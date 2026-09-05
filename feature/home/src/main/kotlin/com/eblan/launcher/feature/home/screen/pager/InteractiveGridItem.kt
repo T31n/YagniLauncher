@@ -235,7 +235,7 @@ internal fun InteractiveGridItem(
                 hasInteraction = hasInteraction,
                 isVisibleWhiteBox = isVisibleWhiteBox,
                 sourceBounds = sourceBounds,
-                gridItemsIconPackInfoFilePaths = iconPackInfoFilePaths,
+                iconPackInfoFilePaths = iconPackInfoFilePaths,
                 animations = animations,
                 horizontalAlignment = horizontalAlignment,
                 verticalArrangement = verticalArrangement,
@@ -398,7 +398,7 @@ private fun InteractiveApplicationInfoGridItem(
     hasInteraction: Boolean,
     isVisibleWhiteBox: Boolean,
     sourceBounds: Rect,
-    gridItemsIconPackInfoFilePaths: Map<String, String?>,
+    iconPackInfoFilePaths: Map<String, String?>,
     animations: Boolean,
     horizontalAlignment: Alignment.Horizontal,
     verticalArrangement: Arrangement.Vertical,
@@ -432,7 +432,7 @@ private fun InteractiveApplicationInfoGridItem(
 
     val scope = rememberCoroutineScope()
 
-    val icon = gridItemsIconPackInfoFilePaths[gridItem.id] ?: data.icon
+    val icon = iconPackInfoFilePaths[data.componentName] ?: data.icon
 
     val hasNotifications =
         (statusBarNotifications[data.packageName] ?: 0) > 0
@@ -1530,7 +1530,7 @@ private fun PreviewFolderGridItem(
 
         when (val data = gridItem.data) {
             is GridItemData.ApplicationInfo -> {
-                val icon = iconPackInfoFilePaths[gridItem.id] ?: data.icon
+                val icon = iconPackInfoFilePaths[data.componentName] ?: data.icon
 
                 AsyncImage(
                     model = Builder(context)

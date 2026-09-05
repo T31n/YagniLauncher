@@ -100,7 +100,6 @@ internal fun GridItemContent(
         is GridItemData.ApplicationInfo ->
             ApplicationInfoGridItem(
                 modifier = modifier,
-                gridItem = gridItem,
                 data = data,
                 gridItemSettings = currentGridItemSettings,
                 textColor = currentTextColor,
@@ -164,7 +163,6 @@ internal fun GridItemContent(
 @Composable
 private fun ApplicationInfoGridItem(
     modifier: Modifier = Modifier,
-    gridItem: GridItem,
     data: GridItemData.ApplicationInfo,
     gridItemSettings: GridItemSettings,
     textColor: Color,
@@ -173,7 +171,7 @@ private fun ApplicationInfoGridItem(
     verticalArrangement: Arrangement.Vertical,
     maxLines: Int,
 ) {
-    val icon = iconPackInfoFilePaths[gridItem.id] ?: data.icon
+    val icon = iconPackInfoFilePaths[data.componentName] ?: data.icon
 
     Column(
         modifier = modifier
@@ -499,7 +497,7 @@ private fun PreviewFolderGridItemContent(
 
         when (val data = gridItem.data) {
             is GridItemData.ApplicationInfo -> {
-                val icon = iconPackInfoFilePaths[gridItem.id] ?: data.icon
+                val icon = iconPackInfoFilePaths[data.componentName] ?: data.icon
 
                 AsyncImage(
                     model = Builder(context)

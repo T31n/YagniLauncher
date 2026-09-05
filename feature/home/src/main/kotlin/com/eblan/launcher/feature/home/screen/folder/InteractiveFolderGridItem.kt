@@ -419,7 +419,7 @@ private fun InteractiveFolderApplicationInfoGridItem(
 
     val scope = rememberCoroutineScope()
 
-    val icon = iconPackInfoFilePaths[gridItem.id] ?: data.icon
+    val icon = iconPackInfoFilePaths[data.componentName] ?: data.icon
 
     val hasNotifications =
         (statusBarNotifications[data.packageName] ?: 0) > 0
@@ -1244,7 +1244,7 @@ private fun PreviewNestedFolderGridItem(
 
         when (val data = gridItem.data) {
             is GridItemData.ApplicationInfo -> {
-                val icon = iconPackInfoFilePaths[gridItem.id] ?: data.icon
+                val icon = iconPackInfoFilePaths[data.componentName] ?: data.icon
 
                 AsyncImage(
                     model = Builder(context).data(data.customIcon ?: icon)
