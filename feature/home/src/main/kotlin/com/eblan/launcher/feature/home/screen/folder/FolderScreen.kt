@@ -245,7 +245,7 @@ internal fun FolderScreen(
         key2 = isFirstFolderGridItem,
         key3 = animations,
     ) {
-        handleFolderPopup(
+        handleIsCloseFolder(
             drag = currentDrag,
             isDragging = currentIsDragging,
             isVisibleOverlay = currentIsVisibleOverlay,
@@ -624,7 +624,7 @@ private fun getAnimatedRect(
     )
 }
 
-private suspend fun handleFolderPopup(
+private suspend fun handleIsCloseFolder(
     drag: State<Drag>,
     isDragging: State<Boolean>,
     isVisibleOverlay: State<Boolean>,
@@ -649,83 +649,104 @@ private suspend fun handleFolderPopup(
         progress.snapTo(targetValue = 0f)
     }
 
-    val gridItem = moveGridItemResult.value?.movingGridItem
-
-    if (drag.value == Drag.Dragging &&
-        isDragging.value &&
-        isVisibleOverlay.value &&
-        gridItem != null
-    ) {
-        val newGridItem = when (val data = gridItem.data) {
-            is GridItemData.ApplicationInfo -> {
-                gridItem.copy(
-                    page = folderPopup.gridItem.page,
-                    startColumn = folderPopup.gridItem.startColumn,
-                    startRow = folderPopup.gridItem.startRow,
-                    data = data.copy(
-                        index = -1,
-                        folderId = null,
-                    ),
-                )
-            }
-
-            is GridItemData.Folder -> {
-                gridItem.copy(
-                    page = folderPopup.gridItem.page,
-                    startColumn = folderPopup.gridItem.startColumn,
-                    startRow = folderPopup.gridItem.startRow,
-                    data = data.copy(
-                        index = -1,
-                        folderId = null,
-                    ),
-                )
-            }
-
-            is GridItemData.ShortcutConfig -> {
-                gridItem.copy(
-                    page = folderPopup.gridItem.page,
-                    startColumn = folderPopup.gridItem.startColumn,
-                    startRow = folderPopup.gridItem.startRow,
-                    data = data.copy(
-                        index = -1,
-                        folderId = null,
-                    ),
-                )
-            }
-
-            is GridItemData.ShortcutInfo -> {
-                gridItem.copy(
-                    page = folderPopup.gridItem.page,
-                    startColumn = folderPopup.gridItem.startColumn,
-                    startRow = folderPopup.gridItem.startRow,
-                    data = data.copy(
-                        index = -1,
-                        folderId = null,
-                    ),
-                )
-            }
-
-            is GridItemData.Widget -> error("Unsupported Folder Grid Item")
-        }
-
-        onUpdateSharedElementKey(
-            SharedElementKey(
-                id = gridItem.id,
-                parent = when (folderPopup.gridItem.associate) {
-                    Associate.Grid -> SharedElementKey.Parent.Grid
-                    Associate.Dock -> SharedElementKey.Parent.Dock
-                },
-            ),
-        )
-
-        onMoveFolderGridItemOutsideFolder(newGridItem)
-    }
+    handleMoveFolderGridItemOutsideFolder(
+        drag = drag,
+        folderPopup = folderPopup,
+        isDragging = isDragging,
+        isVisibleOverlay = isVisibleOverlay,
+        moveGridItemResult = moveGridItemResult,
+        onMoveFolderGridItemOutsideFolder = onMoveFolderGridItemOutsideFolder,
+        onUpdateSharedElementKey = onUpdateSharedElementKey,
+    )
 
     if (isFirstFolderGridItem) {
         onUpdateIsVisibleFolders(false)
     }
 
     onDeleteFolderPopupEntry(folderPopup.folderPopupEntry)
+}
+
+private fun handleMoveFolderGridItemOutsideFolder(
+    drag: State<Drag>,
+    folderPopup: FolderPopup,
+    isDragging: State<Boolean>,
+    isVisibleOverlay: State<Boolean>,
+    moveGridItemResult: State<MoveGridItemResult?>,
+    onMoveFolderGridItemOutsideFolder: (GridItem) -> Unit,
+    onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
+) {
+    val gridItem = moveGridItemResult.value?.movingGridItem ?: return
+
+    if (drag.value != Drag.Dragging ||
+        !isDragging.value ||
+        !isVisibleOverlay.value
+    ) {
+        return
+    }
+
+    val newGridItem = when (val data = gridItem.data) {
+        is GridItemData.ApplicationInfo -> {
+            gridItem.copy(
+                page = folderPopup.gridItem.page,
+                startColumn = folderPopup.gridItem.startColumn,
+                startRow = folderPopup.gridItem.startRow,
+                data = data.copy(
+                    index = -1,
+                    folderId = null,
+                ),
+            )
+        }
+
+        is GridItemData.Folder -> {
+            gridItem.copy(
+                page = folderPopup.gridItem.page,
+                startColumn = folderPopup.gridItem.startColumn,
+                startRow = folderPopup.gridItem.startRow,
+                data = data.copy(
+                    index = -1,
+                    folderId = null,
+                ),
+            )
+        }
+
+        is GridItemData.ShortcutConfig -> {
+            gridItem.copy(
+                page = folderPopup.gridItem.page,
+                startColumn = folderPopup.gridItem.startColumn,
+                startRow = folderPopup.gridItem.startRow,
+                data = data.copy(
+                    index = -1,
+                    folderId = null,
+                ),
+            )
+        }
+
+        is GridItemData.ShortcutInfo -> {
+            gridItem.copy(
+                page = folderPopup.gridItem.page,
+                startColumn = folderPopup.gridItem.startColumn,
+                startRow = folderPopup.gridItem.startRow,
+                data = data.copy(
+                    index = -1,
+                    folderId = null,
+                ),
+            )
+        }
+
+        is GridItemData.Widget -> error("Unsupported Folder Grid Item")
+    }
+
+    onUpdateSharedElementKey(
+        SharedElementKey(
+            id = gridItem.id,
+            parent = when (folderPopup.gridItem.associate) {
+                Associate.Grid -> SharedElementKey.Parent.Grid
+                Associate.Dock -> SharedElementKey.Parent.Dock
+            },
+        ),
+    )
+
+    onMoveFolderGridItemOutsideFolder(newGridItem)
 }
 
 private fun getFolderPopupLayoutInfo(
