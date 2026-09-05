@@ -62,7 +62,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
     ) { tagId, label, userData, eblanApplicationInfos ->
         val iconPackInfoPackageName = userData.generalSettings.iconPackInfoPackageName
 
-        val eblanApplicationInfoWithIconPackInfosByLabel = getEblanApplicationInfos(
+        val eblanApplicationInfosByLabel = getEblanApplicationInfos(
             label = label,
             fuzzySearch = userData.appDrawerSettings.fuzzySearch,
             excludeTaggedApps = userData.appDrawerSettings.excludeTaggedApps,
@@ -72,13 +72,13 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
 
         updateEblanApplicationInfoIndexes(
             eblanApplicationInfoOrder = userData.appDrawerSettings.eblanApplicationInfoOrder,
-            eblanApplicationInfos = eblanApplicationInfoWithIconPackInfosByLabel,
+            eblanApplicationInfos = eblanApplicationInfosByLabel,
         )
 
         when (userData.appDrawerSettings.appDrawerType) {
             AppDrawerType.Vertical, AppDrawerType.List ->
                 getVerticalOrListEblanApplicationInfosByLabel(
-                    eblanApplicationInfos = eblanApplicationInfoWithIconPackInfosByLabel,
+                    eblanApplicationInfos = eblanApplicationInfosByLabel,
                     iconPackInfoPackageName = iconPackInfoPackageName,
                 )
 
@@ -86,7 +86,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
                 getHorizontalEblanApplicationInfosByLabel(
                     horizontalAppDrawerColumns = userData.appDrawerSettings.horizontalAppDrawerColumns,
                     horizontalAppDrawerRows = userData.appDrawerSettings.horizontalAppDrawerRows,
-                    eblanApplicationInfos = eblanApplicationInfoWithIconPackInfosByLabel,
+                    eblanApplicationInfos = eblanApplicationInfosByLabel,
                     iconPackInfoPackageName = iconPackInfoPackageName,
                 )
         }
@@ -193,10 +193,12 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
         }.filterNot { it.isHidden }
 
         val eblanApplicationInfosByLabel = eblanApplicationInfosByTag.filter {
-            it.label.startsWith(
+            val currentLabel = it.customLabel ?: it.label
+
+            currentLabel.startsWith(
                 prefix = label,
                 ignoreCase = true,
-            ) || it.label.contains(
+            ) || currentLabel.contains(
                 other = label,
                 ignoreCase = true,
             )
@@ -207,9 +209,11 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
                 val fuzzyMatches = if (fuzzySearch) {
                     (eblanApplicationInfosByTag - eblanApplicationInfosByLabel.toSet())
                         .map {
+                            val currentLabel = it.customLabel ?: it.label
+
                             it to jaroWinklerSimilarityWrapper.apply(
                                 left = normalize(text = label),
-                                right = normalize(text = it.label),
+                                right = normalize(text = currentLabel),
                             )
                         }
                         .filter { (_, score) -> score >= FUZZY_MATCH_THRESHOLD }
@@ -219,7 +223,11 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
                     emptyList()
                 }
 
-                eblanApplicationInfosByLabel.sortedBy { it.label.lowercase() } + fuzzyMatches
+                eblanApplicationInfosByLabel.sortedBy {
+                    val currentLabel = it.customLabel ?: it.label
+
+                    currentLabel.lowercase()
+                } + fuzzyMatches
             } else {
                 emptyList()
             }
