@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~
+  ~   Copyright 2023 Einstein Blanco
+  ~
+  ~   Licensed under the GNU General Public License v3.0 (the "License");
+  ~   you may not use this file except in compliance with the License.
+  ~   You may obtain a copy of the License at
+  ~
+  ~       https://www.gnu.org/licenses/gpl-3.0
+  ~
+  ~   Unless required by applicable law or agreed to in writing, software
+  ~   distributed under the License is distributed on an "AS IS" BASIS,
+  ~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~   See the License for the specific language governing permissions and
+  ~   limitations under the License.
+  ~
+  -->
+<resources>
+    <string name="personal">Persoal</string>
+    <string name="clone">Clonar</string>
+    <string name="work">Traballo</string>
+    <string name="sort_applications">Orde das aplicacións</string>
+    <string name="rearrange_applications">Reordenar aplicacións</string>
+    <string name="rearrange_applications_by_index">Reordenar aplicacións polo índice</string>
+    <string name="drag_an_item_to_rearrange">Arrastra un elemento para situalo</string>
+    <string name="work_apps_are_paused">As apps do traballo están en pausa</string>
+    <string name="you_won_t_receive_notifications_from_your_work_apps">Non vas recibir notificacións das apps do traballo</string>
+    <string name="unpause">Reactivar</string>
+    <string name="private_space">Privado</string>
+    <string name="please_wait_for_the_white_box_indicator">Agarda polo indicador da caixa branca</string>
+    <string name="edit_pages">Editar páxinas</string>
+    <string name="edit_dock_pages">Editar páxinas do molle</string>
+    <string name="widgets">Widgets</string>
+    <string name="shortcuts">Atallos</string>
+    <string name="wallpaper">Fondo</string>
+    <string name="search_widgets">Busar Widgets</string>
+    <string name="request_permissions">Solicitar permisos</string>
+    <string name="allow_permissions_so_we_can_inform_you_about_important_crash_reports_and_make_phone_shortcuts">Conceder permisos para que poidamos informarte sobre informes de fallos importantes e crear atallos ao teléfono</string>
+    <string name="later">Máis tarde</string>
+</resources>

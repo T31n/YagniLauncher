@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~
+  ~   Copyright 2023 Einstein Blanco
+  ~
+  ~   Licensed under the GNU General Public License v3.0 (the "License");
+  ~   you may not use this file except in compliance with the License.
+  ~   You may obtain a copy of the License at
+  ~
+  ~       https://www.gnu.org/licenses/gpl-3.0
+  ~
+  ~   Unless required by applicable law or agreed to in writing, software
+  ~   distributed under the License is distributed on an "AS IS" BASIS,
+  ~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~   See the License for the specific language governing permissions and
+  ~   limitations under the License.
+  ~
+  -->
+<resources>
+    <string name="warning">Aviso</string>
+    <string name="disable_background_sync_description">
+    Ao desactivar a sincronización en segundo plano axudas a aforrar un pouco de baterí e o sistema síntese máis lixeiro, mais implica que Yagni Launcher non vai actualizar as apps automaticamente, nen os widgets ou os atallos.\n\nA caixa de apps podería mostrar iconas antigas, faltar widgets ou atallos que xa non funcionan.
+</string>
+    <string name="sync_data">Sincronizar datos</string>
+    <string name="keep_data_up_to_date">Manter datos actualizados</string>
+    <string name="enable_or_disable_sync_data">Activar ou desactivar a sicronización</string>
+    <string name="lock_movement">Bloquear o movemento</string>
+    <string name="prevent_other_grid_items_from_moving">Evita que outros elementos da grella se movan</string>
+</resources>
