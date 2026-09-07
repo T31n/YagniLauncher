@@ -17,7 +17,10 @@
  */
 package com.eblan.launcher.feature.home.component
 
+import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
@@ -156,20 +159,25 @@ private fun FolderGridLayoutContent(
     val x = (index % columns) * cellWidth
     val y = (index / columns) * cellHeight
 
+    val animationSpec =
+        if (animate) spring(visibilityThreshold = Int.VisibilityThreshold) else snap()
+
     val animatedX by animateIntAsState(
         targetValue = x,
         label = "x",
+        animationSpec = animationSpec,
     )
 
     val animatedY by animateIntAsState(
         targetValue = y,
         label = "y",
+        animationSpec = animationSpec,
     )
 
     Box(
         modifier = modifier.folderGridItem(
-            x = if (animate) animatedX else x,
-            y = if (animate) animatedY else y,
+            x = animatedX,
+            y = animatedY,
             width = cellWidth,
             height = cellHeight,
         ),
