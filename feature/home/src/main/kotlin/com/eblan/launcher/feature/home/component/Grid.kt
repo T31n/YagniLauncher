@@ -17,14 +17,15 @@
  */
 package com.eblan.launcher.feature.home.component
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.VisibilityThreshold
-import androidx.compose.animation.core.animateIntAsState
-import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ParentDataModifier
 import androidx.compose.ui.layout.SubcomposeLayout
@@ -125,6 +126,35 @@ internal fun HorizontalAppDrawerGridLayout(
 }
 
 @Composable
+internal fun animateGridIntAsState(
+    targetValue: Int,
+    animate: Boolean,
+): Int {
+    val animatable = remember {
+        Animatable(
+            initialValue = targetValue,
+            typeConverter = Int.VectorConverter,
+        )
+    }
+
+    LaunchedEffect(
+        key1 = targetValue,
+        key2 = animate,
+    ) {
+        if (animate) {
+            animatable.animateTo(
+                targetValue = targetValue,
+                animationSpec = spring(visibilityThreshold = Int.VisibilityThreshold),
+            )
+        } else {
+            animatable.snapTo(targetValue)
+        }
+    }
+
+    return animatable.value
+}
+
+@Composable
 private fun GridLayoutItem(
     modifier: Modifier = Modifier,
     gridItem: GridItem,
@@ -139,32 +169,10 @@ private fun GridLayoutItem(
     val x = gridItem.startColumn * cellWidth
     val y = gridItem.startRow * cellHeight
 
-    val animationSpec =
-        if (animate) spring(visibilityThreshold = Int.VisibilityThreshold) else snap()
-
-    val animatedWidth by animateIntAsState(
-        targetValue = width,
-        label = "width",
-        animationSpec = animationSpec,
-    )
-
-    val animatedHeight by animateIntAsState(
-        targetValue = height,
-        label = "height",
-        animationSpec = animationSpec,
-    )
-
-    val animatedX by animateIntAsState(
-        targetValue = x,
-        label = "x",
-        animationSpec = animationSpec,
-    )
-
-    val animatedY by animateIntAsState(
-        targetValue = y,
-        label = "y",
-        animationSpec = animationSpec,
-    )
+    val animatedWidth = animateGridIntAsState(targetValue = width, animate = animate)
+    val animatedHeight = animateGridIntAsState(targetValue = height, animate = animate)
+    val animatedX = animateGridIntAsState(targetValue = x, animate = animate)
+    val animatedY = animateGridIntAsState(targetValue = y, animate = animate)
 
     Box(
         modifier = modifier.gridItem(

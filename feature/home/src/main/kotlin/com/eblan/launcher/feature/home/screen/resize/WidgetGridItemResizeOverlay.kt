@@ -19,7 +19,7 @@ package com.eblan.launcher.feature.home.screen.resize
 
 import android.appwidget.AppWidgetProviderInfo
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.animation.core.VectorConverter
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -53,6 +53,7 @@ import com.eblan.launcher.feature.home.util.updateAppWidgetOptions
 import com.eblan.launcher.framework.widgetmanager.AndroidAppWidgetManagerWrapper
 import com.eblan.launcher.ui.local.LocalAppWidgetManager
 import kotlinx.coroutines.launch
+import kotlin.Int
 import kotlin.math.roundToInt
 
 @Composable
@@ -82,13 +83,33 @@ internal fun WidgetGridItemResizeOverlay(
 
     val appWidgetManager = LocalAppWidgetManager.current
 
-    val currentX = remember { Animatable(x.toFloat()) }
+    val currentX = remember {
+        Animatable(
+            initialValue = x,
+            typeConverter = Int.VectorConverter,
+        )
+    }
 
-    val currentY = remember { Animatable(y.toFloat()) }
+    val currentY = remember {
+        Animatable(
+            initialValue = y,
+            typeConverter = Int.VectorConverter,
+        )
+    }
 
-    val currentWidth = remember { Animatable(width.toFloat()) }
+    val currentWidth = remember {
+        Animatable(
+            initialValue = width,
+            typeConverter = Int.VectorConverter,
+        )
+    }
 
-    val currentHeight = remember { Animatable(height.toFloat()) }
+    val currentHeight = remember {
+        Animatable(
+            initialValue = height,
+            typeConverter = Int.VectorConverter,
+        )
+    }
 
     var isResizing by remember {
         mutableStateOf(true)
@@ -103,7 +124,7 @@ internal fun WidgetGridItemResizeOverlay(
     val borderWidth by remember {
         derivedStateOf {
             with(density) {
-                currentWidth.value.roundToInt().coerceAtLeast(dragHandleSizePx).toDp()
+                currentWidth.value.coerceAtLeast(dragHandleSizePx).toDp()
             }
         }
     }
@@ -111,18 +132,18 @@ internal fun WidgetGridItemResizeOverlay(
     val borderHeight by remember {
         derivedStateOf {
             with(density) {
-                currentHeight.value.roundToInt().coerceAtLeast(dragHandleSizePx).toDp()
+                currentHeight.value.coerceAtLeast(dragHandleSizePx).toDp()
             }
         }
     }
 
     val borderX by remember {
         derivedStateOf {
-            getBorderX(
+            getWidgetBorderX(
                 dragHandle = dragHandle,
-                currentWidth = currentWidth,
+                currentWidth = currentWidth.value,
                 dragHandleSizePx = dragHandleSizePx,
-                currentX = currentX,
+                currentX = currentX.value,
                 x = x,
                 width = width,
             )
@@ -131,11 +152,11 @@ internal fun WidgetGridItemResizeOverlay(
 
     val borderY by remember {
         derivedStateOf {
-            getBorderY(
+            getWidgetBorderY(
                 dragHandle = dragHandle,
-                currentHeight = currentHeight,
+                currentHeight = currentHeight.value,
                 dragHandleSizePx = dragHandleSizePx,
-                currentY = currentY,
+                currentY = currentY.value,
                 y = y,
                 height = height,
             )
@@ -151,10 +172,10 @@ internal fun WidgetGridItemResizeOverlay(
         key1 = currentWidth.value,
         key2 = currentHeight.value,
     ) {
-        resizeGridItem(
+        resizeWidgetGridItem(
             data = data,
-            currentWidth = currentWidth,
-            currentHeight = currentHeight,
+            currentWidth = currentWidth.value,
+            currentHeight = currentHeight.value,
             dragHandle = dragHandle,
             gridItem = gridItem,
             width = width,
@@ -173,10 +194,10 @@ internal fun WidgetGridItemResizeOverlay(
 
     LaunchedEffect(key1 = isResizing) {
         if (!isResizing) {
-            launch { currentX.animateTo(x.toFloat()) }
-            launch { currentY.animateTo(y.toFloat()) }
-            launch { currentWidth.animateTo(width.toFloat()) }
-            launch { currentHeight.animateTo(height.toFloat()) }
+            launch { currentX.animateTo(targetValue = x) }
+            launch { currentY.animateTo(targetValue = y) }
+            launch { currentWidth.animateTo(targetValue = width) }
+            launch { currentHeight.animateTo(targetValue = height) }
         }
     }
 
@@ -209,8 +230,8 @@ internal fun WidgetGridItemResizeOverlay(
                                 },
                                 onDrag = { _, dragAmount ->
                                     scope.launch {
-                                        currentHeight.snapTo(currentHeight.value - dragAmount.y)
-                                        currentY.snapTo(currentY.value + dragAmount.y)
+                                        currentHeight.snapTo(currentHeight.value - dragAmount.y.roundToInt())
+                                        currentY.snapTo(currentY.value + dragAmount.y.roundToInt())
                                     }
                                 },
                             )
@@ -239,7 +260,7 @@ internal fun WidgetGridItemResizeOverlay(
                                 },
                                 onDrag = { _, dragAmount ->
                                     scope.launch {
-                                        currentWidth.snapTo(currentWidth.value + dragAmount.x)
+                                        currentWidth.snapTo(currentWidth.value + dragAmount.x.roundToInt())
                                     }
                                 },
                             )
@@ -268,7 +289,7 @@ internal fun WidgetGridItemResizeOverlay(
                                 },
                                 onDrag = { _, dragAmount ->
                                     scope.launch {
-                                        currentHeight.snapTo(currentHeight.value + dragAmount.y)
+                                        currentHeight.snapTo(currentHeight.value + dragAmount.y.roundToInt())
                                     }
                                 },
                             )
@@ -297,8 +318,8 @@ internal fun WidgetGridItemResizeOverlay(
                                 },
                                 onDrag = { _, dragAmount ->
                                     scope.launch {
-                                        currentWidth.snapTo(currentWidth.value - dragAmount.x)
-                                        currentX.snapTo(currentX.value + dragAmount.x)
+                                        currentWidth.snapTo(currentWidth.value - dragAmount.x.roundToInt())
+                                        currentX.snapTo(currentX.value + dragAmount.x.roundToInt())
                                     }
                                 },
                             )
@@ -311,44 +332,44 @@ internal fun WidgetGridItemResizeOverlay(
     }
 }
 
-private fun getBorderX(
+private fun getWidgetBorderX(
     dragHandle: Alignment,
-    currentWidth: Animatable<Float, AnimationVector1D>,
+    currentWidth: Int,
     dragHandleSizePx: Int,
-    currentX: Animatable<Float, AnimationVector1D>,
+    currentX: Int,
     x: Int,
     width: Int,
 ): Int = if (dragHandle == Alignment.CenterStart) {
-    if (currentWidth.value >= dragHandleSizePx) {
-        currentX.value.roundToInt()
+    if (currentWidth >= dragHandleSizePx) {
+        currentX
     } else {
         (x + width) - dragHandleSizePx
     }
 } else {
-    currentX.value.roundToInt()
+    currentX
 }
 
-private fun getBorderY(
+private fun getWidgetBorderY(
     dragHandle: Alignment,
-    currentHeight: Animatable<Float, AnimationVector1D>,
+    currentHeight: Int,
     dragHandleSizePx: Int,
-    currentY: Animatable<Float, AnimationVector1D>,
+    currentY: Int,
     y: Int,
     height: Int,
 ): Int = if (dragHandle == Alignment.TopCenter) {
-    if (currentHeight.value >= dragHandleSizePx) {
-        currentY.value.roundToInt()
+    if (currentHeight >= dragHandleSizePx) {
+        currentY
     } else {
         (y + height) - dragHandleSizePx
     }
 } else {
-    currentY.value.roundToInt()
+    currentY
 }
 
-private fun resizeGridItem(
+private fun resizeWidgetGridItem(
     data: GridItemData.Widget,
-    currentWidth: Animatable<Float, AnimationVector1D>,
-    currentHeight: Animatable<Float, AnimationVector1D>,
+    currentWidth: Int,
+    currentHeight: Int,
     dragHandle: Alignment,
     gridItem: GridItem,
     width: Int,
@@ -364,21 +385,21 @@ private fun resizeGridItem(
     onResizeWidgetGridItem: (GridItem, Int, Int) -> Unit,
 ) {
     val allowedWidth =
-        if (data.minResizeWidth > 0 && currentWidth.value.roundToInt() <= data.minResizeWidth) {
+        if (data.minResizeWidth > 0 && currentWidth <= data.minResizeWidth) {
             data.minResizeWidth
-        } else if (data.maxResizeWidth in 1..<currentWidth.value.roundToInt()) {
+        } else if (data.maxResizeWidth in 1..<currentWidth) {
             data.maxResizeWidth
         } else {
-            currentWidth.value.roundToInt()
+            currentWidth
         }
 
     val allowedHeight =
-        if (data.minResizeHeight > 0 && currentHeight.value.roundToInt() <= data.minResizeHeight) {
+        if (data.minResizeHeight > 0 && currentHeight <= data.minResizeHeight) {
             data.minResizeHeight
-        } else if (data.maxResizeHeight in 1..<currentHeight.value.roundToInt()) {
+        } else if (data.maxResizeHeight in 1..<currentHeight) {
             data.maxResizeHeight
         } else {
-            currentHeight.value.roundToInt()
+            currentHeight
         }
 
     val resizingGridItem = when (dragHandle) {
