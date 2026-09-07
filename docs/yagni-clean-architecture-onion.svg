@@ -1,110 +1,32 @@
-<svg viewBox="0 0 1200 980" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
+<svg viewBox="0 0 900 900" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif" xmlns:c2pa="http://c2pa.org/manifest"><metadata><c2pa:manifest>AAAWgmp1bWIAAAAeanVtZGMycGEAEQAQgAAAqgA4m3EDYzJwYQAAABZcanVtYgAAAEdqdW1kYzJtYQARABCAAACqADibcQN1cm46YzJwYTozMTUyZGRiZi01ZDE1LTQ5OTItYjRiZi00MGE5M2RkZmFmZmIAAAADl2p1bWIAAAApanVtZGMyYXMAEQAQgAAAqgA4m3EDYzJwYS5hc3NlcnRpb25zAAAAALxqdW1iAAAARGp1bWRjYm9yABEAEIAAAKoAOJtxE2MycGEuaW5ncmVkaWVudC52MwAAAAAYYzJzaEgcJqqgQvrlgQEHjwOx9ZYAAABwY2JvcqNpZGM6Zm9ybWF0bWltYWdlL3N2Zyt4bWxqaW5zdGFuY2VJRHgseG1wOmlpZDplZDI1NmE3NC1lMWI4LTRlMTUtODEyZi1lNGEzZGEyNTBmZWZscmVsYXRpb25zaGlwaHBhcmVudE9mAAAB4mp1bWIAAABBanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5hY3Rpb25zLnYyAAAAABhjMnNoN6BSFb6+bTOV9jb44mLvkQAAAZljYm9yomdhY3Rpb25zgqJmYWN0aW9ua2MycGEub3BlbmVkanBhcmFtZXRlcnOha2luZ3JlZGllbnRzgaJjdXJseC1zZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmluZ3JlZGllbnQudjNkaGFzaFggrXo6NP72KBwq4VPhqoFQfG42RO4lLqlVW4S8lH2qdPWkZmFjdGlvbngdY29tLmFudGhyb3BpYy5jbGF1ZGUucHJvdmlkZWRqcGFyYW1ldGVyc6F4H2NvbS5hbnRocm9waWMub3JpZ2luLWNvbmZpZGVuY2VndW5rbm93bmtkZXNjcmlwdGlvbnhmQ2xhdWRlIHByb3ZpZGVkIHRoaXMgZmlsZSBhdCB0aGUgcmVxdWVzdCBvZiBhIHVzZXIgYW5kIG1heSBoYXZlIGNyZWF0ZWQgb3IgbW9kaWZpZWQgdGhlIGZpbGUgY29udGVudHMubXNvZnR3YXJlQWdlbnShZG5hbWVmQ2xhdWRlcmFsbEFjdGlvbnNJbmNsdWRlZPUAAADIanVtYgAAAEBqdW1kY2JvcgARABCAAACqADibcRNjMnBhLmhhc2guZGF0YQAAAAAYYzJzaNNqhQtw8mMBXJJ2+h2CeK8AAACAY2JvcqVjYWxnZnNoYTI1NmNwYWRNAAAAAAAAAAAAAAAAAGRoYXNoWCC7PC6ZZ5lJQOhHHWrDBy6lkTctSk8Pcdc2NXXUOpQYE2RuYW1lbmp1bWJmIG1hbmlmZXN0amV4Y2x1c2lvbnOBomVzdGFydBioZmxlbmd0aBkeBAAAAj5qdW1iAAAAJ2p1bWRjMmNsABEAEIAAAKoAOJtxA2MycGEuY2xhaW0udjIAAAACD2Nib3KlY2FsZ2ZzaGEyNTZpc2lnbmF0dXJleE1zZWxmI2p1bWJmPS9jMnBhL3VybjpjMnBhOjMxNTJkZGJmLTVkMTUtNDk5Mi1iNGJmLTQwYTkzZGRmYWZmYi9jMnBhLnNpZ25hdHVyZWppbnN0YW5jZUlEeCx4bXA6aWlkOmRhYzZkNjMxLTNjYTctNDJiZC1hMTdiLWY5NmRlNjBlN2ViYnJjcmVhdGVkX2Fzc2VydGlvbnODomN1cmx4LXNlbGYjanVtYmY9YzJwYS5hc3NlcnRpb25zL2MycGEuaW5ncmVkaWVudC52M2RoYXNoWCCtejo0/vYoHCrhU+GqgVB8bjZE7iUuqVVbhLyUfap09aJjdXJseCpzZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmFjdGlvbnMudjJkaGFzaFgg1F6am6jBVpq5M2l6f3Yh+VnUejjF63yOhToljATVLQuiY3VybHgpc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5oYXNoLmRhdGFkaGFzaFggzsdNWW/NLnSmqC5vSgpU7FxhfUNLuMxQvjqN0mfqfpF0Y2xhaW1fZ2VuZXJhdG9yX2luZm+jZG5hbWVvQW50aHJvcGljIEZpbGVzZ3ZlcnNpb25lMS4wLjBrc3BlY1ZlcnNpb25lMi40LjAAABA4anVtYgAAAChqdW1kYzJjcwARABCAAACqADibcQNjMnBhLnNpZ25hdHVyZQAAABAIY2JvctKEWQISogEmGCFZAgowggIGMIIBjaADAgECAhRA5aAK7sI50L64g/oGQgU9Z1UTADAKBggqhkjOPQQDAzBJMRcwFQYDVQQKEw5BbnRocm9waWMsIFBCQzEuMCwGA1UEAxMlQW50aHJvcGljIENvbnRlbnQgQ3JlZGVudGlhbHMgUm9vdCBDQTAeFw0yNjA4MDcxODQzNTZaFw0yODA4MDYxOTQzNTZaMEQxFzAVBgNVBAoTDkFudGhyb3BpYywgUEJDMSkwJwYDVQQDEyBBbnRocm9waWMgQ2xhdWRlIENvbnRlbnQgU2lnbmluZzBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABJh6CmvLUBgFFNU0vUKlOVtE6djd17L5SuwX0LemFisBM3dkd/3cyjxFA3Qo5S46fX0/ihY0VZ7mfb9KF703t5OjWDBWMA4GA1UdDwEB/wQEAwIHgDAVBgNVHSUEDjAMBgorBgEEAYPoXgIBMAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAUzlHiBIFOZFsj+OPEz5o+nMHXXMIwCgYIKoZIzj0EAwMDZwAwZAIwMXMdFJ4BetLLVY7ORuE9noqbbAZOZn/aArXyTwFAZfKrPzxF2vPoJNf1+UCdg1XGAjBwX1zd9WGqYkqmL5SFqw1QySjr1zJfpJM9+1rdDwSPLMOPOjKuiXjoU/pUUeG9RwmhY3BhZFkNngAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPZYQFYZMPAnQK4ilmAPP1Al6yF9Pn1kPHxIwav35uFg8hw83Ok0UJbuEj1wIrFe6IWeqpwcf8hBZKmcK9JVTOgr/1o=</c2pa:manifest></metadata>
   <defs>
     <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
       <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000000" flood-opacity="0.15"/>
     </filter>
   </defs>
 
-  <rect x="0" y="0" width="1200" height="980" fill="#fafaf8"/>
+  <rect x="0" y="0" width="900" height="900" fill="#fafaf8"/>
 
   <!-- Title -->
-  <text x="600" y="30" text-anchor="middle" font-size="26" font-weight="700" fill="#1f2328">Yagni Launcher — Clean Architecture</text>
-  <text x="600" y="50" text-anchor="middle" font-size="13" fill="#6b7280">Dependencies point inward, toward Domain</text>
+  <text x="450" y="40" text-anchor="middle" font-size="26" font-weight="700" fill="#1f2328">Yagni Launcher — Clean Architecture</text>
+  <text x="450" y="62" text-anchor="middle" font-size="13" fill="#6b7280">Dependencies point inward, toward :domain</text>
 
-  <!-- ============ THE ONION ============ -->
-  <!-- Outer ring: Presentation (radius 250) -->
-  <circle cx="600" cy="480" r="250" fill="#eef2ff" stroke="#818cf8" stroke-width="2" filter="url(#softShadow)"/>
+  <!-- ============ THE ONION — 3 equal-thickness rings ============ -->
+  <circle cx="450" cy="480" r="300" fill="#dbeeff" stroke="#60a5fa" stroke-width="2" filter="url(#softShadow)"/>
+  <circle cx="450" cy="480" r="200" fill="#dcfce7" stroke="#4ade80" stroke-width="2"/>
+  <circle cx="450" cy="480" r="100" fill="#fef9c3" stroke="#eab308" stroke-width="2.5"/>
 
-  <!-- Mid ring split into two half-discs: Framework (left) / Data (right), radius 175 -->
-  <path d="M 600,305 A 175,175 0 0,0 600,655 Z" fill="#fff7ed" stroke="#fb923c" stroke-width="2"/>
-  <path d="M 600,305 A 175,175 0 0,1 600,655 Z" fill="#ecfdf5" stroke="#34d399" stroke-width="2"/>
+  <!-- Outer layer label -->
+  <text x="450" y="224" text-anchor="middle" font-family="Consolas, Monaco, monospace" font-size="19" font-weight="700" fill="#1e40af">:app</text>
+  <text x="450" y="248" text-anchor="middle" font-family="Consolas, Monaco, monospace" font-size="19" font-weight="700" fill="#1e40af">:service</text>
 
-  <!-- Inner circle: Domain, radius 100 -->
-  <circle cx="600" cy="480" r="100" fill="#fef9c3" stroke="#eab308" stroke-width="2.5"/>
+  <!-- Merged middle layer — feature / framework / data stacked -->
+  <text x="450" y="314" text-anchor="middle" font-family="Consolas, Monaco, monospace" font-size="18" font-weight="700" fill="#166534">:feature</text>
+  <text x="450" y="336" text-anchor="middle" font-family="Consolas, Monaco, monospace" font-size="18" font-weight="700" fill="#166534">:framework</text>
+  <text x="450" y="358" text-anchor="middle" font-family="Consolas, Monaco, monospace" font-size="18" font-weight="700" fill="#166534">:data</text>
 
-  <!-- Ring dividers -->
-  <line x1="600" y1="230" x2="600" y2="730" stroke="#c7c7c7" stroke-width="1" stroke-dasharray="2 4"/>
+  <!-- Domain label -->
+  <text x="450" y="486" text-anchor="middle" font-family="Consolas, Monaco, monospace" font-size="19" font-weight="700" fill="#713f12">:domain</text>
 
-  <!-- Ring labels -->
-  <text x="600" y="262" text-anchor="middle" font-size="16" font-weight="700" fill="#3730a3">PRESENTATION</text>
-
-  <text x="505" y="462" text-anchor="middle" font-size="15" font-weight="700" fill="#9a3412">FRAMEWORK</text>
-  <text x="505" y="480" text-anchor="middle" font-size="10" fill="#c2410c">Android APIs</text>
-
-  <text x="697" y="462" text-anchor="middle" font-size="15" font-weight="700" fill="#065f46">DATA</text>
-  <text x="697" y="480" text-anchor="middle" font-size="10" fill="#059669">Persistence</text>
-
-  <text x="600" y="472" text-anchor="middle" font-size="17" font-weight="700" fill="#713f12">DOMAIN</text>
-  <text x="600" y="490" text-anchor="middle" font-size="10.5" fill="#a16207">pure Kotlin</text>
-  <text x="600" y="504" text-anchor="middle" font-size="10.5" fill="#a16207">no Android SDK</text>
-
-  <!-- Inward-pointing dependency arrowheads on ring boundaries -->
-  <g stroke="#4a4a4a" stroke-width="2" fill="none">
-    <path d="M 600,232 l -6,10 M 600,232 l 6,10" />
-    <path d="M 428,480 l 11,-5 M 428,480 l 11,5" />
-    <path d="M 772,480 l -11,-5 M 772,480 l -11,5" />
-  </g>
-
-  <!-- ============ CALLOUT: PRESENTATION (top) ============ -->
-  <line x1="600" y1="230" x2="600" y2="215" stroke="#818cf8" stroke-width="1.5" stroke-dasharray="3 3"/>
-  <rect x="380" y="57" width="440" height="158" rx="12" fill="#eef2ff" stroke="#818cf8" stroke-width="1.5"/>
-  <g font-size="13" fill="#3730a3" text-anchor="middle">
-    <text x="600" y="75" font-weight="700" font-size="12">PRESENTATION modules</text>
-    <text x="600" y="95" font-weight="600">app</text>
-    <text x="600" y="113" font-weight="600">common</text>
-    <text x="600" y="131" font-weight="600">design-system</text>
-    <text x="600" y="149" font-weight="600">feature:*</text>
-    <text x="600" y="165" font-size="9.5" font-style="italic" fill="#4f46e5">action · edit-application-info · edit-grid-item · home · pin · settings:*</text>
-    <text x="600" y="183" font-weight="600">service</text>
-    <text x="600" y="199" font-weight="600">ui</text>
-  </g>
-
-  <!-- ============ CALLOUT: FRAMEWORK (left) ============ -->
-  <line x1="425" y1="480" x2="335" y2="480" stroke="#fb923c" stroke-width="1.5" stroke-dasharray="3 3"/>
-  <rect x="25" y="320" width="310" height="352" rx="12" fill="#fff7ed" stroke="#fb923c" stroke-width="1.5"/>
-  <g font-size="12.5" fill="#9a3412" text-anchor="middle">
-    <text x="180" y="345" font-weight="700" font-size="12">FRAMEWORK modules</text>
-    <text x="180" y="368">framework:accessibility-manager</text>
-    <text x="180" y="390">framework:content-resolver</text>
-    <text x="180" y="412">framework:file-manager</text>
-    <text x="180" y="434">framework:icon-pack-manager</text>
-    <text x="180" y="456">framework:image-serializer</text>
-    <text x="180" y="478">framework:jaro-winkler-similarity</text>
-    <text x="180" y="500">framework:launcher-apps</text>
-    <text x="180" y="522">framework:notification-manager</text>
-    <text x="180" y="544">framework:package-manager</text>
-    <text x="180" y="566">framework:resources</text>
-    <text x="180" y="588">framework:settings</text>
-    <text x="180" y="610">framework:user-manager</text>
-    <text x="180" y="632">framework:wallpaper-manager</text>
-    <text x="180" y="654">framework:widget-manager</text>
-  </g>
-
-  <!-- ============ CALLOUT: DATA (right) ============ -->
-  <line x1="775" y1="480" x2="865" y2="480" stroke="#34d399" stroke-width="1.5" stroke-dasharray="3 3"/>
-  <rect x="865" y="360" width="310" height="240" rx="12" fill="#ecfdf5" stroke="#34d399" stroke-width="1.5"/>
-  <g font-size="13" fill="#065f46" text-anchor="middle">
-    <text x="1020" y="385" font-weight="700" font-size="12">DATA modules</text>
-    <text x="1020" y="413" font-weight="600">data:datastore</text>
-    <text x="1020" y="439" font-weight="600">data:datastore-proto</text>
-    <text x="1020" y="467" font-weight="600">data:repository</text>
-    <text x="1020" y="484" font-size="10.5" fill="#047857">combines room + datastore</text>
-    <text x="1020" y="512" font-weight="600">data:room</text>
-  </g>
-
-  <!-- ============ CALLOUT: DOMAIN (bottom) ============ -->
-  <line x1="600" y1="730" x2="600" y2="745" stroke="#eab308" stroke-width="1.5" stroke-dasharray="3 3"/>
-  <rect x="400" y="745" width="400" height="180" rx="12" fill="#fef9c3" stroke="#eab308" stroke-width="1.5"/>
-  <g font-size="12.5" fill="#713f12" text-anchor="middle">
-    <text x="600" y="769" font-weight="700" font-size="12">DOMAIN modules</text>
-    <text x="600" y="791" font-weight="600">domain:common</text>
-    <text x="600" y="813" font-weight="600">domain:framework</text>
-    <text x="600" y="835" font-weight="600">domain:grid</text>
-    <text x="600" y="857" font-weight="600">domain:model</text>
-    <text x="600" y="874" font-size="10.5" fill="#a16207">entities &amp; value objects</text>
-    <text x="600" y="902" font-weight="600">domain:repository</text>
-    <text x="600" y="924" font-weight="600">domain:use-case</text>
-  </g>
-
-  <text x="600" y="955" text-anchor="middle" font-size="11" fill="#9ca3af">GPL-3.0 · F-Droid · IzzyOnDroid — inspired by Uncle Bob's Clean Architecture</text>
+  <text x="450" y="860" text-anchor="middle" font-size="11" fill="#9ca3af">GPL-3.0 · F-Droid · IzzyOnDroid — inspired by Uncle Bob's Clean Architecture</text>
 </svg>
