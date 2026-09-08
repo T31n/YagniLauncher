@@ -441,7 +441,7 @@ internal fun FolderScreen(
                         rows = folderPopup.rows,
                         width = animatedPreviewRect.width().roundToInt(),
                         height = animatedPreviewRect.height().roundToInt(),
-                        animate = isVisibleOverlay && animations,
+                        animate = isVisibleOverlay && !isInProgress && animations,
                         content = {
                             InteractiveFolderGridItem(
                                 sharedTransitionScope = sharedTransitionScope,
