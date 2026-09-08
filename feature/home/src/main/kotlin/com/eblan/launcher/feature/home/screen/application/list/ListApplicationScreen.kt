@@ -543,19 +543,13 @@ private fun EblanApplicationInfos(
         }
     }
 
-    val currentSwipeY by rememberUpdatedState(swipeY)
+    val currentOnVerticalDrag by rememberUpdatedState(onVerticalDrag)
+    val currentOnDragEnd by rememberUpdatedState(onDragEnd)
 
-    val nestedScrollConnection = remember(
-        key1 = onVerticalDrag,
-        key2 = onDragEnd,
-    ) {
+    val nestedScrollConnection = remember {
         OffsetNestedScrollConnection(
-            swipeY = { currentSwipeY },
-            isAtTop = {
-                !lazyListState.canScrollBackward
-            },
-            onVerticalDrag = onVerticalDrag,
-            onDragEnd = onDragEnd,
+            onVerticalDrag = currentOnVerticalDrag,
+            onDragEnd = currentOnDragEnd,
         )
     }
 
@@ -577,6 +571,14 @@ private fun EblanApplicationInfos(
         if (swipeY.toInt() == screenHeight) {
             lazyListState.scrollToItem(0)
         }
+    }
+
+    LaunchedEffect(
+        key1 = swipeY,
+        key2 = lazyListState.canScrollBackward,
+    ) {
+        nestedScrollConnection.updateSwipeY(swipeY)
+        nestedScrollConnection.updateCanScrollBackward(lazyListState.canScrollBackward)
     }
 
     Box(

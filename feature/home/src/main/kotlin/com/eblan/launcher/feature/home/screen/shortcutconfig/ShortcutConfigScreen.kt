@@ -353,17 +353,22 @@ private fun EblanShortcutConfigsPage(
         },
     )
 
-    val currentSwipeY by rememberUpdatedState(swipeY)
+    val currentOnVerticalDrag by rememberUpdatedState(onVerticalDrag)
+    val currentOnDragEnd by rememberUpdatedState(onDragEnd)
 
     val nestedScrollConnection = remember {
         OffsetNestedScrollConnection(
-            swipeY = { currentSwipeY },
-            isAtTop = {
-                !lazyListState.canScrollBackward
-            },
-            onVerticalDrag = onVerticalDrag,
-            onDragEnd = onDragEnd,
+            onVerticalDrag = currentOnVerticalDrag,
+            onDragEnd = currentOnDragEnd,
         )
+    }
+
+    LaunchedEffect(
+        key1 = swipeY,
+        key2 = lazyListState.canScrollBackward,
+    ) {
+        nestedScrollConnection.updateSwipeY(swipeY)
+        nestedScrollConnection.updateCanScrollBackward(lazyListState.canScrollBackward)
     }
 
     Box(

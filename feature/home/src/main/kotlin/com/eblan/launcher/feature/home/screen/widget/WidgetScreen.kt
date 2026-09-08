@@ -145,16 +145,13 @@ internal fun WidgetScreen(
 
     val lazyListState = rememberLazyListState()
 
-    val currentSwipeY by rememberUpdatedState(swipeY)
+    val currentOnVerticalDrag by rememberUpdatedState(onVerticalDrag)
+    val currentOnDragEnd by rememberUpdatedState(onDragEnd)
 
     val nestedScrollConnection = remember {
         OffsetNestedScrollConnection(
-            swipeY = { currentSwipeY },
-            isAtTop = {
-                !lazyListState.canScrollBackward
-            },
-            onVerticalDrag = onVerticalDrag,
-            onDragEnd = onDragEnd,
+            onVerticalDrag = currentOnVerticalDrag,
+            onDragEnd = currentOnDragEnd,
         )
     }
 
@@ -182,6 +179,14 @@ internal fun WidgetScreen(
         if (isVisibleOverlay && (drag == Drag.Cancel || drag == Drag.End)) {
             onUpdateIsVisibleOverlay(false)
         }
+    }
+
+    LaunchedEffect(
+        key1 = swipeY,
+        key2 = lazyListState.canScrollBackward,
+    ) {
+        nestedScrollConnection.updateSwipeY(swipeY)
+        nestedScrollConnection.updateCanScrollBackward(lazyListState.canScrollBackward)
     }
 
     BackHandler(enabled = swipeY < screenHeight.toFloat()) {
