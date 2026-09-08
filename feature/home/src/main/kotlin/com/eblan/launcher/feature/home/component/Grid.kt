@@ -151,7 +151,7 @@ internal fun animateGridIntAsState(
         }
     }
 
-    return animatable.value
+    return if (animate) animatable.value else targetValue
 }
 
 @Composable

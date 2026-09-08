@@ -223,13 +223,13 @@ internal fun GridItemResizeOverlay(
                         },
                         onDrag = { _, dragAmount ->
                             scope.launch {
-                                currentWidth.snapTo(currentWidth.value - dragAmount.x.roundToInt())
+                                currentWidth.snapTo((currentWidth.value - dragAmount.x).roundToInt())
 
-                                currentHeight.snapTo(currentHeight.value - dragAmount.y.roundToInt())
+                                currentHeight.snapTo((currentHeight.value - dragAmount.y).roundToInt())
 
-                                currentX.snapTo(currentX.value + dragAmount.x.roundToInt())
+                                currentX.snapTo((currentX.value + dragAmount.x).roundToInt())
 
-                                currentY.snapTo(currentY.value + dragAmount.y.roundToInt())
+                                currentY.snapTo((currentY.value + dragAmount.y).roundToInt())
                             }
                         },
                     )
@@ -253,11 +253,11 @@ internal fun GridItemResizeOverlay(
                         },
                         onDrag = { _, dragAmount ->
                             scope.launch {
-                                currentWidth.snapTo(currentWidth.value + dragAmount.x.roundToInt())
+                                currentWidth.snapTo((currentWidth.value + dragAmount.x).roundToInt())
 
-                                currentHeight.snapTo(currentHeight.value - dragAmount.y.roundToInt())
+                                currentHeight.snapTo((currentHeight.value - dragAmount.y).roundToInt())
 
-                                currentY.snapTo(currentY.value + dragAmount.y.roundToInt())
+                                currentY.snapTo((currentY.value + dragAmount.y).roundToInt())
                             }
                         },
                     )
@@ -281,11 +281,11 @@ internal fun GridItemResizeOverlay(
                         },
                         onDrag = { _, dragAmount ->
                             scope.launch {
-                                currentWidth.snapTo(currentWidth.value - dragAmount.x.roundToInt())
+                                currentWidth.snapTo((currentWidth.value - dragAmount.x).roundToInt())
 
-                                currentHeight.snapTo(currentHeight.value + dragAmount.y.roundToInt())
+                                currentHeight.snapTo((currentHeight.value + dragAmount.y).roundToInt())
 
-                                currentX.snapTo(currentX.value + dragAmount.x.roundToInt())
+                                currentX.snapTo((currentX.value + dragAmount.x).roundToInt())
                             }
                         },
                     )
@@ -309,9 +309,9 @@ internal fun GridItemResizeOverlay(
                         },
                         onDrag = { _, dragAmount ->
                             scope.launch {
-                                currentWidth.snapTo(currentWidth.value + dragAmount.x.roundToInt())
+                                currentWidth.snapTo((currentWidth.value + dragAmount.x).roundToInt())
 
-                                currentHeight.snapTo(currentHeight.value + dragAmount.y.roundToInt())
+                                currentHeight.snapTo((currentHeight.value + dragAmount.y).roundToInt())
                             }
                         },
                     )
