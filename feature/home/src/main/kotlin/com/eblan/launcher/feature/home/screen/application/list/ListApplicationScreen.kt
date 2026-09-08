@@ -574,8 +574,9 @@ private fun EblanApplicationInfos(
     }
 
     LaunchedEffect(
-        key1 = swipeY,
-        key2 = lazyListState.canScrollBackward,
+        key1 = nestedScrollConnection,
+        key2 = swipeY,
+        key3 = lazyListState.canScrollBackward,
     ) {
         nestedScrollConnection.updateSwipeY(swipeY)
         nestedScrollConnection.updateCanScrollBackward(lazyListState.canScrollBackward)

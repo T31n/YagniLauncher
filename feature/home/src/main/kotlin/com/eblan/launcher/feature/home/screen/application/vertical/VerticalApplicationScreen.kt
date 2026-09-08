@@ -579,8 +579,9 @@ private fun EblanApplicationInfos(
     }
 
     LaunchedEffect(
-        key1 = swipeY,
-        key2 = lazyGridState.canScrollBackward,
+        key1 = nestedScrollConnection,
+        key2 = swipeY,
+        key3 = lazyGridState.canScrollBackward,
     ) {
         nestedScrollConnection.updateSwipeY(swipeY)
         nestedScrollConnection.updateCanScrollBackward(lazyGridState.canScrollBackward)
