@@ -55,7 +55,7 @@ import com.eblan.launcher.ui.dialog.IconPackInfoFilesDialog
 import com.eblan.launcher.ui.model.SettingsItem
 import com.eblan.launcher.ui.settings.EblanActionSettings
 import com.eblan.launcher.ui.settings.GridItemSettings
-import com.eblan.launcher.ui.settings.SettingsItemContent
+import com.eblan.launcher.ui.settings.SettingsItems
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -355,14 +355,10 @@ private fun EditApplicationInfo(
         )
     }
 
-    items.forEachIndexed { index, settingsItem ->
-        SettingsItemContent(
-            modifier = modifier,
-            settingsItem = settingsItem,
-            index = index,
-            size = items.size,
-        )
-    }
+    SettingsItems(
+        modifier = modifier,
+        items = items,
+    )
 
     if (showCustomIconDialog) {
         IconPackInfoFilesDialog(
@@ -481,14 +477,10 @@ private fun EditFolder(
         )
     }
 
-    items.forEachIndexed { index, settingsItem ->
-        SettingsItemContent(
-            modifier = modifier,
-            settingsItem = settingsItem,
-            index = index,
-            size = items.size,
-        )
-    }
+    SettingsItems(
+        modifier = modifier,
+        items = items,
+    )
 
     if (showCustomIconDialog) {
         IconPackInfoFilesDialog(
@@ -604,14 +596,10 @@ private fun EditShortcutInfo(
         )
     }
 
-    items.forEachIndexed { index, settingsItem ->
-        SettingsItemContent(
-            modifier = modifier,
-            settingsItem = settingsItem,
-            index = index,
-            size = items.size,
-        )
-    }
+    SettingsItems(
+        modifier = modifier,
+        items = items,
+    )
 
     if (showCustomIconDialog) {
         IconPackInfoFilesDialog(
@@ -730,14 +718,10 @@ private fun EditShortcutConfig(
         )
     }
 
-    items.forEachIndexed { index, settingsItem ->
-        SettingsItemContent(
-            modifier = modifier,
-            settingsItem = settingsItem,
-            index = index,
-            size = items.size,
-        )
-    }
+    SettingsItems(
+        modifier = modifier,
+        items = items,
+    )
 
     if (showCustomIconDialog) {
         IconPackInfoFilesDialog(
@@ -775,4 +759,17 @@ private fun EditShortcutConfig(
             },
         )
     }
+}
+
+private fun getGridItem(gridItem: GridItem, customIcon: String?): GridItem = when (val data = gridItem.data) {
+    is GridItemData.ApplicationInfo -> gridItem.copy(data = data.copy(customIcon = customIcon))
+
+    is GridItemData.Folder -> gridItem.copy(data = data.copy(icon = customIcon))
+
+    is GridItemData.ShortcutConfig -> gridItem.copy(data = data.copy(customIcon = customIcon))
+
+    is GridItemData.ShortcutInfo ->
+        gridItem.copy(data = data.copy(customIcon = customIcon))
+
+    else -> gridItem
 }

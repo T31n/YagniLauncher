@@ -58,7 +58,7 @@ internal class DefaultFileManager @Inject constructor(
                 }
 
                 file.absolutePath
-            } catch (e: IOException) {
+            } catch (_: IOException) {
                 null
             }
         }
@@ -69,7 +69,7 @@ internal class DefaultFileManager @Inject constructor(
             FileInputStream(file).use { fis ->
                 fis.readBytes()
             }
-        } catch (e: IOException) {
+        } catch (_: IOException) {
             null
         }
     } else {

@@ -115,10 +115,10 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
 
     override suspend fun getFastActivityList(): List<FastLauncherAppsActivityInfo> = withContext(ioDispatcher) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            launcherApps.profiles.filterNot { userHandle ->
+            launcherApps.profiles.filterNot {
                 currentCoroutineContext().ensureActive()
 
-                isPrivateSpaceEntryPointHidden(userHandle = userHandle)
+                isPrivateSpaceEntryPointHidden(userHandle = it)
             }.flatMap { userHandle ->
                 currentCoroutineContext().ensureActive()
 
@@ -184,10 +184,10 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                launcherApps.profiles.filter { userHandle ->
+                launcherApps.profiles.filter {
                     currentCoroutineContext().ensureActive()
 
-                    isUserAvailable(userHandle = userHandle)
+                    isUserAvailable(userHandle = it)
                 }.flatMap { userHandle ->
                     currentCoroutineContext().ensureActive()
 
@@ -230,10 +230,10 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                launcherApps.profiles.filter { userHandle ->
+                launcherApps.profiles.filter {
                     currentCoroutineContext().ensureActive()
 
-                    isUserAvailable(userHandle = userHandle)
+                    isUserAvailable(userHandle = it)
                 }.flatMap { userHandle ->
                     currentCoroutineContext().ensureActive()
 

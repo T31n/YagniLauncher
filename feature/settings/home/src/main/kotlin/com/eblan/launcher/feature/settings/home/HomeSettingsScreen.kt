@@ -57,7 +57,7 @@ import com.eblan.launcher.ui.dialog.getBackgroundColorTitle
 import com.eblan.launcher.ui.model.SettingsItem
 import com.eblan.launcher.ui.settings.GridItemSettings
 import com.eblan.launcher.ui.settings.SettingsCategoryText
-import com.eblan.launcher.ui.settings.SettingsItemContent
+import com.eblan.launcher.ui.settings.SettingsItems
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -194,33 +194,15 @@ private fun Success(
             .padding(10.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        homeSettingsItems.forEachIndexed { index, settingsItem ->
-            SettingsItemContent(
-                settingsItem = settingsItem,
-                index = index,
-                size = homeSettingsItems.size,
-            )
-        }
+        SettingsItems(items = homeSettingsItems)
 
         SettingsCategoryText(text = stringResource(R.string.dock))
 
-        dockHomeSettingsItems.forEachIndexed { index, settingsItem ->
-            SettingsItemContent(
-                settingsItem = settingsItem,
-                index = index,
-                size = dockHomeSettingsItems.size,
-            )
-        }
+        SettingsItems(items = dockHomeSettingsItems)
 
         SettingsCategoryText(text = stringResource(R.string.folder))
 
-        folderHomeSettingsItems.forEachIndexed { index, settingsItem ->
-            SettingsItemContent(
-                settingsItem = settingsItem,
-                index = index,
-                size = folderHomeSettingsItems.size,
-            )
-        }
+        SettingsItems(items = folderHomeSettingsItems)
 
         GridItemSettings(
             gridItemSettings = homeSettings.gridItemSettings,

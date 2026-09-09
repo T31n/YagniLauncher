@@ -38,8 +38,8 @@ internal class DefaultAccessibilityManagerWrapper @Inject constructor(
     override suspend fun isAccessibilityServiceEnabled(): Boolean = withContext(ioDispatcher) {
         accessibilityManager.isEnabled && accessibilityManager
             .getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK)
-            .any { serviceInfo ->
-                val resolvedInfo = serviceInfo.resolveInfo.serviceInfo
+            .any {
+                val resolvedInfo = it.resolveInfo.serviceInfo
 
                 resolvedInfo.packageName == context.packageName &&
                     resolvedInfo.name == EblanAccessibilityService::class.java.name

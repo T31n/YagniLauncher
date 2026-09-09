@@ -77,13 +77,7 @@ fun EblanActionSettings(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        items.forEachIndexed { index, settingsItem ->
-            SettingsItemContent(
-                settingsItem = settingsItem,
-                index = index,
-                size = items.size,
-            )
-        }
+        SettingsItems(items = items)
     }
 
     if (showDoubleTapDialog) {

@@ -67,7 +67,7 @@ import com.eblan.launcher.ui.dialog.IconPackInfoFilesDialog
 import com.eblan.launcher.ui.model.SettingsItem.Column
 import com.eblan.launcher.ui.model.SettingsItem.CustomIcon
 import com.eblan.launcher.ui.model.SettingsItem.Switch
-import com.eblan.launcher.ui.settings.SettingsItemContent
+import com.eblan.launcher.ui.settings.SettingsItems
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -279,13 +279,7 @@ private fun Success(
             onUpdateEblanApplicationInfoTag = onUpdateEblanApplicationInfoTag,
         )
 
-        items.forEachIndexed { index, settingsItem ->
-            SettingsItemContent(
-                settingsItem = settingsItem,
-                index = index,
-                size = items.size,
-            )
-        }
+        SettingsItems(items = items)
     }
 
     if (showCustomIconDialog) {

@@ -50,7 +50,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.ui.model.SettingsItem
-import com.eblan.launcher.ui.settings.SettingsItemContent
+import com.eblan.launcher.ui.settings.SettingsItems
 import com.eblan.launcher.ui.settings.rememberIsDefaultLauncher
 import com.eblan.launcher.common.R as commonR
 
@@ -130,13 +130,7 @@ internal fun SettingsScreen(
             ) {
                 AlphaWarningCard()
 
-                items.forEachIndexed { index, settingsItem ->
-                    SettingsItemContent(
-                        settingsItem = settingsItem,
-                        index = index,
-                        size = items.size,
-                    )
-                }
+                SettingsItems(items = items)
             }
         }
     }

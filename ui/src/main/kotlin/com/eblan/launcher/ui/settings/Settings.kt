@@ -154,72 +154,72 @@ fun SettingsSwitch(
 }
 
 @Composable
-fun SettingsItemContent(
+fun SettingsItems(
     modifier: Modifier = Modifier,
-    settingsItem: SettingsItem,
-    index: Int,
-    size: Int,
+    items: List<SettingsItem>,
 ) {
-    when (settingsItem) {
-        is SettingsItem.Column -> {
-            SettingsColumn(
-                modifier = modifier,
-                index = index,
-                size = size,
-                title = settingsItem.title,
-                subtitle = settingsItem.subtitle,
-                onClick = settingsItem.onClick,
-            )
-        }
+    items.forEachIndexed { index, settingsItem ->
+        when (settingsItem) {
+            is SettingsItem.Column -> {
+                SettingsColumn(
+                    modifier = modifier,
+                    index = index,
+                    size = items.size,
+                    title = settingsItem.title,
+                    subtitle = settingsItem.subtitle,
+                    onClick = settingsItem.onClick,
+                )
+            }
 
-        is SettingsItem.Switch -> {
-            SettingsSwitch(
-                modifier = modifier,
-                index = index,
-                size = size,
-                checked = settingsItem.checked,
-                title = settingsItem.title,
-                subtitle = settingsItem.subtitle,
-                onClick = settingsItem.onClick,
-                onCheckedChange = settingsItem.onCheckedChange,
-            )
-        }
+            is SettingsItem.Switch -> {
+                SettingsSwitch(
+                    modifier = modifier,
+                    index = index,
+                    size = items.size,
+                    checked = settingsItem.checked,
+                    title = settingsItem.title,
+                    subtitle = settingsItem.subtitle,
+                    onClick = settingsItem.onClick,
+                    onCheckedChange = settingsItem.onCheckedChange,
+                )
+            }
 
-        is SettingsItem.CustomBackgroundColor,
-        -> {
-            CustomBackgroundColor(
-                modifier = modifier,
-                index = index,
-                size = size,
-                title = settingsItem.title,
-                customBackgroundColor = settingsItem.customBackgroundColor,
-                onClick = settingsItem.onClick,
-            )
-        }
+            is SettingsItem.CustomBackgroundColor,
+            -> {
+                CustomBackgroundColor(
+                    modifier = modifier,
+                    index = index,
+                    size = items.size,
+                    title = settingsItem.title,
+                    customBackgroundColor = settingsItem.customBackgroundColor,
+                    onClick = settingsItem.onClick,
+                )
+            }
 
-        is SettingsItem.Row -> {
-            SettingsRow(
-                modifier = modifier,
-                index = index,
-                size = size,
-                imageVector = settingsItem.imageVector,
-                title = settingsItem.title,
-                subtitle = settingsItem.subtitle,
-                onClick = settingsItem.onClick,
-            )
-        }
+            is SettingsItem.Row -> {
+                SettingsRow(
+                    modifier = modifier,
+                    index = index,
+                    size = items.size,
+                    imageVector = settingsItem.imageVector,
+                    title = settingsItem.title,
+                    subtitle = settingsItem.subtitle,
+                    onClick = settingsItem.onClick,
+                )
+            }
 
-        is SettingsItem.CustomIcon -> {
-            CustomIcon(
-                modifier = modifier,
-                index = index,
-                size = size,
-                customIcon = settingsItem.customIcon,
-                packageManagerIconPackInfos = settingsItem.packageManagerIconPackInfos,
-                onUpdateIconPackInfoPackageName = settingsItem.onUpdateIconPackInfoPackageName,
-                onUpdateUri = settingsItem.onUpdateUri,
-                onResetCustomIcon = settingsItem.onResetCustomIcon,
-            )
+            is SettingsItem.CustomIcon -> {
+                CustomIcon(
+                    modifier = modifier,
+                    index = index,
+                    size = items.size,
+                    customIcon = settingsItem.customIcon,
+                    packageManagerIconPackInfos = settingsItem.packageManagerIconPackInfos,
+                    onUpdateIconPackInfoPackageName = settingsItem.onUpdateIconPackInfoPackageName,
+                    onUpdateUri = settingsItem.onUpdateUri,
+                    onResetCustomIcon = settingsItem.onResetCustomIcon,
+                )
+            }
         }
     }
 }

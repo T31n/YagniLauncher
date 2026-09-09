@@ -115,13 +115,7 @@ fun GridItemSettings(
     ) {
         SettingsCategoryText(text = stringResource(R.string.grid_item))
 
-        items.forEachIndexed { index, settingsItem ->
-            SettingsItemContent(
-                settingsItem = settingsItem,
-                index = index,
-                size = items.size,
-            )
-        }
+        SettingsItems(items = items)
     }
 
     if (showIconSizeDialog) {

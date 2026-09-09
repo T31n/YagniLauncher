@@ -103,10 +103,10 @@ internal class DefaultPackageManagerWrapper @Inject constructor(
         val resolveInfos = mutableSetOf<ResolveInfo>()
 
         return withContext(ioDispatcher) {
-            intents.forEach { intent ->
+            intents.forEach {
                 resolveInfos.addAll(
                     packageManager.queryIntentActivities(
-                        intent,
+                        it,
                         PackageManager.GET_META_DATA,
                     ),
                 )
@@ -116,10 +116,8 @@ internal class DefaultPackageManagerWrapper @Inject constructor(
                 PackageManagerIconPackInfo(
                     packageName = resolveInfo.activityInfo.applicationInfo.packageName,
                     icon = resolveInfo.activityInfo.applicationInfo.loadIcon(packageManager)
-                        .let { drawable ->
-                            imageSerializer.createByteArray(
-                                drawable = drawable,
-                            )
+                        .let {
+                            imageSerializer.createByteArray(drawable = it)
                         },
                     label = resolveInfo.activityInfo.applicationInfo.loadLabel(packageManager)
                         .toString(),

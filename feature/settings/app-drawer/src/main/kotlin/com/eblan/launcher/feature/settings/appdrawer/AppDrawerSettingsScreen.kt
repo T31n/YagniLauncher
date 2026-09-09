@@ -54,7 +54,7 @@ import com.eblan.launcher.ui.dialog.RadioOptionsDialog
 import com.eblan.launcher.ui.dialog.getBackgroundColorTitle
 import com.eblan.launcher.ui.model.SettingsItem
 import com.eblan.launcher.ui.settings.GridItemSettings
-import com.eblan.launcher.ui.settings.SettingsItemContent
+import com.eblan.launcher.ui.settings.SettingsItems
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -163,13 +163,7 @@ private fun Success(
             .padding(10.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        items.forEachIndexed { index, settingsItem ->
-            SettingsItemContent(
-                settingsItem = settingsItem,
-                index = index,
-                size = items.size,
-            )
-        }
+        SettingsItems(items = items)
 
         GridItemSettings(
             gridItemSettings = appDrawerSettings.gridItemSettings,

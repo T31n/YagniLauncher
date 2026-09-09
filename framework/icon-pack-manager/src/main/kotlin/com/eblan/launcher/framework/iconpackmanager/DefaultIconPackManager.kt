@@ -140,29 +140,27 @@ internal class DefaultIconPackManager @Inject constructor(
     }
 
     private suspend fun parseXml(xmlPullParser: XmlPullParser): List<IconPackInfoComponent> {
-        val iconPackInfoComponents = mutableListOf<IconPackInfoComponent>()
-
         var eventType = xmlPullParser.eventType
 
-        while (currentCoroutineContext().isActive && eventType != XmlPullParser.END_DOCUMENT) {
-            if (eventType == XmlPullParser.START_TAG && xmlPullParser.name == "item") {
-                val component = xmlPullParser.getAttributeValue(null, "component")
+        return buildList {
+            while (currentCoroutineContext().isActive && eventType != XmlPullParser.END_DOCUMENT) {
+                if (eventType == XmlPullParser.START_TAG && xmlPullParser.name == "item") {
+                    val component = xmlPullParser.getAttributeValue(null, "component")
 
-                val drawable = xmlPullParser.getAttributeValue(null, "drawable")
+                    val drawable = xmlPullParser.getAttributeValue(null, "drawable")
 
-                if (!component.isNullOrBlank() && !drawable.isNullOrBlank()) {
-                    iconPackInfoComponents.add(
-                        IconPackInfoComponent(
-                            componentName = component,
-                            drawableName = drawable,
-                        ),
-                    )
+                    if (component != null && drawable != null) {
+                        add(
+                            IconPackInfoComponent(
+                                componentName = component,
+                                drawableName = drawable,
+                            ),
+                        )
+                    }
                 }
+
+                eventType = xmlPullParser.next()
             }
-
-            eventType = xmlPullParser.next()
         }
-
-        return iconPackInfoComponents
     }
 }
