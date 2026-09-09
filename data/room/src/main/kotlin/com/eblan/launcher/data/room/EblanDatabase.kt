@@ -40,6 +40,7 @@ import com.eblan.launcher.data.room.entity.EblanApplicationInfoTagEntity
 import com.eblan.launcher.data.room.entity.EblanIconPackInfoEntity
 import com.eblan.launcher.data.room.entity.EblanShortcutConfigEntity
 import com.eblan.launcher.data.room.entity.EblanShortcutInfoEntity
+import com.eblan.launcher.data.room.entity.FolderEblanApplicationInfoEntity
 import com.eblan.launcher.data.room.entity.FolderGridItemEntity
 import com.eblan.launcher.data.room.entity.ShortcutConfigGridItemEntity
 import com.eblan.launcher.data.room.entity.ShortcutInfoGridItemEntity
@@ -62,8 +63,9 @@ import com.eblan.launcher.data.room.migration.AutoMigration9To10
         ShortcutConfigGridItemEntity::class,
         EblanApplicationInfoTagCrossRefEntity::class,
         EblanApplicationInfoTagEntity::class,
+        FolderEblanApplicationInfoEntity::class,
     ],
-    version = 19,
+    version = 20,
     exportSchema = true,
     autoMigrations = [
         AutoMigration(

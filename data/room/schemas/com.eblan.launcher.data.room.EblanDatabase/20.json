@@ -1,0 +1,1807 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 20,
+    "identityHash": "5e3ba0de5c59535f76e9ad0bb47ee604",
+    "entities": [
+      {
+        "tableName": "EblanApplicationInfoEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`componentName` TEXT NOT NULL, `serialNumber` INTEGER NOT NULL, `packageName` TEXT NOT NULL, `icon` TEXT, `label` TEXT NOT NULL, `customIcon` TEXT, `customLabel` TEXT, `isHidden` INTEGER NOT NULL DEFAULT 0, `lastUpdateTime` INTEGER NOT NULL DEFAULT 0, `index` INTEGER NOT NULL DEFAULT -1, `flags` INTEGER NOT NULL DEFAULT 0, `folderIndex` INTEGER NOT NULL DEFAULT -1, `folderId` TEXT DEFAULT NULL, PRIMARY KEY(`componentName`, `serialNumber`), FOREIGN KEY(`folderId`) REFERENCES `FolderEblanApplicationInfoEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "componentName",
+            "columnName": "componentName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "serialNumber",
+            "columnName": "serialNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "packageName",
+            "columnName": "packageName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "icon",
+            "columnName": "icon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "label",
+            "columnName": "label",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "customIcon",
+            "columnName": "customIcon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "customLabel",
+            "columnName": "customLabel",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "isHidden",
+            "columnName": "isHidden",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "lastUpdateTime",
+            "columnName": "lastUpdateTime",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "index",
+            "columnName": "index",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "-1"
+          },
+          {
+            "fieldPath": "flags",
+            "columnName": "flags",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "folderIndex",
+            "columnName": "folderIndex",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "-1"
+          },
+          {
+            "fieldPath": "folderId",
+            "columnName": "folderId",
+            "affinity": "TEXT",
+            "defaultValue": "NULL"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "componentName",
+            "serialNumber"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_EblanApplicationInfoEntity_folderId",
+            "unique": false,
+            "columnNames": [
+              "folderId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_EblanApplicationInfoEntity_folderId` ON `${TABLE_NAME}` (`folderId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "FolderEblanApplicationInfoEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "folderId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "EblanAppWidgetProviderInfoEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`componentName` TEXT NOT NULL, `serialNumber` INTEGER NOT NULL, `configure` TEXT, `packageName` TEXT NOT NULL, `targetCellWidth` INTEGER NOT NULL, `targetCellHeight` INTEGER NOT NULL, `minWidth` INTEGER NOT NULL, `minHeight` INTEGER NOT NULL, `resizeMode` INTEGER NOT NULL, `minResizeWidth` INTEGER NOT NULL, `minResizeHeight` INTEGER NOT NULL, `maxResizeWidth` INTEGER NOT NULL, `maxResizeHeight` INTEGER NOT NULL, `preview` TEXT, `applicationLabel` TEXT, `applicationIcon` TEXT, `lastUpdateTime` INTEGER NOT NULL DEFAULT 0, `label` TEXT, `description` TEXT, PRIMARY KEY(`componentName`))",
+        "fields": [
+          {
+            "fieldPath": "componentName",
+            "columnName": "componentName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "serialNumber",
+            "columnName": "serialNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "configure",
+            "columnName": "configure",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "packageName",
+            "columnName": "packageName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "targetCellWidth",
+            "columnName": "targetCellWidth",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "targetCellHeight",
+            "columnName": "targetCellHeight",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "minWidth",
+            "columnName": "minWidth",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "minHeight",
+            "columnName": "minHeight",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "resizeMode",
+            "columnName": "resizeMode",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "minResizeWidth",
+            "columnName": "minResizeWidth",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "minResizeHeight",
+            "columnName": "minResizeHeight",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "maxResizeWidth",
+            "columnName": "maxResizeWidth",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "maxResizeHeight",
+            "columnName": "maxResizeHeight",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "preview",
+            "columnName": "preview",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "applicationLabel",
+            "columnName": "applicationLabel",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "applicationIcon",
+            "columnName": "applicationIcon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "lastUpdateTime",
+            "columnName": "lastUpdateTime",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "label",
+            "columnName": "label",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "componentName"
+          ]
+        }
+      },
+      {
+        "tableName": "EblanShortcutInfoEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`shortcutId` TEXT NOT NULL, `serialNumber` INTEGER NOT NULL, `packageName` TEXT NOT NULL, `shortLabel` TEXT NOT NULL, `longLabel` TEXT NOT NULL, `icon` TEXT, `shortcutQueryFlag` TEXT NOT NULL, `isEnabled` INTEGER NOT NULL, `lastChangedTimestamp` INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(`shortcutId`, `serialNumber`, `packageName`))",
+        "fields": [
+          {
+            "fieldPath": "shortcutId",
+            "columnName": "shortcutId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "serialNumber",
+            "columnName": "serialNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "packageName",
+            "columnName": "packageName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shortLabel",
+            "columnName": "shortLabel",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "longLabel",
+            "columnName": "longLabel",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "icon",
+            "columnName": "icon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "shortcutQueryFlag",
+            "columnName": "shortcutQueryFlag",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isEnabled",
+            "columnName": "isEnabled",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastChangedTimestamp",
+            "columnName": "lastChangedTimestamp",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "shortcutId",
+            "serialNumber",
+            "packageName"
+          ]
+        }
+      },
+      {
+        "tableName": "ApplicationInfoGridItemEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `page` INTEGER NOT NULL, `startColumn` INTEGER NOT NULL, `startRow` INTEGER NOT NULL, `columnSpan` INTEGER NOT NULL, `rowSpan` INTEGER NOT NULL, `associate` TEXT NOT NULL, `componentName` TEXT NOT NULL, `packageName` TEXT NOT NULL, `icon` TEXT, `label` TEXT NOT NULL, `override` INTEGER NOT NULL, `serialNumber` INTEGER NOT NULL, `customIcon` TEXT, `customLabel` TEXT, `index` INTEGER NOT NULL, `folderId` TEXT, `iconSize` INTEGER NOT NULL, `textColor` TEXT NOT NULL, `textSize` INTEGER NOT NULL, `showLabel` INTEGER NOT NULL, `singleLineLabel` INTEGER NOT NULL, `horizontalAlignment` TEXT NOT NULL, `verticalArrangement` TEXT NOT NULL, `customTextColor` INTEGER NOT NULL, `customBackgroundColor` INTEGER NOT NULL, `padding` INTEGER NOT NULL, `cornerRadius` INTEGER NOT NULL, `doubleTap_eblanActionType` TEXT NOT NULL, `doubleTap_serialNumber` INTEGER NOT NULL, `doubleTap_componentName` TEXT NOT NULL, `swipeUp_eblanActionType` TEXT NOT NULL, `swipeUp_serialNumber` INTEGER NOT NULL, `swipeUp_componentName` TEXT NOT NULL, `swipeDown_eblanActionType` TEXT NOT NULL, `swipeDown_serialNumber` INTEGER NOT NULL, `swipeDown_componentName` TEXT NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`folderId`) REFERENCES `FolderGridItemEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "page",
+            "columnName": "page",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startColumn",
+            "columnName": "startColumn",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startRow",
+            "columnName": "startRow",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "columnSpan",
+            "columnName": "columnSpan",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rowSpan",
+            "columnName": "rowSpan",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "associate",
+            "columnName": "associate",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "componentName",
+            "columnName": "componentName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "packageName",
+            "columnName": "packageName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "icon",
+            "columnName": "icon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "label",
+            "columnName": "label",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "override",
+            "columnName": "override",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "serialNumber",
+            "columnName": "serialNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "customIcon",
+            "columnName": "customIcon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "customLabel",
+            "columnName": "customLabel",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "index",
+            "columnName": "index",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "folderId",
+            "columnName": "folderId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "gridItemSettings.iconSize",
+            "columnName": "iconSize",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.textColor",
+            "columnName": "textColor",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.textSize",
+            "columnName": "textSize",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.showLabel",
+            "columnName": "showLabel",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.singleLineLabel",
+            "columnName": "singleLineLabel",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.horizontalAlignment",
+            "columnName": "horizontalAlignment",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.verticalArrangement",
+            "columnName": "verticalArrangement",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.customTextColor",
+            "columnName": "customTextColor",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.customBackgroundColor",
+            "columnName": "customBackgroundColor",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.padding",
+            "columnName": "padding",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.cornerRadius",
+            "columnName": "cornerRadius",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "doubleTap.eblanActionType",
+            "columnName": "doubleTap_eblanActionType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "doubleTap.serialNumber",
+            "columnName": "doubleTap_serialNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "doubleTap.componentName",
+            "columnName": "doubleTap_componentName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "swipeUp.eblanActionType",
+            "columnName": "swipeUp_eblanActionType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "swipeUp.serialNumber",
+            "columnName": "swipeUp_serialNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "swipeUp.componentName",
+            "columnName": "swipeUp_componentName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "swipeDown.eblanActionType",
+            "columnName": "swipeDown_eblanActionType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "swipeDown.serialNumber",
+            "columnName": "swipeDown_serialNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "swipeDown.componentName",
+            "columnName": "swipeDown_componentName",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_ApplicationInfoGridItemEntity_folderId",
+            "unique": false,
+            "columnNames": [
+              "folderId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ApplicationInfoGridItemEntity_folderId` ON `${TABLE_NAME}` (`folderId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "FolderGridItemEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "folderId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "WidgetGridItemEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `page` INTEGER NOT NULL, `startColumn` INTEGER NOT NULL, `startRow` INTEGER NOT NULL, `columnSpan` INTEGER NOT NULL, `rowSpan` INTEGER NOT NULL, `associate` TEXT NOT NULL, `appWidgetId` INTEGER NOT NULL, `packageName` TEXT NOT NULL, `componentName` TEXT NOT NULL, `configure` TEXT, `minWidth` INTEGER NOT NULL, `minHeight` INTEGER NOT NULL, `resizeMode` INTEGER NOT NULL, `minResizeWidth` INTEGER NOT NULL, `minResizeHeight` INTEGER NOT NULL, `maxResizeWidth` INTEGER NOT NULL, `maxResizeHeight` INTEGER NOT NULL, `targetCellHeight` INTEGER NOT NULL, `targetCellWidth` INTEGER NOT NULL, `preview` TEXT, `label` TEXT, `icon` TEXT, `override` INTEGER NOT NULL, `serialNumber` INTEGER NOT NULL, `iconSize` INTEGER NOT NULL, `textColor` TEXT NOT NULL, `textSize` INTEGER NOT NULL, `showLabel` INTEGER NOT NULL, `singleLineLabel` INTEGER NOT NULL, `horizontalAlignment` TEXT NOT NULL, `verticalArrangement` TEXT NOT NULL, `customTextColor` INTEGER NOT NULL, `customBackgroundColor` INTEGER NOT NULL, `padding` INTEGER NOT NULL, `cornerRadius` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "page",
+            "columnName": "page",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startColumn",
+            "columnName": "startColumn",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startRow",
+            "columnName": "startRow",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "columnSpan",
+            "columnName": "columnSpan",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rowSpan",
+            "columnName": "rowSpan",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "associate",
+            "columnName": "associate",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "appWidgetId",
+            "columnName": "appWidgetId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "packageName",
+            "columnName": "packageName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "componentName",
+            "columnName": "componentName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "configure",
+            "columnName": "configure",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "minWidth",
+            "columnName": "minWidth",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "minHeight",
+            "columnName": "minHeight",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "resizeMode",
+            "columnName": "resizeMode",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "minResizeWidth",
+            "columnName": "minResizeWidth",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "minResizeHeight",
+            "columnName": "minResizeHeight",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "maxResizeWidth",
+            "columnName": "maxResizeWidth",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "maxResizeHeight",
+            "columnName": "maxResizeHeight",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "targetCellHeight",
+            "columnName": "targetCellHeight",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "targetCellWidth",
+            "columnName": "targetCellWidth",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "preview",
+            "columnName": "preview",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "label",
+            "columnName": "label",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "icon",
+            "columnName": "icon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "override",
+            "columnName": "override",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "serialNumber",
+            "columnName": "serialNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.iconSize",
+            "columnName": "iconSize",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.textColor",
+            "columnName": "textColor",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.textSize",
+            "columnName": "textSize",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.showLabel",
+            "columnName": "showLabel",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.singleLineLabel",
+            "columnName": "singleLineLabel",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.horizontalAlignment",
+            "columnName": "horizontalAlignment",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.verticalArrangement",
+            "columnName": "verticalArrangement",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.customTextColor",
+            "columnName": "customTextColor",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.customBackgroundColor",
+            "columnName": "customBackgroundColor",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.padding",
+            "columnName": "padding",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.cornerRadius",
+            "columnName": "cornerRadius",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "ShortcutInfoGridItemEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `page` INTEGER NOT NULL, `startColumn` INTEGER NOT NULL, `startRow` INTEGER NOT NULL, `columnSpan` INTEGER NOT NULL, `rowSpan` INTEGER NOT NULL, `associate` TEXT NOT NULL, `shortcutId` TEXT NOT NULL, `packageName` TEXT NOT NULL, `shortLabel` TEXT NOT NULL, `longLabel` TEXT NOT NULL, `icon` TEXT, `override` INTEGER NOT NULL, `serialNumber` INTEGER NOT NULL, `isEnabled` INTEGER NOT NULL, `eblanApplicationInfoIcon` TEXT, `customIcon` TEXT, `customShortLabel` TEXT, `index` INTEGER NOT NULL, `folderId` TEXT, `iconSize` INTEGER NOT NULL, `textColor` TEXT NOT NULL, `textSize` INTEGER NOT NULL, `showLabel` INTEGER NOT NULL, `singleLineLabel` INTEGER NOT NULL, `horizontalAlignment` TEXT NOT NULL, `verticalArrangement` TEXT NOT NULL, `customTextColor` INTEGER NOT NULL, `customBackgroundColor` INTEGER NOT NULL, `padding` INTEGER NOT NULL, `cornerRadius` INTEGER NOT NULL, `doubleTap_eblanActionType` TEXT NOT NULL, `doubleTap_serialNumber` INTEGER NOT NULL, `doubleTap_componentName` TEXT NOT NULL, `swipeUp_eblanActionType` TEXT NOT NULL, `swipeUp_serialNumber` INTEGER NOT NULL, `swipeUp_componentName` TEXT NOT NULL, `swipeDown_eblanActionType` TEXT NOT NULL, `swipeDown_serialNumber` INTEGER NOT NULL, `swipeDown_componentName` TEXT NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`folderId`) REFERENCES `FolderGridItemEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "page",
+            "columnName": "page",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startColumn",
+            "columnName": "startColumn",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startRow",
+            "columnName": "startRow",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "columnSpan",
+            "columnName": "columnSpan",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rowSpan",
+            "columnName": "rowSpan",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "associate",
+            "columnName": "associate",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shortcutId",
+            "columnName": "shortcutId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "packageName",
+            "columnName": "packageName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shortLabel",
+            "columnName": "shortLabel",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "longLabel",
+            "columnName": "longLabel",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "icon",
+            "columnName": "icon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "override",
+            "columnName": "override",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "serialNumber",
+            "columnName": "serialNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isEnabled",
+            "columnName": "isEnabled",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "eblanApplicationInfoIcon",
+            "columnName": "eblanApplicationInfoIcon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "customIcon",
+            "columnName": "customIcon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "customShortLabel",
+            "columnName": "customShortLabel",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "index",
+            "columnName": "index",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "folderId",
+            "columnName": "folderId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "gridItemSettings.iconSize",
+            "columnName": "iconSize",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.textColor",
+            "columnName": "textColor",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.textSize",
+            "columnName": "textSize",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.showLabel",
+            "columnName": "showLabel",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.singleLineLabel",
+            "columnName": "singleLineLabel",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.horizontalAlignment",
+            "columnName": "horizontalAlignment",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.verticalArrangement",
+            "columnName": "verticalArrangement",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.customTextColor",
+            "columnName": "customTextColor",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.customBackgroundColor",
+            "columnName": "customBackgroundColor",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.padding",
+            "columnName": "padding",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.cornerRadius",
+            "columnName": "cornerRadius",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "doubleTap.eblanActionType",
+            "columnName": "doubleTap_eblanActionType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "doubleTap.serialNumber",
+            "columnName": "doubleTap_serialNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "doubleTap.componentName",
+            "columnName": "doubleTap_componentName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "swipeUp.eblanActionType",
+            "columnName": "swipeUp_eblanActionType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "swipeUp.serialNumber",
+            "columnName": "swipeUp_serialNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "swipeUp.componentName",
+            "columnName": "swipeUp_componentName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "swipeDown.eblanActionType",
+            "columnName": "swipeDown_eblanActionType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "swipeDown.serialNumber",
+            "columnName": "swipeDown_serialNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "swipeDown.componentName",
+            "columnName": "swipeDown_componentName",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_ShortcutInfoGridItemEntity_folderId",
+            "unique": false,
+            "columnNames": [
+              "folderId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ShortcutInfoGridItemEntity_folderId` ON `${TABLE_NAME}` (`folderId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "FolderGridItemEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "folderId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "FolderGridItemEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `page` INTEGER NOT NULL, `startColumn` INTEGER NOT NULL, `startRow` INTEGER NOT NULL, `columnSpan` INTEGER NOT NULL, `rowSpan` INTEGER NOT NULL, `associate` TEXT NOT NULL, `label` TEXT NOT NULL, `override` INTEGER NOT NULL, `icon` TEXT, `index` INTEGER NOT NULL, `folderId` TEXT, `iconSize` INTEGER NOT NULL, `textColor` TEXT NOT NULL, `textSize` INTEGER NOT NULL, `showLabel` INTEGER NOT NULL, `singleLineLabel` INTEGER NOT NULL, `horizontalAlignment` TEXT NOT NULL, `verticalArrangement` TEXT NOT NULL, `customTextColor` INTEGER NOT NULL, `customBackgroundColor` INTEGER NOT NULL, `padding` INTEGER NOT NULL, `cornerRadius` INTEGER NOT NULL, `doubleTap_eblanActionType` TEXT NOT NULL, `doubleTap_serialNumber` INTEGER NOT NULL, `doubleTap_componentName` TEXT NOT NULL, `swipeUp_eblanActionType` TEXT NOT NULL, `swipeUp_serialNumber` INTEGER NOT NULL, `swipeUp_componentName` TEXT NOT NULL, `swipeDown_eblanActionType` TEXT NOT NULL, `swipeDown_serialNumber` INTEGER NOT NULL, `swipeDown_componentName` TEXT NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`folderId`) REFERENCES `FolderGridItemEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "page",
+            "columnName": "page",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startColumn",
+            "columnName": "startColumn",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startRow",
+            "columnName": "startRow",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "columnSpan",
+            "columnName": "columnSpan",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rowSpan",
+            "columnName": "rowSpan",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "associate",
+            "columnName": "associate",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "label",
+            "columnName": "label",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "override",
+            "columnName": "override",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "icon",
+            "columnName": "icon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "index",
+            "columnName": "index",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "folderId",
+            "columnName": "folderId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "gridItemSettings.iconSize",
+            "columnName": "iconSize",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.textColor",
+            "columnName": "textColor",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.textSize",
+            "columnName": "textSize",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.showLabel",
+            "columnName": "showLabel",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.singleLineLabel",
+            "columnName": "singleLineLabel",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.horizontalAlignment",
+            "columnName": "horizontalAlignment",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.verticalArrangement",
+            "columnName": "verticalArrangement",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.customTextColor",
+            "columnName": "customTextColor",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.customBackgroundColor",
+            "columnName": "customBackgroundColor",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.padding",
+            "columnName": "padding",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.cornerRadius",
+            "columnName": "cornerRadius",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "doubleTap.eblanActionType",
+            "columnName": "doubleTap_eblanActionType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "doubleTap.serialNumber",
+            "columnName": "doubleTap_serialNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "doubleTap.componentName",
+            "columnName": "doubleTap_componentName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "swipeUp.eblanActionType",
+            "columnName": "swipeUp_eblanActionType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "swipeUp.serialNumber",
+            "columnName": "swipeUp_serialNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "swipeUp.componentName",
+            "columnName": "swipeUp_componentName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "swipeDown.eblanActionType",
+            "columnName": "swipeDown_eblanActionType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "swipeDown.serialNumber",
+            "columnName": "swipeDown_serialNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "swipeDown.componentName",
+            "columnName": "swipeDown_componentName",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_FolderGridItemEntity_folderId",
+            "unique": false,
+            "columnNames": [
+              "folderId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_FolderGridItemEntity_folderId` ON `${TABLE_NAME}` (`folderId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "FolderGridItemEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "folderId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "EblanIconPackInfoEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`packageName` TEXT NOT NULL, `icon` TEXT, `label` TEXT, PRIMARY KEY(`packageName`))",
+        "fields": [
+          {
+            "fieldPath": "packageName",
+            "columnName": "packageName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "icon",
+            "columnName": "icon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "label",
+            "columnName": "label",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "packageName"
+          ]
+        }
+      },
+      {
+        "tableName": "EblanShortcutConfigEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`componentName` TEXT NOT NULL, `packageName` TEXT NOT NULL, `serialNumber` INTEGER NOT NULL, `activityIcon` TEXT, `activityLabel` TEXT, `applicationIcon` TEXT, `applicationLabel` TEXT, PRIMARY KEY(`componentName`, `serialNumber`))",
+        "fields": [
+          {
+            "fieldPath": "componentName",
+            "columnName": "componentName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "packageName",
+            "columnName": "packageName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "serialNumber",
+            "columnName": "serialNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "activityIcon",
+            "columnName": "activityIcon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "activityLabel",
+            "columnName": "activityLabel",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "applicationIcon",
+            "columnName": "applicationIcon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "applicationLabel",
+            "columnName": "applicationLabel",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "componentName",
+            "serialNumber"
+          ]
+        }
+      },
+      {
+        "tableName": "ShortcutConfigGridItemEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `page` INTEGER NOT NULL, `startColumn` INTEGER NOT NULL, `startRow` INTEGER NOT NULL, `columnSpan` INTEGER NOT NULL, `rowSpan` INTEGER NOT NULL, `associate` TEXT NOT NULL, `componentName` TEXT NOT NULL, `packageName` TEXT NOT NULL, `activityIcon` TEXT, `activityLabel` TEXT, `applicationIcon` TEXT, `applicationLabel` TEXT, `override` INTEGER NOT NULL, `serialNumber` INTEGER NOT NULL, `shortcutIntentName` TEXT, `shortcutIntentIcon` TEXT, `shortcutIntentUri` TEXT, `customIcon` TEXT, `customLabel` TEXT, `index` INTEGER NOT NULL, `folderId` TEXT, `iconSize` INTEGER NOT NULL, `textColor` TEXT NOT NULL, `textSize` INTEGER NOT NULL, `showLabel` INTEGER NOT NULL, `singleLineLabel` INTEGER NOT NULL, `horizontalAlignment` TEXT NOT NULL, `verticalArrangement` TEXT NOT NULL, `customTextColor` INTEGER NOT NULL, `customBackgroundColor` INTEGER NOT NULL, `padding` INTEGER NOT NULL, `cornerRadius` INTEGER NOT NULL, `doubleTap_eblanActionType` TEXT NOT NULL, `doubleTap_serialNumber` INTEGER NOT NULL, `doubleTap_componentName` TEXT NOT NULL, `swipeUp_eblanActionType` TEXT NOT NULL, `swipeUp_serialNumber` INTEGER NOT NULL, `swipeUp_componentName` TEXT NOT NULL, `swipeDown_eblanActionType` TEXT NOT NULL, `swipeDown_serialNumber` INTEGER NOT NULL, `swipeDown_componentName` TEXT NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`folderId`) REFERENCES `FolderGridItemEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "page",
+            "columnName": "page",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startColumn",
+            "columnName": "startColumn",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startRow",
+            "columnName": "startRow",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "columnSpan",
+            "columnName": "columnSpan",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rowSpan",
+            "columnName": "rowSpan",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "associate",
+            "columnName": "associate",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "componentName",
+            "columnName": "componentName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "packageName",
+            "columnName": "packageName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "activityIcon",
+            "columnName": "activityIcon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "activityLabel",
+            "columnName": "activityLabel",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "applicationIcon",
+            "columnName": "applicationIcon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "applicationLabel",
+            "columnName": "applicationLabel",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "override",
+            "columnName": "override",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "serialNumber",
+            "columnName": "serialNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shortcutIntentName",
+            "columnName": "shortcutIntentName",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "shortcutIntentIcon",
+            "columnName": "shortcutIntentIcon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "shortcutIntentUri",
+            "columnName": "shortcutIntentUri",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "customIcon",
+            "columnName": "customIcon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "customLabel",
+            "columnName": "customLabel",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "index",
+            "columnName": "index",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "folderId",
+            "columnName": "folderId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "gridItemSettings.iconSize",
+            "columnName": "iconSize",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.textColor",
+            "columnName": "textColor",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.textSize",
+            "columnName": "textSize",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.showLabel",
+            "columnName": "showLabel",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.singleLineLabel",
+            "columnName": "singleLineLabel",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.horizontalAlignment",
+            "columnName": "horizontalAlignment",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.verticalArrangement",
+            "columnName": "verticalArrangement",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.customTextColor",
+            "columnName": "customTextColor",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.customBackgroundColor",
+            "columnName": "customBackgroundColor",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.padding",
+            "columnName": "padding",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.cornerRadius",
+            "columnName": "cornerRadius",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "doubleTap.eblanActionType",
+            "columnName": "doubleTap_eblanActionType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "doubleTap.serialNumber",
+            "columnName": "doubleTap_serialNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "doubleTap.componentName",
+            "columnName": "doubleTap_componentName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "swipeUp.eblanActionType",
+            "columnName": "swipeUp_eblanActionType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "swipeUp.serialNumber",
+            "columnName": "swipeUp_serialNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "swipeUp.componentName",
+            "columnName": "swipeUp_componentName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "swipeDown.eblanActionType",
+            "columnName": "swipeDown_eblanActionType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "swipeDown.serialNumber",
+            "columnName": "swipeDown_serialNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "swipeDown.componentName",
+            "columnName": "swipeDown_componentName",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_ShortcutConfigGridItemEntity_folderId",
+            "unique": false,
+            "columnNames": [
+              "folderId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ShortcutConfigGridItemEntity_folderId` ON `${TABLE_NAME}` (`folderId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "FolderGridItemEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "folderId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "EblanApplicationInfoTagCrossRefEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`componentName` TEXT NOT NULL, `serialNumber` INTEGER NOT NULL, `id` INTEGER NOT NULL, PRIMARY KEY(`componentName`, `serialNumber`, `id`), FOREIGN KEY(`componentName`, `serialNumber`) REFERENCES `EblanApplicationInfoEntity`(`componentName`, `serialNumber`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`id`) REFERENCES `EblanApplicationInfoTagEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "componentName",
+            "columnName": "componentName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "serialNumber",
+            "columnName": "serialNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "componentName",
+            "serialNumber",
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_EblanApplicationInfoTagCrossRefEntity_id",
+            "unique": false,
+            "columnNames": [
+              "id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_EblanApplicationInfoTagCrossRefEntity_id` ON `${TABLE_NAME}` (`id`)"
+          },
+          {
+            "name": "index_EblanApplicationInfoTagCrossRefEntity_componentName_serialNumber",
+            "unique": false,
+            "columnNames": [
+              "componentName",
+              "serialNumber"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_EblanApplicationInfoTagCrossRefEntity_componentName_serialNumber` ON `${TABLE_NAME}` (`componentName`, `serialNumber`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "EblanApplicationInfoEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "componentName",
+              "serialNumber"
+            ],
+            "referencedColumns": [
+              "componentName",
+              "serialNumber"
+            ]
+          },
+          {
+            "table": "EblanApplicationInfoTagEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "EblanApplicationInfoTagEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "FolderEblanApplicationInfoEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `folderIndex` INTEGER NOT NULL, `folderId` TEXT, PRIMARY KEY(`id`), FOREIGN KEY(`folderId`) REFERENCES `FolderEblanApplicationInfoEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "folderIndex",
+            "columnName": "folderIndex",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "folderId",
+            "columnName": "folderId",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_FolderEblanApplicationInfoEntity_folderId",
+            "unique": false,
+            "columnNames": [
+              "folderId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_FolderEblanApplicationInfoEntity_folderId` ON `${TABLE_NAME}` (`folderId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "FolderEblanApplicationInfoEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "folderId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5e3ba0de5c59535f76e9ad0bb47ee604')"
+    ]
+  }
+}

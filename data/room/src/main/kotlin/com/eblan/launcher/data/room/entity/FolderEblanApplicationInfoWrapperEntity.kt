@@ -15,20 +15,17 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.domain.model
+package com.eblan.launcher.data.room.entity
 
-data class EblanApplicationInfo(
-    val componentName: String,
-    val serialNumber: Long,
-    val packageName: String,
-    val icon: String?,
-    val label: String,
-    val customIcon: String?,
-    val customLabel: String?,
-    val isHidden: Boolean,
-    val lastUpdateTime: Long,
-    val index: Int,
-    val flags: Int,
-    val folderIndex: Int,
-    val folderId: String?,
+import androidx.room.Embedded
+import androidx.room.Relation
+
+data class FolderEblanApplicationInfoWrapperEntity(
+    @Embedded val folderEblanApplicationInfoEntity: FolderEblanApplicationInfoEntity,
+
+    @Relation(
+        parentColumn = "id",
+        entityColumn = "folderId",
+    )
+    val eblanApplicationInfoEntities: List<EblanApplicationInfoEntity>,
 )
