@@ -481,12 +481,12 @@ private fun Folders(
     onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
     onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
 ) {
-    var showAddTagDialog by remember { mutableStateOf(false) }
+    var showAddFolderDialog by remember { mutableStateOf(false) }
 
     FlowRow(modifier = modifier.fillMaxWidth()) {
-        folderEblanApplicationInfos.forEach { folderEblanApplicationInfo ->
+        folderEblanApplicationInfos.forEach {
             FolderEblanApplicationInfoItem(
-                folderEblanApplicationInfo = folderEblanApplicationInfo,
+                folderEblanApplicationInfo = it,
                 eblanApplicationInfo = eblanApplicationInfo,
                 onUpdateEblanApplicationInfo = onUpdateEblanApplicationInfo,
             )
@@ -494,15 +494,15 @@ private fun Folders(
 
         AddFolder(
             onClick = {
-                showAddTagDialog = true
+                showAddFolderDialog = true
             },
         )
     }
 
-    if (showAddTagDialog) {
+    if (showAddFolderDialog) {
         AddFolderDialog(
             onDismissRequest = {
-                showAddTagDialog = false
+                showAddFolderDialog = false
             },
             onAddFolderEblanApplicationInfo = onAddFolderEblanApplicationInfo,
         )
@@ -524,10 +524,10 @@ private fun FolderEblanApplicationInfoItem(
             modifier = Modifier
                 .combinedClickable(
                     onClick = {
-                        if (folderEblanApplicationInfo.folderId == eblanApplicationInfo.folderId) {
+                        if (folderEblanApplicationInfo.id == eblanApplicationInfo.folderId) {
                             onUpdateEblanApplicationInfo(eblanApplicationInfo.copy(folderId = null))
                         } else {
-                            onUpdateEblanApplicationInfo(eblanApplicationInfo.copy(folderId = folderEblanApplicationInfo.folderId))
+                            onUpdateEblanApplicationInfo(eblanApplicationInfo.copy(folderId = folderEblanApplicationInfo.id))
                         }
                     },
                 )
@@ -535,7 +535,7 @@ private fun FolderEblanApplicationInfoItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            if (folderEblanApplicationInfo.folderId == eblanApplicationInfo.folderId) {
+            if (folderEblanApplicationInfo.id == eblanApplicationInfo.folderId) {
                 Icon(
                     imageVector = EblanLauncherIcons.Done,
                     contentDescription = null,
