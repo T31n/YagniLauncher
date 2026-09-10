@@ -23,7 +23,7 @@ import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.FileManager
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.model.Associate
-import com.eblan.launcher.domain.model.FolderPopup
+import com.eblan.launcher.domain.model.FolderGridItemPopup
 import com.eblan.launcher.domain.model.FolderPopupEntry
 import com.eblan.launcher.domain.model.GetEblanApplicationInfosByLabelAndTag
 import com.eblan.launcher.domain.model.GridItem
@@ -520,7 +520,7 @@ internal class HomeViewModel @Inject constructor(
     }
 
     fun moveFolderGridItem(
-        folderPopup: FolderPopup,
+        folderGridItemPopup: FolderGridItemPopup,
         movingGridItem: GridItem,
         dragX: Int,
         dragY: Int,
@@ -535,7 +535,7 @@ internal class HomeViewModel @Inject constructor(
 
             _moveGridItemResult.update {
                 moveFolderGridItemUseCase(
-                    folderPopup = folderPopup,
+                    folderPopup = folderGridItemPopup,
                     movingGridItem = movingGridItem,
                     dragX = dragX,
                     dragY = dragY,

@@ -19,7 +19,7 @@ package com.eblan.launcher.domain.usecase.grid
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
-import com.eblan.launcher.domain.model.FolderPopup
+import com.eblan.launcher.domain.model.FolderGridItemPopup
 import com.eblan.launcher.domain.model.GridItem
 import com.eblan.launcher.domain.model.GridItemData
 import com.eblan.launcher.domain.model.MoveGridItemResult
@@ -33,7 +33,7 @@ class MoveFolderGridItemUseCase @Inject constructor(
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     suspend operator fun invoke(
-        folderPopup: FolderPopup,
+        folderGridItemPopup: FolderGridItemPopup,
         movingGridItem: GridItem,
         dragX: Int,
         dragY: Int,
@@ -41,18 +41,18 @@ class MoveFolderGridItemUseCase @Inject constructor(
         gridHeight: Int,
         currentPage: Int,
     ): MoveGridItemResult = withContext(defaultDispatcher) {
-        val gridItemsPerPage = folderPopup.columns * folderPopup.rows
+        val gridItemsPerPage = folderGridItemPopup.columns * folderGridItemPopup.rows
 
-        val cellWidth = gridWidth / folderPopup.columns
-        val cellHeight = gridHeight / folderPopup.rows
+        val cellWidth = gridWidth / folderGridItemPopup.columns
+        val cellHeight = gridHeight / folderGridItemPopup.rows
 
         val targetColumn = dragX / cellWidth
         val targetRow = dragY / cellHeight
 
         val targetIndex =
-            currentPage * gridItemsPerPage + targetRow * folderPopup.columns + targetColumn
+            currentPage * gridItemsPerPage + targetRow * folderGridItemPopup.columns + targetColumn
 
-        val folderGridItems = folderPopup.gridItems.toMutableList()
+        val folderGridItems = folderGridItemPopup.gridItems.toMutableList()
 
         val movingIndex =
             folderGridItems.indexOfFirst {

@@ -67,7 +67,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import com.eblan.launcher.domain.model.Associate
 import com.eblan.launcher.domain.model.BackgroundColor
-import com.eblan.launcher.domain.model.FolderPopup
+import com.eblan.launcher.domain.model.FolderGridItemPopup
 import com.eblan.launcher.domain.model.FolderPopupEntry
 import com.eblan.launcher.domain.model.GridItem
 import com.eblan.launcher.domain.model.GridItemData
@@ -93,7 +93,7 @@ internal fun FolderScreen(
     modifier: Modifier = Modifier,
     sharedTransitionScope: SharedTransitionScope,
     drag: Drag,
-    folderPopup: FolderPopup,
+    folderGridItemPopup: FolderGridItemPopup,
     gridItemSettings: GridItemSettings,
     paddingValues: PaddingValues,
     safeDrawingHeight: Int,
@@ -110,7 +110,7 @@ internal fun FolderScreen(
     folderCellHeight: Int,
     screenHeight: Int,
     screenWidth: Int,
-    folderPopups: List<FolderPopup>,
+    folderGridItemPopups: List<FolderGridItemPopup>,
     showFolderGridItemPopup: Boolean,
     previewFolderGridItems: Map<String, PreviewFolder>,
     iconPackInfoFilePaths: Map<String, String?>,
@@ -135,7 +135,7 @@ internal fun FolderScreen(
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
     onMoveFolderGridItem: (
-        folderPopup: FolderPopup,
+        folderGridItemPopup: FolderGridItemPopup,
         movingFolderGridItem: GridItem,
         dragX: Int,
         dragY: Int,
@@ -150,13 +150,13 @@ internal fun FolderScreen(
     onUpdateIsVisibleFolders: (Boolean) -> Unit,
 ) {
     val folderPopupIntOffset = IntOffset(
-        x = folderPopup.folderPopupEntry.x,
-        y = folderPopup.folderPopupEntry.y,
+        x = folderGridItemPopup.folderPopupEntry.x,
+        y = folderGridItemPopup.folderPopupEntry.y,
     )
 
     val folderPopupIntSize = IntSize(
-        width = folderPopup.folderPopupEntry.width,
-        height = folderPopup.folderPopupEntry.height,
+        width = folderGridItemPopup.folderPopupEntry.width,
+        height = folderGridItemPopup.folderPopupEntry.height,
     )
 
     val density = LocalDensity.current
@@ -170,7 +170,7 @@ internal fun FolderScreen(
         paddingValues = paddingValues,
         safeDrawingWidth = safeDrawingWidth,
         safeDrawingHeight = safeDrawingHeight,
-        folderPopup = folderPopup,
+        folderGridItemPopup = folderGridItemPopup,
         folderPopupIntOffset = folderPopupIntOffset,
         folderPopupIntSize = folderPopupIntSize,
     )
@@ -211,16 +211,16 @@ internal fun FolderScreen(
 
     val folderGridHorizontalPagerState = rememberPagerState(
         pageCount = {
-            folderPopup.gridItemsByPage.size
+            folderGridItemPopup.gridItemsByPage.size
         },
     )
 
     var pageDirection by remember { mutableStateOf<PageDirection?>(null) }
 
-    val isFirstFolderGridItem = folderPopups.size == 1 &&
-        folderPopups.singleOrNull()?.gridItem == folderPopup.gridItem
+    val isFirstFolderGridItem = folderGridItemPopups.size == 1 &&
+        folderGridItemPopups.singleOrNull()?.gridItem == folderGridItemPopup.gridItem
 
-    val isLastFolderGridItem = folderPopups.lastOrNull()?.gridItem == folderPopup.gridItem
+    val isLastFolderGridItem = folderGridItemPopups.lastOrNull()?.gridItem == folderGridItemPopup.gridItem
 
     val currentDrag = rememberUpdatedState(drag)
     val currentIsDragging = rememberUpdatedState(isDragging)
@@ -241,7 +241,7 @@ internal fun FolderScreen(
     }
 
     LaunchedEffect(
-        key1 = folderPopup,
+        key1 = folderGridItemPopup,
         key2 = isFirstFolderGridItem,
         key3 = animations,
     ) {
@@ -250,7 +250,7 @@ internal fun FolderScreen(
             isDragging = currentIsDragging,
             isVisibleOverlay = currentIsVisibleOverlay,
             moveGridItemResult = currentMoveGridItemResult,
-            folderPopup = folderPopup,
+            folderGridItemPopup = folderGridItemPopup,
             progress = progress,
             isFirstFolderGridItem = isFirstFolderGridItem,
             animations = animations,
@@ -265,7 +265,7 @@ internal fun FolderScreen(
     LaunchedEffect(
         drag,
         dragIntOffset,
-        folderPopup,
+        folderGridItemPopup,
         moveGridItemResult,
         isLastFolderGridItem,
         isInProgress,
@@ -275,7 +275,7 @@ internal fun FolderScreen(
             drag = drag,
             dragIntOffset = dragIntOffset,
             currentPage = folderGridHorizontalPagerState.currentPage,
-            folderPopup = folderPopup,
+            folderGridItemPopup = folderGridItemPopup,
             folderPopupIntOffset = folderPopupIntOffset,
             isDragging = currentIsDragging,
             isVisibleOverlay = currentIsVisibleOverlay,
@@ -335,7 +335,7 @@ internal fun FolderScreen(
         drag,
         dragIntOffset,
         moveGridItemResult,
-        folderPopup,
+        folderGridItemPopup,
         isLastFolderGridItem,
         isInProgress,
     ) {
@@ -346,7 +346,7 @@ internal fun FolderScreen(
             lockMovement = currentLockMovement,
             moveGridItemResult = moveGridItemResult,
             dragIntOffset = dragIntOffset,
-            folderPopup = folderPopup,
+            folderGridItemPopup = folderGridItemPopup,
             folderPopupIntOffset = folderPopupIntOffset,
             isDragging = currentIsDragging,
             paddingValues = paddingValues,
@@ -362,19 +362,19 @@ internal fun FolderScreen(
     }
 
     BackHandler(
-        enabled = !folderPopup.folderPopupEntry.isCloseFolder &&
+        enabled = !folderGridItemPopup.folderPopupEntry.isCloseFolder &&
             isLastFolderGridItem &&
             !isInProgress,
     ) {
-        onUpsertFolderPopupEntry(folderPopup.folderPopupEntry.copy(isCloseFolder = true))
+        onUpsertFolderPopupEntry(folderGridItemPopup.folderPopupEntry.copy(isCloseFolder = true))
     }
 
     HomeHandler(
-        enabled = !folderPopup.folderPopupEntry.isCloseFolder &&
+        enabled = !folderGridItemPopup.folderPopupEntry.isCloseFolder &&
             isLastFolderGridItem &&
             !isInProgress,
     ) {
-        onUpsertFolderPopupEntry(folderPopup.folderPopupEntry.copy(isCloseFolder = true))
+        onUpsertFolderPopupEntry(folderGridItemPopup.folderPopupEntry.copy(isCloseFolder = true))
     }
 
     Box(
@@ -386,7 +386,7 @@ internal fun FolderScreen(
                             awaitRelease()
 
                             onUpsertFolderPopupEntry(
-                                folderPopup.folderPopupEntry.copy(
+                                folderGridItemPopup.folderPopupEntry.copy(
                                     isCloseFolder = true,
                                 ),
                             )
@@ -436,9 +436,9 @@ internal fun FolderScreen(
                 ) { index ->
                     FolderGridLayout(
                         modifier = Modifier.fillMaxSize(),
-                        columns = folderPopup.columns,
-                        gridItems = folderPopup.gridItemsByPage[index],
-                        rows = folderPopup.rows,
+                        columns = folderGridItemPopup.columns,
+                        gridItems = folderGridItemPopup.gridItemsByPage[index],
+                        rows = folderGridItemPopup.rows,
                         width = animatedPreviewRect.width().roundToInt(),
                         height = animatedPreviewRect.height().roundToInt(),
                         animate = isVisibleOverlay && !isInProgress && animations,
@@ -471,7 +471,7 @@ internal fun FolderScreen(
                                 folderCornerRadius = homeSettings.folderCornerRadius,
                                 folderBackgroundColor = homeSettings.folderBackgroundColor,
                                 customFolderBackgroundColor = homeSettings.customFolderBackgroundColor,
-                                folderPopups = folderPopups,
+                                folderGridItemPopups = folderGridItemPopups,
                                 onOpenAppDrawer = onOpenAppDrawer,
                                 onUpdateImageBitmap = onUpdateImageBitmap,
                                 onUpdateIsDragging = onUpdateIsDragging,
@@ -488,8 +488,8 @@ internal fun FolderScreen(
                 }
 
                 FolderTitle(
-                    label = folderPopup.label,
-                    gridItemsByPage = folderPopup.gridItemsByPage,
+                    label = folderGridItemPopup.label,
+                    gridItemsByPage = folderGridItemPopup.gridItemsByPage,
                     folderGridHorizontalPagerState = folderGridHorizontalPagerState,
                     progress = progress.value,
                     folderBackgroundColor = homeSettings.folderBackgroundColor,
@@ -629,7 +629,7 @@ private suspend fun handleIsCloseFolder(
     isDragging: State<Boolean>,
     isVisibleOverlay: State<Boolean>,
     moveGridItemResult: State<MoveGridItemResult?>,
-    folderPopup: FolderPopup,
+    folderGridItemPopup: FolderGridItemPopup,
     progress: Animatable<Float, AnimationVector1D>,
     isFirstFolderGridItem: Boolean,
     animations: Boolean,
@@ -639,7 +639,7 @@ private suspend fun handleIsCloseFolder(
     onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
     onUpdateIsVisibleFolders: (Boolean) -> Unit,
 ) {
-    if (!folderPopup.folderPopupEntry.isCloseFolder) return
+    if (!folderGridItemPopup.folderPopupEntry.isCloseFolder) return
 
     onAnimateToScrollToPage(0)
 
@@ -651,7 +651,7 @@ private suspend fun handleIsCloseFolder(
 
     handleMoveFolderGridItemOutsideFolder(
         drag = drag,
-        folderPopup = folderPopup,
+        folderGridItemPopup = folderGridItemPopup,
         isDragging = isDragging,
         isVisibleOverlay = isVisibleOverlay,
         moveGridItemResult = moveGridItemResult,
@@ -663,12 +663,12 @@ private suspend fun handleIsCloseFolder(
         onUpdateIsVisibleFolders(false)
     }
 
-    onDeleteFolderPopupEntry(folderPopup.folderPopupEntry)
+    onDeleteFolderPopupEntry(folderGridItemPopup.folderPopupEntry)
 }
 
 private fun handleMoveFolderGridItemOutsideFolder(
     drag: State<Drag>,
-    folderPopup: FolderPopup,
+    folderGridItemPopup: FolderGridItemPopup,
     isDragging: State<Boolean>,
     isVisibleOverlay: State<Boolean>,
     moveGridItemResult: State<MoveGridItemResult?>,
@@ -687,9 +687,9 @@ private fun handleMoveFolderGridItemOutsideFolder(
     val newGridItem = when (val data = gridItem.data) {
         is GridItemData.ApplicationInfo -> {
             gridItem.copy(
-                page = folderPopup.gridItem.page,
-                startColumn = folderPopup.gridItem.startColumn,
-                startRow = folderPopup.gridItem.startRow,
+                page = folderGridItemPopup.gridItem.page,
+                startColumn = folderGridItemPopup.gridItem.startColumn,
+                startRow = folderGridItemPopup.gridItem.startRow,
                 data = data.copy(
                     index = -1,
                     folderId = null,
@@ -699,9 +699,9 @@ private fun handleMoveFolderGridItemOutsideFolder(
 
         is GridItemData.Folder -> {
             gridItem.copy(
-                page = folderPopup.gridItem.page,
-                startColumn = folderPopup.gridItem.startColumn,
-                startRow = folderPopup.gridItem.startRow,
+                page = folderGridItemPopup.gridItem.page,
+                startColumn = folderGridItemPopup.gridItem.startColumn,
+                startRow = folderGridItemPopup.gridItem.startRow,
                 data = data.copy(
                     index = -1,
                     folderId = null,
@@ -711,9 +711,9 @@ private fun handleMoveFolderGridItemOutsideFolder(
 
         is GridItemData.ShortcutConfig -> {
             gridItem.copy(
-                page = folderPopup.gridItem.page,
-                startColumn = folderPopup.gridItem.startColumn,
-                startRow = folderPopup.gridItem.startRow,
+                page = folderGridItemPopup.gridItem.page,
+                startColumn = folderGridItemPopup.gridItem.startColumn,
+                startRow = folderGridItemPopup.gridItem.startRow,
                 data = data.copy(
                     index = -1,
                     folderId = null,
@@ -723,9 +723,9 @@ private fun handleMoveFolderGridItemOutsideFolder(
 
         is GridItemData.ShortcutInfo -> {
             gridItem.copy(
-                page = folderPopup.gridItem.page,
-                startColumn = folderPopup.gridItem.startColumn,
-                startRow = folderPopup.gridItem.startRow,
+                page = folderGridItemPopup.gridItem.page,
+                startColumn = folderGridItemPopup.gridItem.startColumn,
+                startRow = folderGridItemPopup.gridItem.startRow,
                 data = data.copy(
                     index = -1,
                     folderId = null,
@@ -739,7 +739,7 @@ private fun handleMoveFolderGridItemOutsideFolder(
     onUpdateSharedElementKey(
         SharedElementKey(
             id = gridItem.id,
-            parent = when (folderPopup.gridItem.associate) {
+            parent = when (folderGridItemPopup.gridItem.associate) {
                 Associate.Grid -> SharedElementKey.Parent.Grid
                 Associate.Dock -> SharedElementKey.Parent.Dock
             },
@@ -756,7 +756,7 @@ private fun getFolderPopupLayoutInfo(
     paddingValues: PaddingValues,
     safeDrawingWidth: Int,
     safeDrawingHeight: Int,
-    folderPopup: FolderPopup,
+    folderGridItemPopup: FolderGridItemPopup,
     folderPopupIntOffset: IntOffset,
     folderPopupIntSize: IntSize,
 ): FolderPopupLayoutInfo {
@@ -778,9 +778,9 @@ private fun getFolderPopupLayoutInfo(
         PAGE_INDICATOR_HEIGHT.roundToPx()
     }
 
-    val folderGridWidthPx = (minCellWidthPx * folderPopup.columns).coerceAtMost(availableWidth)
+    val folderGridWidthPx = (minCellWidthPx * folderGridItemPopup.columns).coerceAtMost(availableWidth)
 
-    val folderGridHeightPx = (minCellHeightPx * folderPopup.rows).coerceAtMost(
+    val folderGridHeightPx = (minCellHeightPx * folderGridItemPopup.rows).coerceAtMost(
         (availableHeight - folderTitleHeightPx).coerceAtLeast(0),
     )
 
@@ -809,12 +809,12 @@ private fun getFolderPopupLayoutInfo(
     ) / maxOf(FOLDER_PREVIEW_COLUMNS, FOLDER_PREVIEW_ROWS)
 
     val startPreviewWidth = minOf(
-        (previewCellSize * folderPopup.columns).toFloat(),
+        (previewCellSize * folderGridItemPopup.columns).toFloat(),
         availableWidth.toFloat(),
     )
 
     val startPreviewHeight = minOf(
-        (previewCellSize * folderPopup.rows).toFloat(),
+        (previewCellSize * folderGridItemPopup.rows).toFloat(),
         (availableHeight - folderTitleHeightPx).coerceAtLeast(0).toFloat(),
     )
 

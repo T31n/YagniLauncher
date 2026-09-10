@@ -19,9 +19,6 @@
     <string name="personal">Osobní</string>
     <string name="clone">Klonované</string>
     <string name="work">Pracovní</string>
-    <string name="sort_applications">Seřadit aplikace</string>
-    <string name="rearrange_applications">Přeuspořádat aplikace</string>
-    <string name="drag_an_item_to_rearrange">Přetažením položky ji přeuspořádáte</string>
     <string name="work_apps_are_paused">Pracovní aplikace jsou pozastavené</string>
     <string name="you_won_t_receive_notifications_from_your_work_apps">Nebudete dostávat upozornění od pracovních aplikací</string>
     <string name="unpause">Probudit</string>

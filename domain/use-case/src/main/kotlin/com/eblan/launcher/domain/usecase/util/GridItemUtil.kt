@@ -111,6 +111,14 @@ internal fun GridItems.toGridItems(): List<GridItem> = buildList {
     addAll(folderGridItems.map { it.asGridItem() })
 }
 
+internal fun GridItem.isTopLevel() = when (val itemData = data) {
+    is GridItemData.ApplicationInfo -> itemData.folderId == null
+    is GridItemData.Folder -> itemData.folderId == null
+    is GridItemData.ShortcutConfig -> itemData.folderId == null
+    is GridItemData.ShortcutInfo -> itemData.folderId == null
+    is GridItemData.Widget -> true
+}
+
 private suspend fun updatePinShortcutsByPackageName(
     launcherAppsWrapper: LauncherAppsWrapper,
     data: GridItemData.ShortcutInfo,

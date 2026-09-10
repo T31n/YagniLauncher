@@ -19,7 +19,7 @@ package com.eblan.launcher.domain.usecase.grid
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
-import com.eblan.launcher.domain.model.FolderPopup
+import com.eblan.launcher.domain.model.FolderGridItemPopup
 import com.eblan.launcher.domain.model.FolderPopupEntry
 import com.eblan.launcher.domain.repository.FolderGridItemRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
@@ -36,7 +36,7 @@ class GetFolderGridItemsByIdUseCase @Inject constructor(
 ) {
     operator fun invoke(
         folderPopupEntriesFlow: Flow<List<FolderPopupEntry>>,
-    ): Flow<List<FolderPopup>> = combine(
+    ): Flow<List<FolderGridItemPopup>> = combine(
         userDataRepository.userDataFlow,
         folderPopupEntriesFlow,
         folderGridItemRepository.folderGridItemWrappersFlow,

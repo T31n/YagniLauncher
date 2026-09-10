@@ -19,10 +19,6 @@
     <string name="personal">Personal</string>
     <string name="clone">Clone</string>
     <string name="work">Work</string>
-    <string name="sort_applications">Sort Applications</string>
-    <string name="rearrange_applications">Rearrange Applications</string>
-
-    <string name="drag_an_item_to_rearrange">Drag an item to rearrange</string>
     <string name="work_apps_are_paused">Work apps are paused</string>
     <string name="you_won_t_receive_notifications_from_your_work_apps">You won\'t receive notifications from your work apps</string>
     <string name="unpause">Unpause</string>

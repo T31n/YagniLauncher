@@ -76,7 +76,7 @@ import coil3.request.addLastModifiedToFileCacheKey
 import coil3.size.Size
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.BackgroundColor
-import com.eblan.launcher.domain.model.FolderPopup
+import com.eblan.launcher.domain.model.FolderGridItemPopup
 import com.eblan.launcher.domain.model.FolderPopupEntry
 import com.eblan.launcher.domain.model.GridItem
 import com.eblan.launcher.domain.model.GridItemData
@@ -134,7 +134,7 @@ internal fun InteractiveGridItem(
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
     systemCustomTextColor: Int,
-    folderPopups: List<FolderPopup>,
+    folderGridItemPopups: List<FolderGridItemPopup>,
     onOpenAppDrawer: () -> Unit,
     onUpsertFolderPopupEntry: (FolderPopupEntry) -> Unit,
     onUpdateGridItemSource: (GridItemSource) -> Unit,
@@ -189,10 +189,10 @@ internal fun InteractiveGridItem(
 
     val isVisibleFolder = remember(
         key1 = gridItem,
-        key2 = folderPopups,
+        key2 = folderGridItemPopups,
         key3 = isVisibleFolders,
     ) {
-        isVisibleFolders && folderPopups.any { it.folderPopupEntry.id == gridItem.id }
+        isVisibleFolders && folderGridItemPopups.any { it.folderPopupEntry.id == gridItem.id }
     }
 
     val horizontalAlignment =

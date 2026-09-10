@@ -114,7 +114,7 @@ import com.eblan.launcher.domain.model.EblanShortcutInfo
 import com.eblan.launcher.domain.model.EblanShortcutInfoByGroup
 import com.eblan.launcher.domain.model.EblanUser
 import com.eblan.launcher.domain.model.ExperimentalSettings
-import com.eblan.launcher.domain.model.FolderPopup
+import com.eblan.launcher.domain.model.FolderGridItemPopup
 import com.eblan.launcher.domain.model.FolderPopupEntry
 import com.eblan.launcher.domain.model.GestureSettings
 import com.eblan.launcher.domain.model.GetEblanApplicationInfosByLabelAndTag
@@ -172,7 +172,7 @@ internal fun PagerScreen(
     eblanShortcutConfigs: Map<EblanUser, Map<EblanApplicationInfoGroup, List<EblanShortcutConfig>>>,
     eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
     experimentalSettings: ExperimentalSettings,
-    folderPopups: List<FolderPopup>,
+    folderGridItemPopups: List<FolderGridItemPopup>,
     gestureSettings: GestureSettings,
     getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
     gridItems: List<GridItem>,
@@ -210,7 +210,7 @@ internal fun PagerScreen(
     onGetEblanShortcutConfigsByLabel: (String) -> Unit,
     onGetPinGridItem: (PinItemRequestType) -> Unit,
     onMoveFolderGridItem: (
-        folderPopup: FolderPopup,
+        folderGridItemPopup: FolderGridItemPopup,
         movingGridItem: GridItem,
         dragX: Int,
         dragY: Int,
@@ -349,7 +349,7 @@ internal fun PagerScreen(
     val currentGridItemSource = rememberUpdatedState(gridItemSource)
     val currentIsVisibleOverlay = rememberUpdatedState(isVisibleOverlay)
     val currentMoveGridItemResult = rememberUpdatedState(moveGridItemResult)
-    val currentFolderPopups = rememberUpdatedState(folderPopups)
+    val currentFolderPopups = rememberUpdatedState(folderGridItemPopups)
 
     val appWidgetLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
@@ -474,7 +474,7 @@ internal fun PagerScreen(
     val isVisibleSettingsPopup =
         pagerScreenState.showSettingsPopup && pagerScreenState.settingsPopupIntOffset != null
 
-    val isVisibleFolder = pagerScreenState.isVisibleFolders && folderPopups.isNotEmpty()
+    val isVisibleFolder = pagerScreenState.isVisibleFolders && folderGridItemPopups.isNotEmpty()
 
     val isVisibleFolderGridItemPopup = pagerScreenState.showFolderGridItemPopup &&
         pagerScreenState.popupIntOffset != null &&
@@ -644,7 +644,7 @@ internal fun PagerScreen(
 
     LaunchedEffect(key1 = pagerScreenState.gridPageDirection) {
         handlePageDirection(
-            folderPopups = currentFolderPopups,
+            folderGridItemPopups = currentFolderPopups,
             pageDirection = pagerScreenState.gridPageDirection,
             currentPage = gridHorizontalPagerState.currentPage,
             onAnimateScrollToPage = gridHorizontalPagerState::animateScrollToPage,
@@ -653,7 +653,7 @@ internal fun PagerScreen(
 
     LaunchedEffect(key1 = pagerScreenState.dockPageDirection) {
         handlePageDirection(
-            folderPopups = currentFolderPopups,
+            folderGridItemPopups = currentFolderPopups,
             pageDirection = pagerScreenState.dockPageDirection,
             currentPage = dockGridHorizontalPagerState.currentPage,
             onAnimateScrollToPage = dockGridHorizontalPagerState::animateScrollToPage,
@@ -837,7 +837,7 @@ internal fun PagerScreen(
                             folderBackgroundColor = homeSettings.folderBackgroundColor,
                             customFolderBackgroundColor = homeSettings.customFolderBackgroundColor,
                             systemCustomTextColor = homeSettings.gridItemSettings.customTextColor,
-                            folderPopups = folderPopups,
+                            folderGridItemPopups = folderGridItemPopups,
                             onOpenAppDrawer = pagerScreenState::openApplicationScreen,
                             onUpsertFolderPopupEntry = onUpsertFolderPopupEntry,
                             onUpdateGridItemSource = onUpdateGridItemSource,
@@ -950,7 +950,7 @@ internal fun PagerScreen(
                                 folderBackgroundColor = homeSettings.folderBackgroundColor,
                                 customFolderBackgroundColor = homeSettings.customFolderBackgroundColor,
                                 systemCustomTextColor = homeSettings.gridItemSettings.customTextColor,
-                                folderPopups = folderPopups,
+                                folderGridItemPopups = folderGridItemPopups,
                                 onOpenAppDrawer = pagerScreenState::openApplicationScreen,
                                 onUpsertFolderPopupEntry = onUpsertFolderPopupEntry,
                                 onUpdateGridItemSource = onUpdateGridItemSource,
@@ -1015,11 +1015,11 @@ internal fun PagerScreen(
         }
 
         if (isVisibleFolder) {
-            folderPopups.forEach {
+            folderGridItemPopups.forEach {
                 FolderScreen(
                     sharedTransitionScope = this@SharedTransitionLayout,
                     drag = pagerScreenState.drag,
-                    folderPopup = it,
+                    folderGridItemPopup = it,
                     gridItemSettings = homeSettings.gridItemSettings,
                     paddingValues = paddingValues,
                     safeDrawingHeight = safeDrawingHeight,
@@ -1036,7 +1036,7 @@ internal fun PagerScreen(
                     folderCellHeight = homeSettings.folderCellHeight,
                     screenWidth = screenWidth,
                     screenHeight = screenHeight,
-                    folderPopups = folderPopups,
+                    folderGridItemPopups = folderGridItemPopups,
                     showFolderGridItemPopup = pagerScreenState.showFolderGridItemPopup,
                     previewFolderGridItems = previewFolderGridItems,
                     iconPackInfoFilePaths = iconPackInfoFilePaths,

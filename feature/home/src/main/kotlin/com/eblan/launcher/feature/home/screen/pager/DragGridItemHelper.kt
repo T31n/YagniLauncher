@@ -30,7 +30,7 @@ import com.eblan.launcher.domain.grid.getWidgetGridItemSize
 import com.eblan.launcher.domain.grid.getWidgetGridItemSpan
 import com.eblan.launcher.domain.grid.isGridItemSpanWithinBounds
 import com.eblan.launcher.domain.model.Associate
-import com.eblan.launcher.domain.model.FolderPopup
+import com.eblan.launcher.domain.model.FolderGridItemPopup
 import com.eblan.launcher.domain.model.FolderPopupEntry
 import com.eblan.launcher.domain.model.GridItem
 import com.eblan.launcher.domain.model.GridItemData
@@ -52,14 +52,14 @@ private data class GridDragPosition(
 )
 
 internal suspend fun handlePageDirection(
-    folderPopups: State<List<FolderPopup>>,
+    folderGridItemPopups: State<List<FolderGridItemPopup>>,
     pageDirection: PageDirection?,
     currentPage: Int,
     onAnimateScrollToPage: suspend (Int) -> Unit,
 ) {
     delay(500L.milliseconds)
 
-    if (pageDirection == null || folderPopups.value.isNotEmpty()) return
+    if (pageDirection == null || folderGridItemPopups.value.isNotEmpty()) return
 
     when (pageDirection) {
         PageDirection.Left -> onAnimateScrollToPage(currentPage - 1)

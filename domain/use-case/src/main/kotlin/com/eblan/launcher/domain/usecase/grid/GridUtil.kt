@@ -22,7 +22,7 @@ import com.eblan.launcher.domain.model.EblanAction
 import com.eblan.launcher.domain.model.EblanActionType
 import com.eblan.launcher.domain.model.FolderGridItem
 import com.eblan.launcher.domain.model.FolderGridItemWrapper
-import com.eblan.launcher.domain.model.FolderPopup
+import com.eblan.launcher.domain.model.FolderGridItemPopup
 import com.eblan.launcher.domain.model.FolderPopupEntry
 import com.eblan.launcher.domain.model.GridItem
 import com.eblan.launcher.domain.model.GridItemData
@@ -198,7 +198,7 @@ internal suspend fun FolderGridItemWrapper.asFolderPopup(
     folderPopupEntry: FolderPopupEntry,
     maxFolderColumns: Int,
     maxFolderRows: Int,
-): FolderPopup {
+): FolderGridItemPopup {
     val childFolderGridItems = folderGridItems.map {
         folderGridItemRepository.getFolderGridItemWrapper(
             id = it.id,
@@ -246,7 +246,7 @@ internal suspend fun FolderGridItemWrapper.asFolderPopup(
         }
     } ?: 0
 
-    return FolderPopup(
+    return FolderGridItemPopup(
         folderPopupEntry = folderPopupEntry,
         gridItem = folderGridItem.asGridItem(),
         gridItems = gridItems,
@@ -256,14 +256,6 @@ internal suspend fun FolderGridItemWrapper.asFolderPopup(
         rows = rows,
         maxIndex = maxIndex,
     )
-}
-
-internal fun GridItem.isTopLevel() = when (val itemData = data) {
-    is GridItemData.ApplicationInfo -> itemData.folderId == null
-    is GridItemData.Folder -> itemData.folderId == null
-    is GridItemData.ShortcutConfig -> itemData.folderId == null
-    is GridItemData.ShortcutInfo -> itemData.folderId == null
-    is GridItemData.Widget -> true
 }
 
 internal fun FolderGridItemWrapper.asGridItem(): GridItem = GridItem(

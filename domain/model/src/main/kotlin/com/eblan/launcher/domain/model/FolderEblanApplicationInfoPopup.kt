@@ -17,11 +17,11 @@
  */
 package com.eblan.launcher.domain.model
 
-data class FolderPopup(
+data class FolderEblanApplicationInfoPopup(
     val folderPopupEntry: FolderPopupEntry,
-    val gridItem: GridItem,
-    val gridItems: List<GridItem>,
-    val gridItemsByPage: Map<Int, List<GridItem>>,
+    val folderEblanApplicationInfo: FolderEblanApplicationInfo,
+    val folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    val folderEblanApplicationInfosByPage: Map<Int, List<FolderEblanApplicationInfo>>,
     val label: String,
     val columns: Int,
     val rows: Int,

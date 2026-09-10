@@ -191,7 +191,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
                                 right = normalize(text = currentLabel),
                             )
                         }
-                        .filter { (_, score) -> score >= FUZZY_MATCH_THRESHOLD }
+                        .filter { (_, score) -> score >= 0.85 }
                         .sortedByDescending { (_, score) -> score }
                         .map { (eblanApplicationInfo, _) -> eblanApplicationInfo }
                 } else {
@@ -216,5 +216,3 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
             .lowercase()
     }
 }
-
-private const val FUZZY_MATCH_THRESHOLD = 0.85
