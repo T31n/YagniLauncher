@@ -20,13 +20,16 @@ package com.eblan.launcher.data.room.dao
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Upsert
 import com.eblan.launcher.data.room.entity.FolderEblanApplicationInfoEntity
 import com.eblan.launcher.data.room.entity.FolderEblanApplicationInfoWrapperEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface FolderEblanApplicationInfoDao {
-    @Transaction
+    @Query("SELECT * FROM FolderEblanApplicationInfoEntity")
+    fun getFolderEblanApplicationInfoEntitiesFlow(): Flow<List<FolderEblanApplicationInfoEntity>>
+
     @Query("SELECT * FROM FolderEblanApplicationInfoEntity")
     fun getFolderEblanApplicationInfoEntities(): List<FolderEblanApplicationInfoEntity>
 
@@ -37,4 +40,7 @@ interface FolderEblanApplicationInfoDao {
     @Transaction
     @Query("SELECT * FROM FolderEblanApplicationInfoEntity WHERE id = :id")
     suspend fun getFolderEblanApplicationInfoWrapperEntity(id: String): FolderEblanApplicationInfoWrapperEntity?
+
+    @Upsert
+    suspend fun upsertFolderEblanApplicationInfoEntity(entity: FolderEblanApplicationInfoEntity)
 }

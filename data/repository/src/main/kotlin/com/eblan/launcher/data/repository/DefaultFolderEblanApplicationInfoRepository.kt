@@ -29,6 +29,14 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 internal class DefaultFolderEblanApplicationInfoRepository @Inject constructor(private val folderEblanApplicationInfoDao: FolderEblanApplicationInfoDao) : FolderEblanApplicationInfoRepository {
+    override val folderEblanApplicationInfosFlow: Flow<List<FolderEblanApplicationInfo>> =
+        folderEblanApplicationInfoDao.getFolderEblanApplicationInfoEntitiesFlow()
+            .map { entities ->
+                entities.map { entity ->
+                    entity.asModel()
+                }
+            }
+
     override val folderEblanApplicationInfoWrappersFlow: Flow<List<FolderEblanApplicationInfoWrapper>> =
         folderEblanApplicationInfoDao.getFolderEblanApplicationInfoWrapperEntitiesFlow()
             .map { entities ->
@@ -43,6 +51,10 @@ internal class DefaultFolderEblanApplicationInfoRepository @Inject constructor(p
 
     override suspend fun getFolderEblanApplicationInfoWrapper(id: String): FolderEblanApplicationInfoWrapper? = folderEblanApplicationInfoDao.getFolderEblanApplicationInfoWrapperEntity(id = id)?.asModel()
 
+    override suspend fun upsertFolderEblanApplicationInfo(folderEblanApplicationInfo: FolderEblanApplicationInfo) {
+        folderEblanApplicationInfoDao.upsertFolderEblanApplicationInfoEntity(entity = folderEblanApplicationInfo.asModel())
+    }
+
     private fun FolderEblanApplicationInfoWrapperEntity.asModel(): FolderEblanApplicationInfoWrapper = FolderEblanApplicationInfoWrapper(
         folderEblanApplicationInfo = folderEblanApplicationInfoEntity.asModel(),
         eblanApplicationInfos = eblanApplicationInfoEntities.map { it.asModel() },
@@ -50,6 +62,14 @@ internal class DefaultFolderEblanApplicationInfoRepository @Inject constructor(p
     )
 
     private fun FolderEblanApplicationInfoEntity.asModel(): FolderEblanApplicationInfo = FolderEblanApplicationInfo(
+        id = id,
+        icon = icon,
+        label = label,
+        folderIndex = folderIndex,
+        folderId = folderId,
+    )
+
+    private fun FolderEblanApplicationInfo.asModel(): FolderEblanApplicationInfoEntity = FolderEblanApplicationInfoEntity(
         id = id,
         icon = icon,
         label = label,

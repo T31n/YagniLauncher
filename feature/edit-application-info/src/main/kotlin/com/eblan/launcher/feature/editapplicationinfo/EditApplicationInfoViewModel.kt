@@ -28,11 +28,13 @@ import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.model.EblanApplicationInfo
 import com.eblan.launcher.domain.model.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.EblanApplicationInfoTagCrossRef
+import com.eblan.launcher.domain.model.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.IconPackInfoComponent
 import com.eblan.launcher.domain.model.PackageManagerIconPackInfo
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoTagCrossRefRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoTagRepository
+import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
 import com.eblan.launcher.domain.usecase.application.DeleteEblanApplicationInfoCustomIconUseCase
 import com.eblan.launcher.domain.usecase.application.GetEblanApplicationInfosTagsUiUseCase
 import com.eblan.launcher.domain.usecase.application.UpdateEblanApplicationInfoCustomIconUseCase
@@ -61,6 +63,7 @@ internal class EditApplicationInfoViewModel @Inject constructor(
     private val eblanApplicationInfoTagCrossRefRepository: EblanApplicationInfoTagCrossRefRepository,
     private val updateEblanApplicationInfoCustomIconUseCase: UpdateEblanApplicationInfoCustomIconUseCase,
     private val deleteEblanApplicationInfoCustomIconUseCase: DeleteEblanApplicationInfoCustomIconUseCase,
+    private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
     private val editApplicationInfoRouteData =
@@ -68,7 +71,6 @@ internal class EditApplicationInfoViewModel @Inject constructor(
 
     private val _editApplicationInfoUiState =
         MutableStateFlow<EditApplicationInfoUiState>(EditApplicationInfoUiState.Loading)
-
     val editApplicationInfoUiState = _editApplicationInfoUiState.onStart {
         getApplicationInfo()
     }.stateIn(
@@ -79,7 +81,6 @@ internal class EditApplicationInfoViewModel @Inject constructor(
 
     private val _packageManagerIconPackInfos =
         MutableStateFlow(emptyList<PackageManagerIconPackInfo>())
-
     val packageManagerIconPackInfos = _packageManagerIconPackInfos.onStart {
         _packageManagerIconPackInfos.update {
             packageManagerWrapper.getIconPackInfos()
@@ -91,7 +92,6 @@ internal class EditApplicationInfoViewModel @Inject constructor(
     )
 
     private val _iconPackInfoComponents = MutableStateFlow(emptyList<IconPackInfoComponent>())
-
     val iconPackInfoComponents = _iconPackInfoComponents.asStateFlow()
 
     private var iconPackInfoComponentsJob: Job? = null
@@ -106,6 +106,13 @@ internal class EditApplicationInfoViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = emptyList(),
     )
+
+    val folderEblanApplicationInfos =
+        folderEblanApplicationInfoRepository.folderEblanApplicationInfosFlow.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = emptyList(),
+        )
 
     fun updateEblanApplicationInfo(eblanApplicationInfo: EblanApplicationInfo) {
         viewModelScope.launch {
@@ -210,6 +217,14 @@ internal class EditApplicationInfoViewModel @Inject constructor(
             )
 
             getApplicationInfo()
+        }
+    }
+
+    fun addFolderEblanApplicationInfo(folderEblanApplicationInfo: FolderEblanApplicationInfo) {
+        viewModelScope.launch {
+            folderEblanApplicationInfoRepository.upsertFolderEblanApplicationInfo(
+                folderEblanApplicationInfo = folderEblanApplicationInfo,
+            )
         }
     }
 

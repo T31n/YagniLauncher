@@ -22,9 +22,13 @@ import com.eblan.launcher.domain.model.FolderEblanApplicationInfoWrapper
 import kotlinx.coroutines.flow.Flow
 
 interface FolderEblanApplicationInfoRepository {
+    val folderEblanApplicationInfosFlow: Flow<List<FolderEblanApplicationInfo>>
+
     val folderEblanApplicationInfoWrappersFlow: Flow<List<FolderEblanApplicationInfoWrapper>>
 
     fun getFolderEblanApplicationInfos(): List<FolderEblanApplicationInfo>
 
     suspend fun getFolderEblanApplicationInfoWrapper(id: String): FolderEblanApplicationInfoWrapper?
+
+    suspend fun upsertFolderEblanApplicationInfo(folderEblanApplicationInfo: FolderEblanApplicationInfo)
 }
