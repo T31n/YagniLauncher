@@ -56,7 +56,7 @@ class GetPreviewFolderEblanApplicationInfosUseCase @Inject constructor(
         }
     }.flowOn(defaultDispatcher)
 
-    fun FolderEblanApplicationInfoWrapper.asFolderEblanApplicationInfoGridItem(
+    private fun FolderEblanApplicationInfoWrapper.asFolderEblanApplicationInfoGridItem(
         maxFolderColumns: Int,
         maxFolderRows: Int,
     ): PreviewFolderEblanApplicationInfo {

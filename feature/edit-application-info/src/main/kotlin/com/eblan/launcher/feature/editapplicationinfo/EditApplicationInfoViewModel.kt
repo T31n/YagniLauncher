@@ -34,7 +34,7 @@ import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoTagCrossRefRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoTagRepository
 import com.eblan.launcher.domain.usecase.application.DeleteEblanApplicationInfoCustomIconUseCase
-import com.eblan.launcher.domain.usecase.application.GetEblanApplicationInfoTagUseCase
+import com.eblan.launcher.domain.usecase.application.GetEblanApplicationInfosTagsUiUseCase
 import com.eblan.launcher.domain.usecase.application.UpdateEblanApplicationInfoCustomIconUseCase
 import com.eblan.launcher.feature.editapplicationinfo.model.EditApplicationInfoUiState
 import com.eblan.launcher.feature.editapplicationinfo.navigation.EditApplicationInfoRouteData
@@ -56,7 +56,7 @@ internal class EditApplicationInfoViewModel @Inject constructor(
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
     packageManagerWrapper: PackageManagerWrapper,
     private val iconPackManager: IconPackManager,
-    getEblanApplicationInfoTagUseCase: GetEblanApplicationInfoTagUseCase,
+    getEblanApplicationInfosTagsUiUseCase: GetEblanApplicationInfosTagsUiUseCase,
     private val eblanApplicationInfoTagRepository: EblanApplicationInfoTagRepository,
     private val eblanApplicationInfoTagCrossRefRepository: EblanApplicationInfoTagCrossRefRepository,
     private val updateEblanApplicationInfoCustomIconUseCase: UpdateEblanApplicationInfoCustomIconUseCase,
@@ -98,7 +98,7 @@ internal class EditApplicationInfoViewModel @Inject constructor(
 
     private var lastIconPackInfoComponents = emptyList<IconPackInfoComponent>()
 
-    val eblanApplicationInfoTagsUi = getEblanApplicationInfoTagUseCase(
+    val eblanApplicationInfoTagsUi = getEblanApplicationInfosTagsUiUseCase(
         serialNumber = editApplicationInfoRouteData.serialNumber,
         componentName = editApplicationInfoRouteData.componentName,
     ).stateIn(

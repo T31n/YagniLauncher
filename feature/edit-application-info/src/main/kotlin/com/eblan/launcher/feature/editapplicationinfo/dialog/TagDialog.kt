@@ -38,8 +38,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import com.eblan.launcher.designsystem.component.EblanDialog
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
+import com.eblan.launcher.domain.model.EblanApplicationInfoSelectedTag
 import com.eblan.launcher.domain.model.EblanApplicationInfoTag
-import com.eblan.launcher.domain.model.EblanApplicationInfoTagUi
 import com.eblan.launcher.feature.editapplicationinfo.R
 import com.eblan.launcher.common.R as commonR
 
@@ -116,14 +116,14 @@ internal fun AddTagDialog(
 @Composable
 internal fun UpdateTagDialog(
     modifier: Modifier = Modifier,
-    eblanApplicationInfoTagUi: EblanApplicationInfoTagUi?,
+    eblanApplicationInfoSelectedTag: EblanApplicationInfoSelectedTag?,
     onDeleteEblanApplicationInfoTag: (EblanApplicationInfoTag) -> Unit,
     onDismissRequest: () -> Unit,
     onUpdateEblanApplicationInfoTag: (EblanApplicationInfoTag) -> Unit,
 ) {
-    if (eblanApplicationInfoTagUi == null) return
+    if (eblanApplicationInfoSelectedTag == null) return
 
-    var value by remember { mutableStateOf(eblanApplicationInfoTagUi.name) }
+    var value by remember { mutableStateOf(eblanApplicationInfoSelectedTag.name) }
 
     var isError by remember { mutableStateOf(false) }
 
@@ -145,8 +145,8 @@ internal fun UpdateTagDialog(
                 onClick = {
                     onDeleteEblanApplicationInfoTag(
                         EblanApplicationInfoTag(
-                            id = eblanApplicationInfoTagUi.id,
-                            name = eblanApplicationInfoTagUi.name,
+                            id = eblanApplicationInfoSelectedTag.id,
+                            name = eblanApplicationInfoSelectedTag.name,
                         ),
                     )
 
@@ -197,7 +197,7 @@ internal fun UpdateTagDialog(
                     if (value.isNotBlank()) {
                         onUpdateEblanApplicationInfoTag(
                             EblanApplicationInfoTag(
-                                id = eblanApplicationInfoTagUi.id,
+                                id = eblanApplicationInfoSelectedTag.id,
                                 name = value,
                             ),
                         )

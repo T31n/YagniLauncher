@@ -19,7 +19,7 @@ package com.eblan.launcher.domain.usecase.application
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
-import com.eblan.launcher.domain.model.EblanApplicationInfoTagUi
+import com.eblan.launcher.domain.model.EblanApplicationInfoSelectedTag
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoTagRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -28,7 +28,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
-class GetEblanApplicationInfoTagUseCase @Inject constructor(
+class GetEblanApplicationInfosTagsUiUseCase @Inject constructor(
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
     private val eblanApplicationInfoTagRepository: EblanApplicationInfoTagRepository,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
@@ -36,7 +36,7 @@ class GetEblanApplicationInfoTagUseCase @Inject constructor(
     operator fun invoke(
         serialNumber: Long,
         componentName: String,
-    ): Flow<List<EblanApplicationInfoTagUi>> = combine(
+    ): Flow<List<EblanApplicationInfoSelectedTag>> = combine(
         eblanApplicationInfoRepository.getEblanApplicationInfoTagsFlow(
             serialNumber = serialNumber,
             componentName = componentName,
@@ -44,7 +44,7 @@ class GetEblanApplicationInfoTagUseCase @Inject constructor(
         eblanApplicationInfoTagRepository.eblanApplicationInfoTagsFlow,
     ) { eblanApplicationInfoTagsByComponentName, eblanApplicationInfoTags ->
         eblanApplicationInfoTags.map {
-            EblanApplicationInfoTagUi(
+            EblanApplicationInfoSelectedTag(
                 id = it.id,
                 name = it.name,
                 selected = it in eblanApplicationInfoTagsByComponentName,
