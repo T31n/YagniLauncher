@@ -1,7 +1,6 @@
 syntax = "proto3";
 
 import "com/eblan/launcher/data/datastore/proto/model/grid_item_settings.proto";
-import "com/eblan/launcher/data/datastore/proto/appdrawer/eblan_application_info_order.proto";
 import "com/eblan/launcher/data/datastore/proto/appdrawer/app_drawer_type.proto";
 import "com/eblan/launcher/data/datastore/proto/model/background_color.proto";
 
@@ -12,7 +11,6 @@ message AppDrawerSettingsProto {
   int32 appDrawerColumns = 1;
   int32 appDrawerRowsHeight = 2;
   GridItemSettingsProto gridItemSettingsProto = 3;
-  EblanApplicationInfoOrderProto eblanApplicationInfoOrderProto = 4;
   BackgroundColorProto backgroundColorProto = 5;
   int32 customBackgroundColor = 6;
   AppDrawerTypeProto AppDrawerTypeProto = 8;

@@ -142,7 +142,6 @@ class AddPackageUseCase @Inject constructor(
                 customLabel = null,
                 isHidden = false,
                 lastUpdateTime = lastUpdateTime,
-                index = -1,
                 flags = flags,
                 folderIndex = -1,
                 folderId = null,

@@ -36,6 +36,4 @@
     <string name="request_permissions">Žádost o oprávnění</string>
     <string name="allow_permissions_so_we_can_inform_you_about_important_crash_reports_and_make_phone_shortcuts">Povolit oprávnění, abychom vás mohli informovat o důležitých hlášeních o selháních a vytvářet zkratky telefonu</string>
     <string name="later">Později</string>
-    <string name="alphabetical">Abecední</string>
-    <string name="index">Index</string>
 </resources>

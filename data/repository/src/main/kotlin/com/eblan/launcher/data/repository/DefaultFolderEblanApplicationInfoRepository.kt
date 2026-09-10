@@ -28,8 +28,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-internal class DefaultFolderEblanApplicationInfoRepository @Inject constructor(private val folderEblanApplicationInfoDao: FolderEblanApplicationInfoDao) :
-    FolderEblanApplicationInfoRepository {
+internal class DefaultFolderEblanApplicationInfoRepository @Inject constructor(private val folderEblanApplicationInfoDao: FolderEblanApplicationInfoDao) : FolderEblanApplicationInfoRepository {
     override val folderEblanApplicationInfoWrappersFlow: Flow<List<FolderEblanApplicationInfoWrapper>> =
         folderEblanApplicationInfoDao.getFolderEblanApplicationInfoWrapperEntitiesFlow()
             .map { entities ->
@@ -38,27 +37,20 @@ internal class DefaultFolderEblanApplicationInfoRepository @Inject constructor(p
                 }
             }
 
-
-    override fun getFolderEblanApplicationInfos(): List<FolderEblanApplicationInfo> =
-        folderEblanApplicationInfoDao.getFolderEblanApplicationInfoEntities().map {
-            it.asModel()
-        }
-
-    override suspend fun getFolderEblanApplicationInfoWrapper(id: String): FolderEblanApplicationInfoWrapper? =
-        folderEblanApplicationInfoDao.getFolderEblanApplicationInfoWrapperEntity(id = id)?.asModel()
-
-    private fun FolderEblanApplicationInfoWrapperEntity.asModel(): FolderEblanApplicationInfoWrapper {
-        return FolderEblanApplicationInfoWrapper(
-            folderEblanApplicationInfo = folderEblanApplicationInfoEntity.asModel(),
-            eblanApplicationInfoEntities = eblanApplicationInfoEntities.map { it.asModel() },
-        )
+    override fun getFolderEblanApplicationInfos(): List<FolderEblanApplicationInfo> = folderEblanApplicationInfoDao.getFolderEblanApplicationInfoEntities().map {
+        it.asModel()
     }
 
-    private fun FolderEblanApplicationInfoEntity.asModel(): FolderEblanApplicationInfo {
-        return FolderEblanApplicationInfo(
-            id = id,
-            folderIndex = folderIndex,
-            folderId = folderId,
-        )
-    }
+    override suspend fun getFolderEblanApplicationInfoWrapper(id: String): FolderEblanApplicationInfoWrapper? = folderEblanApplicationInfoDao.getFolderEblanApplicationInfoWrapperEntity(id = id)?.asModel()
+
+    private fun FolderEblanApplicationInfoWrapperEntity.asModel(): FolderEblanApplicationInfoWrapper = FolderEblanApplicationInfoWrapper(
+        folderEblanApplicationInfo = folderEblanApplicationInfoEntity.asModel(),
+        eblanApplicationInfoEntities = eblanApplicationInfoEntities.map { it.asModel() },
+    )
+
+    private fun FolderEblanApplicationInfoEntity.asModel(): FolderEblanApplicationInfo = FolderEblanApplicationInfo(
+        id = id,
+        folderIndex = folderIndex,
+        folderId = folderId,
+    )
 }

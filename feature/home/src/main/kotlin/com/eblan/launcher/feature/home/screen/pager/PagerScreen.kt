@@ -107,7 +107,6 @@ import com.eblan.launcher.domain.model.Associate
 import com.eblan.launcher.domain.model.EblanAction
 import com.eblan.launcher.domain.model.EblanActionType
 import com.eblan.launcher.domain.model.EblanAppWidgetProviderInfo
-import com.eblan.launcher.domain.model.EblanApplicationInfo
 import com.eblan.launcher.domain.model.EblanApplicationInfoGroup
 import com.eblan.launcher.domain.model.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.EblanShortcutConfig
@@ -241,8 +240,6 @@ internal fun PagerScreen(
     onSettings: () -> Unit,
     onStartSyncData: () -> Unit,
     onStopSyncData: () -> Unit,
-    onUpdateAppDrawerSettings: (AppDrawerSettings) -> Unit,
-    onUpdateEblanApplicationInfos: (List<EblanApplicationInfo>) -> Unit,
     onUpsertFolderPopupEntry: (FolderPopupEntry) -> Unit,
     onDeleteFolderPopupEntry: (FolderPopupEntry) -> Unit,
     onShowFolderWhenDragging: (
@@ -1120,8 +1117,6 @@ internal fun PagerScreen(
                 onEditApplicationInfo = onEditApplicationInfo,
                 onGetEblanApplicationInfosByLabel = onGetEblanApplicationInfosByLabel,
                 onGetEblanApplicationInfosByTagId = onGetEblanApplicationInfosByTagId,
-                onUpdateAppDrawerSettings = onUpdateAppDrawerSettings,
-                onUpdateEblanApplicationInfos = onUpdateEblanApplicationInfos,
                 onUpdateGridItemSource = onUpdateGridItemSource,
                 onUpdateImageBitmap = pagerScreenState::updateOverlayImageBitmap,
                 onUpdateIsDragging = pagerScreenState::updateIsDragging,

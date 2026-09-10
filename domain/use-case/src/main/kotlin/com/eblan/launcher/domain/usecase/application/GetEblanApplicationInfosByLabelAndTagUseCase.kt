@@ -25,7 +25,6 @@ import com.eblan.launcher.domain.framework.JaroWinklerSimilarityWrapper
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.model.AppDrawerType
 import com.eblan.launcher.domain.model.EblanApplicationInfo
-import com.eblan.launcher.domain.model.EblanApplicationInfoOrder
 import com.eblan.launcher.domain.model.EblanUserPageKey
 import com.eblan.launcher.domain.model.EblanUserType
 import com.eblan.launcher.domain.model.GetEblanApplicationInfosByLabelAndTag
@@ -68,11 +67,6 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
             excludeTaggedApps = userData.appDrawerSettings.excludeTaggedApps,
             tagId = tagId,
             eblanApplicationInfos = eblanApplicationInfos,
-        )
-
-        updateEblanApplicationInfoIndexes(
-            eblanApplicationInfoOrder = userData.appDrawerSettings.eblanApplicationInfoOrder,
-            eblanApplicationInfos = eblanApplicationInfosByLabel,
         )
 
         when (userData.appDrawerSettings.appDrawerType) {
@@ -154,25 +148,6 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
             privateEblanApplicationInfoWithIconPackInfos = emptyList(),
             iconPackInfoFilePaths = iconPackInfoFilePaths,
         )
-    }
-
-    private fun updateEblanApplicationInfoIndexes(
-        eblanApplicationInfoOrder: EblanApplicationInfoOrder,
-        eblanApplicationInfos: MutableList<EblanApplicationInfo>,
-    ) {
-        if (eblanApplicationInfoOrder != EblanApplicationInfoOrder.Index) return
-
-        eblanApplicationInfos.filter { it.index >= 0 }.forEach {
-            val fromIndex = eblanApplicationInfos.indexOf(it)
-
-            if (fromIndex > -1) {
-                eblanApplicationInfos.removeAt(fromIndex)
-
-                val toIndex = it.index.coerceAtMost(eblanApplicationInfos.size)
-
-                eblanApplicationInfos.add(toIndex, it)
-            }
-        }
     }
 
     private suspend fun getEblanApplicationInfos(

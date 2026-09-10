@@ -68,7 +68,6 @@ import com.eblan.launcher.domain.model.AppDrawerSettings
 import com.eblan.launcher.domain.model.EblanAppWidgetProviderInfo
 import com.eblan.launcher.domain.model.EblanApplicationInfo
 import com.eblan.launcher.domain.model.EblanApplicationInfoGroup
-import com.eblan.launcher.domain.model.EblanApplicationInfoOrder
 import com.eblan.launcher.domain.model.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.EblanShortcutInfo
 import com.eblan.launcher.domain.model.EblanShortcutInfoByGroup
@@ -85,7 +84,7 @@ import com.eblan.launcher.feature.home.model.GridItemSource
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.screen.application.ApplicationInfoPopup
 import com.eblan.launcher.feature.home.screen.application.ApplicationScreenEffect
-import com.eblan.launcher.feature.home.screen.application.ApplicationSearchBar
+import com.eblan.launcher.feature.home.screen.application.ApplicationSearchBarWithoutMenu
 import com.eblan.launcher.feature.home.screen.application.EblanApplicationInfoGridItem
 import com.eblan.launcher.feature.home.screen.application.EblanApplicationInfoTabRow
 import com.eblan.launcher.feature.home.screen.application.PrivateApplicationInfoPopup
@@ -126,8 +125,6 @@ internal fun VerticalApplicationScreen(
     ) -> Unit,
     onGetEblanApplicationInfosByLabel: (String) -> Unit,
     onGetEblanApplicationInfosByTagId: (Long?) -> Unit,
-    onUpdateAppDrawerSettings: (AppDrawerSettings) -> Unit,
-    onUpdateEblanApplicationInfos: (List<EblanApplicationInfo>) -> Unit,
     onUpdateGridItemSource: (GridItemSource) -> Unit,
     onUpdateImageBitmap: (ImageBitmap) -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
@@ -162,8 +159,6 @@ internal fun VerticalApplicationScreen(
     val textFieldState = rememberTextFieldState()
 
     var selectedEblanApplicationInfoTagId by remember { mutableStateOf<Long?>(null) }
-
-    var isRearrangeEblanApplicationInfo by remember { mutableStateOf(false) }
 
     var selectedEblanApplicationInfo by remember { mutableStateOf<EblanApplicationInfo?>(null) }
 
@@ -200,22 +195,14 @@ internal fun VerticalApplicationScreen(
                 end = paddingValues.calculateEndPadding(layoutDirection),
             ),
     ) {
-        ApplicationSearchBar(
+        ApplicationSearchBarWithoutMenu(
             focusRequester = focusRequester,
             searchBarState = searchBarState,
             textFieldState = textFieldState,
-            eblanApplicationInfoOrder = appDrawerSettings.eblanApplicationInfoOrder,
-            isRearrangeEblanApplicationInfo = isRearrangeEblanApplicationInfo,
             backgroundColor = appDrawerSettings.backgroundColor,
             customBackgroundColor = appDrawerSettings.customBackgroundColor,
             systemTextColor = systemTextColor,
             systemCustomTextColor = systemCustomTextColor,
-            onUpdateEblanApplicationInfoOrder = {
-                onUpdateAppDrawerSettings(appDrawerSettings.copy(eblanApplicationInfoOrder = it))
-            },
-            onUpdateIsRearrangeEblanApplicationInfo = {
-                isRearrangeEblanApplicationInfo = it
-            },
         )
 
         if (eblanApplicationInfoTags.isNotEmpty()) {
@@ -254,10 +241,8 @@ internal fun VerticalApplicationScreen(
                 sharedTransitionScope = sharedTransitionScope,
                 appDrawerSettings = appDrawerSettings,
                 drag = drag,
-                eblanApplicationInfoOrder = appDrawerSettings.eblanApplicationInfoOrder,
                 getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
                 index = index,
-                isRearrangeEblanApplicationInfo = isRearrangeEblanApplicationInfo,
                 managedProfileResult = managedProfileResult,
                 paddingValues = paddingValues,
                 isVisibleOverlay = isVisibleOverlay,
@@ -268,11 +253,7 @@ internal fun VerticalApplicationScreen(
                 systemCustomTextColor = systemCustomTextColor,
                 animations = animations,
                 onDismiss = onDismiss,
-                onDismissDragAndDrop = {
-                    isRearrangeEblanApplicationInfo = false
-                },
                 onDragEnd = onDragEnd,
-                onUpdateEblanApplicationInfos = onUpdateEblanApplicationInfos,
                 onUpdateGridItemSource = onUpdateGridItemSource,
                 onUpdateImageBitmap = onUpdateImageBitmap,
                 onUpdateIsDragging = onUpdateIsDragging,
@@ -356,10 +337,8 @@ private fun EblanApplicationInfosPage(
     sharedTransitionScope: SharedTransitionScope,
     appDrawerSettings: AppDrawerSettings,
     drag: Drag,
-    eblanApplicationInfoOrder: EblanApplicationInfoOrder,
     getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
     index: Int,
-    isRearrangeEblanApplicationInfo: Boolean,
     managedProfileResult: ManagedProfileResult?,
     paddingValues: PaddingValues,
     showPopupApplicationMenu: Boolean,
@@ -370,9 +349,7 @@ private fun EblanApplicationInfosPage(
     systemCustomTextColor: Int,
     animations: Boolean,
     onDismiss: () -> Unit,
-    onDismissDragAndDrop: () -> Unit,
     onDragEnd: () -> Unit,
-    onUpdateEblanApplicationInfos: (List<EblanApplicationInfo>) -> Unit,
     onUpdateGridItemSource: (GridItemSource) -> Unit,
     onUpdateImageBitmap: (ImageBitmap) -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
@@ -429,19 +406,6 @@ private fun EblanApplicationInfosPage(
                 systemTextColor = systemTextColor,
                 onDragEnd = onDragEnd,
                 onVerticalDrag = onVerticalDrag,
-            )
-        } else if (isRearrangeEblanApplicationInfo && eblanApplicationInfoOrder == EblanApplicationInfoOrder.Index) {
-            DragAndDropEblanApplicationInfos(
-                appDrawerSettings = appDrawerSettings,
-                eblanUserPageKey = eblanUserPageKey,
-                getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
-                paddingValues = paddingValues,
-                swipeY = swipeY,
-                screenHeight = screenHeight,
-                systemTextColor = systemTextColor,
-                systemCustomTextColor = systemCustomTextColor,
-                onDismissDragAndDrop = onDismissDragAndDrop,
-                onUpdateEblanApplicationInfos = onUpdateEblanApplicationInfos,
             )
         } else {
             EblanApplicationInfos(

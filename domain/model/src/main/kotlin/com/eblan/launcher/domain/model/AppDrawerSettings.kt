@@ -21,7 +21,6 @@ data class AppDrawerSettings(
     val appDrawerColumns: Int,
     val appDrawerRowsHeight: Int,
     val gridItemSettings: GridItemSettings,
-    val eblanApplicationInfoOrder: EblanApplicationInfoOrder,
     val backgroundColor: BackgroundColor,
     val customBackgroundColor: Int,
     val appDrawerType: AppDrawerType,

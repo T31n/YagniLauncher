@@ -92,5 +92,4 @@ internal object DaoModule {
     @Provides
     @Singleton
     fun folderEblanApplicationInfoDao(eblanDatabase: EblanDatabase): FolderEblanApplicationInfoDao = eblanDatabase.folderEblanApplicationInfoDao()
-
 }

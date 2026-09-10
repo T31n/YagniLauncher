@@ -37,6 +37,4 @@
     <string name="request_permissions">Request Permissions</string>
     <string name="allow_permissions_so_we_can_inform_you_about_important_crash_reports_and_make_phone_shortcuts">Allow permissions so we can inform you about important crash reports and make phone shortcuts</string>
     <string name="later">Later</string>
-    <string name="alphabetical">Alphabetical</string>
-    <string name="index">Index</string>
 </resources>

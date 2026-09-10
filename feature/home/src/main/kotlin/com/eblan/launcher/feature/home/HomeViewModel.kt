@@ -22,9 +22,7 @@ import androidx.lifecycle.viewModelScope
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.FileManager
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
-import com.eblan.launcher.domain.model.AppDrawerSettings
 import com.eblan.launcher.domain.model.Associate
-import com.eblan.launcher.domain.model.EblanApplicationInfo
 import com.eblan.launcher.domain.model.FolderPopup
 import com.eblan.launcher.domain.model.FolderPopupEntry
 import com.eblan.launcher.domain.model.GetEblanApplicationInfosByLabelAndTag
@@ -37,12 +35,10 @@ import com.eblan.launcher.domain.model.TextColor
 import com.eblan.launcher.domain.repository.EblanAppWidgetProviderInfoRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoTagRepository
 import com.eblan.launcher.domain.repository.GridRepository
-import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.application.GetEblanAppWidgetProviderInfosByLabelUseCase
 import com.eblan.launcher.domain.usecase.application.GetEblanApplicationInfosByLabelAndTagUseCase
 import com.eblan.launcher.domain.usecase.application.GetEblanShortcutConfigsByLabelUseCase
 import com.eblan.launcher.domain.usecase.application.GetEblanShortcutInfosUseCase
-import com.eblan.launcher.domain.usecase.application.UpdateEblanApplicationInfosIndexesUseCase
 import com.eblan.launcher.domain.usecase.grid.DeleteGridItemUseCase
 import com.eblan.launcher.domain.usecase.grid.GetFolderGridItemsByIdUseCase
 import com.eblan.launcher.domain.usecase.grid.GetPreviewFolderGridItemsUseCase
@@ -101,8 +97,6 @@ internal class HomeViewModel @Inject constructor(
     private val removePackageUseCase: RemovePackageUseCase,
     private val changePackageUseCase: ChangePackageUseCase,
     private val changeShortcutsUseCase: ChangeShortcutsUseCase,
-    private val userDataRepository: UserDataRepository,
-    private val updateEblanApplicationInfosIndexesUseCase: UpdateEblanApplicationInfosIndexesUseCase,
     getFolderGridItemsByIdUseCase: GetFolderGridItemsByIdUseCase,
     private val moveFolderGridItemUseCase: MoveFolderGridItemUseCase,
     private val iconKeyGenerator: IconKeyGenerator,
@@ -515,18 +509,6 @@ internal class HomeViewModel @Inject constructor(
         packageAddedJob = null
         packageChangedJob = null
         shortcutsChangedJob = null
-    }
-
-    fun updateAppDrawerSettings(appDrawerSettings: AppDrawerSettings) {
-        viewModelScope.launch {
-            userDataRepository.updateAppDrawerSettings(appDrawerSettings = appDrawerSettings)
-        }
-    }
-
-    fun updateEblanApplicationInfos(eblanApplicationInfos: List<EblanApplicationInfo>) {
-        viewModelScope.launch {
-            updateEblanApplicationInfosIndexesUseCase(eblanApplicationInfos = eblanApplicationInfos)
-        }
     }
 
     fun upsertFolderPopupEntry(folderPopupEntry: FolderPopupEntry) {

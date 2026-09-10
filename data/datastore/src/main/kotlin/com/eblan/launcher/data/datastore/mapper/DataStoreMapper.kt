@@ -19,7 +19,6 @@ package com.eblan.launcher.data.datastore.mapper
 
 import com.eblan.launcher.data.datastore.proto.appdrawer.AppDrawerSettingsProto
 import com.eblan.launcher.data.datastore.proto.appdrawer.AppDrawerTypeProto
-import com.eblan.launcher.data.datastore.proto.appdrawer.EblanApplicationInfoOrderProto
 import com.eblan.launcher.data.datastore.proto.experimental.ExperimentalSettingsProto
 import com.eblan.launcher.data.datastore.proto.general.GeneralSettingsProto
 import com.eblan.launcher.data.datastore.proto.general.ThemeProto
@@ -37,7 +36,6 @@ import com.eblan.launcher.domain.model.AppDrawerType
 import com.eblan.launcher.domain.model.BackgroundColor
 import com.eblan.launcher.domain.model.EblanAction
 import com.eblan.launcher.domain.model.EblanActionType
-import com.eblan.launcher.domain.model.EblanApplicationInfoOrder
 import com.eblan.launcher.domain.model.ExperimentalSettings
 import com.eblan.launcher.domain.model.GeneralSettings
 import com.eblan.launcher.domain.model.GestureSettings
@@ -84,7 +82,6 @@ internal fun AppDrawerSettingsProto.toAppDrawerSettings(): AppDrawerSettings = A
     appDrawerColumns = appDrawerColumns,
     appDrawerRowsHeight = appDrawerRowsHeight,
     gridItemSettings = gridItemSettingsProto.toGridItemSettings(),
-    eblanApplicationInfoOrder = eblanApplicationInfoOrderProto.toEblanApplicationInfoOrder(),
     backgroundColor = backgroundColorProto.toBackgroundColor(),
     customBackgroundColor = customBackgroundColor,
     appDrawerType = appDrawerTypeProto.toAppDrawerType(),
@@ -166,8 +163,6 @@ internal fun AppDrawerSettings.toAppDrawerSettingsProto(): AppDrawerSettingsProt
     builder.appDrawerColumns = appDrawerColumns
     builder.appDrawerRowsHeight = appDrawerRowsHeight
     builder.gridItemSettingsProto = gridItemSettings.toGridItemSettingsProto()
-    builder.eblanApplicationInfoOrderProto =
-        eblanApplicationInfoOrder.toEblanApplicationInfoOrderProto()
     builder.backgroundColorProto = backgroundColor.toBackgroundColorProto()
     builder.customBackgroundColor = customBackgroundColor
     builder.appDrawerTypeProto = appDrawerType.toAppDrawerTypeProto()
@@ -253,17 +248,6 @@ private fun ThemeProto.toTheme(): Theme = when (this) {
     ThemeProto.ThemeSystem, ThemeProto.UNRECOGNIZED -> Theme.System
     ThemeProto.ThemeLight -> Theme.Light
     ThemeProto.ThemeDark -> Theme.Dark
-}
-
-private fun EblanApplicationInfoOrderProto.toEblanApplicationInfoOrder(): EblanApplicationInfoOrder = when (this) {
-    EblanApplicationInfoOrderProto.Alphabetical -> EblanApplicationInfoOrder.Alphabetical
-    EblanApplicationInfoOrderProto.Index -> EblanApplicationInfoOrder.Index
-    EblanApplicationInfoOrderProto.UNRECOGNIZED -> EblanApplicationInfoOrder.Alphabetical
-}
-
-private fun EblanApplicationInfoOrder.toEblanApplicationInfoOrderProto(): EblanApplicationInfoOrderProto = when (this) {
-    EblanApplicationInfoOrder.Alphabetical -> EblanApplicationInfoOrderProto.Alphabetical
-    EblanApplicationInfoOrder.Index -> EblanApplicationInfoOrderProto.Index
 }
 
 private fun TextColor.toTextColorProto(): TextColorProto = when (this) {

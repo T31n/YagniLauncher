@@ -27,7 +27,6 @@ data class EblanApplicationInfo(
     val customLabel: String?,
     val isHidden: Boolean,
     val lastUpdateTime: Long,
-    val index: Int,
     val flags: Int,
     val folderIndex: Int,
     val folderId: String?,

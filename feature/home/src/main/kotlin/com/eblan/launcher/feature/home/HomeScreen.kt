@@ -39,10 +39,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntSize
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.eblan.launcher.domain.model.AppDrawerSettings
 import com.eblan.launcher.domain.model.Associate
 import com.eblan.launcher.domain.model.EblanAppWidgetProviderInfo
-import com.eblan.launcher.domain.model.EblanApplicationInfo
 import com.eblan.launcher.domain.model.EblanApplicationInfoGroup
 import com.eblan.launcher.domain.model.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.EblanShortcutConfig
@@ -161,8 +159,6 @@ internal fun HomeRoute(
         onSettings = onSettings,
         onStartSyncData = viewModel::startSyncData,
         onStopSyncData = viewModel::stopSyncData,
-        onUpdateAppDrawerSettings = viewModel::updateAppDrawerSettings,
-        onUpdateEblanApplicationInfos = viewModel::updateEblanApplicationInfos,
         onUpsertFolderPopupEntry = viewModel::upsertFolderPopupEntry,
         onDeleteFolderPopupEntry = viewModel::deleteFolderPopupEntry,
         onShowFolderWhenDragging = viewModel::showFolderWhenDragging,
@@ -257,8 +253,6 @@ internal fun HomeScreen(
     onSettings: () -> Unit,
     onStartSyncData: () -> Unit,
     onStopSyncData: () -> Unit,
-    onUpdateAppDrawerSettings: (AppDrawerSettings) -> Unit,
-    onUpdateEblanApplicationInfos: (List<EblanApplicationInfo>) -> Unit,
     onUpsertFolderPopupEntry: (FolderPopupEntry) -> Unit,
     onDeleteFolderPopupEntry: (FolderPopupEntry) -> Unit,
     onShowFolderWhenDragging: (
@@ -350,8 +344,6 @@ internal fun HomeScreen(
                 onSettings = onSettings,
                 onStartSyncData = onStartSyncData,
                 onStopSyncData = onStopSyncData,
-                onUpdateAppDrawerSettings = onUpdateAppDrawerSettings,
-                onUpdateEblanApplicationInfos = onUpdateEblanApplicationInfos,
                 onUpsertFolderPopupEntry = onUpsertFolderPopupEntry,
                 onDeleteFolderPopupEntry = onDeleteFolderPopupEntry,
                 onShowFolderWhenDragging = onShowFolderWhenDragging,
@@ -451,8 +443,6 @@ private fun Success(
     onSettings: () -> Unit,
     onStartSyncData: () -> Unit,
     onStopSyncData: () -> Unit,
-    onUpdateAppDrawerSettings: (AppDrawerSettings) -> Unit,
-    onUpdateEblanApplicationInfos: (List<EblanApplicationInfo>) -> Unit,
     onUpsertFolderPopupEntry: (FolderPopupEntry) -> Unit,
     onDeleteFolderPopupEntry: (FolderPopupEntry) -> Unit,
     onShowFolderWhenDragging: (
@@ -544,8 +534,6 @@ private fun Success(
                     onSettings = onSettings,
                     onStartSyncData = onStartSyncData,
                     onStopSyncData = onStopSyncData,
-                    onUpdateAppDrawerSettings = onUpdateAppDrawerSettings,
-                    onUpdateEblanApplicationInfos = onUpdateEblanApplicationInfos,
                     onUpsertFolderPopupEntry = onUpsertFolderPopupEntry,
                     onDeleteFolderPopupEntry = onDeleteFolderPopupEntry,
                     onShowFolderWhenDragging = onShowFolderWhenDragging,
