@@ -24,15 +24,11 @@ import com.eblan.launcher.domain.model.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.FolderEblanApplicationInfoGridItem
 import com.eblan.launcher.domain.model.FolderEblanApplicationInfoGridItemData
 import com.eblan.launcher.domain.model.FolderEblanApplicationInfoWrapper
-import com.eblan.launcher.domain.model.FolderPopupEntry
 import com.eblan.launcher.domain.model.PreviewFolderEblanApplicationInfo
 import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
-import com.eblan.launcher.domain.usecase.grid.FOLDER_PREVIEW_COLUMNS
-import com.eblan.launcher.domain.usecase.grid.FOLDER_PREVIEW_ROWS
 import com.eblan.launcher.domain.usecase.grid.getGridDimension
 import com.eblan.launcher.domain.usecase.util.getPreviewFolderGridItems
-import jdk.internal.org.jline.utils.InfoCmp
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine

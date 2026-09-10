@@ -53,7 +53,7 @@ import com.eblan.launcher.common.R.string.custom_label
 import com.eblan.launcher.common.R.string.none
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.EblanApplicationInfo
-import com.eblan.launcher.domain.model.EblanApplicationInfoSelectedTag
+import com.eblan.launcher.domain.model.EblanApplicationInfoTagUi
 import com.eblan.launcher.domain.model.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.IconPackInfoComponent
 import com.eblan.launcher.domain.model.PackageManagerIconPackInfo
@@ -110,7 +110,7 @@ internal fun EditApplicationInfoRoute(
 @Composable
 internal fun EditApplicationInfoScreen(
     modifier: Modifier = Modifier,
-    eblanApplicationInfoTagsUi: List<EblanApplicationInfoSelectedTag>,
+    eblanApplicationInfoTagsUi: List<EblanApplicationInfoTagUi>,
     editApplicationInfoUiState: EditApplicationInfoUiState,
     iconPackInfoComponents: List<IconPackInfoComponent>,
     packageManagerIconPackInfos: List<PackageManagerIconPackInfo>,
@@ -184,7 +184,7 @@ internal fun EditApplicationInfoScreen(
 private fun Success(
     modifier: Modifier = Modifier,
     eblanApplicationInfo: EblanApplicationInfo,
-    eblanApplicationInfoTagsUi: List<EblanApplicationInfoSelectedTag>,
+    eblanApplicationInfoTagsUi: List<EblanApplicationInfoTagUi>,
     iconPackInfoComponents: List<IconPackInfoComponent>,
     packageManagerIconPackInfos: List<PackageManagerIconPackInfo>,
     onAddEblanApplicationInfoCrossRef: (Long) -> Unit,
@@ -321,7 +321,7 @@ private fun Success(
 @Composable
 private fun Tags(
     modifier: Modifier = Modifier,
-    eblanApplicationInfoTagsUi: List<EblanApplicationInfoSelectedTag>,
+    eblanApplicationInfoTagsUi: List<EblanApplicationInfoTagUi>,
     onAddEblanApplicationInfoCrossRef: (Long) -> Unit,
     onAddEblanApplicationInfoTag: (EblanApplicationInfoTag) -> Unit,
     onDeleteEblanApplicationInfoCrossRef: (Long) -> Unit,
@@ -332,20 +332,20 @@ private fun Tags(
 
     var showUpdateTagDialog by remember { mutableStateOf(false) }
 
-    var selectedEblanApplicationInfoSelectedTag by remember {
-        mutableStateOf<EblanApplicationInfoSelectedTag?>(null)
+    var selectedEblanApplicationInfoTagUi by remember {
+        mutableStateOf<EblanApplicationInfoTagUi?>(null)
     }
 
     FlowRow(modifier = modifier.fillMaxWidth()) {
         eblanApplicationInfoTagsUi.forEach { eblanApplicationInfoTagUi ->
             EblanApplicationInfoTagItem(
-                eblanApplicationInfoSelectedTag = eblanApplicationInfoTagUi,
+                eblanApplicationInfoTagUi = eblanApplicationInfoTagUi,
                 onAddEblanApplicationInfoCrossRef = onAddEblanApplicationInfoCrossRef,
                 onDeleteEblanApplicationInfoCrossRef = onDeleteEblanApplicationInfoCrossRef,
                 onShowUpdateTagDialog = {
                     showUpdateTagDialog = true
 
-                    selectedEblanApplicationInfoSelectedTag = it
+                    selectedEblanApplicationInfoTagUi = it
                 },
             )
         }
@@ -368,7 +368,7 @@ private fun Tags(
 
     if (showUpdateTagDialog) {
         UpdateTagDialog(
-            eblanApplicationInfoSelectedTag = selectedEblanApplicationInfoSelectedTag,
+            eblanApplicationInfoTagUi = selectedEblanApplicationInfoTagUi,
             onDeleteEblanApplicationInfoTag = onDeleteEblanApplicationInfoTag,
             onDismissRequest = {
                 showUpdateTagDialog = false
@@ -381,10 +381,10 @@ private fun Tags(
 @Composable
 private fun EblanApplicationInfoTagItem(
     modifier: Modifier = Modifier,
-    eblanApplicationInfoSelectedTag: EblanApplicationInfoSelectedTag,
+    eblanApplicationInfoTagUi: EblanApplicationInfoTagUi,
     onAddEblanApplicationInfoCrossRef: (Long) -> Unit,
     onDeleteEblanApplicationInfoCrossRef: (Long) -> Unit,
-    onShowUpdateTagDialog: (EblanApplicationInfoSelectedTag) -> Unit,
+    onShowUpdateTagDialog: (EblanApplicationInfoTagUi) -> Unit,
 ) {
     Card(
         modifier = modifier.padding(5.dp),
@@ -394,21 +394,21 @@ private fun EblanApplicationInfoTagItem(
             modifier = Modifier
                 .combinedClickable(
                     onClick = {
-                        if (eblanApplicationInfoSelectedTag.selected) {
-                            onDeleteEblanApplicationInfoCrossRef(eblanApplicationInfoSelectedTag.id)
+                        if (eblanApplicationInfoTagUi.selected) {
+                            onDeleteEblanApplicationInfoCrossRef(eblanApplicationInfoTagUi.id)
                         } else {
-                            onAddEblanApplicationInfoCrossRef(eblanApplicationInfoSelectedTag.id)
+                            onAddEblanApplicationInfoCrossRef(eblanApplicationInfoTagUi.id)
                         }
                     },
                     onLongClick = {
-                        onShowUpdateTagDialog(eblanApplicationInfoSelectedTag)
+                        onShowUpdateTagDialog(eblanApplicationInfoTagUi)
                     },
                 )
                 .padding(10.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            if (eblanApplicationInfoSelectedTag.selected) {
+            if (eblanApplicationInfoTagUi.selected) {
                 Icon(
                     imageVector = EblanLauncherIcons.Done,
                     contentDescription = null,
@@ -417,7 +417,7 @@ private fun EblanApplicationInfoTagItem(
             }
 
             Text(
-                text = eblanApplicationInfoSelectedTag.name,
+                text = eblanApplicationInfoTagUi.name,
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
@@ -457,25 +457,25 @@ private fun AddTag(
 @Composable
 private fun Folders(
     modifier: Modifier = Modifier,
-    eblanApplicationInfoTagsUi: List<EblanApplicationInfoSelectedTag>,
+    eblanApplicationInfoTagsUi: List<EblanApplicationInfoTagUi>,
     onAddEblanApplicationInfoCrossRef: (Long) -> Unit,
     onAddEblanApplicationInfoTag: (EblanApplicationInfoTag) -> Unit,
     onDeleteEblanApplicationInfoCrossRef: (Long) -> Unit,
 ) {
     var showAddTagDialog by remember { mutableStateOf(false) }
 
-    var selectedEblanApplicationInfoSelectedTag by remember {
-        mutableStateOf<EblanApplicationInfoSelectedTag?>(null)
+    var selectedEblanApplicationInfoTagUi by remember {
+        mutableStateOf<EblanApplicationInfoTagUi?>(null)
     }
 
     FlowRow(modifier = modifier.fillMaxWidth()) {
         eblanApplicationInfoTagsUi.forEach { eblanApplicationInfoTagUi ->
             EblanApplicationInfoTagItem(
-                eblanApplicationInfoSelectedTag = eblanApplicationInfoTagUi,
+                eblanApplicationInfoTagUi = eblanApplicationInfoTagUi,
                 onAddEblanApplicationInfoCrossRef = onAddEblanApplicationInfoCrossRef,
                 onDeleteEblanApplicationInfoCrossRef = onDeleteEblanApplicationInfoCrossRef,
                 onShowUpdateTagDialog = {
-                    selectedEblanApplicationInfoSelectedTag = it
+                    selectedEblanApplicationInfoTagUi = it
                 },
             )
         }

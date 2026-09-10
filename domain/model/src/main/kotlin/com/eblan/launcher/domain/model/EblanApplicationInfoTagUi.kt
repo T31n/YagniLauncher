@@ -17,7 +17,7 @@
  */
 package com.eblan.launcher.domain.model
 
-data class EblanApplicationInfoSelectedTag(
+data class EblanApplicationInfoTagUi(
     val id: Long,
     val name: String,
     val selected: Boolean,
