@@ -28,6 +28,7 @@ import com.eblan.launcher.data.room.dao.EblanApplicationInfoTagDao
 import com.eblan.launcher.data.room.dao.EblanIconPackInfoDao
 import com.eblan.launcher.data.room.dao.EblanShortcutConfigDao
 import com.eblan.launcher.data.room.dao.EblanShortcutInfoDao
+import com.eblan.launcher.data.room.dao.FolderEblanApplicationInfoDao
 import com.eblan.launcher.data.room.dao.FolderGridItemDao
 import com.eblan.launcher.data.room.dao.ShortcutConfigGridItemDao
 import com.eblan.launcher.data.room.dao.ShortcutInfoGridItemDao
@@ -121,6 +122,8 @@ internal abstract class EblanDatabase : RoomDatabase() {
     abstract fun eblanApplicationInfoTagCrossRefDao(): EblanApplicationInfoTagCrossRefDao
 
     abstract fun eblanApplicationInfoTagDao(): EblanApplicationInfoTagDao
+
+    abstract fun folderEblanApplicationInfoDao(): FolderEblanApplicationInfoDao
 
     companion object {
         const val DATABASE_NAME = "Eblan.db"
