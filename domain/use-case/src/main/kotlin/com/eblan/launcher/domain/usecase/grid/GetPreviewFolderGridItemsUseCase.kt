@@ -20,10 +20,12 @@ package com.eblan.launcher.domain.usecase.grid
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.model.FolderGridItemWrapper
+import com.eblan.launcher.domain.model.GridItem
 import com.eblan.launcher.domain.model.GridItemData
 import com.eblan.launcher.domain.model.PreviewFolder
 import com.eblan.launcher.domain.repository.FolderGridItemRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
+import com.eblan.launcher.domain.usecase.util.getPreviewFolderGridItems
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -52,20 +54,20 @@ class GetPreviewFolderGridItemsUseCase @Inject constructor(
         maxFolderRows: Int,
     ): PreviewFolder {
         val folderGridItems = (
-            applicationInfoGridItems.map {
-                it.asGridItem()
-            } + shortcutInfoGridItems.map { it.asGridItem() } +
-                shortcutConfigGridItems.map { it.asGridItem() } +
-                folderGridItems.map { it.asGridItem() }
-            ).sortedBy { gridItem ->
-            when (val data = gridItem.data) {
-                is GridItemData.ApplicationInfo -> data.index
-                is GridItemData.ShortcutInfo -> data.index
-                is GridItemData.ShortcutConfig -> data.index
-                is GridItemData.Folder -> data.index
-                else -> error("Unsupported folder grid item")
+                applicationInfoGridItems.map {
+                    it.asGridItem()
+                } + shortcutInfoGridItems.map { it.asGridItem() } +
+                        shortcutConfigGridItems.map { it.asGridItem() } +
+                        folderGridItems.map { it.asGridItem() }
+                ).sortedBy { gridItem ->
+                when (val data = gridItem.data) {
+                    is GridItemData.ApplicationInfo -> data.index
+                    is GridItemData.ShortcutInfo -> data.index
+                    is GridItemData.ShortcutConfig -> data.index
+                    is GridItemData.Folder -> data.index
+                    else -> error("Unsupported folder grid item")
+                }
             }
-        }
 
         val (columns, rows) = getGridDimension(
             count = folderGridItems.size,
@@ -73,15 +75,11 @@ class GetPreviewFolderGridItemsUseCase @Inject constructor(
             maxFolderRows = maxFolderRows,
         )
 
-        val previewFolderGridItems = buildList {
-            for (row in 0 until minOf(rows, FOLDER_PREVIEW_ROWS)) {
-                for (column in 0 until minOf(columns, FOLDER_PREVIEW_COLUMNS)) {
-                    val index = row * columns + column
-
-                    folderGridItems.getOrNull(index)?.let(::add)
-                }
-            }
-        }
+        val previewFolderGridItems = getPreviewFolderGridItems(
+            rows = rows,
+            columns = columns,
+            folderGridItems = folderGridItems,
+        )
 
         return PreviewFolder(
             previewFolderGridItems = previewFolderGridItems,

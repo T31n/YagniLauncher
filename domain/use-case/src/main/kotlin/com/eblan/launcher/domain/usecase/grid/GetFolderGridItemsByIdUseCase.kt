@@ -49,8 +49,7 @@ class GetFolderGridItemsByIdUseCase @Inject constructor(
         folderPopupEntries.mapNotNull { folderPopupEntry ->
             folderGridItemWrappers.firstOrNull {
                 it.folderGridItem.id == folderPopupEntry.id
-            }?.asFolderPopup(
-                folderGridItemRepository = folderGridItemRepository,
+            }?.FolderGridItemPopup(
                 folderPopupEntry = folderPopupEntry,
                 maxFolderColumns = userData.homeSettings.maxFolderColumns,
                 maxFolderRows = userData.homeSettings.maxFolderRows,
@@ -58,8 +57,7 @@ class GetFolderGridItemsByIdUseCase @Inject constructor(
         }
     }.flowOn(defaultDispatcher)
 
-    private suspend fun FolderGridItemWrapper.asFolderPopup(
-        folderGridItemRepository: FolderGridItemRepository,
+    private suspend fun FolderGridItemWrapper.FolderGridItemPopup(
         folderPopupEntry: FolderPopupEntry,
         maxFolderColumns: Int,
         maxFolderRows: Int,

@@ -17,10 +17,7 @@
  */
 package com.eblan.launcher.domain.model
 
-data class FolderEblanApplicationInfo(
+data class PreviewFolderEblanApplicationInfo(
     val id: String,
-    val icon: String?,
-    val label: String,
-    val folderIndex: Int,
-    val folderId: String?,
+    val previewFolderGridItems: List<FolderEblanApplicationInfoGridItem>,
 )

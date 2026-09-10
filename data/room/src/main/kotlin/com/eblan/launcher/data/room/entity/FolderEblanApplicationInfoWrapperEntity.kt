@@ -28,4 +28,10 @@ data class FolderEblanApplicationInfoWrapperEntity(
         entityColumn = "folderId",
     )
     val eblanApplicationInfoEntities: List<EblanApplicationInfoEntity>,
+
+    @Relation(
+        parentColumn = "id",
+        entityColumn = "folderId",
+    )
+    val folderEblanApplicationInfoEntities: List<FolderEblanApplicationInfoEntity>,
 )

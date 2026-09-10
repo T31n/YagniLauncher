@@ -19,5 +19,6 @@ package com.eblan.launcher.domain.model
 
 data class FolderEblanApplicationInfoWrapper(
     val folderEblanApplicationInfo: FolderEblanApplicationInfo,
-    val eblanApplicationInfoEntities: List<EblanApplicationInfo>,
+    val eblanApplicationInfos: List<EblanApplicationInfo>,
+    val folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
 )

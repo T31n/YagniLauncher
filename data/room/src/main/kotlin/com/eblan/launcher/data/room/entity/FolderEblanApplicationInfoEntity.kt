@@ -38,6 +38,8 @@ import androidx.room.PrimaryKey
 data class FolderEblanApplicationInfoEntity(
     @PrimaryKey
     val id: String,
+    val icon: String?,
+    val label: String,
     val folderIndex: Int,
     val folderId: String?,
 )

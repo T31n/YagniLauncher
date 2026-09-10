@@ -19,8 +19,9 @@ package com.eblan.launcher.domain.usecase.application
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
+import com.eblan.launcher.domain.model.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.FolderEblanApplicationInfoPopup
-import com.eblan.launcher.domain.model.FolderGridItemPopup
+import com.eblan.launcher.domain.model.FolderEblanApplicationInfoWrapper
 import com.eblan.launcher.domain.model.FolderPopupEntry
 import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.UserDataRepository

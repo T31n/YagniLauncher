@@ -27,6 +27,8 @@ import com.eblan.launcher.domain.model.GridItems
 import com.eblan.launcher.domain.model.ShortcutQuery
 import com.eblan.launcher.domain.model.ShortcutQueryFlag
 import com.eblan.launcher.domain.repository.FolderGridItemRepository
+import com.eblan.launcher.domain.usecase.grid.FOLDER_PREVIEW_COLUMNS
+import com.eblan.launcher.domain.usecase.grid.FOLDER_PREVIEW_ROWS
 import com.eblan.launcher.domain.usecase.grid.asGridItem
 
 internal suspend fun deleteGridItemData(
@@ -117,6 +119,20 @@ internal fun GridItem.isTopLevel() = when (val itemData = data) {
     is GridItemData.ShortcutConfig -> itemData.folderId == null
     is GridItemData.ShortcutInfo -> itemData.folderId == null
     is GridItemData.Widget -> true
+}
+
+internal fun <T> getPreviewFolderGridItems(
+    rows: Int,
+    columns: Int,
+    folderGridItems: List<T>,
+): List<T> = buildList {
+    for (row in 0 until minOf(rows, FOLDER_PREVIEW_ROWS)) {
+        for (column in 0 until minOf(columns, FOLDER_PREVIEW_COLUMNS)) {
+            val index = row * columns + column
+
+            folderGridItems.getOrNull(index)?.let(::add)
+        }
+    }
 }
 
 private suspend fun updatePinShortcutsByPackageName(
