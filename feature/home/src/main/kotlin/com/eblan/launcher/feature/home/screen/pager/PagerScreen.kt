@@ -124,6 +124,7 @@ import com.eblan.launcher.domain.model.ManagedProfileResult
 import com.eblan.launcher.domain.model.MoveGridItemResult
 import com.eblan.launcher.domain.model.PinItemRequestType
 import com.eblan.launcher.domain.model.PreviewFolder
+import com.eblan.launcher.domain.model.PreviewFolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.TextColor
 import com.eblan.launcher.feature.home.component.GridLayout
 import com.eblan.launcher.feature.home.component.HomeHandler
@@ -191,6 +192,7 @@ internal fun PagerScreen(
     isVisibleOverlay: Boolean,
     previewFolderGridItems: Map<String, PreviewFolder>,
     iconPackInfoFilePaths: Map<String, String?>,
+    previewFolderEblanApplicationInfos: List<PreviewFolderEblanApplicationInfo>,
     onDeleteGridItem: (GridItem) -> Unit,
     onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
@@ -1112,6 +1114,10 @@ internal fun PagerScreen(
                 systemTextColor = textColor,
                 systemCustomTextColor = homeSettings.gridItemSettings.customTextColor,
                 animations = experimentalSettings.gridItemAnimation,
+                previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+                folderCornerRadius = homeSettings.folderCornerRadius,
+                folderBackgroundColor = homeSettings.folderBackgroundColor,
+                customFolderBackgroundColor = homeSettings.customFolderBackgroundColor,
                 onDismiss = pagerScreenState::dismissApplicationScreen,
                 onDragEnd = pagerScreenState::handleOnDragEndApplicationScreen,
                 onEditApplicationInfo = onEditApplicationInfo,

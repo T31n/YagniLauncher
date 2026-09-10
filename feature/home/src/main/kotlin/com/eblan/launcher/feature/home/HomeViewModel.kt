@@ -39,6 +39,7 @@ import com.eblan.launcher.domain.usecase.application.GetEblanAppWidgetProviderIn
 import com.eblan.launcher.domain.usecase.application.GetEblanApplicationInfosByLabelAndTagUseCase
 import com.eblan.launcher.domain.usecase.application.GetEblanShortcutConfigsByLabelUseCase
 import com.eblan.launcher.domain.usecase.application.GetEblanShortcutInfosUseCase
+import com.eblan.launcher.domain.usecase.application.GetPreviewFolderEblanApplicationInfosUseCase
 import com.eblan.launcher.domain.usecase.grid.DeleteGridItemUseCase
 import com.eblan.launcher.domain.usecase.grid.GetFolderGridItemsByIdUseCase
 import com.eblan.launcher.domain.usecase.grid.GetPreviewFolderGridItemsUseCase
@@ -103,6 +104,7 @@ internal class HomeViewModel @Inject constructor(
     private val deleteGridItemUseCase: DeleteGridItemUseCase,
     getTextColorUseCase: GetTextColorUseCase,
     getPreviewFolderGridItemsUseCase: GetPreviewFolderGridItemsUseCase,
+    getPreviewFolderEblanApplicationInfosUseCase: GetPreviewFolderEblanApplicationInfosUseCase,
 ) : ViewModel() {
     val homeUiState = getHomeDataUseCase().map(HomeUiState::Success).stateIn(
         scope = viewModelScope,
@@ -111,25 +113,20 @@ internal class HomeViewModel @Inject constructor(
     )
 
     private val _screen = MutableStateFlow(Screen.Pager)
-
     val screen = _screen.asStateFlow()
 
     private val _moveGridItemResult = MutableStateFlow<MoveGridItemResult?>(null)
-
     val movedGridItemResult = _moveGridItemResult.asStateFlow()
 
     private val defaultDelay = 500L.milliseconds
-
     private val moveDelay = 50L.milliseconds
 
     private val _pageItems = MutableStateFlow<List<PageItem>?>(null)
-
     val pageItems = _pageItems.asStateFlow()
 
     private var moveGridItemJob: Job? = null
 
     private val _pinGridItem = MutableStateFlow<GridItem?>(null)
-
     val pinGridItem = _pinGridItem.asStateFlow()
 
     val eblanShortcutInfosGroup = getEblanShortcutInfosUseCase().stateIn(
@@ -150,9 +147,7 @@ internal class HomeViewModel @Inject constructor(
         )
 
     private val _eblanApplicationInfoLabel = MutableStateFlow("")
-
     private val _eblanApplicationInfoTagId = MutableStateFlow<Long?>(null)
-
     val getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTagUseCase(
         labelFlow = _eblanApplicationInfoLabel,
         eblanApplicationInfoTagIdFlow = _eblanApplicationInfoTagId,
@@ -168,7 +163,6 @@ internal class HomeViewModel @Inject constructor(
     )
 
     private val _eblanAppWidgetProviderInfoLabel = MutableStateFlow("")
-
     val eblanAppWidgetProviderInfos =
         getEblanAppWidgetProviderInfosByLabelUseCase(labelFlow = _eblanAppWidgetProviderInfoLabel).stateIn(
             scope = viewModelScope,
@@ -177,7 +171,6 @@ internal class HomeViewModel @Inject constructor(
         )
 
     private val _eblanShortcutConfigLabel = MutableStateFlow("")
-
     val eblanShortcutConfigs =
         getEblanShortcutConfigsByLabelUseCase(labelFlow = _eblanShortcutConfigLabel).stateIn(
             scope = viewModelScope,
@@ -199,7 +192,6 @@ internal class HomeViewModel @Inject constructor(
     private var shortcutsChangedJob: Job? = null
 
     private val _folderPopupEntries = MutableStateFlow<List<FolderPopupEntry>>(emptyList())
-
     val folderPopups = getFolderGridItemsByIdUseCase(
         folderPopupEntriesFlow = _folderPopupEntries,
     ).stateIn(
@@ -209,15 +201,12 @@ internal class HomeViewModel @Inject constructor(
     )
 
     private val _resizeGridItem = MutableStateFlow<GridItem?>(null)
-
     val resizeGridItem = _resizeGridItem.asStateFlow()
 
     private val _gridItemSource = MutableStateFlow<GridItemSource?>(null)
-
     val gridItemSource = _gridItemSource.asStateFlow()
 
     private val _isVisibleOverlay = MutableStateFlow(false)
-
     val isVisibleOverlay = _isVisibleOverlay.asStateFlow()
 
     val textColor = getTextColorUseCase().stateIn(
@@ -231,6 +220,13 @@ internal class HomeViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = emptyMap(),
     )
+
+    val previewFolderEblanApplicationInfos =
+        getPreviewFolderEblanApplicationInfosUseCase().stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = emptyList(),
+        )
 
     fun moveGridItem(
         movingGridItem: GridItem,

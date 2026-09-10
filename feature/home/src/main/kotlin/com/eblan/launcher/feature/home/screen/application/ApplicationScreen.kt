@@ -88,6 +88,7 @@ import com.eblan.launcher.domain.model.EblanUserType
 import com.eblan.launcher.domain.model.GetEblanApplicationInfosByLabelAndTag
 import com.eblan.launcher.domain.model.ManagedProfileResult
 import com.eblan.launcher.domain.model.MoveGridItemResult
+import com.eblan.launcher.domain.model.PreviewFolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.TextColor
 import com.eblan.launcher.feature.home.R
 import com.eblan.launcher.feature.home.component.HomeHandler
@@ -130,6 +131,10 @@ internal fun ApplicationScreen(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     animations: Boolean,
+    previewFolderEblanApplicationInfos: List<PreviewFolderEblanApplicationInfo>,
+    folderCornerRadius: Int,
+    folderBackgroundColor: BackgroundColor,
+    customFolderBackgroundColor: Int,
     onDismiss: () -> Unit,
     onDragEnd: () -> Unit,
     onEditApplicationInfo: (
@@ -192,6 +197,10 @@ internal fun ApplicationScreen(
                     systemTextColor = systemTextColor,
                     systemCustomTextColor = systemCustomTextColor,
                     animations = animations,
+                    previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+                    folderCornerRadius = folderCornerRadius,
+                    folderBackgroundColor = folderBackgroundColor,
+                    customFolderBackgroundColor = customFolderBackgroundColor,
                     onDismiss = onDismiss,
                     onDragEnd = onDragEnd,
                     onEditApplicationInfo = onEditApplicationInfo,

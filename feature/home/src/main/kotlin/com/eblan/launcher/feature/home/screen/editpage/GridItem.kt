@@ -337,6 +337,7 @@ private fun FolderGridItem(
                 PreviewFolderGridLayout(
                     modifier = Modifier.fillMaxSize(),
                     gridItems = previewFolderGridItems[gridItem.id]?.previewFolderGridItems,
+                    slotId = { it.id },
                     content = {
                         PreviewFolderGridItemContent(
                             gridItem = it,

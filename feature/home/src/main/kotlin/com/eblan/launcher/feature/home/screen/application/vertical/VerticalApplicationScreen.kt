@@ -65,6 +65,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.AppDrawerSettings
+import com.eblan.launcher.domain.model.BackgroundColor
 import com.eblan.launcher.domain.model.EblanAppWidgetProviderInfo
 import com.eblan.launcher.domain.model.EblanApplicationInfo
 import com.eblan.launcher.domain.model.EblanApplicationInfoGroup
@@ -77,6 +78,7 @@ import com.eblan.launcher.domain.model.EblanUserType
 import com.eblan.launcher.domain.model.GetEblanApplicationInfosByLabelAndTag
 import com.eblan.launcher.domain.model.ManagedProfileResult
 import com.eblan.launcher.domain.model.MoveGridItemResult
+import com.eblan.launcher.domain.model.PreviewFolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.TextColor
 import com.eblan.launcher.feature.home.component.OffsetNestedScrollConnection
 import com.eblan.launcher.feature.home.model.Drag
@@ -84,9 +86,10 @@ import com.eblan.launcher.feature.home.model.GridItemSource
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.screen.application.ApplicationInfoPopup
 import com.eblan.launcher.feature.home.screen.application.ApplicationScreenEffect
-import com.eblan.launcher.feature.home.screen.application.ApplicationSearchBarWithoutMenu
+import com.eblan.launcher.feature.home.screen.application.ApplicationSearchBar
 import com.eblan.launcher.feature.home.screen.application.EblanApplicationInfoGridItem
 import com.eblan.launcher.feature.home.screen.application.EblanApplicationInfoTabRow
+import com.eblan.launcher.feature.home.screen.application.FolderEblanApplicationInfoGridItem
 import com.eblan.launcher.feature.home.screen.application.PrivateApplicationInfoPopup
 import com.eblan.launcher.feature.home.screen.application.QuiteModeScreen
 import com.eblan.launcher.feature.home.screen.application.TagElevatedFilterChip
@@ -117,6 +120,10 @@ internal fun VerticalApplicationScreen(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     animations: Boolean,
+    previewFolderEblanApplicationInfos: List<PreviewFolderEblanApplicationInfo>,
+    folderCornerRadius: Int,
+    folderBackgroundColor: BackgroundColor,
+    customFolderBackgroundColor: Int,
     onDismiss: () -> Unit,
     onDragEnd: () -> Unit,
     onEditApplicationInfo: (
@@ -195,7 +202,7 @@ internal fun VerticalApplicationScreen(
                 end = paddingValues.calculateEndPadding(layoutDirection),
             ),
     ) {
-        ApplicationSearchBarWithoutMenu(
+        ApplicationSearchBar(
             focusRequester = focusRequester,
             searchBarState = searchBarState,
             textFieldState = textFieldState,
@@ -252,6 +259,10 @@ internal fun VerticalApplicationScreen(
                 systemTextColor = systemTextColor,
                 systemCustomTextColor = systemCustomTextColor,
                 animations = animations,
+                previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+                folderCornerRadius = folderCornerRadius,
+                folderBackgroundColor = folderBackgroundColor,
+                customFolderBackgroundColor = customFolderBackgroundColor,
                 onDismiss = onDismiss,
                 onDragEnd = onDragEnd,
                 onUpdateGridItemSource = onUpdateGridItemSource,
@@ -348,6 +359,10 @@ private fun EblanApplicationInfosPage(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     animations: Boolean,
+    previewFolderEblanApplicationInfos: List<PreviewFolderEblanApplicationInfo>,
+    folderCornerRadius: Int,
+    folderBackgroundColor: BackgroundColor,
+    customFolderBackgroundColor: Int,
     onDismiss: () -> Unit,
     onDragEnd: () -> Unit,
     onUpdateGridItemSource: (GridItemSource) -> Unit,
@@ -423,6 +438,10 @@ private fun EblanApplicationInfosPage(
                 systemTextColor = systemTextColor,
                 systemCustomTextColor = systemCustomTextColor,
                 animations = animations,
+                previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+                folderCornerRadius = folderCornerRadius,
+                folderBackgroundColor = folderBackgroundColor,
+                customFolderBackgroundColor = customFolderBackgroundColor,
                 onDismiss = onDismiss,
                 onDragEnd = onDragEnd,
                 onUpdateGridItemSource = onUpdateGridItemSource,
@@ -485,6 +504,10 @@ private fun EblanApplicationInfos(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     animations: Boolean,
+    previewFolderEblanApplicationInfos: List<PreviewFolderEblanApplicationInfo>,
+    folderCornerRadius: Int,
+    folderBackgroundColor: BackgroundColor,
+    customFolderBackgroundColor: Int,
     onDismiss: () -> Unit,
     onDragEnd: () -> Unit,
     onUpdateGridItemSource: (GridItemSource) -> Unit,
@@ -567,6 +590,21 @@ private fun EblanApplicationInfos(
         ) {
             when (eblanUserPageKey.eblanUser.eblanUserType) {
                 EblanUserType.Personal -> {
+                    items(items = previewFolderEblanApplicationInfos) {
+                        FolderEblanApplicationInfoGridItem(
+                            previewFolderEblanApplicationInfo = it,
+                            appDrawerSettings = appDrawerSettings,
+                            isVisibleOverlay = isVisibleOverlay,
+                            appDrawerType = appDrawerSettings.appDrawerType,
+                            systemTextColor = systemTextColor,
+                            systemCustomTextColor = systemCustomTextColor,
+                            iconPackInfoFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackInfoFilePaths,
+                            folderCornerRadius = folderCornerRadius,
+                            folderBackgroundColor = folderBackgroundColor,
+                            customFolderBackgroundColor = customFolderBackgroundColor,
+                        )
+                    }
+
                     items(
                         items = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfoWithIconPackInfos[eblanUserPageKey].orEmpty(),
                         key = { it.serialNumber to it.componentName },

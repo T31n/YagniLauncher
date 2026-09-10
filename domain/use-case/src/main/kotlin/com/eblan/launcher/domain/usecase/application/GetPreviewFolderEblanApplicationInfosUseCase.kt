@@ -79,38 +79,36 @@ class GetPreviewFolderEblanApplicationInfosUseCase @Inject constructor(
         )
 
         return PreviewFolderEblanApplicationInfo(
-            id = folderEblanApplicationInfo.id,
+            folderEblanApplicationInfo = folderEblanApplicationInfo,
             previewFolderGridItems = previewFolderGridItems,
         )
     }
 
-    private fun FolderEblanApplicationInfo.asFolderEblanApplicationInfoGridItem(): FolderEblanApplicationInfoGridItem =
-        FolderEblanApplicationInfoGridItem(
-            id = id,
-            data = FolderEblanApplicationInfoGridItemData.Folder(
-                icon = icon,
-                label = label,
-                folderIndex = folderIndex,
-                folderId = folderId,
-            ),
-        )
+    private fun FolderEblanApplicationInfo.asFolderEblanApplicationInfoGridItem(): FolderEblanApplicationInfoGridItem = FolderEblanApplicationInfoGridItem(
+        id = id,
+        data = FolderEblanApplicationInfoGridItemData.Folder(
+            icon = icon,
+            label = label,
+            folderIndex = folderIndex,
+            folderId = folderId,
+        ),
+    )
 
-    private fun EblanApplicationInfo.asFolderEblanApplicationInfoGridItem(): FolderEblanApplicationInfoGridItem =
-        FolderEblanApplicationInfoGridItem(
-            id = "$componentName $serialNumber",
-            data = FolderEblanApplicationInfoGridItemData.ApplicationInfo(
-                componentName = componentName,
-                serialNumber = serialNumber,
-                packageName = packageName,
-                icon = icon,
-                label = label,
-                customIcon = customIcon,
-                customLabel = customLabel,
-                isHidden = isHidden,
-                lastUpdateTime = lastUpdateTime,
-                flags = flags,
-                folderIndex = folderIndex,
-                folderId = folderId,
-            ),
-        )
+    private fun EblanApplicationInfo.asFolderEblanApplicationInfoGridItem(): FolderEblanApplicationInfoGridItem = FolderEblanApplicationInfoGridItem(
+        id = "$componentName $serialNumber",
+        data = FolderEblanApplicationInfoGridItemData.ApplicationInfo(
+            componentName = componentName,
+            serialNumber = serialNumber,
+            packageName = packageName,
+            icon = icon,
+            label = label,
+            customIcon = customIcon,
+            customLabel = customLabel,
+            isHidden = isHidden,
+            lastUpdateTime = lastUpdateTime,
+            flags = flags,
+            folderIndex = folderIndex,
+            folderId = folderId,
+        ),
+    )
 }

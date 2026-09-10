@@ -1195,6 +1195,7 @@ private fun InteractiveFolderGridItem(
                 PreviewFolderGridLayout(
                     modifier = Modifier.fillMaxSize(),
                     gridItems = previewFolderGridItems[gridItem.id]?.previewFolderGridItems,
+                    slotId = { it.id },
                     content = {
                         PreviewFolderGridItem(
                             sharedTransitionScope = sharedTransitionScope,

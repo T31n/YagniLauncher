@@ -56,6 +56,7 @@ import com.eblan.launcher.domain.model.MoveGridItemResult
 import com.eblan.launcher.domain.model.PageItem
 import com.eblan.launcher.domain.model.PinItemRequestType
 import com.eblan.launcher.domain.model.PreviewFolder
+import com.eblan.launcher.domain.model.PreviewFolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.TextColor
 import com.eblan.launcher.feature.home.dialog.TextDialog
 import com.eblan.launcher.feature.home.model.GridItemSource
@@ -115,6 +116,8 @@ internal fun HomeRoute(
 
     val previewFolderGridItems by viewModel.previewFolderGridItems.collectAsStateWithLifecycle()
 
+    val previewFolderEblanApplicationInfos by viewModel.previewFolderEblanApplicationInfos.collectAsStateWithLifecycle()
+
     HomeScreen(
         modifier = modifier,
         configureResultCode = configureResultCode,
@@ -135,6 +138,7 @@ internal fun HomeRoute(
         isVisibleOverlay = isVisibleOverlay,
         textColor = textColor,
         previewFolderGridItems = previewFolderGridItems,
+        previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
         onResetGrid = viewModel::resetGrid,
         onDeleteGridItem = viewModel::deleteGridItem,
         onResetGridAfterDeleteGridItem = viewModel::resetGridAfterDeleteGridItem,
@@ -198,6 +202,7 @@ internal fun HomeScreen(
     isVisibleOverlay: Boolean,
     textColor: TextColor,
     previewFolderGridItems: Map<String, PreviewFolder>,
+    previewFolderEblanApplicationInfos: List<PreviewFolderEblanApplicationInfo>,
     onResetGrid: () -> Unit,
     onDeleteGridItem: (GridItem) -> Unit,
     onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
@@ -320,6 +325,7 @@ internal fun HomeScreen(
                 isVisibleOverlay = isVisibleOverlay,
                 textColor = textColor,
                 previewFolderGridItems = previewFolderGridItems,
+                previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
                 onResetGrid = onResetGrid,
                 onDeleteGridItem = onDeleteGridItem,
                 onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
@@ -388,6 +394,7 @@ private fun Success(
     isVisibleOverlay: Boolean,
     textColor: TextColor,
     previewFolderGridItems: Map<String, PreviewFolder>,
+    previewFolderEblanApplicationInfos: List<PreviewFolderEblanApplicationInfo>,
     onResetGrid: () -> Unit,
     onDeleteGridItem: (GridItem) -> Unit,
     onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
@@ -511,6 +518,7 @@ private fun Success(
                     isVisibleOverlay = isVisibleOverlay,
                     previewFolderGridItems = previewFolderGridItems,
                     iconPackInfoFilePaths = homeData.iconPackInfoFilePaths,
+                    previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
                     onDeleteGridItem = onDeleteGridItem,
                     onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
                     onUpdateGridItemsAfterMove = onUpdateGridItemsAfterMove,

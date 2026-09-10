@@ -112,7 +112,7 @@ import com.eblan.launcher.feature.home.model.GridItemSource
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.screen.application.ApplicationInfoPopup
 import com.eblan.launcher.feature.home.screen.application.ApplicationScreenEffect
-import com.eblan.launcher.feature.home.screen.application.ApplicationSearchBarWithoutMenu
+import com.eblan.launcher.feature.home.screen.application.ApplicationSearchBar
 import com.eblan.launcher.feature.home.screen.application.EblanApplicationInfoTabRow
 import com.eblan.launcher.feature.home.screen.application.PrivateApplicationInfoPopup
 import com.eblan.launcher.feature.home.screen.application.QuiteModeScreen
@@ -228,7 +228,7 @@ internal fun ListApplicationScreen(
                 end = paddingValues.calculateEndPadding(layoutDirection),
             ),
     ) {
-        ApplicationSearchBarWithoutMenu(
+        ApplicationSearchBar(
             focusRequester = focusRequester,
             searchBarState = searchBarState,
             textFieldState = textFieldState,

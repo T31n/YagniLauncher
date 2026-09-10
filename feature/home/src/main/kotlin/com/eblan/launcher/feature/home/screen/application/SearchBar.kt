@@ -48,7 +48,7 @@ import com.eblan.launcher.common.R as commonR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun ApplicationSearchBarWithoutMenu(
+internal fun ApplicationSearchBar(
     modifier: Modifier = Modifier,
     focusRequester: FocusRequester,
     searchBarState: SearchBarState,
