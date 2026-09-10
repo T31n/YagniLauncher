@@ -15,8 +15,13 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.common
+package com.eblan.launcher.common.di
 
+import com.eblan.launcher.common.AndroidImageSerializer
+import com.eblan.launcher.common.DefaultFileManager
+import com.eblan.launcher.common.DefaultIconKeyGenerator
+import com.eblan.launcher.common.DefaultImageSerializer
+import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import dagger.Binds
 import dagger.Module
@@ -31,4 +36,12 @@ internal interface CommonModule {
     @Binds
     @Singleton
     fun iconKeyGenerator(impl: DefaultIconKeyGenerator): IconKeyGenerator
+
+    @Binds
+    @Singleton
+    fun fileManager(impl: DefaultFileManager): FileManager
+
+    @Binds
+    @Singleton
+    fun androidImageSerializer(impl: DefaultImageSerializer): AndroidImageSerializer
 }

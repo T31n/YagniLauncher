@@ -15,20 +15,19 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.framework.filemanager
+package com.eblan.launcher.common
 
-import com.eblan.launcher.domain.framework.FileManager
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
+import java.io.File
 
-@Module
-@InstallIn(SingletonComponent::class)
-internal interface FileManagerModule {
+interface AndroidImageSerializer {
+    suspend fun createByteArray(drawable: Drawable): ByteArray?
 
-    @Binds
-    @Singleton
-    fun fileManager(impl: DefaultFileManager): FileManager
+    suspend fun createByteArray(bitmap: Bitmap?): ByteArray?
+
+    suspend fun createDrawablePath(
+        drawable: Drawable,
+        file: File,
+    )
 }

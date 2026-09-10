@@ -17,8 +17,8 @@
  */
 package com.eblan.launcher.domain.usecase.launcherapps
 
+import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
-import com.eblan.launcher.domain.framework.FileManager
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.grid.findAvailableRegionByPage
 import com.eblan.launcher.domain.model.AddNewEblanApplicationInfo

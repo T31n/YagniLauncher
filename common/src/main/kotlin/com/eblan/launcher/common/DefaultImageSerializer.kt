@@ -15,7 +15,7 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.framework.imageserializer
+package com.eblan.launcher.common
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory

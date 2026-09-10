@@ -15,16 +15,30 @@
  *   limitations under the License.
  *
  */
+package com.eblan.launcher.domain.common
 
-plugins {
-    alias(libs.plugins.com.eblan.launcher.library)
-    alias(libs.plugins.com.eblan.launcher.hilt)
-}
+import java.io.File
 
-android {
-    namespace = "com.eblan.launcher.framework.imageserializer"
-}
+interface FileManager {
+    suspend fun getFilesDirectory(name: String): File
 
-dependencies {
-    implementation(projects.domain.common)
+    suspend fun updateAndGetFilePath(
+        directory: File,
+        name: String,
+        byteArray: ByteArray,
+    ): String?
+
+    companion object {
+        const val ICONS_DIR = "icons"
+
+        const val WIDGETS_DIR = "widgets"
+
+        const val SHORTCUTS_DIR = "shortcuts"
+
+        const val ICON_PACKS_DIR = "iconpacks"
+
+        const val SHORTCUT_INTENT_ICONS_DIR = "shortcutsintenticons"
+
+        const val CUSTOM_ICONS_DIR = "customicons"
+    }
 }

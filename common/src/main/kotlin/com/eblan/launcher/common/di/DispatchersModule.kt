@@ -15,19 +15,25 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.framework.imageserializer
+package com.eblan.launcher.common.di
 
-import dagger.Binds
+import com.eblan.launcher.domain.common.Dispatcher
+import com.eblan.launcher.domain.common.EblanDispatchers
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal interface ImageSerializerModule {
+object DispatchersModule {
+    @Provides
+    @Dispatcher(EblanDispatchers.IO)
+    fun providesIODispatcher(): CoroutineDispatcher = Dispatchers.IO
 
-    @Binds
-    @Singleton
-    fun androidImageSerializer(impl: DefaultImageSerializer): AndroidImageSerializer
+    @Provides
+    @Dispatcher(EblanDispatchers.Default)
+    fun providesDefaultDispatcher(): CoroutineDispatcher = Dispatchers.Default
 }

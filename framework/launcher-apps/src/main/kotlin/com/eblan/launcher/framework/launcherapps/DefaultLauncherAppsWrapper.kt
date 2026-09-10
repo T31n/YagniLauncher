@@ -35,10 +35,11 @@ import android.os.Process.myUserHandle
 import android.os.UserHandle
 import android.os.UserManager
 import androidx.annotation.RequiresApi
+import com.eblan.launcher.common.AndroidImageSerializer
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
+import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
-import com.eblan.launcher.domain.framework.FileManager
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.model.EblanUser
@@ -50,7 +51,6 @@ import com.eblan.launcher.domain.model.LauncherAppsShortcutInfo
 import com.eblan.launcher.domain.model.ShortcutConfigActivityInfo
 import com.eblan.launcher.domain.model.ShortcutQuery
 import com.eblan.launcher.domain.model.ShortcutQueryFlag
-import com.eblan.launcher.framework.imageserializer.AndroidImageSerializer
 import com.eblan.launcher.framework.packagemanager.AndroidPackageManagerWrapper
 import com.eblan.launcher.framework.usermanager.AndroidUserManagerWrapper
 import dagger.hilt.android.qualifiers.ApplicationContext
