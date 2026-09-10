@@ -535,7 +535,7 @@ internal class HomeViewModel @Inject constructor(
 
             _moveGridItemResult.update {
                 moveFolderGridItemUseCase(
-                    folderPopup = folderGridItemPopup,
+                    folderGridItemPopup = folderGridItemPopup,
                     movingGridItem = movingGridItem,
                     dragX = dragX,
                     dragY = dragY,

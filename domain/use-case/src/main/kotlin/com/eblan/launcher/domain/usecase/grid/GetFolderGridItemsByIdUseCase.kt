@@ -20,10 +20,15 @@ package com.eblan.launcher.domain.usecase.grid
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.model.FolderGridItemPopup
+import com.eblan.launcher.domain.model.FolderGridItemWrapper
 import com.eblan.launcher.domain.model.FolderPopupEntry
+import com.eblan.launcher.domain.model.GridItem
+import com.eblan.launcher.domain.model.GridItemData
 import com.eblan.launcher.domain.repository.FolderGridItemRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
@@ -52,4 +57,78 @@ class GetFolderGridItemsByIdUseCase @Inject constructor(
             )
         }
     }.flowOn(defaultDispatcher)
+
+    private suspend fun FolderGridItemWrapper.asFolderPopup(
+        folderGridItemRepository: FolderGridItemRepository,
+        folderPopupEntry: FolderPopupEntry,
+        maxFolderColumns: Int,
+        maxFolderRows: Int,
+    ): FolderGridItemPopup {
+        val childFolderGridItems = folderGridItems.map {
+            folderGridItemRepository.getFolderGridItemWrapper(
+                id = it.id,
+            )?.asGridItem() ?: it.asGridItem()
+        }
+
+        val gridItems = (
+            applicationInfoGridItems.map {
+                it.asGridItem()
+            } + shortcutInfoGridItems.map {
+                it.asGridItem()
+            } + shortcutConfigGridItems.map {
+                it.asGridItem()
+            } + childFolderGridItems
+            ).sortedBy {
+            when (val data = it.data) {
+                is GridItemData.ApplicationInfo -> data.index
+                is GridItemData.ShortcutInfo -> data.index
+                is GridItemData.ShortcutConfig -> data.index
+                is GridItemData.Folder -> data.index
+                else -> error("Unsupported folder grid item")
+            }
+        }
+
+        val gridItemsByPage = gridItems.getGridItemsByPage(
+            maxFolderColumns = maxFolderColumns,
+            maxFolderRows = maxFolderRows,
+        )
+
+        val firstPageGridItems = gridItemsByPage.values.firstOrNull().orEmpty()
+
+        val (columns, rows) = getGridDimension(
+            count = firstPageGridItems.size,
+            maxFolderColumns = maxFolderColumns,
+            maxFolderRows = maxFolderRows,
+        )
+
+        val maxIndex = gridItems.maxOfOrNull {
+            when (val data = it.data) {
+                is GridItemData.ApplicationInfo -> data.index + 1
+                is GridItemData.ShortcutInfo -> data.index + 1
+                is GridItemData.ShortcutConfig -> data.index + 1
+                is GridItemData.Folder -> data.index + 1
+                else -> error("Unsupported folder grid item")
+            }
+        } ?: 0
+
+        return FolderGridItemPopup(
+            folderPopupEntry = folderPopupEntry,
+            gridItem = folderGridItem.asGridItem(),
+            gridItems = gridItems,
+            gridItemsByPage = gridItemsByPage,
+            label = folderGridItem.label,
+            columns = columns,
+            rows = rows,
+            maxIndex = maxIndex,
+        )
+    }
+
+    private suspend fun List<GridItem>.getGridItemsByPage(
+        maxFolderColumns: Int,
+        maxFolderRows: Int,
+    ): Map<Int, List<GridItem>> = chunked(maxFolderColumns * maxFolderRows).mapIndexed { index, gridItems ->
+        currentCoroutineContext().ensureActive()
+
+        index to gridItems
+    }.toMap()
 }

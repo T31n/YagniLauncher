@@ -19,6 +19,7 @@ package com.eblan.launcher.domain.usecase.grid
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
+import com.eblan.launcher.domain.model.FolderGridItemWrapper
 import com.eblan.launcher.domain.model.GridItemData
 import com.eblan.launcher.domain.model.PreviewFolder
 import com.eblan.launcher.domain.repository.FolderGridItemRepository
@@ -39,42 +40,52 @@ class GetPreviewFolderGridItemsUseCase @Inject constructor(
         folderGridItemRepository.folderGridItemWrappersFlow,
     ) { userData, folderGridItemWrappers ->
         folderGridItemWrappers.associate { folderGridItemWrapper ->
-            val folderGridItems = (
-                folderGridItemWrapper.applicationInfoGridItems.map {
-                    it.asGridItem()
-                } + folderGridItemWrapper.shortcutInfoGridItems.map { it.asGridItem() } +
-                    folderGridItemWrapper.shortcutConfigGridItems.map { it.asGridItem() } +
-                    folderGridItemWrapper.folderGridItems.map { it.asGridItem() }
-                ).sortedBy { gridItem ->
-                when (val data = gridItem.data) {
-                    is GridItemData.ApplicationInfo -> data.index
-                    is GridItemData.ShortcutInfo -> data.index
-                    is GridItemData.ShortcutConfig -> data.index
-                    is GridItemData.Folder -> data.index
-                    else -> error("Unsupported folder grid item")
-                }
-            }
-
-            val (columns, rows) = getGridDimension(
-                count = folderGridItems.size,
+            folderGridItemWrapper.folderGridItem.id to folderGridItemWrapper.asPreviewFolder(
                 maxFolderColumns = userData.homeSettings.maxFolderColumns,
                 maxFolderRows = userData.homeSettings.maxFolderRows,
             )
-
-            val previewFolderGridItems = buildList {
-                for (row in 0 until minOf(rows, FOLDER_PREVIEW_ROWS)) {
-                    for (column in 0 until minOf(columns, FOLDER_PREVIEW_COLUMNS)) {
-                        val index = row * columns + column
-
-                        folderGridItems.getOrNull(index)?.let(::add)
-                    }
-                }
-            }
-
-            folderGridItemWrapper.folderGridItem.id to PreviewFolder(
-                previewFolderGridItems = previewFolderGridItems,
-                folderGridItems = folderGridItems,
-            )
         }
     }.flowOn(defaultDispatcher)
+
+    private fun FolderGridItemWrapper.asPreviewFolder(
+        maxFolderColumns: Int,
+        maxFolderRows: Int,
+    ): PreviewFolder {
+        val folderGridItems = (
+            applicationInfoGridItems.map {
+                it.asGridItem()
+            } + shortcutInfoGridItems.map { it.asGridItem() } +
+                shortcutConfigGridItems.map { it.asGridItem() } +
+                folderGridItems.map { it.asGridItem() }
+            ).sortedBy { gridItem ->
+            when (val data = gridItem.data) {
+                is GridItemData.ApplicationInfo -> data.index
+                is GridItemData.ShortcutInfo -> data.index
+                is GridItemData.ShortcutConfig -> data.index
+                is GridItemData.Folder -> data.index
+                else -> error("Unsupported folder grid item")
+            }
+        }
+
+        val (columns, rows) = getGridDimension(
+            count = folderGridItems.size,
+            maxFolderColumns = maxFolderColumns,
+            maxFolderRows = maxFolderRows,
+        )
+
+        val previewFolderGridItems = buildList {
+            for (row in 0 until minOf(rows, FOLDER_PREVIEW_ROWS)) {
+                for (column in 0 until minOf(columns, FOLDER_PREVIEW_COLUMNS)) {
+                    val index = row * columns + column
+
+                    folderGridItems.getOrNull(index)?.let(::add)
+                }
+            }
+        }
+
+        return PreviewFolder(
+            previewFolderGridItems = previewFolderGridItems,
+            folderGridItems = folderGridItems,
+        )
+    }
 }

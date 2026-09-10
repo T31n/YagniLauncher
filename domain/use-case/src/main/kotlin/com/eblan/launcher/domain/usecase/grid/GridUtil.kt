@@ -22,16 +22,11 @@ import com.eblan.launcher.domain.model.EblanAction
 import com.eblan.launcher.domain.model.EblanActionType
 import com.eblan.launcher.domain.model.FolderGridItem
 import com.eblan.launcher.domain.model.FolderGridItemWrapper
-import com.eblan.launcher.domain.model.FolderGridItemPopup
-import com.eblan.launcher.domain.model.FolderPopupEntry
 import com.eblan.launcher.domain.model.GridItem
 import com.eblan.launcher.domain.model.GridItemData
 import com.eblan.launcher.domain.model.ShortcutConfigGridItem
 import com.eblan.launcher.domain.model.ShortcutInfoGridItem
 import com.eblan.launcher.domain.model.WidgetGridItem
-import com.eblan.launcher.domain.repository.FolderGridItemRepository
-import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.ensureActive
 import java.io.File
 import kotlin.math.ceil
 import kotlin.math.min
@@ -39,6 +34,63 @@ import kotlin.math.sqrt
 
 const val FOLDER_PREVIEW_COLUMNS = 2
 const val FOLDER_PREVIEW_ROWS = 2
+
+internal fun deleteGridItemCustomIconFile(gridItem: GridItem) = when (val data = gridItem.data) {
+    is GridItemData.ApplicationInfo -> {
+        data.customIcon?.let {
+            val customIconFile = File(it)
+
+            if (customIconFile.exists()) {
+                customIconFile.delete()
+            }
+        }
+    }
+
+    is GridItemData.ShortcutConfig -> {
+        data.customIcon?.let {
+            val customIconFile = File(it)
+
+            if (customIconFile.exists()) {
+                customIconFile.delete()
+            }
+        }
+    }
+
+    is GridItemData.ShortcutInfo -> {
+        data.customIcon?.let {
+            val customIconFile = File(it)
+
+            if (customIconFile.exists()) {
+                customIconFile.delete()
+            }
+        }
+    }
+
+    is GridItemData.Folder -> {
+        data.icon?.let {
+            val iconFile = File(it)
+
+            if (iconFile.exists()) {
+                iconFile.delete()
+            }
+        }
+    }
+
+    else -> Unit
+}
+
+internal fun getGridDimension(
+    count: Int,
+    maxFolderColumns: Int,
+    maxFolderRows: Int,
+): Pair<Int, Int> {
+    if (count <= 0) return 0 to 0
+
+    val columns = min(maxFolderColumns, ceil(sqrt(count.toDouble())).toInt())
+    val rows = min(maxFolderRows, ceil(count / columns.toDouble()).toInt())
+
+    return columns to rows
+}
 
 internal fun ApplicationInfoGridItem.asGridItem(): GridItem = GridItem(
     id = id,
@@ -193,71 +245,6 @@ internal fun FolderGridItem.asGridItem(): GridItem = GridItem(
     swipeDown = swipeDown,
 )
 
-internal suspend fun FolderGridItemWrapper.asFolderPopup(
-    folderGridItemRepository: FolderGridItemRepository,
-    folderPopupEntry: FolderPopupEntry,
-    maxFolderColumns: Int,
-    maxFolderRows: Int,
-): FolderGridItemPopup {
-    val childFolderGridItems = folderGridItems.map {
-        folderGridItemRepository.getFolderGridItemWrapper(
-            id = it.id,
-        )?.asGridItem() ?: it.asGridItem()
-    }
-
-    val gridItems = (
-        applicationInfoGridItems.map {
-            it.asGridItem()
-        } + shortcutInfoGridItems.map {
-            it.asGridItem()
-        } + shortcutConfigGridItems.map {
-            it.asGridItem()
-        } + childFolderGridItems
-        ).sortedBy {
-        when (val data = it.data) {
-            is GridItemData.ApplicationInfo -> data.index
-            is GridItemData.ShortcutInfo -> data.index
-            is GridItemData.ShortcutConfig -> data.index
-            is GridItemData.Folder -> data.index
-            else -> error("Unsupported folder grid item")
-        }
-    }
-
-    val gridItemsByPage = gridItems.getGridItemsByPage(
-        maxFolderColumns = maxFolderColumns,
-        maxFolderRows = maxFolderRows,
-    )
-
-    val firstPageGridItems = gridItemsByPage.values.firstOrNull().orEmpty()
-
-    val (columns, rows) = getGridDimension(
-        count = firstPageGridItems.size,
-        maxFolderColumns = maxFolderColumns,
-        maxFolderRows = maxFolderRows,
-    )
-
-    val maxIndex = gridItems.maxOfOrNull {
-        when (val data = it.data) {
-            is GridItemData.ApplicationInfo -> data.index + 1
-            is GridItemData.ShortcutInfo -> data.index + 1
-            is GridItemData.ShortcutConfig -> data.index + 1
-            is GridItemData.Folder -> data.index + 1
-            else -> error("Unsupported folder grid item")
-        }
-    } ?: 0
-
-    return FolderGridItemPopup(
-        folderPopupEntry = folderPopupEntry,
-        gridItem = folderGridItem.asGridItem(),
-        gridItems = gridItems,
-        gridItemsByPage = gridItemsByPage,
-        label = folderGridItem.label,
-        columns = columns,
-        rows = rows,
-        maxIndex = maxIndex,
-    )
-}
-
 internal fun FolderGridItemWrapper.asGridItem(): GridItem = GridItem(
     id = folderGridItem.id,
     page = folderGridItem.page,
@@ -278,69 +265,3 @@ internal fun FolderGridItemWrapper.asGridItem(): GridItem = GridItem(
     swipeUp = folderGridItem.swipeUp,
     swipeDown = folderGridItem.swipeDown,
 )
-
-internal fun deleteGridItemCustomIconFile(gridItem: GridItem) = when (val data = gridItem.data) {
-    is GridItemData.ApplicationInfo -> {
-        data.customIcon?.let {
-            val customIconFile = File(it)
-
-            if (customIconFile.exists()) {
-                customIconFile.delete()
-            }
-        }
-    }
-
-    is GridItemData.ShortcutConfig -> {
-        data.customIcon?.let {
-            val customIconFile = File(it)
-
-            if (customIconFile.exists()) {
-                customIconFile.delete()
-            }
-        }
-    }
-
-    is GridItemData.ShortcutInfo -> {
-        data.customIcon?.let {
-            val customIconFile = File(it)
-
-            if (customIconFile.exists()) {
-                customIconFile.delete()
-            }
-        }
-    }
-
-    is GridItemData.Folder -> {
-        data.icon?.let {
-            val iconFile = File(it)
-
-            if (iconFile.exists()) {
-                iconFile.delete()
-            }
-        }
-    }
-
-    else -> Unit
-}
-
-internal fun getGridDimension(
-    count: Int,
-    maxFolderColumns: Int,
-    maxFolderRows: Int,
-): Pair<Int, Int> {
-    if (count <= 0) return 0 to 0
-
-    val columns = min(maxFolderColumns, ceil(sqrt(count.toDouble())).toInt())
-    val rows = min(maxFolderRows, ceil(count / columns.toDouble()).toInt())
-
-    return columns to rows
-}
-
-private suspend fun List<GridItem>.getGridItemsByPage(
-    maxFolderColumns: Int,
-    maxFolderRows: Int,
-): Map<Int, List<GridItem>> = chunked(maxFolderColumns * maxFolderRows).mapIndexed { index, gridItems ->
-    currentCoroutineContext().ensureActive()
-
-    index to gridItems
-}.toMap()
