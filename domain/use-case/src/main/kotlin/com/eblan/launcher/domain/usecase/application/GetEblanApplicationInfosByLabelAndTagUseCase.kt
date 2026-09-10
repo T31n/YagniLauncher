@@ -47,7 +47,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
     private val fileManager: FileManager,
     private val iconKeyGenerator: IconKeyGenerator,
     private val jaroWinklerSimilarityWrapper: JaroWinklerSimilarityWrapper,
-    @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
+    @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke(
@@ -84,7 +84,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
                     iconPackInfoPackageName = iconPackInfoPackageName,
                 )
         }
-    }.flowOn(ioDispatcher)
+    }.flowOn(defaultDispatcher)
 
     private suspend fun getVerticalOrListEblanApplicationInfosByLabel(
         eblanApplicationInfos: MutableList<EblanApplicationInfo>,
@@ -210,7 +210,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
         return filterEblanApplicationInfos.toMutableList()
     }
 
-    private suspend fun normalize(text: String): String = withContext(ioDispatcher) {
+    private suspend fun normalize(text: String): String = withContext(defaultDispatcher) {
         Normalizer.normalize(text, Normalizer.Form.NFD)
             .replace("\\p{M}+".toRegex(), "")
             .lowercase()

@@ -32,7 +32,7 @@ import javax.inject.Inject
 class GetFolderGridItemsByIdUseCase @Inject constructor(
     private val folderGridItemRepository: FolderGridItemRepository,
     private val userDataRepository: UserDataRepository,
-    @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
+    @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     operator fun invoke(
         folderPopupEntriesFlow: Flow<List<FolderPopupEntry>>,
@@ -51,5 +51,5 @@ class GetFolderGridItemsByIdUseCase @Inject constructor(
                 maxFolderRows = userData.homeSettings.maxFolderRows,
             )
         }
-    }.flowOn(ioDispatcher)
+    }.flowOn(defaultDispatcher)
 }

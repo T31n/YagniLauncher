@@ -32,7 +32,7 @@ import javax.inject.Inject
 class GetPreviewFolderGridItemsUseCase @Inject constructor(
     private val folderGridItemRepository: FolderGridItemRepository,
     private val userDataRepository: UserDataRepository,
-    @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
+    @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     operator fun invoke(): Flow<Map<String, PreviewFolder>> = combine(
         userDataRepository.userDataFlow,
@@ -76,5 +76,5 @@ class GetPreviewFolderGridItemsUseCase @Inject constructor(
                 folderGridItems = folderGridItems,
             )
         }
-    }.flowOn(ioDispatcher)
+    }.flowOn(defaultDispatcher)
 }
