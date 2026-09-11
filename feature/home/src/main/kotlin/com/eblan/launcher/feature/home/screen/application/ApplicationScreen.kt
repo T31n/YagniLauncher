@@ -240,6 +240,7 @@ internal fun ApplicationScreen(
                     onUpdateIsVisibleFolders = {
                         isVisibleFolders = it
                     },
+                    onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
                 )
             }
 

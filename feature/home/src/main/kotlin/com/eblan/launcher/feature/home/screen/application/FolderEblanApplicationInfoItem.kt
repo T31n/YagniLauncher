@@ -40,10 +40,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest.Builder
@@ -52,6 +57,7 @@ import coil3.size.Size
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
+import com.eblan.launcher.domain.model.folder.FolderPopupEntry
 import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
@@ -74,7 +80,12 @@ internal fun FolderEblanApplicationInfoItem(
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
     onUpdateIsVisibleFolders: (Boolean) -> Unit,
+    onUpsertFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
 ) {
+    var intOffset by remember { mutableStateOf(IntOffset.Zero) }
+
+    var intSize by remember { mutableStateOf(IntSize.Zero) }
+
     val textColor = getTextColorFromBackgroundColor(
         backgroundColor = appDrawerSettings.backgroundColor,
         customBackgroundColor = appDrawerSettings.customBackgroundColor,
@@ -113,6 +124,17 @@ internal fun FolderEblanApplicationInfoItem(
                     onTap = if (!isVisibleOverlay) {
                         {
                             onUpdateIsVisibleFolders(true)
+
+                            onUpsertFolderEblanApplicationInfoPopupEntry(
+                                FolderPopupEntry(
+                                    id = previewFolderEblanApplicationInfo.folderEblanApplicationInfo.id,
+                                    x = intOffset.x,
+                                    y = intOffset.y,
+                                    width = intSize.width,
+                                    height = intSize.height,
+                                    isCloseFolder = false,
+                                ),
+                            )
                         }
                     } else {
                         null
@@ -130,7 +152,13 @@ internal fun FolderEblanApplicationInfoItem(
         horizontalAlignment = horizontalAlignment,
         verticalArrangement = verticalArrangement,
     ) {
-        val commonModifier = Modifier.size(appDrawerSettings.gridItemSettings.iconSize.dp)
+        val commonModifier = Modifier
+            .size(appDrawerSettings.gridItemSettings.iconSize.dp)
+            .onGloballyPositioned {
+                intOffset = it.positionInRoot().round()
+
+                intSize = it.size
+            }
 
         if (icon != null) {
             AsyncImage(

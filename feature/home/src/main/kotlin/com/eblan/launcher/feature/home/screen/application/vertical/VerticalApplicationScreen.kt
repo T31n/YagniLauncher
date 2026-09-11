@@ -68,6 +68,7 @@ import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
+import com.eblan.launcher.domain.model.folder.FolderPopupEntry
 import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.model.launcherapps.EblanUser
@@ -145,6 +146,7 @@ internal fun VerticalApplicationScreen(
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
     onUpdateIsVisibleFolders: (Boolean) -> Unit,
+    onUpsertFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
 ) {
     val layoutDirection = LocalLayoutDirection.current
 
@@ -290,6 +292,7 @@ internal fun VerticalApplicationScreen(
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                 onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
                 onUpdateIsVisibleFolders = onUpdateIsVisibleFolders,
+                onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
             )
         }
     }
@@ -382,6 +385,7 @@ private fun EblanApplicationInfosPage(
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
     onUpdateIsVisibleFolders: (Boolean) -> Unit,
+    onUpsertFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -459,6 +463,7 @@ private fun EblanApplicationInfosPage(
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                 onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
                 onUpdateIsVisibleFolders = onUpdateIsVisibleFolders,
+                onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
             )
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && isDefaultLauncher &&
@@ -529,6 +534,7 @@ private fun EblanApplicationInfos(
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
     onUpdateIsVisibleFolders: (Boolean) -> Unit,
+    onUpsertFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
 ) {
     val userManager = LocalUserManager.current
 
@@ -606,6 +612,7 @@ private fun EblanApplicationInfos(
                             folderBackgroundColor = folderBackgroundColor,
                             customFolderBackgroundColor = customFolderBackgroundColor,
                             onUpdateIsVisibleFolders = onUpdateIsVisibleFolders,
+                            onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
                         )
                     }
 
