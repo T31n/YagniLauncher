@@ -22,15 +22,13 @@ import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.model.folder.FolderPopupEntry
 import com.eblan.launcher.domain.model.grid.FolderGridItemPopup
 import com.eblan.launcher.domain.model.grid.FolderGridItemWrapper
-import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.repository.FolderGridItemRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.util.asGridItem
 import com.eblan.launcher.domain.usecase.util.getGridDimension
+import com.eblan.launcher.domain.usecase.util.getGridItemsByPage
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
@@ -51,7 +49,7 @@ class GetFolderGridItemsByIdUseCase @Inject constructor(
         folderPopupEntries.mapNotNull { folderPopupEntry ->
             folderGridItemWrappers.firstOrNull {
                 it.folderGridItem.id == folderPopupEntry.id
-            }?.FolderGridItemPopup(
+            }?.asFolderGridItemPopup(
                 folderPopupEntry = folderPopupEntry,
                 maxFolderColumns = userData.homeSettings.maxFolderColumns,
                 maxFolderRows = userData.homeSettings.maxFolderRows,
@@ -59,7 +57,7 @@ class GetFolderGridItemsByIdUseCase @Inject constructor(
         }
     }.flowOn(defaultDispatcher)
 
-    private suspend fun FolderGridItemWrapper.FolderGridItemPopup(
+    private suspend fun FolderGridItemWrapper.asFolderGridItemPopup(
         folderPopupEntry: FolderPopupEntry,
         maxFolderColumns: Int,
         maxFolderRows: Int,
@@ -122,13 +120,4 @@ class GetFolderGridItemsByIdUseCase @Inject constructor(
             maxIndex = maxIndex,
         )
     }
-
-    private suspend fun List<GridItem>.getGridItemsByPage(
-        maxFolderColumns: Int,
-        maxFolderRows: Int,
-    ): Map<Int, List<GridItem>> = chunked(maxFolderColumns * maxFolderRows).mapIndexed { index, gridItems ->
-        currentCoroutineContext().ensureActive()
-
-        index to gridItems
-    }.toMap()
 }

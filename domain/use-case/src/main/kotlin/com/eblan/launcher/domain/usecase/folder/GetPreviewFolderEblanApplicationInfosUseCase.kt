@@ -19,10 +19,6 @@ package com.eblan.launcher.domain.usecase.folder
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
-import com.eblan.launcher.domain.model.application.EblanApplicationInfo
-import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
-import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
-import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoWrapper
 import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
 import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
@@ -79,32 +75,4 @@ class GetPreviewFolderEblanApplicationInfosUseCase @Inject constructor(
             previewFolderGridItems = previewFolderGridItems,
         )
     }
-
-    private fun FolderEblanApplicationInfo.asFolderEblanApplicationInfoGridItem(): FolderEblanApplicationInfoGridItem = FolderEblanApplicationInfoGridItem(
-        id = id,
-        data = FolderEblanApplicationInfoGridItemData.Folder(
-            icon = icon,
-            label = label,
-            folderIndex = folderIndex,
-            folderId = folderId,
-        ),
-    )
-
-    private fun EblanApplicationInfo.asFolderEblanApplicationInfoGridItem(): FolderEblanApplicationInfoGridItem = FolderEblanApplicationInfoGridItem(
-        id = "$componentName $serialNumber",
-        data = FolderEblanApplicationInfoGridItemData.ApplicationInfo(
-            componentName = componentName,
-            serialNumber = serialNumber,
-            packageName = packageName,
-            icon = icon,
-            label = label,
-            customIcon = customIcon,
-            customLabel = customLabel,
-            isHidden = isHidden,
-            lastUpdateTime = lastUpdateTime,
-            flags = flags,
-            folderIndex = folderIndex,
-            folderId = folderId,
-        ),
-    )
 }

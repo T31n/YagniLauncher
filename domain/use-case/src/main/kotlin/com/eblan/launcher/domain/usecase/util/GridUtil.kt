@@ -35,6 +35,8 @@ import com.eblan.launcher.domain.model.launcherapps.ShortcutQueryFlag
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.domain.repository.FolderGridItemRepository
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlin.math.ceil
 import kotlin.math.min
 import kotlin.math.sqrt
@@ -158,6 +160,15 @@ internal fun getGridDimension(
 
     return columns to rows
 }
+
+internal suspend fun <T> List<T>.getGridItemsByPage(
+    maxFolderColumns: Int,
+    maxFolderRows: Int,
+): Map<Int, List<T>> = chunked(maxFolderColumns * maxFolderRows).mapIndexed { index, gridItems ->
+    currentCoroutineContext().ensureActive()
+
+    index to gridItems
+}.toMap()
 
 internal fun ApplicationInfoGridItem.asGridItem(): GridItem = GridItem(
     id = id,
