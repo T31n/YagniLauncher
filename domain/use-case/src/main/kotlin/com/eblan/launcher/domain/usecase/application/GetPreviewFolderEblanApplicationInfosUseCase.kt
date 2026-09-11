@@ -27,7 +27,7 @@ import com.eblan.launcher.domain.model.FolderEblanApplicationInfoWrapper
 import com.eblan.launcher.domain.model.PreviewFolderEblanApplicationInfo
 import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
-import com.eblan.launcher.domain.usecase.grid.getGridDimension
+import com.eblan.launcher.domain.usecase.util.getGridDimension
 import com.eblan.launcher.domain.usecase.util.getPreviewFolderGridItems
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow

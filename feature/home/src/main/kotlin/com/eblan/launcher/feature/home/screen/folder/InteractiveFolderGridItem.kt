@@ -85,8 +85,8 @@ import com.eblan.launcher.domain.model.GridItemSettings
 import com.eblan.launcher.domain.model.MoveGridItemResult
 import com.eblan.launcher.domain.model.PreviewFolder
 import com.eblan.launcher.domain.model.TextColor
-import com.eblan.launcher.domain.usecase.grid.FOLDER_PREVIEW_COLUMNS
-import com.eblan.launcher.domain.usecase.grid.FOLDER_PREVIEW_ROWS
+import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_COLUMNS
+import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_ROWS
 import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
 import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
