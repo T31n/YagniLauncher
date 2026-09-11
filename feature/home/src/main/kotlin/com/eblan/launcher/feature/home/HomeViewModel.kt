@@ -39,7 +39,7 @@ import com.eblan.launcher.domain.usecase.application.GetEblanAppWidgetProviderIn
 import com.eblan.launcher.domain.usecase.application.GetEblanApplicationInfosByLabelAndTagUseCase
 import com.eblan.launcher.domain.usecase.application.GetEblanShortcutConfigsByLabelUseCase
 import com.eblan.launcher.domain.usecase.application.GetEblanShortcutInfosUseCase
-import com.eblan.launcher.domain.usecase.application.GetPreviewFolderEblanApplicationInfosUseCase
+import com.eblan.launcher.domain.usecase.folder.GetPreviewFolderEblanApplicationInfosUseCase
 import com.eblan.launcher.domain.usecase.grid.DeleteGridItemUseCase
 import com.eblan.launcher.domain.usecase.folder.GetFolderGridItemsByIdUseCase
 import com.eblan.launcher.domain.usecase.folder.GetPreviewFolderGridItemsUseCase

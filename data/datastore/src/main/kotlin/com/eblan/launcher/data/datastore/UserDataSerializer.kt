@@ -19,8 +19,6 @@ package com.eblan.launcher.data.datastore
 
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer
-import com.eblan.launcher.data.datastore.mapper.toEblanActionProto
-import com.eblan.launcher.data.datastore.mapper.toThemeProto
 import com.eblan.launcher.data.datastore.proto.UserDataProto
 import com.eblan.launcher.data.datastore.proto.appdrawer.AppDrawerSettingsProto
 import com.eblan.launcher.data.datastore.proto.appdrawer.AppDrawerTypeProto

@@ -15,7 +15,7 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.common
+package com.eblan.launcher.common.impl
 
 import android.util.Base64
 import com.eblan.launcher.domain.common.Dispatcher

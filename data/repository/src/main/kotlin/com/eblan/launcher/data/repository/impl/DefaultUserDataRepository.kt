@@ -15,7 +15,7 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.data.repository
+package com.eblan.launcher.data.repository.impl
 
 import com.eblan.launcher.data.datastore.UserDataStore
 import com.eblan.launcher.domain.model.AppDrawerSettings

@@ -18,16 +18,6 @@
 package com.eblan.launcher.data.datastore
 
 import androidx.datastore.core.DataStore
-import com.eblan.launcher.data.datastore.mapper.toAppDrawerSettings
-import com.eblan.launcher.data.datastore.mapper.toAppDrawerSettingsProto
-import com.eblan.launcher.data.datastore.mapper.toExperimentalSettings
-import com.eblan.launcher.data.datastore.mapper.toExperimentalSettingsProto
-import com.eblan.launcher.data.datastore.mapper.toGeneralSettings
-import com.eblan.launcher.data.datastore.mapper.toGeneralSettingsProto
-import com.eblan.launcher.data.datastore.mapper.toGestureSettings
-import com.eblan.launcher.data.datastore.mapper.toGestureSettingsProto
-import com.eblan.launcher.data.datastore.mapper.toHomeSettings
-import com.eblan.launcher.data.datastore.mapper.toHomeSettingsProto
 import com.eblan.launcher.data.datastore.proto.UserDataProto
 import com.eblan.launcher.data.datastore.proto.copy
 import com.eblan.launcher.domain.model.AppDrawerSettings

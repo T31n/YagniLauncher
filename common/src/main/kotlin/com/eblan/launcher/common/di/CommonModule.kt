@@ -18,9 +18,9 @@
 package com.eblan.launcher.common.di
 
 import com.eblan.launcher.common.AndroidImageSerializer
-import com.eblan.launcher.common.DefaultFileManager
-import com.eblan.launcher.common.DefaultIconKeyGenerator
-import com.eblan.launcher.common.DefaultImageSerializer
+import com.eblan.launcher.common.impl.DefaultFileManager
+import com.eblan.launcher.common.impl.DefaultIconKeyGenerator
+import com.eblan.launcher.common.impl.DefaultImageSerializer
 import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import dagger.Binds

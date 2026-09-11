@@ -15,7 +15,7 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.data.datastore.mapper
+package com.eblan.launcher.data.datastore
 
 import com.eblan.launcher.data.datastore.proto.appdrawer.AppDrawerSettingsProto
 import com.eblan.launcher.data.datastore.proto.appdrawer.AppDrawerTypeProto

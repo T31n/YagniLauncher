@@ -15,7 +15,7 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.data.datastore.migration
+package com.eblan.launcher.data.datastore
 
 import androidx.datastore.core.DataMigration
 import com.eblan.launcher.data.datastore.proto.UserDataProto

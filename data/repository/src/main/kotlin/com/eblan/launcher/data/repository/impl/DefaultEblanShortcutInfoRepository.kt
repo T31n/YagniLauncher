@@ -15,7 +15,7 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.data.repository
+package com.eblan.launcher.data.repository.impl
 
 import com.eblan.launcher.data.room.dao.EblanShortcutInfoDao
 import com.eblan.launcher.data.room.entity.EblanShortcutInfoEntity

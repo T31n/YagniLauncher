@@ -15,7 +15,7 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.common
+package com.eblan.launcher.common.impl
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -23,6 +23,7 @@ import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import androidx.core.graphics.createBitmap
+import com.eblan.launcher.common.AndroidImageSerializer
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import kotlinx.coroutines.CoroutineDispatcher
