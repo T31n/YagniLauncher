@@ -42,8 +42,8 @@ class GetPreviewFolderGridItemsUseCase @Inject constructor(
         userDataRepository.userDataFlow,
         folderGridItemRepository.folderGridItemWrappersFlow,
     ) { userData, folderGridItemWrappers ->
-        folderGridItemWrappers.associate { folderGridItemWrapper ->
-            folderGridItemWrapper.folderGridItem.id to folderGridItemWrapper.asPreviewFolder(
+        folderGridItemWrappers.associate {
+            it.folderGridItem.id to it.asPreviewFolder(
                 maxFolderColumns = userData.homeSettings.maxFolderColumns,
                 maxFolderRows = userData.homeSettings.maxFolderRows,
             )

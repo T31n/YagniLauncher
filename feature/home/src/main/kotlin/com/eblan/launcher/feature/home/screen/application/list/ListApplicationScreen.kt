@@ -603,7 +603,7 @@ private fun EblanApplicationInfos(
                             it.serialNumber to it.componentName
                         },
                     ) {
-                        EblanApplicationInfoListItem(
+                        EblanApplicationInfoItem(
                             sharedTransitionScope = sharedTransitionScope,
                             appDrawerSettings = appDrawerSettings,
                             drag = drag,
@@ -655,7 +655,7 @@ private fun EblanApplicationInfos(
                             it.serialNumber to it.componentName
                         },
                     ) {
-                        EblanApplicationInfoListItem(
+                        EblanApplicationInfoItem(
                             sharedTransitionScope = sharedTransitionScope,
                             appDrawerSettings = appDrawerSettings,
                             drag = drag,
@@ -703,7 +703,7 @@ private fun EblanApplicationInfos(
     ExperimentalLayoutApi::class,
 )
 @Composable
-private fun EblanApplicationInfoListItem(
+private fun EblanApplicationInfoItem(
     modifier: Modifier = Modifier,
     sharedTransitionScope: SharedTransitionScope,
     appDrawerSettings: AppDrawerSettings,

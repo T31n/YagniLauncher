@@ -230,7 +230,7 @@ internal fun InteractiveFolderGridItem(
 
     when (val data = gridItem.data) {
         is GridItemData.ApplicationInfo -> {
-            InteractiveFolderApplicationInfoGridItem(
+            InteractiveApplicationInfoGridItem(
                 modifier = modifier,
                 sharedTransitionScope = sharedTransitionScope,
                 data = data,
@@ -262,7 +262,7 @@ internal fun InteractiveFolderGridItem(
         }
 
         is GridItemData.ShortcutInfo -> {
-            InteractiveFolderShortcutInfoGridItem(
+            InteractiveShortcutInfoGridItem(
                 modifier = modifier,
                 sharedTransitionScope = sharedTransitionScope,
                 data = data,
@@ -293,7 +293,7 @@ internal fun InteractiveFolderGridItem(
         }
 
         is GridItemData.ShortcutConfig -> {
-            InteractiveFolderShortcutConfigGridItem(
+            InteractiveShortcutConfigGridItem(
                 modifier = modifier,
                 sharedTransitionScope = sharedTransitionScope,
                 data = data,
@@ -370,7 +370,7 @@ internal fun InteractiveFolderGridItem(
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-private fun InteractiveFolderApplicationInfoGridItem(
+private fun InteractiveApplicationInfoGridItem(
     modifier: Modifier = Modifier,
     sharedTransitionScope: SharedTransitionScope,
     data: GridItemData.ApplicationInfo,
@@ -571,7 +571,7 @@ private fun InteractiveFolderApplicationInfoGridItem(
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-private fun InteractiveFolderShortcutInfoGridItem(
+private fun InteractiveShortcutInfoGridItem(
     modifier: Modifier = Modifier,
     sharedTransitionScope: SharedTransitionScope,
     data: GridItemData.ShortcutInfo,
@@ -779,7 +779,7 @@ private fun InteractiveFolderShortcutInfoGridItem(
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-private fun InteractiveFolderShortcutConfigGridItem(
+private fun InteractiveShortcutConfigGridItem(
     modifier: Modifier = Modifier,
     sharedTransitionScope: SharedTransitionScope,
     data: GridItemData.ShortcutConfig,

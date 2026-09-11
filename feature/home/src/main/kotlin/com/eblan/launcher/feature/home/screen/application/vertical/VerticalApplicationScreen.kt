@@ -87,9 +87,9 @@ import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.screen.application.ApplicationInfoPopup
 import com.eblan.launcher.feature.home.screen.application.ApplicationScreenEffect
 import com.eblan.launcher.feature.home.screen.application.ApplicationSearchBar
-import com.eblan.launcher.feature.home.screen.application.EblanApplicationInfoGridItem
+import com.eblan.launcher.feature.home.screen.application.EblanApplicationInfoItem
 import com.eblan.launcher.feature.home.screen.application.EblanApplicationInfoTabRow
-import com.eblan.launcher.feature.home.screen.application.FolderEblanApplicationInfoGridItem
+import com.eblan.launcher.feature.home.screen.application.FolderEblanApplicationInfoItem
 import com.eblan.launcher.feature.home.screen.application.PrivateApplicationInfoPopup
 import com.eblan.launcher.feature.home.screen.application.QuiteModeScreen
 import com.eblan.launcher.feature.home.screen.application.TagElevatedFilterChip
@@ -120,7 +120,7 @@ internal fun VerticalApplicationScreen(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     animations: Boolean,
-    previewFolderEblanApplicationInfos: List<PreviewFolderEblanApplicationInfo>,
+    previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
@@ -359,7 +359,7 @@ private fun EblanApplicationInfosPage(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     animations: Boolean,
-    previewFolderEblanApplicationInfos: List<PreviewFolderEblanApplicationInfo>,
+    previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
@@ -504,7 +504,7 @@ private fun EblanApplicationInfos(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     animations: Boolean,
-    previewFolderEblanApplicationInfos: List<PreviewFolderEblanApplicationInfo>,
+    previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
@@ -590,15 +590,13 @@ private fun EblanApplicationInfos(
         ) {
             when (eblanUserPageKey.eblanUser.eblanUserType) {
                 EblanUserType.Personal -> {
-                    items(items = previewFolderEblanApplicationInfos) {
-                        FolderEblanApplicationInfoGridItem(
+                    items(items = previewFolderEblanApplicationInfos.values.toList()) {
+                        FolderEblanApplicationInfoItem(
                             previewFolderEblanApplicationInfo = it,
                             appDrawerSettings = appDrawerSettings,
                             isVisibleOverlay = isVisibleOverlay,
-                            appDrawerType = appDrawerSettings.appDrawerType,
                             systemTextColor = systemTextColor,
                             systemCustomTextColor = systemCustomTextColor,
-                            iconPackInfoFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackInfoFilePaths,
                             folderCornerRadius = folderCornerRadius,
                             folderBackgroundColor = folderBackgroundColor,
                             customFolderBackgroundColor = customFolderBackgroundColor,
@@ -609,7 +607,7 @@ private fun EblanApplicationInfos(
                         items = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfoWithIconPackInfos[eblanUserPageKey].orEmpty(),
                         key = { it.serialNumber to it.componentName },
                     ) {
-                        EblanApplicationInfoGridItem(
+                        EblanApplicationInfoItem(
                             sharedTransitionScope = sharedTransitionScope,
                             appDrawerSettings = appDrawerSettings,
                             drag = drag,
@@ -663,7 +661,7 @@ private fun EblanApplicationInfos(
                                 it.componentName
                         },
                     ) {
-                        EblanApplicationInfoGridItem(
+                        EblanApplicationInfoItem(
                             sharedTransitionScope = sharedTransitionScope,
                             appDrawerSettings = appDrawerSettings,
                             drag = drag,

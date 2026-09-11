@@ -227,7 +227,7 @@ internal class HomeViewModel @Inject constructor(
         getPreviewFolderEblanApplicationInfosUseCase().stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = emptyList(),
+            initialValue = emptyMap(),
         )
 
     private val _folderEblanApplicationInfoPopupEntries = MutableStateFlow<List<FolderPopupEntry>>(emptyList())

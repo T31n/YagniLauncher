@@ -98,7 +98,7 @@ import kotlin.uuid.Uuid
     ExperimentalLayoutApi::class,
 )
 @Composable
-internal fun EblanApplicationInfoGridItem(
+internal fun EblanApplicationInfoItem(
     modifier: Modifier = Modifier,
     sharedTransitionScope: SharedTransitionScope,
     appDrawerSettings: AppDrawerSettings,

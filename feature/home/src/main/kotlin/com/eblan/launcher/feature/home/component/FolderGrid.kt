@@ -94,15 +94,16 @@ internal fun <T> PreviewFolderGridLayout(
 }
 
 @Composable
-internal fun FolderGridLayout(
+internal fun <T> FolderGridLayout(
     modifier: Modifier = Modifier,
-    gridItems: List<GridItem>?,
+    gridItems: List<T>?,
     columns: Int,
     rows: Int,
     width: Int,
     height: Int,
     animate: Boolean,
-    content: @Composable BoxScope.(GridItem) -> Unit,
+    slotId: (T) -> String,
+    content: @Composable BoxScope.(T) -> Unit,
 ) {
     SubcomposeLayout(modifier = modifier) { constraints ->
         val cellWidth = width / columns
@@ -113,7 +114,7 @@ internal fun FolderGridLayout(
             height = constraints.maxHeight,
         ) {
             gridItems?.forEachIndexed { index, gridItem ->
-                subcompose(gridItem.id) {
+                subcompose(slotId(gridItem)) {
                     FolderGridLayoutContent(
                         index = index,
                         columns = columns,
@@ -142,15 +143,15 @@ internal fun FolderGridLayout(
 }
 
 @Composable
-private fun FolderGridLayoutContent(
+private fun <T> FolderGridLayoutContent(
     modifier: Modifier = Modifier,
     index: Int,
     columns: Int,
     cellWidth: Int,
     cellHeight: Int,
-    gridItem: GridItem,
+    gridItem: T,
     animate: Boolean,
-    content: @Composable (BoxScope.(GridItem) -> Unit),
+    content: @Composable (BoxScope.(T) -> Unit),
 ) {
     val x = (index % columns) * cellWidth
     val y = (index / columns) * cellHeight

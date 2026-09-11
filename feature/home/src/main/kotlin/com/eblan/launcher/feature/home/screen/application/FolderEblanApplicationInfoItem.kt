@@ -55,7 +55,6 @@ import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
 import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
-import com.eblan.launcher.domain.model.userdata.AppDrawerType
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
@@ -64,15 +63,13 @@ import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
 import com.eblan.launcher.feature.home.util.getVerticalArrangement
 
 @Composable
-internal fun FolderEblanApplicationInfoGridItem(
+internal fun FolderEblanApplicationInfoItem(
     modifier: Modifier = Modifier,
     previewFolderEblanApplicationInfo: PreviewFolderEblanApplicationInfo,
     appDrawerSettings: AppDrawerSettings,
     isVisibleOverlay: Boolean,
-    appDrawerType: AppDrawerType,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
-    iconPackInfoFilePaths: Map<String, String?>,
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
@@ -102,13 +99,7 @@ internal fun FolderEblanApplicationInfoGridItem(
 
     Column(
         modifier = modifier
-            .run {
-                if (appDrawerType == AppDrawerType.Vertical) {
-                    height(appDrawerSettings.appDrawerRowsHeight.dp)
-                } else {
-                    fillMaxSize()
-                }
-            }
+            .fillMaxSize()
             .padding(appDrawerSettings.gridItemSettings.padding.dp)
             .background(
                 color = Color(appDrawerSettings.gridItemSettings.customBackgroundColor),
@@ -161,14 +152,13 @@ internal fun FolderEblanApplicationInfoGridItem(
                     gridItems = previewFolderEblanApplicationInfo.previewFolderGridItems,
                     slotId = { it.id },
                     content = {
-                        PreviewFolderEblanApplicationInfoGridItem(
+                        PreviewFolderEblanApplicationInfoItem(
                             folderEblanApplicationInfoGridItem = it,
                             gridItemSettings = appDrawerSettings.gridItemSettings,
                             folderBackgroundColor = folderBackgroundColor,
                             customFolderBackgroundColor = customFolderBackgroundColor,
                             systemTextColor = systemTextColor,
                             systemCustomTextColor = systemCustomTextColor,
-                            iconPackInfoFilePaths = iconPackInfoFilePaths,
                         )
                     },
                 )
@@ -192,7 +182,7 @@ internal fun FolderEblanApplicationInfoGridItem(
 }
 
 @Composable
-private fun PreviewFolderEblanApplicationInfoGridItem(
+private fun PreviewFolderEblanApplicationInfoItem(
     modifier: Modifier = Modifier,
     folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
     gridItemSettings: GridItemSettings,
@@ -200,7 +190,6 @@ private fun PreviewFolderEblanApplicationInfoGridItem(
     customFolderBackgroundColor: Int,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
-    iconPackInfoFilePaths: Map<String, String?>,
 ) {
     key(folderEblanApplicationInfoGridItem.id) {
         val context = LocalContext.current
@@ -219,11 +208,9 @@ private fun PreviewFolderEblanApplicationInfoGridItem(
 
         when (val data = folderEblanApplicationInfoGridItem.data) {
             is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
-                val icon = iconPackInfoFilePaths[data.componentName] ?: data.icon
-
                 AsyncImage(
                     model = Builder(context)
-                        .data(data.customIcon ?: icon)
+                        .data(data.customIcon ?: data.icon)
                         .addLastModifiedToFileCacheKey(true)
                         .size(Size.ORIGINAL)
                         .build(),

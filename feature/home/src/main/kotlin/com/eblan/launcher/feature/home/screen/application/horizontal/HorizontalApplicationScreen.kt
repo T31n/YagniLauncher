@@ -73,7 +73,7 @@ import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.screen.application.ApplicationInfoPopup
 import com.eblan.launcher.feature.home.screen.application.ApplicationScreenEffect
 import com.eblan.launcher.feature.home.screen.application.ApplicationSearchBar
-import com.eblan.launcher.feature.home.screen.application.EblanApplicationInfoGridItem
+import com.eblan.launcher.feature.home.screen.application.EblanApplicationInfoItem
 import com.eblan.launcher.feature.home.screen.application.EblanApplicationInfoTabRow
 import com.eblan.launcher.feature.home.screen.application.PrivateApplicationInfoPopup
 import com.eblan.launcher.feature.home.screen.application.PrivateSpaceEblanApplicationInfoItem
@@ -502,7 +502,7 @@ private fun EblanApplicationInfos(
                 EblanUserType.Clone,
                 EblanUserType.Work,
                 -> {
-                    EblanApplicationInfoGridItem(
+                    EblanApplicationInfoItem(
                         sharedTransitionScope = sharedTransitionScope,
                         appDrawerSettings = appDrawerSettings,
                         drag = drag,

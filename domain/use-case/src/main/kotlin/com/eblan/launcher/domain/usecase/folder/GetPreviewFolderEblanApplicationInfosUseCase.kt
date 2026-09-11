@@ -36,16 +36,18 @@ class GetPreviewFolderEblanApplicationInfosUseCase @Inject constructor(
     private val userDataRepository: UserDataRepository,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
-    operator fun invoke(): Flow<List<PreviewFolderEblanApplicationInfo>> = combine(
+    operator fun invoke(): Flow<Map<String, PreviewFolderEblanApplicationInfo>> = combine(
         userDataRepository.userDataFlow,
         folderEblanApplicationInfoRepository.folderEblanApplicationInfoWrappersFlow,
     ) { userData, folderEblanApplicationInfoWrappers ->
-        folderEblanApplicationInfoWrappers.map {
-            it.asFolderEblanApplicationInfoGridItem(
-                maxFolderColumns = userData.homeSettings.maxFolderColumns,
-                maxFolderRows = userData.homeSettings.maxFolderRows,
-            )
-        }
+        folderEblanApplicationInfoWrappers
+            .sortedBy { it.folderEblanApplicationInfo.label }
+            .associate {
+                it.folderEblanApplicationInfo.id to it.asFolderEblanApplicationInfoGridItem(
+                    maxFolderColumns = userData.homeSettings.maxFolderColumns,
+                    maxFolderRows = userData.homeSettings.maxFolderRows,
+                )
+            }
     }.flowOn(defaultDispatcher)
 
     private fun FolderEblanApplicationInfoWrapper.asFolderEblanApplicationInfoGridItem(
