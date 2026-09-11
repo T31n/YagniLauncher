@@ -36,8 +36,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.eblan.launcher.domain.model.EblanAction
-import com.eblan.launcher.domain.model.EblanActionType
+import com.eblan.launcher.domain.model.userdata.EblanAction
+import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.handleEblanAction
 import com.eblan.launcher.ui.local.LocalLauncherApps

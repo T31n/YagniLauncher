@@ -65,10 +65,10 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import coil3.compose.AsyncImage
-import com.eblan.launcher.domain.model.EblanAppWidgetProviderInfo
-import com.eblan.launcher.domain.model.EblanApplicationInfoGroup
-import com.eblan.launcher.domain.model.GridItemSettings
-import com.eblan.launcher.domain.model.MoveGridItemResult
+import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
+import com.eblan.launcher.domain.model.grid.GridItemSettings
+import com.eblan.launcher.domain.model.grid.MoveGridItemResult
+import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
 import com.eblan.launcher.feature.home.component.HomeHandler
 import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.model.Drag

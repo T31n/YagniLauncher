@@ -31,8 +31,8 @@ import androidx.compose.ui.layout.ParentDataModifier
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
-import com.eblan.launcher.domain.model.EblanApplicationInfo
-import com.eblan.launcher.domain.model.GridItem
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
+import com.eblan.launcher.domain.model.grid.GridItem
 
 @Composable
 internal fun GridLayout(

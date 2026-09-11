@@ -31,9 +31,9 @@ import com.eblan.launcher.data.room.entity.ShortcutConfigGridItemEntity
 import com.eblan.launcher.data.room.entity.ShortcutInfoGridItemEntity
 import com.eblan.launcher.data.room.entity.WidgetGridItemEntity
 import com.eblan.launcher.data.room.model.GridItemEntities
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.GridItemData
-import com.eblan.launcher.domain.model.GridItems
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.GridItemData
+import com.eblan.launcher.domain.model.grid.GridItems
 import com.eblan.launcher.domain.repository.ApplicationInfoGridItemRepository
 import com.eblan.launcher.domain.repository.FolderGridItemRepository
 import com.eblan.launcher.domain.repository.GridRepository

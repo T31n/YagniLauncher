@@ -24,7 +24,7 @@ import androidx.room.Query
 import androidx.room.Update
 import androidx.room.Upsert
 import com.eblan.launcher.data.room.entity.ShortcutInfoGridItemEntity
-import com.eblan.launcher.domain.model.PartialShortcutInfoGridItem
+import com.eblan.launcher.domain.model.grid.PartialShortcutInfoGridItem
 
 @Dao
 interface ShortcutInfoGridItemDao {

@@ -22,7 +22,7 @@ import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
 import com.eblan.launcher.data.room.entity.EblanShortcutConfigEntity
-import com.eblan.launcher.domain.model.DeleteEblanShortcutConfig
+import com.eblan.launcher.domain.model.shortcutconfig.DeleteEblanShortcutConfig
 import kotlinx.coroutines.flow.Flow
 
 @Dao

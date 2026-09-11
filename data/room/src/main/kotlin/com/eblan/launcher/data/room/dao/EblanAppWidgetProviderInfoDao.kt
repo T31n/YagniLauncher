@@ -22,7 +22,7 @@ import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
 import com.eblan.launcher.data.room.entity.EblanAppWidgetProviderInfoEntity
-import com.eblan.launcher.domain.model.DeleteEblanAppWidgetProviderInfo
+import com.eblan.launcher.domain.model.widget.DeleteEblanAppWidgetProviderInfo
 import kotlinx.coroutines.flow.Flow
 
 @Dao

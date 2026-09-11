@@ -43,8 +43,8 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.domain.grid.isGridItemSpanWithinBounds
 import com.eblan.launcher.domain.grid.resizeGridItemWithPixels
-import com.eblan.launcher.domain.model.Anchor
-import com.eblan.launcher.domain.model.GridItem
+import com.eblan.launcher.domain.model.grid.Anchor
+import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.feature.home.util.DRAG_HANDLE_SIZE
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt

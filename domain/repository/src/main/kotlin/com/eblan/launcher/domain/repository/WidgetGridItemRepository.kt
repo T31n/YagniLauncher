@@ -17,8 +17,8 @@
  */
 package com.eblan.launcher.domain.repository
 
-import com.eblan.launcher.domain.model.PartialUpdateWidgetGridItem
-import com.eblan.launcher.domain.model.WidgetGridItem
+import com.eblan.launcher.domain.model.grid.WidgetGridItem
+import com.eblan.launcher.domain.model.widget.PartialUpdateWidgetGridItem
 
 interface WidgetGridItemRepository {
     suspend fun getWidgetGridItems(): List<WidgetGridItem>

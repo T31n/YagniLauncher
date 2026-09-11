@@ -24,7 +24,7 @@ import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.AppWidgetManagerWrapper
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
-import com.eblan.launcher.domain.model.EblanShortcutConfig
+import com.eblan.launcher.domain.model.shortcutconfig.EblanShortcutConfig
 import com.eblan.launcher.domain.repository.ApplicationInfoGridItemRepository
 import com.eblan.launcher.domain.repository.EblanAppWidgetProviderInfoRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository

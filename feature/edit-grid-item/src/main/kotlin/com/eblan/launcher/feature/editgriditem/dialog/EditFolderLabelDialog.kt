@@ -32,8 +32,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.eblan.launcher.designsystem.component.EblanDialog
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.GridItemData
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.feature.editgriditem.R
 import com.eblan.launcher.common.R as commonR
 

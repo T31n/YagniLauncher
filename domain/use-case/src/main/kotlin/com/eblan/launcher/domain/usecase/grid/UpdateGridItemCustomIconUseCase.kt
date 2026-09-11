@@ -22,8 +22,8 @@ import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.ContentResolverWrapper
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.GridItemData
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.usecase.util.getCustomIcon
 import kotlinx.coroutines.CoroutineDispatcher

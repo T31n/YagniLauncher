@@ -58,7 +58,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import coil3.compose.AsyncImage
 import com.eblan.launcher.designsystem.component.VerticalSlideReveal
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.PackageManagerIconPackInfo
+import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPackInfo
 import com.eblan.launcher.ui.R
 import com.eblan.launcher.ui.local.LocalAccessibilityManager
 import com.eblan.launcher.ui.local.LocalPackageManager

@@ -20,12 +20,12 @@ package com.eblan.launcher.data.datastore
 import androidx.datastore.core.DataStore
 import com.eblan.launcher.data.datastore.proto.UserDataProto
 import com.eblan.launcher.data.datastore.proto.copy
-import com.eblan.launcher.domain.model.AppDrawerSettings
-import com.eblan.launcher.domain.model.ExperimentalSettings
-import com.eblan.launcher.domain.model.GeneralSettings
-import com.eblan.launcher.domain.model.GestureSettings
-import com.eblan.launcher.domain.model.HomeSettings
-import com.eblan.launcher.domain.model.UserData
+import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
+import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
+import com.eblan.launcher.domain.model.userdata.GeneralSettings
+import com.eblan.launcher.domain.model.userdata.GestureSettings
+import com.eblan.launcher.domain.model.userdata.HomeSettings
+import com.eblan.launcher.domain.model.userdata.UserData
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 

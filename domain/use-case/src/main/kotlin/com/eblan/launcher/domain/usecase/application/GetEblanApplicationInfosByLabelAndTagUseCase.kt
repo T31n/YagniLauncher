@@ -23,11 +23,11 @@ import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.JaroWinklerSimilarityWrapper
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
-import com.eblan.launcher.domain.model.AppDrawerType
-import com.eblan.launcher.domain.model.EblanApplicationInfo
-import com.eblan.launcher.domain.model.EblanUserPageKey
-import com.eblan.launcher.domain.model.EblanUserType
-import com.eblan.launcher.domain.model.GetEblanApplicationInfosByLabelAndTag
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
+import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
+import com.eblan.launcher.domain.model.launcherapps.EblanUserPageKey
+import com.eblan.launcher.domain.model.launcherapps.EblanUserType
+import com.eblan.launcher.domain.model.userdata.AppDrawerType
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.util.getIconPackInfoFilePaths

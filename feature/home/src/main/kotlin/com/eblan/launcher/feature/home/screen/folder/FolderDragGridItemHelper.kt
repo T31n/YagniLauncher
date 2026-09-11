@@ -26,10 +26,10 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import com.eblan.launcher.domain.model.FolderGridItemPopup
-import com.eblan.launcher.domain.model.FolderPopupEntry
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.MoveGridItemResult
+import com.eblan.launcher.domain.model.folder.FolderPopupEntry
+import com.eblan.launcher.domain.model.grid.FolderGridItemPopup
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.PageDirection
 import com.eblan.launcher.feature.home.model.SharedElementKey

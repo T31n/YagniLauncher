@@ -19,8 +19,8 @@ package com.eblan.launcher.data.repository.impl
 
 import com.eblan.launcher.data.room.dao.EblanShortcutInfoDao
 import com.eblan.launcher.data.room.entity.EblanShortcutInfoEntity
-import com.eblan.launcher.domain.model.DeleteEblanShortcutInfo
-import com.eblan.launcher.domain.model.EblanShortcutInfo
+import com.eblan.launcher.domain.model.shortcutinfo.DeleteEblanShortcutInfo
+import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfo
 import com.eblan.launcher.domain.repository.EblanShortcutInfoRepository
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

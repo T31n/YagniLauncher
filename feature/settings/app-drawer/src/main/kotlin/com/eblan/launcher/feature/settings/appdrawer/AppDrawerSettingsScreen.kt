@@ -42,9 +42,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.AppDrawerSettings
-import com.eblan.launcher.domain.model.AppDrawerType
-import com.eblan.launcher.domain.model.EblanApplicationInfo
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
+import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
+import com.eblan.launcher.domain.model.userdata.AppDrawerType
 import com.eblan.launcher.feature.settings.appdrawer.dialog.EditHorizontalGridDialog
 import com.eblan.launcher.feature.settings.appdrawer.dialog.EditVerticalGridDialog
 import com.eblan.launcher.feature.settings.appdrawer.dialog.HiddenEblanApplicationInfosDialog

@@ -19,9 +19,9 @@ package com.eblan.launcher.domain.usecase.folder
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
-import com.eblan.launcher.domain.model.FolderGridItemWrapper
-import com.eblan.launcher.domain.model.GridItemData
-import com.eblan.launcher.domain.model.PreviewFolder
+import com.eblan.launcher.domain.model.folder.PreviewFolder
+import com.eblan.launcher.domain.model.grid.FolderGridItemWrapper
+import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.repository.FolderGridItemRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.util.asGridItem

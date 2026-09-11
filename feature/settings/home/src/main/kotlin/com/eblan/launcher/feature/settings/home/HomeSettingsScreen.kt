@@ -41,7 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.HomeSettings
+import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.feature.settings.home.dialog.EditDockCornerRadiusDialog
 import com.eblan.launcher.feature.settings.home.dialog.EditDockGridDialog
 import com.eblan.launcher.feature.settings.home.dialog.EditDockHeightDialog

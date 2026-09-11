@@ -21,10 +21,10 @@ import com.eblan.launcher.data.repository.mapper.asEntity
 import com.eblan.launcher.data.repository.mapper.asModel
 import com.eblan.launcher.data.room.dao.EblanApplicationInfoDao
 import com.eblan.launcher.data.room.entity.EblanApplicationInfoTagEntity
-import com.eblan.launcher.domain.model.DeleteEblanApplicationInfo
-import com.eblan.launcher.domain.model.EblanApplicationInfo
-import com.eblan.launcher.domain.model.EblanApplicationInfoTag
-import com.eblan.launcher.domain.model.SyncEblanApplicationInfo
+import com.eblan.launcher.domain.model.application.DeleteEblanApplicationInfo
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
+import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
+import com.eblan.launcher.domain.model.application.SyncEblanApplicationInfo
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

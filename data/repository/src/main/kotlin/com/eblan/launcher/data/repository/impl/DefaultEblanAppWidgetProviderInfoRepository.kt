@@ -19,8 +19,8 @@ package com.eblan.launcher.data.repository.impl
 
 import com.eblan.launcher.data.room.dao.EblanAppWidgetProviderInfoDao
 import com.eblan.launcher.data.room.entity.EblanAppWidgetProviderInfoEntity
-import com.eblan.launcher.domain.model.DeleteEblanAppWidgetProviderInfo
-import com.eblan.launcher.domain.model.EblanAppWidgetProviderInfo
+import com.eblan.launcher.domain.model.widget.DeleteEblanAppWidgetProviderInfo
+import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
 import com.eblan.launcher.domain.repository.EblanAppWidgetProviderInfoRepository
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

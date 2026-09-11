@@ -17,8 +17,8 @@
  */
 package com.eblan.launcher.domain.repository
 
-import com.eblan.launcher.domain.model.FolderGridItem
-import com.eblan.launcher.domain.model.FolderGridItemWrapper
+import com.eblan.launcher.domain.model.grid.FolderGridItem
+import com.eblan.launcher.domain.model.grid.FolderGridItemWrapper
 import kotlinx.coroutines.flow.Flow
 
 interface FolderGridItemRepository {

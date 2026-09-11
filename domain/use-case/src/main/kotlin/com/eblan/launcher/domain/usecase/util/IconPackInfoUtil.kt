@@ -20,8 +20,8 @@ package com.eblan.launcher.domain.usecase.util
 import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.IconPackManager
-import com.eblan.launcher.domain.model.FastLauncherAppsActivityInfo
-import com.eblan.launcher.domain.model.IconPackInfoComponent
+import com.eblan.launcher.domain.model.iconpackinfo.IconPackInfoComponent
+import com.eblan.launcher.domain.model.launcherapps.FastLauncherAppsActivityInfo
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import java.io.File

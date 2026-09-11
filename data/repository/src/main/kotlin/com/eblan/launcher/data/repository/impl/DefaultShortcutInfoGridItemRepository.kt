@@ -20,8 +20,8 @@ package com.eblan.launcher.data.repository.impl
 import com.eblan.launcher.data.repository.mapper.asEntity
 import com.eblan.launcher.data.repository.mapper.asModel
 import com.eblan.launcher.data.room.dao.ShortcutInfoGridItemDao
-import com.eblan.launcher.domain.model.PartialShortcutInfoGridItem
-import com.eblan.launcher.domain.model.ShortcutInfoGridItem
+import com.eblan.launcher.domain.model.grid.PartialShortcutInfoGridItem
+import com.eblan.launcher.domain.model.grid.ShortcutInfoGridItem
 import com.eblan.launcher.domain.repository.ShortcutInfoGridItemRepository
 import javax.inject.Inject
 

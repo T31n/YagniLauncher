@@ -21,8 +21,8 @@ import com.eblan.launcher.data.repository.mapper.asModel
 import com.eblan.launcher.data.room.dao.FolderEblanApplicationInfoDao
 import com.eblan.launcher.data.room.entity.FolderEblanApplicationInfoEntity
 import com.eblan.launcher.data.room.entity.FolderEblanApplicationInfoWrapperEntity
-import com.eblan.launcher.domain.model.FolderEblanApplicationInfo
-import com.eblan.launcher.domain.model.FolderEblanApplicationInfoWrapper
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoWrapper
 import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

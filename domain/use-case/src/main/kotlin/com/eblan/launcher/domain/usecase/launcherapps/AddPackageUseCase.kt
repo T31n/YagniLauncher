@@ -25,11 +25,11 @@ import com.eblan.launcher.domain.framework.AppWidgetManagerWrapper
 import com.eblan.launcher.domain.framework.IconPackManager
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
-import com.eblan.launcher.domain.model.ApplicationInfoGridItem
-import com.eblan.launcher.domain.model.Associate
-import com.eblan.launcher.domain.model.EblanApplicationInfo
-import com.eblan.launcher.domain.model.HomeSettings
-import com.eblan.launcher.domain.model.LauncherAppsActivityInfo
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
+import com.eblan.launcher.domain.model.grid.ApplicationInfoGridItem
+import com.eblan.launcher.domain.model.grid.Associate
+import com.eblan.launcher.domain.model.launcherapps.LauncherAppsActivityInfo
+import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.domain.repository.ApplicationInfoGridItemRepository
 import com.eblan.launcher.domain.repository.EblanAppWidgetProviderInfoRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository

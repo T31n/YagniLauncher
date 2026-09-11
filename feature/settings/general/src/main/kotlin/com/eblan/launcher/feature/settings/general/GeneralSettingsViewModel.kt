@@ -20,8 +20,8 @@ package com.eblan.launcher.feature.settings.general
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
-import com.eblan.launcher.domain.model.GeneralSettings
-import com.eblan.launcher.domain.model.PackageManagerIconPackInfo
+import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPackInfo
+import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.domain.repository.EblanIconPackInfoRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.iconpack.DeleteIconPackInfoUseCase

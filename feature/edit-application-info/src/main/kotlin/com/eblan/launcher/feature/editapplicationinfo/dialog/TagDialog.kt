@@ -38,8 +38,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import com.eblan.launcher.designsystem.component.EblanDialog
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.EblanApplicationInfoTag
-import com.eblan.launcher.domain.model.EblanApplicationInfoTagUi
+import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
+import com.eblan.launcher.domain.model.application.EblanApplicationInfoTagUi
 import com.eblan.launcher.feature.editapplicationinfo.R
 import com.eblan.launcher.common.R as commonR
 

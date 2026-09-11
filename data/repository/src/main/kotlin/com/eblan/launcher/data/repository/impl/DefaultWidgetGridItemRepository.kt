@@ -20,8 +20,8 @@ package com.eblan.launcher.data.repository.impl
 import com.eblan.launcher.data.repository.mapper.asEntity
 import com.eblan.launcher.data.repository.mapper.asModel
 import com.eblan.launcher.data.room.dao.WidgetGridItemDao
-import com.eblan.launcher.domain.model.PartialUpdateWidgetGridItem
-import com.eblan.launcher.domain.model.WidgetGridItem
+import com.eblan.launcher.domain.model.grid.WidgetGridItem
+import com.eblan.launcher.domain.model.widget.PartialUpdateWidgetGridItem
 import com.eblan.launcher.domain.repository.WidgetGridItemRepository
 import javax.inject.Inject
 

@@ -31,20 +31,20 @@ import com.eblan.launcher.data.datastore.proto.home.HorizontalAlignmentProto
 import com.eblan.launcher.data.datastore.proto.home.TextColorProto
 import com.eblan.launcher.data.datastore.proto.home.VerticalArrangementProto
 import com.eblan.launcher.data.datastore.proto.model.BackgroundColorProto
-import com.eblan.launcher.domain.model.AppDrawerSettings
-import com.eblan.launcher.domain.model.AppDrawerType
-import com.eblan.launcher.domain.model.BackgroundColor
-import com.eblan.launcher.domain.model.EblanAction
-import com.eblan.launcher.domain.model.EblanActionType
-import com.eblan.launcher.domain.model.ExperimentalSettings
-import com.eblan.launcher.domain.model.GeneralSettings
-import com.eblan.launcher.domain.model.GestureSettings
-import com.eblan.launcher.domain.model.GridItemSettings
-import com.eblan.launcher.domain.model.HomeSettings
-import com.eblan.launcher.domain.model.HorizontalAlignment
-import com.eblan.launcher.domain.model.TextColor
-import com.eblan.launcher.domain.model.Theme
-import com.eblan.launcher.domain.model.VerticalArrangement
+import com.eblan.launcher.domain.model.grid.GridItemSettings
+import com.eblan.launcher.domain.model.grid.HorizontalAlignment
+import com.eblan.launcher.domain.model.grid.VerticalArrangement
+import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
+import com.eblan.launcher.domain.model.userdata.AppDrawerType
+import com.eblan.launcher.domain.model.userdata.BackgroundColor
+import com.eblan.launcher.domain.model.userdata.EblanAction
+import com.eblan.launcher.domain.model.userdata.EblanActionType
+import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
+import com.eblan.launcher.domain.model.userdata.GeneralSettings
+import com.eblan.launcher.domain.model.userdata.GestureSettings
+import com.eblan.launcher.domain.model.userdata.HomeSettings
+import com.eblan.launcher.domain.model.userdata.TextColor
+import com.eblan.launcher.domain.model.userdata.Theme
 
 internal fun HomeSettingsProto.toHomeSettings(): HomeSettings = HomeSettings(
     columns = columns,

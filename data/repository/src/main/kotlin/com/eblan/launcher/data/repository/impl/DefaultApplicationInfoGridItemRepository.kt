@@ -20,8 +20,8 @@ package com.eblan.launcher.data.repository.impl
 import com.eblan.launcher.data.repository.mapper.asEntity
 import com.eblan.launcher.data.repository.mapper.asModel
 import com.eblan.launcher.data.room.dao.ApplicationInfoGridItemDao
-import com.eblan.launcher.domain.model.ApplicationInfoGridItem
-import com.eblan.launcher.domain.model.PartialApplicationInfoGridItem
+import com.eblan.launcher.domain.model.grid.ApplicationInfoGridItem
+import com.eblan.launcher.domain.model.grid.PartialApplicationInfoGridItem
 import com.eblan.launcher.domain.repository.ApplicationInfoGridItemRepository
 import javax.inject.Inject
 

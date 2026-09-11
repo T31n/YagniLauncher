@@ -17,8 +17,8 @@
  */
 package com.eblan.launcher.domain.repository
 
-import com.eblan.launcher.domain.model.DeleteEblanShortcutConfig
-import com.eblan.launcher.domain.model.EblanShortcutConfig
+import com.eblan.launcher.domain.model.shortcutconfig.DeleteEblanShortcutConfig
+import com.eblan.launcher.domain.model.shortcutconfig.EblanShortcutConfig
 import kotlinx.coroutines.flow.Flow
 
 interface EblanShortcutConfigRepository {

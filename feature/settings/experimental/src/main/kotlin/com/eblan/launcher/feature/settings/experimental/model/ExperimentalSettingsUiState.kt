@@ -17,7 +17,7 @@
  */
 package com.eblan.launcher.feature.settings.experimental.model
 
-import com.eblan.launcher.domain.model.ExperimentalSettings
+import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
 
 internal sealed interface ExperimentalSettingsUiState {
     data object Loading : ExperimentalSettingsUiState

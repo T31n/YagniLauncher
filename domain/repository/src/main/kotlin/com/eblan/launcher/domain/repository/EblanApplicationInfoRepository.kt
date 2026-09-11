@@ -17,10 +17,10 @@
  */
 package com.eblan.launcher.domain.repository
 
-import com.eblan.launcher.domain.model.DeleteEblanApplicationInfo
-import com.eblan.launcher.domain.model.EblanApplicationInfo
-import com.eblan.launcher.domain.model.EblanApplicationInfoTag
-import com.eblan.launcher.domain.model.SyncEblanApplicationInfo
+import com.eblan.launcher.domain.model.application.DeleteEblanApplicationInfo
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
+import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
+import com.eblan.launcher.domain.model.application.SyncEblanApplicationInfo
 import kotlinx.coroutines.flow.Flow
 
 interface EblanApplicationInfoRepository {

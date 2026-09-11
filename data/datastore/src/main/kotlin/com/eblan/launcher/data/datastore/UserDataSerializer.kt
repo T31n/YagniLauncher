@@ -31,9 +31,9 @@ import com.eblan.launcher.data.datastore.proto.home.HorizontalAlignmentProto
 import com.eblan.launcher.data.datastore.proto.home.TextColorProto
 import com.eblan.launcher.data.datastore.proto.home.VerticalArrangementProto
 import com.eblan.launcher.data.datastore.proto.model.BackgroundColorProto
-import com.eblan.launcher.domain.model.EblanAction
-import com.eblan.launcher.domain.model.EblanActionType
-import com.eblan.launcher.domain.model.Theme
+import com.eblan.launcher.domain.model.userdata.EblanAction
+import com.eblan.launcher.domain.model.userdata.EblanActionType
+import com.eblan.launcher.domain.model.userdata.Theme
 import com.google.protobuf.InvalidProtocolBufferException
 import java.io.InputStream
 import java.io.OutputStream

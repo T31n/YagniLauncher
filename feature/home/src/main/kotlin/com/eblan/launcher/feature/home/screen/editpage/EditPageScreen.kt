@@ -72,12 +72,12 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.core.util.Consumer
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.Associate
-import com.eblan.launcher.domain.model.BackgroundColor
-import com.eblan.launcher.domain.model.HomeSettings
 import com.eblan.launcher.domain.model.PageItem
-import com.eblan.launcher.domain.model.PreviewFolder
-import com.eblan.launcher.domain.model.TextColor
+import com.eblan.launcher.domain.model.folder.PreviewFolder
+import com.eblan.launcher.domain.model.grid.Associate
+import com.eblan.launcher.domain.model.userdata.BackgroundColor
+import com.eblan.launcher.domain.model.userdata.HomeSettings
+import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.GridLayout
 import com.eblan.launcher.feature.home.component.HomeHandler
 import com.eblan.launcher.feature.home.model.Screen

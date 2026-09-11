@@ -17,8 +17,8 @@
  */
 package com.eblan.launcher.domain.usecase.grid
 
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.GridItemData
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.GridItemData
 import java.io.File
 
 internal fun deleteGridItemCustomIconFile(gridItem: GridItem) = when (val data = gridItem.data) {

@@ -20,8 +20,8 @@ package com.eblan.launcher.data.room.entity
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.eblan.launcher.domain.model.Associate
-import com.eblan.launcher.domain.model.GridItemSettings
+import com.eblan.launcher.domain.model.grid.Associate
+import com.eblan.launcher.domain.model.grid.GridItemSettings
 
 @Entity
 data class WidgetGridItemEntity(

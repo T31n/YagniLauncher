@@ -33,7 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.eblan.launcher.designsystem.component.EblanDialog
-import com.eblan.launcher.domain.model.FolderEblanApplicationInfo
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import kotlinx.coroutines.launch
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid

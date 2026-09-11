@@ -20,7 +20,7 @@ package com.eblan.launcher.data.repository.impl
 import com.eblan.launcher.data.repository.mapper.asEntity
 import com.eblan.launcher.data.repository.mapper.asModel
 import com.eblan.launcher.data.room.dao.EblanIconPackInfoDao
-import com.eblan.launcher.domain.model.EblanIconPackInfo
+import com.eblan.launcher.domain.model.iconpackinfo.EblanIconPackInfo
 import com.eblan.launcher.domain.repository.EblanIconPackInfoRepository
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

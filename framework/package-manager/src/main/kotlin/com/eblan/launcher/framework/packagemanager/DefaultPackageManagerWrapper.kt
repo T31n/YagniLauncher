@@ -27,7 +27,7 @@ import com.eblan.launcher.common.AndroidImageSerializer
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
-import com.eblan.launcher.domain.model.PackageManagerIconPackInfo
+import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPackInfo
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext

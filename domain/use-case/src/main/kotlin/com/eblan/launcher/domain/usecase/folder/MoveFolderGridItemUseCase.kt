@@ -19,10 +19,10 @@ package com.eblan.launcher.domain.usecase.folder
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
-import com.eblan.launcher.domain.model.FolderGridItemPopup
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.GridItemData
-import com.eblan.launcher.domain.model.MoveGridItemResult
+import com.eblan.launcher.domain.model.grid.FolderGridItemPopup
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.GridItemData
+import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.repository.GridRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext

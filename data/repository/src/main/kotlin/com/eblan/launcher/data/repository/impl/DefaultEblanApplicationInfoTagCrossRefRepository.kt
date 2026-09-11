@@ -19,7 +19,7 @@ package com.eblan.launcher.data.repository.impl
 
 import com.eblan.launcher.data.room.dao.EblanApplicationInfoTagCrossRefDao
 import com.eblan.launcher.data.room.entity.EblanApplicationInfoTagCrossRefEntity
-import com.eblan.launcher.domain.model.EblanApplicationInfoTagCrossRef
+import com.eblan.launcher.domain.model.application.EblanApplicationInfoTagCrossRef
 import com.eblan.launcher.domain.repository.EblanApplicationInfoTagCrossRefRepository
 import javax.inject.Inject
 

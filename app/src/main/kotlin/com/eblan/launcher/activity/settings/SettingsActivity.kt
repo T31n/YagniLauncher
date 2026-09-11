@@ -34,7 +34,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.eblan.launcher.activity.main.MainActivity
 import com.eblan.launcher.designsystem.theme.EblanLauncherTheme
-import com.eblan.launcher.domain.model.Theme
+import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.framework.accessibilitymanager.AndroidAccessibilityManagerWrapper
 import com.eblan.launcher.framework.packagemanager.AndroidPackageManagerWrapper
 import com.eblan.launcher.framework.settings.AndroidSettingsWrapper

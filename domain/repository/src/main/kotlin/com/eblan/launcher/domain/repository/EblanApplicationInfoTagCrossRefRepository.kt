@@ -17,7 +17,7 @@
  */
 package com.eblan.launcher.domain.repository
 
-import com.eblan.launcher.domain.model.EblanApplicationInfoTagCrossRef
+import com.eblan.launcher.domain.model.application.EblanApplicationInfoTagCrossRef
 
 interface EblanApplicationInfoTagCrossRefRepository {
     suspend fun insertEblanApplicationInfoTagCrossRef(eblanApplicationInfoTagCrossRef: EblanApplicationInfoTagCrossRef)

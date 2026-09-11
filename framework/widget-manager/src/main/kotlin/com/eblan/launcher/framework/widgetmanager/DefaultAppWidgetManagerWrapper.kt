@@ -31,7 +31,7 @@ import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.AppWidgetManagerWrapper
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
-import com.eblan.launcher.domain.model.AppWidgetManagerAppWidgetProviderInfo
+import com.eblan.launcher.domain.model.widget.AppWidgetManagerAppWidgetProviderInfo
 import com.eblan.launcher.framework.usermanager.AndroidUserManagerWrapper
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher

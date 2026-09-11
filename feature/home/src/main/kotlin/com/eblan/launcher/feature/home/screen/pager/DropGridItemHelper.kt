@@ -41,11 +41,11 @@ import androidx.compose.ui.unit.dp
 import com.eblan.launcher.common.AndroidImageSerializer
 import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
-import com.eblan.launcher.domain.model.Associate
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.GridItemData
-import com.eblan.launcher.domain.model.MoveGridItemResult
-import com.eblan.launcher.domain.model.PinItemRequestType
+import com.eblan.launcher.domain.model.grid.Associate
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.GridItemData
+import com.eblan.launcher.domain.model.grid.MoveGridItemResult
+import com.eblan.launcher.domain.model.launcherapps.PinItemRequestType
 import com.eblan.launcher.feature.home.R
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.GridItemSource

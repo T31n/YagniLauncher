@@ -24,8 +24,8 @@ import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.grid.isGridItemSpanWithinBounds
-import com.eblan.launcher.domain.model.Associate
-import com.eblan.launcher.domain.model.HomeData
+import com.eblan.launcher.domain.model.grid.Associate
+import com.eblan.launcher.domain.model.userdata.HomeData
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.util.getIconPackInfoFilePaths

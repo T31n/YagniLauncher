@@ -40,8 +40,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.BackgroundColor
-import com.eblan.launcher.domain.model.TextColor
+import com.eblan.launcher.domain.model.userdata.BackgroundColor
+import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.util.getApplicationScreenTextColor
 import kotlinx.coroutines.launch
 import com.eblan.launcher.common.R as commonR

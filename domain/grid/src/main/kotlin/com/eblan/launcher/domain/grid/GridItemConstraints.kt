@@ -17,8 +17,8 @@
  */
 package com.eblan.launcher.domain.grid
 
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.ResolveDirection
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.ResolveDirection
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 

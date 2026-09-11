@@ -24,8 +24,8 @@ import androidx.room.Update
 import androidx.room.Upsert
 import com.eblan.launcher.data.room.entity.EblanApplicationInfoEntity
 import com.eblan.launcher.data.room.entity.EblanApplicationInfoTagEntity
-import com.eblan.launcher.domain.model.DeleteEblanApplicationInfo
-import com.eblan.launcher.domain.model.SyncEblanApplicationInfo
+import com.eblan.launcher.domain.model.application.DeleteEblanApplicationInfo
+import com.eblan.launcher.domain.model.application.SyncEblanApplicationInfo
 import kotlinx.coroutines.flow.Flow
 
 @Dao

@@ -25,7 +25,7 @@ import androidx.compose.ui.layout.ParentDataModifier
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
-import com.eblan.launcher.domain.model.GridItem
+import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_COLUMNS
 import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_ROWS
 

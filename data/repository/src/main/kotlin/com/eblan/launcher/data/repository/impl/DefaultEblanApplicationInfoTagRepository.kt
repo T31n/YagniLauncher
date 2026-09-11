@@ -19,7 +19,7 @@ package com.eblan.launcher.data.repository.impl
 
 import com.eblan.launcher.data.room.dao.EblanApplicationInfoTagDao
 import com.eblan.launcher.data.room.entity.EblanApplicationInfoTagEntity
-import com.eblan.launcher.domain.model.EblanApplicationInfoTag
+import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.repository.EblanApplicationInfoTagRepository
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

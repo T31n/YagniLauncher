@@ -20,8 +20,8 @@ package com.eblan.launcher.data.repository.impl
 import com.eblan.launcher.data.repository.mapper.asEntity
 import com.eblan.launcher.data.repository.mapper.asFolderGridItemWrapper
 import com.eblan.launcher.data.room.dao.FolderGridItemDao
-import com.eblan.launcher.domain.model.FolderGridItem
-import com.eblan.launcher.domain.model.FolderGridItemWrapper
+import com.eblan.launcher.domain.model.grid.FolderGridItem
+import com.eblan.launcher.domain.model.grid.FolderGridItemWrapper
 import com.eblan.launcher.domain.repository.FolderGridItemRepository
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
