@@ -73,6 +73,7 @@ internal fun FolderEblanApplicationInfoItem(
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
+    onUpdateIsVisibleFolders: (Boolean) -> Unit,
 ) {
     val textColor = getTextColorFromBackgroundColor(
         backgroundColor = appDrawerSettings.backgroundColor,
@@ -111,6 +112,7 @@ internal fun FolderEblanApplicationInfoItem(
                 detectTapGestures(
                     onTap = if (!isVisibleOverlay) {
                         {
+                            onUpdateIsVisibleFolders(true)
                         }
                     } else {
                         null

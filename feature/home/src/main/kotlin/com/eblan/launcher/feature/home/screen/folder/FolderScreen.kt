@@ -74,7 +74,6 @@ import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
-import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_COLUMNS
 import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_ROWS
@@ -102,7 +101,6 @@ internal fun FolderScreen(
     isVisibleOverlay: Boolean,
     hasShortcutHostPermission: Boolean,
     moveGridItemResult: MoveGridItemResult?,
-    homeSettings: HomeSettings,
     isDragging: Boolean,
     dragIntOffset: IntOffset,
     lockMovement: Boolean,
@@ -117,7 +115,10 @@ internal fun FolderScreen(
     animations: Boolean,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
-    onDeleteFolderPopupEntry: (FolderPopupEntry) -> Unit,
+    folderBackgroundColor: BackgroundColor,
+    folderCornerRadius: Int,
+    customFolderBackgroundColor: Int,
+    onDeleteFolderGridItemPopupEntry: (FolderPopupEntry) -> Unit,
     onMoveFolderGridItemOutsideFolder: (GridItem) -> Unit,
     onOpenAppDrawer: () -> Unit,
     onUpdateImageBitmap: (ImageBitmap) -> Unit,
@@ -166,13 +167,14 @@ internal fun FolderScreen(
     val folderPopupLayoutInfo = getFolderPopupLayoutInfo(
         density = density,
         layoutDirection = layoutDirection,
-        homeSettings = homeSettings,
         paddingValues = paddingValues,
         safeDrawingWidth = safeDrawingWidth,
         safeDrawingHeight = safeDrawingHeight,
         folderGridItemPopup = folderGridItemPopup,
         folderPopupIntOffset = folderPopupIntOffset,
         folderPopupIntSize = folderPopupIntSize,
+        folderCellWidth = folderCellWidth,
+        folderCellHeight = folderCellWidth,
     )
 
     val progress = remember { Animatable(0f) }
@@ -255,7 +257,7 @@ internal fun FolderScreen(
             isFirstFolderGridItem = isFirstFolderGridItem,
             animations = animations,
             onAnimateToScrollToPage = folderGridHorizontalPagerState::animateScrollToPage,
-            onDeleteFolderPopupEntry = onDeleteFolderPopupEntry,
+            onDeleteFolderPopupEntry = onDeleteFolderGridItemPopupEntry,
             onMoveFolderGridItemOutsideFolder = onMoveFolderGridItemOutsideFolder,
             onUpdateSharedElementKey = onUpdateSharedElementKey,
             onUpdateIsVisibleFolders = onUpdateIsVisibleFolders,
@@ -414,12 +416,12 @@ internal fun FolderScreen(
                     height = with(density) { animatedFolderRect.height().toDp() },
                 )
                 .clipToBounds(),
-            shape = RoundedCornerShape(homeSettings.folderCornerRadius.dp),
-            color = when (homeSettings.folderBackgroundColor) {
+            shape = RoundedCornerShape(folderCornerRadius.dp),
+            color = when (folderBackgroundColor) {
                 BackgroundColor.System -> MaterialTheme.colorScheme.surface
                 BackgroundColor.Light -> Color.White
                 BackgroundColor.Dark -> Color.Black
-                BackgroundColor.Custom -> Color(homeSettings.customFolderBackgroundColor)
+                BackgroundColor.Custom -> Color(customFolderBackgroundColor)
             },
             shadowElevation = 2.dp,
         ) {
@@ -469,9 +471,9 @@ internal fun FolderScreen(
                                 animations = animations,
                                 systemTextColor = systemTextColor,
                                 systemCustomTextColor = systemCustomTextColor,
-                                folderCornerRadius = homeSettings.folderCornerRadius,
-                                folderBackgroundColor = homeSettings.folderBackgroundColor,
-                                customFolderBackgroundColor = homeSettings.customFolderBackgroundColor,
+                                folderCornerRadius = folderCornerRadius,
+                                folderBackgroundColor = folderBackgroundColor,
+                                customFolderBackgroundColor = customFolderBackgroundColor,
                                 folderGridItemPopups = folderGridItemPopups,
                                 onOpenAppDrawer = onOpenAppDrawer,
                                 onUpdateImageBitmap = onUpdateImageBitmap,
@@ -493,8 +495,8 @@ internal fun FolderScreen(
                     gridItemsByPage = folderGridItemPopup.gridItemsByPage,
                     folderGridHorizontalPagerState = folderGridHorizontalPagerState,
                     progress = progress.value,
-                    folderBackgroundColor = homeSettings.folderBackgroundColor,
-                    customFolderBackgroundColor = homeSettings.customFolderBackgroundColor,
+                    folderBackgroundColor = folderBackgroundColor,
+                    customFolderBackgroundColor = customFolderBackgroundColor,
                     textColor = gridItemSettings.textColor,
                     customTextColor = gridItemSettings.customTextColor,
                     systemCustomTextColor = systemCustomTextColor,
@@ -753,13 +755,14 @@ private fun handleMoveFolderGridItemOutsideFolder(
 private fun getFolderPopupLayoutInfo(
     density: Density,
     layoutDirection: LayoutDirection,
-    homeSettings: HomeSettings,
     paddingValues: PaddingValues,
     safeDrawingWidth: Int,
     safeDrawingHeight: Int,
     folderGridItemPopup: FolderGridItemPopup,
     folderPopupIntOffset: IntOffset,
     folderPopupIntSize: IntSize,
+    folderCellWidth: Int,
+    folderCellHeight: Int,
 ): FolderPopupLayoutInfo {
     val leftPadding = with(density) {
         paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
@@ -769,8 +772,8 @@ private fun getFolderPopupLayoutInfo(
         paddingValues.calculateTopPadding().roundToPx()
     }
 
-    val minCellWidthPx = with(density) { homeSettings.folderCellWidth.dp.roundToPx() }
-    val minCellHeightPx = with(density) { homeSettings.folderCellHeight.dp.roundToPx() }
+    val minCellWidthPx = with(density) { folderCellWidth.dp.roundToPx() }
+    val minCellHeightPx = with(density) { folderCellHeight.dp.roundToPx() }
 
     val availableWidth = (safeDrawingWidth - leftPadding * 2).coerceAtLeast(0)
     val availableHeight = (safeDrawingHeight - topPadding * 2).coerceAtLeast(0)

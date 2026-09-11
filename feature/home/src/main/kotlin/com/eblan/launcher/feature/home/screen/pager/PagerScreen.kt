@@ -17,17 +17,14 @@
  */
 package com.eblan.launcher.feature.home.screen.pager
 
-import android.content.BroadcastReceiver
 import android.content.ClipDescription
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.ServiceConnection
 import android.content.pm.ActivityInfo
 import android.content.pm.LauncherApps
 import android.content.pm.ShortcutInfo
-import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
@@ -94,7 +91,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import androidx.core.util.Consumer
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -105,6 +101,7 @@ import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderPopupEntry
 import com.eblan.launcher.domain.model.folder.PreviewFolder
 import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
@@ -113,7 +110,6 @@ import com.eblan.launcher.domain.model.grid.FolderGridItemPopup
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.model.launcherapps.EblanUser
-import com.eblan.launcher.domain.model.launcherapps.ManagedProfileResult
 import com.eblan.launcher.domain.model.launcherapps.PinItemRequestType
 import com.eblan.launcher.domain.model.shortcutconfig.EblanShortcutConfig
 import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfo
@@ -193,6 +189,7 @@ internal fun PagerScreen(
     previewFolderGridItems: Map<String, PreviewFolder>,
     iconPackInfoFilePaths: Map<String, String?>,
     previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
+    folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
     onDeleteGridItem: (GridItem) -> Unit,
     onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
@@ -243,7 +240,9 @@ internal fun PagerScreen(
     onStartSyncData: () -> Unit,
     onStopSyncData: () -> Unit,
     onUpsertFolderGridItemPopupEntry: (FolderPopupEntry) -> Unit,
-    onDeleteFolderPopupEntry: (FolderPopupEntry) -> Unit,
+    onDeleteFolderGridItemPopupEntry: (FolderPopupEntry) -> Unit,
+    onUpsertFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
+    onDeleteFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
     onShowFolderWhenDragging: (
         folderPopupEntry: FolderPopupEntry,
         movingGridItem: GridItem,
@@ -464,8 +463,6 @@ internal fun PagerScreen(
             )
         }
     }
-
-    val managedProfileResult by rememberManagedProfileResult()
 
     val isVisibleGridItemPopup = gridItemSource != null &&
         pagerScreenState.showGridItemPopup &&
@@ -1030,7 +1027,6 @@ internal fun PagerScreen(
                     isVisibleOverlay = isVisibleOverlay,
                     hasShortcutHostPermission = hasShortcutHostPermission,
                     moveGridItemResult = moveGridItemResult,
-                    homeSettings = homeSettings,
                     isDragging = pagerScreenState.isDragging,
                     dragIntOffset = pagerScreenState.dragIntOffset,
                     lockMovement = experimentalSettings.lockMovement,
@@ -1045,7 +1041,10 @@ internal fun PagerScreen(
                     animations = experimentalSettings.gridItemAnimation,
                     systemTextColor = textColor,
                     systemCustomTextColor = homeSettings.gridItemSettings.customTextColor,
-                    onDeleteFolderPopupEntry = onDeleteFolderPopupEntry,
+                    folderBackgroundColor = homeSettings.folderBackgroundColor,
+                    folderCornerRadius = homeSettings.folderCornerRadius,
+                    customFolderBackgroundColor = homeSettings.customFolderBackgroundColor,
+                    onDeleteFolderGridItemPopupEntry = onDeleteFolderGridItemPopupEntry,
                     onMoveFolderGridItemOutsideFolder = onMoveFolderGridItemOutsideFolder,
                     onOpenAppDrawer = pagerScreenState::openApplicationScreen,
                     onUpdateImageBitmap = pagerScreenState::updateOverlayImageBitmap,
@@ -1106,7 +1105,6 @@ internal fun PagerScreen(
                 eblanShortcutInfosGroup = eblanShortcutInfosGroup,
                 getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
                 hasShortcutHostPermission = hasShortcutHostPermission,
-                managedProfileResult = managedProfileResult,
                 paddingValues = paddingValues,
                 screenHeight = screenHeight,
                 swipeY = pagerScreenState.applicationScreenSwipeY.value,
@@ -1118,6 +1116,12 @@ internal fun PagerScreen(
                 folderCornerRadius = homeSettings.folderCornerRadius,
                 folderBackgroundColor = homeSettings.folderBackgroundColor,
                 customFolderBackgroundColor = homeSettings.customFolderBackgroundColor,
+                folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+                folderCellWidth = homeSettings.folderCellWidth,
+                folderCellHeight = homeSettings.folderCellHeight,
+                safeDrawingHeight = safeDrawingHeight,
+                safeDrawingWidth = safeDrawingWidth,
+                screenWidth = screenWidth,
                 onDismiss = pagerScreenState::dismissApplicationScreen,
                 onDragEnd = pagerScreenState::handleOnDragEndApplicationScreen,
                 onEditApplicationInfo = onEditApplicationInfo,
@@ -1132,6 +1136,8 @@ internal fun PagerScreen(
                 onWidgets = pagerScreenState::openAppWidgetScreen,
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                 onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+                onDeleteFolderEblanApplicationInfoPopupEntry = onDeleteFolderEblanApplicationInfoPopupEntry,
+                onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
             )
         }
 
@@ -1416,67 +1422,6 @@ private fun SyncDataEffect(
             onStopSyncData()
 
             appWidgetHost.stopListening()
-        }
-    }
-}
-
-@Composable
-private fun rememberManagedProfileResult(): State<ManagedProfileResult?> {
-    val context = LocalContext.current
-
-    val userManagerWrapper = LocalUserManager.current
-
-    return produceState(
-        initialValue = null,
-        key1 = context,
-        key2 = userManagerWrapper,
-    ) {
-        val receiver = object : BroadcastReceiver() {
-            override fun onReceive(
-                context: Context,
-                intent: Intent,
-            ) {
-                val userHandle =
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        intent.getParcelableExtra(
-                            Intent.EXTRA_USER,
-                            UserHandle::class.java,
-                        )
-                    } else {
-                        @Suppress("DEPRECATION")
-                        intent.getParcelableExtra(Intent.EXTRA_USER)
-                    }
-
-                if (userHandle != null) {
-                    value = ManagedProfileResult(
-                        serialNumber =
-                        userManagerWrapper.getSerialNumberForUser(
-                            userHandle = userHandle,
-                        ),
-                        isQuiteModeEnabled =
-                        userManagerWrapper.isQuietModeEnabled(
-                            userHandle = userHandle,
-                        ),
-                    )
-                }
-            }
-        }
-
-        ContextCompat.registerReceiver(
-            context,
-            receiver,
-            IntentFilter().apply {
-                addAction(Intent.ACTION_MANAGED_PROFILE_AVAILABLE)
-                addAction(Intent.ACTION_MANAGED_PROFILE_UNAVAILABLE)
-                addAction(Intent.ACTION_MANAGED_PROFILE_REMOVED)
-                addAction(Intent.ACTION_MANAGED_PROFILE_ADDED)
-                addAction(Intent.ACTION_MANAGED_PROFILE_UNLOCKED)
-            },
-            ContextCompat.RECEIVER_NOT_EXPORTED,
-        )
-
-        awaitDispose {
-            context.unregisterReceiver(receiver)
         }
     }
 }

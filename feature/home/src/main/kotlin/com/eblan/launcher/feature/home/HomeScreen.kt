@@ -43,6 +43,7 @@ import com.eblan.launcher.domain.model.PageItem
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderPopupEntry
 import com.eblan.launcher.domain.model.folder.PreviewFolder
 import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
@@ -118,6 +119,8 @@ internal fun HomeRoute(
 
     val previewFolderEblanApplicationInfos by viewModel.previewFolderEblanApplicationInfos.collectAsStateWithLifecycle()
 
+    val folderEblanApplicationInfoPopups by viewModel.folderEblanApplicationInfoPopups.collectAsStateWithLifecycle()
+
     HomeScreen(
         modifier = modifier,
         configureResultCode = configureResultCode,
@@ -139,6 +142,7 @@ internal fun HomeRoute(
         textColor = textColor,
         previewFolderGridItems = previewFolderGridItems,
         previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+        folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
         onResetGrid = viewModel::resetGrid,
         onDeleteGridItem = viewModel::deleteGridItem,
         onResetGridAfterDeleteGridItem = viewModel::resetGridAfterDeleteGridItem,
@@ -177,6 +181,8 @@ internal fun HomeRoute(
         onPackageChanged = viewModel::packageChanged,
         onShortcutsChanged = viewModel::shortcutsChanged,
         onResetFolderPopupEntries = viewModel::resetFolderGridItemPopupEntries,
+        onUpsertFolderEblanApplicationInfoPopupEntry = viewModel::upsertFolderEblanApplicationInfoPopupEntry,
+        onDeleteFolderEblanApplicationInfoPopupEntry = viewModel::upsertFolderEblanApplicationInfoPopupEntry,
     )
 }
 
@@ -203,6 +209,7 @@ internal fun HomeScreen(
     textColor: TextColor,
     previewFolderGridItems: Map<String, PreviewFolder>,
     previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
+    folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
     onResetGrid: () -> Unit,
     onDeleteGridItem: (GridItem) -> Unit,
     onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
@@ -290,6 +297,8 @@ internal fun HomeScreen(
         packageName: String,
     ) -> Unit,
     onResetFolderPopupEntries: () -> Unit,
+    onUpsertFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
+    onDeleteFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
 ) {
     val paddingValues = WindowInsets.safeDrawing.asPaddingValues()
 
@@ -326,6 +335,7 @@ internal fun HomeScreen(
                 textColor = textColor,
                 previewFolderGridItems = previewFolderGridItems,
                 previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+                folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                 onResetGrid = onResetGrid,
                 onDeleteGridItem = onDeleteGridItem,
                 onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
@@ -364,6 +374,8 @@ internal fun HomeScreen(
                 onPackageChanged = onPackageChanged,
                 onShortcutsChanged = onShortcutsChanged,
                 onResetFolderPopupEntries = onResetFolderPopupEntries,
+                onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
+                onDeleteFolderEblanApplicationInfoPopupEntry = onDeleteFolderEblanApplicationInfoPopupEntry,
             )
         }
     }
@@ -395,6 +407,7 @@ private fun Success(
     textColor: TextColor,
     previewFolderGridItems: Map<String, PreviewFolder>,
     previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
+    folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
     onResetGrid: () -> Unit,
     onDeleteGridItem: (GridItem) -> Unit,
     onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
@@ -482,6 +495,8 @@ private fun Success(
         packageName: String,
     ) -> Unit,
     onResetFolderPopupEntries: () -> Unit,
+    onUpsertFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
+    onDeleteFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
 ) {
     AnimatedContent(
         modifier = modifier,
@@ -519,6 +534,7 @@ private fun Success(
                     previewFolderGridItems = previewFolderGridItems,
                     iconPackInfoFilePaths = homeData.iconPackInfoFilePaths,
                     previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+                    folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                     onDeleteGridItem = onDeleteGridItem,
                     onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
                     onUpdateGridItemsAfterMove = onUpdateGridItemsAfterMove,
@@ -543,7 +559,7 @@ private fun Success(
                     onStartSyncData = onStartSyncData,
                     onStopSyncData = onStopSyncData,
                     onUpsertFolderGridItemPopupEntry = onUpsertFolderGridItemPopupEntry,
-                    onDeleteFolderPopupEntry = onDeleteFolderPopupEntry,
+                    onDeleteFolderGridItemPopupEntry = onDeleteFolderPopupEntry,
                     onShowFolderWhenDragging = onShowFolderWhenDragging,
                     onUpdateShortcutConfigIntoShortcutInfoGridItem = onUpdateShortcutConfigIntoShortcutInfoGridItem,
                     onUpdateGridItemSource = onUpdateGridItemSource,
@@ -556,6 +572,8 @@ private fun Success(
                     onPackageChanged = onPackageChanged,
                     onShortcutsChanged = onShortcutsChanged,
                     onResetFolderPopupEntries = onResetFolderPopupEntries,
+                    onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
+                    onDeleteFolderEblanApplicationInfoPopupEntry = onDeleteFolderEblanApplicationInfoPopupEntry,
                 )
             }
 

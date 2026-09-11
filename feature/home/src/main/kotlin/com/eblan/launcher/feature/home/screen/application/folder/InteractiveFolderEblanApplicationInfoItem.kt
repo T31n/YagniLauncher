@@ -74,7 +74,6 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
     previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
     appDrawerSettings: AppDrawerSettings,
     folderCornerRadius: Int,
-    folderEblanApplicationInfo: FolderEblanApplicationInfoGridItem,
     isVisibleOverlay: Boolean,
 ) {
     when (val data = folderEblanApplicationInfoGridItem.data) {
@@ -97,7 +96,7 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
                 data = data,
                 folderBackgroundColor = folderBackgroundColor,
                 folderCornerRadius = folderCornerRadius,
-                folderEblanApplicationInfo = folderEblanApplicationInfo,
+                folderEblanApplicationInfoGridItem = folderEblanApplicationInfoGridItem,
                 isVisibleOverlay = isVisibleOverlay,
                 previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
                 systemCustomTextColor = systemCustomTextColor,
@@ -206,7 +205,7 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
     data: FolderEblanApplicationInfoGridItemData.Folder,
     folderBackgroundColor: BackgroundColor,
     folderCornerRadius: Int,
-    folderEblanApplicationInfo: FolderEblanApplicationInfoGridItem,
+    folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
     isVisibleOverlay: Boolean,
     previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
     systemCustomTextColor: Int,
@@ -287,7 +286,7 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
             ) {
                 PreviewFolderGridLayout(
                     modifier = Modifier.fillMaxSize(),
-                    gridItems = previewFolderEblanApplicationInfos[folderEblanApplicationInfo.id]?.previewFolderGridItems,
+                    gridItems = previewFolderEblanApplicationInfos[folderEblanApplicationInfoGridItem.id]?.previewFolderGridItems,
                     slotId = { it.id },
                     content = {
                         PreviewFolderEblanApplicationInfoItem(

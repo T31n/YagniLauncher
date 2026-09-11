@@ -62,10 +62,8 @@ import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderPopupEntry
 import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
-import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
-import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_COLUMNS
 import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_ROWS
@@ -79,12 +77,10 @@ import kotlin.math.roundToInt
 internal fun FolderApplicationScreen(
     modifier: Modifier = Modifier,
     folderEblanApplicationInfoPopup: FolderEblanApplicationInfoPopup,
-    gridItemSettings: GridItemSettings,
     paddingValues: PaddingValues,
     safeDrawingHeight: Int,
     safeDrawingWidth: Int,
     isVisibleOverlay: Boolean,
-    homeSettings: HomeSettings,
     screenWidth: Int,
     folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
     animations: Boolean,
@@ -95,9 +91,10 @@ internal fun FolderApplicationScreen(
     customFolderBackgroundColor: Int,
     appDrawerSettings: AppDrawerSettings,
     folderCornerRadius: Int,
-    folderEblanApplicationInfo: FolderEblanApplicationInfoGridItem,
-    onDeleteFolderPopupEntry: (FolderPopupEntry) -> Unit,
-    onUpsertFolderGridItemPopupEntry: (FolderPopupEntry) -> Unit,
+    folderCellWidth: Int,
+    folderCellHeight: Int,
+    onDeleteFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
+    onUpsertFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
     onUpdateIsVisibleFolders: (Boolean) -> Unit,
 ) {
     val folderPopupIntOffset = IntOffset(
@@ -117,13 +114,14 @@ internal fun FolderApplicationScreen(
     val folderPopupLayoutInfo = getFolderPopupLayoutInfo(
         density = density,
         layoutDirection = layoutDirection,
-        homeSettings = homeSettings,
         paddingValues = paddingValues,
         safeDrawingWidth = safeDrawingWidth,
         safeDrawingHeight = safeDrawingHeight,
         folderGridItemPopup = folderEblanApplicationInfoPopup,
         folderPopupIntOffset = folderPopupIntOffset,
         folderPopupIntSize = folderPopupIntSize,
+        folderCellWidth = folderCellWidth,
+        folderCellHeight = folderCellHeight,
     )
 
     val progress = remember { Animatable(0f) }
@@ -195,7 +193,7 @@ internal fun FolderApplicationScreen(
             isFirstFolderGridItem = isFirstFolderGridItem,
             animations = animations,
             onAnimateToScrollToPage = folderGridHorizontalPagerState::animateScrollToPage,
-            onDeleteFolderPopupEntry = onDeleteFolderPopupEntry,
+            onDeleteFolderPopupEntry = onDeleteFolderEblanApplicationInfoPopupEntry,
             onUpdateIsVisibleFolders = onUpdateIsVisibleFolders,
         )
     }
@@ -208,7 +206,7 @@ internal fun FolderApplicationScreen(
                         onPress = {
                             awaitRelease()
 
-                            onUpsertFolderGridItemPopupEntry(
+                            onUpsertFolderEblanApplicationInfoPopupEntry(
                                 folderEblanApplicationInfoPopup.folderPopupEntry.copy(
                                     isCloseFolder = true,
                                 ),
@@ -237,12 +235,12 @@ internal fun FolderApplicationScreen(
                     height = with(density) { animatedFolderRect.height().toDp() },
                 )
                 .clipToBounds(),
-            shape = RoundedCornerShape(homeSettings.folderCornerRadius.dp),
-            color = when (homeSettings.folderBackgroundColor) {
+            shape = RoundedCornerShape(folderCornerRadius.dp),
+            color = when (folderBackgroundColor) {
                 BackgroundColor.System -> MaterialTheme.colorScheme.surface
                 BackgroundColor.Light -> Color.White
                 BackgroundColor.Dark -> Color.Black
-                BackgroundColor.Custom -> Color(homeSettings.customFolderBackgroundColor)
+                BackgroundColor.Custom -> Color(customFolderBackgroundColor)
             },
             shadowElevation = 2.dp,
         ) {
@@ -268,7 +266,6 @@ internal fun FolderApplicationScreen(
                         slotId = { it.id },
                         content = {
                             InteractiveFolderEblanApplicationInfoItem(
-                                modifier = modifier,
                                 folderEblanApplicationInfoGridItem = it,
                                 folderBackgroundColor = folderBackgroundColor,
                                 customFolderBackgroundColor = customFolderBackgroundColor,
@@ -277,7 +274,6 @@ internal fun FolderApplicationScreen(
                                 previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
                                 appDrawerSettings = appDrawerSettings,
                                 folderCornerRadius = folderCornerRadius,
-                                folderEblanApplicationInfo = folderEblanApplicationInfo,
                                 isVisibleOverlay = isVisibleOverlay,
                             )
                         },
@@ -289,10 +285,10 @@ internal fun FolderApplicationScreen(
                     gridItemsByPage = folderEblanApplicationInfoPopup.folderEblanApplicationInfosByPage,
                     folderGridHorizontalPagerState = folderGridHorizontalPagerState,
                     progress = progress.value,
-                    folderBackgroundColor = homeSettings.folderBackgroundColor,
-                    customFolderBackgroundColor = homeSettings.customFolderBackgroundColor,
-                    textColor = gridItemSettings.textColor,
-                    customTextColor = gridItemSettings.customTextColor,
+                    folderBackgroundColor = folderBackgroundColor,
+                    customFolderBackgroundColor = customFolderBackgroundColor,
+                    textColor = appDrawerSettings.gridItemSettings.textColor,
+                    customTextColor = appDrawerSettings.gridItemSettings.customTextColor,
                     systemCustomTextColor = systemCustomTextColor,
                     systemTextColor = systemTextColor,
                 )
@@ -450,13 +446,14 @@ private suspend fun handleIsCloseFolder(
 private fun getFolderPopupLayoutInfo(
     density: Density,
     layoutDirection: LayoutDirection,
-    homeSettings: HomeSettings,
     paddingValues: PaddingValues,
     safeDrawingWidth: Int,
     safeDrawingHeight: Int,
     folderGridItemPopup: FolderEblanApplicationInfoPopup,
     folderPopupIntOffset: IntOffset,
     folderPopupIntSize: IntSize,
+    folderCellWidth: Int,
+    folderCellHeight: Int,
 ): FolderPopupLayoutInfo {
     val leftPadding = with(density) {
         paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
@@ -466,8 +463,8 @@ private fun getFolderPopupLayoutInfo(
         paddingValues.calculateTopPadding().roundToPx()
     }
 
-    val minCellWidthPx = with(density) { homeSettings.folderCellWidth.dp.roundToPx() }
-    val minCellHeightPx = with(density) { homeSettings.folderCellHeight.dp.roundToPx() }
+    val minCellWidthPx = with(density) { folderCellWidth.dp.roundToPx() }
+    val minCellHeightPx = with(density) { folderCellHeight.dp.roundToPx() }
 
     val availableWidth = (safeDrawingWidth - leftPadding * 2).coerceAtLeast(0)
     val availableHeight = (safeDrawingHeight - topPadding * 2).coerceAtLeast(0)

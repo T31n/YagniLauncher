@@ -144,6 +144,7 @@ internal fun VerticalApplicationScreen(
     onWidgets: (EblanApplicationInfoGroup) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
+    onUpdateIsVisibleFolders: (Boolean) -> Unit,
 ) {
     val layoutDirection = LocalLayoutDirection.current
 
@@ -288,6 +289,7 @@ internal fun VerticalApplicationScreen(
                 },
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                 onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+                onUpdateIsVisibleFolders = onUpdateIsVisibleFolders,
             )
         }
     }
@@ -379,6 +381,7 @@ private fun EblanApplicationInfosPage(
     onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
+    onUpdateIsVisibleFolders: (Boolean) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -455,6 +458,7 @@ private fun EblanApplicationInfosPage(
                 onUpdateEblanApplicationInfo = onUpdateEblanApplicationInfo,
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                 onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+                onUpdateIsVisibleFolders = onUpdateIsVisibleFolders,
             )
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && isDefaultLauncher &&
@@ -524,6 +528,7 @@ private fun EblanApplicationInfos(
     onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
+    onUpdateIsVisibleFolders: (Boolean) -> Unit,
 ) {
     val userManager = LocalUserManager.current
 
@@ -600,6 +605,7 @@ private fun EblanApplicationInfos(
                             folderCornerRadius = folderCornerRadius,
                             folderBackgroundColor = folderBackgroundColor,
                             customFolderBackgroundColor = customFolderBackgroundColor,
+                            onUpdateIsVisibleFolders = onUpdateIsVisibleFolders,
                         )
                     }
 

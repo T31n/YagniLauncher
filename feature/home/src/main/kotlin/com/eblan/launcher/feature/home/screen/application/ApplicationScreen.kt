@@ -17,6 +17,10 @@
  */
 package com.eblan.launcher.feature.home.screen.application
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import android.os.UserHandle
 import android.view.WindowManager
@@ -53,9 +57,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,6 +70,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -72,11 +79,14 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
+import com.eblan.launcher.domain.model.folder.FolderPopupEntry
 import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.model.launcherapps.EblanUser
@@ -95,6 +105,7 @@ import com.eblan.launcher.feature.home.component.HomeHandler
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.GridItemSource
 import com.eblan.launcher.feature.home.model.SharedElementKey
+import com.eblan.launcher.feature.home.screen.application.folder.FolderApplicationScreen
 import com.eblan.launcher.feature.home.screen.application.horizontal.HorizontalApplicationScreen
 import com.eblan.launcher.feature.home.screen.application.list.ListApplicationScreen
 import com.eblan.launcher.feature.home.screen.application.vertical.VerticalApplicationScreen
@@ -123,7 +134,6 @@ internal fun ApplicationScreen(
     eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
     getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
     hasShortcutHostPermission: Boolean,
-    managedProfileResult: ManagedProfileResult?,
     paddingValues: PaddingValues,
     screenHeight: Int,
     swipeY: Float,
@@ -135,6 +145,12 @@ internal fun ApplicationScreen(
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
+    folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
+    folderCellWidth: Int,
+    folderCellHeight: Int,
+    safeDrawingHeight: Int,
+    safeDrawingWidth: Int,
+    screenWidth: Int,
     onDismiss: () -> Unit,
     onDragEnd: () -> Unit,
     onEditApplicationInfo: (
@@ -155,7 +171,13 @@ internal fun ApplicationScreen(
     onWidgets: (EblanApplicationInfoGroup) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
+    onDeleteFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
+    onUpsertFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
 ) {
+    val managedProfileResult by rememberManagedProfileResult()
+
+    var isVisibleFolders by remember { mutableStateOf(false) }
+
     BlurBehindEffect(
         blurBehind = appDrawerSettings.blurBehind,
         swipeY = swipeY,
@@ -215,6 +237,9 @@ internal fun ApplicationScreen(
                     onWidgets = onWidgets,
                     onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                     onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+                    onUpdateIsVisibleFolders = {
+                        isVisibleFolders = it
+                    },
                 )
             }
 
@@ -287,6 +312,35 @@ internal fun ApplicationScreen(
                     onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
                 )
             }
+        }
+    }
+
+    if (isVisibleFolders) {
+        folderEblanApplicationInfoPopups.forEach { folderEblanApplicationInfoPopup ->
+            FolderApplicationScreen(
+                folderEblanApplicationInfoPopup = folderEblanApplicationInfoPopup,
+                paddingValues = paddingValues,
+                safeDrawingHeight = safeDrawingHeight,
+                safeDrawingWidth = safeDrawingWidth,
+                isVisibleOverlay = isVisibleOverlay,
+                screenWidth = screenWidth,
+                folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+                animations = animations,
+                systemTextColor = systemTextColor,
+                systemCustomTextColor = systemCustomTextColor,
+                previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+                folderBackgroundColor = folderBackgroundColor,
+                customFolderBackgroundColor = customFolderBackgroundColor,
+                appDrawerSettings = appDrawerSettings,
+                folderCornerRadius = folderCornerRadius,
+                folderCellWidth = folderCellWidth,
+                folderCellHeight = folderCellHeight,
+                onDeleteFolderEblanApplicationInfoPopupEntry = onDeleteFolderEblanApplicationInfoPopupEntry,
+                onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
+                onUpdateIsVisibleFolders = {
+                    isVisibleFolders = it
+                },
+            )
         }
     }
 }
@@ -608,6 +662,67 @@ private fun BlurBehindEffect(
             window.attributes = window.attributes.apply {
                 blurBehindRadius = radius
             }
+        }
+    }
+}
+
+@Composable
+private fun rememberManagedProfileResult(): State<ManagedProfileResult?> {
+    val context = LocalContext.current
+
+    val userManagerWrapper = LocalUserManager.current
+
+    return produceState(
+        initialValue = null,
+        key1 = context,
+        key2 = userManagerWrapper,
+    ) {
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(
+                context: Context,
+                intent: Intent,
+            ) {
+                val userHandle =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        intent.getParcelableExtra(
+                            Intent.EXTRA_USER,
+                            UserHandle::class.java,
+                        )
+                    } else {
+                        @Suppress("DEPRECATION")
+                        intent.getParcelableExtra(Intent.EXTRA_USER)
+                    }
+
+                if (userHandle != null) {
+                    value = ManagedProfileResult(
+                        serialNumber =
+                        userManagerWrapper.getSerialNumberForUser(
+                            userHandle = userHandle,
+                        ),
+                        isQuiteModeEnabled =
+                        userManagerWrapper.isQuietModeEnabled(
+                            userHandle = userHandle,
+                        ),
+                    )
+                }
+            }
+        }
+
+        ContextCompat.registerReceiver(
+            context,
+            receiver,
+            IntentFilter().apply {
+                addAction(Intent.ACTION_MANAGED_PROFILE_AVAILABLE)
+                addAction(Intent.ACTION_MANAGED_PROFILE_UNAVAILABLE)
+                addAction(Intent.ACTION_MANAGED_PROFILE_REMOVED)
+                addAction(Intent.ACTION_MANAGED_PROFILE_ADDED)
+                addAction(Intent.ACTION_MANAGED_PROFILE_UNLOCKED)
+            },
+            ContextCompat.RECEIVER_NOT_EXPORTED,
+        )
+
+        awaitDispose {
+            context.unregisterReceiver(receiver)
         }
     }
 }
