@@ -191,9 +191,9 @@ internal class HomeViewModel @Inject constructor(
     private var packageChangedJob: Job? = null
     private var shortcutsChangedJob: Job? = null
 
-    private val _folderPopupEntries = MutableStateFlow<List<FolderPopupEntry>>(emptyList())
-    val folderPopups = getFolderGridItemsByIdUseCase(
-        folderPopupEntriesFlow = _folderPopupEntries,
+    private val _folderGridItemPopupEntries = MutableStateFlow<List<FolderPopupEntry>>(emptyList())
+    val folderGridItemPopups = getFolderGridItemsByIdUseCase(
+        folderPopupEntriesFlow = _folderGridItemPopupEntries,
     ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
@@ -507,8 +507,8 @@ internal class HomeViewModel @Inject constructor(
         shortcutsChangedJob = null
     }
 
-    fun upsertFolderPopupEntry(folderPopupEntry: FolderPopupEntry) {
-        _folderPopupEntries.update { currentFolderPopupEntries ->
+    fun upsertFolderGridItemPopupEntry(folderPopupEntry: FolderPopupEntry) {
+        _folderGridItemPopupEntries.update { currentFolderPopupEntries ->
             currentFolderPopupEntries
                 .filterNot { it.id == folderPopupEntry.id }
                 .plus(folderPopupEntry)
@@ -565,7 +565,7 @@ internal class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             moveGridItemJob?.cancelAndJoin()
 
-            _folderPopupEntries.update { folderPopupEntries ->
+            _folderGridItemPopupEntries.update { folderPopupEntries ->
                 folderPopupEntries.map { folderPopupEntry ->
                     folderPopupEntry.copy(isCloseFolder = true)
                 }
@@ -608,7 +608,7 @@ internal class HomeViewModel @Inject constructor(
 
             gridRepository.updateGridItem(gridItem = movingGridItem)
 
-            _folderPopupEntries.update {
+            _folderGridItemPopupEntries.update {
                 it + folderPopupEntry
             }
 
@@ -638,8 +638,8 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    fun deleteFolderPopupEntry(folderPopupEntry: FolderPopupEntry) {
-        _folderPopupEntries.update { folderPopupEntries ->
+    fun deleteFolderGridItemPopupEntry(folderPopupEntry: FolderPopupEntry) {
+        _folderGridItemPopupEntries.update { folderPopupEntries ->
             folderPopupEntries.filterNot { it.id == folderPopupEntry.id }
         }
     }
@@ -700,7 +700,7 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    fun resetFolderPopupEntries() {
-        _folderPopupEntries.update { emptyList() }
+    fun resetFolderGridItemPopupEntries() {
+        _folderGridItemPopupEntries.update { emptyList() }
     }
 }

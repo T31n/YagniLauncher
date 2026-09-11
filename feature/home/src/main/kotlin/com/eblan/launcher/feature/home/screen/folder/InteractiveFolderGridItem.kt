@@ -146,7 +146,7 @@ internal fun InteractiveFolderGridItem(
     onUpdateIsCloseFolderGridItemPopup: (Boolean) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
-    onUpsertFolderPopupEntry: (FolderPopupEntry) -> Unit,
+    onUpsertFolderGridItemPopupEntry: (FolderPopupEntry) -> Unit,
 ) {
     val density = LocalDensity.current
 
@@ -354,7 +354,7 @@ internal fun InteractiveFolderGridItem(
                 onUpdateIsCloseFolderGridItemPopup = onUpdateIsCloseFolderGridItemPopup,
                 onOpenAppDrawer = onOpenAppDrawer,
                 onShowGridItemPopup = onShowGridItemPopup,
-                onUpsertFolderPopupEntry = onUpsertFolderPopupEntry,
+                onUpsertFolderGridItemPopupEntry = onUpsertFolderGridItemPopupEntry,
                 onUpdateImageBitmap = onUpdateImageBitmap,
                 onUpdateIsDragging = onUpdateIsDragging,
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
@@ -995,7 +995,7 @@ private fun InteractiveNestedFolderGridItem(
         intOffset: IntOffset,
         intSize: IntSize,
     ) -> Unit,
-    onUpsertFolderPopupEntry: (FolderPopupEntry) -> Unit,
+    onUpsertFolderGridItemPopupEntry: (FolderPopupEntry) -> Unit,
     onUpdateImageBitmap: (ImageBitmap) -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
@@ -1085,7 +1085,7 @@ private fun InteractiveNestedFolderGridItem(
                     },
                     onTap = if (!isVisibleOverlay && !isInProgress) {
                         {
-                            onUpsertFolderPopupEntry(
+                            onUpsertFolderGridItemPopupEntry(
                                 FolderPopupEntry(
                                     id = gridItem.id,
                                     x = intOffset.x,

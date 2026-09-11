@@ -104,7 +104,7 @@ internal fun HomeRoute(
 
     val eblanApplicationInfoTags by viewModel.eblanApplicationInfoTags.collectAsStateWithLifecycle()
 
-    val folderPopups by viewModel.folderPopups.collectAsStateWithLifecycle()
+    val folderGridItemPopups by viewModel.folderGridItemPopups.collectAsStateWithLifecycle()
 
     val resizeGridItem by viewModel.resizeGridItem.collectAsStateWithLifecycle()
 
@@ -127,7 +127,7 @@ internal fun HomeRoute(
         eblanShortcutConfigs = eblanShortcutConfigs,
         eblanShortcutInfosGroup = eblanShortcutInfosGroup,
         pageItems = pageItems,
-        folderGridItemPopups = folderPopups,
+        folderGridItemPopups = folderGridItemPopups,
         getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfos,
         homeUiState = homeUiState,
         movedGridItemResult = movedGridItemResult,
@@ -163,8 +163,8 @@ internal fun HomeRoute(
         onSettings = onSettings,
         onStartSyncData = viewModel::startSyncData,
         onStopSyncData = viewModel::stopSyncData,
-        onUpsertFolderPopupEntry = viewModel::upsertFolderPopupEntry,
-        onDeleteFolderPopupEntry = viewModel::deleteFolderPopupEntry,
+        onUpsertFolderGridItemPopupEntry = viewModel::upsertFolderGridItemPopupEntry,
+        onDeleteFolderPopupEntry = viewModel::deleteFolderGridItemPopupEntry,
         onShowFolderWhenDragging = viewModel::showFolderWhenDragging,
         onUpdateScreen = viewModel::updateScreen,
         onUpdateShortcutConfigIntoShortcutInfoGridItem = viewModel::updateShortcutConfigIntoShortcutInfoGridItem,
@@ -176,7 +176,7 @@ internal fun HomeRoute(
         onPackageAdded = viewModel::packageAdded,
         onPackageChanged = viewModel::packageChanged,
         onShortcutsChanged = viewModel::shortcutsChanged,
-        onResetFolderPopupEntries = viewModel::resetFolderPopupEntries,
+        onResetFolderPopupEntries = viewModel::resetFolderGridItemPopupEntries,
     )
 }
 
@@ -258,7 +258,7 @@ internal fun HomeScreen(
     onSettings: () -> Unit,
     onStartSyncData: () -> Unit,
     onStopSyncData: () -> Unit,
-    onUpsertFolderPopupEntry: (FolderPopupEntry) -> Unit,
+    onUpsertFolderGridItemPopupEntry: (FolderPopupEntry) -> Unit,
     onDeleteFolderPopupEntry: (FolderPopupEntry) -> Unit,
     onShowFolderWhenDragging: (
         folderPopupEntry: FolderPopupEntry,
@@ -350,7 +350,7 @@ internal fun HomeScreen(
                 onSettings = onSettings,
                 onStartSyncData = onStartSyncData,
                 onStopSyncData = onStopSyncData,
-                onUpsertFolderPopupEntry = onUpsertFolderPopupEntry,
+                onUpsertFolderGridItemPopupEntry = onUpsertFolderGridItemPopupEntry,
                 onDeleteFolderPopupEntry = onDeleteFolderPopupEntry,
                 onShowFolderWhenDragging = onShowFolderWhenDragging,
                 onUpdateScreen = onUpdateScreen,
@@ -450,7 +450,7 @@ private fun Success(
     onSettings: () -> Unit,
     onStartSyncData: () -> Unit,
     onStopSyncData: () -> Unit,
-    onUpsertFolderPopupEntry: (FolderPopupEntry) -> Unit,
+    onUpsertFolderGridItemPopupEntry: (FolderPopupEntry) -> Unit,
     onDeleteFolderPopupEntry: (FolderPopupEntry) -> Unit,
     onShowFolderWhenDragging: (
         folderPopupEntry: FolderPopupEntry,
@@ -542,7 +542,7 @@ private fun Success(
                     onSettings = onSettings,
                     onStartSyncData = onStartSyncData,
                     onStopSyncData = onStopSyncData,
-                    onUpsertFolderPopupEntry = onUpsertFolderPopupEntry,
+                    onUpsertFolderGridItemPopupEntry = onUpsertFolderGridItemPopupEntry,
                     onDeleteFolderPopupEntry = onDeleteFolderPopupEntry,
                     onShowFolderWhenDragging = onShowFolderWhenDragging,
                     onUpdateShortcutConfigIntoShortcutInfoGridItem = onUpdateShortcutConfigIntoShortcutInfoGridItem,

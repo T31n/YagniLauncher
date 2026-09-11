@@ -146,7 +146,7 @@ internal fun FolderScreen(
     onDismissFolderGridItemPopup: () -> Unit,
     onResetGrid: () -> Unit,
     onDragEndAfterMoveFolder: () -> Unit,
-    onUpsertFolderPopupEntry: (FolderPopupEntry) -> Unit,
+    onUpsertFolderGridItemPopupEntry: (FolderPopupEntry) -> Unit,
     onUpdateIsVisibleFolders: (Boolean) -> Unit,
 ) {
     val folderPopupIntOffset = IntOffset(
@@ -292,7 +292,7 @@ internal fun FolderScreen(
             isInProgress = isInProgress,
             onMoveFolderGridItem = onMoveFolderGridItem,
             onUpdateSharedElementKey = onUpdateSharedElementKey,
-            onUpsertFolderPopupEntry = onUpsertFolderPopupEntry,
+            onUpsertFolderGridItemPopupEntry = onUpsertFolderGridItemPopupEntry,
         )
     }
 
@@ -366,7 +366,7 @@ internal fun FolderScreen(
             isLastFolderGridItem &&
             !isInProgress,
     ) {
-        onUpsertFolderPopupEntry(folderGridItemPopup.folderPopupEntry.copy(isCloseFolder = true))
+        onUpsertFolderGridItemPopupEntry(folderGridItemPopup.folderPopupEntry.copy(isCloseFolder = true))
     }
 
     HomeHandler(
@@ -374,7 +374,7 @@ internal fun FolderScreen(
             isLastFolderGridItem &&
             !isInProgress,
     ) {
-        onUpsertFolderPopupEntry(folderGridItemPopup.folderPopupEntry.copy(isCloseFolder = true))
+        onUpsertFolderGridItemPopupEntry(folderGridItemPopup.folderPopupEntry.copy(isCloseFolder = true))
     }
 
     Box(
@@ -385,7 +385,7 @@ internal fun FolderScreen(
                         onPress = {
                             awaitRelease()
 
-                            onUpsertFolderPopupEntry(
+                            onUpsertFolderGridItemPopupEntry(
                                 folderGridItemPopup.folderPopupEntry.copy(
                                     isCloseFolder = true,
                                 ),
@@ -481,7 +481,7 @@ internal fun FolderScreen(
                                 onUpdateIsCloseFolderGridItemPopup = onUpdateIsCloseFolderGridItemPopup,
                                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                                 onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
-                                onUpsertFolderPopupEntry = onUpsertFolderPopupEntry,
+                                onUpsertFolderGridItemPopupEntry = onUpsertFolderGridItemPopupEntry,
                             )
                         },
                     )

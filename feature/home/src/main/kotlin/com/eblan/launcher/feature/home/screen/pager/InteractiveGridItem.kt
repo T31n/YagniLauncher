@@ -136,7 +136,7 @@ internal fun InteractiveGridItem(
     systemCustomTextColor: Int,
     folderGridItemPopups: List<FolderGridItemPopup>,
     onOpenAppDrawer: () -> Unit,
-    onUpsertFolderPopupEntry: (FolderPopupEntry) -> Unit,
+    onUpsertFolderGridItemPopupEntry: (FolderPopupEntry) -> Unit,
     onUpdateGridItemSource: (GridItemSource) -> Unit,
     onUpdateImageBitmap: (ImageBitmap) -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
@@ -337,7 +337,7 @@ internal fun InteractiveGridItem(
                 maxLines = maxLines,
                 onOpenAppDrawer = onOpenAppDrawer,
                 onShowGridItemPopup = onShowGridItemPopup,
-                onUpsertFolderPopupEntry = onUpsertFolderPopupEntry,
+                onUpsertFolderGridItemPopupEntry = onUpsertFolderGridItemPopupEntry,
                 onUpdateGridItemSource = onUpdateGridItemSource,
                 onUpdateImageBitmap = onUpdateImageBitmap,
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
@@ -1001,7 +1001,7 @@ private fun InteractiveFolderGridItem(
         intOffset: IntOffset,
         intSize: IntSize,
     ) -> Unit,
-    onUpsertFolderPopupEntry: (FolderPopupEntry) -> Unit,
+    onUpsertFolderGridItemPopupEntry: (FolderPopupEntry) -> Unit,
     onUpdateGridItemSource: (GridItemSource) -> Unit,
     onUpdateImageBitmap: (ImageBitmap) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
@@ -1118,7 +1118,7 @@ private fun InteractiveFolderGridItem(
                         {
                             currentOnUpdateIsVisibleFolders(true)
 
-                            onUpsertFolderPopupEntry(
+                            onUpsertFolderGridItemPopupEntry(
                                 FolderPopupEntry(
                                     id = gridItem.id,
                                     x = intOffset.x,

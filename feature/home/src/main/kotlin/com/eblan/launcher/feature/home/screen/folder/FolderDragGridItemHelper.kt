@@ -170,7 +170,7 @@ internal fun handleDragFolderGridItem(
         currentPage: Int,
     ) -> Unit,
     onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
-    onUpsertFolderPopupEntry: (FolderPopupEntry) -> Unit,
+    onUpsertFolderGridItemPopupEntry: (FolderPopupEntry) -> Unit,
 ) {
     if (drag != Drag.Dragging ||
         isScrollInProgress ||
@@ -219,7 +219,7 @@ internal fun handleDragFolderGridItem(
             currentPage,
         )
     } else if (!folderGridItemPopup.folderPopupEntry.isCloseFolder) {
-        onUpsertFolderPopupEntry(folderGridItemPopup.folderPopupEntry.copy(isCloseFolder = true))
+        onUpsertFolderGridItemPopupEntry(folderGridItemPopup.folderPopupEntry.copy(isCloseFolder = true))
     }
 }
 
