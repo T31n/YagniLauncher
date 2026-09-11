@@ -222,11 +222,15 @@ internal fun ShortcutConfigScreen(
                     SearchBarDefaults.InputField(
                         textFieldState = textFieldState,
                         searchBarState = searchBarState,
-                        leadingIcon = {
-                            Icon(
-                                imageVector = EblanLauncherIcons.Search,
-                                contentDescription = null,
-                            )
+                        leadingIcon = if (textFieldState.text.isNotEmpty()) {
+                            {
+                                Icon(
+                                    imageVector = EblanLauncherIcons.Search,
+                                    contentDescription = null,
+                                )
+                            }
+                        } else {
+                            null
                         },
                         onSearch = { scope.launch { searchBarState.animateToCollapsed() } },
                         placeholder = { Text(text = stringResource(commonR.string.search_applications)) },

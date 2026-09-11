@@ -86,17 +86,21 @@ internal fun ApplicationSearchBar(
                         contentDescription = null,
                     )
                 },
-                trailingIcon = {
-                    IconButton(
-                        onClick = {
-                            textFieldState.clearText()
-                        },
-                    ) {
-                        Icon(
-                            imageVector = EblanLauncherIcons.Close,
-                            contentDescription = null,
-                        )
+                trailingIcon = if (textFieldState.text.isNotEmpty()) {
+                    {
+                        IconButton(
+                            onClick = {
+                                textFieldState.clearText()
+                            },
+                        ) {
+                            Icon(
+                                imageVector = EblanLauncherIcons.Close,
+                                contentDescription = null,
+                            )
+                        }
                     }
+                } else {
+                    null
                 },
                 onSearch = { scope.launch { searchBarState.animateToCollapsed() } },
                 placeholder = { Text(text = stringResource(commonR.string.search_applications)) },

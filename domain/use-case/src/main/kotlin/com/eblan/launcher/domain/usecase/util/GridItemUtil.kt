@@ -122,8 +122,8 @@ internal fun GridItem.isTopLevel() = when (val itemData = data) {
 }
 
 internal fun <T> getPreviewFolderGridItems(
-    rows: Int,
     columns: Int,
+    rows: Int,
     folderGridItems: List<T>,
 ): List<T> = buildList {
     for (row in 0 until minOf(rows, FOLDER_PREVIEW_ROWS)) {

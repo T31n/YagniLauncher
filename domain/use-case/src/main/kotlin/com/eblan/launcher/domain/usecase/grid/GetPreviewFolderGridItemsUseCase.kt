@@ -20,7 +20,6 @@ package com.eblan.launcher.domain.usecase.grid
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.model.FolderGridItemWrapper
-import com.eblan.launcher.domain.model.GridItem
 import com.eblan.launcher.domain.model.GridItemData
 import com.eblan.launcher.domain.model.PreviewFolder
 import com.eblan.launcher.domain.repository.FolderGridItemRepository
@@ -76,8 +75,8 @@ class GetPreviewFolderGridItemsUseCase @Inject constructor(
         )
 
         val previewFolderGridItems = getPreviewFolderGridItems(
-            rows = rows,
             columns = columns,
+            rows = rows,
             folderGridItems = folderGridItems,
         )
 

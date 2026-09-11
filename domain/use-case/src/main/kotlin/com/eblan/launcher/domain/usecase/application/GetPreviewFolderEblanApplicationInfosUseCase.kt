@@ -69,8 +69,8 @@ class GetPreviewFolderEblanApplicationInfosUseCase @Inject constructor(
         )
 
         val previewFolderGridItems = getPreviewFolderGridItems(
-            rows = rows,
             columns = columns,
+            rows = rows,
             folderGridItems = folderEblanApplicationInfoGridItems,
         )
 
