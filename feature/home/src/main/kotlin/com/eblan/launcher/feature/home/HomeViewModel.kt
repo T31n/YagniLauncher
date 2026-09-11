@@ -39,6 +39,7 @@ import com.eblan.launcher.domain.usecase.application.GetEblanAppWidgetProviderIn
 import com.eblan.launcher.domain.usecase.application.GetEblanApplicationInfosByLabelAndTagUseCase
 import com.eblan.launcher.domain.usecase.application.GetEblanShortcutConfigsByLabelUseCase
 import com.eblan.launcher.domain.usecase.application.GetEblanShortcutInfosUseCase
+import com.eblan.launcher.domain.usecase.folder.GetFolderEblanApplicationInfosByIdUseCase
 import com.eblan.launcher.domain.usecase.folder.GetFolderGridItemsByIdUseCase
 import com.eblan.launcher.domain.usecase.folder.GetPreviewFolderEblanApplicationInfosUseCase
 import com.eblan.launcher.domain.usecase.folder.GetPreviewFolderGridItemsUseCase
@@ -105,6 +106,7 @@ internal class HomeViewModel @Inject constructor(
     getTextColorUseCase: GetTextColorUseCase,
     getPreviewFolderGridItemsUseCase: GetPreviewFolderGridItemsUseCase,
     getPreviewFolderEblanApplicationInfosUseCase: GetPreviewFolderEblanApplicationInfosUseCase,
+    getFolderEblanApplicationInfosByIdUseCase: GetFolderEblanApplicationInfosByIdUseCase,
 ) : ViewModel() {
     val homeUiState = getHomeDataUseCase().map(HomeUiState::Success).stateIn(
         scope = viewModelScope,
@@ -227,6 +229,15 @@ internal class HomeViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = emptyList(),
         )
+
+    private val _folderEblanApplicationInfoPopupEntries = MutableStateFlow<List<FolderPopupEntry>>(emptyList())
+    val folderEblanApplicationInfoPopups = getFolderEblanApplicationInfosByIdUseCase(
+        folderPopupEntriesFlow = _folderEblanApplicationInfoPopupEntries,
+    ).stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = emptyList(),
+    )
 
     fun moveGridItem(
         movingGridItem: GridItem,
@@ -701,6 +712,18 @@ internal class HomeViewModel @Inject constructor(
     }
 
     fun resetFolderGridItemPopupEntries() {
+        _folderGridItemPopupEntries.update { emptyList() }
+    }
+
+    fun upsertFolderEblanApplicationInfoPopupEntry(folderPopupEntry: FolderPopupEntry) {
+        _folderEblanApplicationInfoPopupEntries.update { currentFolderPopupEntries ->
+            currentFolderPopupEntries
+                .filterNot { it.id == folderPopupEntry.id }
+                .plus(folderPopupEntry)
+        }
+    }
+
+    fun resetFolderEblanApplicationInfoPopupEntries() {
         _folderGridItemPopupEntries.update { emptyList() }
     }
 }
