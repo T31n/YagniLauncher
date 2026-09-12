@@ -273,6 +273,7 @@ internal fun PagerScreen(
         packageName: String,
     ) -> Unit,
     onResetFolderPopupEntries: () -> Unit,
+    onEditFolderApplicationInfo: (String) -> Unit,
 ) {
     val layoutDirection = LocalLayoutDirection.current
 
@@ -1138,6 +1139,7 @@ internal fun PagerScreen(
                 onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
                 onDeleteFolderEblanApplicationInfoPopupEntry = onDeleteFolderEblanApplicationInfoPopupEntry,
                 onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
+                onEditFolderApplicationInfo = onEditFolderApplicationInfo,
             )
         }
 

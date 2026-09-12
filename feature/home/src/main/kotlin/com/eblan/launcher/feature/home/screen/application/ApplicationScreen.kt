@@ -85,6 +85,7 @@ import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderPopupEntry
 import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
@@ -105,6 +106,7 @@ import com.eblan.launcher.feature.home.component.HomeHandler
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.GridItemSource
 import com.eblan.launcher.feature.home.model.SharedElementKey
+import com.eblan.launcher.feature.home.screen.application.folder.FolderApplicationInfoPopup
 import com.eblan.launcher.feature.home.screen.application.folder.FolderApplicationScreen
 import com.eblan.launcher.feature.home.screen.application.horizontal.HorizontalApplicationScreen
 import com.eblan.launcher.feature.home.screen.application.list.ListApplicationScreen
@@ -173,10 +175,23 @@ internal fun ApplicationScreen(
     onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
     onDeleteFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
     onUpsertFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
+    onEditFolderApplicationInfo: (String) -> Unit,
 ) {
     val managedProfileResult by rememberManagedProfileResult()
 
     var isVisibleFolders by remember { mutableStateOf(false) }
+
+    var showFolderPopupApplicationMenu by remember { mutableStateOf(false) }
+
+    var selectedFolderEblanApplicationInfo by remember {
+        mutableStateOf<FolderEblanApplicationInfo?>(
+            null,
+        )
+    }
+
+    var popupIntOffset by remember { mutableStateOf(IntOffset.Zero) }
+
+    var popupIntSize by remember { mutableStateOf(IntSize.Zero) }
 
     BlurBehindEffect(
         blurBehind = appDrawerSettings.blurBehind,
@@ -231,7 +246,13 @@ internal fun ApplicationScreen(
                     onUpdateGridItemSource = onUpdateGridItemSource,
                     onUpdateImageBitmap = onUpdateImageBitmap,
                     onUpdateIsDragging = onUpdateIsDragging,
-                    onUpdateOverlayBounds = onUpdateOverlayBounds,
+                    onUpdateOverlayBounds = { intOffset, intSize ->
+                        onUpdateOverlayBounds(intOffset, intSize)
+
+                        popupIntOffset = intOffset
+
+                        popupIntSize = intSize
+                    },
                     onUpdateSharedElementKey = onUpdateSharedElementKey,
                     onVerticalDrag = onVerticalDrag,
                     onWidgets = onWidgets,
@@ -343,6 +364,19 @@ internal fun ApplicationScreen(
                 },
             )
         }
+    }
+
+    if (showFolderPopupApplicationMenu && selectedFolderEblanApplicationInfo != null) {
+        FolderApplicationInfoPopup(
+            folderEblanApplicationInfo = selectedFolderEblanApplicationInfo,
+            popupIntOffset = popupIntOffset,
+            popupIntSize = popupIntSize,
+            paddingValues = paddingValues,
+            onDismissRequest = {
+                showFolderPopupApplicationMenu = false
+            },
+            onEditFolderApplicationInfo = onEditFolderApplicationInfo,
+        )
     }
 }
 

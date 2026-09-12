@@ -43,10 +43,10 @@ fun MainNavHost(
         homeScreen(
             configureResultCode = configureResultCode,
             onEditApplicationInfo = navController::navigateToEditApplicationScreen,
-            onEditFolderApplicationInfo = navController::navigateToEditFolderApplicationScreen,
             onEditGridItem = navController::navigateToEditGridItemScreen,
             onResetConfigureResultCode = onResetConfigureResultCode,
             onSettings = onSettings,
+            onEditFolderApplicationInfo = navController::navigateToEditFolderApplicationScreen,
         )
 
         editGridItemScreen(onNavigateUp = navController::navigateUp)

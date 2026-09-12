@@ -82,6 +82,7 @@ internal fun HomeRoute(
     onEditGridItem: (String) -> Unit,
     onResetConfigureResultCode: () -> Unit,
     onSettings: () -> Unit,
+    onEditFolderApplicationInfo: (String) -> Unit,
 ) {
     val homeUiState by viewModel.homeUiState.collectAsStateWithLifecycle()
 
@@ -183,6 +184,7 @@ internal fun HomeRoute(
         onResetFolderPopupEntries = viewModel::resetFolderGridItemPopupEntries,
         onUpsertFolderEblanApplicationInfoPopupEntry = viewModel::upsertFolderEblanApplicationInfoPopupEntry,
         onDeleteFolderEblanApplicationInfoPopupEntry = viewModel::upsertFolderEblanApplicationInfoPopupEntry,
+        onEditFolderApplicationInfo = onEditFolderApplicationInfo,
     )
 }
 
@@ -299,6 +301,7 @@ internal fun HomeScreen(
     onResetFolderPopupEntries: () -> Unit,
     onUpsertFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
     onDeleteFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
+    onEditFolderApplicationInfo: (String) -> Unit,
 ) {
     val paddingValues = WindowInsets.safeDrawing.asPaddingValues()
 
@@ -376,6 +379,7 @@ internal fun HomeScreen(
                 onResetFolderPopupEntries = onResetFolderPopupEntries,
                 onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
                 onDeleteFolderEblanApplicationInfoPopupEntry = onDeleteFolderEblanApplicationInfoPopupEntry,
+                onEditFolderApplicationInfo = onEditFolderApplicationInfo,
             )
         }
     }
@@ -497,6 +501,7 @@ private fun Success(
     onResetFolderPopupEntries: () -> Unit,
     onUpsertFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
     onDeleteFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
+    onEditFolderApplicationInfo: (String) -> Unit,
 ) {
     AnimatedContent(
         modifier = modifier,
@@ -574,6 +579,7 @@ private fun Success(
                     onResetFolderPopupEntries = onResetFolderPopupEntries,
                     onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
                     onDeleteFolderEblanApplicationInfoPopupEntry = onDeleteFolderEblanApplicationInfoPopupEntry,
+                    onEditFolderApplicationInfo = onEditFolderApplicationInfo,
                 )
             }
 
