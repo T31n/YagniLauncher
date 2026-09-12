@@ -47,6 +47,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.iconpackinfo.IconPackInfoComponent
@@ -60,7 +62,37 @@ import com.eblan.launcher.ui.settings.SettingsCategoryText
 import com.eblan.launcher.ui.settings.SettingsItems
 import com.eblan.launcher.common.R as commonR
 
-// TODO Add Route and ViewModel and plug this to navigation
+@Composable
+internal fun EditFolderApplicationInfoRoute(
+    modifier: Modifier = Modifier,
+    viewModel: EditFolderApplicationInfoViewModel = hiltViewModel(),
+    onNavigateUp: () -> Unit,
+) {
+    val editFolderApplicationInfoUiState by viewModel.editFolderApplicationInfoUiState.collectAsStateWithLifecycle()
+
+    val packageManagerIconPackInfos by viewModel.packageManagerIconPackInfos.collectAsStateWithLifecycle()
+
+    val iconPackInfoComponents by viewModel.iconPackInfoComponents.collectAsStateWithLifecycle()
+
+    val folderEblanApplicationInfos by viewModel.folderEblanApplicationInfos.collectAsStateWithLifecycle()
+
+    EditFolderApplicationInfoScreen(
+        modifier = modifier,
+        editFolderApplicationInfoUiState = editFolderApplicationInfoUiState,
+        iconPackInfoComponents = iconPackInfoComponents,
+        packageManagerIconPackInfos = packageManagerIconPackInfos,
+        folderEblanApplicationInfos = folderEblanApplicationInfos,
+        onNavigateUp = onNavigateUp,
+        onUpdateIconPackInfoPackageName = viewModel::updateIconPackInfoPackageName,
+        onResetFolderEblanApplicationInfoCustomIcon = viewModel::resetFolderEblanApplicationInfoCustomIcon,
+        onUpdateFolderEblanApplicationInfoCustomIcon = viewModel::updateFolderEblanApplicationInfoCustomIcon,
+        onResetIconPackInfoPackageName = viewModel::resetIconPackInfoPackageName,
+        onSearchIconPackInfoComponent = viewModel::searchIconPackInfoComponent,
+        onUpdateFolderEblanApplicationInfo = viewModel::updateFolderEblanApplicationInfo,
+        onAddFolderEblanApplicationInfo = viewModel::addFolderEblanApplicationInfo,
+    )
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun EditFolderApplicationInfoScreen(

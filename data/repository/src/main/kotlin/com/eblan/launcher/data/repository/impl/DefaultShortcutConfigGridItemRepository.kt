@@ -58,11 +58,11 @@ internal class DefaultShortcutConfigGridItemRepository @Inject constructor(priva
         it.asModel()
     }
 
-    override suspend fun deleteShortcutConfigGridItem(
+    override suspend fun deleteShortcutConfigGridItemByPackageName(
         serialNumber: Long,
         packageName: String,
     ) {
-        shortcutConfigGridItemDao.deleteShortcutConfigGridItemEntity(
+        shortcutConfigGridItemDao.deleteShortcutConfigGridItemEntityPackageName(
             serialNumber = serialNumber,
             packageName = packageName,
         )

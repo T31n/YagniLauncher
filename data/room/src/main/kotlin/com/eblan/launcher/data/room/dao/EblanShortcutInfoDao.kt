@@ -41,7 +41,7 @@ interface EblanShortcutInfoDao {
     suspend fun deleteEblanShortcutInfoEntities(deleteEblanShortcutInfos: List<DeleteEblanShortcutInfo>)
 
     @Query("SELECT * FROM EblanShortcutInfoEntity WHERE serialNumber = :serialNumber AND packageName = :packageName")
-    suspend fun getEblanShortcutInfoEntities(
+    suspend fun getEblanShortcutInfoEntitiesByPackageName(
         serialNumber: Long,
         packageName: String,
     ): List<EblanShortcutInfoEntity>

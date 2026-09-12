@@ -50,7 +50,7 @@ interface ShortcutInfoGridItemDao {
     ): List<ShortcutInfoGridItemEntity>
 
     @Query("DELETE FROM ShortcutInfoGridItemEntity WHERE serialNumber = :serialNumber AND packageName = :packageName")
-    suspend fun deleteShortcutInfoGridItemEntity(
+    suspend fun deleteShortcutInfoGridItemEntityByPackageName(
         serialNumber: Long,
         packageName: String,
     )

@@ -21,12 +21,14 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.eblan.launcher.feature.home.HomeRoute
 
+// TODO Finish This Shit
 fun NavGraphBuilder.homeScreen(
     configureResultCode: Int?,
     onEditApplicationInfo: (
         serialNumber: Long,
         componentName: String,
     ) -> Unit,
+    onEditFolderApplicationInfo: (String) -> Unit,
     onEditGridItem: (String) -> Unit,
     onResetConfigureResultCode: () -> Unit,
     onSettings: () -> Unit,

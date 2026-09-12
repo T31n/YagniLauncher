@@ -22,6 +22,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.eblan.launcher.feature.editapplicationinfo.navigation.editApplicationScreen
 import com.eblan.launcher.feature.editapplicationinfo.navigation.navigateToEditApplicationScreen
+import com.eblan.launcher.feature.editfolderapplicationinfo.navigation.editFolderApplicationScreen
+import com.eblan.launcher.feature.editfolderapplicationinfo.navigation.navigateToEditFolderApplicationScreen
 import com.eblan.launcher.feature.editgriditem.navigation.editGridItemScreen
 import com.eblan.launcher.feature.editgriditem.navigation.navigateToEditGridItemScreen
 import com.eblan.launcher.feature.home.navigation.HomeRouteData
@@ -41,6 +43,7 @@ fun MainNavHost(
         homeScreen(
             configureResultCode = configureResultCode,
             onEditApplicationInfo = navController::navigateToEditApplicationScreen,
+            onEditFolderApplicationInfo = navController::navigateToEditFolderApplicationScreen,
             onEditGridItem = navController::navigateToEditGridItemScreen,
             onResetConfigureResultCode = onResetConfigureResultCode,
             onSettings = onSettings,
@@ -49,5 +52,7 @@ fun MainNavHost(
         editGridItemScreen(onNavigateUp = navController::navigateUp)
 
         editApplicationScreen(onNavigateUp = navController::navigateUp)
+
+        editFolderApplicationScreen(onNavigateUp = navController::navigateUp)
     }
 }

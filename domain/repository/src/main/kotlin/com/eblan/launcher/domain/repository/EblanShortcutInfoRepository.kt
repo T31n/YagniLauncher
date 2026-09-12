@@ -30,7 +30,7 @@ interface EblanShortcutInfoRepository {
 
     suspend fun deleteEblanShortcutInfos(deleteEblanShortcutInfos: List<DeleteEblanShortcutInfo>)
 
-    suspend fun getEblanShortcutInfos(
+    suspend fun getEblanShortcutInfosByPackageName(
         serialNumber: Long,
         packageName: String,
     ): List<EblanShortcutInfo>

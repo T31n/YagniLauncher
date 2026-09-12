@@ -29,7 +29,7 @@ interface WidgetGridItemRepository {
 
     suspend fun deleteWidgetGridItem(widgetGridItem: WidgetGridItem)
 
-    suspend fun deleteWidgetGridItem(
+    suspend fun deleteWidgetGridItemByPackageName(
         serialNumber: Long,
         packageName: String,
     )

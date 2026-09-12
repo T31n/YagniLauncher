@@ -28,7 +28,7 @@ interface EblanShortcutConfigRepository {
 
     suspend fun upsertEblanShortcutConfigs(eblanShortcutConfigs: List<EblanShortcutConfig>)
 
-    suspend fun deleteEblanShortcutConfig(
+    suspend fun deleteEblanShortcutConfigByPackageName(
         serialNumber: Long,
         packageName: String,
     )

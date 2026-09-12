@@ -48,11 +48,11 @@ internal class DefaultWidgetGridItemRepository @Inject constructor(private val w
         widgetGridItemDao.deleteWidgetGridItemEntity(entity = widgetGridItem.asEntity())
     }
 
-    override suspend fun deleteWidgetGridItem(
+    override suspend fun deleteWidgetGridItemByPackageName(
         serialNumber: Long,
         packageName: String,
     ) {
-        widgetGridItemDao.deleteWidgetGridItemEntity(
+        widgetGridItemDao.deleteWidgetGridItemEntityByPackageName(
             serialNumber = serialNumber,
             packageName = packageName,
         )

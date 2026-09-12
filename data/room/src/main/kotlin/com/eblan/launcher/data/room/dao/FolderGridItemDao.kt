@@ -39,7 +39,7 @@ interface FolderGridItemDao {
 
     @Transaction
     @Query("SELECT * FROM FolderGridItemEntity WHERE id = :id")
-    suspend fun getFolderGridItemWrapperEntity(id: String): FolderGridItemWrapperEntity?
+    suspend fun getFolderGridItemWrapperEntityById(id: String): FolderGridItemWrapperEntity?
 
     @Upsert
     suspend fun upsertFolderGridItemEntities(entities: List<FolderGridItemEntity>)

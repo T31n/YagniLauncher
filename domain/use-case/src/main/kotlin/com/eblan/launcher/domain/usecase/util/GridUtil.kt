@@ -85,12 +85,12 @@ suspend fun getFolderGridItemsById(
     folderGridItemRepository: FolderGridItemRepository,
     folderId: String,
 ): List<GridItem> {
-    val folderGridItemWrapper = folderGridItemRepository.getFolderGridItemWrapper(
+    val folderGridItemWrapper = folderGridItemRepository.getFolderGridItemWrapperById(
         id = folderId,
     ) ?: return emptyList()
 
     val childFolderGridItems = folderGridItemWrapper.folderGridItems.map { folderGridItem ->
-        folderGridItemRepository.getFolderGridItemWrapper(
+        folderGridItemRepository.getFolderGridItemWrapperById(
             id = folderGridItem.id,
         )?.asGridItem() ?: folderGridItem.asGridItem()
     }

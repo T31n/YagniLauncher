@@ -50,10 +50,10 @@ class DefaultEblanShortcutInfoRepository @Inject constructor(private val eblanSh
         eblanShortcutInfoDao.deleteEblanShortcutInfoEntities(deleteEblanShortcutInfos = deleteEblanShortcutInfos)
     }
 
-    override suspend fun getEblanShortcutInfos(
+    override suspend fun getEblanShortcutInfosByPackageName(
         serialNumber: Long,
         packageName: String,
-    ): List<EblanShortcutInfo> = eblanShortcutInfoDao.getEblanShortcutInfoEntities(
+    ): List<EblanShortcutInfo> = eblanShortcutInfoDao.getEblanShortcutInfoEntitiesByPackageName(
         serialNumber = serialNumber,
         packageName = packageName,
     ).map {

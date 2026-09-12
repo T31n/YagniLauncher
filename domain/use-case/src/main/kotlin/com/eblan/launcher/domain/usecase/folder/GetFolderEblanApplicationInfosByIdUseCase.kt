@@ -62,7 +62,7 @@ class GetFolderEblanApplicationInfosByIdUseCase @Inject constructor(
         maxFolderRows: Int,
     ): FolderEblanApplicationInfoPopup {
         val childFolderEblanApplicationInfos = folderEblanApplicationInfos.map {
-            folderEblanApplicationInfoRepository.getFolderEblanApplicationInfoWrapper(
+            folderEblanApplicationInfoRepository.getFolderEblanApplicationInfoWrapperById(
                 id = it.id,
             )?.asFolderEblanApplicationInfoGridItem() ?: it.asFolderEblanApplicationInfoGridItem()
         }

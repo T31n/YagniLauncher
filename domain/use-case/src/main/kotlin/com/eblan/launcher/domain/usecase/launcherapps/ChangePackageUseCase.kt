@@ -232,7 +232,7 @@ class ChangePackageUseCase @Inject constructor(
         ) ?: return
 
         val oldEblanShortcutInfosByPackageName =
-            eblanShortcutInfoRepository.getEblanShortcutInfos(
+            eblanShortcutInfoRepository.getEblanShortcutInfosByPackageName(
                 serialNumber = serialNumber,
                 packageName = packageName,
             )

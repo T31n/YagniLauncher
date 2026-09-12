@@ -63,7 +63,7 @@ class GetFolderGridItemsByIdUseCase @Inject constructor(
         maxFolderRows: Int,
     ): FolderGridItemPopup {
         val childFolderGridItems = folderGridItems.map {
-            folderGridItemRepository.getFolderGridItemWrapper(
+            folderGridItemRepository.getFolderGridItemWrapperById(
                 id = it.id,
             )?.asGridItem() ?: it.asGridItem()
         }

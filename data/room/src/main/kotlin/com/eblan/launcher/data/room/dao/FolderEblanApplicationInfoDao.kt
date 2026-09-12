@@ -18,8 +18,10 @@
 package com.eblan.launcher.data.room.dao
 
 import androidx.room.Dao
+import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Update
 import androidx.room.Upsert
 import com.eblan.launcher.data.room.entity.FolderEblanApplicationInfoEntity
 import com.eblan.launcher.data.room.entity.FolderEblanApplicationInfoWrapperEntity
@@ -39,8 +41,17 @@ interface FolderEblanApplicationInfoDao {
 
     @Transaction
     @Query("SELECT * FROM FolderEblanApplicationInfoEntity WHERE id = :id")
-    suspend fun getFolderEblanApplicationInfoWrapperEntity(id: String): FolderEblanApplicationInfoWrapperEntity?
+    suspend fun getFolderEblanApplicationInfoWrapperEntityById(id: String): FolderEblanApplicationInfoWrapperEntity?
 
     @Upsert
     suspend fun upsertFolderEblanApplicationInfoEntity(entity: FolderEblanApplicationInfoEntity)
+
+    @Query("SELECT * FROM FolderEblanApplicationInfoEntity WHERE id = :id")
+    fun getFolderEblanApplicationInfoEntityById(id: String): FolderEblanApplicationInfoEntity?
+
+    @Insert
+    suspend fun insertFolderEblanApplicationInfoEntity(entity: FolderEblanApplicationInfoEntity)
+
+    @Update
+    suspend fun updateFolderEblanApplicationInfoEntity(entity: FolderEblanApplicationInfoEntity)
 }

@@ -44,7 +44,7 @@ interface WidgetGridItemDao {
     suspend fun deleteWidgetGridItemEntity(entity: WidgetGridItemEntity)
 
     @Query("DELETE FROM WidgetGridItemEntity WHERE serialNumber = :serialNumber AND packageName = :packageName")
-    suspend fun deleteWidgetGridItemEntity(
+    suspend fun deleteWidgetGridItemEntityByPackageName(
         serialNumber: Long,
         packageName: String,
     )

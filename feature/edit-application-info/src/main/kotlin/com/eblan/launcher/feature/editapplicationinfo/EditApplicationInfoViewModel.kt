@@ -222,7 +222,7 @@ internal class EditApplicationInfoViewModel @Inject constructor(
 
     fun addFolderEblanApplicationInfo(folderEblanApplicationInfo: FolderEblanApplicationInfo) {
         viewModelScope.launch {
-            folderEblanApplicationInfoRepository.upsertFolderEblanApplicationInfo(
+            folderEblanApplicationInfoRepository.insertFolderEblanApplicationInfo(
                 folderEblanApplicationInfo = folderEblanApplicationInfo,
             )
         }

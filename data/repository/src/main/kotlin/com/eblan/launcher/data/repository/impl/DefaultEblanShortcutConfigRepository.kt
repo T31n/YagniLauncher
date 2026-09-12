@@ -46,11 +46,11 @@ internal class DefaultEblanShortcutConfigRepository @Inject constructor(private 
         eblanShortcutConfigDao.upsertEblanShortcutConfigEntities(entities = entities)
     }
 
-    override suspend fun deleteEblanShortcutConfig(
+    override suspend fun deleteEblanShortcutConfigByPackageName(
         serialNumber: Long,
         packageName: String,
     ) {
-        eblanShortcutConfigDao.deleteEblanShortcutConfigEntity(
+        eblanShortcutConfigDao.deleteEblanShortcutConfigEntityByPackageName(
             serialNumber = serialNumber,
             packageName = packageName,
         )
