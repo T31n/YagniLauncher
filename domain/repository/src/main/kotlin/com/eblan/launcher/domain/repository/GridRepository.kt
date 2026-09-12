@@ -17,8 +17,8 @@
  */
 package com.eblan.launcher.domain.repository
 
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.GridItems
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.GridItems
 import kotlinx.coroutines.flow.Flow
 
 interface GridRepository {

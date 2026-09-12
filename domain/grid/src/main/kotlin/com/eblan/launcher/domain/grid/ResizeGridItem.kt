@@ -17,9 +17,9 @@
  */
 package com.eblan.launcher.domain.grid
 
-import com.eblan.launcher.domain.model.Anchor
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.SideAnchor
+import com.eblan.launcher.domain.model.grid.Anchor
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.SideAnchor
 
 fun resizeGridItemWithPixels(
     gridItem: GridItem,

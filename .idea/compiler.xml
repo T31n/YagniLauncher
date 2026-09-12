@@ -87,6 +87,8 @@
       <module name="EinsteinLauncher.ui" target="21" />
       <module name="YagniLauncher.data.cache" target="21" />
       <module name="YagniLauncher.feature.settings.folder" target="21" />
+      <module name="YagniLauncher.framework.file-manager" target="21" />
+      <module name="YagniLauncher.framework.image-serializer" target="21" />
       <module name="YagniLauncher.framework.power-manager" target="21" />
       <module name="YagniLauncher.framework.transliterator" target="21" />
     </bytecodeTargetLevel>

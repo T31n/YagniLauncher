@@ -53,25 +53,25 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
+import com.eblan.launcher.common.AndroidImageSerializer
+import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
-import com.eblan.launcher.domain.framework.FileManager
-import com.eblan.launcher.domain.model.Associate
-import com.eblan.launcher.domain.model.EblanAction
-import com.eblan.launcher.domain.model.EblanActionType
-import com.eblan.launcher.domain.model.EblanApplicationInfoGroup
-import com.eblan.launcher.domain.model.ExperimentalSettings
-import com.eblan.launcher.domain.model.GestureSettings
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.HomeSettings
-import com.eblan.launcher.domain.model.MoveGridItemResult
-import com.eblan.launcher.domain.model.PinItemRequestType
+import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
+import com.eblan.launcher.domain.model.grid.Associate
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.MoveGridItemResult
+import com.eblan.launcher.domain.model.launcherapps.PinItemRequestType
+import com.eblan.launcher.domain.model.userdata.EblanAction
+import com.eblan.launcher.domain.model.userdata.EblanActionType
+import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
+import com.eblan.launcher.domain.model.userdata.GestureSettings
+import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.GridItemSource
 import com.eblan.launcher.feature.home.model.PageDirection
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.calculatePage
 import com.eblan.launcher.feature.home.util.handleEblanAction
-import com.eblan.launcher.framework.imageserializer.AndroidImageSerializer
 import com.eblan.launcher.framework.launcherapps.AndroidLauncherAppsWrapper
 import com.eblan.launcher.framework.launcherapps.PinItemRequestWrapper
 import com.eblan.launcher.framework.usermanager.AndroidUserManagerWrapper
@@ -683,6 +683,10 @@ internal class PagerScreenState(
             )
 
             eblanApplicationInfoGroup = null
+
+            if (applicationScreenSwipeY.value < screenHeight) {
+                dismissApplicationScreen()
+            }
         }
     }
 

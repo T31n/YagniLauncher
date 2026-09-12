@@ -44,8 +44,8 @@ import com.eblan.launcher.activity.main.MainActivity
 import com.eblan.launcher.designsystem.theme.EblanLauncherTheme
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
-import com.eblan.launcher.domain.model.EblanAction
-import com.eblan.launcher.domain.model.Theme
+import com.eblan.launcher.domain.model.userdata.EblanAction
+import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.feature.action.ActionScreen
 import com.eblan.launcher.framework.accessibilitymanager.AndroidAccessibilityManagerWrapper
 import com.eblan.launcher.model.ActivityUiState

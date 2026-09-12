@@ -76,17 +76,17 @@ import coil3.request.ImageRequest.Builder
 import coil3.request.addLastModifiedToFileCacheKey
 import coil3.size.Size
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.BackgroundColor
-import com.eblan.launcher.domain.model.FolderPopup
-import com.eblan.launcher.domain.model.FolderPopupEntry
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.GridItemData
-import com.eblan.launcher.domain.model.GridItemSettings
-import com.eblan.launcher.domain.model.MoveGridItemResult
-import com.eblan.launcher.domain.model.PreviewFolder
-import com.eblan.launcher.domain.model.TextColor
-import com.eblan.launcher.domain.usecase.grid.FOLDER_PREVIEW_COLUMNS
-import com.eblan.launcher.domain.usecase.grid.FOLDER_PREVIEW_ROWS
+import com.eblan.launcher.domain.model.folder.FolderPopupEntry
+import com.eblan.launcher.domain.model.folder.PreviewFolder
+import com.eblan.launcher.domain.model.grid.FolderGridItemPopup
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.GridItemData
+import com.eblan.launcher.domain.model.grid.GridItemSettings
+import com.eblan.launcher.domain.model.grid.MoveGridItemResult
+import com.eblan.launcher.domain.model.userdata.BackgroundColor
+import com.eblan.launcher.domain.model.userdata.TextColor
+import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_COLUMNS
+import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_ROWS
 import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
 import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
@@ -130,7 +130,7 @@ internal fun InteractiveFolderGridItem(
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
-    folderPopups: List<FolderPopup>,
+    folderGridItemPopups: List<FolderGridItemPopup>,
     onOpenAppDrawer: () -> Unit,
     onUpdateImageBitmap: (ImageBitmap) -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
@@ -146,7 +146,7 @@ internal fun InteractiveFolderGridItem(
     onUpdateIsCloseFolderGridItemPopup: (Boolean) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
-    onUpsertFolderPopupEntry: (FolderPopupEntry) -> Unit,
+    onUpsertFolderGridItemPopupEntry: (FolderPopupEntry) -> Unit,
 ) {
     val density = LocalDensity.current
 
@@ -203,9 +203,9 @@ internal fun InteractiveFolderGridItem(
 
     val isVisibleFolder = remember(
         key1 = gridItem,
-        key2 = folderPopups,
+        key2 = folderGridItemPopups,
     ) {
-        folderPopups.any { it.folderPopupEntry.id == gridItem.id }
+        folderGridItemPopups.any { it.folderPopupEntry.id == gridItem.id }
     }
 
     val horizontalAlignment =
@@ -230,7 +230,7 @@ internal fun InteractiveFolderGridItem(
 
     when (val data = gridItem.data) {
         is GridItemData.ApplicationInfo -> {
-            InteractiveFolderApplicationInfoGridItem(
+            InteractiveApplicationInfoGridItem(
                 modifier = modifier,
                 sharedTransitionScope = sharedTransitionScope,
                 data = data,
@@ -262,7 +262,7 @@ internal fun InteractiveFolderGridItem(
         }
 
         is GridItemData.ShortcutInfo -> {
-            InteractiveFolderShortcutInfoGridItem(
+            InteractiveShortcutInfoGridItem(
                 modifier = modifier,
                 sharedTransitionScope = sharedTransitionScope,
                 data = data,
@@ -293,7 +293,7 @@ internal fun InteractiveFolderGridItem(
         }
 
         is GridItemData.ShortcutConfig -> {
-            InteractiveFolderShortcutConfigGridItem(
+            InteractiveShortcutConfigGridItem(
                 modifier = modifier,
                 sharedTransitionScope = sharedTransitionScope,
                 data = data,
@@ -354,7 +354,7 @@ internal fun InteractiveFolderGridItem(
                 onUpdateIsCloseFolderGridItemPopup = onUpdateIsCloseFolderGridItemPopup,
                 onOpenAppDrawer = onOpenAppDrawer,
                 onShowGridItemPopup = onShowGridItemPopup,
-                onUpsertFolderPopupEntry = onUpsertFolderPopupEntry,
+                onUpsertFolderGridItemPopupEntry = onUpsertFolderGridItemPopupEntry,
                 onUpdateImageBitmap = onUpdateImageBitmap,
                 onUpdateIsDragging = onUpdateIsDragging,
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
@@ -370,7 +370,7 @@ internal fun InteractiveFolderGridItem(
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-private fun InteractiveFolderApplicationInfoGridItem(
+private fun InteractiveApplicationInfoGridItem(
     modifier: Modifier = Modifier,
     sharedTransitionScope: SharedTransitionScope,
     data: GridItemData.ApplicationInfo,
@@ -571,7 +571,7 @@ private fun InteractiveFolderApplicationInfoGridItem(
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-private fun InteractiveFolderShortcutInfoGridItem(
+private fun InteractiveShortcutInfoGridItem(
     modifier: Modifier = Modifier,
     sharedTransitionScope: SharedTransitionScope,
     data: GridItemData.ShortcutInfo,
@@ -779,7 +779,7 @@ private fun InteractiveFolderShortcutInfoGridItem(
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-private fun InteractiveFolderShortcutConfigGridItem(
+private fun InteractiveShortcutConfigGridItem(
     modifier: Modifier = Modifier,
     sharedTransitionScope: SharedTransitionScope,
     data: GridItemData.ShortcutConfig,
@@ -995,7 +995,7 @@ private fun InteractiveNestedFolderGridItem(
         intOffset: IntOffset,
         intSize: IntSize,
     ) -> Unit,
-    onUpsertFolderPopupEntry: (FolderPopupEntry) -> Unit,
+    onUpsertFolderGridItemPopupEntry: (FolderPopupEntry) -> Unit,
     onUpdateImageBitmap: (ImageBitmap) -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
@@ -1085,7 +1085,7 @@ private fun InteractiveNestedFolderGridItem(
                     },
                     onTap = if (!isVisibleOverlay && !isInProgress) {
                         {
-                            onUpsertFolderPopupEntry(
+                            onUpsertFolderGridItemPopupEntry(
                                 FolderPopupEntry(
                                     id = gridItem.id,
                                     x = intOffset.x,
@@ -1163,6 +1163,7 @@ private fun InteractiveNestedFolderGridItem(
                 PreviewFolderGridLayout(
                     modifier = Modifier.fillMaxSize(),
                     gridItems = previewFolderGridItems[gridItem.id]?.previewFolderGridItems,
+                    slotId = { it.id },
                     content = {
                         PreviewNestedFolderGridItem(
                             alpha = iconAlpha,

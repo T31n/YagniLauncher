@@ -65,10 +65,10 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import coil3.compose.AsyncImage
-import com.eblan.launcher.domain.model.EblanAppWidgetProviderInfo
-import com.eblan.launcher.domain.model.EblanApplicationInfoGroup
-import com.eblan.launcher.domain.model.GridItemSettings
-import com.eblan.launcher.domain.model.MoveGridItemResult
+import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
+import com.eblan.launcher.domain.model.grid.GridItemSettings
+import com.eblan.launcher.domain.model.grid.MoveGridItemResult
+import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
 import com.eblan.launcher.feature.home.component.HomeHandler
 import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.model.Drag
@@ -97,7 +97,6 @@ internal fun AppWidgetScreen(
     isVisibleOverlay: Boolean,
     drag: Drag,
     onDismiss: () -> Unit,
-    onDismissApplicationScreen: () -> Unit,
     onUpdateOverlayBounds: (
         intOffset: IntOffset,
         intSize: IntSize,
@@ -132,6 +131,7 @@ internal fun AppWidgetScreen(
 
     Box(
         modifier = modifier
+            .fillMaxSize()
             .offset {
                 IntOffset(x = 0, y = swipeY.roundToInt())
             }
@@ -141,8 +141,7 @@ internal fun AppWidgetScreen(
                         onDismiss()
                     },
                 )
-            }
-            .fillMaxSize(),
+            },
         contentAlignment = Alignment.BottomCenter,
     ) {
         Surface(
@@ -152,6 +151,9 @@ internal fun AppWidgetScreen(
         ) {
             Column(
                 modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(paddingValues)
+                    .animateContentSize()
                     .pointerInput(key1 = Unit) {
                         detectVerticalDragGestures(
                             onVerticalDrag = { _, dragAmount ->
@@ -164,10 +166,7 @@ internal fun AppWidgetScreen(
                                 onDragEnd()
                             },
                         )
-                    }
-                    .fillMaxWidth()
-                    .padding(paddingValues)
-                    .animateContentSize(),
+                    },
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 AsyncImage(
@@ -201,7 +200,6 @@ internal fun AppWidgetScreen(
                             onUpdateGridItemSource = onUpdateGridItemSource,
                             onUpdateSharedElementKey = onUpdateSharedElementKey,
                             onDismiss = onDismiss,
-                            onDismissApplicationScreen = onDismissApplicationScreen,
                             onUpdateIsDragging = onUpdateIsDragging,
                             onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                             onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
@@ -233,7 +231,6 @@ private fun EblanAppWidgetProviderInfoItem(
     onUpdateGridItemSource: (GridItemSource) -> Unit,
     onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
     onDismiss: () -> Unit,
-    onDismissApplicationScreen: () -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
@@ -274,7 +271,6 @@ private fun EblanAppWidgetProviderInfoItem(
                                 scale = scale,
                                 animations = animations,
                                 onDismiss = onDismiss,
-                                onDismissApplicationScreen = onDismissApplicationScreen,
                                 onUpdateGridItemSource = onUpdateGridItemSource,
                                 onUpdateImageBitmap = onUpdateImageBitmap,
                                 onUpdateIsDragging = onUpdateIsDragging,
@@ -372,7 +368,6 @@ private suspend fun handleOnLongPress(
     scale: Animatable<Float, AnimationVector1D>,
     animations: Boolean,
     onDismiss: () -> Unit,
-    onDismissApplicationScreen: () -> Unit,
     onUpdateGridItemSource: (GridItemSource) -> Unit,
     onUpdateImageBitmap: (ImageBitmap) -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
@@ -439,6 +434,4 @@ private suspend fun handleOnLongPress(
     onUpdateIsDragging(true)
 
     onDismiss()
-
-    onDismissApplicationScreen()
 }

@@ -48,14 +48,14 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import coil3.compose.AsyncImage
-import com.eblan.launcher.domain.model.Associate
-import com.eblan.launcher.domain.model.EblanAction
-import com.eblan.launcher.domain.model.EblanActionType
-import com.eblan.launcher.domain.model.EblanShortcutInfo
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.GridItemData
-import com.eblan.launcher.domain.model.GridItemSettings
-import com.eblan.launcher.domain.model.MoveGridItemResult
+import com.eblan.launcher.domain.model.grid.Associate
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.GridItemData
+import com.eblan.launcher.domain.model.grid.GridItemSettings
+import com.eblan.launcher.domain.model.grid.MoveGridItemResult
+import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfo
+import com.eblan.launcher.domain.model.userdata.EblanAction
+import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.model.GridItemSource
 import com.eblan.launcher.feature.home.model.SharedElementKey
@@ -369,7 +369,7 @@ private fun getShortcutInfoGridItem(
         componentName = "",
     )
 
-    val gridItem = GridItem(
+    return GridItem(
         id = id,
         page = 0,
         startColumn = -1,
@@ -384,5 +384,4 @@ private fun getShortcutInfoGridItem(
         swipeUp = eblanAction,
         swipeDown = eblanAction,
     )
-    return gridItem
 }

@@ -90,20 +90,20 @@ import coil3.request.ImageRequest
 import coil3.request.addLastModifiedToFileCacheKey
 import coil3.request.crossfade
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.AppDrawerSettings
-import com.eblan.launcher.domain.model.EblanAppWidgetProviderInfo
-import com.eblan.launcher.domain.model.EblanApplicationInfo
-import com.eblan.launcher.domain.model.EblanApplicationInfoGroup
-import com.eblan.launcher.domain.model.EblanApplicationInfoTag
-import com.eblan.launcher.domain.model.EblanShortcutInfo
-import com.eblan.launcher.domain.model.EblanShortcutInfoByGroup
-import com.eblan.launcher.domain.model.EblanUser
-import com.eblan.launcher.domain.model.EblanUserPageKey
-import com.eblan.launcher.domain.model.EblanUserType
-import com.eblan.launcher.domain.model.GetEblanApplicationInfosByLabelAndTag
-import com.eblan.launcher.domain.model.ManagedProfileResult
-import com.eblan.launcher.domain.model.MoveGridItemResult
-import com.eblan.launcher.domain.model.TextColor
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
+import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
+import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
+import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
+import com.eblan.launcher.domain.model.grid.MoveGridItemResult
+import com.eblan.launcher.domain.model.launcherapps.EblanUser
+import com.eblan.launcher.domain.model.launcherapps.EblanUserPageKey
+import com.eblan.launcher.domain.model.launcherapps.EblanUserType
+import com.eblan.launcher.domain.model.launcherapps.ManagedProfileResult
+import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfo
+import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfoByGroup
+import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
+import com.eblan.launcher.domain.model.userdata.TextColor
+import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
 import com.eblan.launcher.feature.home.component.OffsetNestedScrollConnection
 import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
@@ -112,7 +112,7 @@ import com.eblan.launcher.feature.home.model.GridItemSource
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.screen.application.ApplicationInfoPopup
 import com.eblan.launcher.feature.home.screen.application.ApplicationScreenEffect
-import com.eblan.launcher.feature.home.screen.application.ApplicationSearchBarWithoutMenu
+import com.eblan.launcher.feature.home.screen.application.ApplicationSearchBar
 import com.eblan.launcher.feature.home.screen.application.EblanApplicationInfoTabRow
 import com.eblan.launcher.feature.home.screen.application.PrivateApplicationInfoPopup
 import com.eblan.launcher.feature.home.screen.application.QuiteModeScreen
@@ -228,7 +228,7 @@ internal fun ListApplicationScreen(
                 end = paddingValues.calculateEndPadding(layoutDirection),
             ),
     ) {
-        ApplicationSearchBarWithoutMenu(
+        ApplicationSearchBar(
             focusRequester = focusRequester,
             searchBarState = searchBarState,
             textFieldState = textFieldState,
@@ -290,13 +290,7 @@ internal fun ListApplicationScreen(
                 onUpdateGridItemSource = onUpdateGridItemSource,
                 onUpdateImageBitmap = onUpdateImageBitmap,
                 onUpdateIsDragging = onUpdateIsDragging,
-                onUpdateOverlayBounds = { intOffset, intSize ->
-                    onUpdateOverlayBounds(intOffset, intSize)
-
-                    popupIntOffset = intOffset
-
-                    popupIntSize = intSize
-                },
+                onUpdateOverlayBounds = onUpdateOverlayBounds,
                 onUpdatePopupMenu = {
                     showPopupApplicationMenu = it
                 },
@@ -310,6 +304,11 @@ internal fun ListApplicationScreen(
                 },
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                 onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+                onUpdatePopupBounds = { intOffset, intSize ->
+                    popupIntOffset = intOffset
+
+                    popupIntSize = intSize
+                },
             )
         }
     }
@@ -397,6 +396,10 @@ private fun EblanApplicationInfosPage(
     onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
+    onUpdatePopupBounds: (
+        intOffset: IntOffset,
+        intSize: IntSize,
+    ) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -469,6 +472,7 @@ private fun EblanApplicationInfosPage(
                 onUpdateEblanApplicationInfo = onUpdateEblanApplicationInfo,
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                 onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+                onUpdatePopupBounds = onUpdatePopupBounds,
             )
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && isDefaultLauncher && eblanUserPageKey.eblanUser.serialNumber > 0 && userHandle != null) {
@@ -532,6 +536,10 @@ private fun EblanApplicationInfos(
     onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
+    onUpdatePopupBounds: (
+        intOffset: IntOffset,
+        intSize: IntSize,
+    ) -> Unit,
 ) {
     val userManager = LocalUserManager.current
 
@@ -603,7 +611,7 @@ private fun EblanApplicationInfos(
                             it.serialNumber to it.componentName
                         },
                     ) {
-                        EblanApplicationInfoListItem(
+                        EblanApplicationInfoItem(
                             sharedTransitionScope = sharedTransitionScope,
                             appDrawerSettings = appDrawerSettings,
                             drag = drag,
@@ -626,6 +634,7 @@ private fun EblanApplicationInfos(
                             onUpdateEblanApplicationInfo = onUpdateEblanApplicationInfo,
                             onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                             onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+                            onUpdatePopupBounds = onUpdatePopupBounds,
                         )
                     }
 
@@ -655,7 +664,7 @@ private fun EblanApplicationInfos(
                             it.serialNumber to it.componentName
                         },
                     ) {
-                        EblanApplicationInfoListItem(
+                        EblanApplicationInfoItem(
                             sharedTransitionScope = sharedTransitionScope,
                             appDrawerSettings = appDrawerSettings,
                             drag = drag,
@@ -678,6 +687,7 @@ private fun EblanApplicationInfos(
                             onUpdateEblanApplicationInfo = onUpdateEblanApplicationInfo,
                             onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                             onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+                            onUpdatePopupBounds = onUpdatePopupBounds,
                         )
                     }
                 }
@@ -703,7 +713,7 @@ private fun EblanApplicationInfos(
     ExperimentalLayoutApi::class,
 )
 @Composable
-private fun EblanApplicationInfoListItem(
+private fun EblanApplicationInfoItem(
     modifier: Modifier = Modifier,
     sharedTransitionScope: SharedTransitionScope,
     appDrawerSettings: AppDrawerSettings,
@@ -730,6 +740,10 @@ private fun EblanApplicationInfoListItem(
     onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
+    onUpdatePopupBounds: (
+        intOffset: IntOffset,
+        intSize: IntSize,
+    ) -> Unit,
 ) {
     val graphicsLayer = rememberGraphicsLayer()
 
@@ -824,7 +838,8 @@ private fun EblanApplicationInfoListItem(
                         {
                             scope.launch {
                                 handleOnTapEblanApplicationInfoItem(
-                                    eblanApplicationInfo = eblanApplicationInfo,
+                                    componentName = eblanApplicationInfo.componentName,
+                                    serialNumber = eblanApplicationInfo.serialNumber,
                                     intOffset = intOffset,
                                     intSize = intSize,
                                     keyboardController = keyboardController,
@@ -842,18 +857,19 @@ private fun EblanApplicationInfoListItem(
                             scope.launch {
                                 handleOnLongPressEblanApplicationInfoItem(
                                     sharedElementKey = sharedElementKey,
-                                    eblanApplicationInfo = eblanApplicationInfo,
+                                    item = eblanApplicationInfo,
                                     graphicsLayer = graphicsLayer,
                                     intOffset = intOffset,
                                     intSize = intSize,
                                     keyboardController = keyboardController,
-                                    onUpdateEblanApplicationInfo = onUpdateEblanApplicationInfo,
+                                    onUpdate = onUpdateEblanApplicationInfo,
                                     onUpdateImageBitmap = onUpdateImageBitmap,
                                     onUpdateIsLongPress = { isLongPress = it },
                                     onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                                     onUpdateOverlayBounds = onUpdateOverlayBounds,
                                     onUpdatePopupMenu = onUpdatePopupMenu,
                                     onUpdateSharedElementKey = onUpdateSharedElementKey,
+                                    onUpdatePopupBounds = onUpdatePopupBounds,
                                 )
                             }
                         }

@@ -19,7 +19,7 @@ package com.eblan.launcher.feature.settings.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.eblan.launcher.domain.model.HomeSettings
+import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.feature.settings.home.model.HomeSettingsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel

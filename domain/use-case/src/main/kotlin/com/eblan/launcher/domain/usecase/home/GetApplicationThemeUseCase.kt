@@ -19,8 +19,8 @@ package com.eblan.launcher.domain.usecase.home
 
 import com.eblan.launcher.domain.framework.ResourcesWrapper
 import com.eblan.launcher.domain.framework.WallpaperManagerWrapper
-import com.eblan.launcher.domain.model.ApplicationTheme
-import com.eblan.launcher.domain.model.Theme
+import com.eblan.launcher.domain.model.userdata.ApplicationTheme
+import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.domain.repository.UserDataRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine

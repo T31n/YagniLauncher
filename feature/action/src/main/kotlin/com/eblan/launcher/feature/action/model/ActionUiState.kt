@@ -17,7 +17,7 @@
  */
 package com.eblan.launcher.feature.action.model
 
-import com.eblan.launcher.domain.model.EblanApplicationInfo
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 
 sealed interface ActionUiState {
     data object Loading : ActionUiState

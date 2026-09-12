@@ -17,7 +17,6 @@
  */
 package com.eblan.launcher.feature.home.screen.shortcutconfig
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
@@ -54,15 +53,12 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
@@ -89,29 +85,25 @@ import androidx.compose.ui.unit.round
 import coil3.compose.AsyncImage
 import com.eblan.launcher.designsystem.component.VerticalSlideReveal
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.Associate
-import com.eblan.launcher.domain.model.EblanAction
-import com.eblan.launcher.domain.model.EblanActionType
-import com.eblan.launcher.domain.model.EblanApplicationInfoGroup
-import com.eblan.launcher.domain.model.EblanShortcutConfig
-import com.eblan.launcher.domain.model.EblanUser
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.GridItemData
-import com.eblan.launcher.domain.model.GridItemSettings
-import com.eblan.launcher.domain.model.MoveGridItemResult
-import com.eblan.launcher.feature.home.component.HomeHandler
-import com.eblan.launcher.feature.home.component.OffsetNestedScrollConnection
+import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
+import com.eblan.launcher.domain.model.grid.Associate
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.GridItemData
+import com.eblan.launcher.domain.model.grid.GridItemSettings
+import com.eblan.launcher.domain.model.grid.MoveGridItemResult
+import com.eblan.launcher.domain.model.launcherapps.EblanUser
+import com.eblan.launcher.domain.model.shortcutconfig.EblanShortcutConfig
+import com.eblan.launcher.domain.model.userdata.EblanAction
+import com.eblan.launcher.domain.model.userdata.EblanActionType
+import com.eblan.launcher.feature.home.component.ScreenEffect
 import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
+import com.eblan.launcher.feature.home.component.rememberNestedScrollConnectionEffect
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.GridItemSource
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.SCALE
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlin.time.Duration.Companion.milliseconds
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 import com.eblan.launcher.common.R as commonR
@@ -147,8 +139,6 @@ internal fun ShortcutConfigScreen(
 ) {
     val layoutDirection = LocalLayoutDirection.current
 
-    val keyboardController = LocalSoftwareKeyboardController.current
-
     val horizontalPagerState = rememberPagerState(
         pageCount = {
             eblanShortcutConfigs.keys.size
@@ -161,48 +151,26 @@ internal fun ShortcutConfigScreen(
 
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(key1 = textFieldState) {
-        snapshotFlow { textFieldState.text }
-            .debounce(500L.milliseconds)
-            .onEach {
-                onGetEblanShortcutConfigsByLabel(it.toString())
-            }.collect()
-    }
-
-    LaunchedEffect(key1 = swipeY) {
-        if (swipeY == screenHeight.toFloat()) {
-            keyboardController?.hide()
-        }
-    }
-
-    LaunchedEffect(
-        key1 = isVisibleOverlay,
-        key2 = drag,
-    ) {
-        if (isVisibleOverlay &&
-            (drag == Drag.Cancel || drag == Drag.End)
-        ) {
-            onUpdateIsVisibleOverlay(false)
-        }
-    }
-
-    BackHandler(enabled = swipeY < screenHeight.toFloat()) {
-        onDismiss()
-    }
-
-    HomeHandler(enabled = swipeY < screenHeight.toFloat()) {
-        onDismiss()
-    }
+    ScreenEffect(
+        drag = drag,
+        isVisibleOverlay = isVisibleOverlay,
+        screenHeight = screenHeight,
+        swipeY = swipeY,
+        textFieldState = textFieldState,
+        onDismiss = onDismiss,
+        onGetLabel = onGetEblanShortcutConfigsByLabel,
+        onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+    )
 
     Surface(
         modifier = modifier
+            .fillMaxSize()
             .graphicsLayer {
                 translationY = swipeY
                 this.alpha = alpha
                 clip = true
                 shape = RoundedCornerShape(cornerSize)
-            }
-            .fillMaxSize(),
+            },
     ) {
         Column(
             modifier = modifier
@@ -222,11 +190,15 @@ internal fun ShortcutConfigScreen(
                     SearchBarDefaults.InputField(
                         textFieldState = textFieldState,
                         searchBarState = searchBarState,
-                        leadingIcon = {
-                            Icon(
-                                imageVector = EblanLauncherIcons.Search,
-                                contentDescription = null,
-                            )
+                        leadingIcon = if (textFieldState.text.isNotEmpty()) {
+                            {
+                                Icon(
+                                    imageVector = EblanLauncherIcons.Search,
+                                    contentDescription = null,
+                                )
+                            }
+                        } else {
+                            null
                         },
                         onSearch = { scope.launch { searchBarState.animateToCollapsed() } },
                         placeholder = { Text(text = stringResource(commonR.string.search_applications)) },
@@ -353,24 +325,12 @@ private fun EblanShortcutConfigsPage(
         },
     )
 
-    val currentOnVerticalDrag by rememberUpdatedState(onVerticalDrag)
-    val currentOnDragEnd by rememberUpdatedState(onDragEnd)
-
-    val nestedScrollConnection = remember {
-        OffsetNestedScrollConnection(
-            onVerticalDrag = currentOnVerticalDrag,
-            onDragEnd = currentOnDragEnd,
-        )
-    }
-
-    LaunchedEffect(
-        key1 = nestedScrollConnection,
-        key2 = swipeY,
-        key3 = lazyListState.canScrollBackward,
-    ) {
-        nestedScrollConnection.updateSwipeY(swipeY)
-        nestedScrollConnection.updateCanScrollBackward(lazyListState.canScrollBackward)
-    }
+    val nestedScrollConnection = rememberNestedScrollConnectionEffect(
+        lazyListState = lazyListState,
+        swipeY = swipeY,
+        onVerticalDrag = onVerticalDrag,
+        onDragEnd = onDragEnd,
+    )
 
     Box(
         modifier = modifier
@@ -433,6 +393,7 @@ private fun EblanApplicationInfoItem(
 
     Column(
         modifier = modifier
+            .fillMaxWidth()
             .pointerInput(Unit) {
                 detectTapGestures(
                     onTap = {
@@ -442,8 +403,7 @@ private fun EblanApplicationInfoItem(
                         expanded = !expanded
                     },
                 )
-            }
-            .fillMaxWidth(),
+            },
     ) {
         ListItem(
             headlineContent = { Text(text = eblanApplicationInfoGroup.label.toString()) },
@@ -691,7 +651,7 @@ private fun getShortcutConfigGridItem(
         componentName = "",
     )
 
-    val gridItem = GridItem(
+    return GridItem(
         id = id,
         page = 0,
         startColumn = -1,
@@ -706,5 +666,4 @@ private fun getShortcutConfigGridItem(
         swipeUp = eblanAction,
         swipeDown = eblanAction,
     )
-    return gridItem
 }

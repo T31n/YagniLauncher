@@ -17,8 +17,8 @@
  */
 package com.eblan.launcher.feature.settings.gestures.model
 
-import com.eblan.launcher.domain.model.EblanApplicationInfo
-import com.eblan.launcher.domain.model.GestureSettings
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
+import com.eblan.launcher.domain.model.userdata.GestureSettings
 
 internal sealed interface GesturesSettingsUiState {
     data object Loading : GesturesSettingsUiState

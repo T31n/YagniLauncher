@@ -52,28 +52,28 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.AppDrawerSettings
-import com.eblan.launcher.domain.model.EblanAppWidgetProviderInfo
-import com.eblan.launcher.domain.model.EblanApplicationInfo
-import com.eblan.launcher.domain.model.EblanApplicationInfoGroup
-import com.eblan.launcher.domain.model.EblanApplicationInfoTag
-import com.eblan.launcher.domain.model.EblanShortcutInfo
-import com.eblan.launcher.domain.model.EblanShortcutInfoByGroup
-import com.eblan.launcher.domain.model.EblanUser
-import com.eblan.launcher.domain.model.EblanUserPageKey
-import com.eblan.launcher.domain.model.EblanUserType
-import com.eblan.launcher.domain.model.GetEblanApplicationInfosByLabelAndTag
-import com.eblan.launcher.domain.model.ManagedProfileResult
-import com.eblan.launcher.domain.model.MoveGridItemResult
-import com.eblan.launcher.domain.model.TextColor
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
+import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
+import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
+import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
+import com.eblan.launcher.domain.model.grid.MoveGridItemResult
+import com.eblan.launcher.domain.model.launcherapps.EblanUser
+import com.eblan.launcher.domain.model.launcherapps.EblanUserPageKey
+import com.eblan.launcher.domain.model.launcherapps.EblanUserType
+import com.eblan.launcher.domain.model.launcherapps.ManagedProfileResult
+import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfo
+import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfoByGroup
+import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
+import com.eblan.launcher.domain.model.userdata.TextColor
+import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
 import com.eblan.launcher.feature.home.component.HorizontalAppDrawerGridLayout
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.GridItemSource
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.screen.application.ApplicationInfoPopup
 import com.eblan.launcher.feature.home.screen.application.ApplicationScreenEffect
-import com.eblan.launcher.feature.home.screen.application.ApplicationSearchBarWithoutMenu
-import com.eblan.launcher.feature.home.screen.application.EblanApplicationInfoGridItem
+import com.eblan.launcher.feature.home.screen.application.ApplicationSearchBar
+import com.eblan.launcher.feature.home.screen.application.EblanApplicationInfoItem
 import com.eblan.launcher.feature.home.screen.application.EblanApplicationInfoTabRow
 import com.eblan.launcher.feature.home.screen.application.PrivateApplicationInfoPopup
 import com.eblan.launcher.feature.home.screen.application.PrivateSpaceEblanApplicationInfoItem
@@ -177,7 +177,7 @@ internal fun HorizontalApplicationScreen(
             .fillMaxSize()
             .padding(paddingValues),
     ) {
-        ApplicationSearchBarWithoutMenu(
+        ApplicationSearchBar(
             focusRequester = focusRequester,
             searchBarState = searchBarState,
             textFieldState = textFieldState,
@@ -239,13 +239,7 @@ internal fun HorizontalApplicationScreen(
                 onUpdateGridItemSource = onUpdateGridItemSource,
                 onUpdateImageBitmap = onUpdateImageBitmap,
                 onUpdateIsDragging = onUpdateIsDragging,
-                onUpdateOverlayBounds = { intOffset, intSize ->
-                    onUpdateOverlayBounds(intOffset, intSize)
-
-                    popupIntOffset = intOffset
-
-                    popupIntSize = intSize
-                },
+                onUpdateOverlayBounds = onUpdateOverlayBounds,
                 onUpdatePopupMenu = {
                     showPopupApplicationMenu = it
                 },
@@ -259,6 +253,11 @@ internal fun HorizontalApplicationScreen(
                 },
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                 onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+                onUpdatePopupBounds = { intOffset, intSize ->
+                    popupIntOffset = intOffset
+
+                    popupIntSize = intSize
+                },
             )
         }
     }
@@ -345,6 +344,10 @@ private fun EblanApplicationInfosPage(
     onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
+    onUpdatePopupBounds: (
+        intOffset: IntOffset,
+        intSize: IntSize,
+    ) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -415,6 +418,7 @@ private fun EblanApplicationInfosPage(
                 onUpdateEblanApplicationInfo = onUpdateEblanApplicationInfo,
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                 onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+                onUpdatePopupBounds = onUpdatePopupBounds,
             )
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && isDefaultLauncher &&
@@ -478,9 +482,14 @@ private fun EblanApplicationInfos(
     onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
+    onUpdatePopupBounds: (
+        intOffset: IntOffset,
+        intSize: IntSize,
+    ) -> Unit,
 ) {
     HorizontalAppDrawerGridLayout(
         modifier = modifier
+            .fillMaxSize()
             .pointerInput(
                 key1 = onVerticalDrag,
                 key2 = onDragEnd,
@@ -491,8 +500,7 @@ private fun EblanApplicationInfos(
                     },
                     onDragEnd = onDragEnd,
                 )
-            }
-            .fillMaxSize(),
+            },
         columns = appDrawerSettings.horizontalAppDrawerColumns,
         eblanApplicationInfoWithIconPackInfos = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfoWithIconPackInfos[eblanUserPageKey],
         rows = appDrawerSettings.horizontalAppDrawerRows,
@@ -502,7 +510,7 @@ private fun EblanApplicationInfos(
                 EblanUserType.Clone,
                 EblanUserType.Work,
                 -> {
-                    EblanApplicationInfoGridItem(
+                    EblanApplicationInfoItem(
                         sharedTransitionScope = sharedTransitionScope,
                         appDrawerSettings = appDrawerSettings,
                         drag = drag,
@@ -526,6 +534,7 @@ private fun EblanApplicationInfos(
                         onUpdateEblanApplicationInfo = onUpdateEblanApplicationInfo,
                         onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                         onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+                        onUpdatePopupBounds = onUpdatePopupBounds,
                     )
                 }
 

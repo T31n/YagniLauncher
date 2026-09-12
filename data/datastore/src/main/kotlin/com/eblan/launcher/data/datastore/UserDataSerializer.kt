@@ -19,12 +19,9 @@ package com.eblan.launcher.data.datastore
 
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer
-import com.eblan.launcher.data.datastore.mapper.toEblanActionProto
-import com.eblan.launcher.data.datastore.mapper.toThemeProto
 import com.eblan.launcher.data.datastore.proto.UserDataProto
 import com.eblan.launcher.data.datastore.proto.appdrawer.AppDrawerSettingsProto
 import com.eblan.launcher.data.datastore.proto.appdrawer.AppDrawerTypeProto
-import com.eblan.launcher.data.datastore.proto.appdrawer.EblanApplicationInfoOrderProto
 import com.eblan.launcher.data.datastore.proto.experimental.ExperimentalSettingsProto
 import com.eblan.launcher.data.datastore.proto.general.GeneralSettingsProto
 import com.eblan.launcher.data.datastore.proto.gesture.GestureSettingsProto
@@ -34,9 +31,9 @@ import com.eblan.launcher.data.datastore.proto.home.HorizontalAlignmentProto
 import com.eblan.launcher.data.datastore.proto.home.TextColorProto
 import com.eblan.launcher.data.datastore.proto.home.VerticalArrangementProto
 import com.eblan.launcher.data.datastore.proto.model.BackgroundColorProto
-import com.eblan.launcher.domain.model.EblanAction
-import com.eblan.launcher.domain.model.EblanActionType
-import com.eblan.launcher.domain.model.Theme
+import com.eblan.launcher.domain.model.userdata.EblanAction
+import com.eblan.launcher.domain.model.userdata.EblanActionType
+import com.eblan.launcher.domain.model.userdata.Theme
 import com.google.protobuf.InvalidProtocolBufferException
 import java.io.InputStream
 import java.io.OutputStream
@@ -97,7 +94,6 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
         appDrawerColumns = 5
         appDrawerRowsHeight = 100
         gridItemSettingsProto = defaultGridItemSettingsProto
-        eblanApplicationInfoOrderProto = EblanApplicationInfoOrderProto.Alphabetical
         backgroundColorProto = BackgroundColorProto.BackgroundColorSystem
         customBackgroundColor = 0x00000000
         appDrawerTypeProto = AppDrawerTypeProto.Vertical

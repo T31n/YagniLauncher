@@ -17,6 +17,9 @@
  */
 package com.eblan.launcher.domain.model
 
+import com.eblan.launcher.domain.model.userdata.EblanAction
+import com.eblan.launcher.domain.model.userdata.EblanActionType
+
 fun getEblanAction() = EblanAction(
     eblanActionType = EblanActionType.None,
     serialNumber = 0L,

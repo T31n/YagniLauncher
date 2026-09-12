@@ -41,7 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.ExperimentalSettings
+import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
 import com.eblan.launcher.feature.settings.experimental.dialog.SyncDataDialog
 import com.eblan.launcher.feature.settings.experimental.model.ExperimentalSettingsUiState
 import com.eblan.launcher.ui.model.SettingsItem

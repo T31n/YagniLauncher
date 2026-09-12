@@ -17,7 +17,7 @@
  */
 package com.eblan.launcher.feature.settings.general.model
 
-import com.eblan.launcher.domain.model.GeneralSettings
+import com.eblan.launcher.domain.model.userdata.GeneralSettings
 
 internal sealed interface GeneralSettingsUiState {
     data object Loading : GeneralSettingsUiState

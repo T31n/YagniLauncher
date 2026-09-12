@@ -17,8 +17,8 @@
  */
 package com.eblan.launcher.domain.repository
 
-import com.eblan.launcher.domain.model.PartialShortcutInfoGridItem
-import com.eblan.launcher.domain.model.ShortcutInfoGridItem
+import com.eblan.launcher.domain.model.grid.PartialShortcutInfoGridItem
+import com.eblan.launcher.domain.model.grid.ShortcutInfoGridItem
 
 interface ShortcutInfoGridItemRepository {
     suspend fun getShortcutInfoGridItems(): List<ShortcutInfoGridItem>
@@ -34,7 +34,7 @@ interface ShortcutInfoGridItemRepository {
         packageName: String,
     ): List<ShortcutInfoGridItem>
 
-    suspend fun deleteShortcutInfoGridItem(
+    suspend fun deleteShortcutInfoGridItemByPackageName(
         serialNumber: Long,
         packageName: String,
     )

@@ -19,7 +19,7 @@ package com.eblan.launcher.feature.pin
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.eblan.launcher.domain.model.GridItem
+import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.usecase.grid.DeleteGridItemUseCase
 import com.eblan.launcher.domain.usecase.pin.AddPinShortcutToHomeScreenUseCase

@@ -28,6 +28,7 @@ import com.eblan.launcher.data.room.dao.EblanApplicationInfoTagDao
 import com.eblan.launcher.data.room.dao.EblanIconPackInfoDao
 import com.eblan.launcher.data.room.dao.EblanShortcutConfigDao
 import com.eblan.launcher.data.room.dao.EblanShortcutInfoDao
+import com.eblan.launcher.data.room.dao.FolderEblanApplicationInfoDao
 import com.eblan.launcher.data.room.dao.FolderGridItemDao
 import com.eblan.launcher.data.room.dao.ShortcutConfigGridItemDao
 import com.eblan.launcher.data.room.dao.ShortcutInfoGridItemDao
@@ -40,6 +41,7 @@ import com.eblan.launcher.data.room.entity.EblanApplicationInfoTagEntity
 import com.eblan.launcher.data.room.entity.EblanIconPackInfoEntity
 import com.eblan.launcher.data.room.entity.EblanShortcutConfigEntity
 import com.eblan.launcher.data.room.entity.EblanShortcutInfoEntity
+import com.eblan.launcher.data.room.entity.FolderEblanApplicationInfoEntity
 import com.eblan.launcher.data.room.entity.FolderGridItemEntity
 import com.eblan.launcher.data.room.entity.ShortcutConfigGridItemEntity
 import com.eblan.launcher.data.room.entity.ShortcutInfoGridItemEntity
@@ -62,8 +64,9 @@ import com.eblan.launcher.data.room.migration.AutoMigration9To10
         ShortcutConfigGridItemEntity::class,
         EblanApplicationInfoTagCrossRefEntity::class,
         EblanApplicationInfoTagEntity::class,
+        FolderEblanApplicationInfoEntity::class,
     ],
-    version = 19,
+    version = 20,
     exportSchema = true,
     autoMigrations = [
         AutoMigration(
@@ -119,6 +122,8 @@ internal abstract class EblanDatabase : RoomDatabase() {
     abstract fun eblanApplicationInfoTagCrossRefDao(): EblanApplicationInfoTagCrossRefDao
 
     abstract fun eblanApplicationInfoTagDao(): EblanApplicationInfoTagDao
+
+    abstract fun folderEblanApplicationInfoDao(): FolderEblanApplicationInfoDao
 
     companion object {
         const val DATABASE_NAME = "Eblan.db"

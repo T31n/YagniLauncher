@@ -75,15 +75,15 @@ import coil3.request.ImageRequest.Builder
 import coil3.request.addLastModifiedToFileCacheKey
 import coil3.size.Size
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.BackgroundColor
-import com.eblan.launcher.domain.model.FolderPopup
-import com.eblan.launcher.domain.model.FolderPopupEntry
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.GridItemData
-import com.eblan.launcher.domain.model.GridItemSettings
-import com.eblan.launcher.domain.model.MoveGridItemResult
-import com.eblan.launcher.domain.model.PreviewFolder
-import com.eblan.launcher.domain.model.TextColor
+import com.eblan.launcher.domain.model.folder.FolderPopupEntry
+import com.eblan.launcher.domain.model.folder.PreviewFolder
+import com.eblan.launcher.domain.model.grid.FolderGridItemPopup
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.GridItemData
+import com.eblan.launcher.domain.model.grid.GridItemSettings
+import com.eblan.launcher.domain.model.grid.MoveGridItemResult
+import com.eblan.launcher.domain.model.userdata.BackgroundColor
+import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
 import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
@@ -134,9 +134,9 @@ internal fun InteractiveGridItem(
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
     systemCustomTextColor: Int,
-    folderPopups: List<FolderPopup>,
+    folderGridItemPopups: List<FolderGridItemPopup>,
     onOpenAppDrawer: () -> Unit,
-    onUpsertFolderPopupEntry: (FolderPopupEntry) -> Unit,
+    onUpsertFolderGridItemPopupEntry: (FolderPopupEntry) -> Unit,
     onUpdateGridItemSource: (GridItemSource) -> Unit,
     onUpdateImageBitmap: (ImageBitmap) -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
@@ -189,10 +189,10 @@ internal fun InteractiveGridItem(
 
     val isVisibleFolder = remember(
         key1 = gridItem,
-        key2 = folderPopups,
+        key2 = folderGridItemPopups,
         key3 = isVisibleFolders,
     ) {
-        isVisibleFolders && folderPopups.any { it.folderPopupEntry.id == gridItem.id }
+        isVisibleFolders && folderGridItemPopups.any { it.folderPopupEntry.id == gridItem.id }
     }
 
     val horizontalAlignment =
@@ -337,7 +337,7 @@ internal fun InteractiveGridItem(
                 maxLines = maxLines,
                 onOpenAppDrawer = onOpenAppDrawer,
                 onShowGridItemPopup = onShowGridItemPopup,
-                onUpsertFolderPopupEntry = onUpsertFolderPopupEntry,
+                onUpsertFolderGridItemPopupEntry = onUpsertFolderGridItemPopupEntry,
                 onUpdateGridItemSource = onUpdateGridItemSource,
                 onUpdateImageBitmap = onUpdateImageBitmap,
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
@@ -1001,7 +1001,7 @@ private fun InteractiveFolderGridItem(
         intOffset: IntOffset,
         intSize: IntSize,
     ) -> Unit,
-    onUpsertFolderPopupEntry: (FolderPopupEntry) -> Unit,
+    onUpsertFolderGridItemPopupEntry: (FolderPopupEntry) -> Unit,
     onUpdateGridItemSource: (GridItemSource) -> Unit,
     onUpdateImageBitmap: (ImageBitmap) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
@@ -1118,7 +1118,7 @@ private fun InteractiveFolderGridItem(
                         {
                             currentOnUpdateIsVisibleFolders(true)
 
-                            onUpsertFolderPopupEntry(
+                            onUpsertFolderGridItemPopupEntry(
                                 FolderPopupEntry(
                                     id = gridItem.id,
                                     x = intOffset.x,
@@ -1195,6 +1195,7 @@ private fun InteractiveFolderGridItem(
                 PreviewFolderGridLayout(
                     modifier = Modifier.fillMaxSize(),
                     gridItems = previewFolderGridItems[gridItem.id]?.previewFolderGridItems,
+                    slotId = { it.id },
                     content = {
                         PreviewFolderGridItem(
                             sharedTransitionScope = sharedTransitionScope,

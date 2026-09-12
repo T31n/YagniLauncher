@@ -19,17 +19,17 @@ package com.eblan.launcher.domain.usecase.launcherapps
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
+import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.AppWidgetManagerWrapper
-import com.eblan.launcher.domain.framework.FileManager
 import com.eblan.launcher.domain.framework.IconPackManager
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
-import com.eblan.launcher.domain.model.ApplicationInfoGridItem
-import com.eblan.launcher.domain.model.Associate
-import com.eblan.launcher.domain.model.EblanApplicationInfo
-import com.eblan.launcher.domain.model.HomeSettings
-import com.eblan.launcher.domain.model.LauncherAppsActivityInfo
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
+import com.eblan.launcher.domain.model.grid.ApplicationInfoGridItem
+import com.eblan.launcher.domain.model.grid.Associate
+import com.eblan.launcher.domain.model.launcherapps.LauncherAppsActivityInfo
+import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.domain.repository.ApplicationInfoGridItemRepository
 import com.eblan.launcher.domain.repository.EblanAppWidgetProviderInfoRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
@@ -38,8 +38,8 @@ import com.eblan.launcher.domain.repository.EblanShortcutInfoRepository
 import com.eblan.launcher.domain.repository.FolderGridItemRepository
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
-import com.eblan.launcher.domain.usecase.grid.isTopLevel
 import com.eblan.launcher.domain.usecase.util.cacheIconPackFile
+import com.eblan.launcher.domain.usecase.util.isTopLevel
 import com.eblan.launcher.domain.usecase.util.toGridItems
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.currentCoroutineContext
@@ -142,8 +142,9 @@ class AddPackageUseCase @Inject constructor(
                 customLabel = null,
                 isHidden = false,
                 lastUpdateTime = lastUpdateTime,
-                index = -1,
                 flags = flags,
+                folderIndex = -1,
+                folderId = null,
             ),
         )
 

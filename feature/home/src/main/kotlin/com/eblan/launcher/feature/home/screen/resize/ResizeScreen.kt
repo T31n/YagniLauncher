@@ -29,10 +29,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import com.eblan.launcher.domain.model.Associate
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.HomeSettings
-import com.eblan.launcher.domain.model.TextColor
+import com.eblan.launcher.domain.model.grid.Associate
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.userdata.HomeSettings
+import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.HomeHandler
 import com.eblan.launcher.feature.home.util.PAGE_INDICATOR_HEIGHT
 
@@ -76,6 +76,8 @@ internal fun ResizeScreen(
 
     BoxWithConstraints(
         modifier = modifier
+            .fillMaxSize()
+            .padding(paddingValues)
             .pointerInput(key1 = Unit) {
                 detectTapGestures(
                     onTap = {
@@ -84,9 +86,7 @@ internal fun ResizeScreen(
                         onResizeEnd()
                     },
                 )
-            }
-            .fillMaxSize()
-            .padding(paddingValues),
+            },
     ) {
         when (resizeGridItem.associate) {
             Associate.Grid -> {

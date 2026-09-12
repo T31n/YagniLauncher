@@ -17,7 +17,7 @@
  */
 package com.eblan.launcher.domain.framework
 
-import com.eblan.launcher.domain.model.AppWidgetManagerAppWidgetProviderInfo
+import com.eblan.launcher.domain.model.widget.AppWidgetManagerAppWidgetProviderInfo
 
 interface AppWidgetManagerWrapper {
     suspend fun getInstalledProvidersWithCacheIcons(): List<AppWidgetManagerAppWidgetProviderInfo>

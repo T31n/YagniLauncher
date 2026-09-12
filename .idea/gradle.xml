@@ -41,6 +41,7 @@
             <option value="$PROJECT_DIR$/feature" />
             <option value="$PROJECT_DIR$/feature/action" />
             <option value="$PROJECT_DIR$/feature/edit-application-info" />
+            <option value="$PROJECT_DIR$/feature/edit-folder-application-info" />
             <option value="$PROJECT_DIR$/feature/edit-grid-item" />
             <option value="$PROJECT_DIR$/feature/home" />
             <option value="$PROJECT_DIR$/feature/pin" />
@@ -54,9 +55,7 @@
             <option value="$PROJECT_DIR$/framework" />
             <option value="$PROJECT_DIR$/framework/accessibility-manager" />
             <option value="$PROJECT_DIR$/framework/content-resolver" />
-            <option value="$PROJECT_DIR$/framework/file-manager" />
             <option value="$PROJECT_DIR$/framework/icon-pack-manager" />
-            <option value="$PROJECT_DIR$/framework/image-serializer" />
             <option value="$PROJECT_DIR$/framework/jaro-winkler-similarity" />
             <option value="$PROJECT_DIR$/framework/launcher-apps" />
             <option value="$PROJECT_DIR$/framework/notification-manager" />
