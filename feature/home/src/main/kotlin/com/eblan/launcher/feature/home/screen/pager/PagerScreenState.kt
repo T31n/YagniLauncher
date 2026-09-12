@@ -683,6 +683,10 @@ internal class PagerScreenState(
             )
 
             eblanApplicationInfoGroup = null
+
+            if (applicationScreenSwipeY.value < screenHeight) {
+                dismissApplicationScreen()
+            }
         }
     }
 

@@ -393,6 +393,7 @@ private fun EblanApplicationInfoItem(
 
     Column(
         modifier = modifier
+            .fillMaxWidth()
             .pointerInput(Unit) {
                 detectTapGestures(
                     onTap = {
@@ -402,8 +403,7 @@ private fun EblanApplicationInfoItem(
                         expanded = !expanded
                     },
                 )
-            }
-            .fillMaxWidth(),
+            },
     ) {
         ListItem(
             headlineContent = { Text(text = eblanApplicationInfoGroup.label.toString()) },
@@ -651,7 +651,7 @@ private fun getShortcutConfigGridItem(
         componentName = "",
     )
 
-    val gridItem = GridItem(
+    return GridItem(
         id = id,
         page = 0,
         startColumn = -1,
@@ -666,5 +666,4 @@ private fun getShortcutConfigGridItem(
         swipeUp = eblanAction,
         swipeDown = eblanAction,
     )
-    return gridItem
 }

@@ -1211,7 +1211,6 @@ internal fun PagerScreen(
                 animations = experimentalSettings.gridItemAnimation,
                 drag = pagerScreenState.drag,
                 onDismiss = pagerScreenState::dismissAppWidgetScreen,
-                onDismissApplicationScreen = pagerScreenState::dismissApplicationScreen,
                 onUpdateOverlayBounds = pagerScreenState::updateOverlayBounds,
                 onUpdateImageBitmap = pagerScreenState::updateOverlayImageBitmap,
                 onUpdateGridItemSource = onUpdateGridItemSource,

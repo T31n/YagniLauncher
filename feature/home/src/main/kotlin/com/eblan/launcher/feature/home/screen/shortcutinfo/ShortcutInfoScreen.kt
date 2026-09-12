@@ -369,7 +369,7 @@ private fun getShortcutInfoGridItem(
         componentName = "",
     )
 
-    val gridItem = GridItem(
+    return GridItem(
         id = id,
         page = 0,
         startColumn = -1,
@@ -384,5 +384,4 @@ private fun getShortcutInfoGridItem(
         swipeUp = eblanAction,
         swipeDown = eblanAction,
     )
-    return gridItem
 }

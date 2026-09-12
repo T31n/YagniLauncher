@@ -97,7 +97,6 @@ internal fun AppWidgetScreen(
     isVisibleOverlay: Boolean,
     drag: Drag,
     onDismiss: () -> Unit,
-    onDismissApplicationScreen: () -> Unit,
     onUpdateOverlayBounds: (
         intOffset: IntOffset,
         intSize: IntSize,
@@ -201,7 +200,6 @@ internal fun AppWidgetScreen(
                             onUpdateGridItemSource = onUpdateGridItemSource,
                             onUpdateSharedElementKey = onUpdateSharedElementKey,
                             onDismiss = onDismiss,
-                            onDismissApplicationScreen = onDismissApplicationScreen,
                             onUpdateIsDragging = onUpdateIsDragging,
                             onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                             onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
@@ -233,7 +231,6 @@ private fun EblanAppWidgetProviderInfoItem(
     onUpdateGridItemSource: (GridItemSource) -> Unit,
     onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
     onDismiss: () -> Unit,
-    onDismissApplicationScreen: () -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
@@ -274,7 +271,6 @@ private fun EblanAppWidgetProviderInfoItem(
                                 scale = scale,
                                 animations = animations,
                                 onDismiss = onDismiss,
-                                onDismissApplicationScreen = onDismissApplicationScreen,
                                 onUpdateGridItemSource = onUpdateGridItemSource,
                                 onUpdateImageBitmap = onUpdateImageBitmap,
                                 onUpdateIsDragging = onUpdateIsDragging,
@@ -372,7 +368,6 @@ private suspend fun handleOnLongPress(
     scale: Animatable<Float, AnimationVector1D>,
     animations: Boolean,
     onDismiss: () -> Unit,
-    onDismissApplicationScreen: () -> Unit,
     onUpdateGridItemSource: (GridItemSource) -> Unit,
     onUpdateImageBitmap: (ImageBitmap) -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
@@ -439,6 +434,4 @@ private suspend fun handleOnLongPress(
     onUpdateIsDragging(true)
 
     onDismiss()
-
-    onDismissApplicationScreen()
 }
