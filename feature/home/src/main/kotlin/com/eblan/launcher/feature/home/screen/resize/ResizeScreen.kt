@@ -76,6 +76,8 @@ internal fun ResizeScreen(
 
     BoxWithConstraints(
         modifier = modifier
+            .fillMaxSize()
+            .padding(paddingValues)
             .pointerInput(key1 = Unit) {
                 detectTapGestures(
                     onTap = {
@@ -84,9 +86,7 @@ internal fun ResizeScreen(
                         onResizeEnd()
                     },
                 )
-            }
-            .fillMaxSize()
-            .padding(paddingValues),
+            },
     ) {
         when (resizeGridItem.associate) {
             Associate.Grid -> {

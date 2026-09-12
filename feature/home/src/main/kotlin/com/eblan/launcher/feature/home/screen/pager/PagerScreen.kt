@@ -730,6 +730,7 @@ internal fun PagerScreen(
 
     SharedTransitionLayout(
         modifier = modifier
+            .fillMaxSize()
             .pointerInput(key1 = pagerScreenState) {
                 detectDragGesturesAfterLongPress(
                     onDragStart = pagerScreenState::dragStart,
@@ -749,11 +750,13 @@ internal fun PagerScreen(
                     it.mimeTypes().contains(ClipDescription.MIMETYPE_TEXT_PLAIN)
                 },
                 target = pagerScreenState.target,
-            )
-            .fillMaxSize(),
+            ),
     ) {
         Column(
             modifier = Modifier
+                .fillMaxSize()
+                .padding(top = paddingValues.calculateTopPadding())
+                .alpha(pagerScreenState.pagerScreenAlpha)
                 .pointerInput(
                     key1 = isVisibleOverlay,
                     key2 = pagerScreenState,
@@ -778,10 +781,7 @@ internal fun PagerScreen(
                             pagerScreenState.showSettingsPopup(offset = it)
                         },
                     )
-                }
-                .fillMaxSize()
-                .padding(top = paddingValues.calculateTopPadding())
-                .alpha(pagerScreenState.pagerScreenAlpha),
+                },
         ) {
             HorizontalPager(
                 state = gridHorizontalPagerState,
@@ -1143,30 +1143,30 @@ internal fun PagerScreen(
 
         if (pagerScreenState.showWidgetScreen) {
             WidgetScreen(
+                alpha = pagerScreenState.widgetScreenAlpha,
+                animations = experimentalSettings.gridItemAnimation,
                 columns = homeSettings.columns,
+                cornerSize = pagerScreenState.widgetScreenCornerSize,
+                drag = pagerScreenState.drag,
                 eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfos,
                 gridItemSettings = homeSettings.gridItemSettings,
+                isVisibleOverlay = isVisibleOverlay,
                 paddingValues = paddingValues,
                 rows = homeSettings.rows,
                 screenHeight = screenHeight,
                 screenWidth = screenWidth,
                 swipeY = pagerScreenState.widgetScreenSwipeY.value,
-                alpha = pagerScreenState.widgetScreenAlpha,
-                cornerSize = pagerScreenState.widgetScreenCornerSize,
-                isVisibleOverlay = isVisibleOverlay,
-                animations = experimentalSettings.gridItemAnimation,
-                drag = pagerScreenState.drag,
                 onDismiss = pagerScreenState::dismissWidgetScreen,
-                onGetEblanAppWidgetProviderInfosByLabel = onGetEblanAppWidgetProviderInfosByLabel,
-                onUpdateOverlayBounds = pagerScreenState::updateOverlayBounds,
-                onUpdateImageBitmap = pagerScreenState::updateOverlayImageBitmap,
-                onUpdateGridItemSource = onUpdateGridItemSource,
-                onUpdateSharedElementKey = pagerScreenState::updateSharedElementKey,
-                onUpdateIsDragging = pagerScreenState::updateIsDragging,
-                onVerticalDrag = pagerScreenState::verticalDragWidgetScreen,
                 onDragEnd = pagerScreenState::handleOnDragEndWidgetScreen,
+                onGetEblanAppWidgetProviderInfosByLabel = onGetEblanAppWidgetProviderInfosByLabel,
+                onUpdateGridItemSource = onUpdateGridItemSource,
+                onUpdateImageBitmap = pagerScreenState::updateOverlayImageBitmap,
+                onUpdateIsDragging = pagerScreenState::updateIsDragging,
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                 onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+                onUpdateOverlayBounds = pagerScreenState::updateOverlayBounds,
+                onUpdateSharedElementKey = pagerScreenState::updateSharedElementKey,
+                onVerticalDrag = pagerScreenState::verticalDragWidgetScreen,
             )
         }
 

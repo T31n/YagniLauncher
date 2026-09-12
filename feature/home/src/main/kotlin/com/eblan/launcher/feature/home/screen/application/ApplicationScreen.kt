@@ -186,13 +186,13 @@ internal fun ApplicationScreen(
 
     Surface(
         modifier = modifier
+            .fillMaxSize()
             .graphicsLayer {
                 translationY = swipeY
                 this.alpha = alpha
                 clip = true
                 shape = RoundedCornerShape(cornerSize)
-            }
-            .fillMaxSize(),
+            },
         color = when (appDrawerSettings.backgroundColor) {
             BackgroundColor.System -> MaterialTheme.colorScheme.surface
             BackgroundColor.Light -> Color.White
@@ -373,6 +373,8 @@ internal fun QuiteModeScreen(
 
     Column(
         modifier = modifier
+            .fillMaxSize()
+            .padding(10.dp)
             .pointerInput(key1 = Unit) {
                 detectVerticalDragGestures(
                     onVerticalDrag = { _, dragAmount ->
@@ -380,9 +382,7 @@ internal fun QuiteModeScreen(
                     },
                     onDragEnd = onDragEnd,
                 )
-            }
-            .fillMaxSize()
-            .padding(10.dp),
+            },
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(

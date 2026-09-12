@@ -17,7 +17,6 @@
  */
 package com.eblan.launcher.feature.home.screen.widget
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
@@ -49,7 +48,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -57,7 +55,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
@@ -89,19 +86,16 @@ import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
 import com.eblan.launcher.feature.home.R
-import com.eblan.launcher.feature.home.component.HomeHandler
 import com.eblan.launcher.feature.home.component.OffsetNestedScrollConnection
 import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.GridItemSource
 import com.eblan.launcher.feature.home.model.SharedElementKey
+import com.eblan.launcher.feature.home.ui.NestedScrollConnectionEffect
+import com.eblan.launcher.feature.home.ui.ScreenEffect
 import com.eblan.launcher.feature.home.util.SCALE
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlin.time.Duration.Companion.milliseconds
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -109,33 +103,33 @@ import kotlin.uuid.Uuid
 @Composable
 internal fun WidgetScreen(
     modifier: Modifier = Modifier,
+    alpha: Float,
+    animations: Boolean,
     columns: Int,
+    cornerSize: Dp,
+    drag: Drag,
     eblanAppWidgetProviderInfos: Map<EblanApplicationInfoGroup, List<EblanAppWidgetProviderInfo>>,
     gridItemSettings: GridItemSettings,
+    isVisibleOverlay: Boolean,
     paddingValues: PaddingValues,
     rows: Int,
     screenHeight: Int,
     screenWidth: Int,
     swipeY: Float,
-    alpha: Float,
-    cornerSize: Dp,
-    isVisibleOverlay: Boolean,
-    animations: Boolean,
-    drag: Drag,
     onDismiss: () -> Unit,
+    onDragEnd: () -> Unit,
     onGetEblanAppWidgetProviderInfosByLabel: (String) -> Unit,
+    onUpdateGridItemSource: (GridItemSource) -> Unit,
+    onUpdateImageBitmap: (ImageBitmap) -> Unit,
+    onUpdateIsDragging: (Boolean) -> Unit,
+    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
+    onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
     onUpdateOverlayBounds: (
         intOffset: IntOffset,
         intSize: IntSize,
     ) -> Unit,
-    onUpdateImageBitmap: (ImageBitmap) -> Unit,
-    onUpdateGridItemSource: (GridItemSource) -> Unit,
     onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
-    onUpdateIsDragging: (Boolean) -> Unit,
     onVerticalDrag: (Float) -> Unit,
-    onDragEnd: () -> Unit,
-    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
-    onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
 ) {
     val layoutDirection = LocalLayoutDirection.current
 
@@ -159,54 +153,33 @@ internal fun WidgetScreen(
 
     val textFieldState = rememberTextFieldState()
 
-    LaunchedEffect(key1 = textFieldState) {
-        snapshotFlow { textFieldState.text }.debounce(500L.milliseconds)
-            .onEach {
-                onGetEblanAppWidgetProviderInfosByLabel(it.toString())
-            }.collect()
-    }
+    ScreenEffect(
+        drag = drag,
+        isVisibleOverlay = isVisibleOverlay,
+        keyboardController = keyboardController,
+        screenHeight = screenHeight,
+        swipeY = swipeY,
+        textFieldState = textFieldState,
+        onDismiss = onDismiss,
+        onGetLabel = onGetEblanAppWidgetProviderInfosByLabel,
+        onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+    )
 
-    LaunchedEffect(key1 = swipeY) {
-        if (swipeY == screenHeight.toFloat()) {
-            keyboardController?.hide()
-        }
-    }
-
-    LaunchedEffect(
-        key1 = isVisibleOverlay,
-        key2 = drag,
-    ) {
-        if (isVisibleOverlay && (drag == Drag.Cancel || drag == Drag.End)) {
-            onUpdateIsVisibleOverlay(false)
-        }
-    }
-
-    LaunchedEffect(
-        key1 = nestedScrollConnection,
-        key2 = swipeY,
-        key3 = lazyListState.canScrollBackward,
-    ) {
-        nestedScrollConnection.updateSwipeY(swipeY)
-        nestedScrollConnection.updateCanScrollBackward(lazyListState.canScrollBackward)
-    }
-
-    BackHandler(enabled = swipeY < screenHeight.toFloat()) {
-        onDismiss()
-    }
-
-    HomeHandler(enabled = swipeY < screenHeight.toFloat()) {
-        onDismiss()
-    }
+    NestedScrollConnectionEffect(
+        lazyListState = lazyListState,
+        nestedScrollConnection = nestedScrollConnection,
+        swipeY = swipeY,
+    )
 
     Surface(
         modifier = modifier
+            .fillMaxSize()
             .graphicsLayer {
                 translationY = swipeY
                 this.alpha = alpha
                 clip = true
                 shape = RoundedCornerShape(cornerSize)
-            }
-            .fillMaxSize(),
+            },
     ) {
         Column(
             modifier = Modifier

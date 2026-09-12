@@ -83,6 +83,7 @@ import com.eblan.launcher.feature.home.component.PageIndicator
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.PageDirection
 import com.eblan.launcher.feature.home.model.SharedElementKey
+import com.eblan.launcher.feature.home.ui.FolderTitle
 import com.eblan.launcher.feature.home.util.PAGE_INDICATOR_HEIGHT
 import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
 import kotlin.math.roundToInt
@@ -381,6 +382,7 @@ internal fun FolderScreen(
 
     Box(
         modifier = modifier
+            .fillMaxSize()
             .pointerInput(key1 = isLastFolderGridItem) {
                 if (isLastFolderGridItem) {
                     detectTapGestures(
@@ -395,11 +397,14 @@ internal fun FolderScreen(
                         },
                     )
                 }
-            }
-            .fillMaxSize(),
+            },
     ) {
         Surface(
             modifier = Modifier
+                .size(
+                    width = with(density) { animatedFolderRect.width().toDp() },
+                    height = with(density) { animatedFolderRect.height().toDp() },
+                )
                 .offset {
                     IntOffset(
                         x = when (layoutDirection) {
@@ -411,10 +416,6 @@ internal fun FolderScreen(
                         y = animatedFolderRect.top.roundToInt(),
                     )
                 }
-                .size(
-                    width = with(density) { animatedFolderRect.width().toDp() },
-                    height = with(density) { animatedFolderRect.height().toDp() },
-                )
                 .clipToBounds(),
             shape = RoundedCornerShape(folderCornerRadius.dp),
             color = when (folderBackgroundColor) {
@@ -503,67 +504,6 @@ internal fun FolderScreen(
                     systemTextColor = systemTextColor,
                 )
             }
-        }
-    }
-}
-
-@Composable
-internal fun FolderTitle(
-    modifier: Modifier = Modifier,
-    label: String,
-    gridItemsByPage: Map<Int, List<GridItem>>,
-    folderGridHorizontalPagerState: PagerState,
-    progress: Float,
-    folderBackgroundColor: BackgroundColor,
-    customFolderBackgroundColor: Int,
-    textColor: TextColor,
-    customTextColor: Int,
-    systemCustomTextColor: Int,
-    systemTextColor: TextColor,
-) {
-    val color = getTextColorFromBackgroundColor(
-        backgroundColor = folderBackgroundColor,
-        customBackgroundColor = customFolderBackgroundColor,
-        textColor = textColor,
-        customTextColor = customTextColor,
-        systemTextColor = systemTextColor,
-        systemCustomTextColor = systemCustomTextColor,
-        defaultColor = MaterialTheme.colorScheme.onSurface,
-    )
-
-    Box(
-        modifier = modifier
-            .alpha(if (progress > 0.5) 1f else 0f)
-            .fillMaxWidth()
-            .height(PAGE_INDICATOR_HEIGHT)
-            .padding(horizontal = 10.dp),
-    ) {
-        if (gridItemsByPage.size > 1) {
-            Row(
-                modifier = Modifier.matchParentSize(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                Text(
-                    text = label,
-                    color = color,
-                    style = MaterialTheme.typography.bodySmall,
-                )
-
-                PageIndicator(
-                    color = color,
-                    gridHorizontalPagerState = folderGridHorizontalPagerState,
-                    infiniteScroll = false,
-                    pageCount = gridItemsByPage.size,
-                )
-            }
-        } else {
-            Text(
-                modifier = Modifier.align(Alignment.Center),
-                text = label,
-                color = color,
-                style = MaterialTheme.typography.bodySmall,
-            )
         }
     }
 }

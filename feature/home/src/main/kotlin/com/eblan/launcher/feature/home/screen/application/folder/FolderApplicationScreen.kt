@@ -21,32 +21,23 @@ import android.graphics.RectF
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
@@ -58,7 +49,6 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
-import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderPopupEntry
 import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
@@ -68,9 +58,8 @@ import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_COLUMNS
 import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_ROWS
 import com.eblan.launcher.feature.home.component.FolderGridLayout
-import com.eblan.launcher.feature.home.component.PageIndicator
+import com.eblan.launcher.feature.home.ui.FolderTitle
 import com.eblan.launcher.feature.home.util.PAGE_INDICATOR_HEIGHT
-import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
 import kotlin.math.roundToInt
 
 @Composable
@@ -200,6 +189,7 @@ internal fun FolderApplicationScreen(
 
     Box(
         modifier = modifier
+            .fillMaxSize()
             .pointerInput(key1 = isLastFolderGridItem) {
                 if (isLastFolderGridItem) {
                     detectTapGestures(
@@ -214,8 +204,7 @@ internal fun FolderApplicationScreen(
                         },
                     )
                 }
-            }
-            .fillMaxSize(),
+            },
     ) {
         Surface(
             modifier = Modifier
@@ -293,67 +282,6 @@ internal fun FolderApplicationScreen(
                     systemTextColor = systemTextColor,
                 )
             }
-        }
-    }
-}
-
-@Composable
-internal fun FolderTitle(
-    modifier: Modifier = Modifier,
-    label: String,
-    gridItemsByPage: Map<Int, List<FolderEblanApplicationInfoGridItem>>,
-    folderGridHorizontalPagerState: PagerState,
-    progress: Float,
-    folderBackgroundColor: BackgroundColor,
-    customFolderBackgroundColor: Int,
-    textColor: TextColor,
-    customTextColor: Int,
-    systemCustomTextColor: Int,
-    systemTextColor: TextColor,
-) {
-    val color = getTextColorFromBackgroundColor(
-        backgroundColor = folderBackgroundColor,
-        customBackgroundColor = customFolderBackgroundColor,
-        textColor = textColor,
-        customTextColor = customTextColor,
-        systemTextColor = systemTextColor,
-        systemCustomTextColor = systemCustomTextColor,
-        defaultColor = MaterialTheme.colorScheme.onSurface,
-    )
-
-    Box(
-        modifier = modifier
-            .alpha(if (progress > 0.5) 1f else 0f)
-            .fillMaxWidth()
-            .height(PAGE_INDICATOR_HEIGHT)
-            .padding(horizontal = 10.dp),
-    ) {
-        if (gridItemsByPage.size > 1) {
-            Row(
-                modifier = Modifier.matchParentSize(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                Text(
-                    text = label,
-                    color = color,
-                    style = MaterialTheme.typography.bodySmall,
-                )
-
-                PageIndicator(
-                    color = color,
-                    gridHorizontalPagerState = folderGridHorizontalPagerState,
-                    infiniteScroll = false,
-                    pageCount = gridItemsByPage.size,
-                )
-            }
-        } else {
-            Text(
-                modifier = Modifier.align(Alignment.Center),
-                text = label,
-                color = color,
-                style = MaterialTheme.typography.bodySmall,
-            )
         }
     }
 }
