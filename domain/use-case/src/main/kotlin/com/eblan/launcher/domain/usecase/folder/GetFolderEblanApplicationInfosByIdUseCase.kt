@@ -54,8 +54,6 @@ class GetFolderEblanApplicationInfosByIdUseCase @Inject constructor(
                 maxFolderRows = userData.homeSettings.maxFolderRows,
             )
         }
-
-        emptyList<FolderEblanApplicationInfoPopup>()
     }.flowOn(defaultDispatcher)
 
     private suspend fun FolderEblanApplicationInfoWrapper.asFolderEblanApplicationInfoPopup(

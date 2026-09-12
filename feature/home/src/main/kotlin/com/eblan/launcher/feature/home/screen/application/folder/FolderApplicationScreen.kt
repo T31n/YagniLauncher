@@ -17,7 +17,6 @@
  */
 package com.eblan.launcher.feature.home.screen.application.folder
 
-import android.graphics.RectF
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -43,23 +42,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.lerp
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderPopupEntry
 import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
-import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_COLUMNS
-import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_ROWS
 import com.eblan.launcher.feature.home.component.FolderGridLayout
 import com.eblan.launcher.feature.home.ui.FolderTitle
-import com.eblan.launcher.feature.home.util.PAGE_INDICATOR_HEIGHT
+import com.eblan.launcher.feature.home.util.getAnimatedRect
+import com.eblan.launcher.feature.home.util.getFolderPopupLayoutInfo
 import kotlin.math.roundToInt
 
 @Composable
@@ -106,11 +102,12 @@ internal fun FolderApplicationScreen(
         paddingValues = paddingValues,
         safeDrawingWidth = safeDrawingWidth,
         safeDrawingHeight = safeDrawingHeight,
-        folderGridItemPopup = folderEblanApplicationInfoPopup,
         folderPopupIntOffset = folderPopupIntOffset,
         folderPopupIntSize = folderPopupIntSize,
         folderCellWidth = folderCellWidth,
         folderCellHeight = folderCellHeight,
+        columns = folderEblanApplicationInfoPopup.columns,
+        rows = folderEblanApplicationInfoPopup.rows,
     )
 
     val progress = remember { Animatable(0f) }
@@ -286,65 +283,6 @@ internal fun FolderApplicationScreen(
     }
 }
 
-private data class FolderPopupLayoutInfo(
-    val minCellWidthPx: Int,
-    val minCellHeightPx: Int,
-    val folderGridWidthPx: Int,
-    val folderGridHeightPx: Int,
-    val endHeight: Int,
-    val startWidth: Float,
-    val startHeight: Float,
-    val startCenterX: Float,
-    val startCenterY: Float,
-    val endCenterX: Float,
-    val endCenterY: Float,
-    val startPreviewWidth: Float,
-    val startPreviewHeight: Float,
-)
-
-private fun getAnimatedRect(
-    progress: Float,
-    startWidth: Float,
-    startHeight: Float,
-    endWidth: Float,
-    endHeight: Float,
-    startCenterX: Float,
-    startCenterY: Float,
-    endCenterX: Float,
-    endCenterY: Float,
-): RectF {
-    val width = lerp(
-        startWidth,
-        endWidth,
-        progress,
-    )
-
-    val height = lerp(
-        startHeight,
-        endHeight,
-        progress,
-    )
-
-    val left = lerp(
-        startCenterX,
-        endCenterX,
-        progress,
-    ) - width / 2f
-
-    val top = lerp(
-        startCenterY,
-        endCenterY,
-        progress,
-    ) - height / 2f
-
-    return RectF(
-        left,
-        top,
-        left + width,
-        top + height,
-    )
-}
-
 private suspend fun handleIsCloseFolder(
     folderEblanApplicationInfoPopup: FolderEblanApplicationInfoPopup,
     progress: Animatable<Float, AnimationVector1D>,
@@ -369,92 +307,4 @@ private suspend fun handleIsCloseFolder(
     }
 
     onDeleteFolderPopupEntry(folderEblanApplicationInfoPopup.folderPopupEntry)
-}
-
-private fun getFolderPopupLayoutInfo(
-    density: Density,
-    layoutDirection: LayoutDirection,
-    paddingValues: PaddingValues,
-    safeDrawingWidth: Int,
-    safeDrawingHeight: Int,
-    folderGridItemPopup: FolderEblanApplicationInfoPopup,
-    folderPopupIntOffset: IntOffset,
-    folderPopupIntSize: IntSize,
-    folderCellWidth: Int,
-    folderCellHeight: Int,
-): FolderPopupLayoutInfo {
-    val leftPadding = with(density) {
-        paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
-    }
-
-    val topPadding = with(density) {
-        paddingValues.calculateTopPadding().roundToPx()
-    }
-
-    val minCellWidthPx = with(density) { folderCellWidth.dp.roundToPx() }
-    val minCellHeightPx = with(density) { folderCellHeight.dp.roundToPx() }
-
-    val availableWidth = (safeDrawingWidth - leftPadding * 2).coerceAtLeast(0)
-    val availableHeight = (safeDrawingHeight - topPadding * 2).coerceAtLeast(0)
-
-    val folderTitleHeightPx = with(density) {
-        PAGE_INDICATOR_HEIGHT.roundToPx()
-    }
-
-    val folderGridWidthPx =
-        (minCellWidthPx * folderGridItemPopup.columns).coerceAtMost(availableWidth)
-
-    val folderGridHeightPx = (minCellHeightPx * folderGridItemPopup.rows).coerceAtMost(
-        (availableHeight - folderTitleHeightPx).coerceAtLeast(0),
-    )
-
-    val endHeight = folderGridHeightPx + folderTitleHeightPx
-
-    val maximumX = (safeDrawingWidth - folderGridWidthPx + leftPadding).coerceAtLeast(leftPadding)
-    val maximumY = (safeDrawingHeight - endHeight + topPadding).coerceAtLeast(topPadding)
-
-    val endIntOffset = IntOffset(
-        x = folderPopupIntOffset.x.coerceIn(leftPadding, maximumX),
-        y = folderPopupIntOffset.y.coerceIn(topPadding, maximumY),
-    )
-
-    val startWidth = folderPopupIntSize.width.toFloat()
-    val startHeight = folderPopupIntSize.height.toFloat()
-
-    val startCenterX = folderPopupIntOffset.x + startWidth / 2f
-    val startCenterY = folderPopupIntOffset.y + startHeight / 2f
-
-    val endCenterX = endIntOffset.x + folderGridWidthPx.toFloat() / 2f
-    val endCenterY = endIntOffset.y + endHeight.toFloat() / 2f
-
-    val previewCellSize = minOf(
-        folderPopupIntSize.width,
-        folderPopupIntSize.height,
-    ) / maxOf(FOLDER_PREVIEW_COLUMNS, FOLDER_PREVIEW_ROWS)
-
-    val startPreviewWidth = minOf(
-        (previewCellSize * folderGridItemPopup.columns).toFloat(),
-        availableWidth.toFloat(),
-    )
-
-    val startPreviewHeight = minOf(
-        (previewCellSize * folderGridItemPopup.rows).toFloat(),
-        (availableHeight - folderTitleHeightPx).coerceAtLeast(0).toFloat(),
-    )
-
-    return FolderPopupLayoutInfo(
-        minCellWidthPx = minCellWidthPx,
-        minCellHeightPx = minCellHeightPx,
-        folderGridWidthPx = folderGridWidthPx,
-        folderGridHeightPx = folderGridHeightPx,
-        endHeight = endHeight,
-        startWidth = startWidth,
-        startHeight = startHeight,
-        startCenterX = startCenterX,
-        startCenterY = startCenterY,
-        endCenterX = endCenterX,
-        endCenterY = endCenterY,
-        startPreviewWidth = startPreviewWidth,
-        startPreviewHeight = startPreviewHeight,
-    )
 }
