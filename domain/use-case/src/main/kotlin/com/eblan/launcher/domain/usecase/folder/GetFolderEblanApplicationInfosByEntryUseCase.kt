@@ -19,13 +19,12 @@ package com.eblan.launcher.domain.usecase.folder
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoWrapper
 import com.eblan.launcher.domain.model.folder.FolderPopupEntry
-import com.eblan.launcher.domain.model.grid.FolderGridItemPopup
-import com.eblan.launcher.domain.model.grid.FolderGridItemWrapper
-import com.eblan.launcher.domain.model.grid.GridItemData
-import com.eblan.launcher.domain.repository.FolderGridItemRepository
+import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
-import com.eblan.launcher.domain.usecase.util.asGridItem
 import com.eblan.launcher.domain.usecase.util.getGridDimension
 import com.eblan.launcher.domain.usecase.util.getGridItemsByPage
 import kotlinx.coroutines.CoroutineDispatcher
@@ -34,22 +33,22 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
-class GetFolderGridItemsByIdUseCase @Inject constructor(
-    private val folderGridItemRepository: FolderGridItemRepository,
+class GetFolderEblanApplicationInfosByEntryUseCase @Inject constructor(
+    private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
     private val userDataRepository: UserDataRepository,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     operator fun invoke(
         folderPopupEntriesFlow: Flow<List<FolderPopupEntry>>,
-    ): Flow<List<FolderGridItemPopup>> = combine(
+    ): Flow<List<FolderEblanApplicationInfoPopup>> = combine(
         userDataRepository.userDataFlow,
         folderPopupEntriesFlow,
-        folderGridItemRepository.folderGridItemWrappersFlow,
-    ) { userData, folderPopupEntries, folderGridItemWrappers ->
+        folderEblanApplicationInfoRepository.folderEblanApplicationInfoWrappersFlow,
+    ) { userData, folderPopupEntries, folderEblanApplicationInfoWrappers ->
         folderPopupEntries.mapNotNull { folderPopupEntry ->
-            folderGridItemWrappers.firstOrNull {
-                it.folderGridItem.id == folderPopupEntry.id
-            }?.asFolderGridItemPopup(
+            folderEblanApplicationInfoWrappers.firstOrNull {
+                it.folderEblanApplicationInfo.id == folderPopupEntry.id
+            }?.asFolderEblanApplicationInfoPopup(
                 folderPopupEntry = folderPopupEntry,
                 maxFolderColumns = userData.homeSettings.maxFolderColumns,
                 maxFolderRows = userData.homeSettings.maxFolderRows,
@@ -57,32 +56,23 @@ class GetFolderGridItemsByIdUseCase @Inject constructor(
         }
     }.flowOn(defaultDispatcher)
 
-    private suspend fun FolderGridItemWrapper.asFolderGridItemPopup(
+    private suspend fun FolderEblanApplicationInfoWrapper.asFolderEblanApplicationInfoPopup(
         folderPopupEntry: FolderPopupEntry,
         maxFolderColumns: Int,
         maxFolderRows: Int,
-    ): FolderGridItemPopup {
-        val childFolderGridItems = folderGridItems.map {
-            folderGridItemRepository.getFolderGridItemWrapperById(
+    ): FolderEblanApplicationInfoPopup {
+        val childFolderEblanApplicationInfos = folderEblanApplicationInfos.map {
+            folderEblanApplicationInfoRepository.getFolderEblanApplicationInfoWrapperById(
                 id = it.id,
-            )?.asGridItem() ?: it.asGridItem()
+            )?.asFolderEblanApplicationInfoGridItem() ?: it.asFolderEblanApplicationInfoGridItem()
         }
 
         val gridItems = (
-            applicationInfoGridItems.map {
-                it.asGridItem()
-            } + shortcutInfoGridItems.map {
-                it.asGridItem()
-            } + shortcutConfigGridItems.map {
-                it.asGridItem()
-            } + childFolderGridItems
+            eblanApplicationInfos.map { it.asFolderEblanApplicationInfoGridItem() } + childFolderEblanApplicationInfos
             ).sortedBy {
             when (val data = it.data) {
-                is GridItemData.ApplicationInfo -> data.index
-                is GridItemData.ShortcutInfo -> data.index
-                is GridItemData.ShortcutConfig -> data.index
-                is GridItemData.Folder -> data.index
-                else -> error("Unsupported folder grid item")
+                is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> data.folderIndex
+                is FolderEblanApplicationInfoGridItemData.Folder -> data.folderIndex
             }
         }
 
@@ -101,20 +91,17 @@ class GetFolderGridItemsByIdUseCase @Inject constructor(
 
         val maxIndex = gridItems.maxOfOrNull {
             when (val data = it.data) {
-                is GridItemData.ApplicationInfo -> data.index + 1
-                is GridItemData.ShortcutInfo -> data.index + 1
-                is GridItemData.ShortcutConfig -> data.index + 1
-                is GridItemData.Folder -> data.index + 1
-                else -> error("Unsupported folder grid item")
+                is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> data.folderIndex + 1
+                is FolderEblanApplicationInfoGridItemData.Folder -> data.folderIndex + 1
             }
         } ?: 0
 
-        return FolderGridItemPopup(
+        return FolderEblanApplicationInfoPopup(
             folderPopupEntry = folderPopupEntry,
-            gridItem = folderGridItem.asGridItem(),
-            gridItems = gridItems,
-            gridItemsByPage = gridItemsByPage,
-            label = folderGridItem.label,
+            folderEblanApplicationInfo = folderEblanApplicationInfo,
+            folderEblanApplicationInfos = gridItems,
+            folderEblanApplicationInfosByPage = gridItemsByPage,
+            label = folderEblanApplicationInfo.label,
             columns = columns,
             rows = rows,
             maxIndex = maxIndex,

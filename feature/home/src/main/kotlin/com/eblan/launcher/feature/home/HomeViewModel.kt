@@ -39,8 +39,8 @@ import com.eblan.launcher.domain.usecase.application.GetEblanAppWidgetProviderIn
 import com.eblan.launcher.domain.usecase.application.GetEblanApplicationInfosByLabelAndTagUseCase
 import com.eblan.launcher.domain.usecase.application.GetEblanShortcutConfigsByLabelUseCase
 import com.eblan.launcher.domain.usecase.application.GetEblanShortcutInfosUseCase
-import com.eblan.launcher.domain.usecase.folder.GetFolderEblanApplicationInfosByIdUseCase
-import com.eblan.launcher.domain.usecase.folder.GetFolderGridItemsByIdUseCase
+import com.eblan.launcher.domain.usecase.folder.GetFolderEblanApplicationInfosByEntryUseCase
+import com.eblan.launcher.domain.usecase.folder.GetFolderGridItemsByEntryUseCase
 import com.eblan.launcher.domain.usecase.folder.GetPreviewFolderEblanApplicationInfosUseCase
 import com.eblan.launcher.domain.usecase.folder.GetPreviewFolderGridItemsUseCase
 import com.eblan.launcher.domain.usecase.folder.MoveFolderGridItemUseCase
@@ -99,14 +99,14 @@ internal class HomeViewModel @Inject constructor(
     private val removePackageUseCase: RemovePackageUseCase,
     private val changePackageUseCase: ChangePackageUseCase,
     private val changeShortcutsUseCase: ChangeShortcutsUseCase,
-    getFolderGridItemsByIdUseCase: GetFolderGridItemsByIdUseCase,
+    getFolderGridItemsByEntryUseCase: GetFolderGridItemsByEntryUseCase,
     private val moveFolderGridItemUseCase: MoveFolderGridItemUseCase,
     private val iconKeyGenerator: IconKeyGenerator,
     private val deleteGridItemUseCase: DeleteGridItemUseCase,
     getTextColorUseCase: GetTextColorUseCase,
     getPreviewFolderGridItemsUseCase: GetPreviewFolderGridItemsUseCase,
     getPreviewFolderEblanApplicationInfosUseCase: GetPreviewFolderEblanApplicationInfosUseCase,
-    getFolderEblanApplicationInfosByIdUseCase: GetFolderEblanApplicationInfosByIdUseCase,
+    getFolderEblanApplicationInfosByEntryUseCase: GetFolderEblanApplicationInfosByEntryUseCase,
 ) : ViewModel() {
     val homeUiState = getHomeDataUseCase().map(HomeUiState::Success).stateIn(
         scope = viewModelScope,
@@ -194,7 +194,7 @@ internal class HomeViewModel @Inject constructor(
     private var shortcutsChangedJob: Job? = null
 
     private val _folderGridItemPopupEntries = MutableStateFlow<List<FolderPopupEntry>>(emptyList())
-    val folderGridItemPopups = getFolderGridItemsByIdUseCase(
+    val folderGridItemPopups = getFolderGridItemsByEntryUseCase(
         folderPopupEntriesFlow = _folderGridItemPopupEntries,
     ).stateIn(
         scope = viewModelScope,
@@ -231,7 +231,7 @@ internal class HomeViewModel @Inject constructor(
         )
 
     private val _folderEblanApplicationInfoPopupEntries = MutableStateFlow<List<FolderPopupEntry>>(emptyList())
-    val folderEblanApplicationInfoPopups = getFolderEblanApplicationInfosByIdUseCase(
+    val folderEblanApplicationInfoPopups = getFolderEblanApplicationInfosByEntryUseCase(
         folderPopupEntriesFlow = _folderEblanApplicationInfoPopupEntries,
     ).stateIn(
         scope = viewModelScope,
@@ -720,6 +720,12 @@ internal class HomeViewModel @Inject constructor(
             currentFolderPopupEntries
                 .filterNot { it.id == folderPopupEntry.id }
                 .plus(folderPopupEntry)
+        }
+    }
+
+    fun deleteFolderEblanApplicationInfoPopupEntry(folderPopupEntry: FolderPopupEntry) {
+        _folderEblanApplicationInfoPopupEntries.update { folderPopupEntries ->
+            folderPopupEntries.filterNot { it.id == folderPopupEntry.id }
         }
     }
 

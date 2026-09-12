@@ -183,7 +183,7 @@ internal fun HomeRoute(
         onShortcutsChanged = viewModel::shortcutsChanged,
         onResetFolderPopupEntries = viewModel::resetFolderGridItemPopupEntries,
         onUpsertFolderEblanApplicationInfoPopupEntry = viewModel::upsertFolderEblanApplicationInfoPopupEntry,
-        onDeleteFolderEblanApplicationInfoPopupEntry = viewModel::upsertFolderEblanApplicationInfoPopupEntry,
+        onDeleteFolderEblanApplicationInfoPopupEntry = viewModel::deleteFolderEblanApplicationInfoPopupEntry,
         onEditFolderApplicationInfo = onEditFolderApplicationInfo,
     )
 }

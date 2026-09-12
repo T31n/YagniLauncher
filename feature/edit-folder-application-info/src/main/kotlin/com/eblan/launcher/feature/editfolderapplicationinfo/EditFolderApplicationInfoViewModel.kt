@@ -25,12 +25,12 @@ import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.framework.IconPackManager
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
-import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.iconpackinfo.IconPackInfoComponent
 import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPackInfo
 import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
 import com.eblan.launcher.domain.usecase.folder.DeleteFolderEblanApplicationInfoCustomIconUseCase
+import com.eblan.launcher.domain.usecase.folder.GetFolderEblanApplicationInfosByIdUseCase
 import com.eblan.launcher.domain.usecase.folder.UpdateFolderEblanApplicationInfoCustomIconUseCase
 import com.eblan.launcher.feature.editfolderapplicationinfo.model.EditFolderApplicationInfoUiState
 import com.eblan.launcher.feature.editfolderapplicationinfo.navigation.EditFolderApplicationInfoRouteData
@@ -54,6 +54,7 @@ internal class EditFolderApplicationInfoViewModel @Inject constructor(
     private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
     private val deleteFolderEblanApplicationInfoCustomIconUseCase: DeleteFolderEblanApplicationInfoCustomIconUseCase,
     private val updateFolderEblanApplicationInfoCustomIconUseCase: UpdateFolderEblanApplicationInfoCustomIconUseCase,
+    getFolderEblanApplicationInfosByIdUseCase: GetFolderEblanApplicationInfosByIdUseCase,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
     private val editFolderApplicationInfoRouteData =
@@ -89,7 +90,7 @@ internal class EditFolderApplicationInfoViewModel @Inject constructor(
     private var lastIconPackInfoComponents = emptyList<IconPackInfoComponent>()
 
     val folderEblanApplicationInfos =
-        folderEblanApplicationInfoRepository.folderEblanApplicationInfosFlow.stateIn(
+        getFolderEblanApplicationInfosByIdUseCase(id = editFolderApplicationInfoRouteData.id).stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = emptyList(),
