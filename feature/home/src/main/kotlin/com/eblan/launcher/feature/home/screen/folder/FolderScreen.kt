@@ -64,11 +64,11 @@ import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.FolderGridLayout
+import com.eblan.launcher.feature.home.component.FolderTitle
 import com.eblan.launcher.feature.home.component.HomeHandler
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.PageDirection
 import com.eblan.launcher.feature.home.model.SharedElementKey
-import com.eblan.launcher.feature.home.ui.FolderTitle
 import com.eblan.launcher.feature.home.util.getAnimatedRect
 import com.eblan.launcher.feature.home.util.getFolderPopupLayoutInfo
 import kotlin.math.roundToInt

@@ -53,13 +53,11 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -97,13 +95,12 @@ import com.eblan.launcher.domain.model.launcherapps.EblanUser
 import com.eblan.launcher.domain.model.shortcutconfig.EblanShortcutConfig
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
-import com.eblan.launcher.feature.home.component.OffsetNestedScrollConnection
+import com.eblan.launcher.feature.home.component.ScreenEffect
 import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
+import com.eblan.launcher.feature.home.component.rememberNestedScrollConnectionEffect
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.GridItemSource
 import com.eblan.launcher.feature.home.model.SharedElementKey
-import com.eblan.launcher.feature.home.ui.NestedScrollConnectionEffect
-import com.eblan.launcher.feature.home.ui.ScreenEffect
 import com.eblan.launcher.feature.home.util.SCALE
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.launch
@@ -142,8 +139,6 @@ internal fun ShortcutConfigScreen(
 ) {
     val layoutDirection = LocalLayoutDirection.current
 
-    val keyboardController = LocalSoftwareKeyboardController.current
-
     val horizontalPagerState = rememberPagerState(
         pageCount = {
             eblanShortcutConfigs.keys.size
@@ -159,7 +154,6 @@ internal fun ShortcutConfigScreen(
     ScreenEffect(
         drag = drag,
         isVisibleOverlay = isVisibleOverlay,
-        keyboardController = keyboardController,
         screenHeight = screenHeight,
         swipeY = swipeY,
         textFieldState = textFieldState,
@@ -331,20 +325,11 @@ private fun EblanShortcutConfigsPage(
         },
     )
 
-    val currentOnVerticalDrag by rememberUpdatedState(onVerticalDrag)
-    val currentOnDragEnd by rememberUpdatedState(onDragEnd)
-
-    val nestedScrollConnection = remember {
-        OffsetNestedScrollConnection(
-            onVerticalDrag = currentOnVerticalDrag,
-            onDragEnd = currentOnDragEnd,
-        )
-    }
-
-    NestedScrollConnectionEffect(
+    val nestedScrollConnection = rememberNestedScrollConnectionEffect(
         lazyListState = lazyListState,
-        nestedScrollConnection = nestedScrollConnection,
         swipeY = swipeY,
+        onVerticalDrag = onVerticalDrag,
+        onDragEnd = onDragEnd,
     )
 
     Box(

@@ -132,6 +132,7 @@ internal fun AppWidgetScreen(
 
     Box(
         modifier = modifier
+            .fillMaxSize()
             .offset {
                 IntOffset(x = 0, y = swipeY.roundToInt())
             }
@@ -141,8 +142,7 @@ internal fun AppWidgetScreen(
                         onDismiss()
                     },
                 )
-            }
-            .fillMaxSize(),
+            },
         contentAlignment = Alignment.BottomCenter,
     ) {
         Surface(
@@ -152,6 +152,9 @@ internal fun AppWidgetScreen(
         ) {
             Column(
                 modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(paddingValues)
+                    .animateContentSize()
                     .pointerInput(key1 = Unit) {
                         detectVerticalDragGestures(
                             onVerticalDrag = { _, dragAmount ->
@@ -164,10 +167,7 @@ internal fun AppWidgetScreen(
                                 onDragEnd()
                             },
                         )
-                    }
-                    .fillMaxWidth()
-                    .padding(paddingValues)
-                    .animateContentSize(),
+                    },
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 AsyncImage(

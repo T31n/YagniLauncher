@@ -53,7 +53,6 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -86,13 +85,12 @@ import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
 import com.eblan.launcher.feature.home.R
-import com.eblan.launcher.feature.home.component.OffsetNestedScrollConnection
+import com.eblan.launcher.feature.home.component.ScreenEffect
 import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
+import com.eblan.launcher.feature.home.component.rememberNestedScrollConnectionEffect
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.GridItemSource
 import com.eblan.launcher.feature.home.model.SharedElementKey
-import com.eblan.launcher.feature.home.ui.NestedScrollConnectionEffect
-import com.eblan.launcher.feature.home.ui.ScreenEffect
 import com.eblan.launcher.feature.home.util.SCALE
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.launch
@@ -133,21 +131,16 @@ internal fun WidgetScreen(
 ) {
     val layoutDirection = LocalLayoutDirection.current
 
-    val keyboardController = LocalSoftwareKeyboardController.current
-
     val scope = rememberCoroutineScope()
 
     val lazyListState = rememberLazyListState()
 
-    val currentOnVerticalDrag by rememberUpdatedState(onVerticalDrag)
-    val currentOnDragEnd by rememberUpdatedState(onDragEnd)
-
-    val nestedScrollConnection = remember {
-        OffsetNestedScrollConnection(
-            onVerticalDrag = currentOnVerticalDrag,
-            onDragEnd = currentOnDragEnd,
-        )
-    }
+    val nestedScrollConnection = rememberNestedScrollConnectionEffect(
+        lazyListState = lazyListState,
+        swipeY = swipeY,
+        onVerticalDrag = onVerticalDrag,
+        onDragEnd = onDragEnd,
+    )
 
     val searchBarState = rememberSearchBarState()
 
@@ -156,19 +149,12 @@ internal fun WidgetScreen(
     ScreenEffect(
         drag = drag,
         isVisibleOverlay = isVisibleOverlay,
-        keyboardController = keyboardController,
         screenHeight = screenHeight,
         swipeY = swipeY,
         textFieldState = textFieldState,
         onDismiss = onDismiss,
         onGetLabel = onGetEblanAppWidgetProviderInfosByLabel,
         onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-    )
-
-    NestedScrollConnectionEffect(
-        lazyListState = lazyListState,
-        nestedScrollConnection = nestedScrollConnection,
-        swipeY = swipeY,
     )
 
     Surface(

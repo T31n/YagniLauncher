@@ -53,7 +53,7 @@ import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.FolderGridLayout
-import com.eblan.launcher.feature.home.ui.FolderTitle
+import com.eblan.launcher.feature.home.component.FolderTitle
 import com.eblan.launcher.feature.home.util.getAnimatedRect
 import com.eblan.launcher.feature.home.util.getFolderPopupLayoutInfo
 import kotlin.math.roundToInt

@@ -15,17 +15,18 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.feature.home.ui
+package com.eblan.launcher.feature.home.component
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.platform.SoftwareKeyboardController
-import com.eblan.launcher.feature.home.component.HomeHandler
-import com.eblan.launcher.feature.home.component.OffsetNestedScrollConnection
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import com.eblan.launcher.feature.home.model.Drag
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collect
@@ -38,7 +39,6 @@ import kotlin.time.Duration.Companion.milliseconds
 internal fun ScreenEffect(
     drag: Drag,
     isVisibleOverlay: Boolean,
-    keyboardController: SoftwareKeyboardController?,
     screenHeight: Int,
     swipeY: Float,
     textFieldState: TextFieldState,
@@ -46,6 +46,8 @@ internal fun ScreenEffect(
     onGetLabel: (String) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     LaunchedEffect(key1 = textFieldState) {
         snapshotFlow { textFieldState.text }.debounce(500L.milliseconds)
             .onEach {
@@ -78,11 +80,22 @@ internal fun ScreenEffect(
 }
 
 @Composable
-internal fun NestedScrollConnectionEffect(
+internal fun rememberNestedScrollConnectionEffect(
     lazyListState: LazyListState,
-    nestedScrollConnection: OffsetNestedScrollConnection,
     swipeY: Float,
-) {
+    onVerticalDrag: (Float) -> Unit,
+    onDragEnd: () -> Unit,
+): OffsetNestedScrollConnection {
+    val currentOnVerticalDrag by rememberUpdatedState(onVerticalDrag)
+    val currentOnDragEnd by rememberUpdatedState(onDragEnd)
+
+    val nestedScrollConnection = remember {
+        OffsetNestedScrollConnection(
+            onVerticalDrag = currentOnVerticalDrag,
+            onDragEnd = currentOnDragEnd,
+        )
+    }
+
     LaunchedEffect(
         key1 = nestedScrollConnection,
         key2 = swipeY,
@@ -91,4 +104,6 @@ internal fun NestedScrollConnectionEffect(
         nestedScrollConnection.updateSwipeY(swipeY)
         nestedScrollConnection.updateCanScrollBackward(lazyListState.canScrollBackward)
     }
+
+    return nestedScrollConnection
 }
