@@ -32,7 +32,7 @@ interface EblanAppWidgetProviderInfoDao {
     fun getEblanAppWidgetProviderInfoEntitiesFlow(): Flow<List<EblanAppWidgetProviderInfoEntity>>
 
     @Query("SELECT * FROM EblanAppWidgetProviderInfoEntity")
-    fun getEblanAppWidgetProviderInfoEntityList(): List<EblanAppWidgetProviderInfoEntity>
+    suspend fun getEblanAppWidgetProviderInfoEntityList(): List<EblanAppWidgetProviderInfoEntity>
 
     @Upsert
     suspend fun upsertEblanAppWidgetProviderInfoEntities(entities: List<EblanAppWidgetProviderInfoEntity>)

@@ -26,13 +26,13 @@ interface FolderEblanApplicationInfoRepository {
 
     val folderEblanApplicationInfoWrappersFlow: Flow<List<FolderEblanApplicationInfoWrapper>>
 
-    fun getFolderEblanApplicationInfos(): List<FolderEblanApplicationInfo>
+    suspend fun getFolderEblanApplicationInfos(): List<FolderEblanApplicationInfo>
 
     suspend fun getFolderEblanApplicationInfoWrapperById(id: String): FolderEblanApplicationInfoWrapper?
 
     suspend fun upsertFolderEblanApplicationInfo(folderEblanApplicationInfo: FolderEblanApplicationInfo)
 
-    fun getFolderEblanApplicationInfoById(id: String): FolderEblanApplicationInfo?
+    suspend fun getFolderEblanApplicationInfoById(id: String): FolderEblanApplicationInfo?
 
     suspend fun insertFolderEblanApplicationInfo(folderEblanApplicationInfo: FolderEblanApplicationInfo)
 

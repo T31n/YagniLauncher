@@ -68,6 +68,7 @@ import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderPopupEntry
 import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
@@ -147,6 +148,12 @@ internal fun VerticalApplicationScreen(
     onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
     onUpdateIsVisibleFolders: (Boolean) -> Unit,
     onUpsertFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
+    onUpdateFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
+    onUpdateFolderPopupBounds: (
+        intOffset: IntOffset,
+        intSize: IntSize,
+    ) -> Unit,
+    onUpdateFolderPopupMenu: (Boolean) -> Unit,
 ) {
     val layoutDirection = LocalLayoutDirection.current
 
@@ -271,13 +278,7 @@ internal fun VerticalApplicationScreen(
                 onUpdateGridItemSource = onUpdateGridItemSource,
                 onUpdateImageBitmap = onUpdateImageBitmap,
                 onUpdateIsDragging = onUpdateIsDragging,
-                onUpdateOverlayBounds = { intOffset, intSize ->
-                    onUpdateOverlayBounds(intOffset, intSize)
-
-                    popupIntOffset = intOffset
-
-                    popupIntSize = intSize
-                },
+                onUpdateOverlayBounds = onUpdateOverlayBounds,
                 onUpdatePopupMenu = {
                     showPopupApplicationMenu = it
                 },
@@ -293,6 +294,14 @@ internal fun VerticalApplicationScreen(
                 onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
                 onUpdateIsVisibleFolders = onUpdateIsVisibleFolders,
                 onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
+                onUpdatePopupBounds = { intOffset, intSize ->
+                    popupIntOffset = intOffset
+
+                    popupIntSize = intSize
+                },
+                onUpdateFolderEblanApplicationInfo = onUpdateFolderEblanApplicationInfo,
+                onUpdateFolderPopupBounds = onUpdateFolderPopupBounds,
+                onUpdateFolderPopupMenu = onUpdateFolderPopupMenu,
             )
         }
     }
@@ -386,6 +395,16 @@ private fun EblanApplicationInfosPage(
     onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
     onUpdateIsVisibleFolders: (Boolean) -> Unit,
     onUpsertFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
+    onUpdatePopupBounds: (
+        intOffset: IntOffset,
+        intSize: IntSize,
+    ) -> Unit,
+    onUpdateFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
+    onUpdateFolderPopupBounds: (
+        intOffset: IntOffset,
+        intSize: IntSize,
+    ) -> Unit,
+    onUpdateFolderPopupMenu: (Boolean) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -464,6 +483,10 @@ private fun EblanApplicationInfosPage(
                 onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
                 onUpdateIsVisibleFolders = onUpdateIsVisibleFolders,
                 onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
+                onUpdatePopupBounds = onUpdatePopupBounds,
+                onUpdateFolderEblanApplicationInfo = onUpdateFolderEblanApplicationInfo,
+                onUpdateFolderPopupBounds = onUpdateFolderPopupBounds,
+                onUpdateFolderPopupMenu = onUpdateFolderPopupMenu,
             )
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && isDefaultLauncher &&
@@ -535,6 +558,16 @@ private fun EblanApplicationInfos(
     onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
     onUpdateIsVisibleFolders: (Boolean) -> Unit,
     onUpsertFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
+    onUpdatePopupBounds: (
+        intOffset: IntOffset,
+        intSize: IntSize,
+    ) -> Unit,
+    onUpdateFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
+    onUpdateFolderPopupBounds: (
+        intOffset: IntOffset,
+        intSize: IntSize,
+    ) -> Unit,
+    onUpdateFolderPopupMenu: (Boolean) -> Unit,
 ) {
     val userManager = LocalUserManager.current
 
@@ -567,6 +600,8 @@ private fun EblanApplicationInfos(
     LaunchedEffect(key1 = lazyGridState.isScrollInProgress) {
         if (lazyGridState.isScrollInProgress && showPopupApplicationMenu) {
             onUpdatePopupMenu(false)
+
+            onUpdateFolderPopupMenu(false)
         }
     }
 
@@ -603,6 +638,7 @@ private fun EblanApplicationInfos(
                 EblanUserType.Personal -> {
                     items(items = previewFolderEblanApplicationInfos.values.toList()) {
                         FolderEblanApplicationInfoItem(
+                            sharedTransitionScope = sharedTransitionScope,
                             previewFolderEblanApplicationInfo = it,
                             appDrawerSettings = appDrawerSettings,
                             isVisibleOverlay = isVisibleOverlay,
@@ -611,8 +647,19 @@ private fun EblanApplicationInfos(
                             folderCornerRadius = folderCornerRadius,
                             folderBackgroundColor = folderBackgroundColor,
                             customFolderBackgroundColor = customFolderBackgroundColor,
+                            animations = animations,
+                            isScrollInProgress = lazyGridState.isScrollInProgress,
+                            isSwiping = swipeY > 0f,
+                            drag = drag,
                             onUpdateIsVisibleFolders = onUpdateIsVisibleFolders,
                             onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
+                            onUpdateImageBitmap = onUpdateImageBitmap,
+                            onUpdateOverlayBounds = onUpdateOverlayBounds,
+                            onUpdateFolderPopupMenu = onUpdateFolderPopupMenu,
+                            onUpdateSharedElementKey = onUpdateSharedElementKey,
+                            onUpdateFolderEblanApplicationInfo = onUpdateFolderEblanApplicationInfo,
+                            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+                            onUpdateFolderPopupBounds = onUpdateFolderPopupBounds,
                         )
                     }
 
@@ -644,6 +691,7 @@ private fun EblanApplicationInfos(
                             onUpdateEblanApplicationInfo = onUpdateEblanApplicationInfo,
                             onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                             onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+                            onUpdatePopupBounds = onUpdatePopupBounds,
                         )
                     }
 
@@ -698,6 +746,7 @@ private fun EblanApplicationInfos(
                             onUpdateEblanApplicationInfo = onUpdateEblanApplicationInfo,
                             onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                             onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+                            onUpdatePopupBounds = onUpdatePopupBounds,
                         )
                     }
                 }

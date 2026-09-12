@@ -31,7 +31,7 @@ interface EblanShortcutConfigDao {
     fun getEblanShortcutConfigEntitiesFlow(): Flow<List<EblanShortcutConfigEntity>>
 
     @Query("SELECT * FROM EblanShortcutConfigEntity")
-    fun getEblanShortcutConfigEntities(): List<EblanShortcutConfigEntity>
+    suspend fun getEblanShortcutConfigEntities(): List<EblanShortcutConfigEntity>
 
     @Upsert
     suspend fun upsertEblanShortcutConfigEntities(entities: List<EblanShortcutConfigEntity>)

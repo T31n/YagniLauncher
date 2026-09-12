@@ -34,7 +34,7 @@ interface EblanApplicationInfoDao {
     fun getEblanApplicationInfoEntitiesFlow(): Flow<List<EblanApplicationInfoEntity>>
 
     @Query("SELECT * FROM EblanApplicationInfoEntity")
-    fun getEblanApplicationInfoEntity(): List<EblanApplicationInfoEntity>
+    suspend fun getEblanApplicationInfoEntity(): List<EblanApplicationInfoEntity>
 
     @Update
     suspend fun updateEblanApplicationInfoEntities(entities: List<EblanApplicationInfoEntity>)

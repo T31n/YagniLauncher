@@ -33,7 +33,7 @@ interface FolderEblanApplicationInfoDao {
     fun getFolderEblanApplicationInfoEntitiesFlow(): Flow<List<FolderEblanApplicationInfoEntity>>
 
     @Query("SELECT * FROM FolderEblanApplicationInfoEntity")
-    fun getFolderEblanApplicationInfoEntities(): List<FolderEblanApplicationInfoEntity>
+    suspend fun getFolderEblanApplicationInfoEntities(): List<FolderEblanApplicationInfoEntity>
 
     @Transaction
     @Query("SELECT * FROM FolderEblanApplicationInfoEntity")
@@ -47,7 +47,7 @@ interface FolderEblanApplicationInfoDao {
     suspend fun upsertFolderEblanApplicationInfoEntity(entity: FolderEblanApplicationInfoEntity)
 
     @Query("SELECT * FROM FolderEblanApplicationInfoEntity WHERE id = :id")
-    fun getFolderEblanApplicationInfoEntityById(id: String): FolderEblanApplicationInfoEntity?
+    suspend fun getFolderEblanApplicationInfoEntityById(id: String): FolderEblanApplicationInfoEntity?
 
     @Insert
     suspend fun insertFolderEblanApplicationInfoEntity(entity: FolderEblanApplicationInfoEntity)

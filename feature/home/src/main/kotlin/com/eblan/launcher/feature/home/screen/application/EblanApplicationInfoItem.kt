@@ -126,6 +126,10 @@ internal fun EblanApplicationInfoItem(
     onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
+    onUpdatePopupBounds: (
+        intOffset: IntOffset,
+        intSize: IntSize,
+    ) -> Unit,
 ) {
     val graphicsLayer = rememberGraphicsLayer()
 
@@ -250,19 +254,20 @@ internal fun EblanApplicationInfoItem(
                         {
                             scope.launch {
                                 handleOnLongPressEblanApplicationInfoItem(
-                                    eblanApplicationInfo = eblanApplicationInfo,
+                                    item = eblanApplicationInfo,
                                     graphicsLayer = graphicsLayer,
                                     intOffset = intOffset,
                                     intSize = intSize,
                                     keyboardController = keyboardController,
                                     sharedElementKey = sharedElementKey,
-                                    onUpdateEblanApplicationInfo = onUpdateEblanApplicationInfo,
+                                    onUpdate = onUpdateEblanApplicationInfo,
                                     onUpdateImageBitmap = onUpdateImageBitmap,
                                     onUpdateIsLongPress = { isLongPress = it },
                                     onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                                     onUpdateOverlayBounds = onUpdateOverlayBounds,
                                     onUpdatePopupMenu = onUpdatePopupMenu,
                                     onUpdateSharedElementKey = onUpdateSharedElementKey,
+                                    onUpdatePopupBounds = onUpdatePopupBounds,
                                 )
                             }
                         }
@@ -449,14 +454,14 @@ internal fun handleDragEblanApplicationInfoItem(
 }
 
 @OptIn(ExperimentalUuidApi::class)
-internal suspend fun handleOnLongPressEblanApplicationInfoItem(
-    eblanApplicationInfo: EblanApplicationInfo,
+internal suspend fun <T> handleOnLongPressEblanApplicationInfoItem(
+    item: T,
     graphicsLayer: GraphicsLayer,
     intOffset: IntOffset,
     intSize: IntSize,
     keyboardController: SoftwareKeyboardController?,
     sharedElementKey: SharedElementKey,
-    onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
+    onUpdate: (T) -> Unit,
     onUpdateImageBitmap: (ImageBitmap) -> Unit,
     onUpdateIsLongPress: (Boolean) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
@@ -466,6 +471,10 @@ internal suspend fun handleOnLongPressEblanApplicationInfoItem(
     ) -> Unit,
     onUpdatePopupMenu: (Boolean) -> Unit,
     onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
+    onUpdatePopupBounds: (
+        intOffset: IntOffset,
+        intSize: IntSize,
+    ) -> Unit,
 ) {
     onUpdateImageBitmap(graphicsLayer.toImageBitmap())
 
@@ -474,9 +483,14 @@ internal suspend fun handleOnLongPressEblanApplicationInfoItem(
         intSize,
     )
 
+    onUpdatePopupBounds(
+        intOffset,
+        intSize,
+    )
+
     onUpdateSharedElementKey(sharedElementKey)
 
-    onUpdateEblanApplicationInfo(eblanApplicationInfo)
+    onUpdate(item)
 
     onUpdatePopupMenu(true)
 

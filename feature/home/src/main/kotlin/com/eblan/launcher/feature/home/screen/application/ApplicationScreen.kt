@@ -246,13 +246,7 @@ internal fun ApplicationScreen(
                     onUpdateGridItemSource = onUpdateGridItemSource,
                     onUpdateImageBitmap = onUpdateImageBitmap,
                     onUpdateIsDragging = onUpdateIsDragging,
-                    onUpdateOverlayBounds = { intOffset, intSize ->
-                        onUpdateOverlayBounds(intOffset, intSize)
-
-                        popupIntOffset = intOffset
-
-                        popupIntSize = intSize
-                    },
+                    onUpdateOverlayBounds = onUpdateOverlayBounds,
                     onUpdateSharedElementKey = onUpdateSharedElementKey,
                     onVerticalDrag = onVerticalDrag,
                     onWidgets = onWidgets,
@@ -262,6 +256,17 @@ internal fun ApplicationScreen(
                         isVisibleFolders = it
                     },
                     onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
+                    onUpdateFolderEblanApplicationInfo = {
+                        selectedFolderEblanApplicationInfo = it
+                    },
+                    onUpdateFolderPopupBounds = { intOffset, intSize ->
+                        popupIntOffset = intOffset
+
+                        popupIntSize = intSize
+                    },
+                    onUpdateFolderPopupMenu = {
+                        showFolderPopupApplicationMenu = it
+                    },
                 )
             }
 

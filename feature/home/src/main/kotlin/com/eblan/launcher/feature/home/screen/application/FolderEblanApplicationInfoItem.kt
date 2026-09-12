@@ -17,6 +17,8 @@
  */
 package com.eblan.launcher.feature.home.screen.application
 
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
@@ -31,18 +33,25 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.layer.drawLayer
+import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
@@ -55,6 +64,7 @@ import coil3.request.ImageRequest.Builder
 import coil3.request.addLastModifiedToFileCacheKey
 import coil3.size.Size
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
 import com.eblan.launcher.domain.model.folder.FolderPopupEntry
@@ -64,13 +74,21 @@ import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
+import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
+import com.eblan.launcher.feature.home.component.gridItemSharedElement
+import com.eblan.launcher.feature.home.model.Drag
+import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.getHorizontalAlignment
 import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
 import com.eblan.launcher.feature.home.util.getVerticalArrangement
+import com.eblan.launcher.feature.home.util.handleOnPress
+import kotlinx.coroutines.launch
+import kotlin.uuid.ExperimentalUuidApi
 
 @Composable
 internal fun FolderEblanApplicationInfoItem(
     modifier: Modifier = Modifier,
+    sharedTransitionScope: SharedTransitionScope,
     previewFolderEblanApplicationInfo: PreviewFolderEblanApplicationInfo,
     appDrawerSettings: AppDrawerSettings,
     isVisibleOverlay: Boolean,
@@ -79,12 +97,35 @@ internal fun FolderEblanApplicationInfoItem(
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
+    animations: Boolean,
+    isScrollInProgress: Boolean,
+    isSwiping: Boolean,
+    drag: Drag,
     onUpdateIsVisibleFolders: (Boolean) -> Unit,
     onUpsertFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
+    onUpdateImageBitmap: (ImageBitmap) -> Unit,
+    onUpdateOverlayBounds: (
+        intOffset: IntOffset,
+        intSize: IntSize,
+    ) -> Unit,
+    onUpdateFolderPopupMenu: (Boolean) -> Unit,
+    onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
+    onUpdateFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
+    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
+    onUpdateFolderPopupBounds: (
+        intOffset: IntOffset,
+        intSize: IntSize,
+    ) -> Unit,
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    val scope = rememberCoroutineScope()
+
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
 
     var intSize by remember { mutableStateOf(IntSize.Zero) }
+
+    val graphicsLayer = rememberGraphicsLayer()
 
     val textColor = getTextColorFromBackgroundColor(
         backgroundColor = appDrawerSettings.backgroundColor,
@@ -108,6 +149,28 @@ internal fun FolderEblanApplicationInfoItem(
     var isLongPress by remember { mutableStateOf(false) }
 
     val alpha = if (isLongPress) 0f else 1f
+
+    val sharedElementKey = SharedElementKey(
+        id = previewFolderEblanApplicationInfo.folderEblanApplicationInfo.id,
+        parent = SharedElementKey.Parent.SwipeY,
+    )
+
+    val scale = remember { Animatable(1f) }
+
+    LaunchedEffect(
+        key1 = drag,
+        key2 = isLongPress,
+    ) {
+        handleDragFolderEblanApplicationInfoItem(
+            drag = drag,
+            isLongPress = isLongPress,
+            isSwiping = isSwiping,
+            onUpdateIsLongPress = {
+                isLongPress = it
+            },
+            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+        )
+    }
 
     Column(
         modifier = modifier
@@ -141,11 +204,33 @@ internal fun FolderEblanApplicationInfoItem(
                     },
                     onLongPress = if (!isVisibleOverlay) {
                         {
+                            scope.launch {
+                                handleOnLongPressEblanApplicationInfoItem(
+                                    item = previewFolderEblanApplicationInfo.folderEblanApplicationInfo,
+                                    graphicsLayer = graphicsLayer,
+                                    intOffset = intOffset,
+                                    intSize = intSize,
+                                    keyboardController = keyboardController,
+                                    sharedElementKey = sharedElementKey,
+                                    onUpdate = onUpdateFolderEblanApplicationInfo,
+                                    onUpdateImageBitmap = onUpdateImageBitmap,
+                                    onUpdateIsLongPress = { isLongPress = it },
+                                    onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+                                    onUpdateOverlayBounds = onUpdateOverlayBounds,
+                                    onUpdatePopupMenu = onUpdateFolderPopupMenu,
+                                    onUpdateSharedElementKey = onUpdateSharedElementKey,
+                                    onUpdatePopupBounds = onUpdateFolderPopupBounds,
+                                )
+                            }
                         }
                     } else {
                         null
                     },
                     onPress = {
+                        handleOnPress(
+                            animations = true,
+                            scale = scale,
+                        )
                     },
                 )
             },
@@ -159,6 +244,28 @@ internal fun FolderEblanApplicationInfoItem(
 
                 intSize = it.size
             }
+            .gridItemScaleAnimation(
+                isVisibleOverlay = isVisibleOverlay,
+                animations = animations,
+                scale = scale,
+            )
+            .gridItemSharedElement(
+                enabled = animations,
+                sharedElementKey = sharedElementKey,
+                sharedTransitionScope = sharedTransitionScope,
+                visible = !isSwiping &&
+                    !isScrollInProgress &&
+                    !isLongPress &&
+                    !isVisibleOverlay,
+            )
+            .drawWithContent {
+                graphicsLayer.record {
+                    this@drawWithContent.drawContent()
+                }
+
+                drawLayer(graphicsLayer)
+            }
+            .alpha(alpha)
 
         if (icon != null) {
             AsyncImage(
@@ -270,5 +377,32 @@ private fun PreviewFolderEblanApplicationInfoItem(
                 }
             }
         }
+    }
+}
+
+@OptIn(ExperimentalUuidApi::class)
+internal fun handleDragFolderEblanApplicationInfoItem(
+    drag: Drag,
+    isLongPress: Boolean,
+    isSwiping: Boolean,
+    onUpdateIsLongPress: (Boolean) -> Unit,
+    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
+) {
+    if (!isLongPress) return
+
+    when (drag) {
+        Drag.Dragging -> {
+            // TODO
+        }
+
+        Drag.Cancel, Drag.End -> {
+            onUpdateIsLongPress(false)
+
+            if (!isSwiping) {
+                onUpdateIsVisibleOverlay(false)
+            }
+        }
+
+        else -> Unit
     }
 }

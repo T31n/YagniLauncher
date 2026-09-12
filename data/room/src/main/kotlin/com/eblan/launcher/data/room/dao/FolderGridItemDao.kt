@@ -31,7 +31,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface FolderGridItemDao {
     @Query("SELECT * FROM FolderGridItemEntity")
-    fun getFolderGridItemEntities(): List<FolderGridItemEntity>
+    suspend fun getFolderGridItemEntities(): List<FolderGridItemEntity>
 
     @Transaction
     @Query("SELECT * FROM FolderGridItemEntity")
