@@ -15,7 +15,7 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.feature.editgriditem.dialog
+package com.eblan.launcher.feature.editfolderapplicationinfo.dialog
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -32,20 +32,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.eblan.launcher.designsystem.component.EblanDialog
-import com.eblan.launcher.domain.model.grid.GridItem
-import com.eblan.launcher.domain.model.grid.GridItemData
-import com.eblan.launcher.feature.editgriditem.R
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun EditFolderLabelDialog(
     modifier: Modifier = Modifier,
-    gridItem: GridItem,
-    data: GridItemData.Folder,
+    folderEblanApplicationInfo: FolderEblanApplicationInfo,
     onDismissRequest: () -> Unit,
-    onUpdateGridItem: (GridItem) -> Unit,
+    onUpdateFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
 ) {
-    var value by remember { mutableStateOf(data.label) }
+    var value by remember { mutableStateOf(folderEblanApplicationInfo.label) }
 
     var isError by remember { mutableStateOf(false) }
 
@@ -91,11 +88,7 @@ internal fun EditFolderLabelDialog(
             TextButton(
                 onClick = {
                     if (value.isNotBlank()) {
-                        onUpdateGridItem(
-                            gridItem.copy(
-                                data = data.copy(label = value),
-                            ),
-                        )
+                        onUpdateFolderEblanApplicationInfo(folderEblanApplicationInfo.copy(label = value))
 
                         onDismissRequest()
                     } else {

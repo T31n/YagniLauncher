@@ -16,11 +16,8 @@
   ~
   -->
 <resources>
-    <string name="label">Název</string>
-    <string name="label_is_not_valid">Název není platný</string>
     <string name="custom_short_label">Vlastní krátký název</string>
     <string name="grid_item_actions">Akce položky mřížky</string>
     <string name="override">Přepsat</string>
     <string name="override_the_grid_item_settings">Přepsat nastavení položky mřížky</string>
-    <string name="edit_label">Upravit název</string>
 </resources>

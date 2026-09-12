@@ -60,10 +60,10 @@ import com.eblan.launcher.domain.model.iconpackinfo.IconPackInfoComponent
 import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPackInfo
 import com.eblan.launcher.feature.editapplicationinfo.R.string.hide_from_drawer
 import com.eblan.launcher.feature.editapplicationinfo.R.string.view_hidden_apps_in_app_drawer_settings
-import com.eblan.launcher.feature.editapplicationinfo.dialog.AddFolderDialog
 import com.eblan.launcher.feature.editapplicationinfo.dialog.AddTagDialog
 import com.eblan.launcher.feature.editapplicationinfo.dialog.UpdateTagDialog
 import com.eblan.launcher.feature.editapplicationinfo.model.EditApplicationInfoUiState
+import com.eblan.launcher.ui.dialog.AddFolderDialog
 import com.eblan.launcher.ui.dialog.EditCustomLabelDialog
 import com.eblan.launcher.ui.dialog.IconPackInfoFilesDialog
 import com.eblan.launcher.ui.model.SettingsItem.Column
@@ -283,7 +283,7 @@ private fun Success(
             .padding(10.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        SettingsCategoryText(text = "Tags")
+        SettingsCategoryText(text = stringResource(R.string.tags))
 
         Tags(
             eblanApplicationInfoTagsUi = eblanApplicationInfoTagsUi,
@@ -294,7 +294,7 @@ private fun Success(
             onUpdateEblanApplicationInfoTag = onUpdateEblanApplicationInfoTag,
         )
 
-        SettingsCategoryText(text = "Folders")
+        SettingsCategoryText(text = stringResource(commonR.string.folders))
 
         Folders(
             eblanApplicationInfo = eblanApplicationInfo,
@@ -311,7 +311,7 @@ private fun Success(
             iconPackInfoComponents = iconPackInfoComponents,
             iconPackInfoPackageName = iconPackInfoPackageName,
             iconPackInfoLabel = iconPackInfoLabel,
-            iconName = eblanApplicationInfo.packageName,
+            iconName = eblanApplicationInfo.componentName,
             onDismissRequest = {
                 onResetIconPackInfoPackageName()
 

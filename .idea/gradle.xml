@@ -41,6 +41,7 @@
             <option value="$PROJECT_DIR$/feature" />
             <option value="$PROJECT_DIR$/feature/action" />
             <option value="$PROJECT_DIR$/feature/edit-application-info" />
+            <option value="$PROJECT_DIR$/feature/edit-folder-application-info" />
             <option value="$PROJECT_DIR$/feature/edit-grid-item" />
             <option value="$PROJECT_DIR$/feature/home" />
             <option value="$PROJECT_DIR$/feature/pin" />

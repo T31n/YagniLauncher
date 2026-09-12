@@ -41,4 +41,8 @@
     <string name="rows">Rows</string>
     <string name="light">Light</string>
     <string name="cancel">Cancel</string>
+    <string name="edit_label">Edit Label</string>
+    <string name="label">Label</string>
+    <string name="label_is_not_valid">Label is not valid</string>
+    <string name="folders">Folders</string>
 </resources>

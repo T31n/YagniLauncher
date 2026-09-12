@@ -232,7 +232,8 @@ internal fun EblanApplicationInfoItem(
                         {
                             scope.launch {
                                 handleOnTapEblanApplicationInfoItem(
-                                    eblanApplicationInfo = eblanApplicationInfo,
+                                    componentName = eblanApplicationInfo.componentName,
+                                    serialNumber = eblanApplicationInfo.serialNumber,
                                     intOffset = intOffset,
                                     intSize = intSize,
                                     keyboardController = keyboardController,
@@ -336,7 +337,8 @@ internal fun EblanApplicationInfoItem(
 }
 
 internal fun handleOnTapEblanApplicationInfoItem(
-    eblanApplicationInfo: EblanApplicationInfo,
+    serialNumber: Long,
+    componentName: String,
     intOffset: IntOffset,
     intSize: IntSize,
     keyboardController: SoftwareKeyboardController?,
@@ -349,8 +351,8 @@ internal fun handleOnTapEblanApplicationInfoItem(
     val top = intOffset.y + topPadding
 
     launcherApps.startMainActivity(
-        serialNumber = eblanApplicationInfo.serialNumber,
-        componentName = eblanApplicationInfo.componentName,
+        serialNumber = serialNumber,
+        componentName = componentName,
         sourceBounds = Rect(
             left,
             top,

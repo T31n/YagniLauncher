@@ -261,6 +261,8 @@ internal fun FolderApplicationScreen(
                                 appDrawerSettings = appDrawerSettings,
                                 folderCornerRadius = folderCornerRadius,
                                 isVisibleOverlay = isVisibleOverlay,
+                                paddingValues = paddingValues,
+                                animations = animations,
                             )
                         },
                     )

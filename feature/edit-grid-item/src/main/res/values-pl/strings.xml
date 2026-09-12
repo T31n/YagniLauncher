@@ -16,11 +16,8 @@
   ~
   -->
 <resources>
-    <string name="label">Etykieta</string>
-    <string name="label_is_not_valid">Nieprawidłowa etykieta</string>
     <string name="custom_short_label">Własna krótka etykieta</string>
     <string name="grid_item_actions">Akcje elementu siatki</string>
     <string name="override">Nadpisz</string>
     <string name="override_the_grid_item_settings">Nadpisz ustawienia elementu siatki</string>
-    <string name="edit_label">Edytuj etykietę</string>
 </resources>

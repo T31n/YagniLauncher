@@ -220,7 +220,8 @@ private fun PrivateSpaceEblanApplicationInfoItem(
                         {
                             scope.launch {
                                 handleOnTapEblanApplicationInfoItem(
-                                    eblanApplicationInfo = eblanApplicationInfo,
+                                    componentName = eblanApplicationInfo.componentName,
+                                    serialNumber = eblanApplicationInfo.serialNumber,
                                     intOffset = intOffset,
                                     intSize = intSize,
                                     keyboardController = keyboardController,

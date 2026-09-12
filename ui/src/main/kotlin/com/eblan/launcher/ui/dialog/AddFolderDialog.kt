@@ -15,7 +15,7 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.feature.editapplicationinfo.dialog
+package com.eblan.launcher.ui.dialog
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -41,7 +41,7 @@ import com.eblan.launcher.common.R as commonR
 
 @OptIn(ExperimentalUuidApi::class)
 @Composable
-internal fun AddFolderDialog(
+fun AddFolderDialog(
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit,
     onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,

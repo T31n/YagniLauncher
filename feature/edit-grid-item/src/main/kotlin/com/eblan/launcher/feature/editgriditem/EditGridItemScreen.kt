@@ -446,7 +446,7 @@ private fun EditFolder(
 
         add(
             SettingsItem.Column(
-                title = stringResource(R.string.edit_label),
+                title = stringResource(commonR.string.edit_label),
                 subtitle = data.label,
                 onClick = {
                     showEditLabelDialog = true

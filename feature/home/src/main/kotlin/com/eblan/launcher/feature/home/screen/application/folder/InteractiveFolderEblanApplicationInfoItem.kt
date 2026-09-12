@@ -17,9 +17,12 @@
  */
 package com.eblan.launcher.feature.home.screen.application.folder
 
+import android.graphics.Rect
+import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -35,14 +38,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
@@ -62,6 +70,10 @@ import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
 import com.eblan.launcher.feature.home.util.getHorizontalAlignment
 import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
 import com.eblan.launcher.feature.home.util.getVerticalArrangement
+import com.eblan.launcher.feature.home.util.handleOnPress
+import com.eblan.launcher.framework.launcherapps.AndroidLauncherAppsWrapper
+import com.eblan.launcher.ui.local.LocalLauncherApps
+import kotlinx.coroutines.launch
 
 @Composable
 internal fun InteractiveFolderEblanApplicationInfoItem(
@@ -75,6 +87,8 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
     appDrawerSettings: AppDrawerSettings,
     folderCornerRadius: Int,
     isVisibleOverlay: Boolean,
+    paddingValues: PaddingValues,
+    animations: Boolean,
 ) {
     when (val data = folderEblanApplicationInfoGridItem.data) {
         is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
@@ -85,6 +99,8 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
                 isVisibleOverlay = isVisibleOverlay,
                 systemTextColor = systemTextColor,
                 systemCustomTextColor = systemCustomTextColor,
+                paddingValues = paddingValues,
+                animations = animations,
             )
         }
 
@@ -114,8 +130,18 @@ private fun InteractiveEblanApplicationInfoItem(
     isVisibleOverlay: Boolean,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
+    paddingValues: PaddingValues,
+    animations: Boolean,
 ) {
     val context = LocalContext.current
+
+    val density = LocalDensity.current
+
+    val launcherApps = LocalLauncherApps.current
+
+    val layoutDirection = LocalLayoutDirection.current
+
+    val scope = rememberCoroutineScope()
 
     val textColor = getTextColorFromBackgroundColor(
         backgroundColor = appDrawerSettings.backgroundColor,
@@ -136,9 +162,23 @@ private fun InteractiveEblanApplicationInfoItem(
     val verticalArrangement =
         getVerticalArrangement(verticalArrangement = appDrawerSettings.gridItemSettings.verticalArrangement)
 
+    val leftPadding = with(density) {
+        paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
+    }
+
+    val topPadding = with(density) {
+        paddingValues.calculateTopPadding().roundToPx()
+    }
+
     var isLongPress by remember { mutableStateOf(false) }
 
     val alpha = if (isLongPress) 0f else 1f
+
+    var intOffset by remember { mutableStateOf(IntOffset.Zero) }
+
+    var intSize by remember { mutableStateOf(IntSize.Zero) }
+
+    val scale = remember { Animatable(1f) }
 
     Column(
         modifier = modifier
@@ -154,6 +194,17 @@ private fun InteractiveEblanApplicationInfoItem(
                 detectTapGestures(
                     onTap = if (!isVisibleOverlay) {
                         {
+                            scope.launch {
+                                handleOnTapEblanApplicationInfoItem(
+                                    componentName = data.componentName,
+                                    serialNumber = data.serialNumber,
+                                    intOffset = intOffset,
+                                    intSize = intSize,
+                                    launcherApps = launcherApps,
+                                    leftPadding = leftPadding,
+                                    topPadding = topPadding,
+                                )
+                            }
                         }
                     } else {
                         null
@@ -165,6 +216,10 @@ private fun InteractiveEblanApplicationInfoItem(
                         null
                     },
                     onPress = {
+                        handleOnPress(
+                            animations = animations,
+                            scale = scale,
+                        )
                     },
                 )
             },
@@ -378,4 +433,29 @@ private fun PreviewFolderEblanApplicationInfoItem(
             }
         }
     }
+}
+
+private fun handleOnTapEblanApplicationInfoItem(
+    serialNumber: Long,
+    componentName: String,
+    intOffset: IntOffset,
+    intSize: IntSize,
+    launcherApps: AndroidLauncherAppsWrapper,
+    leftPadding: Int,
+    topPadding: Int,
+) {
+    val left = intOffset.x + leftPadding
+
+    val top = intOffset.y + topPadding
+
+    launcherApps.startMainActivity(
+        serialNumber = serialNumber,
+        componentName = componentName,
+        sourceBounds = Rect(
+            left,
+            top,
+            left + intSize.width,
+            top + intSize.height,
+        ),
+    )
 }
