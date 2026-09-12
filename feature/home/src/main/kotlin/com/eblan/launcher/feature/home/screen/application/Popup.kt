@@ -143,6 +143,8 @@ internal fun ApplicationInfoPopup(
 
     Box(
         modifier = modifier
+            .fillMaxSize()
+            .padding(paddingValues)
             .pointerInput(Unit) {
                 detectTapGestures(
                     onPress = {
@@ -151,9 +153,7 @@ internal fun ApplicationInfoPopup(
                         transitionState.targetState = false
                     },
                 )
-            }
-            .fillMaxSize()
-            .padding(paddingValues),
+            },
     ) {
         AnimatedVisibility(
             modifier = Modifier.popup(
@@ -313,6 +313,8 @@ internal fun PrivateApplicationInfoPopup(
 
     Box(
         modifier = modifier
+            .fillMaxSize()
+            .padding(paddingValues)
             .pointerInput(Unit) {
                 detectTapGestures(
                     onPress = {
@@ -321,9 +323,7 @@ internal fun PrivateApplicationInfoPopup(
                         transitionState.targetState = false
                     },
                 )
-            }
-            .fillMaxSize()
-            .padding(paddingValues),
+            },
     ) {
         AnimatedVisibility(
             modifier = Modifier.popup(

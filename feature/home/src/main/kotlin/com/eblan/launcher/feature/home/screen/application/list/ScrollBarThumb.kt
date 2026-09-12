@@ -99,7 +99,13 @@ internal fun ScrollBarThumb(
     Row(modifier = modifier) {
         Box(
             modifier = Modifier
-                .pointerInput(lazyListState) {
+                .width(10.dp)
+                .fillMaxHeight()
+                .padding(bottom = paddingValues.calculateBottomPadding())
+                .background(
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
+                    shape = RoundedCornerShape(10.dp),
+                ).pointerInput(lazyListState) {
                     detectTapGestures(
                         onTap = {
                             handleOnTap(
@@ -113,24 +119,22 @@ internal fun ScrollBarThumb(
                             )
                         },
                     )
-                }
-                .width(10.dp)
-                .fillMaxHeight()
-                .padding(bottom = paddingValues.calculateBottomPadding())
-                .background(
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
-                    shape = RoundedCornerShape(10.dp),
-                ),
+                },
         ) {
             Box(
                 modifier = Modifier
+                    .fillMaxWidth()
+                    .height(thumbHeight)
                     .offset {
                         IntOffset(
                             x = 0,
                             y = animatedThumbY.roundToInt(),
                         )
                     }
-                    .pointerInput(lazyListState) {
+                    .background(
+                        color = MaterialTheme.colorScheme.primary,
+                        shape = RoundedCornerShape(10.dp),
+                    ).pointerInput(lazyListState) {
                         detectDragGestures(
                             onDragStart = {
                                 thumbY = viewPortThumbY
@@ -158,13 +162,7 @@ internal fun ScrollBarThumb(
                                 isDraggingThumb = false
                             },
                         )
-                    }
-                    .fillMaxWidth()
-                    .height(thumbHeight)
-                    .background(
-                        color = MaterialTheme.colorScheme.primary,
-                        shape = RoundedCornerShape(10.dp),
-                    ),
+                    },
             )
         }
     }

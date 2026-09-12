@@ -481,6 +481,7 @@ private fun EblanApplicationInfos(
 ) {
     HorizontalAppDrawerGridLayout(
         modifier = modifier
+            .fillMaxSize()
             .pointerInput(
                 key1 = onVerticalDrag,
                 key2 = onDragEnd,
@@ -491,8 +492,7 @@ private fun EblanApplicationInfos(
                     },
                     onDragEnd = onDragEnd,
                 )
-            }
-            .fillMaxSize(),
+            },
         columns = appDrawerSettings.horizontalAppDrawerColumns,
         eblanApplicationInfoWithIconPackInfos = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfoWithIconPackInfos[eblanUserPageKey],
         rows = appDrawerSettings.horizontalAppDrawerRows,

@@ -62,9 +62,9 @@ internal fun <T> FolderTitle(
 
     Box(
         modifier = modifier
-            .padding(horizontal = 10.dp)
             .fillMaxWidth()
             .height(PAGE_INDICATOR_HEIGHT)
+            .padding(horizontal = 10.dp)
             .alpha(if (progress > 0.5) 1f else 0f),
     ) {
         if (gridItemsByPage.size > 1) {

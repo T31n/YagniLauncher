@@ -150,10 +150,10 @@ internal fun FolderApplicationScreen(
         },
     )
 
-    val isFirstFolderGridItem = folderEblanApplicationInfoPopups.size == 1 &&
+    val isFirstFolderEblanApplicationInfo = folderEblanApplicationInfoPopups.size == 1 &&
         folderEblanApplicationInfoPopups.singleOrNull()?.folderEblanApplicationInfo == folderEblanApplicationInfoPopup.folderEblanApplicationInfo
 
-    val isLastFolderGridItem =
+    val isLastFolderEblanApplicationInfo =
         folderEblanApplicationInfoPopups.lastOrNull()?.folderEblanApplicationInfo == folderEblanApplicationInfoPopup.folderEblanApplicationInfo
 
     val isInProgress by remember {
@@ -170,13 +170,13 @@ internal fun FolderApplicationScreen(
 
     LaunchedEffect(
         key1 = folderEblanApplicationInfoPopup,
-        key2 = isFirstFolderGridItem,
+        key2 = isFirstFolderEblanApplicationInfo,
         key3 = animations,
     ) {
         handleIsCloseFolder(
             folderEblanApplicationInfoPopup = folderEblanApplicationInfoPopup,
             progress = progress,
-            isFirstFolderGridItem = isFirstFolderGridItem,
+            isFirstFolderGridItem = isFirstFolderEblanApplicationInfo,
             animations = animations,
             onAnimateToScrollToPage = folderGridHorizontalPagerState::animateScrollToPage,
             onDeleteFolderPopupEntry = onDeleteFolderEblanApplicationInfoPopupEntry,
@@ -187,8 +187,8 @@ internal fun FolderApplicationScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .pointerInput(key1 = isLastFolderGridItem) {
-                if (isLastFolderGridItem) {
+            .pointerInput(key1 = isLastFolderEblanApplicationInfo) {
+                if (isLastFolderEblanApplicationInfo) {
                     detectTapGestures(
                         onPress = {
                             awaitRelease()
