@@ -159,7 +159,7 @@ internal fun FolderScreen(
         folderPopupIntOffset = folderPopupIntOffset,
         folderPopupIntSize = folderPopupIntSize,
         folderCellWidth = folderCellWidth,
-        folderCellHeight = folderCellWidth,
+        folderCellHeight = folderCellHeight,
         columns = folderGridItemPopup.columns,
         rows = folderGridItemPopup.rows,
     )
