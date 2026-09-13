@@ -38,6 +38,7 @@ import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
 import com.eblan.launcher.domain.usecase.application.DeleteEblanApplicationInfoCustomIconUseCase
 import com.eblan.launcher.domain.usecase.application.GetEblanApplicationInfosTagsUiUseCase
 import com.eblan.launcher.domain.usecase.application.UpdateEblanApplicationInfoCustomIconUseCase
+import com.eblan.launcher.domain.usecase.folder.GetPreviewFolderEblanApplicationInfosUseCase
 import com.eblan.launcher.feature.editapplicationinfo.model.EditApplicationInfoUiState
 import com.eblan.launcher.feature.editapplicationinfo.navigation.EditApplicationInfoRouteData
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -64,6 +65,7 @@ internal class EditApplicationInfoViewModel @Inject constructor(
     private val updateEblanApplicationInfoCustomIconUseCase: UpdateEblanApplicationInfoCustomIconUseCase,
     private val deleteEblanApplicationInfoCustomIconUseCase: DeleteEblanApplicationInfoCustomIconUseCase,
     private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
+    getPreviewFolderEblanApplicationInfosUseCase: GetPreviewFolderEblanApplicationInfosUseCase,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
     private val editApplicationInfoRouteData =
@@ -112,6 +114,13 @@ internal class EditApplicationInfoViewModel @Inject constructor(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = emptyList(),
+        )
+
+    val previewFolderEblanApplicationInfos =
+        getPreviewFolderEblanApplicationInfosUseCase().stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = emptyMap(),
         )
 
     fun updateEblanApplicationInfo(eblanApplicationInfo: EblanApplicationInfo) {

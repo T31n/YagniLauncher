@@ -51,6 +51,8 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
+import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.iconpackinfo.IconPackInfoComponent
 import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPackInfo
 import com.eblan.launcher.feature.editfolderapplicationinfo.dialog.EditFolderLabelDialog
@@ -76,12 +78,15 @@ internal fun EditFolderApplicationInfoRoute(
 
     val folderEblanApplicationInfos by viewModel.folderEblanApplicationInfos.collectAsStateWithLifecycle()
 
+    val previewFolderEblanApplicationInfos by viewModel.previewFolderEblanApplicationInfos.collectAsStateWithLifecycle()
+
     EditFolderApplicationInfoScreen(
         modifier = modifier,
         editFolderApplicationInfoUiState = editFolderApplicationInfoUiState,
         iconPackInfoComponents = iconPackInfoComponents,
         packageManagerIconPackInfos = packageManagerIconPackInfos,
         folderEblanApplicationInfos = folderEblanApplicationInfos,
+        previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
         onNavigateUp = onNavigateUp,
         onUpdateIconPackInfoPackageName = viewModel::updateIconPackInfoPackageName,
         onResetFolderEblanApplicationInfoCustomIcon = viewModel::resetFolderEblanApplicationInfoCustomIcon,
@@ -101,6 +106,7 @@ internal fun EditFolderApplicationInfoScreen(
     iconPackInfoComponents: List<IconPackInfoComponent>,
     packageManagerIconPackInfos: List<PackageManagerIconPackInfo>,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
     onNavigateUp: () -> Unit,
     onUpdateIconPackInfoPackageName: (String) -> Unit,
     onResetFolderEblanApplicationInfoCustomIcon: (FolderEblanApplicationInfo) -> Unit,
@@ -146,6 +152,7 @@ internal fun EditFolderApplicationInfoScreen(
                     iconPackInfoComponents = iconPackInfoComponents,
                     packageManagerIconPackInfos = packageManagerIconPackInfos,
                     folderEblanApplicationInfos = folderEblanApplicationInfos,
+                    previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
                     onUpdateIconPackInfoPackageName = onUpdateIconPackInfoPackageName,
                     onResetFolderEblanApplicationInfoCustomIcon = onResetFolderEblanApplicationInfoCustomIcon,
                     onUpdateFolderEblanApplicationInfoCustomIcon = onUpdateFolderEblanApplicationInfoCustomIcon,
@@ -167,6 +174,7 @@ internal fun Success(
     iconPackInfoComponents: List<IconPackInfoComponent>,
     packageManagerIconPackInfos: List<PackageManagerIconPackInfo>,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
     onUpdateIconPackInfoPackageName: (String) -> Unit,
     onResetFolderEblanApplicationInfoCustomIcon: (FolderEblanApplicationInfo) -> Unit,
     onUpdateFolderEblanApplicationInfoCustomIcon: (
@@ -233,17 +241,14 @@ internal fun Success(
         SettingsCategoryText(text = stringResource(commonR.string.folders))
 
         Folders(
-            modifier = modifier,
             folderEblanApplicationInfo = folderEblanApplicationInfo,
             folderEblanApplicationInfos = folderEblanApplicationInfos,
+            previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
             onUpdateFolderEblanApplicationInfo = onUpdateFolderEblanApplicationInfo,
             onAddFolderEblanApplicationInfo = onAddFolderEblanApplicationInfo,
         )
 
-        SettingsItems(
-            modifier = modifier,
-            items = items,
-        )
+        SettingsItems(items = items)
 
         if (showCustomIconDialog) {
             IconPackInfoFilesDialog(
@@ -284,6 +289,7 @@ private fun Folders(
     modifier: Modifier = Modifier,
     folderEblanApplicationInfo: FolderEblanApplicationInfo,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
     onUpdateFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
     onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
 ) {
@@ -292,8 +298,10 @@ private fun Folders(
     FlowRow(modifier = modifier.fillMaxWidth()) {
         folderEblanApplicationInfos.forEach {
             FolderEblanApplicationInfoItem(
-                folderEblanApplicationInfo = it,
-                currentFolderEblanApplicationInfo = folderEblanApplicationInfo,
+                folderEblanApplicationInfo = folderEblanApplicationInfo,
+                id = it.id,
+                label = it.label,
+                previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
                 onUpdateFolderEblanApplicationInfo = onUpdateFolderEblanApplicationInfo,
             )
         }
@@ -319,9 +327,23 @@ private fun Folders(
 private fun FolderEblanApplicationInfoItem(
     modifier: Modifier = Modifier,
     folderEblanApplicationInfo: FolderEblanApplicationInfo,
-    currentFolderEblanApplicationInfo: FolderEblanApplicationInfo,
+    id: String,
+    label: String,
+    previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
     onUpdateFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
 ) {
+    val folderIndex = remember(
+        key1 = previewFolderEblanApplicationInfos,
+        key2 = id,
+    ) {
+        previewFolderEblanApplicationInfos[id]?.folderGridItems?.maxOfOrNull {
+            when (val data = it.data) {
+                is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> data.folderIndex + 1
+                is FolderEblanApplicationInfoGridItemData.Folder -> data.folderIndex + 1
+            }
+        } ?: 0
+    }
+
     Card(
         modifier = modifier.padding(5.dp),
         shape = RoundedCornerShape(16.dp),
@@ -330,16 +352,17 @@ private fun FolderEblanApplicationInfoItem(
             modifier = Modifier
                 .combinedClickable(
                     onClick = {
-                        if (folderEblanApplicationInfo.id == currentFolderEblanApplicationInfo.folderId) {
+                        if (id == folderEblanApplicationInfo.folderId) {
                             onUpdateFolderEblanApplicationInfo(
-                                currentFolderEblanApplicationInfo.copy(
+                                folderEblanApplicationInfo.copy(
                                     folderId = null,
                                 ),
                             )
                         } else {
                             onUpdateFolderEblanApplicationInfo(
-                                currentFolderEblanApplicationInfo.copy(
-                                    folderId = folderEblanApplicationInfo.id,
+                                folderEblanApplicationInfo.copy(
+                                    folderIndex = folderIndex,
+                                    folderId = id,
                                 ),
                             )
                         }
@@ -349,7 +372,7 @@ private fun FolderEblanApplicationInfoItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            if (folderEblanApplicationInfo.id == currentFolderEblanApplicationInfo.folderId) {
+            if (id == folderEblanApplicationInfo.folderId) {
                 Icon(
                     imageVector = EblanLauncherIcons.Done,
                     contentDescription = null,
@@ -358,7 +381,7 @@ private fun FolderEblanApplicationInfoItem(
             }
 
             Text(
-                text = folderEblanApplicationInfo.label,
+                text = label,
                 style = MaterialTheme.typography.bodyMedium,
             )
         }

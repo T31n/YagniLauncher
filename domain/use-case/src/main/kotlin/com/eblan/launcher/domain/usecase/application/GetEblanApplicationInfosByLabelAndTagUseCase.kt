@@ -165,7 +165,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
                 eblanApplicationInfoRepository.getEblanApplicationInfosWithoutTag()
 
             else -> eblanApplicationInfos
-        }.filterNot { it.isHidden && it.folderId != null }
+        }.filterNot { it.isHidden || it.folderId != null }
 
         val eblanApplicationInfosByLabel = eblanApplicationInfosByTag.filter {
             val currentLabel = it.customLabel ?: it.label
@@ -179,35 +179,32 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
             )
         }
 
-        val filterEblanApplicationInfos =
-            if (fuzzySearch || eblanApplicationInfosByLabel.isNotEmpty()) {
-                val fuzzyMatches = if (fuzzySearch) {
-                    (eblanApplicationInfosByTag - eblanApplicationInfosByLabel.toSet())
-                        .map {
-                            val currentLabel = it.customLabel ?: it.label
+        return if (fuzzySearch || eblanApplicationInfosByLabel.isNotEmpty()) {
+            val fuzzyMatches = if (fuzzySearch) {
+                (eblanApplicationInfosByTag - eblanApplicationInfosByLabel.toSet())
+                    .map {
+                        val currentLabel = it.customLabel ?: it.label
 
-                            it to jaroWinklerSimilarityWrapper.apply(
-                                left = normalize(text = label),
-                                right = normalize(text = currentLabel),
-                            )
-                        }
-                        .filter { (_, score) -> score >= 0.85 }
-                        .sortedByDescending { (_, score) -> score }
-                        .map { (eblanApplicationInfo, _) -> eblanApplicationInfo }
-                } else {
-                    emptyList()
-                }
-
-                eblanApplicationInfosByLabel.sortedBy {
-                    val currentLabel = it.customLabel ?: it.label
-
-                    currentLabel.lowercase()
-                } + fuzzyMatches
+                        it to jaroWinklerSimilarityWrapper.apply(
+                            left = normalize(text = label),
+                            right = normalize(text = currentLabel),
+                        )
+                    }
+                    .filter { (_, score) -> score >= 0.85 }
+                    .sortedByDescending { (_, score) -> score }
+                    .map { (eblanApplicationInfo, _) -> eblanApplicationInfo }
             } else {
                 emptyList()
             }
 
-        return filterEblanApplicationInfos.toMutableList()
+            eblanApplicationInfosByLabel.sortedBy {
+                val currentLabel = it.customLabel ?: it.label
+
+                currentLabel.lowercase()
+            } + fuzzyMatches
+        } else {
+            emptyList()
+        }
     }
 
     private suspend fun normalize(text: String): String = withContext(defaultDispatcher) {

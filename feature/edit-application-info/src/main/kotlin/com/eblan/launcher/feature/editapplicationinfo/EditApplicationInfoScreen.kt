@@ -56,6 +56,8 @@ import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTagUi
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
+import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.iconpackinfo.IconPackInfoComponent
 import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPackInfo
 import com.eblan.launcher.feature.editapplicationinfo.R.string.hide_from_drawer
@@ -89,6 +91,8 @@ internal fun EditApplicationInfoRoute(
 
     val folderEblanApplicationInfos by viewModel.folderEblanApplicationInfos.collectAsStateWithLifecycle()
 
+    val previewFolderEblanApplicationInfos by viewModel.previewFolderEblanApplicationInfos.collectAsStateWithLifecycle()
+
     EditApplicationInfoScreen(
         modifier = modifier,
         eblanApplicationInfoTagsUi = eblanApplicationInfoTagsUi,
@@ -96,6 +100,7 @@ internal fun EditApplicationInfoRoute(
         iconPackInfoComponents = iconPackInfoComponents,
         packageManagerIconPackInfos = packageManagerIconPackInfos,
         folderEblanApplicationInfos = folderEblanApplicationInfos,
+        previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
         onAddEblanApplicationInfoCrossRef = viewModel::addEblanApplicationInfoTagCrossRef,
         onAddEblanApplicationInfoTag = viewModel::addEblanApplicationInfoTag,
         onDeleteEblanApplicationInfoCrossRef = viewModel::deleteEblanApplicationInfoTagCrossRef,
@@ -121,6 +126,7 @@ internal fun EditApplicationInfoScreen(
     iconPackInfoComponents: List<IconPackInfoComponent>,
     packageManagerIconPackInfos: List<PackageManagerIconPackInfo>,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
     onAddEblanApplicationInfoCrossRef: (Long) -> Unit,
     onAddEblanApplicationInfoTag: (EblanApplicationInfoTag) -> Unit,
     onDeleteEblanApplicationInfoCrossRef: (Long) -> Unit,
@@ -172,6 +178,7 @@ internal fun EditApplicationInfoScreen(
                     iconPackInfoComponents = iconPackInfoComponents,
                     packageManagerIconPackInfos = packageManagerIconPackInfos,
                     folderEblanApplicationInfos = folderEblanApplicationInfos,
+                    previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
                     onAddEblanApplicationInfoCrossRef = onAddEblanApplicationInfoCrossRef,
                     onAddEblanApplicationInfoTag = onAddEblanApplicationInfoTag,
                     onDeleteEblanApplicationInfoCrossRef = onDeleteEblanApplicationInfoCrossRef,
@@ -198,6 +205,7 @@ private fun Success(
     iconPackInfoComponents: List<IconPackInfoComponent>,
     packageManagerIconPackInfos: List<PackageManagerIconPackInfo>,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
     onAddEblanApplicationInfoCrossRef: (Long) -> Unit,
     onAddEblanApplicationInfoTag: (EblanApplicationInfoTag) -> Unit,
     onDeleteEblanApplicationInfoCrossRef: (Long) -> Unit,
@@ -299,6 +307,7 @@ private fun Success(
         Folders(
             eblanApplicationInfo = eblanApplicationInfo,
             folderEblanApplicationInfos = folderEblanApplicationInfos,
+            previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
             onUpdateEblanApplicationInfo = onUpdateEblanApplicationInfo,
             onAddFolderEblanApplicationInfo = onAddFolderEblanApplicationInfo,
         )
@@ -478,6 +487,7 @@ private fun Folders(
     modifier: Modifier = Modifier,
     eblanApplicationInfo: EblanApplicationInfo,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
     onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
     onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
 ) {
@@ -488,6 +498,7 @@ private fun Folders(
             FolderEblanApplicationInfoItem(
                 folderEblanApplicationInfo = it,
                 eblanApplicationInfo = eblanApplicationInfo,
+                previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
                 onUpdateEblanApplicationInfo = onUpdateEblanApplicationInfo,
             )
         }
@@ -514,8 +525,21 @@ private fun FolderEblanApplicationInfoItem(
     modifier: Modifier = Modifier,
     folderEblanApplicationInfo: FolderEblanApplicationInfo,
     eblanApplicationInfo: EblanApplicationInfo,
+    previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
     onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
 ) {
+    val folderIndex = remember(
+        key1 = previewFolderEblanApplicationInfos,
+        key2 = folderEblanApplicationInfo,
+    ) {
+        previewFolderEblanApplicationInfos[folderEblanApplicationInfo.id]?.folderGridItems?.maxOfOrNull {
+            when (val data = it.data) {
+                is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> data.folderIndex + 1
+                is FolderEblanApplicationInfoGridItemData.Folder -> data.folderIndex + 1
+            }
+        } ?: 0
+    }
+
     Card(
         modifier = modifier.padding(5.dp),
         shape = RoundedCornerShape(16.dp),
@@ -527,7 +551,12 @@ private fun FolderEblanApplicationInfoItem(
                         if (folderEblanApplicationInfo.id == eblanApplicationInfo.folderId) {
                             onUpdateEblanApplicationInfo(eblanApplicationInfo.copy(folderId = null))
                         } else {
-                            onUpdateEblanApplicationInfo(eblanApplicationInfo.copy(folderId = folderEblanApplicationInfo.id))
+                            onUpdateEblanApplicationInfo(
+                                eblanApplicationInfo.copy(
+                                    folderIndex = folderIndex,
+                                    folderId = folderEblanApplicationInfo.id,
+                                ),
+                            )
                         }
                     },
                 )
