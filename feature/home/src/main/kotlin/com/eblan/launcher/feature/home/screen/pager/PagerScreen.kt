@@ -1131,6 +1131,7 @@ internal fun PagerScreen(
                 safeDrawingWidth = safeDrawingWidth,
                 screenWidth = screenWidth,
                 folderEblanApplicationInfos = folderEblanApplicationInfos,
+                moveGridItemResult = moveGridItemResult,
                 onDismiss = pagerScreenState::dismissApplicationScreen,
                 onDragEnd = pagerScreenState::handleOnDragEndApplicationScreen,
                 onEditApplicationInfo = onEditApplicationInfo,

@@ -17,6 +17,7 @@
  */
 package com.eblan.launcher.feature.home.screen.application.folder
 
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -49,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderPopupEntry
 import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
+import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
@@ -61,6 +63,7 @@ import kotlin.math.roundToInt
 @Composable
 internal fun FolderApplicationScreen(
     modifier: Modifier = Modifier,
+    sharedTransitionScope: SharedTransitionScope,
     folderEblanApplicationInfoPopup: FolderEblanApplicationInfoPopup,
     paddingValues: PaddingValues,
     safeDrawingHeight: Int,
@@ -78,6 +81,7 @@ internal fun FolderApplicationScreen(
     folderCornerRadius: Int,
     folderCellWidth: Int,
     folderCellHeight: Int,
+    moveGridItemResult: MoveGridItemResult?,
     onDeleteFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
     onUpsertFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
     onUpdateIsVisibleFolders: (Boolean) -> Unit,
@@ -255,6 +259,7 @@ internal fun FolderApplicationScreen(
                         content = {
                             InteractiveFolderEblanApplicationInfoItem(
                                 folderEblanApplicationInfoGridItem = it,
+                                sharedTransitionScope = sharedTransitionScope,
                                 folderBackgroundColor = folderBackgroundColor,
                                 customFolderBackgroundColor = customFolderBackgroundColor,
                                 systemTextColor = systemTextColor,
@@ -263,8 +268,13 @@ internal fun FolderApplicationScreen(
                                 appDrawerSettings = appDrawerSettings,
                                 folderCornerRadius = folderCornerRadius,
                                 isVisibleOverlay = isVisibleOverlay,
+                                isScrollInProgress = folderGridHorizontalPagerState.isScrollInProgress,
+                                isInProgress = isInProgress,
                                 paddingValues = paddingValues,
                                 animations = animations,
+                                moveGridItemResult = moveGridItemResult,
+                                onUpdateIsVisibleFolders = onUpdateIsVisibleFolders,
+                                onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
                             )
                         },
                     )

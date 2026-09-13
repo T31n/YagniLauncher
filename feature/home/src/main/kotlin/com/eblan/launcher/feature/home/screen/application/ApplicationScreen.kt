@@ -154,6 +154,7 @@ internal fun ApplicationScreen(
     safeDrawingWidth: Int,
     screenWidth: Int,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    moveGridItemResult: MoveGridItemResult?,
     onDismiss: () -> Unit,
     onDragEnd: () -> Unit,
     onEditApplicationInfo: (
@@ -347,6 +348,7 @@ internal fun ApplicationScreen(
     if (isVisibleFolders) {
         folderEblanApplicationInfoPopups.forEach { folderEblanApplicationInfoPopup ->
             FolderApplicationScreen(
+                sharedTransitionScope = sharedTransitionScope,
                 folderEblanApplicationInfoPopup = folderEblanApplicationInfoPopup,
                 paddingValues = paddingValues,
                 safeDrawingHeight = safeDrawingHeight,
@@ -364,6 +366,7 @@ internal fun ApplicationScreen(
                 folderCornerRadius = folderCornerRadius,
                 folderCellWidth = folderCellWidth,
                 folderCellHeight = folderCellHeight,
+                moveGridItemResult = moveGridItemResult,
                 onDeleteFolderEblanApplicationInfoPopupEntry = onDeleteFolderEblanApplicationInfoPopupEntry,
                 onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
                 onUpdateIsVisibleFolders = {
