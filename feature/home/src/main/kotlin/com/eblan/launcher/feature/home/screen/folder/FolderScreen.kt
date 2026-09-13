@@ -230,9 +230,10 @@ internal fun FolderScreen(
     }
 
     LaunchedEffect(
-        key1 = folderGridItemPopup,
-        key2 = isFirstFolderGridItem,
-        key3 = animations,
+        folderGridItemPopup,
+        isFirstFolderGridItem,
+        animations,
+        isLastFolderGridItem,
     ) {
         handleIsCloseFolder(
             drag = currentDrag,
@@ -243,6 +244,7 @@ internal fun FolderScreen(
             progress = progress,
             isFirstFolderGridItem = isFirstFolderGridItem,
             animations = animations,
+            isLastFolderGridItem = isLastFolderGridItem,
             onAnimateToScrollToPage = folderGridHorizontalPagerState::animateScrollToPage,
             onDeleteFolderPopupEntry = onDeleteFolderGridItemPopupEntry,
             onMoveFolderGridItemOutsideFolder = onMoveFolderGridItemOutsideFolder,
@@ -503,13 +505,14 @@ private suspend fun handleIsCloseFolder(
     progress: Animatable<Float, AnimationVector1D>,
     isFirstFolderGridItem: Boolean,
     animations: Boolean,
+    isLastFolderGridItem: Boolean,
     onAnimateToScrollToPage: suspend (Int) -> Unit,
     onDeleteFolderPopupEntry: (FolderPopupEntry) -> Unit,
     onMoveFolderGridItemOutsideFolder: (GridItem) -> Unit,
     onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
     onUpdateIsVisibleFolders: (Boolean) -> Unit,
 ) {
-    if (!folderGridItemPopup.folderPopupEntry.isCloseFolder) return
+    if (!folderGridItemPopup.folderPopupEntry.isCloseFolder || !isLastFolderGridItem) return
 
     onAnimateToScrollToPage(0)
 

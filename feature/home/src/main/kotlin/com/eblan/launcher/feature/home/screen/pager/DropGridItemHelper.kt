@@ -125,7 +125,7 @@ internal suspend fun handleDropGridItem(
                 onResetGrid = onResetGrid,
                 onUpdateGridItemsAfterMove = onUpdateGridItemsAfterMove,
                 onUpdateIsDragging = onUpdateIsDragging,
-                onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay
+                onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
             )
 
         is GridItemSource.ExistingFolder ->
@@ -139,7 +139,7 @@ internal suspend fun handleDropGridItem(
                 onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
                 onUpdateGridItemsAfterMove = onUpdateGridItemsAfterMove,
                 onUpdateIsDragging = onUpdateIsDragging,
-                onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay
+                onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
             )
 
         is GridItemSource.New ->
@@ -167,7 +167,7 @@ internal suspend fun handleDropGridItem(
                 onUpdateGridItemsAfterMove = onUpdateGridItemsAfterMove,
                 onUpdateIsDragging = onUpdateIsDragging,
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                onUpdateWidgetGridItem = onUpdateWidgetGridItem
+                onUpdateWidgetGridItem = onUpdateWidgetGridItem,
             )
 
         is GridItemSource.Pin ->
@@ -192,7 +192,7 @@ internal suspend fun handleDropGridItem(
                 onUpdateGridItemsAfterMove = onUpdateGridItemsAfterMove,
                 onUpdateIsDragging = onUpdateIsDragging,
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                onUpdateWidgetGridItem = onUpdateWidgetGridItem
+                onUpdateWidgetGridItem = onUpdateWidgetGridItem,
             )
     }
 }
@@ -743,7 +743,7 @@ private fun handleExistingGridItemSource(
     onResetGrid: () -> Unit,
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
-    onUpdateIsVisibleOverlay: (Boolean) -> Unit
+    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
 ) {
     fun cancel() {
         onUpdateIsVisibleOverlay(false)
@@ -788,7 +788,7 @@ private fun handleExistingFolderGridItemSource(
     onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
-    onUpdateIsVisibleOverlay: (Boolean) -> Unit
+    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
 ) {
     fun cancel() {
         onUpdateIsVisibleOverlay(false)
@@ -849,7 +849,7 @@ private suspend fun handleNewGridItemSource(
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
-    onUpdateWidgetGridItem: (GridItem) -> Unit
+    onUpdateWidgetGridItem: (GridItem) -> Unit,
 ) {
     if (isVisibleOverlay.value &&
         isDragging &&
@@ -860,7 +860,7 @@ private suspend fun handleNewGridItemSource(
             moveGridItemResult = currentMoveGridItemResult,
             onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
             onUpdateIsDragging = onUpdateIsDragging,
-            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay
+            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
         )
     }
 
@@ -870,7 +870,7 @@ private suspend fun handleNewGridItemSource(
             moveGridItemResult = currentMoveGridItemResult,
             onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
             onUpdateIsDragging = onUpdateIsDragging,
-            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay
+            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
         )
     }
 
@@ -950,7 +950,7 @@ private fun handlePinGridItemSource(
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
-    onUpdateWidgetGridItem: (GridItem) -> Unit
+    onUpdateWidgetGridItem: (GridItem) -> Unit,
 ) {
     if (isVisibleOverlay.value &&
         isDragging &&
@@ -961,7 +961,7 @@ private fun handlePinGridItemSource(
             moveGridItemResult = currentMoveGridItemResult,
             onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
             onUpdateIsDragging = onUpdateIsDragging,
-            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay
+            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
         )
     }
 
@@ -971,7 +971,7 @@ private fun handlePinGridItemSource(
             moveGridItemResult = currentMoveGridItemResult,
             onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
             onUpdateIsDragging = onUpdateIsDragging,
-            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay
+            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
         )
     }
 
@@ -1019,7 +1019,7 @@ private fun cancelAndDeleteGridItem(
     moveGridItemResult: MoveGridItemResult,
     onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
-    onUpdateIsVisibleOverlay: (Boolean) -> Unit
+    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
 ) {
     onUpdateIsVisibleOverlay(false)
 
