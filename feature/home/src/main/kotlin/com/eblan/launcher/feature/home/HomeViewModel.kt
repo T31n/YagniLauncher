@@ -742,16 +742,34 @@ internal class HomeViewModel @Inject constructor(
         _folderGridItemPopupEntries.update { emptyList() }
     }
 
-    fun updateGridItemsAfterMoveNewFolder(
-        moveGridItemResult: MoveGridItemResult,
+    fun moveNewFolderGridItem(
         folderGridItems: List<GridItem>,
+        movingGridItem: GridItem,
+        x: Int,
+        y: Int,
+        columns: Int,
+        rows: Int,
+        gridWidth: Int,
+        gridHeight: Int,
     ) {
-        viewModelScope.launch {
-            moveGridItemJob?.cancelAndJoin()
+        moveGridItemJob?.cancel()
+
+        moveGridItemJob = viewModelScope.launch {
+            delay(moveDelay)
 
             gridRepository.upsertGridItems(gridItems = folderGridItems)
 
-            updateGridItemsAfterMoveUseCase(moveGridItemResult = moveGridItemResult)
+            _moveGridItemResult.update {
+                moveGridItemUseCase(
+                    movingGridItem = movingGridItem,
+                    x = x,
+                    y = y,
+                    columns = columns,
+                    rows = rows,
+                    gridWidth = gridWidth,
+                    gridHeight = gridHeight,
+                )
+            }
         }
     }
 }
