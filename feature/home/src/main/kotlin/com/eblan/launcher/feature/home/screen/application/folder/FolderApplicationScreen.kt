@@ -169,15 +169,17 @@ internal fun FolderApplicationScreen(
     }
 
     LaunchedEffect(
-        key1 = folderEblanApplicationInfoPopup,
-        key2 = isFirstFolderEblanApplicationInfo,
-        key3 = animations,
+        folderEblanApplicationInfoPopup,
+        isFirstFolderEblanApplicationInfo,
+        animations,
+        isLastFolderEblanApplicationInfo,
     ) {
         handleIsCloseFolder(
             folderEblanApplicationInfoPopup = folderEblanApplicationInfoPopup,
             progress = progress,
             isFirstFolderGridItem = isFirstFolderEblanApplicationInfo,
             animations = animations,
+            isLastFolderEblanApplicationInfo = isLastFolderEblanApplicationInfo,
             onAnimateToScrollToPage = folderGridHorizontalPagerState::animateScrollToPage,
             onDeleteFolderPopupEntry = onDeleteFolderEblanApplicationInfoPopupEntry,
             onUpdateIsVisibleFolders = onUpdateIsVisibleFolders,
@@ -290,11 +292,12 @@ private suspend fun handleIsCloseFolder(
     progress: Animatable<Float, AnimationVector1D>,
     isFirstFolderGridItem: Boolean,
     animations: Boolean,
+    isLastFolderEblanApplicationInfo: Boolean,
     onAnimateToScrollToPage: suspend (Int) -> Unit,
     onDeleteFolderPopupEntry: (FolderPopupEntry) -> Unit,
     onUpdateIsVisibleFolders: (Boolean) -> Unit,
 ) {
-    if (!folderEblanApplicationInfoPopup.folderPopupEntry.isCloseFolder) return
+    if (!folderEblanApplicationInfoPopup.folderPopupEntry.isCloseFolder || !isLastFolderEblanApplicationInfo) return
 
     onAnimateToScrollToPage(0)
 

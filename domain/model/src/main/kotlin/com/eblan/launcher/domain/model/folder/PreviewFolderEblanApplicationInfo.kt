@@ -20,4 +20,5 @@ package com.eblan.launcher.domain.model.folder
 data class PreviewFolderEblanApplicationInfo(
     val folderEblanApplicationInfo: FolderEblanApplicationInfo,
     val previewFolderGridItems: List<FolderEblanApplicationInfoGridItem>,
+    val folderGridItems: List<FolderEblanApplicationInfoGridItem>,
 )

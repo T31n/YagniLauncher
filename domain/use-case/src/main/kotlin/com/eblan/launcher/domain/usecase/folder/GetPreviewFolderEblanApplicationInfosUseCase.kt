@@ -75,6 +75,7 @@ class GetPreviewFolderEblanApplicationInfosUseCase @Inject constructor(
         return PreviewFolderEblanApplicationInfo(
             folderEblanApplicationInfo = folderEblanApplicationInfo,
             previewFolderGridItems = previewFolderGridItems,
+            folderGridItems = folderEblanApplicationInfoGridItems,
         )
     }
 }

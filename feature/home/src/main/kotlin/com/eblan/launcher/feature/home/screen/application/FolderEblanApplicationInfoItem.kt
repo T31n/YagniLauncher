@@ -496,7 +496,7 @@ private fun getFolderGridItems(
         ),
     )
 
-    previewFolderEblanApplicationInfo.previewFolderGridItems.forEach { folderEblanApplicationInfoGridItem ->
+    previewFolderEblanApplicationInfo.folderGridItems.forEach { folderEblanApplicationInfoGridItem ->
         when (val data = folderEblanApplicationInfoGridItem.data) {
             is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
                 add(
