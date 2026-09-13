@@ -147,14 +147,7 @@ internal fun ApplicationScreen(
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
-    folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
-    folderCellWidth: Int,
-    folderCellHeight: Int,
-    safeDrawingHeight: Int,
-    safeDrawingWidth: Int,
-    screenWidth: Int,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
-    moveGridItemResult: MoveGridItemResult?,
     onDismiss: () -> Unit,
     onDragEnd: () -> Unit,
     onEditApplicationInfo: (
@@ -175,25 +168,16 @@ internal fun ApplicationScreen(
     onWidgets: (EblanApplicationInfoGroup) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
-    onDeleteFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
+    onUpdateIsVisibleFolders: (Boolean) -> Unit,
     onUpsertFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
-    onEditFolderApplicationInfo: (String) -> Unit,
+    onUpdateFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
+    onUpdateFolderPopupBounds: (
+        intOffset: IntOffset,
+        intSize: IntSize,
+    ) -> Unit,
+    onUpdateFolderPopupMenu: (Boolean) -> Unit,
 ) {
     val managedProfileResult by rememberManagedProfileResult()
-
-    var isVisibleFolders by remember { mutableStateOf(false) }
-
-    var showFolderPopupApplicationMenu by remember { mutableStateOf(false) }
-
-    var selectedFolderEblanApplicationInfo by remember {
-        mutableStateOf<FolderEblanApplicationInfo?>(
-            null,
-        )
-    }
-
-    var popupIntOffset by remember { mutableStateOf(IntOffset.Zero) }
-
-    var popupIntSize by remember { mutableStateOf(IntSize.Zero) }
 
     BlurBehindEffect(
         blurBehind = appDrawerSettings.blurBehind,
@@ -255,21 +239,11 @@ internal fun ApplicationScreen(
                     onWidgets = onWidgets,
                     onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                     onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
-                    onUpdateIsVisibleFolders = {
-                        isVisibleFolders = it
-                    },
+                    onUpdateIsVisibleFolders = onUpdateIsVisibleFolders,
                     onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
-                    onUpdateFolderEblanApplicationInfo = {
-                        selectedFolderEblanApplicationInfo = it
-                    },
-                    onUpdateFolderPopupBounds = { intOffset, intSize ->
-                        popupIntOffset = intOffset
-
-                        popupIntSize = intSize
-                    },
-                    onUpdateFolderPopupMenu = {
-                        showFolderPopupApplicationMenu = it
-                    },
+                    onUpdateFolderEblanApplicationInfo = onUpdateFolderEblanApplicationInfo,
+                    onUpdateFolderPopupBounds = onUpdateFolderPopupBounds,
+                    onUpdateFolderPopupMenu = onUpdateFolderPopupMenu,
                 )
             }
 
@@ -343,50 +317,6 @@ internal fun ApplicationScreen(
                 )
             }
         }
-    }
-
-    if (isVisibleFolders) {
-        folderEblanApplicationInfoPopups.forEach { folderEblanApplicationInfoPopup ->
-            FolderApplicationScreen(
-                sharedTransitionScope = sharedTransitionScope,
-                folderEblanApplicationInfoPopup = folderEblanApplicationInfoPopup,
-                paddingValues = paddingValues,
-                safeDrawingHeight = safeDrawingHeight,
-                safeDrawingWidth = safeDrawingWidth,
-                isVisibleOverlay = isVisibleOverlay,
-                screenWidth = screenWidth,
-                folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
-                animations = animations,
-                systemTextColor = systemTextColor,
-                systemCustomTextColor = systemCustomTextColor,
-                previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
-                folderBackgroundColor = folderBackgroundColor,
-                customFolderBackgroundColor = customFolderBackgroundColor,
-                appDrawerSettings = appDrawerSettings,
-                folderCornerRadius = folderCornerRadius,
-                folderCellWidth = folderCellWidth,
-                folderCellHeight = folderCellHeight,
-                moveGridItemResult = moveGridItemResult,
-                onDeleteFolderEblanApplicationInfoPopupEntry = onDeleteFolderEblanApplicationInfoPopupEntry,
-                onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
-                onUpdateIsVisibleFolders = {
-                    isVisibleFolders = it
-                },
-            )
-        }
-    }
-
-    if (showFolderPopupApplicationMenu && selectedFolderEblanApplicationInfo != null) {
-        FolderApplicationInfoPopup(
-            folderEblanApplicationInfo = selectedFolderEblanApplicationInfo,
-            popupIntOffset = popupIntOffset,
-            popupIntSize = popupIntSize,
-            paddingValues = paddingValues,
-            onDismissRequest = {
-                showFolderPopupApplicationMenu = false
-            },
-            onEditFolderApplicationInfo = onEditFolderApplicationInfo,
-        )
     }
 }
 

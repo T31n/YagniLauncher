@@ -57,6 +57,7 @@ import com.eblan.launcher.common.AndroidImageSerializer
 import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
@@ -307,6 +308,15 @@ internal class PagerScreenState(
             !showFolderGridItemPopup &&
             eblanApplicationInfoGroup == null
 
+    var folderEblanApplicationInfo by mutableStateOf<FolderEblanApplicationInfo?>(null)
+        private set
+
+    var showFolderApplicationPopup by mutableStateOf(false)
+        private set
+
+    var isCloseFolderApplicationPopup by mutableStateOf(false)
+        private set
+
     private val touchSlop = with(density) {
         50.dp.toPx()
     }
@@ -447,6 +457,27 @@ internal class PagerScreenState(
         showFolderGridItemPopup = false
 
         isCloseFolderGridItemPopup = false
+    }
+
+    fun showFolderApplicationPopup(
+        intOffset: IntOffset,
+        intSize: IntSize,
+    ) {
+        popupIntOffset = intOffset
+
+        popupIntSize = intSize
+
+        showFolderApplicationPopup = true
+    }
+
+    fun dismissFolderApplicationPopup() {
+        popupIntOffset = null
+
+        popupIntSize = null
+
+        showFolderApplicationPopup = false
+
+        isCloseFolderApplicationPopup = false
     }
 
     fun updateIsDragging(value: Boolean) {
@@ -1096,6 +1127,14 @@ internal class PagerScreenState(
 
     fun updateIsVisibleFolders(value: Boolean) {
         isVisibleFolders = value
+    }
+
+    fun updateShowFolderApplicationPopup(value: Boolean) {
+        showFolderApplicationPopup = value
+    }
+
+    fun updateFolderEblanApplicationInfo(value: FolderEblanApplicationInfo?) {
+        folderEblanApplicationInfo = value
     }
 }
 

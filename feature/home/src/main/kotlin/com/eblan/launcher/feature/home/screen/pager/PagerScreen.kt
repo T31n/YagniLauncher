@@ -130,6 +130,8 @@ import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.GridItemSource
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.screen.application.ApplicationScreen
+import com.eblan.launcher.feature.home.screen.application.folder.FolderApplicationInfoPopup
+import com.eblan.launcher.feature.home.screen.application.folder.FolderApplicationScreen
 import com.eblan.launcher.feature.home.screen.folder.FolderGridItemPopup
 import com.eblan.launcher.feature.home.screen.folder.FolderScreen
 import com.eblan.launcher.feature.home.screen.resize.ResizeScreen
@@ -1124,14 +1126,7 @@ internal fun PagerScreen(
                 folderCornerRadius = homeSettings.folderCornerRadius,
                 folderBackgroundColor = homeSettings.folderBackgroundColor,
                 customFolderBackgroundColor = homeSettings.customFolderBackgroundColor,
-                folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
-                folderCellWidth = homeSettings.folderCellWidth,
-                folderCellHeight = homeSettings.folderCellHeight,
-                safeDrawingHeight = safeDrawingHeight,
-                safeDrawingWidth = safeDrawingWidth,
-                screenWidth = screenWidth,
                 folderEblanApplicationInfos = folderEblanApplicationInfos,
-                moveGridItemResult = moveGridItemResult,
                 onDismiss = pagerScreenState::dismissApplicationScreen,
                 onDragEnd = pagerScreenState::handleOnDragEndApplicationScreen,
                 onEditApplicationInfo = onEditApplicationInfo,
@@ -1146,9 +1141,11 @@ internal fun PagerScreen(
                 onWidgets = pagerScreenState::openAppWidgetScreen,
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                 onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
-                onDeleteFolderEblanApplicationInfoPopupEntry = onDeleteFolderEblanApplicationInfoPopupEntry,
                 onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
-                onEditFolderApplicationInfo = onEditFolderApplicationInfo,
+                onUpdateIsVisibleFolders = pagerScreenState::updateIsVisibleFolders,
+                onUpdateFolderEblanApplicationInfo = pagerScreenState::updateFolderEblanApplicationInfo,
+                onUpdateFolderPopupBounds = pagerScreenState::showFolderApplicationPopup,
+                onUpdateFolderPopupMenu = pagerScreenState::updateShowFolderApplicationPopup,
             )
         }
 
@@ -1245,6 +1242,48 @@ internal fun PagerScreen(
                 onResizeEnd = onResizeEnd,
                 onResizeGridItem = onResizeGridItem,
                 onUpdateIsResizing = pagerScreenState::updateIsResizing,
+            )
+        }
+
+        if (pagerScreenState.isVisibleFolders) {
+            folderEblanApplicationInfoPopups.forEach { folderEblanApplicationInfoPopup ->
+                FolderApplicationScreen(
+                    sharedTransitionScope = this,
+                    folderEblanApplicationInfoPopup = folderEblanApplicationInfoPopup,
+                    paddingValues = paddingValues,
+                    safeDrawingHeight = safeDrawingHeight,
+                    safeDrawingWidth = safeDrawingWidth,
+                    isVisibleOverlay = isVisibleOverlay,
+                    screenWidth = screenWidth,
+                    folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+                    animations = experimentalSettings.gridItemAnimation,
+                    systemTextColor = textColor,
+                    systemCustomTextColor = homeSettings.gridItemSettings.customTextColor,
+                    previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+                    folderBackgroundColor = homeSettings.folderBackgroundColor,
+                    customFolderBackgroundColor = homeSettings.customFolderBackgroundColor,
+                    appDrawerSettings = appDrawerSettings,
+                    folderCornerRadius = homeSettings.folderCornerRadius,
+                    folderCellWidth = homeSettings.folderCellWidth,
+                    folderCellHeight = homeSettings.folderCellHeight,
+                    moveGridItemResult = moveGridItemResult,
+                    onDeleteFolderEblanApplicationInfoPopupEntry = onDeleteFolderEblanApplicationInfoPopupEntry,
+                    onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
+                    onUpdateIsVisibleFolders = pagerScreenState::updateIsVisibleFolders,
+                )
+            }
+        }
+
+        if (pagerScreenState.showFolderApplicationPopup && pagerScreenState.folderEblanApplicationInfo != null) {
+            FolderApplicationInfoPopup(
+                folderEblanApplicationInfo = pagerScreenState.folderEblanApplicationInfo,
+                popupIntOffset = pagerScreenState.popupIntOffset,
+                popupIntSize = pagerScreenState.popupIntSize,
+                paddingValues = paddingValues,
+                onDismissRequest = {
+                    pagerScreenState.updateShowFolderApplicationPopup(false)
+                },
+                onEditFolderApplicationInfo = onEditFolderApplicationInfo,
             )
         }
 

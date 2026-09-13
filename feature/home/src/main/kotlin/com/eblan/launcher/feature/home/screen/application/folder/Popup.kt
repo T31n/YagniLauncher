@@ -54,12 +54,16 @@ import com.eblan.launcher.feature.home.component.popup
 internal fun FolderApplicationInfoPopup(
     modifier: Modifier = Modifier,
     folderEblanApplicationInfo: FolderEblanApplicationInfo?,
-    popupIntOffset: IntOffset,
-    popupIntSize: IntSize,
+    popupIntOffset: IntOffset?,
+    popupIntSize: IntSize?,
     paddingValues: PaddingValues,
     onDismissRequest: () -> Unit,
     onEditFolderApplicationInfo: (String) -> Unit,
 ) {
+    requireNotNull(popupIntOffset)
+
+    requireNotNull(popupIntSize)
+
     requireNotNull(folderEblanApplicationInfo)
 
     val density = LocalDensity.current
