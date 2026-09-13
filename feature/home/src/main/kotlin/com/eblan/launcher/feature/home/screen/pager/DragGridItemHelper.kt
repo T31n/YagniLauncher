@@ -217,6 +217,7 @@ internal fun handleDragGridItem(
         is GridItemSource.Existing,
         is GridItemSource.ExistingFolder,
         is GridItemSource.New,
+        is GridItemSource.NewFolder,
         is GridItemSource.Pin,
         -> {
             if (gridDragPosition.isOnDock) {
@@ -352,7 +353,9 @@ private fun getMoveGridItem(
         )
     }
 
-    is GridItemSource.New, is GridItemSource.Pin,
+    is GridItemSource.New,
+    is GridItemSource.NewFolder,
+    is GridItemSource.Pin,
     -> {
         getMoveNewGridItem(
             associate = associate,

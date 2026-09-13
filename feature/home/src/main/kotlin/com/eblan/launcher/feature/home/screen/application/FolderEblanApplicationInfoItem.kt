@@ -69,14 +69,21 @@ import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
 import com.eblan.launcher.domain.model.folder.FolderPopupEntry
 import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
+import com.eblan.launcher.domain.model.grid.Associate
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
+import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
+import com.eblan.launcher.domain.model.userdata.EblanAction
+import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
 import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.model.Drag
+import com.eblan.launcher.feature.home.model.GridItemSource
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.getHorizontalAlignment
 import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
@@ -84,7 +91,6 @@ import com.eblan.launcher.feature.home.util.getVerticalArrangement
 import com.eblan.launcher.feature.home.util.handleOnPress
 import kotlinx.coroutines.launch
 import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
 
 @Composable
 internal fun FolderEblanApplicationInfoItem(
@@ -102,6 +108,7 @@ internal fun FolderEblanApplicationInfoItem(
     isScrollInProgress: Boolean,
     isSwiping: Boolean,
     drag: Drag,
+    previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
     onUpdateIsVisibleFolders: (Boolean) -> Unit,
     onUpsertFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
     onUpdateImageBitmap: (ImageBitmap) -> Unit,
@@ -117,6 +124,10 @@ internal fun FolderEblanApplicationInfoItem(
         intOffset: IntOffset,
         intSize: IntSize,
     ) -> Unit,
+    onDismiss: () -> Unit,
+    onUpdateGridItemSource: (GridItemSource) -> Unit,
+    onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
+    onUpdateIsDragging: (Boolean) -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -162,15 +173,23 @@ internal fun FolderEblanApplicationInfoItem(
         key1 = drag,
         key2 = isLongPress,
     ) {
-//        handleDragFolderEblanApplicationInfoItem(
-//            drag = drag,
-//            isLongPress = isLongPress,
-//            isSwiping = isSwiping,
-//            onUpdateIsLongPress = {
-//                isLongPress = it
-//            },
-//            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-//        )
+        handleDragFolderEblanApplicationInfoItem(
+            drag = drag,
+            appDrawerSettings = appDrawerSettings,
+            folderEblanApplicationInfo = previewFolderEblanApplicationInfo.folderEblanApplicationInfo,
+            isLongPress = isLongPress,
+            isSwiping = isSwiping,
+            previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+            onUpdateIsLongPress = {
+                isLongPress = it
+            },
+            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+            onUpdateFolderPopupMenu = onUpdateFolderPopupMenu,
+            onDismiss = onDismiss,
+            onUpdateGridItemSource = onUpdateGridItemSource,
+            onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+            onUpdateIsDragging = onUpdateIsDragging,
+        )
     }
 
     Column(
@@ -384,6 +403,7 @@ private fun PreviewFolderEblanApplicationInfoItem(
 @OptIn(ExperimentalUuidApi::class)
 internal fun handleDragFolderEblanApplicationInfoItem(
     drag: Drag,
+    appDrawerSettings: AppDrawerSettings,
     folderEblanApplicationInfo: FolderEblanApplicationInfo,
     isLongPress: Boolean,
     isSwiping: Boolean,
@@ -392,6 +412,9 @@ internal fun handleDragFolderEblanApplicationInfoItem(
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onUpdateFolderPopupMenu: (Boolean) -> Unit,
     onDismiss: () -> Unit,
+    onUpdateGridItemSource: (GridItemSource) -> Unit,
+    onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
+    onUpdateIsDragging: (Boolean) -> Unit,
 ) {
     if (!isLongPress) return
 
@@ -401,7 +424,25 @@ internal fun handleDragFolderEblanApplicationInfoItem(
 
             onDismiss()
 
-            val pagerScreenId = Uuid.random().toHexString()
+            val folderGridItems = getFolderGridItems(
+                appDrawerSettings = appDrawerSettings,
+                icon = folderEblanApplicationInfo.icon,
+                id = folderEblanApplicationInfo.id,
+                label = folderEblanApplicationInfo.label,
+                previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+            )
+
+            onUpdateGridItemSource(GridItemSource.NewFolder(folderGridItems = folderGridItems))
+
+            onUpdateMoveGridItemResult(
+                MoveGridItemResult(
+                    isSuccess = false,
+                    movingGridItem = folderGridItems.first(),
+                    conflictingGridItem = null,
+                ),
+            )
+
+            onUpdateIsDragging(true)
         }
 
         Drag.Cancel, Drag.End -> {
@@ -413,5 +454,89 @@ internal fun handleDragFolderEblanApplicationInfoItem(
         }
 
         else -> Unit
+    }
+}
+
+private fun getFolderGridItems(
+    appDrawerSettings: AppDrawerSettings,
+    icon: String?,
+    id: String,
+    label: String,
+    previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
+): List<GridItem> = buildList {
+    val previewFolderEblanApplicationInfo =
+        previewFolderEblanApplicationInfos[id] ?: return@buildList
+
+    val eblanAction = EblanAction(
+        eblanActionType = EblanActionType.None,
+        serialNumber = 0L,
+        componentName = "",
+    )
+
+    add(
+        GridItem(
+            id = id,
+            page = 0,
+            startColumn = -1,
+            startRow = -1,
+            columnSpan = 1,
+            rowSpan = 1,
+            data = GridItemData.Folder(
+                label = label,
+                icon = icon,
+                index = -1,
+                folderId = null,
+            ),
+            associate = Associate.Grid,
+            override = false,
+            gridItemSettings = appDrawerSettings.gridItemSettings,
+            doubleTap = eblanAction,
+            swipeUp = eblanAction,
+            swipeDown = eblanAction,
+        ),
+    )
+
+    previewFolderEblanApplicationInfo.previewFolderGridItems.forEach { folderEblanApplicationInfoGridItem ->
+        when (val data = folderEblanApplicationInfoGridItem.data) {
+            is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
+                add(
+                    GridItem(
+                        id = folderEblanApplicationInfoGridItem.id,
+                        page = 0,
+                        startColumn = -1,
+                        startRow = -1,
+                        columnSpan = 1,
+                        rowSpan = 1,
+                        data = GridItemData.ApplicationInfo(
+                            serialNumber = data.serialNumber,
+                            componentName = data.componentName,
+                            packageName = data.packageName,
+                            icon = data.icon,
+                            label = data.label,
+                            customIcon = data.customIcon,
+                            customLabel = data.customLabel,
+                            index = data.folderIndex,
+                            folderId = data.folderId,
+                        ),
+                        associate = Associate.Grid,
+                        override = false,
+                        gridItemSettings = appDrawerSettings.gridItemSettings,
+                        doubleTap = eblanAction,
+                        swipeUp = eblanAction,
+                        swipeDown = eblanAction,
+                    ),
+                )
+            }
+
+            is FolderEblanApplicationInfoGridItemData.Folder -> {
+                getFolderGridItems(
+                    appDrawerSettings = appDrawerSettings,
+                    icon = data.icon,
+                    id = folderEblanApplicationInfoGridItem.id,
+                    label = data.label,
+                    previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+                )
+            }
+        }
     }
 }

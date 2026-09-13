@@ -170,6 +170,10 @@ internal suspend fun handleDropGridItem(
                 onUpdateWidgetGridItem = onUpdateWidgetGridItem,
             )
 
+        is GridItemSource.NewFolder -> {
+            TODO("We upsert the grid items")
+        }
+
         is GridItemSource.Pin ->
             handlePinGridItemSource(
                 androidAppWidgetHostWrapper = androidAppWidgetHostWrapper,

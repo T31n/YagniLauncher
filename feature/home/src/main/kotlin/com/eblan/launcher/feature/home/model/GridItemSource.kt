@@ -18,6 +18,7 @@
 package com.eblan.launcher.feature.home.model
 
 import android.content.pm.LauncherApps.PinItemRequest
+import com.eblan.launcher.domain.model.grid.GridItem
 
 internal sealed interface GridItemSource {
     data object Existing : GridItemSource
@@ -25,6 +26,8 @@ internal sealed interface GridItemSource {
     data object ExistingFolder : GridItemSource
 
     data object New : GridItemSource
+
+    data class NewFolder(val folderGridItems: List<GridItem>) : GridItemSource
 
     data class Pin(val pinItemRequest: PinItemRequest) : GridItemSource
 }

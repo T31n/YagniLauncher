@@ -660,6 +660,11 @@ private fun EblanApplicationInfos(
                             onUpdateFolderEblanApplicationInfo = onUpdateFolderEblanApplicationInfo,
                             onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                             onUpdateFolderPopupBounds = onUpdateFolderPopupBounds,
+                            previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+                            onDismiss = onDismiss,
+                            onUpdateGridItemSource = onUpdateGridItemSource,
+                            onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+                            onUpdateIsDragging = onUpdateIsDragging,
                         )
                     }
 
