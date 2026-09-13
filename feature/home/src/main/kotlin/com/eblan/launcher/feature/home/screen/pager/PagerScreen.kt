@@ -101,6 +101,7 @@ import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderPopupEntry
 import com.eblan.launcher.domain.model.folder.PreviewFolder
@@ -190,6 +191,7 @@ internal fun PagerScreen(
     iconPackInfoFilePaths: Map<String, String?>,
     previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
     folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
+    folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     onDeleteGridItem: (GridItem) -> Unit,
     onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
@@ -1128,6 +1130,7 @@ internal fun PagerScreen(
                 safeDrawingHeight = safeDrawingHeight,
                 safeDrawingWidth = safeDrawingWidth,
                 screenWidth = screenWidth,
+                folderEblanApplicationInfos = folderEblanApplicationInfos,
                 onDismiss = pagerScreenState::dismissApplicationScreen,
                 onDragEnd = pagerScreenState::handleOnDragEndApplicationScreen,
                 onEditApplicationInfo = onEditApplicationInfo,

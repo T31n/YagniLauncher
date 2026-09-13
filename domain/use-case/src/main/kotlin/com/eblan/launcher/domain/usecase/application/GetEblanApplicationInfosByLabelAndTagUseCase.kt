@@ -87,7 +87,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
     }.flowOn(defaultDispatcher)
 
     private suspend fun getVerticalOrListEblanApplicationInfosByLabel(
-        eblanApplicationInfos: MutableList<EblanApplicationInfo>,
+        eblanApplicationInfos: List<EblanApplicationInfo>,
         iconPackInfoPackageName: String,
     ): GetEblanApplicationInfosByLabelAndTag {
         val groupedEblanApplicationInfos = eblanApplicationInfos.groupBy {
@@ -119,7 +119,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
     private suspend fun getHorizontalEblanApplicationInfosByLabel(
         horizontalAppDrawerColumns: Int,
         horizontalAppDrawerRows: Int,
-        eblanApplicationInfos: MutableList<EblanApplicationInfo>,
+        eblanApplicationInfos: List<EblanApplicationInfo>,
         iconPackInfoPackageName: String,
     ): GetEblanApplicationInfosByLabelAndTag {
         val groupedEblanApplicationInfos = eblanApplicationInfos.groupBy {
@@ -156,7 +156,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
         excludeTaggedApps: Boolean,
         tagId: Long?,
         eblanApplicationInfos: List<EblanApplicationInfo>,
-    ): MutableList<EblanApplicationInfo> {
+    ): List<EblanApplicationInfo> {
         val eblanApplicationInfosByTag = when {
             tagId != null ->
                 eblanApplicationInfoRepository.getEblanApplicationInfosByTagId(id = tagId)
@@ -165,7 +165,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
                 eblanApplicationInfoRepository.getEblanApplicationInfosWithoutTag()
 
             else -> eblanApplicationInfos
-        }.filterNot { it.isHidden }
+        }.filterNot { it.isHidden && it.folderId != null }
 
         val eblanApplicationInfosByLabel = eblanApplicationInfosByTag.filter {
             val currentLabel = it.customLabel ?: it.label

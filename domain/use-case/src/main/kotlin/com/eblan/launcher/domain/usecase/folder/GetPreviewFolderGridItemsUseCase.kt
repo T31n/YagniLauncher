@@ -60,8 +60,8 @@ class GetPreviewFolderGridItemsUseCase @Inject constructor(
             } + shortcutInfoGridItems.map { it.asGridItem() } +
                 shortcutConfigGridItems.map { it.asGridItem() } +
                 folderGridItems.map { it.asGridItem() }
-            ).sortedBy { gridItem ->
-            when (val data = gridItem.data) {
+            ).sortedBy {
+            when (val data = it.data) {
                 is GridItemData.ApplicationInfo -> data.index
                 is GridItemData.ShortcutInfo -> data.index
                 is GridItemData.ShortcutConfig -> data.index

@@ -19,6 +19,7 @@ package com.eblan.launcher.domain.usecase.folder
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoWrapper
 import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
 import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
@@ -54,10 +55,17 @@ class GetPreviewFolderEblanApplicationInfosUseCase @Inject constructor(
         maxFolderColumns: Int,
         maxFolderRows: Int,
     ): PreviewFolderEblanApplicationInfo {
-        val folderEblanApplicationInfoGridItems = folderEblanApplicationInfos.map {
-            it.asFolderEblanApplicationInfoGridItem()
-        } + eblanApplicationInfos.map {
-            it.asFolderEblanApplicationInfoGridItem()
+        val folderEblanApplicationInfoGridItems = (
+            folderEblanApplicationInfos.map {
+                it.asFolderEblanApplicationInfoGridItem()
+            } + eblanApplicationInfos.map {
+                it.asFolderEblanApplicationInfoGridItem()
+            }
+            ).sortedBy {
+            when (val data = it.data) {
+                is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> data.folderIndex
+                is FolderEblanApplicationInfoGridItemData.Folder -> data.folderIndex
+            }
         }
 
         val (columns, rows) = getGridDimension(

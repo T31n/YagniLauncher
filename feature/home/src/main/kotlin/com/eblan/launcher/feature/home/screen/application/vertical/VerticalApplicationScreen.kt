@@ -126,6 +126,7 @@ internal fun VerticalApplicationScreen(
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
+    folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     onDismiss: () -> Unit,
     onDragEnd: () -> Unit,
     onEditApplicationInfo: (
@@ -273,6 +274,7 @@ internal fun VerticalApplicationScreen(
                 folderCornerRadius = folderCornerRadius,
                 folderBackgroundColor = folderBackgroundColor,
                 customFolderBackgroundColor = customFolderBackgroundColor,
+                folderEblanApplicationInfos = folderEblanApplicationInfos,
                 onDismiss = onDismiss,
                 onDragEnd = onDragEnd,
                 onUpdateGridItemSource = onUpdateGridItemSource,
@@ -377,6 +379,7 @@ private fun EblanApplicationInfosPage(
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
+    folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     onDismiss: () -> Unit,
     onDragEnd: () -> Unit,
     onUpdateGridItemSource: (GridItemSource) -> Unit,
@@ -468,6 +471,7 @@ private fun EblanApplicationInfosPage(
                 folderCornerRadius = folderCornerRadius,
                 folderBackgroundColor = folderBackgroundColor,
                 customFolderBackgroundColor = customFolderBackgroundColor,
+                folderEblanApplicationInfos = folderEblanApplicationInfos,
                 onDismiss = onDismiss,
                 onDragEnd = onDragEnd,
                 onUpdateGridItemSource = onUpdateGridItemSource,
@@ -540,6 +544,7 @@ private fun EblanApplicationInfos(
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
+    folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     onDismiss: () -> Unit,
     onDragEnd: () -> Unit,
     onUpdateGridItemSource: (GridItemSource) -> Unit,
@@ -636,10 +641,10 @@ private fun EblanApplicationInfos(
         ) {
             when (eblanUserPageKey.eblanUser.eblanUserType) {
                 EblanUserType.Personal -> {
-                    items(items = previewFolderEblanApplicationInfos.values.toList()) {
+                    items(items = folderEblanApplicationInfos) {
                         FolderEblanApplicationInfoItem(
                             sharedTransitionScope = sharedTransitionScope,
-                            previewFolderEblanApplicationInfo = it,
+                            folderEblanApplicationInfo = it,
                             appDrawerSettings = appDrawerSettings,
                             isVisibleOverlay = isVisibleOverlay,
                             systemTextColor = systemTextColor,

@@ -43,6 +43,7 @@ import com.eblan.launcher.domain.model.PageItem
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderPopupEntry
 import com.eblan.launcher.domain.model.folder.PreviewFolder
@@ -122,6 +123,8 @@ internal fun HomeRoute(
 
     val folderEblanApplicationInfoPopups by viewModel.folderEblanApplicationInfoPopups.collectAsStateWithLifecycle()
 
+    val folderEblanApplicationInfos by viewModel.folderEblanApplicationInfos.collectAsStateWithLifecycle()
+
     HomeScreen(
         modifier = modifier,
         configureResultCode = configureResultCode,
@@ -144,6 +147,7 @@ internal fun HomeRoute(
         previewFolderGridItems = previewFolderGridItems,
         previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
         folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+        folderEblanApplicationInfos = folderEblanApplicationInfos,
         onResetGrid = viewModel::resetGrid,
         onDeleteGridItem = viewModel::deleteGridItem,
         onResetGridAfterDeleteGridItem = viewModel::resetGridAfterDeleteGridItem,
@@ -213,6 +217,7 @@ internal fun HomeScreen(
     previewFolderGridItems: Map<String, PreviewFolder>,
     previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
     folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
+    folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     onResetGrid: () -> Unit,
     onDeleteGridItem: (GridItem) -> Unit,
     onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
@@ -344,6 +349,7 @@ internal fun HomeScreen(
                 previewFolderGridItems = previewFolderGridItems,
                 previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
                 folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+                folderEblanApplicationInfos = folderEblanApplicationInfos,
                 onResetGrid = onResetGrid,
                 onDeleteGridItem = onDeleteGridItem,
                 onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
@@ -418,6 +424,7 @@ private fun Success(
     previewFolderGridItems: Map<String, PreviewFolder>,
     previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
     folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
+    folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     onResetGrid: () -> Unit,
     onDeleteGridItem: (GridItem) -> Unit,
     onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
@@ -550,6 +557,7 @@ private fun Success(
                     iconPackInfoFilePaths = homeData.iconPackInfoFilePaths,
                     previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
                     folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+                    folderEblanApplicationInfos = folderEblanApplicationInfos,
                     onDeleteGridItem = onDeleteGridItem,
                     onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
                     onUpdateGridItemsAfterMove = onUpdateGridItemsAfterMove,

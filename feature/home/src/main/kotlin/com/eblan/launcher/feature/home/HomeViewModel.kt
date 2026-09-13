@@ -40,6 +40,7 @@ import com.eblan.launcher.domain.usecase.application.GetEblanApplicationInfosByL
 import com.eblan.launcher.domain.usecase.application.GetEblanShortcutConfigsByLabelUseCase
 import com.eblan.launcher.domain.usecase.application.GetEblanShortcutInfosUseCase
 import com.eblan.launcher.domain.usecase.folder.GetFolderEblanApplicationInfosByEntryUseCase
+import com.eblan.launcher.domain.usecase.folder.GetFolderEblanApplicationInfosUseCase
 import com.eblan.launcher.domain.usecase.folder.GetFolderGridItemsByEntryUseCase
 import com.eblan.launcher.domain.usecase.folder.GetPreviewFolderEblanApplicationInfosUseCase
 import com.eblan.launcher.domain.usecase.folder.GetPreviewFolderGridItemsUseCase
@@ -107,6 +108,7 @@ internal class HomeViewModel @Inject constructor(
     getPreviewFolderGridItemsUseCase: GetPreviewFolderGridItemsUseCase,
     getPreviewFolderEblanApplicationInfosUseCase: GetPreviewFolderEblanApplicationInfosUseCase,
     getFolderEblanApplicationInfosByEntryUseCase: GetFolderEblanApplicationInfosByEntryUseCase,
+    getFolderEblanApplicationInfosUseCase: GetFolderEblanApplicationInfosUseCase,
 ) : ViewModel() {
     val homeUiState = getHomeDataUseCase().map(HomeUiState::Success).stateIn(
         scope = viewModelScope,
@@ -235,6 +237,12 @@ internal class HomeViewModel @Inject constructor(
     val folderEblanApplicationInfoPopups = getFolderEblanApplicationInfosByEntryUseCase(
         folderPopupEntriesFlow = _folderEblanApplicationInfoPopupEntries,
     ).stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = emptyList(),
+    )
+
+    val folderEblanApplicationInfos = getFolderEblanApplicationInfosUseCase().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = emptyList(),

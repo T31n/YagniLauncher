@@ -153,6 +153,7 @@ internal fun ApplicationScreen(
     safeDrawingHeight: Int,
     safeDrawingWidth: Int,
     screenWidth: Int,
+    folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     onDismiss: () -> Unit,
     onDragEnd: () -> Unit,
     onEditApplicationInfo: (
@@ -238,6 +239,7 @@ internal fun ApplicationScreen(
                     folderCornerRadius = folderCornerRadius,
                     folderBackgroundColor = folderBackgroundColor,
                     customFolderBackgroundColor = customFolderBackgroundColor,
+                    folderEblanApplicationInfos = folderEblanApplicationInfos,
                     onDismiss = onDismiss,
                     onDragEnd = onDragEnd,
                     onEditApplicationInfo = onEditApplicationInfo,

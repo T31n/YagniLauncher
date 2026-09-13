@@ -96,7 +96,7 @@ import kotlin.uuid.ExperimentalUuidApi
 internal fun FolderEblanApplicationInfoItem(
     modifier: Modifier = Modifier,
     sharedTransitionScope: SharedTransitionScope,
-    previewFolderEblanApplicationInfo: PreviewFolderEblanApplicationInfo,
+    folderEblanApplicationInfo: FolderEblanApplicationInfo,
     appDrawerSettings: AppDrawerSettings,
     isVisibleOverlay: Boolean,
     systemTextColor: TextColor,
@@ -150,7 +150,7 @@ internal fun FolderEblanApplicationInfoItem(
 
     val maxLines = if (appDrawerSettings.gridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
 
-    val icon = previewFolderEblanApplicationInfo.folderEblanApplicationInfo.icon
+    val icon = folderEblanApplicationInfo.icon
 
     val horizontalAlignment =
         getHorizontalAlignment(horizontalAlignment = appDrawerSettings.gridItemSettings.horizontalAlignment)
@@ -163,7 +163,7 @@ internal fun FolderEblanApplicationInfoItem(
     val alpha = if (isLongPress) 0f else 1f
 
     val sharedElementKey = SharedElementKey(
-        id = previewFolderEblanApplicationInfo.folderEblanApplicationInfo.id,
+        id = folderEblanApplicationInfo.id,
         parent = SharedElementKey.Parent.SwipeY,
     )
 
@@ -176,7 +176,7 @@ internal fun FolderEblanApplicationInfoItem(
         handleDragFolderEblanApplicationInfoItem(
             drag = drag,
             appDrawerSettings = appDrawerSettings,
-            folderEblanApplicationInfo = previewFolderEblanApplicationInfo.folderEblanApplicationInfo,
+            folderEblanApplicationInfo = folderEblanApplicationInfo,
             isLongPress = isLongPress,
             isSwiping = isSwiping,
             previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
@@ -210,7 +210,7 @@ internal fun FolderEblanApplicationInfoItem(
 
                             onUpsertFolderEblanApplicationInfoPopupEntry(
                                 FolderPopupEntry(
-                                    id = previewFolderEblanApplicationInfo.folderEblanApplicationInfo.id,
+                                    id = folderEblanApplicationInfo.id,
                                     x = intOffset.x,
                                     y = intOffset.y,
                                     width = intSize.width,
@@ -226,7 +226,7 @@ internal fun FolderEblanApplicationInfoItem(
                         {
                             scope.launch {
                                 handleOnLongPressEblanApplicationInfoItem(
-                                    item = previewFolderEblanApplicationInfo.folderEblanApplicationInfo,
+                                    item = folderEblanApplicationInfo,
                                     graphicsLayer = graphicsLayer,
                                     intOffset = intOffset,
                                     intSize = intSize,
@@ -306,7 +306,7 @@ internal fun FolderEblanApplicationInfoItem(
             ) {
                 PreviewFolderGridLayout(
                     modifier = Modifier.fillMaxSize(),
-                    gridItems = previewFolderEblanApplicationInfo.previewFolderGridItems,
+                    gridItems = previewFolderEblanApplicationInfos[folderEblanApplicationInfo.id]?.previewFolderGridItems,
                     slotId = { it.id },
                     content = {
                         PreviewFolderEblanApplicationInfoItem(
@@ -327,7 +327,7 @@ internal fun FolderEblanApplicationInfoItem(
 
             Text(
                 modifier = Modifier.alpha(alpha),
-                text = previewFolderEblanApplicationInfo.folderEblanApplicationInfo.label,
+                text = folderEblanApplicationInfo.label,
                 color = textColor,
                 textAlign = TextAlign.Center,
                 maxLines = maxLines,
@@ -537,8 +537,8 @@ private fun getFolderGridItems(
                     data = GridItemData.Folder(
                         label = data.label,
                         icon = data.icon,
-                        index = -1,
-                        folderId = null,
+                        index = data.folderIndex,
+                        folderId = data.folderId,
                     ),
                     associate = Associate.Grid,
                     override = false,
