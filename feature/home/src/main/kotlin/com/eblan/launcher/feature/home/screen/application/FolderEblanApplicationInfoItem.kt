@@ -84,6 +84,7 @@ import com.eblan.launcher.feature.home.util.getVerticalArrangement
 import com.eblan.launcher.feature.home.util.handleOnPress
 import kotlinx.coroutines.launch
 import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 @Composable
 internal fun FolderEblanApplicationInfoItem(
@@ -161,15 +162,15 @@ internal fun FolderEblanApplicationInfoItem(
         key1 = drag,
         key2 = isLongPress,
     ) {
-        handleDragFolderEblanApplicationInfoItem(
-            drag = drag,
-            isLongPress = isLongPress,
-            isSwiping = isSwiping,
-            onUpdateIsLongPress = {
-                isLongPress = it
-            },
-            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-        )
+//        handleDragFolderEblanApplicationInfoItem(
+//            drag = drag,
+//            isLongPress = isLongPress,
+//            isSwiping = isSwiping,
+//            onUpdateIsLongPress = {
+//                isLongPress = it
+//            },
+//            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+//        )
     }
 
     Column(
@@ -383,16 +384,24 @@ private fun PreviewFolderEblanApplicationInfoItem(
 @OptIn(ExperimentalUuidApi::class)
 internal fun handleDragFolderEblanApplicationInfoItem(
     drag: Drag,
+    folderEblanApplicationInfo: FolderEblanApplicationInfo,
     isLongPress: Boolean,
     isSwiping: Boolean,
+    previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
     onUpdateIsLongPress: (Boolean) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
+    onUpdateFolderPopupMenu: (Boolean) -> Unit,
+    onDismiss: () -> Unit,
 ) {
     if (!isLongPress) return
 
     when (drag) {
         Drag.Dragging -> {
-            // TODO
+            onUpdateFolderPopupMenu(false)
+
+            onDismiss()
+
+            val pagerScreenId = Uuid.random().toHexString()
         }
 
         Drag.Cancel, Drag.End -> {

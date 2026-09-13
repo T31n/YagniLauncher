@@ -496,7 +496,7 @@ internal suspend fun <T> handleOnLongPressEblanApplicationInfoItem(
 
     onUpdateIsLongPress(true)
 
-    keyboardController?.hide()
-
     onUpdateIsVisibleOverlay(true)
+
+    keyboardController?.hide()
 }

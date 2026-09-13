@@ -87,7 +87,7 @@ internal suspend fun onLongPress(
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
 ) {
-    onUpdateGridItemSource(GridItemSource.Existing(isFolderGridItem = false))
+    onUpdateGridItemSource(GridItemSource.Existing)
 
     onUpdateMoveGridItemResult(
         MoveGridItemResult(
@@ -215,6 +215,7 @@ internal fun handleDragGridItem(
 
     when (val currentGridItemSource = gridItemSource.value ?: return) {
         is GridItemSource.Existing,
+        is GridItemSource.ExistingFolder,
         is GridItemSource.New,
         is GridItemSource.Pin,
         -> {
@@ -330,6 +331,7 @@ private fun getMoveGridItem(
     currentPage: Int,
 ): GridItem = when (gridItemSource) {
     is GridItemSource.Existing,
+    is GridItemSource.ExistingFolder,
     -> {
         val (startColumn, startRow) = getStartPosition(
             x = gridX,

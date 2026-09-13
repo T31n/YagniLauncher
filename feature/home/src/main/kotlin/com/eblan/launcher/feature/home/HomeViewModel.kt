@@ -593,7 +593,7 @@ internal class HomeViewModel @Inject constructor(
             }
 
             _gridItemSource.update {
-                GridItemSource.Existing(isFolderGridItem = true)
+                GridItemSource.ExistingFolder
             }
         }
     }
