@@ -741,9 +741,9 @@ internal class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             moveGridItemJob?.cancelAndJoin()
 
-            updateGridItemsAfterMoveUseCase(moveGridItemResult = moveGridItemResult)
-
             gridRepository.upsertGridItems(gridItems = folderGridItems)
+
+            updateGridItemsAfterMoveUseCase(moveGridItemResult = moveGridItemResult)
         }
     }
 }

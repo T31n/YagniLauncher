@@ -392,8 +392,6 @@ internal fun handleDragEblanApplicationInfoItem(
 
             onDismiss()
 
-            val pagerScreenId = Uuid.random().toHexString()
-
             val data = GridItemData.ApplicationInfo(
                 serialNumber = eblanApplicationInfo.serialNumber,
                 componentName = eblanApplicationInfo.componentName,
@@ -413,7 +411,7 @@ internal fun handleDragEblanApplicationInfoItem(
             )
 
             val gridItem = GridItem(
-                id = pagerScreenId,
+                id = Uuid.random().toHexString(),
                 page = 0,
                 startColumn = -1,
                 startRow = -1,
