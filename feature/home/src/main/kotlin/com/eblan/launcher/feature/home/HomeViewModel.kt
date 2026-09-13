@@ -230,7 +230,8 @@ internal class HomeViewModel @Inject constructor(
             initialValue = emptyMap(),
         )
 
-    private val _folderEblanApplicationInfoPopupEntries = MutableStateFlow<List<FolderPopupEntry>>(emptyList())
+    private val _folderEblanApplicationInfoPopupEntries =
+        MutableStateFlow<List<FolderPopupEntry>>(emptyList())
     val folderEblanApplicationInfoPopups = getFolderEblanApplicationInfosByEntryUseCase(
         folderPopupEntriesFlow = _folderEblanApplicationInfoPopupEntries,
     ).stateIn(
@@ -731,5 +732,18 @@ internal class HomeViewModel @Inject constructor(
 
     fun resetFolderEblanApplicationInfoPopupEntries() {
         _folderGridItemPopupEntries.update { emptyList() }
+    }
+
+    fun updateGridItemsAfterMoveNewFolder(
+        moveGridItemResult: MoveGridItemResult,
+        folderGridItems: List<GridItem>,
+    ) {
+        viewModelScope.launch {
+            moveGridItemJob?.cancelAndJoin()
+
+            updateGridItemsAfterMoveUseCase(moveGridItemResult = moveGridItemResult)
+
+            gridRepository.upsertGridItems(gridItems = folderGridItems)
+        }
     }
 }

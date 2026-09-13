@@ -274,6 +274,10 @@ internal fun PagerScreen(
     ) -> Unit,
     onResetFolderPopupEntries: () -> Unit,
     onEditFolderApplicationInfo: (String) -> Unit,
+    onUpdateGridItemsAfterMoveNewFolder: (
+        moveGridItemResult: MoveGridItemResult,
+        folderGridItems: List<GridItem>,
+    ) -> Unit,
 ) {
     val layoutDirection = LocalLayoutDirection.current
 
@@ -586,6 +590,7 @@ internal fun PagerScreen(
             onUpdateIsDragging = pagerScreenState::updateIsDragging,
             onUpdateWidgetGridItem = pagerScreenState::updateWidgetGridItem,
             onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+            onUpdateGridItemsAfterMoveNewFolder = onUpdateGridItemsAfterMoveNewFolder,
         )
     }
 

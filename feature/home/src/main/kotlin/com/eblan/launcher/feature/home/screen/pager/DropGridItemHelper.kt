@@ -87,6 +87,10 @@ internal suspend fun handleDropGridItem(
     onUpdateIsDragging: (Boolean) -> Unit,
     onUpdateWidgetGridItem: (GridItem) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
+    onUpdateGridItemsAfterMoveNewFolder: (
+        moveGridItemResult: MoveGridItemResult,
+        folderGridItems: List<GridItem>,
+    ) -> Unit,
 ) {
     val currentGridItemSource = gridItemSource.value ?: return
 
@@ -170,9 +174,21 @@ internal suspend fun handleDropGridItem(
                 onUpdateWidgetGridItem = onUpdateWidgetGridItem,
             )
 
-        is GridItemSource.NewFolder -> {
-            TODO("We upsert the grid items")
-        }
+        is GridItemSource.NewFolder ->
+            handleNewFolderGridItemSource(
+                context = context,
+                currentMoveGridItemResult = currentMoveGridItemResult,
+                isDragging = isDragging,
+                isMoveGridItemResultFailed = isMoveGridItemResultFailed,
+                isVisibleOverlay = isVisibleOverlay,
+                lockMovement = lockMovement,
+                folderGridItems = currentGridItemSource.folderGridItems,
+                onResetGrid = onResetGrid,
+                onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
+                onUpdateGridItemsAfterMoveNewFolder = onUpdateGridItemsAfterMoveNewFolder,
+                onUpdateIsDragging = onUpdateIsDragging,
+                onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+            )
 
         is GridItemSource.Pin ->
             handlePinGridItemSource(
@@ -1014,6 +1030,62 @@ private fun handlePinGridItemSource(
             )
 
             else -> error("Expected ShortcutInfo or Widget")
+        }
+    }
+}
+
+private fun handleNewFolderGridItemSource(
+    context: Context,
+    currentMoveGridItemResult: MoveGridItemResult,
+    isDragging: Boolean,
+    isMoveGridItemResultFailed: Boolean,
+    isVisibleOverlay: State<Boolean>,
+    lockMovement: Boolean,
+    folderGridItems: List<GridItem>,
+    onResetGrid: () -> Unit,
+    onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
+    onUpdateGridItemsAfterMoveNewFolder: (
+        moveGridItemResult: MoveGridItemResult,
+        folderGridItems: List<GridItem>,
+    ) -> Unit,
+    onUpdateIsDragging: (Boolean) -> Unit,
+    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
+) {
+    if (isVisibleOverlay.value &&
+        isDragging &&
+        isMoveGridItemResultFailed
+    ) {
+        return cancelAndDeleteGridItem(
+            context = context,
+            moveGridItemResult = currentMoveGridItemResult,
+            onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
+            onUpdateIsDragging = onUpdateIsDragging,
+            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+        )
+    }
+
+    if (lockMovement) {
+        return cancelAndDeleteGridItem(
+            context = context,
+            moveGridItemResult = currentMoveGridItemResult,
+            onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
+            onUpdateIsDragging = onUpdateIsDragging,
+            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+        )
+    }
+
+    if (isVisibleOverlay.value &&
+        isDragging
+    ) {
+        onUpdateGridItemsAfterMoveNewFolder(
+            currentMoveGridItemResult,
+            folderGridItems,
+        )
+
+        onUpdateIsDragging(false)
+
+        if (currentMoveGridItemResult.conflictingGridItem == null) {
+            onResetGrid()
         }
     }
 }

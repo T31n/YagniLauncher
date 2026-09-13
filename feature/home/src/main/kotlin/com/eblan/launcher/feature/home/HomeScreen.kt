@@ -185,6 +185,7 @@ internal fun HomeRoute(
         onUpsertFolderEblanApplicationInfoPopupEntry = viewModel::upsertFolderEblanApplicationInfoPopupEntry,
         onDeleteFolderEblanApplicationInfoPopupEntry = viewModel::deleteFolderEblanApplicationInfoPopupEntry,
         onEditFolderApplicationInfo = onEditFolderApplicationInfo,
+        onUpdateGridItemsAfterMoveNewFolder = viewModel::updateGridItemsAfterMoveNewFolder,
     )
 }
 
@@ -302,6 +303,10 @@ internal fun HomeScreen(
     onUpsertFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
     onDeleteFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
     onEditFolderApplicationInfo: (String) -> Unit,
+    onUpdateGridItemsAfterMoveNewFolder: (
+        moveGridItemResult: MoveGridItemResult,
+        folderGridItems: List<GridItem>,
+    ) -> Unit,
 ) {
     val paddingValues = WindowInsets.safeDrawing.asPaddingValues()
 
@@ -380,6 +385,7 @@ internal fun HomeScreen(
                 onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
                 onDeleteFolderEblanApplicationInfoPopupEntry = onDeleteFolderEblanApplicationInfoPopupEntry,
                 onEditFolderApplicationInfo = onEditFolderApplicationInfo,
+                onUpdateGridItemsAfterMoveNewFolder = onUpdateGridItemsAfterMoveNewFolder,
             )
         }
     }
@@ -502,6 +508,10 @@ private fun Success(
     onUpsertFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
     onDeleteFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
     onEditFolderApplicationInfo: (String) -> Unit,
+    onUpdateGridItemsAfterMoveNewFolder: (
+        moveGridItemResult: MoveGridItemResult,
+        folderGridItems: List<GridItem>,
+    ) -> Unit,
 ) {
     AnimatedContent(
         modifier = modifier,
@@ -580,6 +590,7 @@ private fun Success(
                     onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
                     onDeleteFolderEblanApplicationInfoPopupEntry = onDeleteFolderEblanApplicationInfoPopupEntry,
                     onEditFolderApplicationInfo = onEditFolderApplicationInfo,
+                    onUpdateGridItemsAfterMoveNewFolder = onUpdateGridItemsAfterMoveNewFolder,
                 )
             }
 
