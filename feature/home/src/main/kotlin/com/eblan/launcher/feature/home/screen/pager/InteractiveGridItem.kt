@@ -543,8 +543,8 @@ private fun InteractiveApplicationInfoGridItem(
                         intSize = it.size
                     }
                     .gridItemScaleAnimation(
-                        isVisibleOverlay = isVisibleOverlay,
                         enabled = animations,
+                        isVisibleOverlay = isVisibleOverlay,
                         scale = scale,
                     )
                     .gridItemSharedElement(
@@ -653,8 +653,8 @@ private fun InteractiveWidgetGridItem(
                 intSize = it.size
             }
             .gridItemScaleAnimation(
-                isVisibleOverlay = isVisibleOverlay,
                 enabled = animations,
+                isVisibleOverlay = isVisibleOverlay,
                 scale = scale,
             )
             .gridItemSharedElement(
@@ -915,8 +915,8 @@ private fun InteractiveShortcutInfoGridItem(
                         intSize = it.size
                     }
                     .gridItemScaleAnimation(
-                        isVisibleOverlay = isVisibleOverlay,
                         enabled = animations,
+                        isVisibleOverlay = isVisibleOverlay,
                         scale = scale,
                     )
                     .gridItemSharedElement(
@@ -1156,8 +1156,8 @@ private fun InteractiveFolderGridItem(
                 intSize = it.size
             }
             .gridItemScaleAnimation(
-                isVisibleOverlay = isVisibleOverlay,
                 enabled = animations,
+                isVisibleOverlay = isVisibleOverlay,
                 scale = scale,
             )
             .gridItemSharedElement(
@@ -1393,8 +1393,8 @@ private fun InteractiveShortcutConfigGridItem(
                     intSize = it.size
                 }
                 .gridItemScaleAnimation(
-                    isVisibleOverlay = isVisibleOverlay,
                     enabled = animations,
+                    isVisibleOverlay = isVisibleOverlay,
                     scale = scale,
                 )
                 .gridItemSharedElement(

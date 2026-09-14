@@ -899,8 +899,8 @@ private fun EblanApplicationInfoItem(
                     intSize = it.size
                 }
                 .gridItemScaleAnimation(
-                    isVisibleOverlay = isVisibleOverlay,
                     enabled = animations,
+                    isVisibleOverlay = isVisibleOverlay,
                     scale = scale,
                 )
                 .gridItemSharedElement(

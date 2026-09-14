@@ -138,7 +138,7 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
 ) {
     val isSelected =
         moveFolderEblanApplicationInfoGridItemResult != null &&
-                moveFolderEblanApplicationInfoGridItemResult.folderEblanApplicationInfoGridItem.id == folderEblanApplicationInfoGridItem.id
+            moveFolderEblanApplicationInfoGridItemResult.folderEblanApplicationInfoGridItem.id == folderEblanApplicationInfoGridItem.id
 
     val textColor = getTextColorFromBackgroundColor(
         backgroundColor = appDrawerSettings.backgroundColor,
@@ -419,8 +419,8 @@ private fun InteractiveEblanApplicationInfoItem(
                     intSize = it.size
                 }
                 .gridItemScaleAnimation(
-                    isVisibleOverlay = isVisibleOverlay,
                     enabled = animations,
+                    isVisibleOverlay = isVisibleOverlay,
                     scale = scale,
                 )
                 .gridItemSharedElement(
@@ -582,8 +582,8 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
                 intSize = it.size
             }
             .gridItemScaleAnimation(
-                isVisibleOverlay = isVisibleOverlay,
                 enabled = animations,
+                isVisibleOverlay = isVisibleOverlay,
                 scale = scale,
             )
             .gridItemSharedElement(

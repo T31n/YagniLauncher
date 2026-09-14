@@ -522,8 +522,8 @@ private fun InteractiveApplicationInfoGridItem(
                         intSize = it.size
                     }
                     .gridItemScaleAnimation(
-                        isVisibleOverlay = isVisibleOverlay,
                         enabled = animations && !isInProgress,
+                        isVisibleOverlay = isVisibleOverlay,
                         scale = scale,
                     )
                     .gridItemSharedElement(
@@ -724,8 +724,8 @@ private fun InteractiveShortcutInfoGridItem(
                         intSize = it.size
                     }
                     .gridItemScaleAnimation(
-                        isVisibleOverlay = isVisibleOverlay,
                         enabled = animations && !isInProgress,
+                        isVisibleOverlay = isVisibleOverlay,
                         scale = scale,
                     )
                     .gridItemSharedElement(
@@ -916,8 +916,8 @@ private fun InteractiveShortcutConfigGridItem(
                     intSize = it.size
                 }
                 .gridItemScaleAnimation(
-                    isVisibleOverlay = isVisibleOverlay,
                     enabled = animations && !isInProgress,
+                    isVisibleOverlay = isVisibleOverlay,
                     scale = scale,
                 )
                 .gridItemSharedElement(
@@ -1113,8 +1113,8 @@ private fun InteractiveNestedFolderGridItem(
                 intSize = it.size
             }
             .gridItemScaleAnimation(
-                isVisibleOverlay = isVisibleOverlay,
                 enabled = animations && !isInProgress,
+                isVisibleOverlay = isVisibleOverlay,
                 scale = scale,
             )
             .gridItemSharedElement(
@@ -1208,7 +1208,7 @@ private fun PreviewNestedFolderGridItem(
             is GridItemData.Folder,
             is GridItemData.ShortcutConfig,
             is GridItemData.Widget,
-                -> alpha
+            -> alpha
 
             is GridItemData.ShortcutInfo -> {
                 if (hasShortcutHostPermission && data.isEnabled) 1f else 0.3f

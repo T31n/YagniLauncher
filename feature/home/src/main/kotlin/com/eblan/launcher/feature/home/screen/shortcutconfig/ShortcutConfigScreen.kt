@@ -533,8 +533,8 @@ private fun EblanShortcutConfigItem(
                     intSize = it.size
                 }
                 .gridItemScaleAnimation(
-                    isVisibleOverlay = isVisibleOverlay,
                     enabled = animations,
+                    isVisibleOverlay = isVisibleOverlay,
                     scale = scale,
                 )
                 .drawWithContent {

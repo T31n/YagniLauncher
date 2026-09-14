@@ -67,9 +67,9 @@ internal fun Modifier.swipeGestures(
     val currentOnOpenAppDrawer by rememberUpdatedState(onOpenAppDrawer)
 
     return if ((
-                swipeUp.eblanActionType != EblanActionType.None ||
-                        swipeDown.eblanActionType != EblanActionType.None
-                ) && enabled
+            swipeUp.eblanActionType != EblanActionType.None ||
+                swipeDown.eblanActionType != EblanActionType.None
+            ) && enabled
     ) {
         val swipeY = remember { Animatable(0f) }
 
@@ -161,7 +161,7 @@ internal fun Modifier.popup(
 
 @Composable
 internal fun Modifier.gridItemSharedElement(
-    enabled: Boolean = true,
+    enabled: Boolean,
     sharedElementKey: SharedElementKey,
     sharedTransitionScope: SharedTransitionScope,
     visible: Boolean,
@@ -178,8 +178,8 @@ internal fun Modifier.gridItemSharedElement(
 
 @Composable
 internal fun Modifier.gridItemScaleAnimation(
-    isVisibleOverlay: Boolean,
     enabled: Boolean,
+    isVisibleOverlay: Boolean,
     scale: Animatable<Float, AnimationVector1D>,
 ): Modifier {
     LaunchedEffect(
@@ -204,18 +204,16 @@ internal fun Modifier.gridItemScaleAnimation(
 internal fun Modifier.recordToGraphicsLayerIfNotInProgress(
     isInProgress: Boolean,
     graphicsLayer: GraphicsLayer,
-): Modifier {
-    return if (!isInProgress) {
-        drawWithContent {
-            graphicsLayer.record {
-                this@drawWithContent.drawContent()
-            }
-
-            drawLayer(graphicsLayer)
+): Modifier = if (!isInProgress) {
+    drawWithContent {
+        graphicsLayer.record {
+            this@drawWithContent.drawContent()
         }
-    } else {
-        this
+
+        drawLayer(graphicsLayer)
     }
+} else {
+    this
 }
 
 internal fun Modifier.recordBoundsIfNotInProgress(
