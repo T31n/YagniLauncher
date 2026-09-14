@@ -1314,7 +1314,7 @@ internal fun PagerScreen(
                     onResetGrid = onResetGrid,
                     onResetGridAfterMoveFolderEblanApplicationInfo = onDragEndAfterMoveFolderEblanApplicationInfo,
                     onUpdateIsDragging = pagerScreenState::updateIsDragging,
-                    onUpdateIsCloseFolderEblanApplicationGridItemPopup = pagerScreenState::updateIsCloseFolderEblanApplicationInfoGridItemPopup,
+                    onUpdateIsCloseFolderEblanApplicationInfoGridItemPopup = pagerScreenState::updateIsCloseFolderEblanApplicationInfoGridItemPopup,
                 )
             }
         }
@@ -1342,6 +1342,7 @@ internal fun PagerScreen(
                 hasShortcutHostPermission = hasShortcutHostPermission,
                 isVisibleOverlay = isVisibleOverlay,
                 animations = experimentalSettings.gridItemAnimation,
+                isCloseFolderEblanApplicationInfoGridItemPopup = pagerScreenState.isCloseFolderEblanApplicationInfoGridItemPopup,
                 onDismissRequest = pagerScreenState::dismissFolderEblanApplicationInfoGridItemPopup,
                 onUpdateIsDragging = pagerScreenState::updateIsDragging,
                 onEditFolderApplicationInfo = onEditFolderApplicationInfo,

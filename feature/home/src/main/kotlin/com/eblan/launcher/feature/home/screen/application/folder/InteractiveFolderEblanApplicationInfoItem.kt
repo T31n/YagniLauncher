@@ -135,7 +135,7 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
     ) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onUpdateMoveFolderEblanApplicationInfoGridItemResult: (MoveFolderEblanApplicationInfoGridItemResult) -> Unit,
-    onUpdateIsCloseFolderEblanApplicationGridItemPopup: (Boolean) -> Unit,
+    onUpdateIsCloseFolderEblanApplicationInfoGridItemPopup: (Boolean) -> Unit,
 ) {
     val isSelected =
         moveFolderEblanApplicationInfoGridItemResult != null &&
@@ -199,7 +199,7 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
         if (drag == Drag.Dragging && hasInteraction && showFolderEblanApplicationGridItemPopup) {
             onUpdateIsDragging(true)
 
-            onUpdateIsCloseFolderEblanApplicationGridItemPopup(true)
+            onUpdateIsCloseFolderEblanApplicationInfoGridItemPopup(true)
         }
     }
 

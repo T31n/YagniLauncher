@@ -179,6 +179,7 @@ internal fun FolderApplicationInfoGridItemPopup(
     hasShortcutHostPermission: Boolean,
     isVisibleOverlay: Boolean,
     animations: Boolean,
+    isCloseFolderEblanApplicationInfoGridItemPopup: Boolean,
     onDismissRequest: () -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
     onEditFolderApplicationInfo: (String) -> Unit,
@@ -233,6 +234,12 @@ internal fun FolderApplicationInfoGridItemPopup(
     ) {
         if (!transitionState.targetState && transitionState.isIdle) {
             onDismissRequest()
+        }
+    }
+
+    LaunchedEffect(key1 = isCloseFolderEblanApplicationInfoGridItemPopup) {
+        if (isCloseFolderEblanApplicationInfoGridItemPopup) {
+            transitionState.targetState = false
         }
     }
 

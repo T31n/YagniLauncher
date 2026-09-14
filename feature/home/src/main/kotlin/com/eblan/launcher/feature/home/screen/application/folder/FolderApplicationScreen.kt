@@ -129,7 +129,7 @@ internal fun FolderApplicationScreen(
     onResetGrid: () -> Unit,
     onResetGridAfterMoveFolderEblanApplicationInfo: () -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
-    onUpdateIsCloseFolderEblanApplicationGridItemPopup: (Boolean) -> Unit,
+    onUpdateIsCloseFolderEblanApplicationInfoGridItemPopup: (Boolean) -> Unit,
 ) {
     val folderPopupIntOffset = IntOffset(
         x = folderEblanApplicationInfoPopup.folderPopupEntry.x,
@@ -463,7 +463,7 @@ internal fun FolderApplicationScreen(
                                 onShowGridItemPopup = onShowGridItemPopup,
                                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                                 onUpdateMoveFolderEblanApplicationInfoGridItemResult = onUpdateMoveFolderEblanApplicationInfoGridItemResult,
-                                onUpdateIsCloseFolderEblanApplicationGridItemPopup = onUpdateIsCloseFolderEblanApplicationGridItemPopup,
+                                onUpdateIsCloseFolderEblanApplicationInfoGridItemPopup = onUpdateIsCloseFolderEblanApplicationInfoGridItemPopup,
                             )
                         },
                     )
