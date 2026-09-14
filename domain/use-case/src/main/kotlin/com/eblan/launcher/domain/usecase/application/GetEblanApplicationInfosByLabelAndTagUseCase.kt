@@ -109,9 +109,9 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
         )
 
         return GetEblanApplicationInfosByLabelAndTag(
-            eblanApplicationInfoWithIconPackInfos = groupedEblanApplicationInfos.filterKeys { it != privateEblanUserPageKey },
+            eblanApplicationInfos = groupedEblanApplicationInfos.filterKeys { it != privateEblanUserPageKey },
             privateEblanUser = privateEblanUserPageKey?.eblanUser,
-            privateEblanApplicationInfoWithIconPackInfos = groupedEblanApplicationInfos[privateEblanUserPageKey].orEmpty(),
+            privateEblanApplicationInfos = groupedEblanApplicationInfos[privateEblanUserPageKey].orEmpty(),
             iconPackInfoFilePaths = iconPackInfoFilePaths,
         )
     }
@@ -143,9 +143,9 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
         )
 
         return GetEblanApplicationInfosByLabelAndTag(
-            eblanApplicationInfoWithIconPackInfos = groupedEblanApplicationInfos,
+            eblanApplicationInfos = groupedEblanApplicationInfos,
             privateEblanUser = null,
-            privateEblanApplicationInfoWithIconPackInfos = emptyList(),
+            privateEblanApplicationInfos = emptyList(),
             iconPackInfoFilePaths = iconPackInfoFilePaths,
         )
     }

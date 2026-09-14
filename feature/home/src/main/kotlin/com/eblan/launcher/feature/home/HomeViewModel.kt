@@ -37,7 +37,6 @@ import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.model.launcherapps.PinItemRequestType
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.domain.repository.EblanAppWidgetProviderInfoRepository
-import com.eblan.launcher.domain.repository.EblanApplicationInfoTagRepository
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.usecase.application.GetEblanAppWidgetProviderInfosByLabelUseCase
 import com.eblan.launcher.domain.usecase.application.GetEblanApplicationInfosByLabelAndTagUseCase
@@ -166,9 +165,9 @@ internal class HomeViewModel @Inject constructor(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = GetEblanApplicationInfosByLabelAndTag(
-            eblanApplicationInfoWithIconPackInfos = emptyMap(),
+            eblanApplicationInfos = emptyMap(),
             privateEblanUser = null,
-            privateEblanApplicationInfoWithIconPackInfos = emptyList(),
+            privateEblanApplicationInfos = emptyList(),
             iconPackInfoFilePaths = emptyMap(),
         ),
     )

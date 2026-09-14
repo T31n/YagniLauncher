@@ -183,7 +183,7 @@ internal fun ListApplicationScreen(
 
     val horizontalPagerState = rememberPagerState(
         pageCount = {
-            getEblanApplicationInfosByLabelAndTag.eblanApplicationInfoWithIconPackInfos.keys.size
+            getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos.keys.size
         },
     )
 
@@ -196,8 +196,8 @@ internal fun ListApplicationScreen(
     var selectedEblanApplicationInfo by remember { mutableStateOf<EblanApplicationInfo?>(null) }
 
     val eblanUserPageKeys =
-        remember(key1 = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfoWithIconPackInfos) {
-            getEblanApplicationInfosByLabelAndTag.eblanApplicationInfoWithIconPackInfos.keys.distinctBy { it.eblanUser.serialNumber }
+        remember(key1 = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos) {
+            getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos.keys.distinctBy { it.eblanUser.serialNumber }
         }
 
     val focusRequester = remember { FocusRequester() }
@@ -252,11 +252,11 @@ internal fun ListApplicationScreen(
             }
         }
 
-        if (getEblanApplicationInfosByLabelAndTag.eblanApplicationInfoWithIconPackInfos.keys.size > 1) {
+        if (getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos.keys.size > 1) {
             EblanApplicationInfoTabRow(
                 currentPage = horizontalPagerState.currentPage,
                 eblanUserPageKeys = eblanUserPageKeys,
-                eblanApplicationInfos = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfoWithIconPackInfos,
+                eblanApplicationInfos = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos,
                 backgroundColor = appDrawerSettings.backgroundColor,
                 customBackgroundColor = appDrawerSettings.customBackgroundColor,
                 systemTextColor = systemTextColor,
@@ -406,7 +406,7 @@ private fun EblanApplicationInfosPage(
     val userManager = LocalUserManager.current
 
     val eblanUserPageKey =
-        getEblanApplicationInfosByLabelAndTag.eblanApplicationInfoWithIconPackInfos.keys.toList()
+        getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos.keys.toList()
             .getOrElse(
                 index = index,
                 defaultValue = {
@@ -606,7 +606,7 @@ private fun EblanApplicationInfos(
             when (eblanUserPageKey.eblanUser.eblanUserType) {
                 EblanUserType.Personal -> {
                     items(
-                        items = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfoWithIconPackInfos[eblanUserPageKey].orEmpty(),
+                        items = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos[eblanUserPageKey].orEmpty(),
                         key = {
                             it.serialNumber to it.componentName
                         },
@@ -642,7 +642,7 @@ private fun EblanApplicationInfos(
                         appDrawerSettings = appDrawerSettings,
                         isQuietModeEnabled = privateIsQuiteModeEnabled,
                         paddingValues = paddingValues,
-                        privateEblanApplicationInfos = getEblanApplicationInfosByLabelAndTag.privateEblanApplicationInfoWithIconPackInfos,
+                        privateEblanApplicationInfos = getEblanApplicationInfosByLabelAndTag.privateEblanApplicationInfos,
                         privateEblanUser = getEblanApplicationInfosByLabelAndTag.privateEblanUser,
                         isVisibleOverlay = isVisibleOverlay,
                         backgroundColor = appDrawerSettings.backgroundColor,
@@ -659,7 +659,7 @@ private fun EblanApplicationInfos(
 
                 else -> {
                     items(
-                        getEblanApplicationInfosByLabelAndTag.eblanApplicationInfoWithIconPackInfos[eblanUserPageKey].orEmpty(),
+                        getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos[eblanUserPageKey].orEmpty(),
                         key = {
                             it.serialNumber to it.componentName
                         },

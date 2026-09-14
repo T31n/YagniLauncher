@@ -136,7 +136,7 @@ internal fun HorizontalApplicationScreen(
 
     val horizontalPagerState = rememberPagerState(
         pageCount = {
-            getEblanApplicationInfosByLabelAndTag.eblanApplicationInfoWithIconPackInfos.keys.size
+            getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos.keys.size
         },
     )
 
@@ -149,8 +149,8 @@ internal fun HorizontalApplicationScreen(
     var selectedEblanApplicationInfo by remember { mutableStateOf<EblanApplicationInfo?>(null) }
 
     val eblanUserPageKeys =
-        remember(key1 = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfoWithIconPackInfos) {
-            getEblanApplicationInfosByLabelAndTag.eblanApplicationInfoWithIconPackInfos.keys.distinctBy { it.eblanUser.serialNumber }
+        remember(key1 = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos) {
+            getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos.keys.distinctBy { it.eblanUser.serialNumber }
         }
 
     val focusRequester = remember { FocusRequester() }
@@ -205,7 +205,7 @@ internal fun HorizontalApplicationScreen(
             EblanApplicationInfoTabRow(
                 currentPage = horizontalPagerState.currentPage,
                 eblanUserPageKeys = eblanUserPageKeys,
-                eblanApplicationInfos = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfoWithIconPackInfos,
+                eblanApplicationInfos = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos,
                 backgroundColor = appDrawerSettings.backgroundColor,
                 customBackgroundColor = appDrawerSettings.customBackgroundColor,
                 systemTextColor = systemTextColor,
@@ -354,7 +354,7 @@ private fun EblanApplicationInfosPage(
     val userManager = LocalUserManager.current
 
     val eblanUserPageKey =
-        getEblanApplicationInfosByLabelAndTag.eblanApplicationInfoWithIconPackInfos.keys.toList()
+        getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos.keys.toList()
             .getOrElse(
                 index = index,
                 defaultValue = {
@@ -502,7 +502,7 @@ private fun EblanApplicationInfos(
                 )
             },
         columns = appDrawerSettings.horizontalAppDrawerColumns,
-        eblanApplicationInfoWithIconPackInfos = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfoWithIconPackInfos[eblanUserPageKey],
+        eblanApplicationInfos = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos[eblanUserPageKey],
         rows = appDrawerSettings.horizontalAppDrawerRows,
         content = {
             when (eblanUserPageKey.eblanUser.eblanUserType) {

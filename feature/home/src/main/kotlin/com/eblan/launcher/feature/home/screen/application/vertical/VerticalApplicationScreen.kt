@@ -168,7 +168,7 @@ internal fun VerticalApplicationScreen(
 
     val horizontalPagerState = rememberPagerState(
         pageCount = {
-            getEblanApplicationInfosByLabelAndTag.eblanApplicationInfoWithIconPackInfos.keys.size
+            getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos.keys.size
         },
     )
 
@@ -181,8 +181,8 @@ internal fun VerticalApplicationScreen(
     var selectedEblanApplicationInfo by remember { mutableStateOf<EblanApplicationInfo?>(null) }
 
     val eblanUserPageKeys =
-        remember(key1 = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfoWithIconPackInfos) {
-            getEblanApplicationInfosByLabelAndTag.eblanApplicationInfoWithIconPackInfos.keys.distinctBy { it.eblanUser.serialNumber }
+        remember(key1 = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos) {
+            getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos.keys.distinctBy { it.eblanUser.serialNumber }
         }
 
     val focusRequester = remember { FocusRequester() }
@@ -241,7 +241,7 @@ internal fun VerticalApplicationScreen(
             EblanApplicationInfoTabRow(
                 currentPage = horizontalPagerState.currentPage,
                 eblanUserPageKeys = eblanUserPageKeys,
-                eblanApplicationInfos = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfoWithIconPackInfos,
+                eblanApplicationInfos = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos,
                 backgroundColor = appDrawerSettings.backgroundColor,
                 customBackgroundColor = appDrawerSettings.customBackgroundColor,
                 systemTextColor = systemTextColor,
@@ -414,7 +414,7 @@ private fun EblanApplicationInfosPage(
     val userManager = LocalUserManager.current
 
     val eblanUserPageKey =
-        getEblanApplicationInfosByLabelAndTag.eblanApplicationInfoWithIconPackInfos.keys.toList()
+        getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos.keys.toList()
             .getOrElse(
                 index = index,
                 defaultValue = {
@@ -674,7 +674,7 @@ private fun EblanApplicationInfos(
                     }
 
                     items(
-                        items = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfoWithIconPackInfos[eblanUserPageKey].orEmpty(),
+                        items = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos[eblanUserPageKey].orEmpty(),
                         key = { it.serialNumber to it.componentName },
                     ) {
                         EblanApplicationInfoItem(
@@ -709,7 +709,7 @@ private fun EblanApplicationInfos(
                         appDrawerSettings = appDrawerSettings,
                         isQuietModeEnabled = privateIsQuiteModeEnabled,
                         paddingValues = paddingValues,
-                        privateEblanApplicationInfos = getEblanApplicationInfosByLabelAndTag.privateEblanApplicationInfoWithIconPackInfos,
+                        privateEblanApplicationInfos = getEblanApplicationInfosByLabelAndTag.privateEblanApplicationInfos,
                         privateEblanUser = getEblanApplicationInfosByLabelAndTag.privateEblanUser,
                         isVisibleOverlay = isVisibleOverlay,
                         backgroundColor = appDrawerSettings.backgroundColor,
@@ -726,7 +726,7 @@ private fun EblanApplicationInfos(
 
                 else -> {
                     items(
-                        items = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfoWithIconPackInfos[eblanUserPageKey].orEmpty(),
+                        items = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos[eblanUserPageKey].orEmpty(),
                         key = {
                             it.serialNumber to
                                 it.componentName
