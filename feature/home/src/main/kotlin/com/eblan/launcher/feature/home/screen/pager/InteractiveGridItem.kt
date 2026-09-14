@@ -544,7 +544,7 @@ private fun InteractiveApplicationInfoGridItem(
                     }
                     .gridItemScaleAnimation(
                         isVisibleOverlay = isVisibleOverlay,
-                        animations = animations,
+                        enabled = animations,
                         scale = scale,
                     )
                     .gridItemSharedElement(
@@ -654,7 +654,7 @@ private fun InteractiveWidgetGridItem(
             }
             .gridItemScaleAnimation(
                 isVisibleOverlay = isVisibleOverlay,
-                animations = animations,
+                enabled = animations,
                 scale = scale,
             )
             .gridItemSharedElement(
@@ -916,7 +916,7 @@ private fun InteractiveShortcutInfoGridItem(
                     }
                     .gridItemScaleAnimation(
                         isVisibleOverlay = isVisibleOverlay,
-                        animations = animations,
+                        enabled = animations,
                         scale = scale,
                     )
                     .gridItemSharedElement(
@@ -1157,7 +1157,7 @@ private fun InteractiveFolderGridItem(
             }
             .gridItemScaleAnimation(
                 isVisibleOverlay = isVisibleOverlay,
-                animations = animations,
+                enabled = animations,
                 scale = scale,
             )
             .gridItemSharedElement(
@@ -1394,7 +1394,7 @@ private fun InteractiveShortcutConfigGridItem(
                 }
                 .gridItemScaleAnimation(
                     isVisibleOverlay = isVisibleOverlay,
-                    animations = animations,
+                    enabled = animations,
                     scale = scale,
                 )
                 .gridItemSharedElement(

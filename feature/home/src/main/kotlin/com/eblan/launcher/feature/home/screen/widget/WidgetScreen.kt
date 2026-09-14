@@ -414,7 +414,7 @@ private fun EblanAppWidgetProviderInfoItem(
                 }
                 .gridItemScaleAnimation(
                     isVisibleOverlay = isVisibleOverlay,
-                    animations = animations,
+                    enabled = animations,
                     scale = scale,
                 )
                 .drawWithContent {

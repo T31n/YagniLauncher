@@ -49,13 +49,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -90,6 +87,8 @@ import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_ROWS
 import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
 import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
+import com.eblan.launcher.feature.home.component.recordBoundsIfNotInProgress
+import com.eblan.launcher.feature.home.component.recordToGraphicsLayerIfNotInProgress
 import com.eblan.launcher.feature.home.component.swipeGestures
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
@@ -517,29 +516,26 @@ private fun InteractiveApplicationInfoGridItem(
                 contentDescription = null,
                 modifier = Modifier
                     .matchParentSize()
-                    .onGloballyPositioned {
+                    .recordBoundsIfNotInProgress(isInProgress = isInProgress) {
                         intOffset = it.positionInRoot().round()
 
                         intSize = it.size
                     }
                     .gridItemScaleAnimation(
                         isVisibleOverlay = isVisibleOverlay,
-                        animations = animations,
+                        enabled = animations && !isInProgress,
                         scale = scale,
                     )
                     .gridItemSharedElement(
-                        enabled = animations,
+                        enabled = animations && !isInProgress,
                         sharedElementKey = sharedElementKey,
                         sharedTransitionScope = sharedTransitionScope,
-                        visible = !isScrollInProgress && !hasInteraction && !isInProgress,
+                        visible = !isScrollInProgress && !hasInteraction,
                     )
-                    .drawWithContent {
-                        graphicsLayer.record {
-                            this@drawWithContent.drawContent()
-                        }
-
-                        drawLayer(graphicsLayer)
-                    },
+                    .recordToGraphicsLayerIfNotInProgress(
+                        isInProgress = isInProgress,
+                        graphicsLayer = graphicsLayer,
+                    ),
             )
 
             if (isNotificationAccessGranted && hasNotifications) {
@@ -722,33 +718,26 @@ private fun InteractiveShortcutInfoGridItem(
                     .size(Size.ORIGINAL).build(),
                 modifier = Modifier
                     .matchParentSize()
-                    .onGloballyPositioned {
+                    .recordBoundsIfNotInProgress(isInProgress = isInProgress) {
                         intOffset = it.positionInRoot().round()
 
                         intSize = it.size
                     }
                     .gridItemScaleAnimation(
                         isVisibleOverlay = isVisibleOverlay,
-                        animations = animations,
+                        enabled = animations && !isInProgress,
                         scale = scale,
                     )
                     .gridItemSharedElement(
-                        enabled = animations,
+                        enabled = animations && !isInProgress,
                         sharedElementKey = sharedElementKey,
                         sharedTransitionScope = sharedTransitionScope,
-                        visible = !isScrollInProgress && !hasInteraction && !isInProgress,
+                        visible = !isScrollInProgress && !hasInteraction,
                     )
-                    .drawWithContent {
-                        graphicsLayer.apply {
-                            this.alpha = alpha
-                        }
-
-                        graphicsLayer.record {
-                            this@drawWithContent.drawContent()
-                        }
-
-                        drawLayer(graphicsLayer)
-                    },
+                    .recordToGraphicsLayerIfNotInProgress(
+                        isInProgress = isInProgress,
+                        graphicsLayer = graphicsLayer,
+                    ),
                 contentDescription = null,
             )
 
@@ -851,7 +840,10 @@ private fun InteractiveShortcutConfigGridItem(
                 color = Color(gridItemSettings.customBackgroundColor),
                 shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
             )
-            .pointerInput(key1 = isVisibleOverlay && !isInProgress) {
+            .pointerInput(
+                key1 = isVisibleOverlay,
+                key2 = isInProgress,
+            ) {
                 detectTapGestures(
                     onDoubleTap = if (!isVisibleOverlay && !isInProgress) {
                         {
@@ -918,29 +910,26 @@ private fun InteractiveShortcutConfigGridItem(
             contentDescription = null,
             modifier = Modifier
                 .size(iconSize)
-                .onGloballyPositioned {
+                .recordBoundsIfNotInProgress(isInProgress = isInProgress) {
                     intOffset = it.positionInRoot().round()
 
                     intSize = it.size
                 }
                 .gridItemScaleAnimation(
                     isVisibleOverlay = isVisibleOverlay,
-                    animations = animations,
+                    enabled = animations && !isInProgress,
                     scale = scale,
                 )
                 .gridItemSharedElement(
-                    enabled = animations,
+                    enabled = animations && !isInProgress,
                     sharedElementKey = sharedElementKey,
                     sharedTransitionScope = sharedTransitionScope,
-                    visible = !isScrollInProgress && !hasInteraction && !isInProgress,
+                    visible = !isScrollInProgress && !hasInteraction,
                 )
-                .drawWithContent {
-                    graphicsLayer.record {
-                        this@drawWithContent.drawContent()
-                    }
-
-                    drawLayer(graphicsLayer)
-                }
+                .recordToGraphicsLayerIfNotInProgress(
+                    isInProgress = isInProgress,
+                    graphicsLayer = graphicsLayer,
+                )
                 .alpha(alpha),
         )
 
@@ -1118,29 +1107,26 @@ private fun InteractiveNestedFolderGridItem(
     ) {
         val commonModifier = Modifier
             .size(iconSize)
-            .onGloballyPositioned {
+            .recordBoundsIfNotInProgress(isInProgress = isInProgress) {
                 intOffset = it.positionInRoot().round()
 
                 intSize = it.size
             }
             .gridItemScaleAnimation(
                 isVisibleOverlay = isVisibleOverlay,
-                animations = animations,
+                enabled = animations && !isInProgress,
                 scale = scale,
             )
             .gridItemSharedElement(
-                enabled = animations,
+                enabled = animations && !isInProgress,
                 sharedElementKey = sharedElementKey,
                 sharedTransitionScope = sharedTransitionScope,
-                visible = !isScrollInProgress && !hasInteraction && !isInProgress,
+                visible = !isScrollInProgress && !hasInteraction,
             )
-            .drawWithContent {
-                graphicsLayer.record {
-                    this@drawWithContent.drawContent()
-                }
-
-                drawLayer(graphicsLayer)
-            }
+            .recordToGraphicsLayerIfNotInProgress(
+                isInProgress = isInProgress,
+                graphicsLayer = graphicsLayer,
+            )
             .alpha(iconAlpha)
 
         if (data.icon != null) {
@@ -1222,7 +1208,7 @@ private fun PreviewNestedFolderGridItem(
             is GridItemData.Folder,
             is GridItemData.ShortcutConfig,
             is GridItemData.Widget,
-            -> alpha
+                -> alpha
 
             is GridItemData.ShortcutInfo -> {
                 if (hasShortcutHostPermission && data.isEnabled) 1f else 0.3f

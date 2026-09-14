@@ -47,13 +47,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -88,6 +85,8 @@ import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_ROWS
 import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
 import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
+import com.eblan.launcher.feature.home.component.recordBoundsIfNotInProgress
+import com.eblan.launcher.feature.home.component.recordToGraphicsLayerIfNotInProgress
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.getHorizontalAlignment
@@ -139,7 +138,7 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
 ) {
     val isSelected =
         moveFolderEblanApplicationInfoGridItemResult != null &&
-            moveFolderEblanApplicationInfoGridItemResult.folderEblanApplicationInfoGridItem.id == folderEblanApplicationInfoGridItem.id
+                moveFolderEblanApplicationInfoGridItemResult.folderEblanApplicationInfoGridItem.id == folderEblanApplicationInfoGridItem.id
 
     val textColor = getTextColorFromBackgroundColor(
         backgroundColor = appDrawerSettings.backgroundColor,
@@ -355,9 +354,12 @@ private fun InteractiveEblanApplicationInfoItem(
                     size = appDrawerSettings.gridItemSettings.cornerRadius.dp,
                 ),
             )
-            .pointerInput(key1 = isVisibleOverlay) {
+            .pointerInput(
+                key1 = isVisibleOverlay,
+                key2 = isInProgress,
+            ) {
                 detectTapGestures(
-                    onTap = if (!isVisibleOverlay) {
+                    onTap = if (!isVisibleOverlay && !isInProgress) {
                         {
                             scope.launch {
                                 launcherApps.startMainActivity(
@@ -370,7 +372,7 @@ private fun InteractiveEblanApplicationInfoItem(
                     } else {
                         null
                     },
-                    onLongPress = if (!isVisibleOverlay) {
+                    onLongPress = if (!isVisibleOverlay && !isInProgress) {
                         {
                             scope.launch {
                                 onLongPressFolderEblanApplicationInfoGridItem(
@@ -411,13 +413,14 @@ private fun InteractiveEblanApplicationInfoItem(
             contentDescription = null,
             modifier = Modifier
                 .size(iconSize)
-                .onGloballyPositioned {
+                .recordBoundsIfNotInProgress(isInProgress = isInProgress) {
                     intOffset = it.positionInRoot().round()
+
                     intSize = it.size
                 }
                 .gridItemScaleAnimation(
                     isVisibleOverlay = isVisibleOverlay,
-                    animations = animations,
+                    enabled = animations,
                     scale = scale,
                 )
                 .gridItemSharedElement(
@@ -426,13 +429,10 @@ private fun InteractiveEblanApplicationInfoItem(
                     sharedTransitionScope = sharedTransitionScope,
                     visible = !isScrollInProgress && !hasInteraction && !isInProgress,
                 )
-                .drawWithContent {
-                    graphicsLayer.record {
-                        this@drawWithContent.drawContent()
-                    }
-
-                    drawLayer(graphicsLayer)
-                }
+                .recordToGraphicsLayerIfNotInProgress(
+                    isInProgress = isInProgress,
+                    graphicsLayer = graphicsLayer,
+                )
                 .alpha(alpha),
         )
 
@@ -519,9 +519,12 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
                     size = appDrawerSettings.gridItemSettings.cornerRadius.dp,
                 ),
             )
-            .pointerInput(key1 = isVisibleOverlay) {
+            .pointerInput(
+                key1 = isVisibleOverlay,
+                key2 = isInProgress,
+            ) {
                 detectTapGestures(
-                    onTap = if (!isVisibleOverlay) {
+                    onTap = if (!isVisibleOverlay && !isInProgress) {
                         {
                             onUpdateIsVisibleFolders(true)
 
@@ -539,7 +542,7 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
                     } else {
                         null
                     },
-                    onLongPress = if (!isVisibleOverlay) {
+                    onLongPress = if (!isVisibleOverlay && !isInProgress) {
                         {
                             scope.launch {
                                 onLongPressFolderEblanApplicationInfoGridItem(
@@ -573,13 +576,14 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
     ) {
         val commonModifier = Modifier
             .size(iconSize)
-            .onGloballyPositioned {
+            .recordBoundsIfNotInProgress(isInProgress = isInProgress) {
                 intOffset = it.positionInRoot().round()
+
                 intSize = it.size
             }
             .gridItemScaleAnimation(
                 isVisibleOverlay = isVisibleOverlay,
-                animations = animations,
+                enabled = animations,
                 scale = scale,
             )
             .gridItemSharedElement(
@@ -588,13 +592,10 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
                 sharedTransitionScope = sharedTransitionScope,
                 visible = !isScrollInProgress && !hasInteraction && !isInProgress,
             )
-            .drawWithContent {
-                graphicsLayer.record {
-                    this@drawWithContent.drawContent()
-                }
-
-                drawLayer(graphicsLayer)
-            }
+            .recordToGraphicsLayerIfNotInProgress(
+                isInProgress = isInProgress,
+                graphicsLayer = graphicsLayer,
+            )
             .alpha(iconAlpha)
 
         if (icon != null) {
