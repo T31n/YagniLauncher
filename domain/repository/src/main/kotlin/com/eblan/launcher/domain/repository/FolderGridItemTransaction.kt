@@ -31,4 +31,6 @@ interface FolderGridItemTransaction {
     suspend fun upsertFolderGridItemsTransaction(folderEblanApplicationInfos: List<FolderEblanApplicationInfoGridItem>)
 
     suspend fun deleteFolderGridItemsTransaction(folderEblanApplicationInfos: List<FolderEblanApplicationInfoGridItem>)
+
+    suspend fun updateFolderEblanApplicationInfoGridItem(folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem)
 }

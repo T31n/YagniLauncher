@@ -21,9 +21,13 @@ import com.eblan.launcher.data.repository.mapper.asModel
 import com.eblan.launcher.data.room.entity.EblanApplicationInfoEntity
 import com.eblan.launcher.data.room.entity.FolderEblanApplicationInfoEntity
 import com.eblan.launcher.data.room.transaction.FolderGridItemEntityTransaction
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
 import com.eblan.launcher.domain.model.folder.FolderGridItems
+import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
+import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.FolderGridItemTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -31,6 +35,8 @@ import javax.inject.Inject
 
 internal class DefaultFolderGridItemTransaction @Inject constructor(
     private val folderGridItemEntityTransaction: FolderGridItemEntityTransaction,
+    private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
+    private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
 ) : FolderGridItemTransaction {
     override val folderGridItemsFlow: Flow<FolderGridItems> =
         folderGridItemEntityTransaction.folderGridItemEntitiesFlow.map { folderGridItemEntities ->
@@ -91,6 +97,20 @@ internal class DefaultFolderGridItemTransaction @Inject constructor(
         )
     }
 
+    override suspend fun updateFolderEblanApplicationInfoGridItem(folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem) {
+        when (val data = folderEblanApplicationInfoGridItem.data) {
+            is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
+                eblanApplicationInfoRepository.updateEblanApplicationInfo(eblanApplicationInfo = data.asModel())
+            }
+
+            is FolderEblanApplicationInfoGridItemData.Folder -> {
+                folderEblanApplicationInfoRepository.updateFolderEblanApplicationInfo(
+                    folderEblanApplicationInfo = folderEblanApplicationInfoGridItem.asModel(data = data),
+                )
+            }
+        }
+    }
+
     private fun FolderEblanApplicationInfoGridItemData.ApplicationInfo.asEntity(): EblanApplicationInfoEntity = EblanApplicationInfoEntity(
         componentName = componentName,
         serialNumber = serialNumber,
@@ -112,5 +132,28 @@ internal class DefaultFolderGridItemTransaction @Inject constructor(
         label = label,
         folderIndex = folderIndex,
         folderId = folderId,
+    )
+
+    private fun FolderEblanApplicationInfoGridItemData.ApplicationInfo.asModel(): EblanApplicationInfo = EblanApplicationInfo(
+        componentName = componentName,
+        serialNumber = serialNumber,
+        packageName = packageName,
+        icon = icon,
+        label = label,
+        customIcon = customIcon,
+        customLabel = customLabel,
+        isHidden = isHidden,
+        lastUpdateTime = lastUpdateTime,
+        flags = flags,
+        folderIndex = folderIndex,
+        folderId = folderId,
+    )
+
+    private fun FolderEblanApplicationInfoGridItem.asModel(data: FolderEblanApplicationInfoGridItemData.Folder): FolderEblanApplicationInfo = FolderEblanApplicationInfo(
+        id = id,
+        icon = data.icon,
+        label = data.label,
+        folderIndex = data.folderIndex,
+        folderId = data.folderId,
     )
 }

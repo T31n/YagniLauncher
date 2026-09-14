@@ -25,6 +25,7 @@ import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.model.PageItem
 import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderPopupEntry
 import com.eblan.launcher.domain.model.grid.Associate
@@ -37,6 +38,7 @@ import com.eblan.launcher.domain.model.launcherapps.PinItemRequestType
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.domain.repository.EblanAppWidgetProviderInfoRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoTagRepository
+import com.eblan.launcher.domain.repository.FolderGridItemTransaction
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.usecase.application.GetEblanAppWidgetProviderInfosByLabelUseCase
 import com.eblan.launcher.domain.usecase.application.GetEblanApplicationInfosByLabelAndTagUseCase
@@ -114,6 +116,7 @@ internal class HomeViewModel @Inject constructor(
     getFolderEblanApplicationInfosByEntryUseCase: GetFolderEblanApplicationInfosByEntryUseCase,
     getFolderEblanApplicationInfosUseCase: GetFolderEblanApplicationInfosUseCase,
     private val moveFolderEblanApplicationInfoGridItemUseCase: MoveFolderEblanApplicationInfoGridItemUseCase,
+    private val folderGridItemTransaction: FolderGridItemTransaction,
 ) : ViewModel() {
     val homeUiState = getHomeDataUseCase().map(HomeUiState::Success).stateIn(
         scope = viewModelScope,
@@ -837,6 +840,47 @@ internal class HomeViewModel @Inject constructor(
 
             _gridItemSource.update {
                 null
+            }
+        }
+    }
+
+    // TODO Plug this shit to FolderApplicationScreen
+    fun moveFolderEblanApplicationInfoGridItemOutsideFolder(
+        folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
+        folderGridItems: List<GridItem>,
+    ) {
+        viewModelScope.launch {
+            moveGridItemJob?.cancelAndJoin()
+
+            _folderEblanApplicationInfoPopupEntries.update { folderPopupEntries ->
+                folderPopupEntries.map { folderPopupEntry ->
+                    folderPopupEntry.copy(isCloseFolder = true)
+                }
+            }
+
+            folderGridItemTransaction.updateFolderEblanApplicationInfoGridItem(
+                folderEblanApplicationInfoGridItem = folderEblanApplicationInfoGridItem,
+            )
+
+            _moveFolderEblanApplicationInfoGridItemResult.update {
+                MoveFolderEblanApplicationInfoGridItemResult(
+                    isSuccess = false,
+                    folderEblanApplicationInfoGridItem = folderEblanApplicationInfoGridItem,
+                )
+            }
+
+            when (folderEblanApplicationInfoGridItem.data) {
+                is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
+                    _gridItemSource.update {
+                        GridItemSource.New
+                    }
+                }
+
+                is FolderEblanApplicationInfoGridItemData.Folder -> {
+                    _gridItemSource.update {
+                        GridItemSource.NewFolder(folderGridItems = folderGridItems)
+                    }
+                }
             }
         }
     }
