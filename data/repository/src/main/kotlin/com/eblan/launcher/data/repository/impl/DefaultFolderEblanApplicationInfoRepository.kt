@@ -17,9 +17,9 @@
  */
 package com.eblan.launcher.data.repository.impl
 
+import com.eblan.launcher.data.repository.mapper.asEntity
 import com.eblan.launcher.data.repository.mapper.asModel
 import com.eblan.launcher.data.room.dao.FolderEblanApplicationInfoDao
-import com.eblan.launcher.data.room.entity.FolderEblanApplicationInfoEntity
 import com.eblan.launcher.data.room.entity.FolderEblanApplicationInfoWrapperEntity
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoWrapper
@@ -53,38 +53,22 @@ internal class DefaultFolderEblanApplicationInfoRepository @Inject constructor(p
         ?.asModel()
 
     override suspend fun upsertFolderEblanApplicationInfo(folderEblanApplicationInfo: FolderEblanApplicationInfo) {
-        folderEblanApplicationInfoDao.upsertFolderEblanApplicationInfoEntity(entity = folderEblanApplicationInfo.asModel())
+        folderEblanApplicationInfoDao.upsertFolderEblanApplicationInfoEntity(entity = folderEblanApplicationInfo.asEntity())
     }
 
     override suspend fun getFolderEblanApplicationInfoById(id: String): FolderEblanApplicationInfo? = folderEblanApplicationInfoDao.getFolderEblanApplicationInfoEntityById(id = id)?.asModel()
 
     override suspend fun insertFolderEblanApplicationInfo(folderEblanApplicationInfo: FolderEblanApplicationInfo) {
-        folderEblanApplicationInfoDao.insertFolderEblanApplicationInfoEntity(entity = folderEblanApplicationInfo.asModel())
+        folderEblanApplicationInfoDao.insertFolderEblanApplicationInfoEntity(entity = folderEblanApplicationInfo.asEntity())
     }
 
     override suspend fun updateFolderEblanApplicationInfo(folderEblanApplicationInfo: FolderEblanApplicationInfo) {
-        folderEblanApplicationInfoDao.updateFolderEblanApplicationInfoEntity(entity = folderEblanApplicationInfo.asModel())
+        folderEblanApplicationInfoDao.updateFolderEblanApplicationInfoEntity(entity = folderEblanApplicationInfo.asEntity())
     }
 
     private fun FolderEblanApplicationInfoWrapperEntity.asModel(): FolderEblanApplicationInfoWrapper = FolderEblanApplicationInfoWrapper(
         folderEblanApplicationInfo = folderEblanApplicationInfoEntity.asModel(),
         eblanApplicationInfos = eblanApplicationInfoEntities.map { it.asModel() },
         folderEblanApplicationInfos = folderEblanApplicationInfoEntities.map { it.asModel() },
-    )
-
-    private fun FolderEblanApplicationInfoEntity.asModel(): FolderEblanApplicationInfo = FolderEblanApplicationInfo(
-        id = id,
-        icon = icon,
-        label = label,
-        folderIndex = folderIndex,
-        folderId = folderId,
-    )
-
-    private fun FolderEblanApplicationInfo.asModel(): FolderEblanApplicationInfoEntity = FolderEblanApplicationInfoEntity(
-        id = id,
-        icon = icon,
-        label = label,
-        folderIndex = folderIndex,
-        folderId = folderId,
     )
 }

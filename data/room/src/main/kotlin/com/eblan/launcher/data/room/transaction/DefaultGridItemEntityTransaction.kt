@@ -15,9 +15,10 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.data.room
+package com.eblan.launcher.data.room.transaction
 
 import androidx.room.withTransaction
+import com.eblan.launcher.data.room.EblanDatabase
 import com.eblan.launcher.data.room.dao.ApplicationInfoGridItemDao
 import com.eblan.launcher.data.room.dao.FolderGridItemDao
 import com.eblan.launcher.data.room.dao.ShortcutConfigGridItemDao
@@ -35,14 +36,14 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-internal class DefaultGridItemTransaction @Inject constructor(
+internal class DefaultGridItemEntityTransaction @Inject constructor(
     private val eblanDatabase: EblanDatabase,
     private val applicationInfoGridItemDao: ApplicationInfoGridItemDao,
     private val widgetGridItemDao: WidgetGridItemDao,
     private val shortcutInfoGridItemDao: ShortcutInfoGridItemDao,
     private val shortcutConfigGridItemDao: ShortcutConfigGridItemDao,
     private val folderGridItemDao: FolderGridItemDao,
-) : GridItemTransaction {
+) : GridItemEntityTransaction {
     override val gridItemEntitiesFlow: Flow<GridItemEntities> =
         eblanDatabase.invalidationTracker.createFlow(
             "ApplicationInfoGridItemEntity",

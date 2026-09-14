@@ -24,13 +24,13 @@ import com.eblan.launcher.data.repository.mapper.asModel
 import com.eblan.launcher.data.repository.mapper.asShortcutConfigGridItem
 import com.eblan.launcher.data.repository.mapper.asShortcutInfoGridItem
 import com.eblan.launcher.data.repository.mapper.asWidgetGridItem
-import com.eblan.launcher.data.room.GridItemTransaction
 import com.eblan.launcher.data.room.entity.ApplicationInfoGridItemEntity
 import com.eblan.launcher.data.room.entity.FolderGridItemEntity
 import com.eblan.launcher.data.room.entity.ShortcutConfigGridItemEntity
 import com.eblan.launcher.data.room.entity.ShortcutInfoGridItemEntity
 import com.eblan.launcher.data.room.entity.WidgetGridItemEntity
 import com.eblan.launcher.data.room.model.GridItemEntities
+import com.eblan.launcher.data.room.transaction.GridItemEntityTransaction
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItems
@@ -50,14 +50,14 @@ internal class DefaultGridRepository @Inject constructor(
     private val shortcutInfoGridItemRepository: ShortcutInfoGridItemRepository,
     private val folderGridItemRepository: FolderGridItemRepository,
     private val shortcutConfigGridItemRepository: ShortcutConfigGridItemRepository,
-    private val gridItemTransaction: GridItemTransaction,
+    private val gridItemEntityTransaction: GridItemEntityTransaction,
 ) : GridRepository {
     override val gridItemsFlow: Flow<GridItems> =
-        gridItemTransaction.gridItemEntitiesFlow.map { gridItemEntities ->
+        gridItemEntityTransaction.gridItemEntitiesFlow.map { gridItemEntities ->
             gridItemEntities.asGridItems()
         }
 
-    override suspend fun getGridItems(): GridItems = gridItemTransaction.getGridItemEntities().asGridItems()
+    override suspend fun getGridItems(): GridItems = gridItemEntityTransaction.getGridItemEntities().asGridItems()
 
     override suspend fun insertGridItem(gridItem: GridItem) {
         when (val data = gridItem.data) {
@@ -172,7 +172,7 @@ internal class DefaultGridRepository @Inject constructor(
             }
         }
 
-        gridItemTransaction.upsertGridItemEntitiesTransaction(
+        gridItemEntityTransaction.upsertGridItemEntitiesTransaction(
             applicationInfoGridItemEntities = applicationInfoGridItemEntities,
             widgetGridItemEntities = widgetGridItemEntities,
             shortcutInfoGridItemEntities = shortcutInfoGridItemEntities,
@@ -226,7 +226,7 @@ internal class DefaultGridRepository @Inject constructor(
             }
         }
 
-        gridItemTransaction.deleteGridItemEntitiesTransaction(
+        gridItemEntityTransaction.deleteGridItemEntitiesTransaction(
             applicationInfoGridItemEntities = applicationInfoGridItemEntities,
             widgetGridItemEntities = widgetGridItemEntities,
             shortcutInfoGridItemEntities = shortcutInfoGridItemEntities,

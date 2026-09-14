@@ -40,21 +40,13 @@ internal class DefaultEblanApplicationInfoRepository @Inject constructor(
             }
         }
 
-    override suspend fun getEblanApplicationInfos(): List<EblanApplicationInfo> = eblanApplicationInfoDao.getEblanApplicationInfoEntity()
+    override suspend fun getEblanApplicationInfos(): List<EblanApplicationInfo> = eblanApplicationInfoDao.getEblanApplicationInfoEntities()
         .map {
             it.asModel()
         }
 
     override suspend fun upsertEblanApplicationInfo(eblanApplicationInfo: EblanApplicationInfo) {
         eblanApplicationInfoDao.upsertEblanApplicationInfoEntity(entity = eblanApplicationInfo.asEntity())
-    }
-
-    override suspend fun updateEblanApplicationInfos(eblanApplicationInfos: List<EblanApplicationInfo>) {
-        val entities = eblanApplicationInfos.map {
-            it.asEntity()
-        }
-
-        eblanApplicationInfoDao.updateEblanApplicationInfoEntities(entities = entities)
     }
 
     override suspend fun deleteEblanApplicationInfoByPackageName(

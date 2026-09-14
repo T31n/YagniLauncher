@@ -27,6 +27,7 @@ import com.eblan.launcher.data.repository.impl.DefaultEblanShortcutConfigReposit
 import com.eblan.launcher.data.repository.impl.DefaultEblanShortcutInfoRepository
 import com.eblan.launcher.data.repository.impl.DefaultFolderEblanApplicationInfoRepository
 import com.eblan.launcher.data.repository.impl.DefaultFolderGridItemRepository
+import com.eblan.launcher.data.repository.impl.DefaultFolderGridItemTransaction
 import com.eblan.launcher.data.repository.impl.DefaultGridRepository
 import com.eblan.launcher.data.repository.impl.DefaultShortcutConfigGridItemRepository
 import com.eblan.launcher.data.repository.impl.DefaultShortcutInfoGridItemRepository
@@ -42,6 +43,7 @@ import com.eblan.launcher.domain.repository.EblanShortcutConfigRepository
 import com.eblan.launcher.domain.repository.EblanShortcutInfoRepository
 import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.FolderGridItemRepository
+import com.eblan.launcher.domain.repository.FolderGridItemTransaction
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.repository.ShortcutConfigGridItemRepository
 import com.eblan.launcher.domain.repository.ShortcutInfoGridItemRepository
@@ -115,4 +117,8 @@ internal interface RepositoryModule {
     @Binds
     @Singleton
     fun folderEblanApplicationInfoRepository(impl: DefaultFolderEblanApplicationInfoRepository): FolderEblanApplicationInfoRepository
+
+    @Binds
+    @Singleton
+    fun folderGridItemTransaction(impl: DefaultFolderGridItemTransaction): FolderGridItemTransaction
 }

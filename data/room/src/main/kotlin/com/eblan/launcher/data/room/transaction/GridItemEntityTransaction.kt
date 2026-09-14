@@ -15,7 +15,7 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.data.room
+package com.eblan.launcher.data.room.transaction
 
 import com.eblan.launcher.data.room.entity.ApplicationInfoGridItemEntity
 import com.eblan.launcher.data.room.entity.FolderGridItemEntity
@@ -25,7 +25,7 @@ import com.eblan.launcher.data.room.entity.WidgetGridItemEntity
 import com.eblan.launcher.data.room.model.GridItemEntities
 import kotlinx.coroutines.flow.Flow
 
-interface GridItemTransaction {
+interface GridItemEntityTransaction {
     val gridItemEntitiesFlow: Flow<GridItemEntities>
 
     suspend fun getGridItemEntities(): GridItemEntities
