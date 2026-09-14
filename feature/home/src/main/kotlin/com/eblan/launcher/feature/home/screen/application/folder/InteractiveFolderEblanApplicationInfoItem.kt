@@ -48,6 +48,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
@@ -91,7 +92,6 @@ import com.eblan.launcher.feature.home.util.getHorizontalAlignment
 import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
 import com.eblan.launcher.feature.home.util.getVerticalArrangement
 import com.eblan.launcher.feature.home.util.handleOnPress
-import com.eblan.launcher.framework.launcherapps.AndroidLauncherAppsWrapper
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import kotlinx.coroutines.launch
 
@@ -118,6 +118,18 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
     folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
     onUpdateIsVisibleFolders: (Boolean) -> Unit,
     onUpsertFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
+    onUpdateImageBitmap: (ImageBitmap) -> Unit,
+    onUpdateOverlayBounds: (
+        intOffset: IntOffset,
+        intSize: IntSize,
+    ) -> Unit,
+    onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
+    onShowGridItemPopup: (
+        intOffset: IntOffset,
+        intSize: IntSize,
+    ) -> Unit,
+    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
+    onUpdateMoveFolderEblanApplicationInfoGridItemResult: (MoveFolderEblanApplicationInfoGridItemResult) -> Unit,
 ) {
     val isSelected =
         moveFolderEblanApplicationInfoGridItemResult != null &&
@@ -178,6 +190,7 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
             InteractiveEblanApplicationInfoItem(
                 modifier = modifier,
                 sharedTransitionScope = sharedTransitionScope,
+                folderEblanApplicationInfoGridItem = folderEblanApplicationInfoGridItem,
                 data = data,
                 appDrawerSettings = appDrawerSettings,
                 isVisibleOverlay = isVisibleOverlay,
@@ -193,6 +206,12 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
                 sharedElementKey = sharedElementKey,
                 padding = padding,
                 iconSize = iconSize,
+                onUpdateImageBitmap = onUpdateImageBitmap,
+                onUpdateOverlayBounds = onUpdateOverlayBounds,
+                onUpdateSharedElementKey = onUpdateSharedElementKey,
+                onShowGridItemPopup = onShowGridItemPopup,
+                onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+                onUpdateMoveFolderEblanApplicationInfoGridItemResult = onUpdateMoveFolderEblanApplicationInfoGridItemResult,
             )
         }
 
@@ -223,6 +242,12 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
                 isVisibleFolder = isVisibleFolder,
                 onUpdateIsVisibleFolders = onUpdateIsVisibleFolders,
                 onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
+                onUpdateImageBitmap = onUpdateImageBitmap,
+                onUpdateOverlayBounds = onUpdateOverlayBounds,
+                onUpdateSharedElementKey = onUpdateSharedElementKey,
+                onShowGridItemPopup = onShowGridItemPopup,
+                onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+                onUpdateMoveFolderEblanApplicationInfoGridItemResult = onUpdateMoveFolderEblanApplicationInfoGridItemResult,
             )
         }
     }
@@ -232,6 +257,7 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
 private fun InteractiveEblanApplicationInfoItem(
     modifier: Modifier = Modifier,
     sharedTransitionScope: SharedTransitionScope,
+    folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
     data: FolderEblanApplicationInfoGridItemData.ApplicationInfo,
     appDrawerSettings: AppDrawerSettings,
     isVisibleOverlay: Boolean,
@@ -247,6 +273,18 @@ private fun InteractiveEblanApplicationInfoItem(
     sharedElementKey: SharedElementKey,
     padding: Dp,
     iconSize: Dp,
+    onUpdateImageBitmap: (ImageBitmap) -> Unit,
+    onUpdateOverlayBounds: (
+        intOffset: IntOffset,
+        intSize: IntSize,
+    ) -> Unit,
+    onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
+    onShowGridItemPopup: (
+        intOffset: IntOffset,
+        intSize: IntSize,
+    ) -> Unit,
+    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
+    onUpdateMoveFolderEblanApplicationInfoGridItemResult: (MoveFolderEblanApplicationInfoGridItemResult) -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -276,6 +314,17 @@ private fun InteractiveEblanApplicationInfoItem(
 
     var intSize by remember { mutableStateOf(IntSize.Zero) }
 
+    val left = intOffset.x + leftPadding
+
+    val top = intOffset.y + topPadding
+
+    val sourceBounds = Rect(
+        left,
+        top,
+        left + intSize.width,
+        top + intSize.height,
+    )
+
     val scale = remember { Animatable(1f) }
 
     val graphicsLayer = rememberGraphicsLayer()
@@ -295,14 +344,10 @@ private fun InteractiveEblanApplicationInfoItem(
                     onTap = if (!isVisibleOverlay) {
                         {
                             scope.launch {
-                                handleOnTapEblanApplicationInfoItem(
-                                    componentName = data.componentName,
+                                launcherApps.startMainActivity(
                                     serialNumber = data.serialNumber,
-                                    intOffset = intOffset,
-                                    intSize = intSize,
-                                    launcherApps = launcherApps,
-                                    leftPadding = leftPadding,
-                                    topPadding = topPadding,
+                                    componentName = data.componentName,
+                                    sourceBounds = sourceBounds,
                                 )
                             }
                         }
@@ -311,6 +356,21 @@ private fun InteractiveEblanApplicationInfoItem(
                     },
                     onLongPress = if (!isVisibleOverlay) {
                         {
+                            scope.launch {
+                                onLongPressFolderEblanApplicationInfoGridItem(
+                                    graphicsLayer = graphicsLayer,
+                                    intOffset = intOffset,
+                                    intSize = intSize,
+                                    sharedElementKey = sharedElementKey,
+                                    folderEblanApplicationInfoGridItem = folderEblanApplicationInfoGridItem,
+                                    onUpdateImageBitmap = onUpdateImageBitmap,
+                                    onUpdateOverlayBounds = onUpdateOverlayBounds,
+                                    onUpdateSharedElementKey = onUpdateSharedElementKey,
+                                    onShowGridItemPopup = onShowGridItemPopup,
+                                    onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+                                    onUpdateMoveFolderEblanApplicationInfoGridItemResult = onUpdateMoveFolderEblanApplicationInfoGridItemResult,
+                                )
+                            }
                         }
                     } else {
                         null
@@ -402,7 +462,21 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
     isVisibleFolder: Boolean,
     onUpdateIsVisibleFolders: (Boolean) -> Unit,
     onUpsertFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
+    onUpdateImageBitmap: (ImageBitmap) -> Unit,
+    onUpdateOverlayBounds: (
+        intOffset: IntOffset,
+        intSize: IntSize,
+    ) -> Unit,
+    onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
+    onShowGridItemPopup: (
+        intOffset: IntOffset,
+        intSize: IntSize,
+    ) -> Unit,
+    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
+    onUpdateMoveFolderEblanApplicationInfoGridItemResult: (MoveFolderEblanApplicationInfoGridItemResult) -> Unit,
 ) {
+    val scope = rememberCoroutineScope()
+
     val maxLines = if (appDrawerSettings.gridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
 
     val icon = data.icon
@@ -450,6 +524,21 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
                     },
                     onLongPress = if (!isVisibleOverlay) {
                         {
+                            scope.launch {
+                                onLongPressFolderEblanApplicationInfoGridItem(
+                                    graphicsLayer = graphicsLayer,
+                                    intOffset = intOffset,
+                                    intSize = intSize,
+                                    sharedElementKey = sharedElementKey,
+                                    folderEblanApplicationInfoGridItem = folderEblanApplicationInfoGridItem,
+                                    onUpdateImageBitmap = onUpdateImageBitmap,
+                                    onUpdateOverlayBounds = onUpdateOverlayBounds,
+                                    onUpdateSharedElementKey = onUpdateSharedElementKey,
+                                    onShowGridItemPopup = onShowGridItemPopup,
+                                    onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+                                    onUpdateMoveFolderEblanApplicationInfoGridItemResult = onUpdateMoveFolderEblanApplicationInfoGridItemResult,
+                                )
+                            }
                         }
                     } else {
                         null
@@ -606,29 +695,4 @@ private fun PreviewFolderEblanApplicationInfoItem(
             }
         }
     }
-}
-
-private fun handleOnTapEblanApplicationInfoItem(
-    serialNumber: Long,
-    componentName: String,
-    intOffset: IntOffset,
-    intSize: IntSize,
-    launcherApps: AndroidLauncherAppsWrapper,
-    leftPadding: Int,
-    topPadding: Int,
-) {
-    val left = intOffset.x + leftPadding
-
-    val top = intOffset.y + topPadding
-
-    launcherApps.startMainActivity(
-        serialNumber = serialNumber,
-        componentName = componentName,
-        sourceBounds = Rect(
-            left,
-            top,
-            left + intSize.width,
-            top + intSize.height,
-        ),
-    )
 }

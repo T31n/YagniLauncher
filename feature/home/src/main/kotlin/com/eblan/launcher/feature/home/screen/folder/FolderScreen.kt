@@ -71,6 +71,8 @@ import com.eblan.launcher.feature.home.model.PageDirection
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.getAnimatedRect
 import com.eblan.launcher.feature.home.util.getFolderPopupLayoutInfo
+import com.eblan.launcher.feature.home.util.handleAnimateScrollToPage
+import com.eblan.launcher.feature.home.util.handlePageDirection
 import kotlin.math.roundToInt
 
 @Composable
@@ -132,7 +134,7 @@ internal fun FolderScreen(
     ) -> Unit,
     onDismissFolderGridItemPopup: () -> Unit,
     onResetGrid: () -> Unit,
-    onDragEndAfterMoveFolder: () -> Unit,
+    onResetGridAfterMoveFolder: () -> Unit,
     onUpsertFolderGridItemPopupEntry: (FolderPopupEntry) -> Unit,
     onUpdateIsVisibleFolders: (Boolean) -> Unit,
 ) {
@@ -209,7 +211,8 @@ internal fun FolderScreen(
     val isFirstFolderGridItem = folderGridItemPopups.size == 1 &&
         folderGridItemPopups.singleOrNull()?.gridItem == folderGridItemPopup.gridItem
 
-    val isLastFolderGridItem = folderGridItemPopups.lastOrNull()?.gridItem == folderGridItemPopup.gridItem
+    val isLastFolderGridItem =
+        folderGridItemPopups.lastOrNull()?.gridItem == folderGridItemPopup.gridItem
 
     val currentDrag = rememberUpdatedState(drag)
     val currentIsDragging = rememberUpdatedState(isDragging)
@@ -298,7 +301,7 @@ internal fun FolderScreen(
             isVisibleOverlay = currentIsVisibleOverlay,
             isLastFolderGridItem = isLastFolderGridItem,
             onResetGrid = onResetGrid,
-            onDragEndAfterMoveFolder = onDragEndAfterMoveFolder,
+            onResetGridAfterMoveFolder = onResetGridAfterMoveFolder,
             onUpdateIsDragging = onUpdateIsDragging,
             onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
         )
@@ -333,13 +336,13 @@ internal fun FolderScreen(
         handleAnimateScrollToPage(
             density = density,
             drag = drag,
-            isVisibleOverlay = currentIsVisibleOverlay,
-            lockMovement = currentLockMovement,
+            isVisibleOverlay = currentIsVisibleOverlay.value,
+            lockMovement = currentLockMovement.value,
             moveGridItemResult = moveGridItemResult,
             dragIntOffset = dragIntOffset,
-            folderGridItemPopup = folderGridItemPopup,
+            columns = folderGridItemPopup.columns,
             folderPopupIntOffset = folderPopupIntOffset,
-            isDragging = currentIsDragging,
+            isDragging = currentIsDragging.value,
             paddingValues = paddingValues,
             screenWidth = screenWidth,
             layoutDirection = layoutDirection,

@@ -44,6 +44,7 @@ import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderPopupEntry
 import com.eblan.launcher.domain.model.folder.PreviewFolder
@@ -168,7 +169,7 @@ internal fun HomeRoute(
         onMoveGridItem = viewModel::moveGridItem,
         onResetConfigureResultCode = onResetConfigureResultCode,
         onUpdateGridItemsAfterMove = viewModel::updateGridItemsAfterMove,
-        onUpdateGridItemsAfterMoveFolder = viewModel::resetGridAfterMoveFolder,
+        onResetGridAfterMoveFolder = viewModel::resetGridAfterMoveFolder,
         onResetGridAfterResize = viewModel::resetGridAfterResize,
         onResetPinGridItem = viewModel::resetPinGridItem,
         onResizeGridItem = viewModel::resizeGridItem,
@@ -194,6 +195,9 @@ internal fun HomeRoute(
         onDeleteFolderEblanApplicationInfoPopupEntry = viewModel::deleteFolderEblanApplicationInfoPopupEntry,
         onEditFolderApplicationInfo = onEditFolderApplicationInfo,
         onMoveNewFolderGridItem = viewModel::moveNewFolderGridItem,
+        onUpdateMoveFolderEblanApplicationInfoGridItemResult = viewModel::updateMoveFolderEblanApplicationInfoGridItemResult,
+        onMoveFolderEblanApplicationInfoGridItem = viewModel::moveFolderEblanApplicationInfoGridItem,
+        onResetGridAfterMoveFolderEblanApplicationInfo = viewModel::resetGridAfterMoveFolderEblanApplicationInfo,
     )
 }
 
@@ -261,7 +265,7 @@ internal fun HomeScreen(
     ) -> Unit,
     onResetConfigureResultCode: () -> Unit,
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
-    onUpdateGridItemsAfterMoveFolder: () -> Unit,
+    onResetGridAfterMoveFolder: () -> Unit,
     onResetGridAfterResize: () -> Unit,
     onResetPinGridItem: () -> Unit,
     onResizeGridItem: (
@@ -323,6 +327,17 @@ internal fun HomeScreen(
         gridWidth: Int,
         gridHeight: Int,
     ) -> Unit,
+    onUpdateMoveFolderEblanApplicationInfoGridItemResult: (MoveFolderEblanApplicationInfoGridItemResult) -> Unit,
+    onMoveFolderEblanApplicationInfoGridItem: (
+        folderEblanApplicationInfoPopup: FolderEblanApplicationInfoPopup,
+        folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
+        dragX: Int,
+        dragY: Int,
+        gridWidth: Int,
+        gridHeight: Int,
+        currentPage: Int,
+    ) -> Unit,
+    onResetGridAfterMoveFolderEblanApplicationInfo: () -> Unit,
 ) {
     val paddingValues = WindowInsets.safeDrawing.asPaddingValues()
 
@@ -378,7 +393,7 @@ internal fun HomeScreen(
                 onMoveGridItem = onMoveGridItem,
                 onResetConfigureResultCode = onResetConfigureResultCode,
                 onUpdateGridItemsAfterMove = onUpdateGridItemsAfterMove,
-                onUpdateGridItemsAfterMoveFolder = onUpdateGridItemsAfterMoveFolder,
+                onResetGridAfterMoveFolder = onResetGridAfterMoveFolder,
                 onResetGridAfterResize = onResetGridAfterResize,
                 onResetPinGridItem = onResetPinGridItem,
                 onResizeGridItem = onResizeGridItem,
@@ -404,6 +419,9 @@ internal fun HomeScreen(
                 onDeleteFolderEblanApplicationInfoPopupEntry = onDeleteFolderEblanApplicationInfoPopupEntry,
                 onEditFolderApplicationInfo = onEditFolderApplicationInfo,
                 onMoveNewFolderGridItem = onMoveNewFolderGridItem,
+                onUpdateMoveFolderEblanApplicationInfoGridItemResult = onUpdateMoveFolderEblanApplicationInfoGridItemResult,
+                onMoveFolderEblanApplicationInfoGridItem = onMoveFolderEblanApplicationInfoGridItem,
+                onDragEndAfterMoveFolderEblanApplicationInfo = onResetGridAfterMoveFolderEblanApplicationInfo,
             )
         }
     }
@@ -476,7 +494,7 @@ private fun Success(
     ) -> Unit,
     onResetConfigureResultCode: () -> Unit,
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
-    onUpdateGridItemsAfterMoveFolder: () -> Unit,
+    onResetGridAfterMoveFolder: () -> Unit,
     onResetGridAfterResize: () -> Unit,
     onResetPinGridItem: () -> Unit,
     onResizeGridItem: (
@@ -538,6 +556,17 @@ private fun Success(
         gridWidth: Int,
         gridHeight: Int,
     ) -> Unit,
+    onUpdateMoveFolderEblanApplicationInfoGridItemResult: (MoveFolderEblanApplicationInfoGridItemResult) -> Unit,
+    onMoveFolderEblanApplicationInfoGridItem: (
+        folderEblanApplicationInfoPopup: FolderEblanApplicationInfoPopup,
+        folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
+        dragX: Int,
+        dragY: Int,
+        gridWidth: Int,
+        gridHeight: Int,
+        currentPage: Int,
+    ) -> Unit,
+    onDragEndAfterMoveFolderEblanApplicationInfo: () -> Unit,
 ) {
     AnimatedContent(
         modifier = modifier,
@@ -581,7 +610,7 @@ private fun Success(
                     onDeleteGridItem = onDeleteGridItem,
                     onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
                     onUpdateGridItemsAfterMove = onUpdateGridItemsAfterMove,
-                    onDragEndAfterMoveFolder = onUpdateGridItemsAfterMoveFolder,
+                    onResetGridAfterMoveFolder = onResetGridAfterMoveFolder,
                     onEditApplicationInfo = onEditApplicationInfo,
                     onEditGridItem = onEditGridItem,
                     onEditPage = onEditPage,
@@ -619,6 +648,9 @@ private fun Success(
                     onDeleteFolderEblanApplicationInfoPopupEntry = onDeleteFolderEblanApplicationInfoPopupEntry,
                     onEditFolderApplicationInfo = onEditFolderApplicationInfo,
                     onMoveNewFolderGridItem = onMoveNewFolderGridItem,
+                    onUpdateMoveFolderEblanApplicationInfoGridItemResult = onUpdateMoveFolderEblanApplicationInfoGridItemResult,
+                    onMoveFolderEblanApplicationInfoGridItem = onMoveFolderEblanApplicationInfoGridItem,
+                    onDragEndAfterMoveFolderEblanApplicationInfo = onDragEndAfterMoveFolderEblanApplicationInfo,
                 )
             }
 

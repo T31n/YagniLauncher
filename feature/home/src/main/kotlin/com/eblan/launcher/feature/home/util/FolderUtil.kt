@@ -27,7 +27,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_COLUMNS
 import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_ROWS
+import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.FolderPopupLayoutInfo
+import com.eblan.launcher.feature.home.model.PageDirection
+import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 internal fun getAnimatedRect(
     progress: Float,
@@ -159,4 +163,115 @@ internal fun getFolderPopupLayoutInfo(
         startPreviewWidth = startPreviewWidth,
         startPreviewHeight = startPreviewHeight,
     )
+}
+
+internal suspend fun handlePageDirection(
+    pageDirection: PageDirection?,
+    currentPage: Int,
+    isInProgress: Boolean,
+    onAnimateScrollToPage: suspend (Int) -> Unit,
+) {
+    if (pageDirection == null || isInProgress) return
+
+    delay(500L.milliseconds)
+
+    when (pageDirection) {
+        PageDirection.Left -> onAnimateScrollToPage(currentPage - 1)
+        PageDirection.Right -> onAnimateScrollToPage(currentPage + 1)
+    }
+}
+
+internal fun handleAnimateScrollToPage(
+    density: Density,
+    drag: Drag,
+    isVisibleOverlay: Boolean,
+    lockMovement: Boolean,
+    moveGridItemResult: Any?,
+    dragIntOffset: IntOffset,
+    columns: Int,
+    folderPopupIntOffset: IntOffset,
+    isDragging: Boolean,
+    paddingValues: PaddingValues,
+    screenWidth: Int,
+    layoutDirection: LayoutDirection,
+    folderCellWidth: Int,
+    isLastFolderGridItem: Boolean,
+    isInProgress: Boolean,
+    onUpdateFolderPageDirection: (PageDirection?) -> Unit,
+) {
+    if (drag != Drag.Dragging ||
+        !isVisibleOverlay ||
+        !isDragging ||
+        lockMovement ||
+        moveGridItemResult == null ||
+        !isLastFolderGridItem ||
+        isInProgress
+    ) {
+        return
+    }
+
+    onUpdateFolderPageDirection(
+        calculateFolderPageDirection(
+            density = density,
+            dragIntOffset = dragIntOffset,
+            columns = columns,
+            folderPopupIntOffset = folderPopupIntOffset,
+            paddingValues = paddingValues,
+            screenWidth = screenWidth,
+            layoutDirection = layoutDirection,
+            folderCellWidth = folderCellWidth,
+        ),
+    )
+}
+
+private fun calculateFolderPageDirection(
+    density: Density,
+    dragIntOffset: IntOffset,
+    columns: Int,
+    folderPopupIntOffset: IntOffset,
+    paddingValues: PaddingValues,
+    screenWidth: Int,
+    layoutDirection: LayoutDirection,
+    folderCellWidth: Int,
+): PageDirection? {
+    val leftPadding = with(density) {
+        paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
+    }
+
+    val rightPadding = with(density) {
+        paddingValues.calculateRightPadding(layoutDirection).roundToPx()
+    }
+
+    val horizontalPadding = leftPadding + rightPadding
+
+    val safeDrawingWidth = screenWidth - horizontalPadding
+
+    val availableWidth = safeDrawingWidth.coerceAtLeast(0)
+
+    val cellWidthDp = folderCellWidth.dp
+    val cellWidthPx = with(receiver = density) { cellWidthDp.roundToPx() }
+
+    val folderGridWidthPx = (cellWidthPx * columns)
+        .coerceAtMost(availableWidth)
+
+    val edgeDistance = with(density) {
+        20.dp.roundToPx()
+    }
+
+    val x = folderPopupIntOffset.x - leftPadding
+
+    val dragX = dragIntOffset.x - leftPadding
+
+    val popupX = x.coerceIn(0, availableWidth - folderGridWidthPx) + leftPadding
+
+    val folderDragX = dragX - popupX
+
+    val isOnLeftGrid = folderDragX < edgeDistance
+    val isOnRightGrid = folderDragX > folderGridWidthPx - edgeDistance
+
+    return when {
+        isOnLeftGrid -> PageDirection.Left
+        isOnRightGrid -> PageDirection.Right
+        else -> null
+    }
 }

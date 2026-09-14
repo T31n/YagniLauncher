@@ -317,6 +317,12 @@ internal class PagerScreenState(
     var isCloseFolderApplicationPopup by mutableStateOf(false)
         private set
 
+    var showFolderEblanApplicationGridItemPopup by mutableStateOf(false)
+        private set
+
+    var isCloseFolderEblanApplicationGridItemPopup by mutableStateOf(false)
+        private set
+
     private val touchSlop = with(density) {
         50.dp.toPx()
     }
@@ -470,7 +476,7 @@ internal class PagerScreenState(
         showFolderApplicationPopup = true
     }
 
-    fun dismissFolderApplicationPopup() {
+    fun dismissFolderEblanApplicationPopup() {
         popupIntOffset = null
 
         popupIntSize = null
@@ -1135,6 +1141,20 @@ internal class PagerScreenState(
 
     fun updateFolderEblanApplicationInfo(value: FolderEblanApplicationInfo?) {
         folderEblanApplicationInfo = value
+    }
+
+    fun updateIsCloseFolderEblanApplicationGridItemPopup(value: Boolean) {
+        isCloseFolderEblanApplicationGridItemPopup = value
+    }
+
+    fun dismissFolderEblanApplicationGridItemPopup() {
+        popupIntOffset = null
+
+        popupIntSize = null
+
+        showFolderEblanApplicationGridItemPopup = false
+
+        isCloseFolderEblanApplicationGridItemPopup = false
     }
 }
 

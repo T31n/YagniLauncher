@@ -15,37 +15,36 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.feature.home.screen.folder
+package com.eblan.launcher.feature.home.screen.application.folder
 
-import androidx.compose.runtime.State
 import com.eblan.launcher.feature.home.model.Drag
 
-internal fun handleDropFolderGridItem(
+internal fun handleDropFolderEblanApplicationInfoGridItem(
     drag: Drag,
-    isDragging: State<Boolean>,
-    lockMovement: State<Boolean>,
-    isVisibleOverlay: State<Boolean>,
-    isLastFolderGridItem: Boolean,
+    isDragging: Boolean,
+    lockMovement: Boolean,
+    isVisibleOverlay: Boolean,
+    isLastFolderEblanApplicationInfo: Boolean,
     onResetGrid: () -> Unit,
-    onResetGridAfterMoveFolder: () -> Unit,
+    onDragEndAfterMoveFolderEblanApplicationInfo: () -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
 ) {
     if (drag == Drag.None ||
         drag == Drag.Start ||
         drag == Drag.Dragging ||
-        !isLastFolderGridItem
+        !isLastFolderEblanApplicationInfo
     ) {
         return
     }
 
-    if (isVisibleOverlay.value && !isDragging.value) {
+    if (isVisibleOverlay && !isDragging) {
         onUpdateIsVisibleOverlay(false)
 
         return
     }
 
-    if (lockMovement.value) {
+    if (lockMovement) {
         onUpdateIsVisibleOverlay(false)
 
         onUpdateIsDragging(false)
@@ -55,8 +54,8 @@ internal fun handleDropFolderGridItem(
         return
     }
 
-    if (isVisibleOverlay.value) {
-        onResetGridAfterMoveFolder()
+    if (isVisibleOverlay) {
+        onDragEndAfterMoveFolderEblanApplicationInfo()
 
         onUpdateIsDragging(false)
     }

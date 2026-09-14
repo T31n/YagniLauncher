@@ -15,10 +15,9 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.feature.home.screen.folder
+package com.eblan.launcher.feature.home.screen.application.folder
 
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.runtime.State
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.layer.GraphicsLayer
 import androidx.compose.ui.unit.Density
@@ -26,23 +25,20 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderPopupEntry
-import com.eblan.launcher.domain.model.grid.FolderGridItemPopup
-import com.eblan.launcher.domain.model.grid.GridItem
-import com.eblan.launcher.domain.model.grid.MoveGridItemResult
+import com.eblan.launcher.domain.model.grid.MoveFolderEblanApplicationInfoGridItemResult
 import com.eblan.launcher.feature.home.model.Drag
-import com.eblan.launcher.feature.home.model.PageDirection
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.PAGE_INDICATOR_HEIGHT
-import kotlinx.coroutines.delay
-import kotlin.time.Duration.Companion.milliseconds
 
-internal suspend fun onLongPressFolderGridItem(
+internal suspend fun onLongPressFolderEblanApplicationInfoGridItem(
     graphicsLayer: GraphicsLayer,
     intOffset: IntOffset,
     intSize: IntSize,
     sharedElementKey: SharedElementKey,
-    gridItem: GridItem,
+    folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
     onUpdateImageBitmap: (ImageBitmap) -> Unit,
     onUpdateOverlayBounds: (
         intOffset: IntOffset,
@@ -54,13 +50,12 @@ internal suspend fun onLongPressFolderGridItem(
         intSize: IntSize,
     ) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
-    onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
+    onUpdateMoveFolderEblanApplicationInfoGridItemResult: (MoveFolderEblanApplicationInfoGridItemResult) -> Unit,
 ) {
-    onUpdateMoveGridItemResult(
-        MoveGridItemResult(
+    onUpdateMoveFolderEblanApplicationInfoGridItemResult(
+        MoveFolderEblanApplicationInfoGridItemResult(
             isSuccess = true,
-            movingGridItem = gridItem,
-            conflictingGridItem = null,
+            folderEblanApplicationInfoGridItem = folderEblanApplicationInfoGridItem,
         ),
     )
 
@@ -81,29 +76,29 @@ internal suspend fun onLongPressFolderGridItem(
     onUpdateIsVisibleOverlay(true)
 }
 
-internal fun handleDragFolderGridItem(
+internal fun handleDragFolderEblanApplicationInfoGridItem(
     density: Density,
     drag: Drag,
     dragIntOffset: IntOffset,
     currentPage: Int,
-    folderGridItemPopup: FolderGridItemPopup,
+    folderEblanApplicationInfoPopup: FolderEblanApplicationInfoPopup,
     folderPopupIntOffset: IntOffset,
-    isDragging: State<Boolean>,
-    isVisibleOverlay: State<Boolean>,
+    isDragging: Boolean,
+    isVisibleOverlay: Boolean,
     isScrollInProgress: Boolean,
-    lockMovement: State<Boolean>,
+    lockMovement: Boolean,
     paddingValues: PaddingValues,
     screenHeight: Int,
     screenWidth: Int,
-    moveGridItemResult: MoveGridItemResult?,
+    moveFolderEblanApplicationInfoGridItemResult: MoveFolderEblanApplicationInfoGridItemResult?,
     layoutDirection: LayoutDirection,
     folderCellWidth: Int,
     folderCellHeight: Int,
-    isLastFolderGridItem: Boolean,
+    isLastFolderEblanApplicationInfoGridItem: Boolean,
     isInProgress: Boolean,
-    onMoveFolderGridItem: (
-        folderGridItemPopup: FolderGridItemPopup,
-        movingFolderGridItem: GridItem,
+    onMoveFolderEblanApplicationInfoGridItem: (
+        folderEblanApplicationInfoPopup: FolderEblanApplicationInfoPopup,
+        folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
         dragX: Int,
         dragY: Int,
         gridWidth: Int,
@@ -111,15 +106,15 @@ internal fun handleDragFolderGridItem(
         currentPage: Int,
     ) -> Unit,
     onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
-    onUpsertFolderGridItemPopupEntry: (FolderPopupEntry) -> Unit,
+    onUpsertFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
 ) {
     if (drag != Drag.Dragging ||
         isScrollInProgress ||
-        !isVisibleOverlay.value ||
-        !isDragging.value ||
-        lockMovement.value ||
-        moveGridItemResult == null ||
-        !isLastFolderGridItem ||
+        !isVisibleOverlay ||
+        !isDragging ||
+        lockMovement ||
+        moveFolderEblanApplicationInfoGridItemResult == null ||
+        !isLastFolderEblanApplicationInfoGridItem ||
         isInProgress
     ) {
         return
@@ -128,8 +123,9 @@ internal fun handleDragFolderGridItem(
     val folderGridDragPosition = calculateFolderGridDragPosition(
         density = density,
         dragIntOffset = dragIntOffset,
-        folderGridItemPopup = folderGridItemPopup,
         folderPopupIntOffset = folderPopupIntOffset,
+        columns = folderEblanApplicationInfoPopup.columns,
+        rows = folderEblanApplicationInfoPopup.rows,
         paddingValues = paddingValues,
         screenHeight = screenHeight,
         screenWidth = screenWidth,
@@ -141,26 +137,31 @@ internal fun handleDragFolderGridItem(
     if (folderGridDragPosition.x in 0 until folderGridDragPosition.width &&
         folderGridDragPosition.y in 0 until folderGridDragPosition.height
     ) {
-        val movingGridItem = moveGridItemResult.movingGridItem
+        val movingFolderGridItem =
+            moveFolderEblanApplicationInfoGridItemResult.folderEblanApplicationInfoGridItem
 
         onUpdateSharedElementKey(
             SharedElementKey(
-                id = movingGridItem.id,
+                id = movingFolderGridItem.id,
                 parent = SharedElementKey.Parent.Folder,
             ),
         )
 
-        onMoveFolderGridItem(
-            folderGridItemPopup,
-            movingGridItem,
+        onMoveFolderEblanApplicationInfoGridItem(
+            folderEblanApplicationInfoPopup,
+            movingFolderGridItem,
             folderGridDragPosition.x,
             folderGridDragPosition.y,
             folderGridDragPosition.width,
             folderGridDragPosition.height,
             currentPage,
         )
-    } else if (!folderGridItemPopup.folderPopupEntry.isCloseFolder) {
-        onUpsertFolderGridItemPopupEntry(folderGridItemPopup.folderPopupEntry.copy(isCloseFolder = true))
+    } else if (!folderEblanApplicationInfoPopup.folderPopupEntry.isCloseFolder) {
+        onUpsertFolderEblanApplicationInfoPopupEntry(
+            folderEblanApplicationInfoPopup.folderPopupEntry.copy(
+                isCloseFolder = true,
+            ),
+        )
     }
 }
 
@@ -171,62 +172,11 @@ private data class FolderGridDragPosition(
     val height: Int,
 )
 
-private fun calculateFolderPageDirection(
-    density: Density,
-    dragIntOffset: IntOffset,
-    folderGridItemPopup: FolderGridItemPopup,
-    folderPopupIntOffset: IntOffset,
-    paddingValues: PaddingValues,
-    screenWidth: Int,
-    layoutDirection: LayoutDirection,
-    folderCellWidth: Int,
-): PageDirection? {
-    val leftPadding = with(density) {
-        paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
-    }
-
-    val rightPadding = with(density) {
-        paddingValues.calculateRightPadding(layoutDirection).roundToPx()
-    }
-
-    val horizontalPadding = leftPadding + rightPadding
-
-    val safeDrawingWidth = screenWidth - horizontalPadding
-
-    val availableWidth = safeDrawingWidth.coerceAtLeast(0)
-
-    val cellWidthDp = folderCellWidth.dp
-    val cellWidthPx = with(receiver = density) { cellWidthDp.roundToPx() }
-
-    val folderGridWidthPx = (cellWidthPx * folderGridItemPopup.columns)
-        .coerceAtMost(availableWidth)
-
-    val edgeDistance = with(density) {
-        20.dp.roundToPx()
-    }
-
-    val x = folderPopupIntOffset.x - leftPadding
-
-    val dragX = dragIntOffset.x - leftPadding
-
-    val popupX = x.coerceIn(0, availableWidth - folderGridWidthPx) + leftPadding
-
-    val folderDragX = dragX - popupX
-
-    val isOnLeftGrid = folderDragX < edgeDistance
-    val isOnRightGrid = folderDragX > folderGridWidthPx - edgeDistance
-
-    return when {
-        isOnLeftGrid -> PageDirection.Left
-        isOnRightGrid -> PageDirection.Right
-        else -> null
-    }
-}
-
 private fun calculateFolderGridDragPosition(
     density: Density,
     dragIntOffset: IntOffset,
-    folderGridItemPopup: FolderGridItemPopup,
+    columns: Int,
+    rows: Int,
     folderPopupIntOffset: IntOffset,
     paddingValues: PaddingValues,
     screenHeight: Int,
@@ -275,8 +225,8 @@ private fun calculateFolderGridDragPosition(
     }
 
     val folderGridWidthPx =
-        (minCellWidthPx * folderGridItemPopup.columns).coerceAtMost(availableWidth)
-    val folderGridHeightPx = (minCellHeightPx * folderGridItemPopup.rows).coerceAtMost(
+        (minCellWidthPx * columns).coerceAtMost(availableWidth)
+    val folderGridHeightPx = (minCellHeightPx * rows).coerceAtMost(
         (availableHeight - folderTitleHeightPx).coerceAtLeast(0),
     )
 

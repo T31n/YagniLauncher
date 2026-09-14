@@ -253,8 +253,10 @@ internal class HomeViewModel @Inject constructor(
         initialValue = emptyList(),
     )
 
-    private val _moveFolderEblanApplicationInfoGridItemResult = MutableStateFlow<MoveFolderEblanApplicationInfoGridItemResult?>(null)
-    val moveFolderEblanApplicationInfoGridItemResult = _moveFolderEblanApplicationInfoGridItemResult.asStateFlow()
+    private val _moveFolderEblanApplicationInfoGridItemResult =
+        MutableStateFlow<MoveFolderEblanApplicationInfoGridItemResult?>(null)
+    val moveFolderEblanApplicationInfoGridItemResult =
+        _moveFolderEblanApplicationInfoGridItemResult.asStateFlow()
 
     fun moveGridItem(
         movingGridItem: GridItem,
@@ -398,6 +400,10 @@ internal class HomeViewModel @Inject constructor(
             }
 
             _moveGridItemResult.update {
+                null
+            }
+
+            _moveFolderEblanApplicationInfoGridItemResult.update {
                 null
             }
 
@@ -805,6 +811,32 @@ internal class HomeViewModel @Inject constructor(
                     gridHeight = gridHeight,
                     currentPage = currentPage,
                 )
+            }
+        }
+    }
+
+    fun updateMoveFolderEblanApplicationInfoGridItemResult(
+        moveFolderEblanApplicationInfoGridItemResult: MoveFolderEblanApplicationInfoGridItemResult,
+    ) {
+        _moveFolderEblanApplicationInfoGridItemResult.update {
+            moveFolderEblanApplicationInfoGridItemResult
+        }
+    }
+
+    fun resetGridAfterMoveFolderEblanApplicationInfo() {
+        viewModelScope.launch {
+            moveGridItemJob?.cancelAndJoin()
+
+            _isVisibleOverlay.update {
+                false
+            }
+
+            _moveFolderEblanApplicationInfoGridItemResult.update {
+                null
+            }
+
+            _gridItemSource.update {
+                null
             }
         }
     }

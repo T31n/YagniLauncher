@@ -102,6 +102,7 @@ import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderPopupEntry
 import com.eblan.launcher.domain.model.folder.PreviewFolder
@@ -199,7 +200,7 @@ internal fun PagerScreen(
     onDeleteGridItem: (GridItem) -> Unit,
     onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
-    onDragEndAfterMoveFolder: () -> Unit,
+    onResetGridAfterMoveFolder: () -> Unit,
     onEditApplicationInfo: (
         serialNumber: Long,
         componentName: String,
@@ -290,6 +291,17 @@ internal fun PagerScreen(
         gridWidth: Int,
         gridHeight: Int,
     ) -> Unit,
+    onUpdateMoveFolderEblanApplicationInfoGridItemResult: (MoveFolderEblanApplicationInfoGridItemResult) -> Unit,
+    onMoveFolderEblanApplicationInfoGridItem: (
+        folderEblanApplicationInfoPopup: FolderEblanApplicationInfoPopup,
+        folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
+        dragX: Int,
+        dragY: Int,
+        gridWidth: Int,
+        gridHeight: Int,
+        currentPage: Int,
+    ) -> Unit,
+    onDragEndAfterMoveFolderEblanApplicationInfo: () -> Unit,
 ) {
     val layoutDirection = LocalLayoutDirection.current
 
@@ -1077,7 +1089,7 @@ internal fun PagerScreen(
                     onMoveFolderGridItem = onMoveFolderGridItem,
                     onDismissFolderGridItemPopup = pagerScreenState::dismissFolderGridItemPopup,
                     onResetGrid = onResetGrid,
-                    onDragEndAfterMoveFolder = onDragEndAfterMoveFolder,
+                    onResetGridAfterMoveFolder = onResetGridAfterMoveFolder,
                     onUpdateIsVisibleFolders = pagerScreenState::updateIsVisibleFolders,
                 )
             }
@@ -1263,6 +1275,7 @@ internal fun PagerScreen(
                     safeDrawingWidth = safeDrawingWidth,
                     isVisibleOverlay = isVisibleOverlay,
                     screenWidth = screenWidth,
+                    screenHeight = screenHeight,
                     folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                     animations = experimentalSettings.gridItemAnimation,
                     systemTextColor = textColor,
@@ -1275,9 +1288,24 @@ internal fun PagerScreen(
                     folderCellWidth = homeSettings.folderCellWidth,
                     folderCellHeight = homeSettings.folderCellHeight,
                     moveFolderEblanApplicationInfoGridItemResult = moveFolderEblanApplicationInfoGridItemResult,
+                    drag = pagerScreenState.drag,
+                    isDragging = pagerScreenState.isDragging,
+                    lockMovement = experimentalSettings.lockMovement,
+                    dragIntOffset = pagerScreenState.dragIntOffset,
                     onDeleteFolderEblanApplicationInfoPopupEntry = onDeleteFolderEblanApplicationInfoPopupEntry,
                     onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
                     onUpdateIsVisibleFolders = pagerScreenState::updateIsVisibleFolders,
+                    onUpdateImageBitmap = pagerScreenState::updateOverlayImageBitmap,
+                    onUpdateOverlayBounds = pagerScreenState::updateOverlayBounds,
+                    onUpdateSharedElementKey = pagerScreenState::updateSharedElementKey,
+                    onShowGridItemPopup = pagerScreenState::showGridItemPopup,
+                    onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+                    onUpdateMoveFolderEblanApplicationInfoGridItemResult = onUpdateMoveFolderEblanApplicationInfoGridItemResult,
+                    onMoveFolderEblanApplicationInfoGridItem = onMoveFolderEblanApplicationInfoGridItem,
+                    onDismissFolderEblanApplicationGridItemPopup = pagerScreenState::dismissFolderEblanApplicationGridItemPopup,
+                    onResetGrid = onResetGrid,
+                    onDragEndAfterMoveFolderEblanApplicationInfo = onDragEndAfterMoveFolderEblanApplicationInfo,
+                    onUpdateIsDragging = pagerScreenState::updateIsDragging,
                 )
             }
         }
