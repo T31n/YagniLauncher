@@ -28,13 +28,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.eblan.launcher.designsystem.component.EblanDialog
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
-import kotlinx.coroutines.launch
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 import com.eblan.launcher.common.R as commonR
@@ -46,8 +44,6 @@ fun AddFolderDialog(
     onDismissRequest: () -> Unit,
     onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
 ) {
-    val scope = rememberCoroutineScope()
-
     var value by remember { mutableStateOf("") }
 
     var isError by remember { mutableStateOf(false) }
@@ -94,19 +90,17 @@ fun AddFolderDialog(
             TextButton(
                 onClick = {
                     if (value.isNotBlank()) {
-                        scope.launch {
-                            onAddFolderEblanApplicationInfo(
-                                FolderEblanApplicationInfo(
-                                    id = Uuid.random().toHexString(),
-                                    icon = null,
-                                    label = value,
-                                    folderIndex = -1,
-                                    folderId = null,
-                                ),
-                            )
+                        onAddFolderEblanApplicationInfo(
+                            FolderEblanApplicationInfo(
+                                id = Uuid.random().toHexString(),
+                                icon = null,
+                                label = value,
+                                folderIndex = -1,
+                                folderId = null,
+                            ),
+                        )
 
-                            onDismissRequest()
-                        }
+                        onDismissRequest()
                     } else {
                         isError = true
                     }
