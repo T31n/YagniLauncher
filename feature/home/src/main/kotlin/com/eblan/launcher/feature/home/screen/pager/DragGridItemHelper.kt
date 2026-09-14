@@ -118,7 +118,7 @@ internal fun handleAnimateScrollToPage(
     associate: Associate?,
     density: Density,
     dragIntOffset: IntOffset,
-    gridItemSource: State<GridItemSource?>,
+    gridItemSource: GridItemSource?,
     isDragging: Boolean,
     paddingValues: PaddingValues,
     screenWidth: Int,
@@ -126,7 +126,7 @@ internal fun handleAnimateScrollToPage(
     onUpdateDockPageDirection: (PageDirection?) -> Unit,
     onUpdateGridPageDirection: (PageDirection?) -> Unit,
 ) {
-    if (gridItemSource.value == null || !isDragging) return
+    if (gridItemSource == null || !isDragging) return
 
     val leftPadding = with(density) {
         paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
@@ -166,9 +166,9 @@ internal fun handleDragGridItem(
     dockRows: Int,
     drag: Drag,
     dragIntOffset: IntOffset,
-    gridItemSource: State<GridItemSource?>,
+    gridItemSource: GridItemSource?,
     isDragging: Boolean,
-    isVisibleOverlay: State<Boolean>,
+    isVisibleOverlay: Boolean,
     isGridScrollInProgress: Boolean,
     isDockScrollInProgress: Boolean,
     lockMovement: Boolean,
@@ -176,7 +176,7 @@ internal fun handleDragGridItem(
     rows: Int,
     screenHeight: Int,
     screenWidth: Int,
-    moveGridItemResult: State<MoveGridItemResult?>,
+    moveGridItemResult: MoveGridItemResult?,
     layoutDirection: LayoutDirection,
     onMoveGridItem: (
         movingGridItem: GridItem,
@@ -203,7 +203,7 @@ internal fun handleDragGridItem(
     if (drag != Drag.Dragging ||
         isGridScrollInProgress ||
         isDockScrollInProgress ||
-        !isVisibleOverlay.value ||
+        !isVisibleOverlay ||
         !isDragging ||
         lockMovement
     ) {
@@ -223,7 +223,7 @@ internal fun handleDragGridItem(
         layoutDirection = layoutDirection,
     )
 
-    when (val currentGridItemSource = gridItemSource.value ?: return) {
+    when (val currentGridItemSource = gridItemSource ?: return) {
         is GridItemSource.Existing,
         is GridItemSource.ExistingFolder,
         is GridItemSource.New,
@@ -662,7 +662,7 @@ private fun dragGridItem(
     rows: Int,
     safeDrawingHeight: Int,
     safeDrawingWidth: Int,
-    moveGridItemResult: State<MoveGridItemResult?>,
+    moveGridItemResult: MoveGridItemResult?,
     onMoveGridItem: (
         movingGridItem: GridItem,
         x: Int,
@@ -675,7 +675,7 @@ private fun dragGridItem(
     onUpdateAssociate: (Associate) -> Unit,
     onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
 ) {
-    val movingGridItem = moveGridItemResult.value?.movingGridItem ?: return
+    val movingGridItem = moveGridItemResult?.movingGridItem ?: return
 
     val pageIndicatorHeightPx = with(density) {
         PAGE_INDICATOR_HEIGHT.roundToPx()
@@ -738,7 +738,7 @@ private fun dragDockGridItem(
     gridItemSource: GridItemSource,
     safeDrawingHeight: Int,
     safeDrawingWidth: Int,
-    moveGridItemResult: State<MoveGridItemResult?>,
+    moveGridItemResult: MoveGridItemResult?,
     onMoveGridItem: (
         movingGridItem: GridItem,
         x: Int,
@@ -751,7 +751,7 @@ private fun dragDockGridItem(
     onUpdateAssociate: (Associate) -> Unit,
     onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
 ) {
-    val movingGridItem = moveGridItemResult.value?.movingGridItem ?: return
+    val movingGridItem = moveGridItemResult?.movingGridItem ?: return
 
     val cellWidth = safeDrawingWidth / dockColumns
     val cellHeight = dockHeightPx / dockRows
@@ -810,7 +810,7 @@ private fun dragDockNewFolderGridItem(
     gridItemSource: GridItemSource,
     safeDrawingHeight: Int,
     safeDrawingWidth: Int,
-    moveGridItemResult: State<MoveGridItemResult?>,
+    moveGridItemResult: MoveGridItemResult?,
     folderGridItems: List<GridItem>,
     onMoveNewFolderGridItem: (
         folderGridItems: List<GridItem>,
@@ -825,7 +825,7 @@ private fun dragDockNewFolderGridItem(
     onUpdateAssociate: (Associate) -> Unit,
     onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
 ) {
-    val movingGridItem = moveGridItemResult.value?.movingGridItem ?: return
+    val movingGridItem = moveGridItemResult?.movingGridItem ?: return
 
     val cellWidth = safeDrawingWidth / dockColumns
     val cellHeight = dockHeightPx / dockRows
@@ -886,7 +886,7 @@ private fun dragNewFolderGridItem(
     rows: Int,
     safeDrawingHeight: Int,
     safeDrawingWidth: Int,
-    moveGridItemResult: State<MoveGridItemResult?>,
+    moveGridItemResult: MoveGridItemResult?,
     folderGridItems: List<GridItem>,
     onMoveNewFolderGridItem: (
         folderGridItems: List<GridItem>,
@@ -901,7 +901,7 @@ private fun dragNewFolderGridItem(
     onUpdateAssociate: (Associate) -> Unit,
     onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
 ) {
-    val movingGridItem = moveGridItemResult.value?.movingGridItem ?: return
+    val movingGridItem = moveGridItemResult?.movingGridItem ?: return
 
     val pageIndicatorHeightPx = with(density) {
         PAGE_INDICATOR_HEIGHT.roundToPx()
