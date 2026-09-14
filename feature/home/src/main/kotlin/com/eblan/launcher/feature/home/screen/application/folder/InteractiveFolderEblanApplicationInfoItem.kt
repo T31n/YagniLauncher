@@ -37,6 +37,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -87,6 +88,7 @@ import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_ROWS
 import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
 import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
+import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.getHorizontalAlignment
 import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
@@ -116,9 +118,12 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
     progress: Float,
     moveFolderEblanApplicationInfoGridItemResult: MoveFolderEblanApplicationInfoGridItemResult?,
     folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
+    drag: Drag,
+    showFolderEblanApplicationGridItemPopup: Boolean,
     onUpdateIsVisibleFolders: (Boolean) -> Unit,
     onUpsertFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
     onUpdateImageBitmap: (ImageBitmap) -> Unit,
+    onUpdateIsDragging: (Boolean) -> Unit,
     onUpdateOverlayBounds: (
         intOffset: IntOffset,
         intSize: IntSize,
@@ -130,6 +135,7 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
     ) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onUpdateMoveFolderEblanApplicationInfoGridItemResult: (MoveFolderEblanApplicationInfoGridItemResult) -> Unit,
+    onUpdateIsCloseFolderEblanApplicationGridItemPopup: (Boolean) -> Unit,
 ) {
     val isSelected =
         moveFolderEblanApplicationInfoGridItemResult != null &&
@@ -184,6 +190,18 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
         id = folderEblanApplicationInfoGridItem.id,
         parent = SharedElementKey.Parent.Folder,
     )
+
+    LaunchedEffect(
+        key1 = drag,
+        key2 = hasInteraction,
+        key3 = showFolderEblanApplicationGridItemPopup,
+    ) {
+        if (drag == Drag.Dragging && hasInteraction && showFolderEblanApplicationGridItemPopup) {
+            onUpdateIsDragging(true)
+
+            onUpdateIsCloseFolderEblanApplicationGridItemPopup(true)
+        }
+    }
 
     when (val data = folderEblanApplicationInfoGridItem.data) {
         is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
@@ -414,7 +432,8 @@ private fun InteractiveEblanApplicationInfoItem(
                     }
 
                     drawLayer(graphicsLayer)
-                }.alpha(alpha),
+                }
+                .alpha(alpha),
         )
 
         if (appDrawerSettings.gridItemSettings.showLabel) {

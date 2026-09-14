@@ -1292,6 +1292,7 @@ internal fun PagerScreen(
                     isDragging = pagerScreenState.isDragging,
                     lockMovement = experimentalSettings.lockMovement,
                     dragIntOffset = pagerScreenState.dragIntOffset,
+                    showFolderEblanApplicationGridItemPopup = pagerScreenState.showFolderEblanApplicationGridItemPopup,
                     onDeleteFolderEblanApplicationInfoPopupEntry = onDeleteFolderEblanApplicationInfoPopupEntry,
                     onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
                     onUpdateIsVisibleFolders = pagerScreenState::updateIsVisibleFolders,
@@ -1306,6 +1307,7 @@ internal fun PagerScreen(
                     onResetGrid = onResetGrid,
                     onResetGridAfterMoveFolderEblanApplicationInfo = onDragEndAfterMoveFolderEblanApplicationInfo,
                     onUpdateIsDragging = pagerScreenState::updateIsDragging,
+                    onUpdateIsCloseFolderEblanApplicationGridItemPopup = pagerScreenState::updateIsCloseFolderEblanApplicationGridItemPopup,
                 )
             }
         }

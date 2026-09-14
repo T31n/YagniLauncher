@@ -100,6 +100,7 @@ internal fun FolderApplicationScreen(
     isDragging: Boolean,
     lockMovement: Boolean,
     dragIntOffset: IntOffset,
+    showFolderEblanApplicationGridItemPopup: Boolean,
     onDeleteFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
     onUpsertFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
     onUpdateIsVisibleFolders: (Boolean) -> Unit,
@@ -128,6 +129,7 @@ internal fun FolderApplicationScreen(
     onResetGrid: () -> Unit,
     onResetGridAfterMoveFolderEblanApplicationInfo: () -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
+    onUpdateIsCloseFolderEblanApplicationGridItemPopup: (Boolean) -> Unit,
 ) {
     val folderPopupIntOffset = IntOffset(
         x = folderEblanApplicationInfoPopup.folderPopupEntry.x,
@@ -450,14 +452,18 @@ internal fun FolderApplicationScreen(
                                 moveFolderEblanApplicationInfoGridItemResult = moveFolderEblanApplicationInfoGridItemResult,
                                 progress = progress.value,
                                 folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+                                drag = drag,
+                                showFolderEblanApplicationGridItemPopup = showFolderEblanApplicationGridItemPopup,
                                 onUpdateIsVisibleFolders = onUpdateIsVisibleFolders,
                                 onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
                                 onUpdateImageBitmap = onUpdateImageBitmap,
+                                onUpdateIsDragging = onUpdateIsDragging,
                                 onUpdateOverlayBounds = onUpdateOverlayBounds,
                                 onUpdateSharedElementKey = onUpdateSharedElementKey,
                                 onShowGridItemPopup = onShowGridItemPopup,
                                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                                 onUpdateMoveFolderEblanApplicationInfoGridItemResult = onUpdateMoveFolderEblanApplicationInfoGridItemResult,
+                                onUpdateIsCloseFolderEblanApplicationGridItemPopup = onUpdateIsCloseFolderEblanApplicationGridItemPopup,
                             )
                         },
                     )
