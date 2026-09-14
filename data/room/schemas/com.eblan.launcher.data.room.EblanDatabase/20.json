@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 20,
-    "identityHash": "1e64f0234b0ba7f2ce02afa966162b7b",
+    "identityHash": "1cbb30224dcfa092dc896842a369705b",
     "entities": [
       {
         "tableName": "EblanApplicationInfoEntity",
@@ -1716,7 +1716,7 @@
       },
       {
         "tableName": "EblanApplicationInfoTagEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `index` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -1728,6 +1728,12 @@
             "fieldPath": "name",
             "columnName": "name",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "index",
+            "columnName": "index",
+            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -1805,7 +1811,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1e64f0234b0ba7f2ce02afa966162b7b')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1cbb30224dcfa092dc896842a369705b')"
     ]
   }
 }

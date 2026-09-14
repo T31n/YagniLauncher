@@ -121,5 +121,6 @@ internal class DefaultEblanApplicationInfoRepository @Inject constructor(
     private fun EblanApplicationInfoTagEntity.asModel(): EblanApplicationInfoTag = EblanApplicationInfoTag(
         id = id,
         name = name,
+        index = index,
     )
 }

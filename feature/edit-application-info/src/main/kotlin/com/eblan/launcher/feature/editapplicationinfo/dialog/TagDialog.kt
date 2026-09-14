@@ -46,9 +46,14 @@ import com.eblan.launcher.common.R as commonR
 @Composable
 internal fun AddTagDialog(
     modifier: Modifier = Modifier,
+    eblanApplicationInfoTagsUi: List<EblanApplicationInfoTagUi>,
     onDismissRequest: () -> Unit,
     onAddEblanApplicationInfoTag: (EblanApplicationInfoTag) -> Unit,
 ) {
+    val maxIndex = remember(key1 = eblanApplicationInfoTagsUi) {
+        eblanApplicationInfoTagsUi.maxOfOrNull { it.index } ?: 0
+    }
+
     var value by remember { mutableStateOf("") }
 
     var isError by remember { mutableStateOf(false) }
@@ -98,6 +103,7 @@ internal fun AddTagDialog(
                         onAddEblanApplicationInfoTag(
                             EblanApplicationInfoTag(
                                 name = value,
+                                index = maxIndex,
                             ),
                         )
 
@@ -147,6 +153,7 @@ internal fun UpdateTagDialog(
                         EblanApplicationInfoTag(
                             id = eblanApplicationInfoTagUi.id,
                             name = eblanApplicationInfoTagUi.name,
+                            index = eblanApplicationInfoTagUi.index,
                         ),
                     )
 
@@ -199,6 +206,7 @@ internal fun UpdateTagDialog(
                             EblanApplicationInfoTag(
                                 id = eblanApplicationInfoTagUi.id,
                                 name = value,
+                                index = eblanApplicationInfoTagUi.index,
                             ),
                         )
 

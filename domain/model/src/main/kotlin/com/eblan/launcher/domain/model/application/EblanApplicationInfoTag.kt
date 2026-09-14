@@ -20,4 +20,5 @@ package com.eblan.launcher.domain.model.application
 data class EblanApplicationInfoTag(
     val id: Long = 0L,
     val name: String,
+    val index: Int,
 )

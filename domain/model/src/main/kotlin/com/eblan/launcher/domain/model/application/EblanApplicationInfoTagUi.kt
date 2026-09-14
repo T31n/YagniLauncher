@@ -21,4 +21,5 @@ data class EblanApplicationInfoTagUi(
     val id: Long,
     val name: String,
     val selected: Boolean,
+    val index: Int,
 )

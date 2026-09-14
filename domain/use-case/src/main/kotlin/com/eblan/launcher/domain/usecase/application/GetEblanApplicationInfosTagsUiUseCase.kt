@@ -48,6 +48,7 @@ class GetEblanApplicationInfosTagsUiUseCase @Inject constructor(
                 id = it.id,
                 name = it.name,
                 selected = it in eblanApplicationInfoTagsByComponentName,
+                index = it.index,
             )
         }.sortedBy {
             it.id

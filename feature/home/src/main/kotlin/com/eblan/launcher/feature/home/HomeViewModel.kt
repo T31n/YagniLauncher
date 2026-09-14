@@ -41,6 +41,7 @@ import com.eblan.launcher.domain.repository.EblanApplicationInfoTagRepository
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.usecase.application.GetEblanAppWidgetProviderInfosByLabelUseCase
 import com.eblan.launcher.domain.usecase.application.GetEblanApplicationInfosByLabelAndTagUseCase
+import com.eblan.launcher.domain.usecase.application.GetEblanApplicationTagsUseCase
 import com.eblan.launcher.domain.usecase.application.GetEblanShortcutConfigsByLabelUseCase
 import com.eblan.launcher.domain.usecase.application.GetEblanShortcutInfosUseCase
 import com.eblan.launcher.domain.usecase.folder.GetFolderEblanApplicationInfosByEntryUseCase
@@ -99,7 +100,6 @@ internal class HomeViewModel @Inject constructor(
     getEblanAppWidgetProviderInfosByLabelUseCase: GetEblanAppWidgetProviderInfosByLabelUseCase,
     getEblanShortcutConfigsByLabelUseCase: GetEblanShortcutConfigsByLabelUseCase,
     private val gridRepository: GridRepository,
-    eblanApplicationInfoTagRepository: EblanApplicationInfoTagRepository,
     private val syncDataUseCase: SyncDataUseCase,
     private val addPackageUseCase: AddPackageUseCase,
     private val removePackageUseCase: RemovePackageUseCase,
@@ -115,6 +115,7 @@ internal class HomeViewModel @Inject constructor(
     getFolderEblanApplicationInfosByEntryUseCase: GetFolderEblanApplicationInfosByEntryUseCase,
     getFolderEblanApplicationInfosUseCase: GetFolderEblanApplicationInfosUseCase,
     private val moveFolderEblanApplicationInfoGridItemUseCase: MoveFolderEblanApplicationInfoGridItemUseCase,
+    getEblanApplicationTagsUseCase: GetEblanApplicationTagsUseCase,
 ) : ViewModel() {
     val homeUiState = getHomeDataUseCase().map(HomeUiState::Success).stateIn(
         scope = viewModelScope,
@@ -188,12 +189,11 @@ internal class HomeViewModel @Inject constructor(
             initialValue = emptyMap(),
         )
 
-    val eblanApplicationInfoTags =
-        eblanApplicationInfoTagRepository.eblanApplicationInfoTagsFlow.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = emptyList(),
-        )
+    val eblanApplicationInfoTags = getEblanApplicationTagsUseCase().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = emptyList(),
+    )
 
     private var syncDataJob: Job? = null
     private var packageRemovedJob: Job? = null

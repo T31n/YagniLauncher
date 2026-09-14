@@ -387,6 +387,7 @@ private fun Tags(
 
     if (showAddTagDialog) {
         AddTagDialog(
+            eblanApplicationInfoTagsUi = eblanApplicationInfoTagsUi,
             onDismissRequest = {
                 showAddTagDialog = false
             },
