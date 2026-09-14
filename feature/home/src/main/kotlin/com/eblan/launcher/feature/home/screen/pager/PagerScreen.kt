@@ -305,6 +305,7 @@ internal fun PagerScreen(
     onDragEndAfterMoveFolderEblanApplicationInfo: () -> Unit,
     onMoveFolderEblanApplicationInfoGridItemOutsideFolder: (
         folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
+        movingGridItem: GridItem,
         folderGridItems: List<GridItem>,
     ) -> Unit,
 ) {
@@ -1320,6 +1321,7 @@ internal fun PagerScreen(
                     onUpdateIsDragging = pagerScreenState::updateIsDragging,
                     onUpdateIsCloseFolderEblanApplicationInfoGridItemPopup = pagerScreenState::updateIsCloseFolderEblanApplicationInfoGridItemPopup,
                     onMoveFolderEblanApplicationInfoGridItemOutsideFolder = onMoveFolderEblanApplicationInfoGridItemOutsideFolder,
+                    onDismissApplicationScreen = pagerScreenState::dismissApplicationScreen,
                 )
             }
         }

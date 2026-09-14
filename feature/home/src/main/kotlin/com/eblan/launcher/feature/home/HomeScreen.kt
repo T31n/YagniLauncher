@@ -341,6 +341,7 @@ internal fun HomeScreen(
     onResetGridAfterMoveFolderEblanApplicationInfo: () -> Unit,
     onMoveFolderEblanApplicationInfoGridItemOutsideFolder: (
         folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
+        movingGridItem: GridItem,
         folderGridItems: List<GridItem>,
     ) -> Unit,
 ) {
@@ -575,6 +576,7 @@ private fun Success(
     onResetGridAfterMoveFolderEblanApplicationInfo: () -> Unit,
     onMoveFolderEblanApplicationInfoGridItemOutsideFolder: (
         folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
+        movingGridItem: GridItem,
         folderGridItems: List<GridItem>,
     ) -> Unit,
 ) {

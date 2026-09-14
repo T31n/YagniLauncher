@@ -40,6 +40,8 @@ import com.eblan.launcher.feature.home.model.FolderPopupLayoutInfo
 import com.eblan.launcher.feature.home.model.PageDirection
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 internal fun getAnimatedRect(
     progress: Float,
@@ -378,14 +380,16 @@ internal fun handleDropFolderGridItem(
     }
 }
 
+@OptIn(ExperimentalUuidApi::class)
 internal fun getFolderGridItems(
     gridItemSettings: GridItemSettings,
     gridItem: GridItem,
     eblanAction: EblanAction,
     previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
+    sourceFolderId: String = gridItem.id,
 ): List<GridItem> = buildList {
     val previewFolderEblanApplicationInfo =
-        previewFolderEblanApplicationInfos[gridItem.id] ?: return@buildList
+        previewFolderEblanApplicationInfos[sourceFolderId] ?: return@buildList
 
     add(gridItem)
 
@@ -394,7 +398,7 @@ internal fun getFolderGridItems(
             is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
                 add(
                     GridItem(
-                        id = folderEblanApplicationInfoGridItem.id,
+                        id = Uuid.random().toHexString(),
                         page = 0,
                         startColumn = -1,
                         startRow = -1,
@@ -409,7 +413,7 @@ internal fun getFolderGridItems(
                             customIcon = data.customIcon,
                             customLabel = data.customLabel,
                             index = data.folderIndex,
-                            folderId = data.folderId,
+                            folderId = gridItem.id,
                         ),
                         associate = Associate.Grid,
                         override = false,
@@ -423,7 +427,7 @@ internal fun getFolderGridItems(
 
             is FolderEblanApplicationInfoGridItemData.Folder -> {
                 val gridItem = GridItem(
-                    id = folderEblanApplicationInfoGridItem.id,
+                    id = Uuid.random().toHexString(),
                     page = 0,
                     startColumn = -1,
                     startRow = -1,
@@ -433,7 +437,7 @@ internal fun getFolderGridItems(
                         label = data.label,
                         icon = data.icon,
                         index = data.folderIndex,
-                        folderId = data.folderId,
+                        folderId = gridItem.id,
                     ),
                     associate = Associate.Grid,
                     override = false,
@@ -449,6 +453,7 @@ internal fun getFolderGridItems(
                         gridItem = gridItem,
                         eblanAction = eblanAction,
                         previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+                        sourceFolderId = folderEblanApplicationInfoGridItem.id,
                     ),
                 )
             }

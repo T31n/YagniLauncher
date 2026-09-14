@@ -92,6 +92,7 @@ import com.eblan.launcher.feature.home.util.getVerticalArrangement
 import com.eblan.launcher.feature.home.util.handleOnPress
 import kotlinx.coroutines.launch
 import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 @Composable
 internal fun FolderEblanApplicationInfoItem(
@@ -432,7 +433,7 @@ internal fun handleDragFolderEblanApplicationInfoItem(
             )
 
             val gridItem = GridItem(
-                id = folderEblanApplicationInfo.id,
+                id = Uuid.random().toHexString(),
                 page = 0,
                 startColumn = -1,
                 startRow = -1,
@@ -457,6 +458,7 @@ internal fun handleDragFolderEblanApplicationInfoItem(
                 gridItem = gridItem,
                 eblanAction = eblanAction,
                 previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+                sourceFolderId = folderEblanApplicationInfo.id,
             )
 
             onUpdateGridItemSource(GridItemSource.NewFolder(folderGridItems = folderGridItems))
