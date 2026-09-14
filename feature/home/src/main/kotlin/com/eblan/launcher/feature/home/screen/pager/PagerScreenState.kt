@@ -311,16 +311,16 @@ internal class PagerScreenState(
     var folderEblanApplicationInfo by mutableStateOf<FolderEblanApplicationInfo?>(null)
         private set
 
-    var showFolderApplicationPopup by mutableStateOf(false)
+    var showFolderApplicationInfoPopup by mutableStateOf(false)
         private set
 
-    var isCloseFolderApplicationPopup by mutableStateOf(false)
+    var isCloseFolderApplicationInfoPopup by mutableStateOf(false)
         private set
 
     var showFolderEblanApplicationInfoGridItemPopup by mutableStateOf(false)
         private set
 
-    var isCloseFolderEblanApplicationGridItemPopup by mutableStateOf(false)
+    var isCloseFolderEblanApplicationInfoGridItemPopup by mutableStateOf(false)
         private set
 
     private val touchSlop = with(density) {
@@ -473,7 +473,7 @@ internal class PagerScreenState(
 
         popupIntSize = intSize
 
-        showFolderApplicationPopup = true
+        showFolderApplicationInfoPopup = true
     }
 
     fun dismissFolderEblanApplicationPopup() {
@@ -481,9 +481,30 @@ internal class PagerScreenState(
 
         popupIntSize = null
 
-        showFolderApplicationPopup = false
+        showFolderApplicationInfoPopup = false
 
-        isCloseFolderApplicationPopup = false
+        isCloseFolderApplicationInfoPopup = false
+    }
+
+    fun showFolderEblanApplicationInfoGridItemPopup(
+        intOffset: IntOffset,
+        intSize: IntSize,
+    ) {
+        popupIntOffset = intOffset
+
+        popupIntSize = intSize
+
+        showFolderEblanApplicationInfoGridItemPopup = true
+    }
+
+    fun dismissFolderEblanApplicationInfoGridItemPopup() {
+        popupIntOffset = null
+
+        popupIntSize = null
+
+        showFolderEblanApplicationInfoGridItemPopup = false
+
+        isCloseFolderEblanApplicationInfoGridItemPopup = false
     }
 
     fun updateIsDragging(value: Boolean) {
@@ -1135,26 +1156,16 @@ internal class PagerScreenState(
         isVisibleFolders = value
     }
 
-    fun updateShowFolderApplicationPopup(value: Boolean) {
-        showFolderApplicationPopup = value
+    fun updateShowFolderApplicationInfoPopup(value: Boolean) {
+        showFolderApplicationInfoPopup = value
     }
 
     fun updateFolderEblanApplicationInfo(value: FolderEblanApplicationInfo?) {
         folderEblanApplicationInfo = value
     }
 
-    fun updateIsCloseFolderEblanApplicationGridItemPopup(value: Boolean) {
-        isCloseFolderEblanApplicationGridItemPopup = value
-    }
-
-    fun dismissFolderEblanApplicationGridItemPopup() {
-        popupIntOffset = null
-
-        popupIntSize = null
-
-        showFolderEblanApplicationInfoGridItemPopup = false
-
-        isCloseFolderEblanApplicationGridItemPopup = false
+    fun updateIsCloseFolderEblanApplicationInfoGridItemPopup(value: Boolean) {
+        isCloseFolderEblanApplicationInfoGridItemPopup = value
     }
 }
 
