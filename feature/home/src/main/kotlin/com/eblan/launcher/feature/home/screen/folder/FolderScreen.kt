@@ -339,7 +339,7 @@ internal fun FolderScreen(
             drag = drag,
             isVisibleOverlay = currentIsVisibleOverlay.value,
             lockMovement = currentLockMovement.value,
-            moveGridItemResult = moveGridItemResult,
+            hasMoveGridItemResult = moveGridItemResult != null,
             dragIntOffset = dragIntOffset,
             columns = folderGridItemPopup.columns,
             folderPopupIntOffset = folderPopupIntOffset,

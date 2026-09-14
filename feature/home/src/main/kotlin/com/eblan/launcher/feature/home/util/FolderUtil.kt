@@ -25,6 +25,13 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
+import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
+import com.eblan.launcher.domain.model.grid.Associate
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.GridItemData
+import com.eblan.launcher.domain.model.grid.GridItemSettings
+import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_COLUMNS
 import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_ROWS
 import com.eblan.launcher.feature.home.model.Drag
@@ -187,7 +194,7 @@ internal fun handleAnimateScrollToPage(
     drag: Drag,
     isVisibleOverlay: Boolean,
     lockMovement: Boolean,
-    moveGridItemResult: Any?,
+    hasMoveGridItemResult: Boolean,
     dragIntOffset: IntOffset,
     columns: Int,
     folderPopupIntOffset: IntOffset,
@@ -204,7 +211,7 @@ internal fun handleAnimateScrollToPage(
         !isVisibleOverlay ||
         !isDragging ||
         lockMovement ||
-        moveGridItemResult == null ||
+        !hasMoveGridItemResult ||
         !isLastFolderGridItem ||
         isInProgress
     ) {
@@ -368,6 +375,84 @@ internal fun handleDropFolderGridItem(
         onResetGridAfterMoveFolder()
 
         onUpdateIsDragging(false)
+    }
+}
+
+internal fun getFolderGridItems(
+    gridItemSettings: GridItemSettings,
+    gridItem: GridItem,
+    eblanAction: EblanAction,
+    previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
+): List<GridItem> = buildList {
+    val previewFolderEblanApplicationInfo =
+        previewFolderEblanApplicationInfos[gridItem.id] ?: return@buildList
+
+    add(gridItem)
+
+    previewFolderEblanApplicationInfo.folderGridItems.forEach { folderEblanApplicationInfoGridItem ->
+        when (val data = folderEblanApplicationInfoGridItem.data) {
+            is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
+                add(
+                    GridItem(
+                        id = folderEblanApplicationInfoGridItem.id,
+                        page = 0,
+                        startColumn = -1,
+                        startRow = -1,
+                        columnSpan = 1,
+                        rowSpan = 1,
+                        data = GridItemData.ApplicationInfo(
+                            serialNumber = data.serialNumber,
+                            componentName = data.componentName,
+                            packageName = data.packageName,
+                            icon = data.icon,
+                            label = data.label,
+                            customIcon = data.customIcon,
+                            customLabel = data.customLabel,
+                            index = data.folderIndex,
+                            folderId = data.folderId,
+                        ),
+                        associate = Associate.Grid,
+                        override = false,
+                        gridItemSettings = gridItemSettings,
+                        doubleTap = eblanAction,
+                        swipeUp = eblanAction,
+                        swipeDown = eblanAction,
+                    ),
+                )
+            }
+
+            is FolderEblanApplicationInfoGridItemData.Folder -> {
+                val gridItem = GridItem(
+                    id = folderEblanApplicationInfoGridItem.id,
+                    page = 0,
+                    startColumn = -1,
+                    startRow = -1,
+                    columnSpan = 1,
+                    rowSpan = 1,
+                    data = GridItemData.Folder(
+                        label = data.label,
+                        icon = data.icon,
+                        index = data.folderIndex,
+                        folderId = data.folderId,
+                    ),
+                    associate = Associate.Grid,
+                    override = false,
+                    gridItemSettings = gridItemSettings,
+                    doubleTap = eblanAction,
+                    swipeUp = eblanAction,
+                    swipeDown = eblanAction,
+                )
+
+                addAll(
+                    getFolderGridItems(
+                        gridItemSettings = gridItemSettings,
+                        gridItem = gridItem,
+                        eblanAction = eblanAction,
+                        previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+                    ),
+                )
+            }
+        }
     }
 }
 

@@ -844,7 +844,6 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    // TODO Plug this shit to FolderApplicationScreen
     fun moveFolderEblanApplicationInfoGridItemOutsideFolder(
         folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
         folderGridItems: List<GridItem>,
@@ -857,10 +856,6 @@ internal class HomeViewModel @Inject constructor(
                     folderPopupEntry.copy(isCloseFolder = true)
                 }
             }
-
-            folderGridItemTransaction.updateFolderEblanApplicationInfoGridItem(
-                folderEblanApplicationInfoGridItem = folderEblanApplicationInfoGridItem,
-            )
 
             _moveFolderEblanApplicationInfoGridItemResult.update {
                 MoveFolderEblanApplicationInfoGridItemResult(

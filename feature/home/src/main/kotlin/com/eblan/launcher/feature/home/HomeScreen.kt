@@ -198,6 +198,7 @@ internal fun HomeRoute(
         onUpdateMoveFolderEblanApplicationInfoGridItemResult = viewModel::updateMoveFolderEblanApplicationInfoGridItemResult,
         onMoveFolderEblanApplicationInfoGridItem = viewModel::moveFolderEblanApplicationInfoGridItem,
         onResetGridAfterMoveFolderEblanApplicationInfo = viewModel::resetGridAfterMoveFolderEblanApplicationInfo,
+        onMoveFolderEblanApplicationInfoGridItemOutsideFolder = viewModel::moveFolderEblanApplicationInfoGridItemOutsideFolder,
     )
 }
 
@@ -338,6 +339,10 @@ internal fun HomeScreen(
         currentPage: Int,
     ) -> Unit,
     onResetGridAfterMoveFolderEblanApplicationInfo: () -> Unit,
+    onMoveFolderEblanApplicationInfoGridItemOutsideFolder: (
+        folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
+        folderGridItems: List<GridItem>,
+    ) -> Unit,
 ) {
     val paddingValues = WindowInsets.safeDrawing.asPaddingValues()
 
@@ -422,6 +427,7 @@ internal fun HomeScreen(
                 onUpdateMoveFolderEblanApplicationInfoGridItemResult = onUpdateMoveFolderEblanApplicationInfoGridItemResult,
                 onMoveFolderEblanApplicationInfoGridItem = onMoveFolderEblanApplicationInfoGridItem,
                 onResetGridAfterMoveFolderEblanApplicationInfo = onResetGridAfterMoveFolderEblanApplicationInfo,
+                onMoveFolderEblanApplicationInfoGridItemOutsideFolder = onMoveFolderEblanApplicationInfoGridItemOutsideFolder,
             )
         }
     }
@@ -567,6 +573,10 @@ private fun Success(
         currentPage: Int,
     ) -> Unit,
     onResetGridAfterMoveFolderEblanApplicationInfo: () -> Unit,
+    onMoveFolderEblanApplicationInfoGridItemOutsideFolder: (
+        folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
+        folderGridItems: List<GridItem>,
+    ) -> Unit,
 ) {
     AnimatedContent(
         modifier = modifier,
@@ -651,6 +661,7 @@ private fun Success(
                     onUpdateMoveFolderEblanApplicationInfoGridItemResult = onUpdateMoveFolderEblanApplicationInfoGridItemResult,
                     onMoveFolderEblanApplicationInfoGridItem = onMoveFolderEblanApplicationInfoGridItem,
                     onDragEndAfterMoveFolderEblanApplicationInfo = onResetGridAfterMoveFolderEblanApplicationInfo,
+                    onMoveFolderEblanApplicationInfoGridItemOutsideFolder = onMoveFolderEblanApplicationInfoGridItemOutsideFolder,
                 )
             }
 
