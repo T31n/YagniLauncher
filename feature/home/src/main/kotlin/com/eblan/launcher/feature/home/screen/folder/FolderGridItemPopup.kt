@@ -79,7 +79,7 @@ internal fun FolderGridItemPopup(
     hasShortcutHostPermission: Boolean,
     popupIntOffset: IntOffset?,
     popupIntSize: IntSize?,
-    movingGridItem: GridItem,
+    folderGridItem: GridItem,
     isVisibleOverlay: Boolean,
     paddingValues: PaddingValues,
     isCloseFolderGridItemPopup: Boolean,
@@ -197,7 +197,7 @@ internal fun FolderGridItemPopup(
                 eblanAppWidgetProviderInfosGroup = eblanAppWidgetProviderInfosGroup,
                 eblanShortcutInfosGroup = eblanShortcutInfosGroup,
                 gridItemSettings = gridItemSettings,
-                movingFolderGridItem = movingGridItem,
+                folderGridItem = folderGridItem,
                 hasShortcutHostPermission = hasShortcutHostPermission,
                 isVisibleOverlay = isVisibleOverlay,
                 animations = animations,
@@ -244,7 +244,7 @@ private fun FolderGridItemPopupContent(
     eblanAppWidgetProviderInfosGroup: Map<String, List<EblanAppWidgetProviderInfo>>,
     eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
     gridItemSettings: GridItemSettings,
-    movingFolderGridItem: GridItem,
+    folderGridItem: GridItem,
     hasShortcutHostPermission: Boolean,
     isVisibleOverlay: Boolean,
     animations: Boolean,
@@ -276,7 +276,7 @@ private fun FolderGridItemPopupContent(
         shape = RoundedCornerShape(30.dp),
         shadowElevation = 2.dp,
         content = {
-            when (val data = movingFolderGridItem.data) {
+            when (val data = folderGridItem.data) {
                 is GridItemData.ApplicationInfo -> {
                     ApplicationInfoFolderGridItemPopupContent(
                         modifier = modifier,
@@ -298,12 +298,12 @@ private fun FolderGridItemPopupContent(
                             onUpdateTransitionState(false)
                         },
                         onDelete = {
-                            onDeleteGridItem(movingFolderGridItem)
+                            onDeleteGridItem(folderGridItem)
 
                             onUpdateTransitionState(false)
                         },
                         onEdit = {
-                            onEdit(movingFolderGridItem.id)
+                            onEdit(folderGridItem.id)
 
                             onResetFolderPopupEntries()
 
@@ -356,12 +356,12 @@ private fun FolderGridItemPopupContent(
                 -> {
                     FolderGridItemMenu(
                         onDelete = {
-                            onDeleteGridItem(movingFolderGridItem)
+                            onDeleteGridItem(folderGridItem)
 
                             onUpdateTransitionState(false)
                         },
                         onEdit = {
-                            onEdit(movingFolderGridItem.id)
+                            onEdit(folderGridItem.id)
 
                             onResetFolderPopupEntries()
 

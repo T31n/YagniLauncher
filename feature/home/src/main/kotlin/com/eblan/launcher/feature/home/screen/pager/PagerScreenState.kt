@@ -317,7 +317,7 @@ internal class PagerScreenState(
     var isCloseFolderApplicationPopup by mutableStateOf(false)
         private set
 
-    var showFolderEblanApplicationGridItemPopup by mutableStateOf(false)
+    var showFolderEblanApplicationInfoGridItemPopup by mutableStateOf(false)
         private set
 
     var isCloseFolderEblanApplicationGridItemPopup by mutableStateOf(false)
@@ -1152,7 +1152,7 @@ internal class PagerScreenState(
 
         popupIntSize = null
 
-        showFolderEblanApplicationGridItemPopup = false
+        showFolderEblanApplicationInfoGridItemPopup = false
 
         isCloseFolderEblanApplicationGridItemPopup = false
     }

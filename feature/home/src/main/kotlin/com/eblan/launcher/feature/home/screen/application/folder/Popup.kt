@@ -17,6 +17,8 @@
  */
 package com.eblan.launcher.feature.home.screen.application.folder
 
+import android.graphics.Rect
+import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
@@ -39,6 +41,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -46,9 +49,21 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
+import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
+import com.eblan.launcher.domain.model.grid.GridItemSettings
+import com.eblan.launcher.domain.model.grid.MoveGridItemResult
+import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfo
+import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfoByGroup
+import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
 import com.eblan.launcher.feature.home.component.HomeHandler
 import com.eblan.launcher.feature.home.component.popup
+import com.eblan.launcher.feature.home.model.GridItemSource
+import com.eblan.launcher.feature.home.model.SharedElementKey
+import com.eblan.launcher.feature.home.screen.application.ApplicationInfoMenu
+import com.eblan.launcher.ui.local.LocalLauncherApps
 
 @Composable
 internal fun FolderApplicationInfoPopup(
@@ -147,6 +162,215 @@ internal fun FolderApplicationInfoPopup(
                     transitionState.targetState = false
                 },
             )
+        }
+    }
+}
+
+@Composable
+internal fun FolderApplicationInfoGridItemPopup(
+    modifier: Modifier = Modifier,
+    folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem?,
+    popupIntOffset: IntOffset?,
+    popupIntSize: IntSize?,
+    paddingValues: PaddingValues,
+    eblanAppWidgetProviderInfosGroup: Map<String, List<EblanAppWidgetProviderInfo>>,
+    eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
+    gridItemSettings: GridItemSettings,
+    hasShortcutHostPermission: Boolean,
+    isVisibleOverlay: Boolean,
+    animations: Boolean,
+    onDismissRequest: () -> Unit,
+    onUpdateIsDragging: (Boolean) -> Unit,
+    onEditFolderApplicationInfo: (String) -> Unit,
+    onEditApplicationInfo: (
+        serialNumber: Long,
+        componentName: String,
+    ) -> Unit,
+    onUpdateGridItemSource: (GridItemSource) -> Unit,
+    onUpdateImageBitmap: (ImageBitmap) -> Unit,
+    onUpdateOverlayBounds: (
+        intOffset: IntOffset,
+        intSize: IntSize,
+    ) -> Unit,
+    onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
+    onWidgets: (EblanApplicationInfoGroup) -> Unit,
+    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
+    onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
+) {
+    requireNotNull(popupIntOffset)
+
+    requireNotNull(popupIntSize)
+
+    requireNotNull(folderEblanApplicationInfoGridItem)
+
+    val launcherApps = LocalLauncherApps.current
+
+    val density = LocalDensity.current
+
+    val layoutDirection = LocalLayoutDirection.current
+
+    val transitionState = remember {
+        MutableTransitionState(false).apply {
+            targetState = true
+        }
+    }
+
+    val leftPadding = with(density) {
+        paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
+    }
+
+    val topPadding = with(density) {
+        paddingValues.calculateTopPadding().roundToPx()
+    }
+
+    val x = popupIntOffset.x - leftPadding
+
+    val y = popupIntOffset.y - topPadding
+
+    LaunchedEffect(
+        key1 = transitionState.targetState,
+        key2 = transitionState.isIdle,
+    ) {
+        if (!transitionState.targetState && transitionState.isIdle) {
+            onDismissRequest()
+        }
+    }
+
+    BackHandler(enabled = transitionState.targetState) {
+        transitionState.targetState = false
+    }
+
+    HomeHandler(enabled = transitionState.targetState) {
+        transitionState.targetState = false
+    }
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(paddingValues)
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onPress = {
+                        awaitRelease()
+
+                        transitionState.targetState = false
+                    },
+                )
+            },
+    ) {
+        AnimatedVisibility(
+            modifier = Modifier.popup(
+                width = popupIntSize.width,
+                height = popupIntSize.height,
+                x = x,
+                y = y,
+            ),
+            visibleState = transitionState,
+            enter = fadeIn(tween()) + scaleIn(
+                initialScale = 0.8f,
+                animationSpec = tween(),
+            ),
+            exit = fadeOut(tween()) + scaleOut(
+                targetScale = 0.8f,
+                animationSpec = tween(),
+            ),
+        ) {
+            when (val data = folderEblanApplicationInfoGridItem.data) {
+                is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
+                    ApplicationInfoMenu(
+                        eblanAppWidgetProviderInfosByPackageName = eblanAppWidgetProviderInfosGroup[
+                            data.packageName,
+                        ],
+                        eblanShortcutInfosGroup = eblanShortcutInfosGroup[
+                            EblanShortcutInfoByGroup(
+                                serialNumber = data.serialNumber,
+                                packageName = data.packageName,
+                            ),
+                        ],
+                        gridItemSettings = gridItemSettings,
+                        hasShortcutHostPermission = hasShortcutHostPermission,
+                        icon = data.icon,
+                        isVisibleOverlay = isVisibleOverlay,
+                        animations = animations,
+                        onApplicationInfo = {
+                            launcherApps.startAppDetailsActivity(
+                                serialNumber = data.serialNumber,
+                                componentName = data.componentName,
+                                sourceBounds = Rect(
+                                    popupIntOffset.x,
+                                    popupIntOffset.y,
+                                    popupIntOffset.x + popupIntSize.width,
+                                    popupIntOffset.y + popupIntSize.height,
+                                ),
+                            )
+
+                            transitionState.targetState = false
+                        },
+                        onUpdateIsDragging = onUpdateIsDragging,
+                        onEdit = {
+                            onEditApplicationInfo(
+                                data.serialNumber,
+                                data.componentName,
+                            )
+
+                            transitionState.targetState = false
+                        },
+                        onTapShortcutInfo = { serialNumber, packageName, shortcutId ->
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+                                launcherApps.startShortcut(
+                                    serialNumber = serialNumber,
+                                    packageName = packageName,
+                                    id = shortcutId,
+                                    sourceBounds = Rect(
+                                        popupIntOffset.x,
+                                        popupIntOffset.y,
+                                        popupIntOffset.x + popupIntSize.width,
+                                        popupIntOffset.y + popupIntSize.height,
+                                    ),
+                                )
+                            }
+
+                            transitionState.targetState = false
+                        },
+                        onUpdateGridItemSource = onUpdateGridItemSource,
+                        onUpdateImageBitmap = onUpdateImageBitmap,
+                        onUpdateOverlayBounds = onUpdateOverlayBounds,
+                        onUpdateSharedElementKey = onUpdateSharedElementKey,
+                        onWidgets = {
+                            onWidgets(
+                                EblanApplicationInfoGroup(
+                                    serialNumber = data.serialNumber,
+                                    packageName = data.packageName,
+                                    icon = data.icon,
+                                    label = data.label,
+                                ),
+                            )
+
+                            transitionState.targetState = false
+                        },
+                        onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+                        onUpdateTransitionState = {
+                            transitionState.targetState = it
+                        },
+                    )
+                }
+
+                is FolderEblanApplicationInfoGridItemData.Folder -> {
+                    FolderApplicationInfoMenu(
+                        onDelete = {
+                            // TODO
+                            transitionState.targetState = false
+                        },
+                        onEdit = {
+                            onEditFolderApplicationInfo(folderEblanApplicationInfoGridItem.id)
+
+                            // Reset the folder pops like in folder screen
+                            transitionState.targetState = false
+                        },
+                    )
+                }
+            }
         }
     }
 }

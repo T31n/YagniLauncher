@@ -395,7 +395,7 @@ internal fun PrivateApplicationInfoPopup(
 }
 
 @Composable
-private fun ApplicationInfoMenu(
+internal fun ApplicationInfoMenu(
     modifier: Modifier = Modifier,
     eblanAppWidgetProviderInfosByPackageName: List<EblanAppWidgetProviderInfo>?,
     eblanShortcutInfosGroup: List<EblanShortcutInfo>?,
