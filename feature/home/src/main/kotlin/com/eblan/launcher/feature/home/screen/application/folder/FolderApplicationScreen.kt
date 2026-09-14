@@ -69,6 +69,7 @@ import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.getAnimatedRect
 import com.eblan.launcher.feature.home.util.getFolderPopupLayoutInfo
 import com.eblan.launcher.feature.home.util.handleAnimateScrollToPage
+import com.eblan.launcher.feature.home.util.handleDropFolderGridItem
 import com.eblan.launcher.feature.home.util.handlePageDirection
 import kotlin.math.roundToInt
 
@@ -125,7 +126,7 @@ internal fun FolderApplicationScreen(
     ) -> Unit,
     onDismissFolderEblanApplicationGridItemPopup: () -> Unit,
     onResetGrid: () -> Unit,
-    onDragEndAfterMoveFolderEblanApplicationInfo: () -> Unit,
+    onResetGridAfterMoveFolderEblanApplicationInfo: () -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
 ) {
     val folderPopupIntOffset = IntOffset(
@@ -279,14 +280,14 @@ internal fun FolderApplicationScreen(
         key1 = drag,
         key2 = isLastFolderEblanApplicationInfo,
     ) {
-        handleDropFolderEblanApplicationInfoGridItem(
+        handleDropFolderGridItem(
             drag = drag,
             isDragging = isDragging,
             lockMovement = lockMovement,
             isVisibleOverlay = isVisibleOverlay,
-            isLastFolderEblanApplicationInfo = isLastFolderEblanApplicationInfo,
+            isLastFolderGridItem = isLastFolderEblanApplicationInfo,
             onResetGrid = onResetGrid,
-            onDragEndAfterMoveFolderEblanApplicationInfo = onDragEndAfterMoveFolderEblanApplicationInfo,
+            onResetGridAfterMoveFolder = onResetGridAfterMoveFolderEblanApplicationInfo,
             onUpdateIsDragging = onUpdateIsDragging,
             onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
         )

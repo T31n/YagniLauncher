@@ -24,14 +24,13 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderPopupEntry
 import com.eblan.launcher.domain.model.grid.MoveFolderEblanApplicationInfoGridItemResult
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
-import com.eblan.launcher.feature.home.util.PAGE_INDICATOR_HEIGHT
+import com.eblan.launcher.feature.home.util.calculateFolderGridDragPosition
 
 internal suspend fun onLongPressFolderEblanApplicationInfoGridItem(
     graphicsLayer: GraphicsLayer,
@@ -163,115 +162,4 @@ internal fun handleDragFolderEblanApplicationInfoGridItem(
             ),
         )
     }
-}
-
-private data class FolderGridDragPosition(
-    val x: Int,
-    val y: Int,
-    val width: Int,
-    val height: Int,
-)
-
-private fun calculateFolderGridDragPosition(
-    density: Density,
-    dragIntOffset: IntOffset,
-    columns: Int,
-    rows: Int,
-    folderPopupIntOffset: IntOffset,
-    paddingValues: PaddingValues,
-    screenHeight: Int,
-    screenWidth: Int,
-    layoutDirection: LayoutDirection,
-    folderCellWidth: Int,
-    folderCellHeight: Int,
-): FolderGridDragPosition {
-    val leftPadding = with(density) {
-        paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
-    }
-
-    val rightPadding = with(density) {
-        paddingValues.calculateRightPadding(layoutDirection).roundToPx()
-    }
-
-    val topPadding = with(density) {
-        paddingValues.calculateTopPadding().roundToPx()
-    }
-
-    val bottomPadding = with(density) {
-        paddingValues.calculateBottomPadding().roundToPx()
-    }
-
-    val horizontalPadding = leftPadding + rightPadding
-    val verticalPadding = topPadding + bottomPadding
-
-    val safeDrawingWidth = screenWidth - horizontalPadding
-    val safeDrawingHeight = screenHeight - verticalPadding
-
-    val localDragX = dragIntOffset.x - leftPadding
-    val localDragY = dragIntOffset.y - topPadding
-
-    val minCellWidthPx = with(receiver = density) {
-        folderCellWidth.dp.roundToPx()
-    }
-    val minCellHeightPx = with(receiver = density) {
-        folderCellHeight.dp.roundToPx()
-    }
-
-    val availableWidth = safeDrawingWidth.coerceAtLeast(0)
-    val availableHeight = safeDrawingHeight.coerceAtLeast(0)
-
-    val folderTitleHeightPx = with(receiver = density) {
-        PAGE_INDICATOR_HEIGHT.roundToPx()
-    }
-
-    val folderGridWidthPx =
-        (minCellWidthPx * columns).coerceAtMost(availableWidth)
-    val folderGridHeightPx = (minCellHeightPx * rows).coerceAtMost(
-        (availableHeight - folderTitleHeightPx).coerceAtLeast(0),
-    )
-
-    val endHeight = folderGridHeightPx + folderTitleHeightPx
-
-    val maximumX = (
-        safeDrawingWidth -
-            folderGridWidthPx +
-            leftPadding
-        ).coerceAtLeast(minimumValue = leftPadding)
-
-    val maximumY = (
-        safeDrawingHeight -
-            endHeight +
-            topPadding
-        ).coerceAtLeast(minimumValue = topPadding)
-
-    val endIntOffset = IntOffset(
-        x = folderPopupIntOffset.x.coerceIn(
-            minimumValue = leftPadding,
-            maximumValue = maximumX,
-        ),
-        y = folderPopupIntOffset.y.coerceIn(
-            minimumValue = topPadding,
-            maximumValue = maximumY,
-        ),
-    )
-
-    val localEndIntOffset = IntOffset(
-        x = endIntOffset.x - leftPadding,
-        y = endIntOffset.y - topPadding,
-    )
-
-    val dragX = localDragX - localEndIntOffset.x
-    val dragY = localDragY - localEndIntOffset.y
-
-    val layoutDirectionX = when (layoutDirection) {
-        LayoutDirection.Rtl -> folderGridWidthPx - dragX
-        LayoutDirection.Ltr -> dragX
-    }
-
-    return FolderGridDragPosition(
-        x = layoutDirectionX,
-        y = dragY,
-        width = folderGridWidthPx,
-        height = endHeight,
-    )
 }

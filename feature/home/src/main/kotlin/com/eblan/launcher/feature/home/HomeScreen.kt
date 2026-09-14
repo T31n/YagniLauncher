@@ -421,7 +421,7 @@ internal fun HomeScreen(
                 onMoveNewFolderGridItem = onMoveNewFolderGridItem,
                 onUpdateMoveFolderEblanApplicationInfoGridItemResult = onUpdateMoveFolderEblanApplicationInfoGridItemResult,
                 onMoveFolderEblanApplicationInfoGridItem = onMoveFolderEblanApplicationInfoGridItem,
-                onDragEndAfterMoveFolderEblanApplicationInfo = onResetGridAfterMoveFolderEblanApplicationInfo,
+                onResetGridAfterMoveFolderEblanApplicationInfo = onResetGridAfterMoveFolderEblanApplicationInfo,
             )
         }
     }
@@ -566,7 +566,7 @@ private fun Success(
         gridHeight: Int,
         currentPage: Int,
     ) -> Unit,
-    onDragEndAfterMoveFolderEblanApplicationInfo: () -> Unit,
+    onResetGridAfterMoveFolderEblanApplicationInfo: () -> Unit,
 ) {
     AnimatedContent(
         modifier = modifier,
@@ -650,7 +650,7 @@ private fun Success(
                     onMoveNewFolderGridItem = onMoveNewFolderGridItem,
                     onUpdateMoveFolderEblanApplicationInfoGridItemResult = onUpdateMoveFolderEblanApplicationInfoGridItemResult,
                     onMoveFolderEblanApplicationInfoGridItem = onMoveFolderEblanApplicationInfoGridItem,
-                    onDragEndAfterMoveFolderEblanApplicationInfo = onDragEndAfterMoveFolderEblanApplicationInfo,
+                    onDragEndAfterMoveFolderEblanApplicationInfo = onResetGridAfterMoveFolderEblanApplicationInfo,
                 )
             }
 

@@ -1304,7 +1304,7 @@ internal fun PagerScreen(
                     onMoveFolderEblanApplicationInfoGridItem = onMoveFolderEblanApplicationInfoGridItem,
                     onDismissFolderEblanApplicationGridItemPopup = pagerScreenState::dismissFolderEblanApplicationGridItemPopup,
                     onResetGrid = onResetGrid,
-                    onDragEndAfterMoveFolderEblanApplicationInfo = onDragEndAfterMoveFolderEblanApplicationInfo,
+                    onResetGridAfterMoveFolderEblanApplicationInfo = onDragEndAfterMoveFolderEblanApplicationInfo,
                     onUpdateIsDragging = pagerScreenState::updateIsDragging,
                 )
             }

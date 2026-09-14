@@ -72,6 +72,7 @@ import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.getAnimatedRect
 import com.eblan.launcher.feature.home.util.getFolderPopupLayoutInfo
 import com.eblan.launcher.feature.home.util.handleAnimateScrollToPage
+import com.eblan.launcher.feature.home.util.handleDropFolderGridItem
 import com.eblan.launcher.feature.home.util.handlePageDirection
 import kotlin.math.roundToInt
 
@@ -271,10 +272,10 @@ internal fun FolderScreen(
             currentPage = folderGridHorizontalPagerState.currentPage,
             folderGridItemPopup = folderGridItemPopup,
             folderPopupIntOffset = folderPopupIntOffset,
-            isDragging = currentIsDragging,
-            isVisibleOverlay = currentIsVisibleOverlay,
+            isDragging = currentIsDragging.value,
+            isVisibleOverlay = currentIsVisibleOverlay.value,
             isScrollInProgress = folderGridHorizontalPagerState.isScrollInProgress,
-            lockMovement = currentLockMovement,
+            lockMovement = currentLockMovement.value,
             paddingValues = paddingValues,
             screenHeight = screenHeight,
             screenWidth = screenWidth,
@@ -296,9 +297,9 @@ internal fun FolderScreen(
     ) {
         handleDropFolderGridItem(
             drag = drag,
-            isDragging = currentIsDragging,
-            lockMovement = currentLockMovement,
-            isVisibleOverlay = currentIsVisibleOverlay,
+            isDragging = currentIsDragging.value,
+            lockMovement = currentLockMovement.value,
+            isVisibleOverlay = currentIsVisibleOverlay.value,
             isLastFolderGridItem = isLastFolderGridItem,
             onResetGrid = onResetGrid,
             onResetGridAfterMoveFolder = onResetGridAfterMoveFolder,
