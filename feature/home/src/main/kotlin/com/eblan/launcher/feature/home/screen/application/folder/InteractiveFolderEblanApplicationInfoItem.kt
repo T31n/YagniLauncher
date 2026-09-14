@@ -306,9 +306,7 @@ private fun InteractiveEblanApplicationInfoItem(
         paddingValues.calculateTopPadding().roundToPx()
     }
 
-    var isLongPress by remember { mutableStateOf(false) }
-
-    val alpha = if (isLongPress) 0f else 1f
+    val alpha = if (hasInteraction) 0f else 1f
 
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
 
@@ -416,7 +414,7 @@ private fun InteractiveEblanApplicationInfoItem(
                     }
 
                     drawLayer(graphicsLayer)
-                },
+                }.alpha(alpha),
         )
 
         if (appDrawerSettings.gridItemSettings.showLabel) {
