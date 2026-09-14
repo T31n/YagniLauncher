@@ -24,11 +24,14 @@ import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.model.PageItem
 import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderPopupEntry
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.FolderGridItemPopup
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData.ShortcutInfo
+import com.eblan.launcher.domain.model.grid.MoveFolderEblanApplicationInfoGridItemResult
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.model.launcherapps.PinItemRequestType
 import com.eblan.launcher.domain.model.userdata.TextColor
@@ -44,6 +47,7 @@ import com.eblan.launcher.domain.usecase.folder.GetFolderEblanApplicationInfosUs
 import com.eblan.launcher.domain.usecase.folder.GetFolderGridItemsByEntryUseCase
 import com.eblan.launcher.domain.usecase.folder.GetPreviewFolderEblanApplicationInfosUseCase
 import com.eblan.launcher.domain.usecase.folder.GetPreviewFolderGridItemsUseCase
+import com.eblan.launcher.domain.usecase.folder.MoveFolderEblanApplicationInfoGridItemUseCase
 import com.eblan.launcher.domain.usecase.folder.MoveFolderGridItemUseCase
 import com.eblan.launcher.domain.usecase.grid.DeleteGridItemUseCase
 import com.eblan.launcher.domain.usecase.grid.MoveGridItemUseCase
@@ -109,6 +113,7 @@ internal class HomeViewModel @Inject constructor(
     getPreviewFolderEblanApplicationInfosUseCase: GetPreviewFolderEblanApplicationInfosUseCase,
     getFolderEblanApplicationInfosByEntryUseCase: GetFolderEblanApplicationInfosByEntryUseCase,
     getFolderEblanApplicationInfosUseCase: GetFolderEblanApplicationInfosUseCase,
+    private val moveFolderEblanApplicationInfoGridItemUseCase: MoveFolderEblanApplicationInfoGridItemUseCase,
 ) : ViewModel() {
     val homeUiState = getHomeDataUseCase().map(HomeUiState::Success).stateIn(
         scope = viewModelScope,
@@ -247,6 +252,9 @@ internal class HomeViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = emptyList(),
     )
+
+    private val _moveFolderEblanApplicationInfoGridItemResult = MutableStateFlow<MoveFolderEblanApplicationInfoGridItemResult?>(null)
+    val moveFolderEblanApplicationInfoGridItemResult = _moveFolderEblanApplicationInfoGridItemResult.asStateFlow()
 
     fun moveGridItem(
         movingGridItem: GridItem,
@@ -768,6 +776,34 @@ internal class HomeViewModel @Inject constructor(
                     rows = rows,
                     gridWidth = gridWidth,
                     gridHeight = gridHeight,
+                )
+            }
+        }
+    }
+
+    fun moveFolderEblanApplicationInfoGridItem(
+        folderGridItemPopup: FolderEblanApplicationInfoPopup,
+        folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
+        dragX: Int,
+        dragY: Int,
+        gridWidth: Int,
+        gridHeight: Int,
+        currentPage: Int,
+    ) {
+        moveGridItemJob?.cancel()
+
+        moveGridItemJob = viewModelScope.launch {
+            delay(moveDelay)
+
+            _moveFolderEblanApplicationInfoGridItemResult.update {
+                moveFolderEblanApplicationInfoGridItemUseCase(
+                    folderGridItemPopup = folderGridItemPopup,
+                    folderEblanApplicationInfoGridItem = folderEblanApplicationInfoGridItem,
+                    dragX = dragX,
+                    dragY = dragY,
+                    gridWidth = gridWidth,
+                    gridHeight = gridHeight,
+                    currentPage = currentPage,
                 )
             }
         }

@@ -50,7 +50,7 @@ import androidx.compose.ui.unit.dp
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderPopupEntry
 import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
-import com.eblan.launcher.domain.model.grid.MoveGridItemResult
+import com.eblan.launcher.domain.model.grid.MoveFolderEblanApplicationInfoGridItemResult
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
@@ -81,7 +81,7 @@ internal fun FolderApplicationScreen(
     folderCornerRadius: Int,
     folderCellWidth: Int,
     folderCellHeight: Int,
-    moveGridItemResult: MoveGridItemResult?,
+    moveFolderEblanApplicationInfoGridItemResult: MoveFolderEblanApplicationInfoGridItemResult?,
     onDeleteFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
     onUpsertFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
     onUpdateIsVisibleFolders: (Boolean) -> Unit,
@@ -272,7 +272,9 @@ internal fun FolderApplicationScreen(
                                 isInProgress = isInProgress,
                                 paddingValues = paddingValues,
                                 animations = animations,
-                                moveGridItemResult = moveGridItemResult,
+                                moveFolderEblanApplicationInfoGridItemResult = moveFolderEblanApplicationInfoGridItemResult,
+                                progress = progress.value,
+                                folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                                 onUpdateIsVisibleFolders = onUpdateIsVisibleFolders,
                                 onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
                             )

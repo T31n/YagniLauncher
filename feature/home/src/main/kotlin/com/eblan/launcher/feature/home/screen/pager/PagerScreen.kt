@@ -109,6 +109,7 @@ import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.FolderGridItemPopup
 import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.MoveFolderEblanApplicationInfoGridItemResult
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.model.launcherapps.EblanUser
 import com.eblan.launcher.domain.model.launcherapps.PinItemRequestType
@@ -194,6 +195,7 @@ internal fun PagerScreen(
     previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
     folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    moveFolderEblanApplicationInfoGridItemResult: MoveFolderEblanApplicationInfoGridItemResult?,
     onDeleteGridItem: (GridItem) -> Unit,
     onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
@@ -1272,7 +1274,7 @@ internal fun PagerScreen(
                     folderCornerRadius = homeSettings.folderCornerRadius,
                     folderCellWidth = homeSettings.folderCellWidth,
                     folderCellHeight = homeSettings.folderCellHeight,
-                    moveGridItemResult = moveGridItemResult,
+                    moveFolderEblanApplicationInfoGridItemResult = moveFolderEblanApplicationInfoGridItemResult,
                     onDeleteFolderEblanApplicationInfoPopupEntry = onDeleteFolderEblanApplicationInfoPopupEntry,
                     onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
                     onUpdateIsVisibleFolders = pagerScreenState::updateIsVisibleFolders,

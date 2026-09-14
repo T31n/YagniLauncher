@@ -51,6 +51,7 @@ import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.FolderGridItemPopup
 import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.MoveFolderEblanApplicationInfoGridItemResult
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.model.launcherapps.EblanUser
 import com.eblan.launcher.domain.model.launcherapps.PinItemRequestType
@@ -125,6 +126,8 @@ internal fun HomeRoute(
 
     val folderEblanApplicationInfos by viewModel.folderEblanApplicationInfos.collectAsStateWithLifecycle()
 
+    val moveFolderEblanApplicationInfoGridItemResult by viewModel.moveFolderEblanApplicationInfoGridItemResult.collectAsStateWithLifecycle()
+
     HomeScreen(
         modifier = modifier,
         configureResultCode = configureResultCode,
@@ -148,6 +151,7 @@ internal fun HomeRoute(
         previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
         folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
         folderEblanApplicationInfos = folderEblanApplicationInfos,
+        moveFolderEblanApplicationInfoGridItemResult = moveFolderEblanApplicationInfoGridItemResult,
         onResetGrid = viewModel::resetGrid,
         onDeleteGridItem = viewModel::deleteGridItem,
         onResetGridAfterDeleteGridItem = viewModel::resetGridAfterDeleteGridItem,
@@ -218,6 +222,7 @@ internal fun HomeScreen(
     previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
     folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    moveFolderEblanApplicationInfoGridItemResult: MoveFolderEblanApplicationInfoGridItemResult?,
     onResetGrid: () -> Unit,
     onDeleteGridItem: (GridItem) -> Unit,
     onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
@@ -356,6 +361,7 @@ internal fun HomeScreen(
                 previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
                 folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                 folderEblanApplicationInfos = folderEblanApplicationInfos,
+                moveFolderEblanApplicationInfoGridItemResult = moveFolderEblanApplicationInfoGridItemResult,
                 onResetGrid = onResetGrid,
                 onDeleteGridItem = onDeleteGridItem,
                 onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
@@ -431,6 +437,7 @@ private fun Success(
     previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
     folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    moveFolderEblanApplicationInfoGridItemResult: MoveFolderEblanApplicationInfoGridItemResult?,
     onResetGrid: () -> Unit,
     onDeleteGridItem: (GridItem) -> Unit,
     onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
@@ -570,6 +577,7 @@ private fun Success(
                     previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
                     folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                     folderEblanApplicationInfos = folderEblanApplicationInfos,
+                    moveFolderEblanApplicationInfoGridItemResult = moveFolderEblanApplicationInfoGridItemResult,
                     onDeleteGridItem = onDeleteGridItem,
                     onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
                     onUpdateGridItemsAfterMove = onUpdateGridItemsAfterMove,

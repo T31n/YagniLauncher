@@ -21,6 +21,8 @@ import android.content.Context
 import androidx.room.Room
 import com.eblan.launcher.data.room.EblanDatabase
 import com.eblan.launcher.data.room.dao.ApplicationInfoGridItemDao
+import com.eblan.launcher.data.room.dao.EblanApplicationInfoDao
+import com.eblan.launcher.data.room.dao.FolderEblanApplicationInfoDao
 import com.eblan.launcher.data.room.dao.FolderGridItemDao
 import com.eblan.launcher.data.room.dao.ShortcutConfigGridItemDao
 import com.eblan.launcher.data.room.dao.ShortcutInfoGridItemDao
@@ -32,7 +34,9 @@ import com.eblan.launcher.data.room.migration.Migration15To16
 import com.eblan.launcher.data.room.migration.Migration18To19
 import com.eblan.launcher.data.room.migration.Migration3To4
 import com.eblan.launcher.data.room.migration.Migration7To8
+import com.eblan.launcher.data.room.transaction.DefaultFolderGridItemEntityTransaction
 import com.eblan.launcher.data.room.transaction.DefaultGridItemEntityTransaction
+import com.eblan.launcher.data.room.transaction.FolderGridItemEntityTransaction
 import com.eblan.launcher.data.room.transaction.GridItemEntityTransaction
 import dagger.Module
 import dagger.Provides
@@ -85,5 +89,17 @@ internal object RoomModule {
         shortcutInfoGridItemDao = shortcutInfoGridItemDao,
         shortcutConfigGridItemDao = shortcutConfigGridItemDao,
         folderGridItemDao = folderGridItemDao,
+    )
+
+    @Singleton
+    @Provides
+    fun folderGridItemTransaction(
+        eblanDatabase: EblanDatabase,
+        eblanApplicationInfoDao: EblanApplicationInfoDao,
+        folderEblanApplicationInfoDao: FolderEblanApplicationInfoDao,
+    ): FolderGridItemEntityTransaction = DefaultFolderGridItemEntityTransaction(
+        eblanDatabase = eblanDatabase,
+        eblanApplicationInfoDao = eblanApplicationInfoDao,
+        folderEblanApplicationInfoDao = folderEblanApplicationInfoDao,
     )
 }
