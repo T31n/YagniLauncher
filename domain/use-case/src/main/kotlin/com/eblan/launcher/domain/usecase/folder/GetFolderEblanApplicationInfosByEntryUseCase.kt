@@ -61,14 +61,9 @@ class GetFolderEblanApplicationInfosByEntryUseCase @Inject constructor(
         maxFolderColumns: Int,
         maxFolderRows: Int,
     ): FolderEblanApplicationInfoPopup {
-        val childFolderEblanApplicationInfos = folderEblanApplicationInfos.map {
-            folderEblanApplicationInfoRepository.getFolderEblanApplicationInfoWrapperById(
-                id = it.id,
-            )?.asFolderEblanApplicationInfoGridItem() ?: it.asFolderEblanApplicationInfoGridItem()
-        }
-
         val gridItems = (
-            eblanApplicationInfos.map { it.asFolderEblanApplicationInfoGridItem() } + childFolderEblanApplicationInfos
+            eblanApplicationInfos.map { it.asFolderEblanApplicationInfoGridItem() } +
+                folderEblanApplicationInfos.map { it.asFolderEblanApplicationInfoGridItem() }
             ).sortedBy {
             when (val data = it.data) {
                 is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> data.folderIndex

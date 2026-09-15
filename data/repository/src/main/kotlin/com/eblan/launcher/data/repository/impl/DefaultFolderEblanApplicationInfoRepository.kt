@@ -49,9 +49,6 @@ internal class DefaultFolderEblanApplicationInfoRepository @Inject constructor(p
         it.asModel()
     }
 
-    override suspend fun getFolderEblanApplicationInfoWrapperById(id: String): FolderEblanApplicationInfoWrapper? = folderEblanApplicationInfoDao.getFolderEblanApplicationInfoWrapperEntityById(id = id)
-        ?.asModel()
-
     override suspend fun upsertFolderEblanApplicationInfo(folderEblanApplicationInfo: FolderEblanApplicationInfo) {
         folderEblanApplicationInfoDao.upsertFolderEblanApplicationInfoEntity(entity = folderEblanApplicationInfo.asEntity())
     }

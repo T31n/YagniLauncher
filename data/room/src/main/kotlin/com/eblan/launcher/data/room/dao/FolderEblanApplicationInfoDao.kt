@@ -44,10 +44,6 @@ interface FolderEblanApplicationInfoDao {
     @Query("SELECT * FROM FolderEblanApplicationInfoEntity")
     fun getFolderEblanApplicationInfoWrapperEntities(): List<FolderEblanApplicationInfoWrapperEntity>
 
-    @Transaction
-    @Query("SELECT * FROM FolderEblanApplicationInfoEntity WHERE id = :id")
-    suspend fun getFolderEblanApplicationInfoWrapperEntityById(id: String): FolderEblanApplicationInfoWrapperEntity?
-
     @Upsert
     suspend fun upsertFolderEblanApplicationInfoEntity(entity: FolderEblanApplicationInfoEntity)
 

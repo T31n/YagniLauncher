@@ -63,22 +63,22 @@ class GetFolderGridItemsByEntryUseCase @Inject constructor(
         maxFolderRows: Int,
     ): FolderGridItemPopup {
         val gridItems = (
-                applicationInfoGridItems.map {
-                    it.asGridItem()
-                } + shortcutInfoGridItems.map {
-                    it.asGridItem()
-                } + shortcutConfigGridItems.map {
-                    it.asGridItem()
-                } + folderGridItems.map { it.asGridItem() }
-                ).sortedBy {
-                when (val data = it.data) {
-                    is GridItemData.ApplicationInfo -> data.index
-                    is GridItemData.ShortcutInfo -> data.index
-                    is GridItemData.ShortcutConfig -> data.index
-                    is GridItemData.Folder -> data.index
-                    else -> error("Unsupported folder grid item")
-                }
+            applicationInfoGridItems.map {
+                it.asGridItem()
+            } + shortcutInfoGridItems.map {
+                it.asGridItem()
+            } + shortcutConfigGridItems.map {
+                it.asGridItem()
+            } + folderGridItems.map { it.asGridItem() }
+            ).sortedBy {
+            when (val data = it.data) {
+                is GridItemData.ApplicationInfo -> data.index
+                is GridItemData.ShortcutInfo -> data.index
+                is GridItemData.ShortcutConfig -> data.index
+                is GridItemData.Folder -> data.index
+                else -> error("Unsupported folder grid item")
             }
+        }
 
         val gridItemsByPage = gridItems.getGridItemsByPage(
             maxFolderColumns = maxFolderColumns,

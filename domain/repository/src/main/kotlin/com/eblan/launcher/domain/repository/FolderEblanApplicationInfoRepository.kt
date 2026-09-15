@@ -28,8 +28,6 @@ interface FolderEblanApplicationInfoRepository {
 
     suspend fun getFolderEblanApplicationInfos(): List<FolderEblanApplicationInfo>
 
-    suspend fun getFolderEblanApplicationInfoWrapperById(id: String): FolderEblanApplicationInfoWrapper?
-
     suspend fun upsertFolderEblanApplicationInfo(folderEblanApplicationInfo: FolderEblanApplicationInfo)
 
     suspend fun getFolderEblanApplicationInfoById(id: String): FolderEblanApplicationInfo?
