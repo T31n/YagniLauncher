@@ -19,7 +19,7 @@
     <string name="choose_yagni_launcher">Vybrat Yagni spouštěč</string>
     <string name="default_launcher">Výchozí spouštěč</string>
     <string name="themes_icon_packs">Motivy, balíčky ikon</string>
-    <string name="grid_icon_dock_and_more">Mřížka, ikony, dokovací oblast a další</string>
+    <string name="grid_icon_dock_and_more">Mřížka, ikony</string>
     <string name="columns_and_rows_count">Počty sloupců a řádků</string>
     <string name="swipe_gesture_actions">Akce pro gesta přejetí prstem</string>
     <string name="advanced_options_for_power_users">Pokročilé možnosti pro náročné uživatele</string>

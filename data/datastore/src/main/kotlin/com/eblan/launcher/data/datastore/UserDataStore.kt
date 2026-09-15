@@ -20,8 +20,10 @@ package com.eblan.launcher.data.datastore
 import androidx.datastore.core.DataStore
 import com.eblan.launcher.data.datastore.proto.UserDataProto
 import com.eblan.launcher.data.datastore.proto.copy
+import com.eblan.launcher.data.datastore.proto.folder.folderSettingsProto
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
+import com.eblan.launcher.domain.model.userdata.FolderSettings
 import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.domain.model.userdata.GestureSettings
 import com.eblan.launcher.domain.model.userdata.HomeSettings
@@ -37,6 +39,7 @@ class UserDataStore @Inject constructor(private val dataStore: DataStore<UserDat
             gestureSettings = it.gestureSettingsProto.toGestureSettings(),
             generalSettings = it.generalSettingsProto.toGeneralSettings(),
             experimentalSettings = it.experimentalSettingsProto.toExperimentalSettings(),
+            folderSettings = it.folderSettingsProto.toFolderSettings(),
         )
     }
 
@@ -76,6 +79,14 @@ class UserDataStore @Inject constructor(private val dataStore: DataStore<UserDat
         dataStore.updateData {
             it.copy {
                 experimentalSettingsProto = experimentalSettings.toExperimentalSettingsProto()
+            }
+        }
+    }
+
+    suspend fun updateFolderSettings(folderSettings: FolderSettings) {
+        dataStore.updateData {
+            it.copy {
+                folderSettingsProto = folderSettings.toFolderSettingsProto()
             }
         }
     }

@@ -15,13 +15,21 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.domain.model.userdata
+package com.eblan.launcher.feature.settings.folder.navigation
 
-data class UserData(
-    val homeSettings: HomeSettings,
-    val appDrawerSettings: AppDrawerSettings,
-    val gestureSettings: GestureSettings,
-    val generalSettings: GeneralSettings,
-    val experimentalSettings: ExperimentalSettings,
-    val folderSettings: FolderSettings,
-)
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
+import com.eblan.launcher.feature.settings.folder.FolderSettingsRoute
+
+fun NavController.navigateToFolderSettings() {
+    navigate(FolderSettingsRouteData)
+}
+
+fun NavGraphBuilder.folderSettingsScreen(
+    onNavigateUp: () -> Unit,
+) {
+    composable<FolderSettingsRouteData> {
+        FolderSettingsRoute(onNavigateUp = onNavigateUp)
+    }
+}

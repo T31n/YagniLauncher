@@ -21,16 +21,6 @@
     <string name="dock_rows_is_not_valid">Nieprawidłowa liczba wierszy doku</string>
     <string name="dock_height">Wysokość doku</string>
     <string name="dock_height_is_not_valid">Nieprawidłowa wysokość doku</string>
-    <string name="folder_cell_dimension">Wymiary komórki folderu</string>
-    <string name="cell_width">Szerokość komórki</string>
-    <string name="cell_width_is_not_valid">Nieprawidłowa szerokość komórki</string>
-    <string name="cell_height">Wysokość komórki</string>
-    <string name="cell_height_is_not_valid">Nieprawidłowa wysokość komórki</string>
-    <string name="max_columns">Maksymalna liczba kolumn</string>
-    <string name="max_columns_is_not_valid">Nieprawidłowa maksymalna liczba kolumn</string>
-    <string name="folder_max_grid">Maksymalna siatka folderu</string>
-    <string name="max_rows">Maksymalna liczba wierszy</string>
-    <string name="max_rows_is_not_valid">Nieprawidłowa maksymalna liczba wierszy</string>
     <string name="infinite_scrolling">Nieskończone przewijanie</string>
     <string name="seamless_loop_page_scroll">Płynne zapętlenie przewijania stron</string>
     <string name="wallpaper_scrolling">Przewijanie tapety</string>
@@ -40,7 +30,6 @@
     <string name="add_new_apps_to_home_screen">Dodawaj nowe aplikacje do ekranu głównego</string>
     <string name="dock">Dok</string>
     <string name="dock_infinite_scroll">Nieskończone przewijanie doku</string>
-    <string name="folder">Folder</string>
     <string name="prevent_rotation_when_device_orientation_changes">Zapobiegaj obracaniu ekranu przy zmianie orientacji urządzenia</string>
     <string name="show_page_indicator">Pokaż wskaźnik stron</string>
     <string name="show_an_indicator_for_the_current_page">Pokazuj wskaźnik bieżącej strony</string>

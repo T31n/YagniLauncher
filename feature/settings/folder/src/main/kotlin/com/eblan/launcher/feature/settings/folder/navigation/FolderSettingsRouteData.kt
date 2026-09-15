@@ -15,13 +15,9 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.domain.model.userdata
+package com.eblan.launcher.feature.settings.folder.navigation
 
-data class UserData(
-    val homeSettings: HomeSettings,
-    val appDrawerSettings: AppDrawerSettings,
-    val gestureSettings: GestureSettings,
-    val generalSettings: GeneralSettings,
-    val experimentalSettings: ExperimentalSettings,
-    val folderSettings: FolderSettings,
-)
+import kotlinx.serialization.Serializable
+
+@Serializable
+data object FolderSettingsRouteData

@@ -76,6 +76,7 @@ import com.eblan.launcher.domain.model.PageItem
 import com.eblan.launcher.domain.model.folder.PreviewFolder
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
+import com.eblan.launcher.domain.model.userdata.FolderSettings
 import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.GridLayout
@@ -101,6 +102,7 @@ internal fun EditGridPageScreen(
     customFolderBackgroundColor: Int,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
+    folderSettings: FolderSettings,
     onSaveEditPage: (
         id: Int,
         pageItems: List<PageItem>,
@@ -221,7 +223,7 @@ internal fun EditGridPageScreen(
                                 customFolderBackgroundColor = customFolderBackgroundColor,
                                 systemTextColor = systemTextColor,
                                 systemCustomTextColor = systemCustomTextColor,
-                                folderCornerRadius = homeSettings.folderCornerRadius,
+                                folderCornerRadius = folderSettings.folderCornerRadius,
                             )
                         },
                     )
@@ -333,6 +335,7 @@ internal fun EditDockGridPageScreen(
     customFolderBackgroundColor: Int,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
+    folderSettings: FolderSettings,
     onSaveEditPage: (
         id: Int,
         pageItems: List<PageItem>,
@@ -447,7 +450,7 @@ internal fun EditDockGridPageScreen(
                                     customFolderBackgroundColor = customFolderBackgroundColor,
                                     systemTextColor = systemTextColor,
                                     systemCustomTextColor = systemCustomTextColor,
-                                    folderCornerRadius = homeSettings.folderCornerRadius,
+                                    folderCornerRadius = folderSettings.folderCornerRadius,
                                 )
                             },
                         )

@@ -15,7 +15,7 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.feature.settings.home.dialog
+package com.eblan.launcher.feature.settings.folder.dialog
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -35,32 +35,32 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.component.EblanDialog
-import com.eblan.launcher.feature.settings.home.R
+import com.eblan.launcher.feature.settings.folder.R
 import com.eblan.launcher.common.R as commonR
 
 @Composable
-internal fun EditFolderMaxGridDialog(
+internal fun EditFolderCellDimensionDialog(
     modifier: Modifier = Modifier,
-    maxFolderColumns: Int,
-    maxFolderRows: Int,
+    folderCellWidth: Int,
+    folderCellHeight: Int,
     onDismissRequest: () -> Unit,
-    onUpdateFolderMaxGrid: (
-        maxFolderColumns: Int,
-        maxFolderRows: Int,
+    onUpdateFolderCellDimension: (
+        folderCellWidth: Int,
+        folderCellHeight: Int,
     ) -> Unit,
 ) {
-    var currentMaxFolderColumns by remember { mutableStateOf("$maxFolderColumns") }
-    var currentMaxFolderRows by remember { mutableStateOf("$maxFolderRows") }
+    var currentFolderCellWidth by remember { mutableStateOf("$folderCellWidth") }
+    var currentFolderCellHeight by remember { mutableStateOf("$folderCellHeight") }
 
-    var isErrorMaxFolderColumns by remember { mutableStateOf(false) }
-    var isErrorMaxFolderRows by remember { mutableStateOf(false) }
+    var isErrorFolderCellWidth by remember { mutableStateOf(false) }
+    var isErrorFolderCellHeight by remember { mutableStateOf(false) }
 
     EblanDialog(
         modifier = modifier,
         onDismissRequest = onDismissRequest,
     ) {
         Text(
-            text = stringResource(R.string.folder_max_grid),
+            text = stringResource(R.string.folder_cell_dimension),
             style = MaterialTheme.typography.titleLarge,
         )
 
@@ -68,42 +68,42 @@ internal fun EditFolderMaxGridDialog(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             TextField(
-                value = currentMaxFolderColumns,
+                value = currentFolderCellWidth,
                 onValueChange = {
-                    currentMaxFolderColumns = it
-                    isErrorMaxFolderColumns = false
+                    currentFolderCellWidth = it
+                    isErrorFolderCellWidth = false
                 },
                 modifier = Modifier.weight(1f),
-                label = { Text(text = stringResource(R.string.max_columns)) },
-                supportingText = if (isErrorMaxFolderColumns) {
+                label = { Text(text = stringResource(R.string.cell_width)) },
+                supportingText = if (isErrorFolderCellWidth) {
                     {
-                        Text(text = stringResource(R.string.max_columns_is_not_valid))
+                        Text(text = stringResource(R.string.cell_width_is_not_valid))
                     }
                 } else {
                     null
                 },
-                isError = isErrorMaxFolderColumns,
+                isError = isErrorFolderCellWidth,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
                 ),
             )
 
             TextField(
-                value = currentMaxFolderRows,
+                value = currentFolderCellHeight,
                 onValueChange = {
-                    currentMaxFolderRows = it
-                    isErrorMaxFolderRows = false
+                    currentFolderCellHeight = it
+                    isErrorFolderCellHeight = false
                 },
                 modifier = Modifier.weight(1f),
-                label = { Text(text = stringResource(R.string.max_rows)) },
-                supportingText = if (isErrorMaxFolderRows) {
+                label = { Text(text = stringResource(R.string.cell_height)) },
+                supportingText = if (isErrorFolderCellHeight) {
                     {
-                        Text(text = stringResource(R.string.max_rows_is_not_valid))
+                        Text(text = stringResource(R.string.cell_height_is_not_valid))
                     }
                 } else {
                     null
                 },
-                isError = isErrorMaxFolderRows,
+                isError = isErrorFolderCellHeight,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
                 ),
@@ -122,18 +122,18 @@ internal fun EditFolderMaxGridDialog(
 
             TextButton(
                 onClick = {
-                    val newColumns = currentMaxFolderColumns.toIntOrNull()
-                    val newRows = currentMaxFolderRows.toIntOrNull()
+                    val newWidth = currentFolderCellWidth.toIntOrNull()
+                    val newHeight = currentFolderCellHeight.toIntOrNull()
 
-                    isErrorMaxFolderColumns = newColumns == null || newColumns <= 0
-                    isErrorMaxFolderRows = newRows == null || newRows <= 0
+                    isErrorFolderCellWidth = newWidth == null || newWidth <= 0
+                    isErrorFolderCellHeight = newHeight == null || newHeight <= 0
 
-                    if (newColumns != null &&
-                        newRows != null &&
-                        newColumns > 0 &&
-                        newRows > 0
+                    if (newWidth != null &&
+                        newHeight != null &&
+                        newWidth > 0 &&
+                        newHeight > 0
                     ) {
-                        onUpdateFolderMaxGrid(newColumns, newRows)
+                        onUpdateFolderCellDimension(newWidth, newHeight)
 
                         onDismissRequest()
                     }

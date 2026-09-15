@@ -19,6 +19,7 @@ package com.eblan.launcher.domain.repository
 
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
+import com.eblan.launcher.domain.model.userdata.FolderSettings
 import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.domain.model.userdata.GestureSettings
 import com.eblan.launcher.domain.model.userdata.HomeSettings
@@ -37,4 +38,6 @@ interface UserDataRepository {
     suspend fun updateGestureSettings(gestureSettings: GestureSettings)
 
     suspend fun updateExperimentalSettings(experimentalSettings: ExperimentalSettings)
+
+    suspend fun updateFolderSettings(folderSettings: FolderSettings)
 }

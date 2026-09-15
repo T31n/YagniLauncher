@@ -48,6 +48,7 @@
             <option value="$PROJECT_DIR$/feature/settings" />
             <option value="$PROJECT_DIR$/feature/settings/app-drawer" />
             <option value="$PROJECT_DIR$/feature/settings/experimental" />
+            <option value="$PROJECT_DIR$/feature/settings/folder" />
             <option value="$PROJECT_DIR$/feature/settings/general" />
             <option value="$PROJECT_DIR$/feature/settings/gestures" />
             <option value="$PROJECT_DIR$/feature/settings/home" />

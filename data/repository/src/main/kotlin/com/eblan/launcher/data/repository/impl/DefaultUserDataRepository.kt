@@ -20,6 +20,7 @@ package com.eblan.launcher.data.repository.impl
 import com.eblan.launcher.data.datastore.UserDataStore
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
+import com.eblan.launcher.domain.model.userdata.FolderSettings
 import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.domain.model.userdata.GestureSettings
 import com.eblan.launcher.domain.model.userdata.HomeSettings
@@ -47,5 +48,9 @@ internal class DefaultUserDataRepository @Inject constructor(private val userDat
 
     override suspend fun updateExperimentalSettings(experimentalSettings: ExperimentalSettings) {
         userDataStore.updateExperimentalSettings(experimentalSettings = experimentalSettings)
+    }
+
+    override suspend fun updateFolderSettings(folderSettings: FolderSettings) {
+        userDataStore.updateFolderSettings(folderSettings = folderSettings)
     }
 }

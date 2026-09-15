@@ -23,6 +23,7 @@ import com.eblan.launcher.data.datastore.proto.UserDataProto
 import com.eblan.launcher.data.datastore.proto.appdrawer.AppDrawerSettingsProto
 import com.eblan.launcher.data.datastore.proto.appdrawer.AppDrawerTypeProto
 import com.eblan.launcher.data.datastore.proto.experimental.ExperimentalSettingsProto
+import com.eblan.launcher.data.datastore.proto.folder.FolderSettingsProto
 import com.eblan.launcher.data.datastore.proto.general.GeneralSettingsProto
 import com.eblan.launcher.data.datastore.proto.gesture.GestureSettingsProto
 import com.eblan.launcher.data.datastore.proto.home.GridItemSettingsProto
@@ -75,10 +76,6 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
         dockPageCount = 1
         dockInfiniteScroll = false
         addNewAppsToHomeScreen = true
-        folderCellWidth = 64
-        folderCellHeight = 96
-        maxFolderColumns = 5
-        maxFolderRows = 4
         showPageIndicator = false
         dockCustomBackgroundColor = 0x00000000
         dockPadding = 0
@@ -86,8 +83,6 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
         dockTopEndCornerRadius = 0
         dockBottomStartCornerRadius = 0
         dockBottomEndCornerRadius = 0
-        folderBackgroundColorProto = BackgroundColorProto.BackgroundColorSystem
-        customFolderBackgroundColor = 0x00000000
     }.build()
 
     private val defaultAppDrawerSettingsProto = AppDrawerSettingsProto.newBuilder().apply {
@@ -132,12 +127,23 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
         gridItemAnimation = true
     }.build()
 
+    private val defaultFolderSettingsProto = FolderSettingsProto.newBuilder().apply {
+        folderCellWidth = 64
+        folderCellHeight = 96
+        maxFolderColumns = 5
+        maxFolderRows = 4
+        folderCornerRadius = 5
+        folderBackgroundColorProto = BackgroundColorProto.BackgroundColorSystem
+        customFolderBackgroundColor = 0x00000000
+    }.build()
+
     override val defaultValue: UserDataProto = UserDataProto.newBuilder().apply {
         homeSettingsProto = defaultHomeSettingsProto
         appDrawerSettingsProto = defaultAppDrawerSettingsProto
         gestureSettingsProto = defaultGestureSettingsProto
         generalSettingsProto = defaultGeneralSettingsProto
         experimentalSettingsProto = defaultExperimentalSettings
+        folderSettingsProto = defaultFolderSettingsProto
     }.build()
 
     override suspend fun readFrom(input: InputStream): UserDataProto = try {

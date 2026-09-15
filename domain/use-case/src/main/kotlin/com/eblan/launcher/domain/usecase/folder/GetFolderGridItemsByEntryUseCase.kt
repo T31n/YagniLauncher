@@ -51,8 +51,8 @@ class GetFolderGridItemsByEntryUseCase @Inject constructor(
                 it.folderGridItem.id == folderPopupEntry.id
             }?.asFolderGridItemPopup(
                 folderPopupEntry = folderPopupEntry,
-                maxFolderColumns = userData.homeSettings.maxFolderColumns,
-                maxFolderRows = userData.homeSettings.maxFolderRows,
+                maxFolderColumns = userData.folderSettings.maxFolderColumns,
+                maxFolderRows = userData.folderSettings.maxFolderRows,
             )
         }
     }.flowOn(defaultDispatcher)

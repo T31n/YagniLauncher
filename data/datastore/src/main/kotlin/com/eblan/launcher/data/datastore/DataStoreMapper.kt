@@ -20,6 +20,7 @@ package com.eblan.launcher.data.datastore
 import com.eblan.launcher.data.datastore.proto.appdrawer.AppDrawerSettingsProto
 import com.eblan.launcher.data.datastore.proto.appdrawer.AppDrawerTypeProto
 import com.eblan.launcher.data.datastore.proto.experimental.ExperimentalSettingsProto
+import com.eblan.launcher.data.datastore.proto.folder.FolderSettingsProto
 import com.eblan.launcher.data.datastore.proto.general.GeneralSettingsProto
 import com.eblan.launcher.data.datastore.proto.general.ThemeProto
 import com.eblan.launcher.data.datastore.proto.gesture.EblanActionProto
@@ -40,6 +41,7 @@ import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
+import com.eblan.launcher.domain.model.userdata.FolderSettings
 import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.domain.model.userdata.GestureSettings
 import com.eblan.launcher.domain.model.userdata.HomeSettings
@@ -62,20 +64,13 @@ internal fun HomeSettingsProto.toHomeSettings(): HomeSettings = HomeSettings(
     dockInfiniteScroll = dockInfiniteScroll,
     dockInitialPage = dockInitialPage,
     addNewAppsToHomeScreen = addNewAppsToHomeScreen,
-    folderCellWidth = folderCellWidth,
-    folderCellHeight = folderCellHeight,
-    maxFolderColumns = maxFolderColumns,
-    maxFolderRows = maxFolderRows,
-    showPageIndicator = if (hasShowPageIndicator()) showPageIndicator else true,
+    showPageIndicator = showPageIndicator,
     dockCustomBackgroundColor = dockCustomBackgroundColor,
     dockPadding = dockPadding,
     dockTopStartCornerRadius = dockTopStartCornerRadius,
     dockTopEndCornerRadius = dockTopEndCornerRadius,
     dockBottomStartCornerRadius = dockBottomStartCornerRadius,
     dockBottomEndCornerRadius = dockBottomEndCornerRadius,
-    folderCornerRadius = if (hasFolderCornerRadius()) folderCornerRadius else 5,
-    folderBackgroundColor = folderBackgroundColorProto.toBackgroundColor(),
-    customFolderBackgroundColor = customFolderBackgroundColor,
 )
 
 internal fun AppDrawerSettingsProto.toAppDrawerSettings(): AppDrawerSettings = AppDrawerSettings(
@@ -143,10 +138,6 @@ internal fun HomeSettings.toHomeSettingsProto(): HomeSettingsProto = HomeSetting
     builder.dockInfiniteScroll = dockInfiniteScroll
     builder.dockInitialPage = dockInitialPage
     builder.addNewAppsToHomeScreen = addNewAppsToHomeScreen
-    builder.folderCellWidth = folderCellWidth
-    builder.folderCellHeight = folderCellHeight
-    builder.maxFolderColumns = maxFolderColumns
-    builder.maxFolderRows = maxFolderRows
     builder.showPageIndicator = showPageIndicator
     builder.dockCustomBackgroundColor = dockCustomBackgroundColor
     builder.dockPadding = dockPadding
@@ -154,9 +145,6 @@ internal fun HomeSettings.toHomeSettingsProto(): HomeSettingsProto = HomeSetting
     builder.dockTopEndCornerRadius = dockTopEndCornerRadius
     builder.dockBottomStartCornerRadius = dockBottomStartCornerRadius
     builder.dockBottomEndCornerRadius = dockBottomEndCornerRadius
-    builder.folderCornerRadius = folderCornerRadius
-    builder.folderBackgroundColorProto = folderBackgroundColor.toBackgroundColorProto()
-    builder.customFolderBackgroundColor = customFolderBackgroundColor
 }.build()
 
 internal fun AppDrawerSettings.toAppDrawerSettingsProto(): AppDrawerSettingsProto = AppDrawerSettingsProto.newBuilder().also { builder ->
@@ -197,8 +185,28 @@ internal fun ExperimentalSettingsProto.toExperimentalSettings(): ExperimentalSet
     syncData = syncData,
     firstLaunch = firstLaunch,
     lockMovement = lockMovement,
-    gridItemAnimation = if (hasGridItemAnimation()) gridItemAnimation else true,
+    gridItemAnimation = gridItemAnimation,
 )
+
+internal fun FolderSettingsProto.toFolderSettings(): FolderSettings = FolderSettings(
+    folderCellWidth = folderCellWidth,
+    folderCellHeight = folderCellHeight,
+    maxFolderColumns = maxFolderColumns,
+    maxFolderRows = maxFolderRows,
+    folderCornerRadius = folderCornerRadius,
+    folderBackgroundColor = folderBackgroundColorProto.toBackgroundColor(),
+    customFolderBackgroundColor = customFolderBackgroundColor,
+)
+
+internal fun FolderSettings.toFolderSettingsProto(): FolderSettingsProto = FolderSettingsProto.newBuilder().also { builder ->
+    builder.folderCellWidth = folderCellWidth
+    builder.folderCellHeight = folderCellHeight
+    builder.maxFolderColumns = maxFolderColumns
+    builder.maxFolderRows = maxFolderRows
+    builder.folderCornerRadius = folderCornerRadius
+    builder.folderBackgroundColorProto = folderBackgroundColor.toBackgroundColorProto()
+    builder.customFolderBackgroundColor = customFolderBackgroundColor
+}.build()
 
 internal fun EblanAction.toEblanActionProto(): EblanActionProto = EblanActionProto.newBuilder().also { builder ->
     builder.eblanActionTypeProto = eblanActionType.toEblanActionTypeProto()

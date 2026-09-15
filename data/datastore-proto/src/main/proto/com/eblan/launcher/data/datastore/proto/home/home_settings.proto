@@ -1,7 +1,6 @@
 syntax = "proto3";
 
 import "com/eblan/launcher/data/datastore/proto/model/grid_item_settings.proto";
-import "com/eblan/launcher/data/datastore/proto/model/background_color.proto";
 
 option java_package = "com.eblan.launcher.data.datastore.proto.home";
 option java_multiple_files = true;
@@ -22,18 +21,11 @@ message HomeSettingsProto {
   bool dockInfiniteScroll = 15;
   int32 dockInitialPage = 16;
   bool addNewAppsToHomeScreen = 17;
-  int32 folderCellWidth = 18;
-  int32 folderCellHeight = 19;
-  int32 maxFolderColumns = 20;
-  int32 maxFolderRows = 21;
-  optional bool showPageIndicator = 22;
+  bool showPageIndicator = 22;
   int32 dockCustomBackgroundColor = 23;
   int32 dockPadding = 24;
   int32 dockTopStartCornerRadius = 25;
   int32 dockTopEndCornerRadius = 26;
   int32 dockBottomStartCornerRadius = 27;
   int32 dockBottomEndCornerRadius = 28;
-  optional int32 folderCornerRadius = 29;
-  BackgroundColorProto folderBackgroundColorProto = 30;
-  int32 customFolderBackgroundColor = 31;
 }

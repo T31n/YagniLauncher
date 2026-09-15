@@ -15,7 +15,7 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.feature.settings.home.dialog
+package com.eblan.launcher.feature.settings.folder.dialog
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -35,32 +35,32 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.component.EblanDialog
-import com.eblan.launcher.feature.settings.home.R
+import com.eblan.launcher.feature.settings.folder.R
 import com.eblan.launcher.common.R as commonR
 
 @Composable
-internal fun EditFolderCellDimensionDialog(
+internal fun EditFolderMaxGridDialog(
     modifier: Modifier = Modifier,
-    folderCellWidth: Int,
-    folderCellHeight: Int,
+    maxFolderColumns: Int,
+    maxFolderRows: Int,
     onDismissRequest: () -> Unit,
-    onUpdateFolderCellDimension: (
-        folderCellWidth: Int,
-        folderCellHeight: Int,
+    onUpdateFolderMaxGrid: (
+        maxFolderColumns: Int,
+        maxFolderRows: Int,
     ) -> Unit,
 ) {
-    var currentFolderCellWidth by remember { mutableStateOf("$folderCellWidth") }
-    var currentFolderCellHeight by remember { mutableStateOf("$folderCellHeight") }
+    var currentMaxFolderColumns by remember { mutableStateOf("$maxFolderColumns") }
+    var currentMaxFolderRows by remember { mutableStateOf("$maxFolderRows") }
 
-    var isErrorFolderCellWidth by remember { mutableStateOf(false) }
-    var isErrorFolderCellHeight by remember { mutableStateOf(false) }
+    var isErrorMaxFolderColumns by remember { mutableStateOf(false) }
+    var isErrorMaxFolderRows by remember { mutableStateOf(false) }
 
     EblanDialog(
         modifier = modifier,
         onDismissRequest = onDismissRequest,
     ) {
         Text(
-            text = stringResource(R.string.folder_cell_dimension),
+            text = stringResource(R.string.folder_max_grid),
             style = MaterialTheme.typography.titleLarge,
         )
 
@@ -68,42 +68,42 @@ internal fun EditFolderCellDimensionDialog(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             TextField(
-                value = currentFolderCellWidth,
+                value = currentMaxFolderColumns,
                 onValueChange = {
-                    currentFolderCellWidth = it
-                    isErrorFolderCellWidth = false
+                    currentMaxFolderColumns = it
+                    isErrorMaxFolderColumns = false
                 },
                 modifier = Modifier.weight(1f),
-                label = { Text(text = stringResource(R.string.cell_width)) },
-                supportingText = if (isErrorFolderCellWidth) {
+                label = { Text(text = stringResource(R.string.max_columns)) },
+                supportingText = if (isErrorMaxFolderColumns) {
                     {
-                        Text(text = stringResource(R.string.cell_width_is_not_valid))
+                        Text(text = stringResource(R.string.max_columns_is_not_valid))
                     }
                 } else {
                     null
                 },
-                isError = isErrorFolderCellWidth,
+                isError = isErrorMaxFolderColumns,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
                 ),
             )
 
             TextField(
-                value = currentFolderCellHeight,
+                value = currentMaxFolderRows,
                 onValueChange = {
-                    currentFolderCellHeight = it
-                    isErrorFolderCellHeight = false
+                    currentMaxFolderRows = it
+                    isErrorMaxFolderRows = false
                 },
                 modifier = Modifier.weight(1f),
-                label = { Text(text = stringResource(R.string.cell_height)) },
-                supportingText = if (isErrorFolderCellHeight) {
+                label = { Text(text = stringResource(R.string.max_rows)) },
+                supportingText = if (isErrorMaxFolderRows) {
                     {
-                        Text(text = stringResource(R.string.cell_height_is_not_valid))
+                        Text(text = stringResource(R.string.max_rows_is_not_valid))
                     }
                 } else {
                     null
                 },
-                isError = isErrorFolderCellHeight,
+                isError = isErrorMaxFolderRows,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
                 ),
@@ -122,18 +122,18 @@ internal fun EditFolderCellDimensionDialog(
 
             TextButton(
                 onClick = {
-                    val newWidth = currentFolderCellWidth.toIntOrNull()
-                    val newHeight = currentFolderCellHeight.toIntOrNull()
+                    val newColumns = currentMaxFolderColumns.toIntOrNull()
+                    val newRows = currentMaxFolderRows.toIntOrNull()
 
-                    isErrorFolderCellWidth = newWidth == null || newWidth <= 0
-                    isErrorFolderCellHeight = newHeight == null || newHeight <= 0
+                    isErrorMaxFolderColumns = newColumns == null || newColumns <= 0
+                    isErrorMaxFolderRows = newRows == null || newRows <= 0
 
-                    if (newWidth != null &&
-                        newHeight != null &&
-                        newWidth > 0 &&
-                        newHeight > 0
+                    if (newColumns != null &&
+                        newRows != null &&
+                        newColumns > 0 &&
+                        newRows > 0
                     ) {
-                        onUpdateFolderCellDimension(newWidth, newHeight)
+                        onUpdateFolderMaxGrid(newColumns, newRows)
 
                         onDismissRequest()
                     }

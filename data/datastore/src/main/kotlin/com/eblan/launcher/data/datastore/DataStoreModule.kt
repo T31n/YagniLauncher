@@ -46,9 +46,6 @@ object DataStoreModule {
     ): DataStore<UserDataProto> = DataStoreFactory.create(
         serializer = userDataSerializer,
         scope = CoroutineScope(ioDispatcher),
-        migrations = listOf(
-            DataStoreMigration(),
-        ),
     ) {
         context.dataStoreFile("user_data.pb")
     }

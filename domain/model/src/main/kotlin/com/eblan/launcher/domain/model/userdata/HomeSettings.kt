@@ -35,10 +35,6 @@ data class HomeSettings(
     val dockInfiniteScroll: Boolean,
     val dockInitialPage: Int,
     val addNewAppsToHomeScreen: Boolean,
-    val folderCellWidth: Int,
-    val folderCellHeight: Int,
-    val maxFolderColumns: Int,
-    val maxFolderRows: Int,
     val showPageIndicator: Boolean,
     val dockCustomBackgroundColor: Int,
     val dockPadding: Int,
@@ -46,7 +42,4 @@ data class HomeSettings(
     val dockTopEndCornerRadius: Int,
     val dockBottomStartCornerRadius: Int,
     val dockBottomEndCornerRadius: Int,
-    val folderCornerRadius: Int,
-    val folderBackgroundColor: BackgroundColor,
-    val customFolderBackgroundColor: Int,
 )

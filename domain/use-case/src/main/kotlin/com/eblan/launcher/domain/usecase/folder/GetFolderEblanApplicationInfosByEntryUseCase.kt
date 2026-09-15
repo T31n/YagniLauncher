@@ -50,8 +50,8 @@ class GetFolderEblanApplicationInfosByEntryUseCase @Inject constructor(
                 it.folderEblanApplicationInfo.id == folderPopupEntry.id
             }?.asFolderEblanApplicationInfoPopup(
                 folderPopupEntry = folderPopupEntry,
-                maxFolderColumns = userData.homeSettings.maxFolderColumns,
-                maxFolderRows = userData.homeSettings.maxFolderRows,
+                maxFolderColumns = userData.folderSettings.maxFolderColumns,
+                maxFolderRows = userData.folderSettings.maxFolderRows,
             )
         }
     }.flowOn(defaultDispatcher)

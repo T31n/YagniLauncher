@@ -17,11 +17,12 @@
  */
 package com.eblan.launcher.domain.model.userdata
 
-data class UserData(
-    val homeSettings: HomeSettings,
-    val appDrawerSettings: AppDrawerSettings,
-    val gestureSettings: GestureSettings,
-    val generalSettings: GeneralSettings,
-    val experimentalSettings: ExperimentalSettings,
-    val folderSettings: FolderSettings,
+data class FolderSettings(
+    val folderCellWidth: Int,
+    val folderCellHeight: Int,
+    val maxFolderColumns: Int,
+    val maxFolderRows: Int,
+    val folderCornerRadius: Int,
+    val folderBackgroundColor: BackgroundColor,
+    val customFolderBackgroundColor: Int,
 )

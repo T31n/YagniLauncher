@@ -45,8 +45,8 @@ class GetPreviewFolderEblanApplicationInfosUseCase @Inject constructor(
             .sortedBy { it.folderEblanApplicationInfo.label }
             .associate {
                 it.folderEblanApplicationInfo.id to it.asFolderEblanApplicationInfoGridItem(
-                    maxFolderColumns = userData.homeSettings.maxFolderColumns,
-                    maxFolderRows = userData.homeSettings.maxFolderRows,
+                    maxFolderColumns = userData.folderSettings.maxFolderColumns,
+                    maxFolderRows = userData.folderSettings.maxFolderRows,
                 )
             }
     }.flowOn(defaultDispatcher)
