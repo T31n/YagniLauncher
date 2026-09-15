@@ -30,17 +30,6 @@ import com.eblan.launcher.domain.usecase.util.asGridItem
 import com.eblan.launcher.domain.usecase.util.getGridDimension
 import com.eblan.launcher.domain.usecase.util.getPreviewFolderGridItems
 
-internal fun FolderEblanApplicationInfoWrapper.asFolderEblanApplicationInfoGridItem(): FolderEblanApplicationInfoGridItem = FolderEblanApplicationInfoGridItem(
-    id = folderEblanApplicationInfo.id,
-    data = FolderEblanApplicationInfoGridItemData.Folder(
-        icon = folderEblanApplicationInfo.icon,
-        label = folderEblanApplicationInfo.label,
-        index = folderEblanApplicationInfo.index,
-        folderIndex = folderEblanApplicationInfo.folderIndex,
-        folderId = folderEblanApplicationInfo.folderId,
-    ),
-)
-
 internal fun FolderEblanApplicationInfo.asFolderEblanApplicationInfoGridItem(): FolderEblanApplicationInfoGridItem = FolderEblanApplicationInfoGridItem(
     id = id,
     data = FolderEblanApplicationInfoGridItemData.Folder(
