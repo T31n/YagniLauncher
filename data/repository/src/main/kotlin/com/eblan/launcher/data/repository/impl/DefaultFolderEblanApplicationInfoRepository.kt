@@ -70,6 +70,10 @@ internal class DefaultFolderEblanApplicationInfoRepository @Inject constructor(p
         folderEblanApplicationInfoDao.updateFolderEblanApplicationInfoEntities(entities = folderEblanApplicationInfos.map { it.asEntity() })
     }
 
+    override suspend fun getFolderEblanApplicationInfoWrappers(): List<FolderEblanApplicationInfoWrapper> = folderEblanApplicationInfoDao.getFolderEblanApplicationInfoWrapperEntities().map {
+        it.asModel()
+    }
+
     private fun FolderEblanApplicationInfoWrapperEntity.asModel(): FolderEblanApplicationInfoWrapper = FolderEblanApplicationInfoWrapper(
         folderEblanApplicationInfo = folderEblanApplicationInfoEntity.asModel(),
         eblanApplicationInfos = eblanApplicationInfoEntities.map { it.asModel() },

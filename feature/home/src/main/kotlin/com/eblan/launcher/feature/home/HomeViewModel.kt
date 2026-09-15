@@ -17,6 +17,8 @@
  */
 package com.eblan.launcher.feature.home
 
+import android.R.attr.data
+import android.R.attr.label
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eblan.launcher.domain.common.FileManager
@@ -24,6 +26,7 @@ import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.model.PageItem
 import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
@@ -47,6 +50,7 @@ import com.eblan.launcher.domain.usecase.folder.GetFolderEblanApplicationInfosBy
 import com.eblan.launcher.domain.usecase.folder.GetFolderGridItemsByEntryUseCase
 import com.eblan.launcher.domain.usecase.folder.GetPreviewFolderEblanApplicationInfosUseCase
 import com.eblan.launcher.domain.usecase.folder.GetPreviewFolderGridItemsUseCase
+import com.eblan.launcher.domain.usecase.folder.GetRecursiveFolderEblanApplicationInfosUseCase
 import com.eblan.launcher.domain.usecase.folder.GetTopLevelFolderEblanApplicationInfosUseCase
 import com.eblan.launcher.domain.usecase.folder.MoveFolderEblanApplicationInfoGridItemUseCase
 import com.eblan.launcher.domain.usecase.folder.MoveFolderGridItemUseCase
@@ -115,6 +119,7 @@ internal class HomeViewModel @Inject constructor(
     getTopLevelFolderEblanApplicationInfosUseCase: GetTopLevelFolderEblanApplicationInfosUseCase,
     private val moveFolderEblanApplicationInfoGridItemUseCase: MoveFolderEblanApplicationInfoGridItemUseCase,
     getEblanApplicationTagsUseCase: GetEblanApplicationTagsUseCase,
+    private val getRecursiveFolderEblanApplicationInfosUseCase: GetRecursiveFolderEblanApplicationInfosUseCase,
 ) : ViewModel() {
     val homeUiState = getHomeDataUseCase().map(HomeUiState::Success).stateIn(
         scope = viewModelScope,
@@ -247,11 +252,12 @@ internal class HomeViewModel @Inject constructor(
         initialValue = emptyList(),
     )
 
-    val topLevelFolderEblanApplicationInfos = getTopLevelFolderEblanApplicationInfosUseCase().stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = emptyList(),
-    )
+    val topLevelFolderEblanApplicationInfos =
+        getTopLevelFolderEblanApplicationInfosUseCase().stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = emptyList(),
+        )
 
     private val _moveFolderEblanApplicationInfoGridItemResult =
         MutableStateFlow<MoveFolderEblanApplicationInfoGridItemResult?>(null)
@@ -844,7 +850,6 @@ internal class HomeViewModel @Inject constructor(
     fun moveFolderEblanApplicationInfoGridItemOutsideFolder(
         folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
         movingGridItem: GridItem,
-        folderGridItems: List<GridItem>,
     ) {
         viewModelScope.launch {
             moveGridItemJob?.cancelAndJoin()
@@ -863,7 +868,7 @@ internal class HomeViewModel @Inject constructor(
                 )
             }
 
-            when (folderEblanApplicationInfoGridItem.data) {
+            when (val data = folderEblanApplicationInfoGridItem.data) {
                 is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
                     _gridItemSource.update {
                         GridItemSource.New
@@ -872,9 +877,44 @@ internal class HomeViewModel @Inject constructor(
 
                 is FolderEblanApplicationInfoGridItemData.Folder -> {
                     _gridItemSource.update {
-                        GridItemSource.NewFolder(folderGridItems = folderGridItems)
+                        GridItemSource.NewFolder(
+                            folderGridItems = getRecursiveFolderEblanApplicationInfosUseCase(
+                                id = folderEblanApplicationInfoGridItem.id,
+                                label = data.label,
+                                icon = data.icon,
+                                gridItem = movingGridItem,
+                            ),
+                        )
                     }
                 }
+            }
+        }
+    }
+
+    fun dragFolderEblanApplicationInfo(
+        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        movingGridItem: GridItem,
+    ) {
+        viewModelScope.launch {
+            moveGridItemJob?.cancelAndJoin()
+
+            _moveGridItemResult.update {
+                MoveGridItemResult(
+                    isSuccess = false,
+                    movingGridItem = movingGridItem,
+                    conflictingGridItem = null,
+                )
+            }
+
+            _gridItemSource.update {
+                GridItemSource.NewFolder(
+                    folderGridItems = getRecursiveFolderEblanApplicationInfosUseCase(
+                        id = folderEblanApplicationInfo.id,
+                        label = folderEblanApplicationInfo.label,
+                        icon = folderEblanApplicationInfo.icon,
+                        gridItem = movingGridItem,
+                    ),
+                )
             }
         }
     }

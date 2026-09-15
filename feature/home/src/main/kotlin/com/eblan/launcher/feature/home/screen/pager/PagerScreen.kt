@@ -308,7 +308,10 @@ internal fun PagerScreen(
     onMoveFolderEblanApplicationInfoGridItemOutsideFolder: (
         folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
         movingGridItem: GridItem,
-        folderGridItems: List<GridItem>,
+    ) -> Unit,
+    onDragFolderEblanApplicationInfo: (
+        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        movingGridItem: GridItem,
     ) -> Unit,
 ) {
     val layoutDirection = LocalLayoutDirection.current
@@ -1180,6 +1183,7 @@ internal fun PagerScreen(
                 onUpdateFolderEblanApplicationInfo = pagerScreenState::updateFolderEblanApplicationInfo,
                 onUpdateFolderPopupBounds = pagerScreenState::showFolderApplicationPopup,
                 onUpdateFolderPopupMenu = pagerScreenState::updateShowFolderApplicationInfoPopup,
+                onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
             )
         }
 

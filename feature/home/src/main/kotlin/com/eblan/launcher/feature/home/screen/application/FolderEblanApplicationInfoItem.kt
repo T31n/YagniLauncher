@@ -73,7 +73,6 @@ import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
-import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.EblanAction
@@ -83,9 +82,7 @@ import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
 import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.model.Drag
-import com.eblan.launcher.feature.home.model.GridItemSource
 import com.eblan.launcher.feature.home.model.SharedElementKey
-import com.eblan.launcher.feature.home.util.getFolderGridItems
 import com.eblan.launcher.feature.home.util.getHorizontalAlignment
 import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
 import com.eblan.launcher.feature.home.util.getVerticalArrangement
@@ -127,9 +124,11 @@ internal fun FolderEblanApplicationInfoItem(
         intSize: IntSize,
     ) -> Unit,
     onDismiss: () -> Unit,
-    onUpdateGridItemSource: (GridItemSource) -> Unit,
-    onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
+    onDragFolderEblanApplicationInfo: (
+        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        movingGridItem: GridItem,
+    ) -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -181,16 +180,14 @@ internal fun FolderEblanApplicationInfoItem(
             folderEblanApplicationInfo = folderEblanApplicationInfo,
             isLongPress = isLongPress,
             isSwiping = isSwiping,
-            previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
             onUpdateIsLongPress = {
                 isLongPress = it
             },
             onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
             onUpdateFolderPopupMenu = onUpdateFolderPopupMenu,
             onDismiss = onDismiss,
-            onUpdateGridItemSource = onUpdateGridItemSource,
-            onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
             onUpdateIsDragging = onUpdateIsDragging,
+            onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
         )
     }
 
@@ -409,14 +406,15 @@ internal fun handleDragFolderEblanApplicationInfoItem(
     folderEblanApplicationInfo: FolderEblanApplicationInfo,
     isLongPress: Boolean,
     isSwiping: Boolean,
-    previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
     onUpdateIsLongPress: (Boolean) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onUpdateFolderPopupMenu: (Boolean) -> Unit,
     onDismiss: () -> Unit,
-    onUpdateGridItemSource: (GridItemSource) -> Unit,
-    onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
+    onDragFolderEblanApplicationInfo: (
+        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        movingGridItem: GridItem,
+    ) -> Unit,
 ) {
     if (!isLongPress) return
 
@@ -453,22 +451,9 @@ internal fun handleDragFolderEblanApplicationInfoItem(
                 swipeDown = eblanAction,
             )
 
-            val folderGridItems = getFolderGridItems(
-                gridItemSettings = gridItemSettings,
-                gridItem = gridItem,
-                eblanAction = eblanAction,
-                previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
-                sourceFolderId = folderEblanApplicationInfo.id,
-            )
-
-            onUpdateGridItemSource(GridItemSource.NewFolder(folderGridItems = folderGridItems))
-
-            onUpdateMoveGridItemResult(
-                MoveGridItemResult(
-                    isSuccess = false,
-                    movingGridItem = gridItem,
-                    conflictingGridItem = null,
-                ),
+            onDragFolderEblanApplicationInfo(
+                folderEblanApplicationInfo,
+                gridItem,
             )
 
             onUpdateIsDragging(true)

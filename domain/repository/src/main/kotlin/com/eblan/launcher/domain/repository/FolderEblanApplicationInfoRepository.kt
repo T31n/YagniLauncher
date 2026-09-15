@@ -39,4 +39,6 @@ interface FolderEblanApplicationInfoRepository {
     suspend fun updateFolderEblanApplicationInfo(folderEblanApplicationInfo: FolderEblanApplicationInfo)
 
     suspend fun updateFolderEblanApplicationInfos(folderEblanApplicationInfos: List<FolderEblanApplicationInfo>)
+
+    suspend fun getFolderEblanApplicationInfoWrappers(): List<FolderEblanApplicationInfoWrapper>
 }

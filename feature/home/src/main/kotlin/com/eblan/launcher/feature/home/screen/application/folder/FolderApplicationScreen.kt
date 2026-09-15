@@ -75,7 +75,6 @@ import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.PageDirection
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.getAnimatedRect
-import com.eblan.launcher.feature.home.util.getFolderGridItems
 import com.eblan.launcher.feature.home.util.getFolderPopupLayoutInfo
 import com.eblan.launcher.feature.home.util.handleAnimateScrollToPage
 import com.eblan.launcher.feature.home.util.handleDropFolderGridItem
@@ -144,7 +143,6 @@ internal fun FolderApplicationScreen(
     onMoveFolderEblanApplicationInfoGridItemOutsideFolder: (
         folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
         movingGridItem: GridItem,
-        folderGridItems: List<GridItem>,
     ) -> Unit,
     onDismissApplicationScreen: () -> Unit,
 ) {
@@ -230,8 +228,6 @@ internal fun FolderApplicationScreen(
     val currentMoveFolderEblanApplicationInfoGridItemResult =
         rememberUpdatedState(moveFolderEblanApplicationInfoGridItemResult)
     val currentLockMovement = rememberUpdatedState(lockMovement)
-    val currentPreviewFolderEblanApplicationInfos =
-        rememberUpdatedState(previewFolderEblanApplicationInfos)
 
     val isInProgress by remember {
         derivedStateOf { progress.value < 1f }
@@ -262,7 +258,6 @@ internal fun FolderApplicationScreen(
             isLastFolderEblanApplicationInfo = isLastFolderEblanApplicationInfo,
             isVisibleOverlay = currentIsVisibleOverlay,
             moveFolderEblanApplicationInfoGridItemResult = currentMoveFolderEblanApplicationInfoGridItemResult,
-            previewFolderEblanApplicationInfos = currentPreviewFolderEblanApplicationInfos,
             progress = progress,
             onAnimateToScrollToPage = folderGridHorizontalPagerState::animateScrollToPage,
             onDeleteFolderPopupEntry = onDeleteFolderEblanApplicationInfoPopupEntry,
@@ -525,14 +520,12 @@ private suspend fun handleIsCloseFolder(
     isLastFolderEblanApplicationInfo: Boolean,
     isVisibleOverlay: State<Boolean>,
     moveFolderEblanApplicationInfoGridItemResult: State<MoveFolderEblanApplicationInfoGridItemResult?>,
-    previewFolderEblanApplicationInfos: State<Map<String, PreviewFolderEblanApplicationInfo>>,
     progress: Animatable<Float, AnimationVector1D>,
     onAnimateToScrollToPage: suspend (Int) -> Unit,
     onDeleteFolderPopupEntry: (FolderPopupEntry) -> Unit,
     onMoveFolderEblanApplicationInfoGridItemOutsideFolder: (
         folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
         movingGridItem: GridItem,
-        folderGridItems: List<GridItem>,
     ) -> Unit,
     onUpdateIsVisibleFolders: (Boolean) -> Unit,
     onDismissApplicationScreen: () -> Unit,
@@ -554,7 +547,6 @@ private suspend fun handleIsCloseFolder(
         isDragging = isDragging,
         isVisibleOverlay = isVisibleOverlay,
         moveFolderEblanApplicationInfoGridItemResult = moveFolderEblanApplicationInfoGridItemResult,
-        previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
         onMoveFolderEblanApplicationInfoGridItemOutsideFolder = onMoveFolderEblanApplicationInfoGridItemOutsideFolder,
         onDismissApplicationScreen = onDismissApplicationScreen,
         onUpdateIsDragging = onUpdateIsDragging,
@@ -574,11 +566,9 @@ private fun handleMoveFolderGridItemOutsideFolder(
     isDragging: State<Boolean>,
     isVisibleOverlay: State<Boolean>,
     moveFolderEblanApplicationInfoGridItemResult: State<MoveFolderEblanApplicationInfoGridItemResult?>,
-    previewFolderEblanApplicationInfos: State<Map<String, PreviewFolderEblanApplicationInfo>>,
     onMoveFolderEblanApplicationInfoGridItemOutsideFolder: (
         folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
         movingGridItem: GridItem,
-        folderGridItems: List<GridItem>,
     ) -> Unit,
     onDismissApplicationScreen: () -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
@@ -655,20 +645,11 @@ private fun handleMoveFolderGridItemOutsideFolder(
         }
     }
 
-    val folderGridItems = getFolderGridItems(
-        gridItemSettings = gridItemSettings,
-        gridItem = gridItem,
-        eblanAction = eblanAction,
-        previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos.value,
-        sourceFolderId = folderEblanApplicationInfoGridItem.id,
-    )
-
     onDismissApplicationScreen()
 
     onMoveFolderEblanApplicationInfoGridItemOutsideFolder(
         folderEblanApplicationInfoGridItem,
         gridItem,
-        folderGridItems,
     )
 
     onUpdateIsDragging(true)

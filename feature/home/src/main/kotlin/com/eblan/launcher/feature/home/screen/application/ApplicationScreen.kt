@@ -86,6 +86,7 @@ import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLab
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderPopupEntry
 import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
+import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.model.launcherapps.EblanUser
 import com.eblan.launcher.domain.model.launcherapps.EblanUserPageKey
@@ -171,6 +172,10 @@ internal fun ApplicationScreen(
         intSize: IntSize,
     ) -> Unit,
     onUpdateFolderPopupMenu: (Boolean) -> Unit,
+    onDragFolderEblanApplicationInfo: (
+        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        movingGridItem: GridItem,
+    ) -> Unit,
 ) {
     val managedProfileResult by rememberManagedProfileResult()
 
@@ -239,6 +244,7 @@ internal fun ApplicationScreen(
                     onUpdateFolderEblanApplicationInfo = onUpdateFolderEblanApplicationInfo,
                     onUpdateFolderPopupBounds = onUpdateFolderPopupBounds,
                     onUpdateFolderPopupMenu = onUpdateFolderPopupMenu,
+                    onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
                 )
             }
 

@@ -41,6 +41,10 @@ interface FolderEblanApplicationInfoDao {
     fun getFolderEblanApplicationInfoWrapperEntitiesFlow(): Flow<List<FolderEblanApplicationInfoWrapperEntity>>
 
     @Transaction
+    @Query("SELECT * FROM FolderEblanApplicationInfoEntity")
+    fun getFolderEblanApplicationInfoWrapperEntities(): List<FolderEblanApplicationInfoWrapperEntity>
+
+    @Transaction
     @Query("SELECT * FROM FolderEblanApplicationInfoEntity WHERE id = :id")
     suspend fun getFolderEblanApplicationInfoWrapperEntityById(id: String): FolderEblanApplicationInfoWrapperEntity?
 

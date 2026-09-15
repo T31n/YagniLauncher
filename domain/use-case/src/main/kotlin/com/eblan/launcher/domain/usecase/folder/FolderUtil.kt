@@ -22,6 +22,9 @@ import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoWrapper
+import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
+import com.eblan.launcher.domain.usecase.util.getGridDimension
+import com.eblan.launcher.domain.usecase.util.getPreviewFolderGridItems
 
 internal fun FolderEblanApplicationInfoWrapper.asFolderEblanApplicationInfoGridItem(): FolderEblanApplicationInfoGridItem = FolderEblanApplicationInfoGridItem(
     id = folderEblanApplicationInfo.id,
@@ -62,3 +65,39 @@ internal fun EblanApplicationInfo.asFolderEblanApplicationInfoGridItem(): Folder
         folderId = folderId,
     ),
 )
+
+internal fun FolderEblanApplicationInfoWrapper.asFolderEblanApplicationInfoGridItem(
+    maxFolderColumns: Int,
+    maxFolderRows: Int,
+): PreviewFolderEblanApplicationInfo {
+    val folderEblanApplicationInfoGridItems = (
+        folderEblanApplicationInfos.map {
+            it.asFolderEblanApplicationInfoGridItem()
+        } + eblanApplicationInfos.map {
+            it.asFolderEblanApplicationInfoGridItem()
+        }
+        ).sortedBy {
+        when (val data = it.data) {
+            is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> data.folderIndex
+            is FolderEblanApplicationInfoGridItemData.Folder -> data.folderIndex
+        }
+    }
+
+    val (columns, rows) = getGridDimension(
+        count = folderEblanApplicationInfoGridItems.size,
+        maxFolderColumns = maxFolderColumns,
+        maxFolderRows = maxFolderRows,
+    )
+
+    val previewFolderGridItems = getPreviewFolderGridItems(
+        columns = columns,
+        rows = rows,
+        folderGridItems = folderEblanApplicationInfoGridItems,
+    )
+
+    return PreviewFolderEblanApplicationInfo(
+        folderEblanApplicationInfo = folderEblanApplicationInfo,
+        previewFolderGridItems = previewFolderGridItems,
+        folderGridItems = folderEblanApplicationInfoGridItems,
+    )
+}
