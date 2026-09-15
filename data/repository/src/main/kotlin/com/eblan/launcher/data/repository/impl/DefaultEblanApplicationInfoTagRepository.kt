@@ -44,6 +44,14 @@ internal class DefaultEblanApplicationInfoTagRepository @Inject constructor(priv
         eblanApplicationInfoTagDao.deleteEblanApplicationInfoTagEntity(entity = eblanApplicationInfoTag.asEntity())
     }
 
+    override suspend fun updateEblanApplicationInfoTags(eblanApplicationInfoTags: List<EblanApplicationInfoTag>) {
+        val entities = eblanApplicationInfoTags.map {
+            it.asEntity()
+        }
+
+        eblanApplicationInfoTagDao.updateEblanApplicationInfoTagEntities(entities = entities)
+    }
+
     private fun EblanApplicationInfoTagEntity.asModel(): EblanApplicationInfoTag = EblanApplicationInfoTag(
         id = id,
         name = name,

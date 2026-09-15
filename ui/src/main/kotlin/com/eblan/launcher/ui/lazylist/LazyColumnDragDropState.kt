@@ -15,7 +15,7 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.feature.home.screen.editpage
+package com.eblan.launcher.ui.lazylist
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
@@ -49,7 +49,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 @Composable
-internal fun rememberLazyColumnDragDropState(
+fun rememberLazyColumnDragDropState(
     lazyListState: LazyListState,
     onMove: (Int, Int) -> Unit,
 ): LazyColumnDragDropState {
@@ -73,7 +73,7 @@ internal fun rememberLazyColumnDragDropState(
     return state
 }
 
-internal class LazyColumnDragDropState(
+class LazyColumnDragDropState(
     private val state: LazyListState,
     private val scope: CoroutineScope,
     private val onMove: (Int, Int) -> Unit,
@@ -81,11 +81,11 @@ internal class LazyColumnDragDropState(
     var draggingItemIndex by mutableStateOf<Int?>(null)
         private set
 
-    internal val scrollChannel = Channel<Float>()
+    val scrollChannel = Channel<Float>()
 
     private var draggingItemDraggedDelta by mutableFloatStateOf(0f)
     private var draggingItemInitialOffset by mutableIntStateOf(0)
-    internal val draggingItemOffset: Float
+    val draggingItemOffset: Float
         get() = draggingItemLayoutInfo?.let { item ->
             draggingItemInitialOffset + draggingItemDraggedDelta - item.offset
         } ?: 0f
@@ -93,13 +93,13 @@ internal class LazyColumnDragDropState(
     private val draggingItemLayoutInfo: LazyListItemInfo?
         get() = state.layoutInfo.visibleItemsInfo.firstOrNull { it.index == draggingItemIndex }
 
-    internal var previousIndexOfDraggedItem by mutableStateOf<Int?>(null)
+    var previousIndexOfDraggedItem by mutableStateOf<Int?>(null)
         private set
 
-    internal var previousItemOffset = Animatable(0f)
+    var previousItemOffset = Animatable(0f)
         private set
 
-    internal fun onDragStart(offset: Offset) {
+    fun onDragStart(offset: Offset) {
         state.layoutInfo.visibleItemsInfo.firstOrNull { item -> offset.y.toInt() in item.offset..(item.offset + item.size) }
             ?.also {
                 draggingItemIndex = it.index
@@ -107,7 +107,7 @@ internal class LazyColumnDragDropState(
             }
     }
 
-    internal fun onDragInterrupted() {
+    fun onDragInterrupted() {
         if (draggingItemIndex != null) {
             previousIndexOfDraggedItem = draggingItemIndex
             val startOffset = draggingItemOffset
@@ -125,7 +125,7 @@ internal class LazyColumnDragDropState(
         draggingItemInitialOffset = 0
     }
 
-    internal fun onDrag(offset: Offset) {
+    fun onDrag(offset: Offset) {
         draggingItemDraggedDelta += offset.y
 
         val draggingItem = draggingItemLayoutInfo ?: return
@@ -167,7 +167,7 @@ internal class LazyColumnDragDropState(
         get() = this.offset + this.size
 }
 
-internal fun Modifier.dragColumnContainer(lazyColumnDragDropState: LazyColumnDragDropState): Modifier = pointerInput(key1 = lazyColumnDragDropState) {
+fun Modifier.dragColumnContainer(lazyColumnDragDropState: LazyColumnDragDropState): Modifier = pointerInput(key1 = lazyColumnDragDropState) {
     detectDragGesturesAfterLongPress(
         onDrag = { change, offset ->
             change.consume()
@@ -180,7 +180,7 @@ internal fun Modifier.dragColumnContainer(lazyColumnDragDropState: LazyColumnDra
 }
 
 @Composable
-internal fun LazyItemScope.DraggableColumnItem(
+fun LazyItemScope.DraggableColumnItem(
     modifier: Modifier = Modifier,
     lazyColumnDragDropState: LazyColumnDragDropState,
     index: Int,

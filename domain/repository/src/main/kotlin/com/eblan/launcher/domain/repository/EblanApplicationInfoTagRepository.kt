@@ -28,4 +28,6 @@ interface EblanApplicationInfoTagRepository {
     suspend fun updateEblanApplicationInfoTag(eblanApplicationInfoTag: EblanApplicationInfoTag)
 
     suspend fun deleteEblanApplicationInfoTag(eblanApplicationInfoTag: EblanApplicationInfoTag)
+
+    suspend fun updateEblanApplicationInfoTags(eblanApplicationInfoTags: List<EblanApplicationInfoTag>)
 }

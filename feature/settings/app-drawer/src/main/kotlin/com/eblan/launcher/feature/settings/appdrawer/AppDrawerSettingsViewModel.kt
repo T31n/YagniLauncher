@@ -20,9 +20,12 @@ package com.eblan.launcher.feature.settings.appdrawer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
+import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
+import com.eblan.launcher.domain.repository.EblanApplicationInfoTagRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
+import com.eblan.launcher.domain.usecase.application.GetEblanApplicationTagsUseCase
 import com.eblan.launcher.feature.settings.appdrawer.model.AppDrawerSettingsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -35,6 +38,8 @@ import javax.inject.Inject
 internal class AppDrawerSettingsViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository,
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
+    getEblanApplicationTagsUseCase: GetEblanApplicationTagsUseCase,
+    private val eblanApplicationInfoTagRepository: EblanApplicationInfoTagRepository,
 ) : ViewModel() {
     val appDrawerSettingsUiState = combine(
         userDataRepository.userDataFlow,
@@ -52,6 +57,12 @@ internal class AppDrawerSettingsViewModel @Inject constructor(
         initialValue = AppDrawerSettingsUiState.Loading,
     )
 
+    val eblanApplicationInfoTags = getEblanApplicationTagsUseCase().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = emptyList(),
+    )
+
     fun updateAppDrawerSettings(appDrawerSettings: AppDrawerSettings) {
         viewModelScope.launch {
             userDataRepository.updateAppDrawerSettings(appDrawerSettings = appDrawerSettings)
@@ -61,6 +72,14 @@ internal class AppDrawerSettingsViewModel @Inject constructor(
     fun updateEblanApplicationInfo(eblanApplicationInfo: EblanApplicationInfo) {
         viewModelScope.launch {
             eblanApplicationInfoRepository.upsertEblanApplicationInfo(eblanApplicationInfo = eblanApplicationInfo)
+        }
+    }
+
+    fun updateEblanApplicationInfoTags(eblanApplicationInfoTags: List<EblanApplicationInfoTag>) {
+        viewModelScope.launch {
+            eblanApplicationInfoTagRepository.updateEblanApplicationInfoTags(
+                eblanApplicationInfoTags = eblanApplicationInfoTags,
+            )
         }
     }
 }
