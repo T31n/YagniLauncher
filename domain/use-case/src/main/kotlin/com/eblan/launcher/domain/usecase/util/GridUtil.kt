@@ -22,7 +22,6 @@ import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.model.folder.PreviewFolder
 import com.eblan.launcher.domain.model.grid.ApplicationInfoGridItem
 import com.eblan.launcher.domain.model.grid.FolderGridItem
-import com.eblan.launcher.domain.model.grid.FolderGridItemWrapper
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItems
@@ -301,27 +300,6 @@ internal fun FolderGridItem.asGridItem(): GridItem = GridItem(
     doubleTap = doubleTap,
     swipeUp = swipeUp,
     swipeDown = swipeDown,
-)
-
-internal fun FolderGridItemWrapper.asGridItem(): GridItem = GridItem(
-    id = folderGridItem.id,
-    page = folderGridItem.page,
-    startColumn = folderGridItem.startColumn,
-    startRow = folderGridItem.startRow,
-    columnSpan = folderGridItem.columnSpan,
-    rowSpan = folderGridItem.rowSpan,
-    data = GridItemData.Folder(
-        label = folderGridItem.label,
-        icon = folderGridItem.icon,
-        index = folderGridItem.index,
-        folderId = folderGridItem.folderId,
-    ),
-    associate = folderGridItem.associate,
-    override = folderGridItem.override,
-    gridItemSettings = folderGridItem.gridItemSettings,
-    doubleTap = folderGridItem.doubleTap,
-    swipeUp = folderGridItem.swipeUp,
-    swipeDown = folderGridItem.swipeDown,
 )
 
 private suspend fun updatePinShortcutsByPackageName(

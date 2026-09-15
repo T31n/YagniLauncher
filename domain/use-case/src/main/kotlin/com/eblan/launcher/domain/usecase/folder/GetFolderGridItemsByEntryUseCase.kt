@@ -20,7 +20,6 @@ package com.eblan.launcher.domain.usecase.folder
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.model.folder.FolderPopupEntry
-import com.eblan.launcher.domain.model.folder.PreviewFolder
 import com.eblan.launcher.domain.model.grid.FolderGridItemPopup
 import com.eblan.launcher.domain.model.grid.FolderGridItemWrapper
 import com.eblan.launcher.domain.model.grid.GridItemData
@@ -29,7 +28,6 @@ import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.util.asGridItem
 import com.eblan.launcher.domain.usecase.util.getGridDimension
 import com.eblan.launcher.domain.usecase.util.getGridItemsByPage
-import com.eblan.launcher.domain.usecase.util.getRecursiveFolderGridItems
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -48,12 +46,6 @@ class GetFolderGridItemsByEntryUseCase @Inject constructor(
         folderPopupEntriesFlow,
         folderGridItemRepository.folderGridItemWrappersFlow,
     ) { userData, folderPopupEntries, folderGridItemWrappers ->
-        val previewFolderGridItems =
-            folderGridItemWrappers.asPreviewFolders(
-                maxFolderColumns = userData.folderSettings.maxFolderColumns,
-                maxFolderRows = userData.folderSettings.maxFolderRows,
-            )
-
         folderPopupEntries.mapNotNull { folderPopupEntry ->
             folderGridItemWrappers.firstOrNull {
                 it.folderGridItem.id == folderPopupEntry.id
@@ -61,7 +53,6 @@ class GetFolderGridItemsByEntryUseCase @Inject constructor(
                 folderPopupEntry = folderPopupEntry,
                 maxFolderColumns = userData.folderSettings.maxFolderColumns,
                 maxFolderRows = userData.folderSettings.maxFolderRows,
-                previewFolderGridItems = previewFolderGridItems,
             )
         }
     }.flowOn(defaultDispatcher)
@@ -70,16 +61,7 @@ class GetFolderGridItemsByEntryUseCase @Inject constructor(
         folderPopupEntry: FolderPopupEntry,
         maxFolderColumns: Int,
         maxFolderRows: Int,
-        previewFolderGridItems: Map<String, PreviewFolder>,
     ): FolderGridItemPopup {
-        val gridItem = asGridItem()
-
-        val childFolderGridItems = getRecursiveFolderGridItems(
-            gridItem = gridItem,
-            previewFolderGridItems = previewFolderGridItems,
-            includeRoot = false,
-        )
-
         val gridItems = (
                 applicationInfoGridItems.map {
                     it.asGridItem()
@@ -87,7 +69,7 @@ class GetFolderGridItemsByEntryUseCase @Inject constructor(
                     it.asGridItem()
                 } + shortcutConfigGridItems.map {
                     it.asGridItem()
-                } + childFolderGridItems
+                } + folderGridItems.map { it.asGridItem() }
                 ).sortedBy {
                 when (val data = it.data) {
                     is GridItemData.ApplicationInfo -> data.index
