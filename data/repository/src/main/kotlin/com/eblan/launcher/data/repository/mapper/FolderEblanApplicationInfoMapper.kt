@@ -24,6 +24,7 @@ internal fun FolderEblanApplicationInfoEntity.asModel(): FolderEblanApplicationI
     id = id,
     icon = icon,
     label = label,
+    index = index,
     folderIndex = folderIndex,
     folderId = folderId,
 )
@@ -32,6 +33,7 @@ internal fun FolderEblanApplicationInfo.asEntity(): FolderEblanApplicationInfoEn
     id = id,
     icon = icon,
     label = label,
+    index = index,
     folderIndex = folderIndex,
     folderId = folderId,
 )

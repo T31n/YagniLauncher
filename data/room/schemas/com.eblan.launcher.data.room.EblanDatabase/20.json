@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 20,
-    "identityHash": "1cbb30224dcfa092dc896842a369705b",
+    "identityHash": "4e028facfdce8c87679792d3abb485f4",
     "entities": [
       {
         "tableName": "EblanApplicationInfoEntity",
@@ -1746,7 +1746,7 @@
       },
       {
         "tableName": "FolderEblanApplicationInfoEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `icon` TEXT, `label` TEXT NOT NULL, `folderIndex` INTEGER NOT NULL, `folderId` TEXT, PRIMARY KEY(`id`), FOREIGN KEY(`folderId`) REFERENCES `FolderEblanApplicationInfoEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `icon` TEXT, `label` TEXT NOT NULL, `index` INTEGER NOT NULL, `folderIndex` INTEGER NOT NULL, `folderId` TEXT, PRIMARY KEY(`id`), FOREIGN KEY(`folderId`) REFERENCES `FolderEblanApplicationInfoEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -1763,6 +1763,12 @@
             "fieldPath": "label",
             "columnName": "label",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "index",
+            "columnName": "index",
+            "affinity": "INTEGER",
             "notNull": true
           },
           {
@@ -1811,7 +1817,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1cbb30224dcfa092dc896842a369705b')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4e028facfdce8c87679792d3abb485f4')"
     ]
   }
 }

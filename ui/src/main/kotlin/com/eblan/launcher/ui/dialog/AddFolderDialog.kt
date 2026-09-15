@@ -95,6 +95,7 @@ fun AddFolderDialog(
                                 id = Uuid.random().toHexString(),
                                 icon = null,
                                 label = value,
+                                index = -1,
                                 folderIndex = -1,
                                 folderId = null,
                             ),

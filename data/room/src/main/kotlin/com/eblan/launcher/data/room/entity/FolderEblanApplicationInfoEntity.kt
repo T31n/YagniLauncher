@@ -40,6 +40,7 @@ data class FolderEblanApplicationInfoEntity(
     val id: String,
     val icon: String?,
     val label: String,
+    val index: Int,
     val folderIndex: Int,
     val folderId: String?,
 )

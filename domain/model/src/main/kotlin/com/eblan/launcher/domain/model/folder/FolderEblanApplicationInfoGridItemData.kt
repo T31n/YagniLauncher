@@ -36,6 +36,7 @@ sealed interface FolderEblanApplicationInfoGridItemData {
     data class Folder(
         val icon: String?,
         val label: String,
+        val index: Int,
         val folderIndex: Int,
         val folderId: String?,
     ) : FolderEblanApplicationInfoGridItemData

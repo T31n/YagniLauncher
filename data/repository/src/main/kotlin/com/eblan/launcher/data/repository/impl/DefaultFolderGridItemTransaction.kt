@@ -130,6 +130,7 @@ internal class DefaultFolderGridItemTransaction @Inject constructor(
         id = id,
         icon = icon,
         label = label,
+        index = index,
         folderIndex = folderIndex,
         folderId = folderId,
     )
@@ -153,6 +154,7 @@ internal class DefaultFolderGridItemTransaction @Inject constructor(
         id = id,
         icon = data.icon,
         label = data.label,
+        index = data.index,
         folderIndex = data.folderIndex,
         folderId = data.folderId,
     )

@@ -28,6 +28,7 @@ internal fun FolderEblanApplicationInfoWrapper.asFolderEblanApplicationInfoGridI
     data = FolderEblanApplicationInfoGridItemData.Folder(
         icon = folderEblanApplicationInfo.icon,
         label = folderEblanApplicationInfo.label,
+        index = folderEblanApplicationInfo.index,
         folderIndex = folderEblanApplicationInfo.folderIndex,
         folderId = folderEblanApplicationInfo.folderId,
     ),
@@ -38,6 +39,7 @@ internal fun FolderEblanApplicationInfo.asFolderEblanApplicationInfoGridItem(): 
     data = FolderEblanApplicationInfoGridItemData.Folder(
         icon = icon,
         label = label,
+        index = index,
         folderIndex = folderIndex,
         folderId = folderId,
     ),

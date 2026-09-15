@@ -32,6 +32,6 @@ class GetFolderEblanApplicationInfosUseCase @Inject constructor(
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     operator fun invoke(): Flow<List<FolderEblanApplicationInfo>> = folderEblanApplicationInfoRepository.folderEblanApplicationInfosFlow.map { folderEblanApplicationInfos ->
-        folderEblanApplicationInfos.filterNot { it.folderId != null }
+        folderEblanApplicationInfos.filterNot { it.folderId != null }.sortedBy { it.index }
     }.flowOn(defaultDispatcher)
 }
