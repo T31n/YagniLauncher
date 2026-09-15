@@ -25,4 +25,5 @@ data class EblanApplicationInfoTagEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0L,
     val name: String,
+    val index: Int,
 )

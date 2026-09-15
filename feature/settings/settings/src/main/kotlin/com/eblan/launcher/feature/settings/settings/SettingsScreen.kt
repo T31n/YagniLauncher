@@ -63,6 +63,7 @@ internal fun SettingsRoute(
     onGeneral: () -> Unit,
     onGestures: () -> Unit,
     onHome: () -> Unit,
+    onFolder: () -> Unit,
 ) {
     SettingsScreen(
         modifier = modifier,
@@ -72,6 +73,7 @@ internal fun SettingsRoute(
         onGeneral = onGeneral,
         onGestures = onGestures,
         onHome = onHome,
+        onFolder = onFolder,
     )
 }
 
@@ -85,6 +87,7 @@ internal fun SettingsScreen(
     onGeneral: () -> Unit,
     onGestures: () -> Unit,
     onHome: () -> Unit,
+    onFolder: () -> Unit,
 ) {
     val items = buildSettingsItems(
         onGeneralClick = onGeneral,
@@ -92,6 +95,7 @@ internal fun SettingsScreen(
         onAppDrawerClick = onAppDrawer,
         onGesturesClick = onGestures,
         onExperimentalClick = onExperimental,
+        onFolderClick = onFolder,
     )
 
     BackHandler {
@@ -213,6 +217,7 @@ private fun buildSettingsItems(
     onAppDrawerClick: () -> Unit,
     onGesturesClick: () -> Unit,
     onExperimentalClick: () -> Unit,
+    onFolderClick: () -> Unit,
 ): List<SettingsItem> {
     val context = LocalContext.current
 
@@ -247,6 +252,15 @@ private fun buildSettingsItems(
                 title = stringResource(commonR.string.home),
                 subtitle = stringResource(R.string.grid_icon_dock_and_more),
                 onClick = onHomeClick,
+            ),
+        )
+
+        add(
+            SettingsItem.Row(
+                imageVector = EblanLauncherIcons.Folder,
+                title = stringResource(commonR.string.folder),
+                subtitle = stringResource(R.string.corner_radius_background_color_and_more),
+                onClick = onFolderClick,
             ),
         )
 

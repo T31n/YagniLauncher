@@ -19,13 +19,11 @@ package com.eblan.launcher.data.datastore
 
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer
-import com.eblan.launcher.data.datastore.mapper.toEblanActionProto
-import com.eblan.launcher.data.datastore.mapper.toThemeProto
 import com.eblan.launcher.data.datastore.proto.UserDataProto
 import com.eblan.launcher.data.datastore.proto.appdrawer.AppDrawerSettingsProto
 import com.eblan.launcher.data.datastore.proto.appdrawer.AppDrawerTypeProto
-import com.eblan.launcher.data.datastore.proto.appdrawer.EblanApplicationInfoOrderProto
 import com.eblan.launcher.data.datastore.proto.experimental.ExperimentalSettingsProto
+import com.eblan.launcher.data.datastore.proto.folder.FolderSettingsProto
 import com.eblan.launcher.data.datastore.proto.general.GeneralSettingsProto
 import com.eblan.launcher.data.datastore.proto.gesture.GestureSettingsProto
 import com.eblan.launcher.data.datastore.proto.home.GridItemSettingsProto
@@ -34,9 +32,9 @@ import com.eblan.launcher.data.datastore.proto.home.HorizontalAlignmentProto
 import com.eblan.launcher.data.datastore.proto.home.TextColorProto
 import com.eblan.launcher.data.datastore.proto.home.VerticalArrangementProto
 import com.eblan.launcher.data.datastore.proto.model.BackgroundColorProto
-import com.eblan.launcher.domain.model.EblanAction
-import com.eblan.launcher.domain.model.EblanActionType
-import com.eblan.launcher.domain.model.Theme
+import com.eblan.launcher.domain.model.userdata.EblanAction
+import com.eblan.launcher.domain.model.userdata.EblanActionType
+import com.eblan.launcher.domain.model.userdata.Theme
 import com.google.protobuf.InvalidProtocolBufferException
 import java.io.InputStream
 import java.io.OutputStream
@@ -78,10 +76,6 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
         dockPageCount = 1
         dockInfiniteScroll = false
         addNewAppsToHomeScreen = true
-        folderCellWidth = 64
-        folderCellHeight = 96
-        maxFolderColumns = 5
-        maxFolderRows = 4
         showPageIndicator = false
         dockCustomBackgroundColor = 0x00000000
         dockPadding = 0
@@ -89,15 +83,12 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
         dockTopEndCornerRadius = 0
         dockBottomStartCornerRadius = 0
         dockBottomEndCornerRadius = 0
-        folderBackgroundColorProto = BackgroundColorProto.BackgroundColorSystem
-        customFolderBackgroundColor = 0x00000000
     }.build()
 
     private val defaultAppDrawerSettingsProto = AppDrawerSettingsProto.newBuilder().apply {
         appDrawerColumns = 5
         appDrawerRowsHeight = 100
         gridItemSettingsProto = defaultGridItemSettingsProto
-        eblanApplicationInfoOrderProto = EblanApplicationInfoOrderProto.Alphabetical
         backgroundColorProto = BackgroundColorProto.BackgroundColorSystem
         customBackgroundColor = 0x00000000
         appDrawerTypeProto = AppDrawerTypeProto.Vertical
@@ -136,12 +127,23 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
         gridItemAnimation = true
     }.build()
 
+    private val defaultFolderSettingsProto = FolderSettingsProto.newBuilder().apply {
+        folderCellWidth = 64
+        folderCellHeight = 96
+        maxFolderColumns = 5
+        maxFolderRows = 4
+        folderCornerRadius = 5
+        folderBackgroundColorProto = BackgroundColorProto.BackgroundColorSystem
+        customFolderBackgroundColor = 0x00000000
+    }.build()
+
     override val defaultValue: UserDataProto = UserDataProto.newBuilder().apply {
         homeSettingsProto = defaultHomeSettingsProto
         appDrawerSettingsProto = defaultAppDrawerSettingsProto
         gestureSettingsProto = defaultGestureSettingsProto
         generalSettingsProto = defaultGeneralSettingsProto
         experimentalSettingsProto = defaultExperimentalSettings
+        folderSettingsProto = defaultFolderSettingsProto
     }.build()
 
     override suspend fun readFrom(input: InputStream): UserDataProto = try {

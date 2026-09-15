@@ -29,15 +29,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.layer.GraphicsLayer
+import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.eblan.launcher.domain.model.EblanAction
-import com.eblan.launcher.domain.model.EblanActionType
+import com.eblan.launcher.domain.model.userdata.EblanAction
+import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.handleEblanAction
 import com.eblan.launcher.ui.local.LocalLauncherApps
@@ -156,40 +161,37 @@ internal fun Modifier.popup(
 
 @Composable
 internal fun Modifier.gridItemSharedElement(
-    enabled: Boolean = true,
+    enabled: Boolean,
     sharedElementKey: SharedElementKey,
     sharedTransitionScope: SharedTransitionScope,
     visible: Boolean,
-): Modifier = this
-    .run {
-        if (enabled && visible) {
-            with(sharedTransitionScope) {
-                sharedElementWithCallerManagedVisibility(
-                    sharedContentState = rememberSharedContentState(key = sharedElementKey),
-                    visible = true,
-                )
-            }
-        } else {
-            this
-        }
+): Modifier = if (enabled && visible) {
+    with(sharedTransitionScope) {
+        sharedElementWithCallerManagedVisibility(
+            sharedContentState = rememberSharedContentState(key = sharedElementKey),
+            visible = true,
+        )
     }
+} else {
+    this
+}
 
 @Composable
 internal fun Modifier.gridItemScaleAnimation(
+    enabled: Boolean,
     isVisibleOverlay: Boolean,
-    animations: Boolean,
     scale: Animatable<Float, AnimationVector1D>,
 ): Modifier {
     LaunchedEffect(
         key1 = isVisibleOverlay,
-        key2 = animations,
+        key2 = enabled,
     ) {
-        if (isVisibleOverlay && animations) {
+        if (isVisibleOverlay && enabled) {
             scale.snapTo(1f)
         }
     }
 
-    return if (animations) {
+    return if (enabled) {
         graphicsLayer {
             scaleX = scale.value
             scaleY = scale.value
@@ -197,4 +199,28 @@ internal fun Modifier.gridItemScaleAnimation(
     } else {
         this
     }
+}
+
+internal fun Modifier.recordToGraphicsLayerIfNotInProgress(
+    isInProgress: Boolean,
+    graphicsLayer: GraphicsLayer,
+): Modifier = if (!isInProgress) {
+    drawWithContent {
+        graphicsLayer.record {
+            this@drawWithContent.drawContent()
+        }
+
+        drawLayer(graphicsLayer)
+    }
+} else {
+    this
+}
+
+internal fun Modifier.recordBoundsIfNotInProgress(
+    isInProgress: Boolean,
+    onGloballyPositioned: (LayoutCoordinates) -> Unit,
+): Modifier = if (!isInProgress) {
+    onGloballyPositioned(onGloballyPositioned)
+} else {
+    this
 }

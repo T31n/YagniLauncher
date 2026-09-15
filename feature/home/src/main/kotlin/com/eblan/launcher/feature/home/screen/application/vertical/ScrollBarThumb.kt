@@ -102,7 +102,13 @@ internal fun ScrollBarThumb(
     Row(modifier = modifier) {
         Box(
             modifier = Modifier
-                .pointerInput(lazyGridState) {
+                .width(10.dp)
+                .fillMaxHeight()
+                .padding(bottom = paddingValues.calculateBottomPadding())
+                .background(
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
+                    shape = RoundedCornerShape(10.dp),
+                ).pointerInput(lazyGridState) {
                     detectTapGestures(onTap = {
                         handleOnTap(
                             lazyGridState = lazyGridState,
@@ -115,24 +121,22 @@ internal fun ScrollBarThumb(
                             onScrollToItem = onScrollToItem,
                         )
                     })
-                }
-                .width(10.dp)
-                .fillMaxHeight()
-                .padding(bottom = paddingValues.calculateBottomPadding())
-                .background(
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
-                    shape = RoundedCornerShape(10.dp),
-                ),
+                },
         ) {
             Box(
                 modifier = Modifier
+                    .fillMaxWidth()
+                    .height(thumbHeight)
                     .offset {
                         IntOffset(
                             x = 0,
                             y = animatedThumbY.roundToInt(),
                         )
                     }
-                    .pointerInput(key1 = lazyGridState) {
+                    .background(
+                        color = MaterialTheme.colorScheme.primary,
+                        shape = RoundedCornerShape(10.dp),
+                    ).pointerInput(key1 = lazyGridState) {
                         detectDragGestures(
                             onDragStart = {
                                 thumbY = viewPortThumbY
@@ -162,13 +166,7 @@ internal fun ScrollBarThumb(
                                 isDraggingThumb = false
                             },
                         )
-                    }
-                    .fillMaxWidth()
-                    .height(thumbHeight)
-                    .background(
-                        color = MaterialTheme.colorScheme.primary,
-                        shape = RoundedCornerShape(10.dp),
-                    ),
+                    },
             )
         }
     }

@@ -41,4 +41,7 @@
     <string name="rows">Wiersze</string>
     <string name="light">Jasny</string>
     <string name="cancel">Anuluj</string>
+    <string name="edit_label">Edytuj etykietę</string>
+    <string name="label">Etykieta</string>
+    <string name="label_is_not_valid">Nieprawidłowa etykieta</string>
 </resources>

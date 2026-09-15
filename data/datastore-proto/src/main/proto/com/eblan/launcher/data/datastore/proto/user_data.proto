@@ -5,18 +5,16 @@ import "com/eblan/launcher/data/datastore/proto/home/home_settings.proto";
 import "com/eblan/launcher/data/datastore/proto/gesture/gesture_settings.proto";
 import "com/eblan/launcher/data/datastore/proto/general/general_settings.proto";
 import "com/eblan/launcher/data/datastore/proto/experimental/experimental_settings.proto";
+import "com/eblan/launcher/data/datastore/proto/folder/folder_settings.proto";
 
 option java_package = "com.eblan.launcher.data.datastore.proto";
 option java_multiple_files = true;
 
 message UserDataProto {
   HomeSettingsProto homeSettingsProto = 1;
-
   AppDrawerSettingsProto appDrawerSettingsProto = 2;
-
   GestureSettingsProto gestureSettingsProto = 3;
-
   GeneralSettingsProto generalSettingsProto = 4;
-
   ExperimentalSettingsProto experimentalSettingsProto = 5;
+  FolderSettingsProto folderSettingsProto = 6;
 }

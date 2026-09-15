@@ -21,16 +21,6 @@
     <string name="dock_rows_is_not_valid">Dock rows is not valid</string>
     <string name="dock_height">Dock Height</string>
     <string name="dock_height_is_not_valid">Dock Height is not valid</string>
-    <string name="folder_cell_dimension">Folder Cell Dimension</string>
-    <string name="cell_width">Cell Width</string>
-    <string name="cell_width_is_not_valid">Cell width is not valid</string>
-    <string name="cell_height">Cell Height</string>
-    <string name="cell_height_is_not_valid">Cell height is not valid</string>
-    <string name="max_columns">Max Columns</string>
-    <string name="max_columns_is_not_valid">Max columns is not valid</string>
-    <string name="folder_max_grid">Folder Max Grid</string>
-    <string name="max_rows">Max Rows</string>
-    <string name="max_rows_is_not_valid">Max rows is not valid</string>
     <string name="infinite_scrolling">Infinite Scrolling</string>
     <string name="seamless_loop_page_scroll">Seamless loop page scroll</string>
     <string name="wallpaper_scrolling">Wallpaper Scrolling</string>
@@ -40,7 +30,6 @@
     <string name="add_new_apps_to_home_screen">Add new apps to home screen</string>
     <string name="dock">Dock</string>
     <string name="dock_infinite_scroll">Dock Infinite Scroll</string>
-    <string name="folder">Folder</string>
     <string name="prevent_rotation_when_device_orientation_changes">Prevent rotation when device orientation changes</string>
     <string name="show_page_indicator">Show Page Indicator</string>
     <string name="show_an_indicator_for_the_current_page">Show an indicator for the current page</string>
@@ -57,6 +46,4 @@
     <string name="bottom_end">Bottom End</string>
     <string name="bottom_end_is_not_valid">Bottom End is not valid</string>
     <string name="set_the_radius_for_each_dock_corner">Set the radius for each dock corner</string>
-    <string name="folder_corner_radius">Folder Corner Radius</string>
-    <string name="folder_background_color">Folder Background Color</string>
 </resources>

@@ -17,7 +17,7 @@
  */
 package com.eblan.launcher.domain.framework
 
-import com.eblan.launcher.domain.model.PackageManagerIconPackInfo
+import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPackInfo
 import java.io.File
 
 interface PackageManagerWrapper {

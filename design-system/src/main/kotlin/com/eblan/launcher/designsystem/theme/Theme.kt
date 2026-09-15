@@ -29,7 +29,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import com.eblan.launcher.domain.model.Theme
+import com.eblan.launcher.domain.model.userdata.Theme
 
 private val LightColorScheme = lightColorScheme(
     primary = Color(0xFF4C662B),

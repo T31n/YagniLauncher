@@ -18,7 +18,7 @@
 package com.eblan.launcher.ui.model
 
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.eblan.launcher.domain.model.PackageManagerIconPackInfo
+import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPackInfo
 
 sealed interface SettingsItem {
     data class Column(

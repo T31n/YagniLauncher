@@ -19,8 +19,8 @@ package com.eblan.launcher.feature.home.util
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
-import com.eblan.launcher.domain.model.BackgroundColor
-import com.eblan.launcher.domain.model.TextColor
+import com.eblan.launcher.domain.model.userdata.BackgroundColor
+import com.eblan.launcher.domain.model.userdata.TextColor
 
 internal fun getGridItemTextColor(
     gridItemCustomTextColor: Int,

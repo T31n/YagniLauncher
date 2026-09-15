@@ -72,15 +72,19 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.core.util.Consumer
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.Associate
-import com.eblan.launcher.domain.model.BackgroundColor
-import com.eblan.launcher.domain.model.HomeSettings
 import com.eblan.launcher.domain.model.PageItem
-import com.eblan.launcher.domain.model.PreviewFolder
-import com.eblan.launcher.domain.model.TextColor
+import com.eblan.launcher.domain.model.folder.PreviewFolder
+import com.eblan.launcher.domain.model.grid.Associate
+import com.eblan.launcher.domain.model.userdata.BackgroundColor
+import com.eblan.launcher.domain.model.userdata.FolderSettings
+import com.eblan.launcher.domain.model.userdata.HomeSettings
+import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.GridLayout
 import com.eblan.launcher.feature.home.component.HomeHandler
 import com.eblan.launcher.feature.home.model.Screen
+import com.eblan.launcher.ui.lazylist.DraggableColumnItem
+import com.eblan.launcher.ui.lazylist.dragColumnContainer
+import com.eblan.launcher.ui.lazylist.rememberLazyColumnDragDropState
 import kotlinx.coroutines.launch
 import com.eblan.launcher.common.R as commonR
 
@@ -101,6 +105,7 @@ internal fun EditGridPageScreen(
     customFolderBackgroundColor: Int,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
+    folderSettings: FolderSettings,
     onSaveEditPage: (
         id: Int,
         pageItems: List<PageItem>,
@@ -221,7 +226,7 @@ internal fun EditGridPageScreen(
                                 customFolderBackgroundColor = customFolderBackgroundColor,
                                 systemTextColor = systemTextColor,
                                 systemCustomTextColor = systemCustomTextColor,
-                                folderCornerRadius = homeSettings.folderCornerRadius,
+                                folderCornerRadius = folderSettings.folderCornerRadius,
                             )
                         },
                     )
@@ -333,6 +338,7 @@ internal fun EditDockGridPageScreen(
     customFolderBackgroundColor: Int,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
+    folderSettings: FolderSettings,
     onSaveEditPage: (
         id: Int,
         pageItems: List<PageItem>,
@@ -447,7 +453,7 @@ internal fun EditDockGridPageScreen(
                                     customFolderBackgroundColor = customFolderBackgroundColor,
                                     systemTextColor = systemTextColor,
                                     systemCustomTextColor = systemCustomTextColor,
-                                    folderCornerRadius = homeSettings.folderCornerRadius,
+                                    folderCornerRadius = folderSettings.folderCornerRadius,
                                 )
                             },
                         )

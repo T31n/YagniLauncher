@@ -19,30 +19,18 @@
     <string name="personal">Osobiste</string>
     <string name="clone">Klonowane</string>
     <string name="work">Służbowe</string>
-
-    <string name="sort_applications">Sortuj aplikacje</string>
-    <string name="rearrange_applications">Zmień kolejność aplikacji</string>
-
-    <string name="drag_an_item_to_rearrange">Przeciągnij element, aby zmienić jego położenie</string>
-
     <string name="work_apps_are_paused">Aplikacje służbowe są wstrzymane</string>
     <string name="you_won_t_receive_notifications_from_your_work_apps">Nie będziesz otrzymywać powiadomień z aplikacji służbowych</string>
     <string name="unpause">Wznów</string>
-
     <string name="private_space">Przestrzeń prywatna</string>
-
     <string name="please_wait_for_the_white_box_indicator">Poczekaj na pojawienie się wskaźnika w postaci białego pola</string>
-
     <string name="edit_pages">Edytuj strony</string>
     <string name="edit_dock_pages">Edytuj strony paska aplikacji</string>
-
     <string name="widgets">Widżety</string>
     <string name="shortcuts">Skróty</string>
     <string name="wallpaper">Tapeta</string>
     <string name="search_widgets">Wyszukaj widżety</string>
-
     <string name="request_permissions">Nadaj uprawnienia</string>
     <string name="allow_permissions_so_we_can_inform_you_about_important_crash_reports_and_make_phone_shortcuts">Udziel uprawnień, abyśmy mogli informować Cię o ważnych raportach o awariach oraz tworzyć skróty do funkcji telefonu</string>
-
     <string name="later">Później</string>
 </resources>

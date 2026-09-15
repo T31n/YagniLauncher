@@ -17,11 +17,11 @@
  */
 package com.eblan.launcher.domain.usecase.grid
 
-import com.eblan.launcher.domain.model.ApplicationInfoGridItem
-import com.eblan.launcher.domain.model.Associate
-import com.eblan.launcher.domain.model.GridItems
 import com.eblan.launcher.domain.model.getEblanAction
 import com.eblan.launcher.domain.model.getGridItemSettings
+import com.eblan.launcher.domain.model.grid.ApplicationInfoGridItem
+import com.eblan.launcher.domain.model.grid.Associate
+import com.eblan.launcher.domain.model.grid.GridItems
 import com.eblan.launcher.domain.repository.FakeGridRepository
 import com.eblan.launcher.domain.usecase.util.toGridItems
 import kotlinx.coroutines.ExperimentalCoroutinesApi

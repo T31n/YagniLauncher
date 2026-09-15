@@ -25,9 +25,9 @@ import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.framework.IconPackManager
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.IconPackInfoComponent
-import com.eblan.launcher.domain.model.PackageManagerIconPackInfo
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.iconpackinfo.IconPackInfoComponent
+import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPackInfo
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.usecase.application.GetEblanApplicationInfosUseCase
 import com.eblan.launcher.domain.usecase.grid.DeleteGridItemCustomIconUseCase

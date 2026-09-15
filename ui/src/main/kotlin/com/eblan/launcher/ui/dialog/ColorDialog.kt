@@ -35,8 +35,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.eblan.launcher.designsystem.component.EblanDialog
 import com.eblan.launcher.designsystem.component.EblanRadioButton
-import com.eblan.launcher.domain.model.BackgroundColor
-import com.eblan.launcher.domain.model.TextColor
+import com.eblan.launcher.domain.model.userdata.BackgroundColor
+import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.ui.R
 import com.eblan.launcher.common.R as commonR
 

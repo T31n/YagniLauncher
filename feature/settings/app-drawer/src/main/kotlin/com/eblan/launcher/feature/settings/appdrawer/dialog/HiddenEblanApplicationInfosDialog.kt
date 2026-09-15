@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.eblan.launcher.designsystem.component.EblanDialog
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.EblanApplicationInfo
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.feature.settings.appdrawer.R
 import com.eblan.launcher.common.R as commonR
 

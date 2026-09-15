@@ -41,10 +41,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.eblan.launcher.domain.model.GridItemSettings
-import com.eblan.launcher.domain.model.HorizontalAlignment
-import com.eblan.launcher.domain.model.TextColor
-import com.eblan.launcher.domain.model.VerticalArrangement
+import com.eblan.launcher.domain.model.grid.GridItemSettings
+import com.eblan.launcher.domain.model.grid.HorizontalAlignment
+import com.eblan.launcher.domain.model.grid.VerticalArrangement
+import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.ui.R
 import com.eblan.launcher.ui.dialog.ColorPickerDialog
 import com.eblan.launcher.ui.dialog.EditCornerRadiusDialog

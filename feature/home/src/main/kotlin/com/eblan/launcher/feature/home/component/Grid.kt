@@ -31,8 +31,8 @@ import androidx.compose.ui.layout.ParentDataModifier
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
-import com.eblan.launcher.domain.model.EblanApplicationInfo
-import com.eblan.launcher.domain.model.GridItem
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
+import com.eblan.launcher.domain.model.grid.GridItem
 
 @Composable
 internal fun GridLayout(
@@ -80,7 +80,7 @@ internal fun GridLayout(
 internal fun HorizontalAppDrawerGridLayout(
     modifier: Modifier = Modifier,
     columns: Int,
-    eblanApplicationInfoWithIconPackInfos: List<EblanApplicationInfo>?,
+    eblanApplicationInfos: List<EblanApplicationInfo>?,
     rows: Int,
     content: @Composable BoxScope.(EblanApplicationInfo) -> Unit,
 ) {
@@ -90,14 +90,14 @@ internal fun HorizontalAppDrawerGridLayout(
         val cellHeight = constraints.maxHeight / rows
 
         layout(constraints.maxWidth, constraints.maxHeight) {
-            eblanApplicationInfoWithIconPackInfos?.forEachIndexed { index, eblanApplicationInfoWithIconPackInfo ->
+            eblanApplicationInfos?.forEachIndexed { index, eblanApplicationInfo ->
                 val row = index / columns
 
                 val column = index % columns
 
                 subcompose(
-                    eblanApplicationInfoWithIconPackInfo.serialNumber to
-                        eblanApplicationInfoWithIconPackInfo.componentName,
+                    eblanApplicationInfo.serialNumber to
+                        eblanApplicationInfo.componentName,
                 ) {
                     Box(
                         modifier = Modifier.gridItem(
@@ -107,7 +107,7 @@ internal fun HorizontalAppDrawerGridLayout(
                             y = row * cellHeight,
                         ),
                     ) {
-                        content(eblanApplicationInfoWithIconPackInfo)
+                        content(eblanApplicationInfo)
                     }
                 }.forEach { measurable ->
                     measurable.measure(

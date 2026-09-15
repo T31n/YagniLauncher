@@ -19,8 +19,8 @@ package com.eblan.launcher.domain.usecase.launcherapps
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
+import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
-import com.eblan.launcher.domain.framework.FileManager
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.repository.ApplicationInfoGridItemRepository
 import com.eblan.launcher.domain.repository.EblanAppWidgetProviderInfoRepository
@@ -90,7 +90,7 @@ class RemovePackageUseCase @Inject constructor(
                 packageName = packageName,
             )
 
-            eblanShortcutConfigRepository.deleteEblanShortcutConfig(
+            eblanShortcutConfigRepository.deleteEblanShortcutConfigByPackageName(
                 serialNumber = serialNumber,
                 packageName = packageName,
             )
@@ -100,17 +100,17 @@ class RemovePackageUseCase @Inject constructor(
                 packageName = packageName,
             )
 
-            widgetGridItemRepository.deleteWidgetGridItem(
+            widgetGridItemRepository.deleteWidgetGridItemByPackageName(
                 serialNumber = serialNumber,
                 packageName = packageName,
             )
 
-            shortcutInfoGridItemRepository.deleteShortcutInfoGridItem(
+            shortcutInfoGridItemRepository.deleteShortcutInfoGridItemByPackageName(
                 serialNumber = serialNumber,
                 packageName = packageName,
             )
 
-            shortcutConfigGridItemRepository.deleteShortcutConfigGridItem(
+            shortcutConfigGridItemRepository.deleteShortcutConfigGridItemByPackageName(
                 serialNumber = serialNumber,
                 packageName = packageName,
             )
@@ -226,7 +226,7 @@ class RemovePackageUseCase @Inject constructor(
         serialNumber: Long,
         packageName: String,
     ) {
-        eblanShortcutInfoRepository.getEblanShortcutInfos(
+        eblanShortcutInfoRepository.getEblanShortcutInfosByPackageName(
             serialNumber = serialNumber,
             packageName = packageName,
         ).forEach { eblanShortcutInfoByPackageName ->

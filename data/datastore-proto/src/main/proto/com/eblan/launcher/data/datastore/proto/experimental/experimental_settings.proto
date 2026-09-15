@@ -7,5 +7,5 @@ message ExperimentalSettingsProto {
   bool syncData = 1;
   bool firstLaunch = 2;
   bool lockMovement = 3;
-  optional bool gridItemAnimation = 4;
+  bool gridItemAnimation = 4;
 }

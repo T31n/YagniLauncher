@@ -19,7 +19,7 @@ package com.eblan.launcher.domain.usecase.iconpack
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
-import com.eblan.launcher.domain.framework.FileManager
+import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.repository.EblanIconPackInfoRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext

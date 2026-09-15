@@ -17,8 +17,8 @@
  */
 package com.eblan.launcher.feature.settings.appdrawer.model
 
-import com.eblan.launcher.domain.model.AppDrawerSettings
-import com.eblan.launcher.domain.model.EblanApplicationInfo
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
+import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 
 internal sealed interface AppDrawerSettingsUiState {
     data object Loading : AppDrawerSettingsUiState

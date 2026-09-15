@@ -17,14 +17,14 @@
  */
 package com.eblan.launcher.domain.repository
 
-import com.eblan.launcher.domain.model.ApplicationInfoGridItem
-import com.eblan.launcher.domain.model.FolderGridItem
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.GridItemData
-import com.eblan.launcher.domain.model.GridItems
-import com.eblan.launcher.domain.model.ShortcutConfigGridItem
-import com.eblan.launcher.domain.model.ShortcutInfoGridItem
-import com.eblan.launcher.domain.model.WidgetGridItem
+import com.eblan.launcher.domain.model.grid.ApplicationInfoGridItem
+import com.eblan.launcher.domain.model.grid.FolderGridItem
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.GridItemData
+import com.eblan.launcher.domain.model.grid.GridItems
+import com.eblan.launcher.domain.model.grid.ShortcutConfigGridItem
+import com.eblan.launcher.domain.model.grid.ShortcutInfoGridItem
+import com.eblan.launcher.domain.model.grid.WidgetGridItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update

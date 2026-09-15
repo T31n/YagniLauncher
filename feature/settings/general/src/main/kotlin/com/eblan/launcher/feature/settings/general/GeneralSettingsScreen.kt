@@ -46,10 +46,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.EblanIconPackInfo
-import com.eblan.launcher.domain.model.GeneralSettings
-import com.eblan.launcher.domain.model.PackageManagerIconPackInfo
-import com.eblan.launcher.domain.model.Theme
+import com.eblan.launcher.domain.model.iconpackinfo.EblanIconPackInfo
+import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPackInfo
+import com.eblan.launcher.domain.model.userdata.GeneralSettings
+import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.feature.settings.general.dialog.ImportIconPackInfoDialog
 import com.eblan.launcher.feature.settings.general.dialog.SelectIconPackInfoDialog
 import com.eblan.launcher.feature.settings.general.model.GeneralSettingsUiState

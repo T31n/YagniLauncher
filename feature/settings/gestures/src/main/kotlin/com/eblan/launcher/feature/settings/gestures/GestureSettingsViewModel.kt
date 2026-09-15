@@ -19,7 +19,7 @@ package com.eblan.launcher.feature.settings.gestures
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.eblan.launcher.domain.model.GestureSettings
+import com.eblan.launcher.domain.model.userdata.GestureSettings
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.application.GetEblanApplicationInfosUseCase
 import com.eblan.launcher.feature.settings.gestures.model.GesturesSettingsUiState

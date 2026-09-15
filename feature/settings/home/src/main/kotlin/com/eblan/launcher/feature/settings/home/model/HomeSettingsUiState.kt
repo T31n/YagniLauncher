@@ -17,7 +17,7 @@
  */
 package com.eblan.launcher.feature.settings.home.model
 
-import com.eblan.launcher.domain.model.HomeSettings
+import com.eblan.launcher.domain.model.userdata.HomeSettings
 
 internal sealed interface HomeSettingsUiState {
     data object Loading : HomeSettingsUiState

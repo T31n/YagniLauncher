@@ -17,8 +17,8 @@
  */
 package com.eblan.launcher.domain.repository
 
-import com.eblan.launcher.domain.model.DeleteEblanShortcutInfo
-import com.eblan.launcher.domain.model.EblanShortcutInfo
+import com.eblan.launcher.domain.model.shortcutinfo.DeleteEblanShortcutInfo
+import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfo
 import kotlinx.coroutines.flow.Flow
 
 interface EblanShortcutInfoRepository {
@@ -30,7 +30,7 @@ interface EblanShortcutInfoRepository {
 
     suspend fun deleteEblanShortcutInfos(deleteEblanShortcutInfos: List<DeleteEblanShortcutInfo>)
 
-    suspend fun getEblanShortcutInfos(
+    suspend fun getEblanShortcutInfosByPackageName(
         serialNumber: Long,
         packageName: String,
     ): List<EblanShortcutInfo>

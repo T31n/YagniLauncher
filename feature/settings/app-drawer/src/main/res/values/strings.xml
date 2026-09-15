@@ -32,4 +32,10 @@
     <string name="find_apps_even_with_typos_or_accented_characters">Find apps even with typos or accented characters</string>
     <string name="blur_behind">Blur Behind</string>
     <string name="blurs_the_wallpaper_when_app_drawer_opens">Blur the wallpaper when app drawer opens</string>
+    <string name="no_folders">No Folders</string>
+    <string name="no_tags">No Tags</string>
+    <string name="manage_tags">Manage Tags</string>
+    <string name="sort_update_and_delete_tags">Sort, update and delete tags</string>
+    <string name="manage_folders">Manage Folders</string>
+    <string name="sort_update_and_delete_folders">Sort, update and delete folders</string>
 </resources>

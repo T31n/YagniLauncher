@@ -19,7 +19,7 @@ package com.eblan.launcher.domain.usecase.grid
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
-import com.eblan.launcher.domain.model.GridItem
+import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.usecase.util.toGridItems
 import kotlinx.coroutines.CoroutineDispatcher

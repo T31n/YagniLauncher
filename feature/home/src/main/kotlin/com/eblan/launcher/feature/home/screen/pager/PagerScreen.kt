@@ -17,17 +17,14 @@
  */
 package com.eblan.launcher.feature.home.screen.pager
 
-import android.content.BroadcastReceiver
 import android.content.ClipDescription
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.ServiceConnection
 import android.content.pm.ActivityInfo
 import android.content.pm.LauncherApps
 import android.content.pm.ShortcutInfo
-import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
@@ -94,7 +91,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import androidx.core.util.Consumer
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -102,30 +98,34 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.AppDrawerSettings
-import com.eblan.launcher.domain.model.Associate
-import com.eblan.launcher.domain.model.EblanAction
-import com.eblan.launcher.domain.model.EblanActionType
-import com.eblan.launcher.domain.model.EblanAppWidgetProviderInfo
-import com.eblan.launcher.domain.model.EblanApplicationInfo
-import com.eblan.launcher.domain.model.EblanApplicationInfoGroup
-import com.eblan.launcher.domain.model.EblanApplicationInfoTag
-import com.eblan.launcher.domain.model.EblanShortcutConfig
-import com.eblan.launcher.domain.model.EblanShortcutInfo
-import com.eblan.launcher.domain.model.EblanShortcutInfoByGroup
-import com.eblan.launcher.domain.model.EblanUser
-import com.eblan.launcher.domain.model.ExperimentalSettings
-import com.eblan.launcher.domain.model.FolderPopup
-import com.eblan.launcher.domain.model.FolderPopupEntry
-import com.eblan.launcher.domain.model.GestureSettings
-import com.eblan.launcher.domain.model.GetEblanApplicationInfosByLabelAndTag
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.HomeSettings
-import com.eblan.launcher.domain.model.ManagedProfileResult
-import com.eblan.launcher.domain.model.MoveGridItemResult
-import com.eblan.launcher.domain.model.PinItemRequestType
-import com.eblan.launcher.domain.model.PreviewFolder
-import com.eblan.launcher.domain.model.TextColor
+import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
+import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
+import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
+import com.eblan.launcher.domain.model.folder.FolderPopupEntry
+import com.eblan.launcher.domain.model.folder.PreviewFolder
+import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
+import com.eblan.launcher.domain.model.grid.Associate
+import com.eblan.launcher.domain.model.grid.FolderGridItemPopup
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.MoveFolderEblanApplicationInfoGridItemResult
+import com.eblan.launcher.domain.model.grid.MoveGridItemResult
+import com.eblan.launcher.domain.model.launcherapps.EblanUser
+import com.eblan.launcher.domain.model.launcherapps.PinItemRequestType
+import com.eblan.launcher.domain.model.shortcutconfig.EblanShortcutConfig
+import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfo
+import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfoByGroup
+import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
+import com.eblan.launcher.domain.model.userdata.EblanAction
+import com.eblan.launcher.domain.model.userdata.EblanActionType
+import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
+import com.eblan.launcher.domain.model.userdata.FolderSettings
+import com.eblan.launcher.domain.model.userdata.GestureSettings
+import com.eblan.launcher.domain.model.userdata.HomeSettings
+import com.eblan.launcher.domain.model.userdata.TextColor
+import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
 import com.eblan.launcher.feature.home.component.GridLayout
 import com.eblan.launcher.feature.home.component.HomeHandler
 import com.eblan.launcher.feature.home.component.PageIndicator
@@ -133,6 +133,9 @@ import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.GridItemSource
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.screen.application.ApplicationScreen
+import com.eblan.launcher.feature.home.screen.application.folder.FolderApplicationInfoGridItemPopup
+import com.eblan.launcher.feature.home.screen.application.folder.FolderApplicationInfoPopup
+import com.eblan.launcher.feature.home.screen.application.folder.FolderApplicationScreen
 import com.eblan.launcher.feature.home.screen.folder.FolderGridItemPopup
 import com.eblan.launcher.feature.home.screen.folder.FolderScreen
 import com.eblan.launcher.feature.home.screen.resize.ResizeScreen
@@ -173,7 +176,7 @@ internal fun PagerScreen(
     eblanShortcutConfigs: Map<EblanUser, Map<EblanApplicationInfoGroup, List<EblanShortcutConfig>>>,
     eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
     experimentalSettings: ExperimentalSettings,
-    folderPopups: List<FolderPopup>,
+    folderGridItemPopups: List<FolderGridItemPopup>,
     gestureSettings: GestureSettings,
     getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
     gridItems: List<GridItem>,
@@ -181,6 +184,7 @@ internal fun PagerScreen(
     hasShortcutHostPermission: Boolean,
     hasSystemFeatureAppWidgets: Boolean,
     homeSettings: HomeSettings,
+    folderSettings: FolderSettings,
     moveGridItemResult: MoveGridItemResult?,
     paddingValues: PaddingValues,
     pinGridItem: GridItem?,
@@ -192,10 +196,14 @@ internal fun PagerScreen(
     isVisibleOverlay: Boolean,
     previewFolderGridItems: Map<String, PreviewFolder>,
     iconPackInfoFilePaths: Map<String, String?>,
+    previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
+    folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
+    topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    moveFolderEblanApplicationInfoGridItemResult: MoveFolderEblanApplicationInfoGridItemResult?,
     onDeleteGridItem: (GridItem) -> Unit,
     onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
-    onDragEndAfterMoveFolder: () -> Unit,
+    onResetGridAfterMoveFolder: () -> Unit,
     onEditApplicationInfo: (
         serialNumber: Long,
         componentName: String,
@@ -211,7 +219,7 @@ internal fun PagerScreen(
     onGetEblanShortcutConfigsByLabel: (String) -> Unit,
     onGetPinGridItem: (PinItemRequestType) -> Unit,
     onMoveFolderGridItem: (
-        folderPopup: FolderPopup,
+        folderGridItemPopup: FolderGridItemPopup,
         movingGridItem: GridItem,
         dragX: Int,
         dragY: Int,
@@ -241,10 +249,10 @@ internal fun PagerScreen(
     onSettings: () -> Unit,
     onStartSyncData: () -> Unit,
     onStopSyncData: () -> Unit,
-    onUpdateAppDrawerSettings: (AppDrawerSettings) -> Unit,
-    onUpdateEblanApplicationInfos: (List<EblanApplicationInfo>) -> Unit,
-    onUpsertFolderPopupEntry: (FolderPopupEntry) -> Unit,
-    onDeleteFolderPopupEntry: (FolderPopupEntry) -> Unit,
+    onUpsertFolderGridItemPopupEntry: (FolderPopupEntry) -> Unit,
+    onDeleteFolderGridItemPopupEntry: (FolderPopupEntry) -> Unit,
+    onUpsertFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
+    onDeleteFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
     onShowFolderWhenDragging: (
         folderPopupEntry: FolderPopupEntry,
         movingGridItem: GridItem,
@@ -275,6 +283,36 @@ internal fun PagerScreen(
         packageName: String,
     ) -> Unit,
     onResetFolderPopupEntries: () -> Unit,
+    onEditFolderApplicationInfo: (String) -> Unit,
+    onMoveNewFolderGridItem: (
+        folderGridItems: List<GridItem>,
+        movingGridItem: GridItem,
+        x: Int,
+        y: Int,
+        columns: Int,
+        rows: Int,
+        gridWidth: Int,
+        gridHeight: Int,
+    ) -> Unit,
+    onUpdateMoveFolderEblanApplicationInfoGridItemResult: (MoveFolderEblanApplicationInfoGridItemResult) -> Unit,
+    onMoveFolderEblanApplicationInfoGridItem: (
+        folderEblanApplicationInfoPopup: FolderEblanApplicationInfoPopup,
+        folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
+        dragX: Int,
+        dragY: Int,
+        gridWidth: Int,
+        gridHeight: Int,
+        currentPage: Int,
+    ) -> Unit,
+    onDragEndAfterMoveFolderEblanApplicationInfo: () -> Unit,
+    onMoveFolderEblanApplicationInfoGridItemOutsideFolder: (
+        folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
+        movingGridItem: GridItem,
+    ) -> Unit,
+    onDragFolderEblanApplicationInfo: (
+        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        movingGridItem: GridItem,
+    ) -> Unit,
 ) {
     val layoutDirection = LocalLayoutDirection.current
 
@@ -352,14 +390,14 @@ internal fun PagerScreen(
     val currentGridItemSource = rememberUpdatedState(gridItemSource)
     val currentIsVisibleOverlay = rememberUpdatedState(isVisibleOverlay)
     val currentMoveGridItemResult = rememberUpdatedState(moveGridItemResult)
-    val currentFolderPopups = rememberUpdatedState(folderPopups)
+    val currentFolderPopups = rememberUpdatedState(folderGridItemPopups)
 
     val appWidgetLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
     ) {
         handleAppWidgetLauncherResult(
             androidAppWidgetManagerWrapper = androidAppWidgetManagerWrapper,
-            moveGridItemResult = currentMoveGridItemResult,
+            moveGridItemResult = currentMoveGridItemResult.value,
             result = it,
             columns = homeSettings.columns,
             density = density,
@@ -382,7 +420,7 @@ internal fun PagerScreen(
         scope.launch {
             handleShortcutConfigLauncherResult(
                 androidImageSerializer = androidImageSerializer,
-                moveGridItemResult = currentMoveGridItemResult,
+                moveGridItemResult = currentMoveGridItemResult.value,
                 result = it,
                 fileManager = fileManager,
                 onDeleteGridItem = onResetGridAfterDeleteGridItem,
@@ -401,7 +439,7 @@ internal fun PagerScreen(
                 androidLauncherAppsWrapper = androidLauncherAppsWrapper,
                 androidUserManagerWrapper = androidUserManagerWrapper,
                 fileManager = fileManager,
-                moveGridItemResult = currentMoveGridItemResult,
+                moveGridItemResult = currentMoveGridItemResult.value,
                 result = it,
                 iconKeyGenerator = iconKeyGenerator,
                 onDeleteGridItem = onResetGridAfterDeleteGridItem,
@@ -466,8 +504,6 @@ internal fun PagerScreen(
         }
     }
 
-    val managedProfileResult by rememberManagedProfileResult()
-
     val isVisibleGridItemPopup = gridItemSource != null &&
         pagerScreenState.showGridItemPopup &&
         pagerScreenState.popupIntOffset != null &&
@@ -477,7 +513,7 @@ internal fun PagerScreen(
     val isVisibleSettingsPopup =
         pagerScreenState.showSettingsPopup && pagerScreenState.settingsPopupIntOffset != null
 
-    val isVisibleFolder = pagerScreenState.isVisibleFolders && folderPopups.isNotEmpty()
+    val isVisibleFolders = pagerScreenState.isVisibleFolders && folderGridItemPopups.isNotEmpty()
 
     val isVisibleFolderGridItemPopup = pagerScreenState.showFolderGridItemPopup &&
         pagerScreenState.popupIntOffset != null &&
@@ -489,7 +525,7 @@ internal fun PagerScreen(
     val shouldLockScreenOrientation = homeSettings.lockScreenOrientation ||
         isVisibleGridItemPopup ||
         isVisibleSettingsPopup ||
-        isVisibleFolder ||
+        isVisibleFolders ||
         isVisibleFolderGridItemPopup ||
         isResizing ||
         pagerScreenState.showApplicationScreen ||
@@ -498,6 +534,12 @@ internal fun PagerScreen(
         pagerScreenState.eblanApplicationInfoGroup != null
 
     val statusBarNotifications by rememberStatusBarNotifications()
+
+    val isVisibleFolderEblanApplicationInfoGridItemPopup =
+        pagerScreenState.showFolderEblanApplicationInfoGridItemPopup &&
+            pagerScreenState.popupIntOffset != null &&
+            pagerScreenState.popupIntSize != null &&
+            moveFolderEblanApplicationInfoGridItemResult != null
 
     LaunchedEffect(
         key1 = pinGridItem,
@@ -536,9 +578,9 @@ internal fun PagerScreen(
             dockRows = homeSettings.dockRows,
             drag = pagerScreenState.drag,
             dragIntOffset = pagerScreenState.dragIntOffset,
-            gridItemSource = currentGridItemSource,
+            gridItemSource = currentGridItemSource.value,
             isDragging = pagerScreenState.isDragging,
-            isVisibleOverlay = currentIsVisibleOverlay,
+            isVisibleOverlay = currentIsVisibleOverlay.value,
             isGridScrollInProgress = gridHorizontalPagerState.isScrollInProgress,
             isDockScrollInProgress = dockGridHorizontalPagerState.isScrollInProgress,
             lockMovement = experimentalSettings.lockMovement,
@@ -546,11 +588,12 @@ internal fun PagerScreen(
             rows = homeSettings.rows,
             screenHeight = screenHeight,
             screenWidth = screenWidth,
-            moveGridItemResult = currentMoveGridItemResult,
+            moveGridItemResult = currentMoveGridItemResult.value,
             layoutDirection = layoutDirection,
             onMoveGridItem = onMoveGridItem,
             onUpdateAssociate = pagerScreenState::updateAssociate,
             onUpdateSharedElementKey = pagerScreenState::updateSharedElementKey,
+            onMoveNewFolderGridItem = onMoveNewFolderGridItem,
         )
     }
 
@@ -566,10 +609,10 @@ internal fun PagerScreen(
             androidUserManagerWrapper = androidUserManagerWrapper,
             context = context,
             drag = pagerScreenState.drag,
-            gridItemSource = currentGridItemSource,
+            gridItemSource = currentGridItemSource.value,
             isDragging = pagerScreenState.isDragging,
-            isVisibleOverlay = currentIsVisibleOverlay,
-            moveGridItemResult = currentMoveGridItemResult,
+            isVisibleOverlay = currentIsVisibleOverlay.value,
+            moveGridItemResult = currentMoveGridItemResult.value,
             lockMovement = experimentalSettings.lockMovement,
             columns = homeSettings.columns,
             density = density,
@@ -596,8 +639,8 @@ internal fun PagerScreen(
         handleBoundWidgetEffect(
             activity = activity,
             androidAppWidgetHostWrapper = androidAppWidgetHostWrapper,
-            gridItemSource = currentGridItemSource,
-            moveGridItemResult = currentMoveGridItemResult,
+            gridItemSource = currentGridItemSource.value,
+            moveGridItemResult = currentMoveGridItemResult.value,
             widgetGridItem = pagerScreenState.widgetGridItem,
             onDeleteGridItem = onResetGridAfterDeleteGridItem,
             onUpdateGridItemsAfterMove = onUpdateGridItemsAfterMove,
@@ -620,7 +663,7 @@ internal fun PagerScreen(
             associate = pagerScreenState.associate,
             density = density,
             dragIntOffset = pagerScreenState.dragIntOffset,
-            gridItemSource = currentGridItemSource,
+            gridItemSource = currentGridItemSource.value,
             isDragging = pagerScreenState.isDragging,
             paddingValues = paddingValues,
             screenWidth = screenWidth,
@@ -635,7 +678,7 @@ internal fun PagerScreen(
         key2 = pagerScreenState.widgetGridItem,
     ) {
         handleConfigureLauncherResultEffect(
-            moveGridItemResult = currentMoveGridItemResult,
+            moveGridItemResult = currentMoveGridItemResult.value,
             resultCode = configureResultCode,
             widgetGridItem = pagerScreenState.widgetGridItem,
             onDeleteGridItem = onDeleteGridItem,
@@ -647,7 +690,7 @@ internal fun PagerScreen(
 
     LaunchedEffect(key1 = pagerScreenState.gridPageDirection) {
         handlePageDirection(
-            folderPopups = currentFolderPopups,
+            folderGridItemPopups = currentFolderPopups,
             pageDirection = pagerScreenState.gridPageDirection,
             currentPage = gridHorizontalPagerState.currentPage,
             onAnimateScrollToPage = gridHorizontalPagerState::animateScrollToPage,
@@ -656,7 +699,7 @@ internal fun PagerScreen(
 
     LaunchedEffect(key1 = pagerScreenState.dockPageDirection) {
         handlePageDirection(
-            folderPopups = currentFolderPopups,
+            folderGridItemPopups = currentFolderPopups,
             pageDirection = pagerScreenState.dockPageDirection,
             currentPage = dockGridHorizontalPagerState.currentPage,
             onAnimateScrollToPage = dockGridHorizontalPagerState::animateScrollToPage,
@@ -734,6 +777,7 @@ internal fun PagerScreen(
 
     SharedTransitionLayout(
         modifier = modifier
+            .fillMaxSize()
             .pointerInput(key1 = pagerScreenState) {
                 detectDragGesturesAfterLongPress(
                     onDragStart = pagerScreenState::dragStart,
@@ -753,11 +797,13 @@ internal fun PagerScreen(
                     it.mimeTypes().contains(ClipDescription.MIMETYPE_TEXT_PLAIN)
                 },
                 target = pagerScreenState.target,
-            )
-            .fillMaxSize(),
+            ),
     ) {
         Column(
             modifier = Modifier
+                .fillMaxSize()
+                .padding(top = paddingValues.calculateTopPadding())
+                .alpha(pagerScreenState.pagerScreenAlpha)
                 .pointerInput(
                     key1 = isVisibleOverlay,
                     key2 = pagerScreenState,
@@ -782,10 +828,7 @@ internal fun PagerScreen(
                             pagerScreenState.showSettingsPopup(offset = it)
                         },
                     )
-                }
-                .fillMaxSize()
-                .padding(top = paddingValues.calculateTopPadding())
-                .alpha(pagerScreenState.pagerScreenAlpha),
+                },
         ) {
             HorizontalPager(
                 state = gridHorizontalPagerState,
@@ -836,13 +879,13 @@ internal fun PagerScreen(
                             ),
                             iconPackInfoFilePaths = iconPackInfoFilePaths,
                             animations = experimentalSettings.gridItemAnimation,
-                            folderCornerRadius = homeSettings.folderCornerRadius,
-                            folderBackgroundColor = homeSettings.folderBackgroundColor,
-                            customFolderBackgroundColor = homeSettings.customFolderBackgroundColor,
+                            folderCornerRadius = folderSettings.folderCornerRadius,
+                            folderBackgroundColor = folderSettings.folderBackgroundColor,
+                            customFolderBackgroundColor = folderSettings.customFolderBackgroundColor,
                             systemCustomTextColor = homeSettings.gridItemSettings.customTextColor,
-                            folderPopups = folderPopups,
+                            folderGridItemPopups = folderGridItemPopups,
                             onOpenAppDrawer = pagerScreenState::openApplicationScreen,
-                            onUpsertFolderPopupEntry = onUpsertFolderPopupEntry,
+                            onUpsertFolderGridItemPopupEntry = onUpsertFolderGridItemPopupEntry,
                             onUpdateGridItemSource = onUpdateGridItemSource,
                             onUpdateImageBitmap = pagerScreenState::updateOverlayImageBitmap,
                             onUpdateIsDragging = pagerScreenState::updateIsDragging,
@@ -949,13 +992,13 @@ internal fun PagerScreen(
                                 ),
                                 iconPackInfoFilePaths = iconPackInfoFilePaths,
                                 animations = experimentalSettings.gridItemAnimation,
-                                folderCornerRadius = homeSettings.folderCornerRadius,
-                                folderBackgroundColor = homeSettings.folderBackgroundColor,
-                                customFolderBackgroundColor = homeSettings.customFolderBackgroundColor,
+                                folderCornerRadius = folderSettings.folderCornerRadius,
+                                folderBackgroundColor = folderSettings.folderBackgroundColor,
+                                customFolderBackgroundColor = folderSettings.customFolderBackgroundColor,
                                 systemCustomTextColor = homeSettings.gridItemSettings.customTextColor,
-                                folderPopups = folderPopups,
+                                folderGridItemPopups = folderGridItemPopups,
                                 onOpenAppDrawer = pagerScreenState::openApplicationScreen,
-                                onUpsertFolderPopupEntry = onUpsertFolderPopupEntry,
+                                onUpsertFolderGridItemPopupEntry = onUpsertFolderGridItemPopupEntry,
                                 onUpdateGridItemSource = onUpdateGridItemSource,
                                 onUpdateImageBitmap = pagerScreenState::updateOverlayImageBitmap,
                                 onUpdateIsDragging = pagerScreenState::updateIsDragging,
@@ -1017,12 +1060,12 @@ internal fun PagerScreen(
             )
         }
 
-        if (isVisibleFolder) {
-            folderPopups.forEach {
+        if (isVisibleFolders) {
+            folderGridItemPopups.forEach {
                 FolderScreen(
                     sharedTransitionScope = this@SharedTransitionLayout,
                     drag = pagerScreenState.drag,
-                    folderPopup = it,
+                    folderGridItemPopup = it,
                     gridItemSettings = homeSettings.gridItemSettings,
                     paddingValues = paddingValues,
                     safeDrawingHeight = safeDrawingHeight,
@@ -1031,22 +1074,24 @@ internal fun PagerScreen(
                     isVisibleOverlay = isVisibleOverlay,
                     hasShortcutHostPermission = hasShortcutHostPermission,
                     moveGridItemResult = moveGridItemResult,
-                    homeSettings = homeSettings,
                     isDragging = pagerScreenState.isDragging,
                     dragIntOffset = pagerScreenState.dragIntOffset,
                     lockMovement = experimentalSettings.lockMovement,
-                    folderCellWidth = homeSettings.folderCellWidth,
-                    folderCellHeight = homeSettings.folderCellHeight,
+                    folderCellWidth = folderSettings.folderCellWidth,
+                    folderCellHeight = folderSettings.folderCellHeight,
                     screenWidth = screenWidth,
                     screenHeight = screenHeight,
-                    folderPopups = folderPopups,
+                    folderGridItemPopups = folderGridItemPopups,
                     showFolderGridItemPopup = pagerScreenState.showFolderGridItemPopup,
                     previewFolderGridItems = previewFolderGridItems,
                     iconPackInfoFilePaths = iconPackInfoFilePaths,
                     animations = experimentalSettings.gridItemAnimation,
                     systemTextColor = textColor,
                     systemCustomTextColor = homeSettings.gridItemSettings.customTextColor,
-                    onDeleteFolderPopupEntry = onDeleteFolderPopupEntry,
+                    folderBackgroundColor = folderSettings.folderBackgroundColor,
+                    folderCornerRadius = folderSettings.folderCornerRadius,
+                    customFolderBackgroundColor = folderSettings.customFolderBackgroundColor,
+                    onDeleteFolderGridItemPopupEntry = onDeleteFolderGridItemPopupEntry,
                     onMoveFolderGridItemOutsideFolder = onMoveFolderGridItemOutsideFolder,
                     onOpenAppDrawer = pagerScreenState::openApplicationScreen,
                     onUpdateImageBitmap = pagerScreenState::updateOverlayImageBitmap,
@@ -1057,11 +1102,11 @@ internal fun PagerScreen(
                     onUpdateIsCloseFolderGridItemPopup = pagerScreenState::updateIsCloseFolderGridItemPopup,
                     onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                     onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
-                    onUpsertFolderPopupEntry = onUpsertFolderPopupEntry,
+                    onUpsertFolderGridItemPopupEntry = onUpsertFolderGridItemPopupEntry,
                     onMoveFolderGridItem = onMoveFolderGridItem,
                     onDismissFolderGridItemPopup = pagerScreenState::dismissFolderGridItemPopup,
                     onResetGrid = onResetGrid,
-                    onDragEndAfterMoveFolder = onDragEndAfterMoveFolder,
+                    onResetGridAfterMoveFolder = onResetGridAfterMoveFolder,
                     onUpdateIsVisibleFolders = pagerScreenState::updateIsVisibleFolders,
                 )
             }
@@ -1075,7 +1120,7 @@ internal fun PagerScreen(
                 hasShortcutHostPermission = hasShortcutHostPermission,
                 popupIntOffset = pagerScreenState.popupIntOffset,
                 popupIntSize = pagerScreenState.popupIntSize,
-                movingGridItem = moveGridItemResult.movingGridItem,
+                folderGridItem = moveGridItemResult.movingGridItem,
                 isVisibleOverlay = isVisibleOverlay,
                 paddingValues = paddingValues,
                 isCloseFolderGridItemPopup = pagerScreenState.isCloseFolderGridItemPopup,
@@ -1107,7 +1152,6 @@ internal fun PagerScreen(
                 eblanShortcutInfosGroup = eblanShortcutInfosGroup,
                 getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
                 hasShortcutHostPermission = hasShortcutHostPermission,
-                managedProfileResult = managedProfileResult,
                 paddingValues = paddingValues,
                 screenHeight = screenHeight,
                 swipeY = pagerScreenState.applicationScreenSwipeY.value,
@@ -1115,13 +1159,16 @@ internal fun PagerScreen(
                 systemTextColor = textColor,
                 systemCustomTextColor = homeSettings.gridItemSettings.customTextColor,
                 animations = experimentalSettings.gridItemAnimation,
+                previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+                folderCornerRadius = folderSettings.folderCornerRadius,
+                folderBackgroundColor = folderSettings.folderBackgroundColor,
+                customFolderBackgroundColor = folderSettings.customFolderBackgroundColor,
+                topLevelFolderEblanApplicationInfos = topLevelFolderEblanApplicationInfos,
                 onDismiss = pagerScreenState::dismissApplicationScreen,
                 onDragEnd = pagerScreenState::handleOnDragEndApplicationScreen,
                 onEditApplicationInfo = onEditApplicationInfo,
                 onGetEblanApplicationInfosByLabel = onGetEblanApplicationInfosByLabel,
                 onGetEblanApplicationInfosByTagId = onGetEblanApplicationInfosByTagId,
-                onUpdateAppDrawerSettings = onUpdateAppDrawerSettings,
-                onUpdateEblanApplicationInfos = onUpdateEblanApplicationInfos,
                 onUpdateGridItemSource = onUpdateGridItemSource,
                 onUpdateImageBitmap = pagerScreenState::updateOverlayImageBitmap,
                 onUpdateIsDragging = pagerScreenState::updateIsDragging,
@@ -1131,35 +1178,41 @@ internal fun PagerScreen(
                 onWidgets = pagerScreenState::openAppWidgetScreen,
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                 onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+                onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
+                onUpdateIsVisibleFolders = pagerScreenState::updateIsVisibleFolders,
+                onUpdateFolderEblanApplicationInfo = pagerScreenState::updateFolderEblanApplicationInfo,
+                onUpdateFolderPopupBounds = pagerScreenState::showFolderApplicationPopup,
+                onUpdateFolderPopupMenu = pagerScreenState::updateShowFolderApplicationInfoPopup,
+                onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
             )
         }
 
         if (pagerScreenState.showWidgetScreen) {
             WidgetScreen(
+                alpha = pagerScreenState.widgetScreenAlpha,
+                animations = experimentalSettings.gridItemAnimation,
                 columns = homeSettings.columns,
+                cornerSize = pagerScreenState.widgetScreenCornerSize,
+                drag = pagerScreenState.drag,
                 eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfos,
                 gridItemSettings = homeSettings.gridItemSettings,
+                isVisibleOverlay = isVisibleOverlay,
                 paddingValues = paddingValues,
                 rows = homeSettings.rows,
                 screenHeight = screenHeight,
                 screenWidth = screenWidth,
                 swipeY = pagerScreenState.widgetScreenSwipeY.value,
-                alpha = pagerScreenState.widgetScreenAlpha,
-                cornerSize = pagerScreenState.widgetScreenCornerSize,
-                isVisibleOverlay = isVisibleOverlay,
-                animations = experimentalSettings.gridItemAnimation,
-                drag = pagerScreenState.drag,
                 onDismiss = pagerScreenState::dismissWidgetScreen,
-                onGetEblanAppWidgetProviderInfosByLabel = onGetEblanAppWidgetProviderInfosByLabel,
-                onUpdateOverlayBounds = pagerScreenState::updateOverlayBounds,
-                onUpdateImageBitmap = pagerScreenState::updateOverlayImageBitmap,
-                onUpdateGridItemSource = onUpdateGridItemSource,
-                onUpdateSharedElementKey = pagerScreenState::updateSharedElementKey,
-                onUpdateIsDragging = pagerScreenState::updateIsDragging,
-                onVerticalDrag = pagerScreenState::verticalDragWidgetScreen,
                 onDragEnd = pagerScreenState::handleOnDragEndWidgetScreen,
+                onGetEblanAppWidgetProviderInfosByLabel = onGetEblanAppWidgetProviderInfosByLabel,
+                onUpdateGridItemSource = onUpdateGridItemSource,
+                onUpdateImageBitmap = pagerScreenState::updateOverlayImageBitmap,
+                onUpdateIsDragging = pagerScreenState::updateIsDragging,
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                 onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+                onUpdateOverlayBounds = pagerScreenState::updateOverlayBounds,
+                onUpdateSharedElementKey = pagerScreenState::updateSharedElementKey,
+                onVerticalDrag = pagerScreenState::verticalDragWidgetScreen,
             )
         }
 
@@ -1204,7 +1257,6 @@ internal fun PagerScreen(
                 animations = experimentalSettings.gridItemAnimation,
                 drag = pagerScreenState.drag,
                 onDismiss = pagerScreenState::dismissAppWidgetScreen,
-                onDismissApplicationScreen = pagerScreenState::dismissApplicationScreen,
                 onUpdateOverlayBounds = pagerScreenState::updateOverlayBounds,
                 onUpdateImageBitmap = pagerScreenState::updateOverlayImageBitmap,
                 onUpdateGridItemSource = onUpdateGridItemSource,
@@ -1228,6 +1280,93 @@ internal fun PagerScreen(
                 onResizeEnd = onResizeEnd,
                 onResizeGridItem = onResizeGridItem,
                 onUpdateIsResizing = pagerScreenState::updateIsResizing,
+            )
+        }
+
+        if (pagerScreenState.isVisibleFolders) {
+            folderEblanApplicationInfoPopups.forEach { folderEblanApplicationInfoPopup ->
+                FolderApplicationScreen(
+                    sharedTransitionScope = this,
+                    folderEblanApplicationInfoPopup = folderEblanApplicationInfoPopup,
+                    paddingValues = paddingValues,
+                    safeDrawingHeight = safeDrawingHeight,
+                    safeDrawingWidth = safeDrawingWidth,
+                    isVisibleOverlay = isVisibleOverlay,
+                    screenWidth = screenWidth,
+                    screenHeight = screenHeight,
+                    folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+                    animations = experimentalSettings.gridItemAnimation,
+                    systemTextColor = textColor,
+                    systemCustomTextColor = homeSettings.gridItemSettings.customTextColor,
+                    previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+                    folderBackgroundColor = folderSettings.folderBackgroundColor,
+                    customFolderBackgroundColor = folderSettings.customFolderBackgroundColor,
+                    appDrawerSettings = appDrawerSettings,
+                    folderCornerRadius = folderSettings.folderCornerRadius,
+                    folderCellWidth = folderSettings.folderCellWidth,
+                    folderCellHeight = folderSettings.folderCellHeight,
+                    moveFolderEblanApplicationInfoGridItemResult = moveFolderEblanApplicationInfoGridItemResult,
+                    drag = pagerScreenState.drag,
+                    isDragging = pagerScreenState.isDragging,
+                    lockMovement = experimentalSettings.lockMovement,
+                    dragIntOffset = pagerScreenState.dragIntOffset,
+                    showFolderEblanApplicationGridItemPopup = pagerScreenState.showFolderEblanApplicationInfoGridItemPopup,
+                    onDeleteFolderEblanApplicationInfoPopupEntry = onDeleteFolderEblanApplicationInfoPopupEntry,
+                    onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
+                    onUpdateIsVisibleFolders = pagerScreenState::updateIsVisibleFolders,
+                    onUpdateImageBitmap = pagerScreenState::updateOverlayImageBitmap,
+                    onUpdateOverlayBounds = pagerScreenState::updateOverlayBounds,
+                    onUpdateSharedElementKey = pagerScreenState::updateSharedElementKey,
+                    onShowGridItemPopup = pagerScreenState::showFolderEblanApplicationInfoGridItemPopup,
+                    onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+                    onUpdateMoveFolderEblanApplicationInfoGridItemResult = onUpdateMoveFolderEblanApplicationInfoGridItemResult,
+                    onMoveFolderEblanApplicationInfoGridItem = onMoveFolderEblanApplicationInfoGridItem,
+                    onDismissFolderEblanApplicationGridItemPopup = pagerScreenState::dismissFolderEblanApplicationInfoGridItemPopup,
+                    onResetGrid = onResetGrid,
+                    onResetGridAfterMoveFolderEblanApplicationInfo = onDragEndAfterMoveFolderEblanApplicationInfo,
+                    onUpdateIsDragging = pagerScreenState::updateIsDragging,
+                    onUpdateIsCloseFolderEblanApplicationInfoGridItemPopup = pagerScreenState::updateIsCloseFolderEblanApplicationInfoGridItemPopup,
+                    onMoveFolderEblanApplicationInfoGridItemOutsideFolder = onMoveFolderEblanApplicationInfoGridItemOutsideFolder,
+                    onDismissApplicationScreen = pagerScreenState::dismissApplicationScreen,
+                )
+            }
+        }
+
+        if (pagerScreenState.showFolderApplicationInfoPopup && pagerScreenState.folderEblanApplicationInfo != null) {
+            FolderApplicationInfoPopup(
+                folderEblanApplicationInfo = pagerScreenState.folderEblanApplicationInfo,
+                popupIntOffset = pagerScreenState.popupIntOffset,
+                popupIntSize = pagerScreenState.popupIntSize,
+                paddingValues = paddingValues,
+                onDismissRequest = pagerScreenState::dismissFolderEblanApplicationPopup,
+                onEditFolderApplicationInfo = onEditFolderApplicationInfo,
+            )
+        }
+
+        if (isVisibleFolderEblanApplicationInfoGridItemPopup) {
+            FolderApplicationInfoGridItemPopup(
+                folderEblanApplicationInfoGridItem = moveFolderEblanApplicationInfoGridItemResult.folderEblanApplicationInfoGridItem,
+                popupIntOffset = pagerScreenState.popupIntOffset,
+                popupIntSize = pagerScreenState.popupIntSize,
+                paddingValues = paddingValues,
+                eblanAppWidgetProviderInfosGroup = eblanAppWidgetProviderInfosGroup,
+                eblanShortcutInfosGroup = eblanShortcutInfosGroup,
+                gridItemSettings = appDrawerSettings.gridItemSettings,
+                hasShortcutHostPermission = hasShortcutHostPermission,
+                isVisibleOverlay = isVisibleOverlay,
+                animations = experimentalSettings.gridItemAnimation,
+                isCloseFolderEblanApplicationInfoGridItemPopup = pagerScreenState.isCloseFolderEblanApplicationInfoGridItemPopup,
+                onDismissRequest = pagerScreenState::dismissFolderEblanApplicationInfoGridItemPopup,
+                onUpdateIsDragging = pagerScreenState::updateIsDragging,
+                onEditFolderApplicationInfo = onEditFolderApplicationInfo,
+                onEditApplicationInfo = onEditApplicationInfo,
+                onUpdateGridItemSource = onUpdateGridItemSource,
+                onUpdateImageBitmap = pagerScreenState::updateOverlayImageBitmap,
+                onUpdateOverlayBounds = pagerScreenState::updateOverlayBounds,
+                onUpdateSharedElementKey = pagerScreenState::updateSharedElementKey,
+                onWidgets = pagerScreenState::openAppWidgetScreen,
+                onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+                onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
             )
         }
 
@@ -1415,67 +1554,6 @@ private fun SyncDataEffect(
             onStopSyncData()
 
             appWidgetHost.stopListening()
-        }
-    }
-}
-
-@Composable
-private fun rememberManagedProfileResult(): State<ManagedProfileResult?> {
-    val context = LocalContext.current
-
-    val userManagerWrapper = LocalUserManager.current
-
-    return produceState(
-        initialValue = null,
-        key1 = context,
-        key2 = userManagerWrapper,
-    ) {
-        val receiver = object : BroadcastReceiver() {
-            override fun onReceive(
-                context: Context,
-                intent: Intent,
-            ) {
-                val userHandle =
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        intent.getParcelableExtra(
-                            Intent.EXTRA_USER,
-                            UserHandle::class.java,
-                        )
-                    } else {
-                        @Suppress("DEPRECATION")
-                        intent.getParcelableExtra(Intent.EXTRA_USER)
-                    }
-
-                if (userHandle != null) {
-                    value = ManagedProfileResult(
-                        serialNumber =
-                        userManagerWrapper.getSerialNumberForUser(
-                            userHandle = userHandle,
-                        ),
-                        isQuiteModeEnabled =
-                        userManagerWrapper.isQuietModeEnabled(
-                            userHandle = userHandle,
-                        ),
-                    )
-                }
-            }
-        }
-
-        ContextCompat.registerReceiver(
-            context,
-            receiver,
-            IntentFilter().apply {
-                addAction(Intent.ACTION_MANAGED_PROFILE_AVAILABLE)
-                addAction(Intent.ACTION_MANAGED_PROFILE_UNAVAILABLE)
-                addAction(Intent.ACTION_MANAGED_PROFILE_REMOVED)
-                addAction(Intent.ACTION_MANAGED_PROFILE_ADDED)
-                addAction(Intent.ACTION_MANAGED_PROFILE_UNLOCKED)
-            },
-            ContextCompat.RECEIVER_NOT_EXPORTED,
-        )
-
-        awaitDispose {
-            context.unregisterReceiver(receiver)
         }
     }
 }

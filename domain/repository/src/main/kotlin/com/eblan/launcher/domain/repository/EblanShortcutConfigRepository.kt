@@ -17,8 +17,8 @@
  */
 package com.eblan.launcher.domain.repository
 
-import com.eblan.launcher.domain.model.DeleteEblanShortcutConfig
-import com.eblan.launcher.domain.model.EblanShortcutConfig
+import com.eblan.launcher.domain.model.shortcutconfig.DeleteEblanShortcutConfig
+import com.eblan.launcher.domain.model.shortcutconfig.EblanShortcutConfig
 import kotlinx.coroutines.flow.Flow
 
 interface EblanShortcutConfigRepository {
@@ -28,7 +28,7 @@ interface EblanShortcutConfigRepository {
 
     suspend fun upsertEblanShortcutConfigs(eblanShortcutConfigs: List<EblanShortcutConfig>)
 
-    suspend fun deleteEblanShortcutConfig(
+    suspend fun deleteEblanShortcutConfigByPackageName(
         serialNumber: Long,
         packageName: String,
     )

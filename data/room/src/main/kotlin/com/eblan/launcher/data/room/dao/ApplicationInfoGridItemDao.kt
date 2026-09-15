@@ -24,7 +24,7 @@ import androidx.room.Query
 import androidx.room.Update
 import androidx.room.Upsert
 import com.eblan.launcher.data.room.entity.ApplicationInfoGridItemEntity
-import com.eblan.launcher.domain.model.PartialApplicationInfoGridItem
+import com.eblan.launcher.domain.model.grid.PartialApplicationInfoGridItem
 
 @Dao
 interface ApplicationInfoGridItemDao {

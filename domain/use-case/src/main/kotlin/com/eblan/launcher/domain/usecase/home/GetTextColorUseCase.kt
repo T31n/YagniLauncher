@@ -21,8 +21,8 @@ import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.framework.ResourcesWrapper
 import com.eblan.launcher.domain.framework.WallpaperManagerWrapper
-import com.eblan.launcher.domain.model.TextColor
-import com.eblan.launcher.domain.model.Theme
+import com.eblan.launcher.domain.model.userdata.TextColor
+import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.domain.repository.UserDataRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow

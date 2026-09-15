@@ -19,7 +19,7 @@
     <string name="choose_yagni_launcher">Choose Yagni Launcher</string>
     <string name="default_launcher">Default Launcher</string>
     <string name="themes_icon_packs">Themes, icon packs</string>
-    <string name="grid_icon_dock_and_more">Grid, icon, dock, and more</string>
+    <string name="grid_icon_dock_and_more">Grid, icon, dock</string>
     <string name="columns_and_rows_count">Columns and rows count</string>
     <string name="swipe_gesture_actions">Swipe gesture actions</string>
     <string name="advanced_options_for_power_users">Advanced options for power users</string>
@@ -33,4 +33,5 @@
     <string name="support_on_ko_fi">Support on Ko-Fi</string>
     <string name="star_on_github">Star on GitHub</string>
     <string name="note_this_informational_card_will_be_removed_in_future_stable_releases">Note: This informational card will be removed in future stable releases</string>
+    <string name="corner_radius_background_color_and_more">Corner radius, background color</string>
 </resources>

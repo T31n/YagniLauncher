@@ -18,7 +18,7 @@
 package com.eblan.launcher.data.repository.mapper
 
 import com.eblan.launcher.data.room.entity.EblanIconPackInfoEntity
-import com.eblan.launcher.domain.model.EblanIconPackInfo
+import com.eblan.launcher.domain.model.iconpackinfo.EblanIconPackInfo
 
 fun EblanIconPackInfo.asEntity(): EblanIconPackInfoEntity = EblanIconPackInfoEntity(
     packageName = packageName,

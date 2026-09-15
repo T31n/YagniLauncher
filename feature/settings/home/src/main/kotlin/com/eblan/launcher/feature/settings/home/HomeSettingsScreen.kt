@@ -41,19 +41,14 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.HomeSettings
+import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.feature.settings.home.dialog.EditDockCornerRadiusDialog
 import com.eblan.launcher.feature.settings.home.dialog.EditDockGridDialog
 import com.eblan.launcher.feature.settings.home.dialog.EditDockHeightDialog
 import com.eblan.launcher.feature.settings.home.dialog.EditDockPaddingDialog
-import com.eblan.launcher.feature.settings.home.dialog.EditFolderCellDimensionDialog
-import com.eblan.launcher.feature.settings.home.dialog.EditFolderMaxGridDialog
 import com.eblan.launcher.feature.settings.home.dialog.EditGridDialog
 import com.eblan.launcher.feature.settings.home.model.HomeSettingsUiState
-import com.eblan.launcher.ui.dialog.BackgroundColorDialog
 import com.eblan.launcher.ui.dialog.ColorPickerDialog
-import com.eblan.launcher.ui.dialog.EditCornerRadiusDialog
-import com.eblan.launcher.ui.dialog.getBackgroundColorTitle
 import com.eblan.launcher.ui.model.SettingsItem
 import com.eblan.launcher.ui.settings.GridItemSettings
 import com.eblan.launcher.ui.settings.SettingsCategoryText
@@ -129,14 +124,6 @@ private fun Success(
 
     var showDockHeightDialog by remember { mutableStateOf(false) }
 
-    var showFolderCellDimensionDialog by remember { mutableStateOf(false) }
-
-    var showFolderMaxGridDialog by remember { mutableStateOf(false) }
-
-    var showFolderCornerRadiusGridDialog by remember { mutableStateOf(false) }
-
-    var showFolderBackgroundColorDialog by remember { mutableStateOf(false) }
-
     var showDockCustomBackgroundColorDialog by remember { mutableStateOf(false) }
 
     var showDockPaddingDialog by remember { mutableStateOf(false) }
@@ -171,22 +158,6 @@ private fun Success(
         },
     )
 
-    val folderHomeSettingsItems = buildFolderHomeSettingsItems(
-        homeSettings = homeSettings,
-        onFolderCellDimensionClick = {
-            showFolderCellDimensionDialog = true
-        },
-        onFolderMaxGridClick = {
-            showFolderMaxGridDialog = true
-        },
-        onFolderCornerRadiusClick = {
-            showFolderCornerRadiusGridDialog = true
-        },
-        onFolderBackgroundColorClick = {
-            showFolderBackgroundColorDialog = true
-        },
-    )
-
     Column(
         modifier = modifier
             .verticalScroll(rememberScrollState())
@@ -199,10 +170,6 @@ private fun Success(
         SettingsCategoryText(text = stringResource(R.string.dock))
 
         SettingsItems(items = dockHomeSettingsItems)
-
-        SettingsCategoryText(text = stringResource(R.string.folder))
-
-        SettingsItems(items = folderHomeSettingsItems)
 
         GridItemSettings(
             gridItemSettings = homeSettings.gridItemSettings,
@@ -264,77 +231,6 @@ private fun Success(
                 )
 
                 showDockHeightDialog = false
-            },
-        )
-    }
-
-    if (showFolderCellDimensionDialog) {
-        EditFolderCellDimensionDialog(
-            folderCellWidth = homeSettings.folderCellWidth,
-            folderCellHeight = homeSettings.folderCellHeight,
-            onDismissRequest = {
-                showFolderCellDimensionDialog = false
-            },
-            onUpdateFolderCellDimension = { folderCellWidth, folderCellHeight ->
-                onUpdateHomeSettings(
-                    homeSettings.copy(
-                        folderCellWidth = folderCellWidth,
-                        folderCellHeight = folderCellHeight,
-                    ),
-                )
-            },
-        )
-    }
-
-    if (showFolderMaxGridDialog) {
-        EditFolderMaxGridDialog(
-            maxFolderColumns = homeSettings.maxFolderColumns,
-            maxFolderRows = homeSettings.maxFolderRows,
-            onDismissRequest = {
-                showFolderMaxGridDialog = false
-            },
-            onUpdateFolderMaxGrid = { maxFolderColumns, maxFolderRows ->
-                onUpdateHomeSettings(
-                    homeSettings.copy(
-                        maxFolderColumns = maxFolderColumns,
-                        maxFolderRows = maxFolderRows,
-                    ),
-                )
-            },
-        )
-    }
-
-    if (showFolderCornerRadiusGridDialog) {
-        EditCornerRadiusDialog(
-            cornerRadius = homeSettings.folderCornerRadius,
-            onDismissRequest = {
-                showFolderCornerRadiusGridDialog = false
-            },
-            onUpdateCornerRadius = {
-                onUpdateHomeSettings(
-                    homeSettings.copy(
-                        folderCornerRadius = it,
-                    ),
-                )
-            },
-        )
-    }
-
-    if (showFolderBackgroundColorDialog) {
-        BackgroundColorDialog(
-            title = stringResource(commonR.string.background_color),
-            backgroundColor = homeSettings.folderBackgroundColor,
-            customBackgroundColor = homeSettings.customFolderBackgroundColor,
-            onDismissRequest = {
-                showFolderBackgroundColorDialog = false
-            },
-            onUpdateClick = { backgroundColor, customColor ->
-                onUpdateHomeSettings(
-                    homeSettings.copy(
-                        folderBackgroundColor = backgroundColor,
-                        customFolderBackgroundColor = customColor,
-                    ),
-                )
             },
         )
     }
@@ -562,47 +458,6 @@ private fun buildDockHomeSettingsItems(
             title = stringResource(R.string.dock_corner_radius),
             subtitle = stringResource(R.string.set_the_radius_for_each_dock_corner),
             onClick = onDockCornerRadiusClick,
-        ),
-    )
-}
-
-@Composable
-private fun buildFolderHomeSettingsItems(
-    homeSettings: HomeSettings,
-    onFolderCellDimensionClick: () -> Unit,
-    onFolderMaxGridClick: () -> Unit,
-    onFolderCornerRadiusClick: () -> Unit,
-    onFolderBackgroundColorClick: () -> Unit,
-): List<SettingsItem> = buildList {
-    add(
-        SettingsItem.Column(
-            title = stringResource(R.string.folder_cell_dimension),
-            subtitle = "${homeSettings.folderCellWidth}x${homeSettings.folderCellHeight}",
-            onClick = onFolderCellDimensionClick,
-        ),
-    )
-
-    add(
-        SettingsItem.Column(
-            title = stringResource(R.string.folder_max_grid),
-            subtitle = "${homeSettings.maxFolderColumns}x${homeSettings.maxFolderRows}",
-            onClick = onFolderMaxGridClick,
-        ),
-    )
-
-    add(
-        SettingsItem.Column(
-            title = stringResource(R.string.folder_corner_radius),
-            subtitle = "${homeSettings.folderCornerRadius}",
-            onClick = onFolderCornerRadiusClick,
-        ),
-    )
-
-    add(
-        SettingsItem.Column(
-            title = stringResource(R.string.folder_background_color),
-            subtitle = homeSettings.folderBackgroundColor.getBackgroundColorTitle(),
-            onClick = onFolderBackgroundColorClick,
         ),
     )
 }

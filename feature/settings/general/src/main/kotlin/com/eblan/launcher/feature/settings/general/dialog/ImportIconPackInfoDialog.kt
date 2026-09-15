@@ -35,7 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.eblan.launcher.designsystem.component.EblanDialog
-import com.eblan.launcher.domain.model.PackageManagerIconPackInfo
+import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPackInfo
 import com.eblan.launcher.feature.settings.general.R
 import com.eblan.launcher.common.R as commonR
 
@@ -66,37 +66,35 @@ internal fun ImportIconPackInfoDialog(
             }
 
             else -> {
-                Column {
-                    LazyColumn(
-                        modifier = Modifier.weight(
-                            weight = 1f,
-                            fill = false,
-                        ),
-                    ) {
-                        items(packageManagerIconPackInfos) {
-                            ListItem(
-                                headlineContent = {
-                                    Text(text = it.label)
-                                },
-                                leadingContent = {
-                                    AsyncImage(
-                                        model = it.icon,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(40.dp),
+                LazyColumn(
+                    modifier = Modifier.weight(
+                        weight = 1f,
+                        fill = false,
+                    ),
+                ) {
+                    items(packageManagerIconPackInfos) {
+                        ListItem(
+                            headlineContent = {
+                                Text(text = it.label)
+                            },
+                            leadingContent = {
+                                AsyncImage(
+                                    model = it.icon,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(40.dp),
+                                )
+                            },
+                            modifier = Modifier
+                                .clickable {
+                                    onUpdateIconPackInfo(
+                                        it.packageName,
+                                        it.label,
                                     )
-                                },
-                                modifier = Modifier
-                                    .clickable {
-                                        onUpdateIconPackInfo(
-                                            it.packageName,
-                                            it.label,
-                                        )
 
-                                        onDismissRequest()
-                                    }
-                                    .fillMaxWidth(),
-                            )
-                        }
+                                    onDismissRequest()
+                                }
+                                .fillMaxWidth(),
+                        )
                     }
                 }
             }

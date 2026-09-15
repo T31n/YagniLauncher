@@ -17,4 +17,6 @@
  */
 package com.eblan.launcher.domain.model
 
+import com.eblan.launcher.domain.model.grid.GridItem
+
 data class PageItem(val id: Int, val gridItems: List<GridItem>)

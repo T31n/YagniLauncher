@@ -19,17 +19,17 @@ package com.eblan.launcher.domain.usecase.home
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
+import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
-import com.eblan.launcher.domain.framework.FileManager
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.grid.isGridItemSpanWithinBounds
-import com.eblan.launcher.domain.model.Associate
-import com.eblan.launcher.domain.model.HomeData
+import com.eblan.launcher.domain.model.grid.Associate
+import com.eblan.launcher.domain.model.userdata.HomeData
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
-import com.eblan.launcher.domain.usecase.grid.isTopLevel
 import com.eblan.launcher.domain.usecase.util.getIconPackInfoFilePaths
+import com.eblan.launcher.domain.usecase.util.isTopLevel
 import com.eblan.launcher.domain.usecase.util.toGridItems
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow

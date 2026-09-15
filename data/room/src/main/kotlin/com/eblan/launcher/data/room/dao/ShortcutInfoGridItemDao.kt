@@ -24,7 +24,7 @@ import androidx.room.Query
 import androidx.room.Update
 import androidx.room.Upsert
 import com.eblan.launcher.data.room.entity.ShortcutInfoGridItemEntity
-import com.eblan.launcher.domain.model.PartialShortcutInfoGridItem
+import com.eblan.launcher.domain.model.grid.PartialShortcutInfoGridItem
 
 @Dao
 interface ShortcutInfoGridItemDao {
@@ -50,7 +50,7 @@ interface ShortcutInfoGridItemDao {
     ): List<ShortcutInfoGridItemEntity>
 
     @Query("DELETE FROM ShortcutInfoGridItemEntity WHERE serialNumber = :serialNumber AND packageName = :packageName")
-    suspend fun deleteShortcutInfoGridItemEntity(
+    suspend fun deleteShortcutInfoGridItemEntityByPackageName(
         serialNumber: Long,
         packageName: String,
     )

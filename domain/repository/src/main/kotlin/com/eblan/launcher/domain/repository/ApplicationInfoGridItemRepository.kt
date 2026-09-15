@@ -17,8 +17,8 @@
  */
 package com.eblan.launcher.domain.repository
 
-import com.eblan.launcher.domain.model.ApplicationInfoGridItem
-import com.eblan.launcher.domain.model.PartialApplicationInfoGridItem
+import com.eblan.launcher.domain.model.grid.ApplicationInfoGridItem
+import com.eblan.launcher.domain.model.grid.PartialApplicationInfoGridItem
 
 interface ApplicationInfoGridItemRepository {
     suspend fun getApplicationInfoGridItems(): List<ApplicationInfoGridItem>

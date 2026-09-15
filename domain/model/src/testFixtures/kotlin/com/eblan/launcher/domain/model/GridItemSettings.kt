@@ -17,6 +17,11 @@
  */
 package com.eblan.launcher.domain.model
 
+import com.eblan.launcher.domain.model.grid.GridItemSettings
+import com.eblan.launcher.domain.model.grid.HorizontalAlignment
+import com.eblan.launcher.domain.model.grid.VerticalArrangement
+import com.eblan.launcher.domain.model.userdata.TextColor
+
 fun getGridItemSettings() = GridItemSettings(
     iconSize = 48,
     textColor = TextColor.System,

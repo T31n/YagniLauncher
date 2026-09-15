@@ -62,11 +62,11 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.addLastModifiedToFileCacheKey
 import coil3.request.crossfade
-import com.eblan.launcher.domain.model.AppDrawerSettings
-import com.eblan.launcher.domain.model.BackgroundColor
-import com.eblan.launcher.domain.model.EblanApplicationInfo
-import com.eblan.launcher.domain.model.EblanUser
-import com.eblan.launcher.domain.model.TextColor
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
+import com.eblan.launcher.domain.model.launcherapps.EblanUser
+import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
+import com.eblan.launcher.domain.model.userdata.BackgroundColor
+import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.screen.application.PrivateSpaceStickyHeader
 import com.eblan.launcher.feature.home.screen.application.handleOnLongPressPrivateSpaceEblanApplicationInfoItem
 import com.eblan.launcher.feature.home.screen.application.handleOnTapEblanApplicationInfoItem
@@ -220,7 +220,8 @@ private fun PrivateSpaceEblanApplicationInfoItem(
                         {
                             scope.launch {
                                 handleOnTapEblanApplicationInfoItem(
-                                    eblanApplicationInfo = eblanApplicationInfo,
+                                    componentName = eblanApplicationInfo.componentName,
+                                    serialNumber = eblanApplicationInfo.serialNumber,
                                     intOffset = intOffset,
                                     intSize = intSize,
                                     keyboardController = keyboardController,

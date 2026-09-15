@@ -19,16 +19,15 @@ package com.eblan.launcher.domain.usecase.application
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
+import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
-import com.eblan.launcher.domain.framework.FileManager
 import com.eblan.launcher.domain.framework.JaroWinklerSimilarityWrapper
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
-import com.eblan.launcher.domain.model.AppDrawerType
-import com.eblan.launcher.domain.model.EblanApplicationInfo
-import com.eblan.launcher.domain.model.EblanApplicationInfoOrder
-import com.eblan.launcher.domain.model.EblanUserPageKey
-import com.eblan.launcher.domain.model.EblanUserType
-import com.eblan.launcher.domain.model.GetEblanApplicationInfosByLabelAndTag
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
+import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
+import com.eblan.launcher.domain.model.launcherapps.EblanUserPageKey
+import com.eblan.launcher.domain.model.launcherapps.EblanUserType
+import com.eblan.launcher.domain.model.userdata.AppDrawerType
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.util.getIconPackInfoFilePaths
@@ -48,7 +47,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
     private val fileManager: FileManager,
     private val iconKeyGenerator: IconKeyGenerator,
     private val jaroWinklerSimilarityWrapper: JaroWinklerSimilarityWrapper,
-    @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
+    @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke(
@@ -70,11 +69,6 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
             eblanApplicationInfos = eblanApplicationInfos,
         )
 
-        updateEblanApplicationInfoIndexes(
-            eblanApplicationInfoOrder = userData.appDrawerSettings.eblanApplicationInfoOrder,
-            eblanApplicationInfos = eblanApplicationInfosByLabel,
-        )
-
         when (userData.appDrawerSettings.appDrawerType) {
             AppDrawerType.Vertical, AppDrawerType.List ->
                 getVerticalOrListEblanApplicationInfosByLabel(
@@ -90,10 +84,10 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
                     iconPackInfoPackageName = iconPackInfoPackageName,
                 )
         }
-    }.flowOn(ioDispatcher)
+    }.flowOn(defaultDispatcher)
 
     private suspend fun getVerticalOrListEblanApplicationInfosByLabel(
-        eblanApplicationInfos: MutableList<EblanApplicationInfo>,
+        eblanApplicationInfos: List<EblanApplicationInfo>,
         iconPackInfoPackageName: String,
     ): GetEblanApplicationInfosByLabelAndTag {
         val groupedEblanApplicationInfos = eblanApplicationInfos.groupBy {
@@ -115,9 +109,9 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
         )
 
         return GetEblanApplicationInfosByLabelAndTag(
-            eblanApplicationInfoWithIconPackInfos = groupedEblanApplicationInfos.filterKeys { it != privateEblanUserPageKey },
+            eblanApplicationInfos = groupedEblanApplicationInfos.filterKeys { it != privateEblanUserPageKey },
             privateEblanUser = privateEblanUserPageKey?.eblanUser,
-            privateEblanApplicationInfoWithIconPackInfos = groupedEblanApplicationInfos[privateEblanUserPageKey].orEmpty(),
+            privateEblanApplicationInfos = groupedEblanApplicationInfos[privateEblanUserPageKey].orEmpty(),
             iconPackInfoFilePaths = iconPackInfoFilePaths,
         )
     }
@@ -125,7 +119,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
     private suspend fun getHorizontalEblanApplicationInfosByLabel(
         horizontalAppDrawerColumns: Int,
         horizontalAppDrawerRows: Int,
-        eblanApplicationInfos: MutableList<EblanApplicationInfo>,
+        eblanApplicationInfos: List<EblanApplicationInfo>,
         iconPackInfoPackageName: String,
     ): GetEblanApplicationInfosByLabelAndTag {
         val groupedEblanApplicationInfos = eblanApplicationInfos.groupBy {
@@ -149,30 +143,11 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
         )
 
         return GetEblanApplicationInfosByLabelAndTag(
-            eblanApplicationInfoWithIconPackInfos = groupedEblanApplicationInfos,
+            eblanApplicationInfos = groupedEblanApplicationInfos,
             privateEblanUser = null,
-            privateEblanApplicationInfoWithIconPackInfos = emptyList(),
+            privateEblanApplicationInfos = emptyList(),
             iconPackInfoFilePaths = iconPackInfoFilePaths,
         )
-    }
-
-    private fun updateEblanApplicationInfoIndexes(
-        eblanApplicationInfoOrder: EblanApplicationInfoOrder,
-        eblanApplicationInfos: MutableList<EblanApplicationInfo>,
-    ) {
-        if (eblanApplicationInfoOrder != EblanApplicationInfoOrder.Index) return
-
-        eblanApplicationInfos.filter { it.index >= 0 }.forEach {
-            val fromIndex = eblanApplicationInfos.indexOf(it)
-
-            if (fromIndex > -1) {
-                eblanApplicationInfos.removeAt(fromIndex)
-
-                val toIndex = it.index.coerceAtMost(eblanApplicationInfos.size)
-
-                eblanApplicationInfos.add(toIndex, it)
-            }
-        }
     }
 
     private suspend fun getEblanApplicationInfos(
@@ -181,7 +156,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
         excludeTaggedApps: Boolean,
         tagId: Long?,
         eblanApplicationInfos: List<EblanApplicationInfo>,
-    ): MutableList<EblanApplicationInfo> {
+    ): List<EblanApplicationInfo> {
         val eblanApplicationInfosByTag = when {
             tagId != null ->
                 eblanApplicationInfoRepository.getEblanApplicationInfosByTagId(id = tagId)
@@ -190,7 +165,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
                 eblanApplicationInfoRepository.getEblanApplicationInfosWithoutTag()
 
             else -> eblanApplicationInfos
-        }.filterNot { it.isHidden }
+        }.filterNot { it.isHidden || it.folderId != null }
 
         val eblanApplicationInfosByLabel = eblanApplicationInfosByTag.filter {
             val currentLabel = it.customLabel ?: it.label
@@ -204,42 +179,37 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
             )
         }
 
-        val filterEblanApplicationInfos =
-            if (fuzzySearch || eblanApplicationInfosByLabel.isNotEmpty()) {
-                val fuzzyMatches = if (fuzzySearch) {
-                    (eblanApplicationInfosByTag - eblanApplicationInfosByLabel.toSet())
-                        .map {
-                            val currentLabel = it.customLabel ?: it.label
+        return if (fuzzySearch || eblanApplicationInfosByLabel.isNotEmpty()) {
+            val fuzzyMatches = if (fuzzySearch) {
+                (eblanApplicationInfosByTag - eblanApplicationInfosByLabel.toSet())
+                    .map {
+                        val currentLabel = it.customLabel ?: it.label
 
-                            it to jaroWinklerSimilarityWrapper.apply(
-                                left = normalize(text = label),
-                                right = normalize(text = currentLabel),
-                            )
-                        }
-                        .filter { (_, score) -> score >= FUZZY_MATCH_THRESHOLD }
-                        .sortedByDescending { (_, score) -> score }
-                        .map { (eblanApplicationInfo, _) -> eblanApplicationInfo }
-                } else {
-                    emptyList()
-                }
-
-                eblanApplicationInfosByLabel.sortedBy {
-                    val currentLabel = it.customLabel ?: it.label
-
-                    currentLabel.lowercase()
-                } + fuzzyMatches
+                        it to jaroWinklerSimilarityWrapper.apply(
+                            left = normalize(text = label),
+                            right = normalize(text = currentLabel),
+                        )
+                    }
+                    .filter { (_, score) -> score >= 0.85 }
+                    .sortedByDescending { (_, score) -> score }
+                    .map { (eblanApplicationInfo, _) -> eblanApplicationInfo }
             } else {
                 emptyList()
             }
 
-        return filterEblanApplicationInfos.toMutableList()
+            eblanApplicationInfosByLabel.sortedBy {
+                val currentLabel = it.customLabel ?: it.label
+
+                currentLabel.lowercase()
+            } + fuzzyMatches
+        } else {
+            emptyList()
+        }
     }
 
-    private suspend fun normalize(text: String): String = withContext(ioDispatcher) {
+    private suspend fun normalize(text: String): String = withContext(defaultDispatcher) {
         Normalizer.normalize(text, Normalizer.Form.NFD)
             .replace("\\p{M}+".toRegex(), "")
             .lowercase()
     }
 }
-
-private const val FUZZY_MATCH_THRESHOLD = 0.85

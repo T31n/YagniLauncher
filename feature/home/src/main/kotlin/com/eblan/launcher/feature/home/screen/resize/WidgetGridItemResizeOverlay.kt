@@ -45,9 +45,9 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.domain.grid.isGridItemSpanWithinBounds
 import com.eblan.launcher.domain.grid.resizeWidgetGridItemWithPixels
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.GridItemData
-import com.eblan.launcher.domain.model.SideAnchor
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.GridItemData
+import com.eblan.launcher.domain.model.grid.SideAnchor
 import com.eblan.launcher.feature.home.util.DRAG_HANDLE_SIZE
 import com.eblan.launcher.feature.home.util.updateAppWidgetOptions
 import com.eblan.launcher.framework.widgetmanager.AndroidAppWidgetManagerWrapper

@@ -53,25 +53,26 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
+import com.eblan.launcher.common.AndroidImageSerializer
+import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
-import com.eblan.launcher.domain.framework.FileManager
-import com.eblan.launcher.domain.model.Associate
-import com.eblan.launcher.domain.model.EblanAction
-import com.eblan.launcher.domain.model.EblanActionType
-import com.eblan.launcher.domain.model.EblanApplicationInfoGroup
-import com.eblan.launcher.domain.model.ExperimentalSettings
-import com.eblan.launcher.domain.model.GestureSettings
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.HomeSettings
-import com.eblan.launcher.domain.model.MoveGridItemResult
-import com.eblan.launcher.domain.model.PinItemRequestType
+import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
+import com.eblan.launcher.domain.model.grid.Associate
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.MoveGridItemResult
+import com.eblan.launcher.domain.model.launcherapps.PinItemRequestType
+import com.eblan.launcher.domain.model.userdata.EblanAction
+import com.eblan.launcher.domain.model.userdata.EblanActionType
+import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
+import com.eblan.launcher.domain.model.userdata.GestureSettings
+import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.GridItemSource
 import com.eblan.launcher.feature.home.model.PageDirection
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.calculatePage
 import com.eblan.launcher.feature.home.util.handleEblanAction
-import com.eblan.launcher.framework.imageserializer.AndroidImageSerializer
 import com.eblan.launcher.framework.launcherapps.AndroidLauncherAppsWrapper
 import com.eblan.launcher.framework.launcherapps.PinItemRequestWrapper
 import com.eblan.launcher.framework.usermanager.AndroidUserManagerWrapper
@@ -307,6 +308,21 @@ internal class PagerScreenState(
             !showFolderGridItemPopup &&
             eblanApplicationInfoGroup == null
 
+    var folderEblanApplicationInfo by mutableStateOf<FolderEblanApplicationInfo?>(null)
+        private set
+
+    var showFolderApplicationInfoPopup by mutableStateOf(false)
+        private set
+
+    var isCloseFolderApplicationInfoPopup by mutableStateOf(false)
+        private set
+
+    var showFolderEblanApplicationInfoGridItemPopup by mutableStateOf(false)
+        private set
+
+    var isCloseFolderEblanApplicationInfoGridItemPopup by mutableStateOf(false)
+        private set
+
     private val touchSlop = with(density) {
         50.dp.toPx()
     }
@@ -447,6 +463,48 @@ internal class PagerScreenState(
         showFolderGridItemPopup = false
 
         isCloseFolderGridItemPopup = false
+    }
+
+    fun showFolderApplicationPopup(
+        intOffset: IntOffset,
+        intSize: IntSize,
+    ) {
+        popupIntOffset = intOffset
+
+        popupIntSize = intSize
+
+        showFolderApplicationInfoPopup = true
+    }
+
+    fun dismissFolderEblanApplicationPopup() {
+        popupIntOffset = null
+
+        popupIntSize = null
+
+        showFolderApplicationInfoPopup = false
+
+        isCloseFolderApplicationInfoPopup = false
+    }
+
+    fun showFolderEblanApplicationInfoGridItemPopup(
+        intOffset: IntOffset,
+        intSize: IntSize,
+    ) {
+        popupIntOffset = intOffset
+
+        popupIntSize = intSize
+
+        showFolderEblanApplicationInfoGridItemPopup = true
+    }
+
+    fun dismissFolderEblanApplicationInfoGridItemPopup() {
+        popupIntOffset = null
+
+        popupIntSize = null
+
+        showFolderEblanApplicationInfoGridItemPopup = false
+
+        isCloseFolderEblanApplicationInfoGridItemPopup = false
     }
 
     fun updateIsDragging(value: Boolean) {
@@ -683,6 +741,10 @@ internal class PagerScreenState(
             )
 
             eblanApplicationInfoGroup = null
+
+            if (applicationScreenSwipeY.value < screenHeight) {
+                dismissApplicationScreen()
+            }
         }
     }
 
@@ -1092,6 +1154,18 @@ internal class PagerScreenState(
 
     fun updateIsVisibleFolders(value: Boolean) {
         isVisibleFolders = value
+    }
+
+    fun updateShowFolderApplicationInfoPopup(value: Boolean) {
+        showFolderApplicationInfoPopup = value
+    }
+
+    fun updateFolderEblanApplicationInfo(value: FolderEblanApplicationInfo?) {
+        folderEblanApplicationInfo = value
+    }
+
+    fun updateIsCloseFolderEblanApplicationInfoGridItemPopup(value: Boolean) {
+        isCloseFolderEblanApplicationInfoGridItemPopup = value
     }
 }
 

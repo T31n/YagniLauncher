@@ -17,7 +17,7 @@
  */
 package com.eblan.launcher.feature.editapplicationinfo.model
 
-import com.eblan.launcher.domain.model.EblanApplicationInfo
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 
 internal sealed interface EditApplicationInfoUiState {
     data object Loading : EditApplicationInfoUiState

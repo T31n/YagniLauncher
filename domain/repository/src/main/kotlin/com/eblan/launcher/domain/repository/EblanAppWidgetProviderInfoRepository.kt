@@ -17,8 +17,8 @@
  */
 package com.eblan.launcher.domain.repository
 
-import com.eblan.launcher.domain.model.DeleteEblanAppWidgetProviderInfo
-import com.eblan.launcher.domain.model.EblanAppWidgetProviderInfo
+import com.eblan.launcher.domain.model.widget.DeleteEblanAppWidgetProviderInfo
+import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
 import kotlinx.coroutines.flow.Flow
 
 interface EblanAppWidgetProviderInfoRepository {

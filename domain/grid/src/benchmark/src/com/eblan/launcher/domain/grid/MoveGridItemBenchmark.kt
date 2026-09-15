@@ -17,12 +17,12 @@
  */
 package com.eblan.launcher.domain.grid
 
-import com.eblan.launcher.domain.model.Associate
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.GridItemData
-import com.eblan.launcher.domain.model.ResolveDirection
 import com.eblan.launcher.domain.model.getEblanAction
 import com.eblan.launcher.domain.model.getGridItemSettings
+import com.eblan.launcher.domain.model.grid.Associate
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.GridItemData
+import com.eblan.launcher.domain.model.grid.ResolveDirection
 import kotlinx.coroutines.runBlocking
 import org.openjdk.jmh.annotations.Benchmark
 import org.openjdk.jmh.annotations.BenchmarkMode

@@ -17,13 +17,13 @@
  */
 package com.eblan.launcher.domain.framework
 
-import com.eblan.launcher.domain.model.EblanUser
-import com.eblan.launcher.domain.model.FastLauncherAppsActivityInfo
-import com.eblan.launcher.domain.model.FastLauncherAppsShortcutInfo
-import com.eblan.launcher.domain.model.LauncherAppsActivityInfo
-import com.eblan.launcher.domain.model.LauncherAppsShortcutInfo
-import com.eblan.launcher.domain.model.ShortcutConfigActivityInfo
-import com.eblan.launcher.domain.model.ShortcutQuery
+import com.eblan.launcher.domain.model.launcherapps.EblanUser
+import com.eblan.launcher.domain.model.launcherapps.FastLauncherAppsActivityInfo
+import com.eblan.launcher.domain.model.launcherapps.FastLauncherAppsShortcutInfo
+import com.eblan.launcher.domain.model.launcherapps.LauncherAppsActivityInfo
+import com.eblan.launcher.domain.model.launcherapps.LauncherAppsShortcutInfo
+import com.eblan.launcher.domain.model.launcherapps.ShortcutConfigActivityInfo
+import com.eblan.launcher.domain.model.launcherapps.ShortcutQuery
 
 interface LauncherAppsWrapper {
     val hasShortcutHostPermission: Boolean

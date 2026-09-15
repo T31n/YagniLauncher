@@ -19,8 +19,8 @@ package com.eblan.launcher.domain.usecase.launcherapps
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
+import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
-import com.eblan.launcher.domain.framework.FileManager
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.repository.EblanShortcutInfoRepository
@@ -52,7 +52,7 @@ class ChangeShortcutsUseCase @Inject constructor(
                 packageName = packageName,
             ) ?: return@withContext
 
-            val oldEblanShortcutInfos = eblanShortcutInfoRepository.getEblanShortcutInfos(
+            val oldEblanShortcutInfos = eblanShortcutInfoRepository.getEblanShortcutInfosByPackageName(
                 serialNumber = serialNumber,
                 packageName = packageName,
             )

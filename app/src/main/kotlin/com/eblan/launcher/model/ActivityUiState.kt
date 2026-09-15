@@ -17,7 +17,7 @@
  */
 package com.eblan.launcher.model
 
-import com.eblan.launcher.domain.model.ApplicationTheme
+import com.eblan.launcher.domain.model.userdata.ApplicationTheme
 
 sealed interface ActivityUiState {
     data object Loading : ActivityUiState

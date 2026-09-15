@@ -21,16 +21,6 @@
     <string name="dock_rows_is_not_valid">Počet řádků dokovací oblasti není platný</string>
     <string name="dock_height">Výška dokovací oblasti</string>
     <string name="dock_height_is_not_valid">Výška dokovací oblasti není platná</string>
-    <string name="folder_cell_dimension">Rozměr buňky složky</string>
-    <string name="cell_width">Šířka buňky</string>
-    <string name="cell_width_is_not_valid">Šířka buňky není platná</string>
-    <string name="cell_height">Výška buňky</string>
-    <string name="cell_height_is_not_valid">Výška buňky není platná</string>
-    <string name="max_columns">Maximum sloupců</string>
-    <string name="max_columns_is_not_valid">Maximální počet sloupců není platný</string>
-    <string name="folder_max_grid">Maximální rozměr mřížky složky</string>
-    <string name="max_rows">Maximum řádků</string>
-    <string name="max_rows_is_not_valid">Maximální počet řádků není platný</string>
     <string name="infinite_scrolling">Nekonečné rolování</string>
     <string name="seamless_loop_page_scroll">Bezešvá smyčka při rolování stránek</string>
     <string name="wallpaper_scrolling">Rolování tapety</string>
@@ -40,7 +30,6 @@
     <string name="add_new_apps_to_home_screen">Přidat nové aplikace na domovskou obrazovku</string>
     <string name="dock">Dokovací oblast</string>
     <string name="dock_infinite_scroll">Nekonečné rolování dokovací oblasti</string>
-    <string name="folder">Složka</string>
     <string name="prevent_rotation_when_device_orientation_changes">Zabránit otáčení při změně natočení zařízení</string>
     <string name="show_page_indicator">Zobrazit indikátor stránky</string>
     <string name="show_an_indicator_for_the_current_page">Zobrazit indikátor pro aktuální stránku</string>
@@ -57,6 +46,4 @@
     <string name="bottom_end">Pravý dolní</string>
     <string name="bottom_end_is_not_valid">Pravý dolní není platný</string>
     <string name="set_the_radius_for_each_dock_corner">Nastavit zaoblení každého rohu dokovací oblasti</string>
-    <string name="folder_corner_radius">Zaoblení rohů složky</string>
-    <string name="folder_background_color">Barva pozadí složky</string>
 </resources>

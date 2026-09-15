@@ -43,11 +43,11 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.component.VerticalSlideReveal
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.EblanApplicationInfo
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.GridItemData
-import com.eblan.launcher.domain.model.IconPackInfoComponent
-import com.eblan.launcher.domain.model.PackageManagerIconPackInfo
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.GridItemData
+import com.eblan.launcher.domain.model.iconpackinfo.IconPackInfoComponent
+import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPackInfo
 import com.eblan.launcher.feature.editgriditem.dialog.EditFolderLabelDialog
 import com.eblan.launcher.feature.editgriditem.model.EditGridItemUiState
 import com.eblan.launcher.ui.dialog.EditCustomLabelDialog
@@ -446,7 +446,7 @@ private fun EditFolder(
 
         add(
             SettingsItem.Column(
-                title = stringResource(R.string.edit_label),
+                title = stringResource(commonR.string.edit_label),
                 subtitle = data.label,
                 onClick = {
                     showEditLabelDialog = true

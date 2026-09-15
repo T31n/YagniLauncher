@@ -17,7 +17,7 @@
  */
 package com.eblan.launcher.domain.repository
 
-import com.eblan.launcher.domain.model.EblanIconPackInfo
+import com.eblan.launcher.domain.model.iconpackinfo.EblanIconPackInfo
 import kotlinx.coroutines.flow.Flow
 
 interface EblanIconPackInfoRepository {

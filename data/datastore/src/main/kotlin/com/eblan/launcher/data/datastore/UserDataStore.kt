@@ -18,24 +18,16 @@
 package com.eblan.launcher.data.datastore
 
 import androidx.datastore.core.DataStore
-import com.eblan.launcher.data.datastore.mapper.toAppDrawerSettings
-import com.eblan.launcher.data.datastore.mapper.toAppDrawerSettingsProto
-import com.eblan.launcher.data.datastore.mapper.toExperimentalSettings
-import com.eblan.launcher.data.datastore.mapper.toExperimentalSettingsProto
-import com.eblan.launcher.data.datastore.mapper.toGeneralSettings
-import com.eblan.launcher.data.datastore.mapper.toGeneralSettingsProto
-import com.eblan.launcher.data.datastore.mapper.toGestureSettings
-import com.eblan.launcher.data.datastore.mapper.toGestureSettingsProto
-import com.eblan.launcher.data.datastore.mapper.toHomeSettings
-import com.eblan.launcher.data.datastore.mapper.toHomeSettingsProto
 import com.eblan.launcher.data.datastore.proto.UserDataProto
 import com.eblan.launcher.data.datastore.proto.copy
-import com.eblan.launcher.domain.model.AppDrawerSettings
-import com.eblan.launcher.domain.model.ExperimentalSettings
-import com.eblan.launcher.domain.model.GeneralSettings
-import com.eblan.launcher.domain.model.GestureSettings
-import com.eblan.launcher.domain.model.HomeSettings
-import com.eblan.launcher.domain.model.UserData
+import com.eblan.launcher.data.datastore.proto.folder.folderSettingsProto
+import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
+import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
+import com.eblan.launcher.domain.model.userdata.FolderSettings
+import com.eblan.launcher.domain.model.userdata.GeneralSettings
+import com.eblan.launcher.domain.model.userdata.GestureSettings
+import com.eblan.launcher.domain.model.userdata.HomeSettings
+import com.eblan.launcher.domain.model.userdata.UserData
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -47,6 +39,7 @@ class UserDataStore @Inject constructor(private val dataStore: DataStore<UserDat
             gestureSettings = it.gestureSettingsProto.toGestureSettings(),
             generalSettings = it.generalSettingsProto.toGeneralSettings(),
             experimentalSettings = it.experimentalSettingsProto.toExperimentalSettings(),
+            folderSettings = it.folderSettingsProto.toFolderSettings(),
         )
     }
 
@@ -86,6 +79,14 @@ class UserDataStore @Inject constructor(private val dataStore: DataStore<UserDat
         dataStore.updateData {
             it.copy {
                 experimentalSettingsProto = experimentalSettings.toExperimentalSettingsProto()
+            }
+        }
+    }
+
+    suspend fun updateFolderSettings(folderSettings: FolderSettings) {
+        dataStore.updateData {
+            it.copy {
+                folderSettingsProto = folderSettings.toFolderSettingsProto()
             }
         }
     }
