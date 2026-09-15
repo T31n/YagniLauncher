@@ -44,11 +44,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.AppDrawerType
 import com.eblan.launcher.feature.settings.appdrawer.dialog.EditHorizontalGridDialog
 import com.eblan.launcher.feature.settings.appdrawer.dialog.EditVerticalGridDialog
 import com.eblan.launcher.feature.settings.appdrawer.dialog.HiddenEblanApplicationInfosDialog
+import com.eblan.launcher.feature.settings.appdrawer.dialog.ManageFoldersDialog
 import com.eblan.launcher.feature.settings.appdrawer.dialog.ManageTagsDialog
 import com.eblan.launcher.feature.settings.appdrawer.model.AppDrawerSettingsUiState
 import com.eblan.launcher.ui.dialog.BackgroundColorDialog
@@ -69,14 +71,18 @@ internal fun AppDrawerSettingsRoute(
 
     val eblanApplicationInfoTags by viewModel.eblanApplicationInfoTags.collectAsStateWithLifecycle()
 
+    val folderEblanApplicationInfos by viewModel.folderEblanApplicationInfos.collectAsStateWithLifecycle()
+
     AppDrawerSettingsScreen(
         modifier = modifier,
         appDrawerSettingsUiState = appDrawerSettingsUiState,
         eblanApplicationInfoTags = eblanApplicationInfoTags,
+        folderEblanApplicationInfos = folderEblanApplicationInfos,
         onNavigateUp = onNavigateUp,
         onUpdateAppDrawerSettings = viewModel::updateAppDrawerSettings,
         onUpdateEblanApplicationInfo = viewModel::updateEblanApplicationInfo,
         onUpdateEblanApplicationInfoTags = viewModel::updateEblanApplicationInfoTags,
+        onUpdateFolderEblanApplicationInfos = viewModel::updateFolderEblanApplicationInfos,
     )
 }
 
@@ -86,10 +92,12 @@ internal fun AppDrawerSettingsScreen(
     modifier: Modifier = Modifier,
     appDrawerSettingsUiState: AppDrawerSettingsUiState,
     eblanApplicationInfoTags: List<EblanApplicationInfoTag>,
+    folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     onNavigateUp: () -> Unit,
     onUpdateAppDrawerSettings: (AppDrawerSettings) -> Unit,
     onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
     onUpdateEblanApplicationInfoTags: (List<EblanApplicationInfoTag>) -> Unit,
+    onUpdateFolderEblanApplicationInfos: (List<FolderEblanApplicationInfo>) -> Unit,
 ) {
     Scaffold(
         modifier = modifier,
@@ -119,9 +127,11 @@ internal fun AppDrawerSettingsScreen(
                     appDrawerSettings = appDrawerSettingsUiState.appDrawerSettings,
                     eblanApplicationInfos = appDrawerSettingsUiState.eblanApplicationInfos,
                     eblanApplicationInfoTags = eblanApplicationInfoTags,
+                    folderEblanApplicationInfos = folderEblanApplicationInfos,
                     onUpdateAppDrawerSettings = onUpdateAppDrawerSettings,
                     onUpdateEblanApplicationInfo = onUpdateEblanApplicationInfo,
                     onUpdateEblanApplicationInfoTags = onUpdateEblanApplicationInfoTags,
+                    onUpdateFolderEblanApplicationInfos = onUpdateFolderEblanApplicationInfos,
                 )
             }
         }
@@ -134,9 +144,11 @@ private fun Success(
     appDrawerSettings: AppDrawerSettings,
     eblanApplicationInfos: List<EblanApplicationInfo>,
     eblanApplicationInfoTags: List<EblanApplicationInfoTag>,
+    folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     onUpdateAppDrawerSettings: (AppDrawerSettings) -> Unit,
     onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
     onUpdateEblanApplicationInfoTags: (List<EblanApplicationInfoTag>) -> Unit,
+    onUpdateFolderEblanApplicationInfos: (List<FolderEblanApplicationInfo>) -> Unit,
 ) {
     var showAppDrawerTypeDialog by remember { mutableStateOf(false) }
 
@@ -149,6 +161,8 @@ private fun Success(
     var showBackgroundColorDialog by remember { mutableStateOf(false) }
 
     var showManageTagsDialog by remember { mutableStateOf(false) }
+
+    var showManageFoldersDialog by remember { mutableStateOf(false) }
 
     val items = buildAppDrawerSettingsItems(
         appDrawerSettings = appDrawerSettings,
@@ -170,6 +184,9 @@ private fun Success(
         onUpdateAppDrawerSettings = onUpdateAppDrawerSettings,
         onManageTags = {
             showManageTagsDialog = true
+        },
+        onManageFolders = {
+            showManageFoldersDialog = true
         },
     )
 
@@ -285,6 +302,16 @@ private fun Success(
             onUpdateEblanApplicationInfoTags = onUpdateEblanApplicationInfoTags,
         )
     }
+
+    if (showManageFoldersDialog) {
+        ManageFoldersDialog(
+            folderEblanApplicationInfos = folderEblanApplicationInfos,
+            onDismissRequest = {
+                showManageFoldersDialog = false
+            },
+            onUpdateFolderEblanApplicationInfos = onUpdateFolderEblanApplicationInfos,
+        )
+    }
 }
 
 @Composable
@@ -297,12 +324,21 @@ private fun buildAppDrawerSettingsItems(
     onHiddenApplicationsClick: () -> Unit,
     onUpdateAppDrawerSettings: (AppDrawerSettings) -> Unit,
     onManageTags: () -> Unit,
+    onManageFolders: () -> Unit,
 ): List<SettingsItem> = buildList {
     add(
         SettingsItem.Column(
             title = "Manage Tags",
             subtitle = "Sort, update and delete tags",
             onClick = onManageTags,
+        ),
+    )
+
+    add(
+        SettingsItem.Column(
+            title = "Manage Folders",
+            subtitle = "Sort, update and delete folders",
+            onClick = onManageFolders,
         ),
     )
 

@@ -21,11 +21,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoTagRepository
+import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.application.GetEblanApplicationTagsUseCase
+import com.eblan.launcher.domain.usecase.folder.GetFolderEblanApplicationInfosUseCase
 import com.eblan.launcher.feature.settings.appdrawer.model.AppDrawerSettingsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -40,6 +43,8 @@ internal class AppDrawerSettingsViewModel @Inject constructor(
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
     getEblanApplicationTagsUseCase: GetEblanApplicationTagsUseCase,
     private val eblanApplicationInfoTagRepository: EblanApplicationInfoTagRepository,
+    private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
+    getFolderEblanApplicationInfosUseCase: GetFolderEblanApplicationInfosUseCase,
 ) : ViewModel() {
     val appDrawerSettingsUiState = combine(
         userDataRepository.userDataFlow,
@@ -63,6 +68,12 @@ internal class AppDrawerSettingsViewModel @Inject constructor(
         initialValue = emptyList(),
     )
 
+    val folderEblanApplicationInfos = getFolderEblanApplicationInfosUseCase().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = emptyList(),
+    )
+
     fun updateAppDrawerSettings(appDrawerSettings: AppDrawerSettings) {
         viewModelScope.launch {
             userDataRepository.updateAppDrawerSettings(appDrawerSettings = appDrawerSettings)
@@ -79,6 +90,14 @@ internal class AppDrawerSettingsViewModel @Inject constructor(
         viewModelScope.launch {
             eblanApplicationInfoTagRepository.updateEblanApplicationInfoTags(
                 eblanApplicationInfoTags = eblanApplicationInfoTags,
+            )
+        }
+    }
+
+    fun updateFolderEblanApplicationInfos(folderEblanApplicationInfos: List<FolderEblanApplicationInfo>) {
+        viewModelScope.launch {
+            folderEblanApplicationInfoRepository.updateFolderEblanApplicationInfos(
+                folderEblanApplicationInfos = folderEblanApplicationInfos,
             )
         }
     }
