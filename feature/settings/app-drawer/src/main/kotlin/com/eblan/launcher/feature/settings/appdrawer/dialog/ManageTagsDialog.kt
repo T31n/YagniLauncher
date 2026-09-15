@@ -71,14 +71,14 @@ internal fun ManageTagsDialog(
         onDismissRequest = onDismissRequest,
     ) {
         Text(
-            text = stringResource(R.string.horizontal_grid),
+            text = stringResource(R.string.manage_tags),
             style = MaterialTheme.typography.titleLarge,
         )
 
         when {
             currentEblanApplicationInfoTags.isEmpty() -> {
                 Text(
-                    text = "No Tags",
+                    text = stringResource(R.string.no_tags),
                 )
             }
 

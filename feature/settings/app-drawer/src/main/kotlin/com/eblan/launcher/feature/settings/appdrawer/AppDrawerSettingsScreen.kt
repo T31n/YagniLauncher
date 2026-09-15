@@ -328,16 +328,16 @@ private fun buildAppDrawerSettingsItems(
 ): List<SettingsItem> = buildList {
     add(
         SettingsItem.Column(
-            title = "Manage Tags",
-            subtitle = "Sort, update and delete tags",
+            title = stringResource(R.string.manage_tags),
+            subtitle = stringResource(R.string.sort_update_and_delete_tags),
             onClick = onManageTags,
         ),
     )
 
     add(
         SettingsItem.Column(
-            title = "Manage Folders",
-            subtitle = "Sort, update and delete folders",
+            title = stringResource(R.string.manage_folders),
+            subtitle = stringResource(R.string.sort_update_and_delete_folders),
             onClick = onManageFolders,
         ),
     )

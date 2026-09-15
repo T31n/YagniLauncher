@@ -73,14 +73,14 @@ internal fun ManageFoldersDialog(
         onDismissRequest = onDismissRequest,
     ) {
         Text(
-            text = stringResource(R.string.horizontal_grid),
+            text = stringResource(R.string.manage_folders),
             style = MaterialTheme.typography.titleLarge,
         )
 
         when {
             currentFolderEblanApplicationInfos.isEmpty() -> {
                 Text(
-                    text = "No Folders",
+                    text = stringResource(R.string.no_folders),
                 )
             }
 
