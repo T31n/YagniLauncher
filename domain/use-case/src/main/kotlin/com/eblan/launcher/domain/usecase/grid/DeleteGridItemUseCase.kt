@@ -54,6 +54,7 @@ class DeleteGridItemUseCase @Inject constructor(
         getRecursiveFolderGridItems(
             gridItem = gridItem,
             previewFolderGridItems = previewFolderGridItems,
+            includeRoot = false,
         ).forEach {
             deleteGridItemData(
                 gridItem = it,

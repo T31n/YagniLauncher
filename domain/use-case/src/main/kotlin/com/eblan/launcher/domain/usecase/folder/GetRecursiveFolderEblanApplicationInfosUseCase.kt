@@ -70,7 +70,8 @@ class GetRecursiveFolderEblanApplicationInfosUseCase @Inject constructor(
             gridItem = movingGridItem,
             eblanAction = eblanAction,
             previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
-            sourceFolderId = id,
+            id = id,
+            includeRoot = false,
         )
     }
 
@@ -80,12 +81,15 @@ class GetRecursiveFolderEblanApplicationInfosUseCase @Inject constructor(
         gridItem: GridItem,
         eblanAction: EblanAction,
         previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
-        sourceFolderId: String,
+        id: String,
+        includeRoot: Boolean = true,
     ): List<GridItem> = buildList {
         val previewFolderEblanApplicationInfo =
-            previewFolderEblanApplicationInfos[sourceFolderId] ?: return@buildList
+            previewFolderEblanApplicationInfos[id] ?: return@buildList
 
-        add(gridItem)
+        if (includeRoot) {
+            add(gridItem)
+        }
 
         previewFolderEblanApplicationInfo.folderGridItems.forEach { folderEblanApplicationInfoGridItem ->
             when (val data = folderEblanApplicationInfoGridItem.data) {
@@ -147,7 +151,7 @@ class GetRecursiveFolderEblanApplicationInfosUseCase @Inject constructor(
                             gridItem = gridItem,
                             eblanAction = eblanAction,
                             previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
-                            sourceFolderId = folderEblanApplicationInfoGridItem.id,
+                            id = folderEblanApplicationInfoGridItem.id,
                         ),
                     )
                 }

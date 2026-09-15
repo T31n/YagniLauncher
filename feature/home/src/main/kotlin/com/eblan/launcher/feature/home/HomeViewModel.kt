@@ -17,8 +17,6 @@
  */
 package com.eblan.launcher.feature.home
 
-import android.R.attr.data
-import android.R.attr.label
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eblan.launcher.domain.common.FileManager
@@ -777,8 +775,6 @@ internal class HomeViewModel @Inject constructor(
         moveGridItemJob = viewModelScope.launch {
             delay(moveDelay)
 
-            gridRepository.upsertGridItems(gridItems = folderGridItems)
-
             _moveGridItemResult.update {
                 moveGridItemUseCase(
                     movingGridItem = movingGridItem,
@@ -790,6 +786,8 @@ internal class HomeViewModel @Inject constructor(
                     gridHeight = gridHeight,
                 )
             }
+
+            gridRepository.upsertGridItems(gridItems = folderGridItems)
         }
     }
 
@@ -891,7 +889,7 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    fun dragFolderEblanApplicationInfo(
+    fun dragFolderEblanApplicationInfoToGrid(
         folderEblanApplicationInfo: FolderEblanApplicationInfo,
         movingGridItem: GridItem,
     ) {

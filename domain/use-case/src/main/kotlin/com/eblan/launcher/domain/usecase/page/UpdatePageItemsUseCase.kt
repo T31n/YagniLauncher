@@ -63,6 +63,7 @@ class UpdatePageItemsUseCase @Inject constructor(
                     getRecursiveFolderGridItems(
                         gridItem = gridItem,
                         previewFolderGridItems = previewFolderGridItems,
+                        includeRoot = false,
                     ).forEach { folderGridItem ->
                         deleteGridItemData(
                             gridItem = folderGridItem,

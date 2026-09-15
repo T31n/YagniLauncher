@@ -64,10 +64,13 @@ internal suspend fun deleteGridItemData(
 internal fun getRecursiveFolderGridItems(
     gridItem: GridItem,
     previewFolderGridItems: Map<String, PreviewFolder>,
+    includeRoot: Boolean = true,
 ): List<GridItem> = buildList {
     val previewFolder = previewFolderGridItems[gridItem.id] ?: return@buildList
 
-    add(gridItem)
+    if (includeRoot) {
+        add(gridItem)
+    }
 
     previewFolder.folderGridItems.forEach { folderGridItem ->
         when (folderGridItem.data) {

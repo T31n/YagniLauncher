@@ -199,7 +199,7 @@ internal fun HomeRoute(
         onMoveFolderEblanApplicationInfoGridItem = viewModel::moveFolderEblanApplicationInfoGridItem,
         onResetGridAfterMoveFolderEblanApplicationInfo = viewModel::resetGridAfterMoveFolderEblanApplicationInfo,
         onMoveFolderEblanApplicationInfoGridItemOutsideFolder = viewModel::moveFolderEblanApplicationInfoGridItemOutsideFolder,
-        onDragFolderEblanApplicationInfo = viewModel::dragFolderEblanApplicationInfo,
+        onDragFolderEblanApplicationInfo = viewModel::dragFolderEblanApplicationInfoToGrid,
         onResetFolderEblanApplicationInfoPopupEntries = viewModel::resetFolderEblanApplicationInfoPopupEntries,
     )
 }

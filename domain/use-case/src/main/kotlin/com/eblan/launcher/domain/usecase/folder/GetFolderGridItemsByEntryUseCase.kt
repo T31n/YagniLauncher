@@ -20,6 +20,7 @@ package com.eblan.launcher.domain.usecase.folder
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.model.folder.FolderPopupEntry
+import com.eblan.launcher.domain.model.folder.PreviewFolder
 import com.eblan.launcher.domain.model.grid.FolderGridItemPopup
 import com.eblan.launcher.domain.model.grid.FolderGridItemWrapper
 import com.eblan.launcher.domain.model.grid.GridItemData
@@ -47,6 +48,12 @@ class GetFolderGridItemsByEntryUseCase @Inject constructor(
         folderPopupEntriesFlow,
         folderGridItemRepository.folderGridItemWrappersFlow,
     ) { userData, folderPopupEntries, folderGridItemWrappers ->
+        val previewFolderGridItems =
+            folderGridItemWrappers.asPreviewFolders(
+                maxFolderColumns = userData.folderSettings.maxFolderColumns,
+                maxFolderRows = userData.folderSettings.maxFolderRows,
+            )
+
         folderPopupEntries.mapNotNull { folderPopupEntry ->
             folderGridItemWrappers.firstOrNull {
                 it.folderGridItem.id == folderPopupEntry.id
@@ -54,6 +61,7 @@ class GetFolderGridItemsByEntryUseCase @Inject constructor(
                 folderPopupEntry = folderPopupEntry,
                 maxFolderColumns = userData.folderSettings.maxFolderColumns,
                 maxFolderRows = userData.folderSettings.maxFolderRows,
+                previewFolderGridItems = previewFolderGridItems,
             )
         }
     }.flowOn(defaultDispatcher)
@@ -62,36 +70,33 @@ class GetFolderGridItemsByEntryUseCase @Inject constructor(
         folderPopupEntry: FolderPopupEntry,
         maxFolderColumns: Int,
         maxFolderRows: Int,
+        previewFolderGridItems: Map<String, PreviewFolder>,
     ): FolderGridItemPopup {
-        val previewFolderGridItems =
-            folderGridItemRepository.getFolderGridItemWrappers()
-                .asPreviewFolders(
-                    maxFolderColumns = maxFolderColumns,
-                    maxFolderRows = maxFolderRows,
-                )
+        val gridItem = asGridItem()
 
         val childFolderGridItems = getRecursiveFolderGridItems(
-            gridItem = asGridItem(),
+            gridItem = gridItem,
             previewFolderGridItems = previewFolderGridItems,
+            includeRoot = false,
         )
 
         val gridItems = (
-            applicationInfoGridItems.map {
-                it.asGridItem()
-            } + shortcutInfoGridItems.map {
-                it.asGridItem()
-            } + shortcutConfigGridItems.map {
-                it.asGridItem()
-            } + childFolderGridItems
-            ).sortedBy {
-            when (val data = it.data) {
-                is GridItemData.ApplicationInfo -> data.index
-                is GridItemData.ShortcutInfo -> data.index
-                is GridItemData.ShortcutConfig -> data.index
-                is GridItemData.Folder -> data.index
-                else -> error("Unsupported folder grid item")
+                applicationInfoGridItems.map {
+                    it.asGridItem()
+                } + shortcutInfoGridItems.map {
+                    it.asGridItem()
+                } + shortcutConfigGridItems.map {
+                    it.asGridItem()
+                } + childFolderGridItems
+                ).sortedBy {
+                when (val data = it.data) {
+                    is GridItemData.ApplicationInfo -> data.index
+                    is GridItemData.ShortcutInfo -> data.index
+                    is GridItemData.ShortcutConfig -> data.index
+                    is GridItemData.Folder -> data.index
+                    else -> error("Unsupported folder grid item")
+                }
             }
-        }
 
         val gridItemsByPage = gridItems.getGridItemsByPage(
             maxFolderColumns = maxFolderColumns,

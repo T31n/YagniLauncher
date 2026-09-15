@@ -187,7 +187,7 @@ internal fun FolderEblanApplicationInfoItem(
             onUpdateFolderPopupMenu = onUpdateFolderPopupMenu,
             onDismiss = onDismiss,
             onUpdateIsDragging = onUpdateIsDragging,
-            onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
+            onDragFolderEblanApplicationInfoToGrid = onDragFolderEblanApplicationInfo,
         )
     }
 
@@ -411,7 +411,7 @@ internal fun handleDragFolderEblanApplicationInfoItem(
     onUpdateFolderPopupMenu: (Boolean) -> Unit,
     onDismiss: () -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
-    onDragFolderEblanApplicationInfo: (
+    onDragFolderEblanApplicationInfoToGrid: (
         folderEblanApplicationInfo: FolderEblanApplicationInfo,
         movingGridItem: GridItem,
     ) -> Unit,
@@ -451,7 +451,7 @@ internal fun handleDragFolderEblanApplicationInfoItem(
                 swipeDown = eblanAction,
             )
 
-            onDragFolderEblanApplicationInfo(
+            onDragFolderEblanApplicationInfoToGrid(
                 folderEblanApplicationInfo,
                 gridItem,
             )
