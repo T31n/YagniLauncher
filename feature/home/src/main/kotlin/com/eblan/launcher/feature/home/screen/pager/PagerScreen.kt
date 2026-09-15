@@ -282,7 +282,7 @@ internal fun PagerScreen(
         serialNumber: Long,
         packageName: String,
     ) -> Unit,
-    onResetFolderPopupEntries: () -> Unit,
+    onResetFolderGridItemPopupEntries: () -> Unit,
     onEditFolderApplicationInfo: (String) -> Unit,
     onMoveNewFolderGridItem: (
         folderGridItems: List<GridItem>,
@@ -313,6 +313,7 @@ internal fun PagerScreen(
         folderEblanApplicationInfo: FolderEblanApplicationInfo,
         movingGridItem: GridItem,
     ) -> Unit,
+    onResetFolderEblanApplicationInfoPopupEntries: () -> Unit,
 ) {
     val layoutDirection = LocalLayoutDirection.current
 
@@ -1136,7 +1137,7 @@ internal fun PagerScreen(
                 onUpdateSharedElementKey = pagerScreenState::updateSharedElementKey,
                 onWidgets = pagerScreenState::openAppWidgetScreen,
                 onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
-                onResetFolderPopupEntries = onResetFolderPopupEntries,
+                onResetFolderGridItemPopupEntries = onResetFolderGridItemPopupEntries,
             )
         }
 
@@ -1340,6 +1341,7 @@ internal fun PagerScreen(
                 paddingValues = paddingValues,
                 onDismissRequest = pagerScreenState::dismissFolderEblanApplicationPopup,
                 onEditFolderApplicationInfo = onEditFolderApplicationInfo,
+                onResetFolderEblanApplicationInfoPopupEntries = onResetFolderEblanApplicationInfoPopupEntries,
             )
         }
 

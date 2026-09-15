@@ -19,13 +19,9 @@ package com.eblan.launcher.domain.usecase.folder
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
-import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
-import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoWrapper
 import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
 import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
-import com.eblan.launcher.domain.usecase.util.getGridDimension
-import com.eblan.launcher.domain.usecase.util.getPreviewFolderGridItems
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -43,11 +39,9 @@ class GetPreviewFolderEblanApplicationInfosUseCase @Inject constructor(
     ) { userData, folderEblanApplicationInfoWrappers ->
         folderEblanApplicationInfoWrappers
             .sortedBy { it.folderEblanApplicationInfo.label }
-            .associate {
-                it.folderEblanApplicationInfo.id to it.asFolderEblanApplicationInfoGridItem(
-                    maxFolderColumns = userData.folderSettings.maxFolderColumns,
-                    maxFolderRows = userData.folderSettings.maxFolderRows,
-                )
-            }
+            .asPreviewFolderEblanApplicationInfos(
+                maxFolderColumns = userData.folderSettings.maxFolderColumns,
+                maxFolderRows = userData.folderSettings.maxFolderRows,
+            )
     }.flowOn(defaultDispatcher)
 }

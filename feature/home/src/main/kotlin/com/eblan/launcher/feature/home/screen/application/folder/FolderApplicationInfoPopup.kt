@@ -74,6 +74,7 @@ internal fun FolderApplicationInfoPopup(
     paddingValues: PaddingValues,
     onDismissRequest: () -> Unit,
     onEditFolderApplicationInfo: (String) -> Unit,
+    onResetFolderEblanApplicationInfoPopupEntries: () -> Unit,
 ) {
     requireNotNull(popupIntOffset)
 
@@ -158,6 +159,8 @@ internal fun FolderApplicationInfoPopup(
                 },
                 onEdit = {
                     onEditFolderApplicationInfo(folderEblanApplicationInfo.id)
+
+                    onResetFolderEblanApplicationInfoPopupEntries()
 
                     transitionState.targetState = false
                 },

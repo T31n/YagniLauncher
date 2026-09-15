@@ -190,7 +190,7 @@ internal fun HomeRoute(
         onPackageAdded = viewModel::packageAdded,
         onPackageChanged = viewModel::packageChanged,
         onShortcutsChanged = viewModel::shortcutsChanged,
-        onResetFolderPopupEntries = viewModel::resetFolderGridItemPopupEntries,
+        onResetFolderGridItemPopupEntries = viewModel::resetFolderGridItemPopupEntries,
         onUpsertFolderEblanApplicationInfoPopupEntry = viewModel::upsertFolderEblanApplicationInfoPopupEntry,
         onDeleteFolderEblanApplicationInfoPopupEntry = viewModel::deleteFolderEblanApplicationInfoPopupEntry,
         onEditFolderApplicationInfo = onEditFolderApplicationInfo,
@@ -200,6 +200,7 @@ internal fun HomeRoute(
         onResetGridAfterMoveFolderEblanApplicationInfo = viewModel::resetGridAfterMoveFolderEblanApplicationInfo,
         onMoveFolderEblanApplicationInfoGridItemOutsideFolder = viewModel::moveFolderEblanApplicationInfoGridItemOutsideFolder,
         onDragFolderEblanApplicationInfo = viewModel::dragFolderEblanApplicationInfo,
+        onResetFolderEblanApplicationInfoPopupEntries = viewModel::resetFolderEblanApplicationInfoPopupEntries,
     )
 }
 
@@ -315,7 +316,7 @@ internal fun HomeScreen(
         serialNumber: Long,
         packageName: String,
     ) -> Unit,
-    onResetFolderPopupEntries: () -> Unit,
+    onResetFolderGridItemPopupEntries: () -> Unit,
     onUpsertFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
     onDeleteFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
     onEditFolderApplicationInfo: (String) -> Unit,
@@ -348,6 +349,7 @@ internal fun HomeScreen(
         folderEblanApplicationInfo: FolderEblanApplicationInfo,
         movingGridItem: GridItem,
     ) -> Unit,
+    onResetFolderEblanApplicationInfoPopupEntries: () -> Unit,
 ) {
     val paddingValues = WindowInsets.safeDrawing.asPaddingValues()
 
@@ -424,7 +426,7 @@ internal fun HomeScreen(
                 onPackageAdded = onPackageAdded,
                 onPackageChanged = onPackageChanged,
                 onShortcutsChanged = onShortcutsChanged,
-                onResetFolderPopupEntries = onResetFolderPopupEntries,
+                onResetFolderGridItemPopupEntries = onResetFolderGridItemPopupEntries,
                 onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
                 onDeleteFolderEblanApplicationInfoPopupEntry = onDeleteFolderEblanApplicationInfoPopupEntry,
                 onEditFolderApplicationInfo = onEditFolderApplicationInfo,
@@ -434,6 +436,7 @@ internal fun HomeScreen(
                 onResetGridAfterMoveFolderEblanApplicationInfo = onResetGridAfterMoveFolderEblanApplicationInfo,
                 onMoveFolderEblanApplicationInfoGridItemOutsideFolder = onMoveFolderEblanApplicationInfoGridItemOutsideFolder,
                 onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
+                onResetFolderEblanApplicationInfoPopupEntries = onResetFolderEblanApplicationInfoPopupEntries,
             )
         }
     }
@@ -554,7 +557,7 @@ private fun Success(
         serialNumber: Long,
         packageName: String,
     ) -> Unit,
-    onResetFolderPopupEntries: () -> Unit,
+    onResetFolderGridItemPopupEntries: () -> Unit,
     onUpsertFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
     onDeleteFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
     onEditFolderApplicationInfo: (String) -> Unit,
@@ -587,6 +590,7 @@ private fun Success(
         folderEblanApplicationInfo: FolderEblanApplicationInfo,
         movingGridItem: GridItem,
     ) -> Unit,
+    onResetFolderEblanApplicationInfoPopupEntries: () -> Unit,
 ) {
     AnimatedContent(
         modifier = modifier,
@@ -664,7 +668,7 @@ private fun Success(
                     onPackageAdded = onPackageAdded,
                     onPackageChanged = onPackageChanged,
                     onShortcutsChanged = onShortcutsChanged,
-                    onResetFolderPopupEntries = onResetFolderPopupEntries,
+                    onResetFolderGridItemPopupEntries = onResetFolderGridItemPopupEntries,
                     onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
                     onDeleteFolderEblanApplicationInfoPopupEntry = onDeleteFolderEblanApplicationInfoPopupEntry,
                     onEditFolderApplicationInfo = onEditFolderApplicationInfo,
@@ -674,6 +678,7 @@ private fun Success(
                     onDragEndAfterMoveFolderEblanApplicationInfo = onResetGridAfterMoveFolderEblanApplicationInfo,
                     onMoveFolderEblanApplicationInfoGridItemOutsideFolder = onMoveFolderEblanApplicationInfoGridItemOutsideFolder,
                     onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
+                    onResetFolderEblanApplicationInfoPopupEntries = onResetFolderGridItemPopupEntries,
                 )
             }
 

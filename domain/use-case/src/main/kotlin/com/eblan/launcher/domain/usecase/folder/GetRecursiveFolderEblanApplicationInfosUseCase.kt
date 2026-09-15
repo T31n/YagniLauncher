@@ -54,19 +54,18 @@ class GetRecursiveFolderEblanApplicationInfosUseCase @Inject constructor(
 
         val previewFolderEblanApplicationInfos =
             folderEblanApplicationInfoRepository.getFolderEblanApplicationInfoWrappers()
-                .associate {
-                    it.folderEblanApplicationInfo.id to it.asFolderEblanApplicationInfoGridItem(
-                        maxFolderColumns = userData.folderSettings.maxFolderColumns,
-                        maxFolderRows = userData.folderSettings.maxFolderRows,
-                    )
-                }
+                .asPreviewFolderEblanApplicationInfos(
+                    maxFolderColumns = userData.folderSettings.maxFolderColumns,
+                    maxFolderRows = userData.folderSettings.maxFolderRows,
+                )
+
         val eblanAction = EblanAction(
             eblanActionType = EblanActionType.None,
             serialNumber = 0L,
             componentName = "",
         )
 
-        getFolderGridItems(
+        getRecursiveFolderGridItems(
             gridItemSettings = gridItemSettings,
             gridItem = movingGridItem,
             eblanAction = eblanAction,
@@ -76,7 +75,7 @@ class GetRecursiveFolderEblanApplicationInfosUseCase @Inject constructor(
     }
 
     @OptIn(ExperimentalUuidApi::class)
-    private fun getFolderGridItems(
+    private fun getRecursiveFolderGridItems(
         gridItemSettings: GridItemSettings,
         gridItem: GridItem,
         eblanAction: EblanAction,
@@ -143,7 +142,7 @@ class GetRecursiveFolderEblanApplicationInfosUseCase @Inject constructor(
                     )
 
                     addAll(
-                        getFolderGridItems(
+                        getRecursiveFolderGridItems(
                             gridItemSettings = gridItemSettings,
                             gridItem = gridItem,
                             eblanAction = eblanAction,

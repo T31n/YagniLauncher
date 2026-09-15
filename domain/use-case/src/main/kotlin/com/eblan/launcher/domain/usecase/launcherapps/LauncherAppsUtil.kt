@@ -44,6 +44,7 @@ import com.eblan.launcher.domain.model.shortcutinfo.DeleteEblanShortcutInfo
 import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfo
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
+import com.eblan.launcher.domain.model.userdata.FolderSettings
 import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.domain.model.widget.AppWidgetManagerAppWidgetProviderInfo
 import com.eblan.launcher.domain.model.widget.DeleteEblanAppWidgetProviderInfo
@@ -54,7 +55,8 @@ import com.eblan.launcher.domain.repository.FolderGridItemRepository
 import com.eblan.launcher.domain.repository.ShortcutConfigGridItemRepository
 import com.eblan.launcher.domain.repository.ShortcutInfoGridItemRepository
 import com.eblan.launcher.domain.repository.WidgetGridItemRepository
-import com.eblan.launcher.domain.usecase.util.getFolderGridItemsById
+import com.eblan.launcher.domain.usecase.folder.asPreviewFolders
+import com.eblan.launcher.domain.usecase.util.getRecursiveFolderGridItems
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import java.io.File
@@ -503,6 +505,7 @@ internal suspend fun addNewApplicationToHomeScreen(
     homeSettings: HomeSettings,
     applicationInfoGridItems: MutableList<ApplicationInfoGridItem>,
     folderGridItemRepository: FolderGridItemRepository,
+    folderSettings: FolderSettings,
 ) {
     val alreadyOnHome = gridItems.any {
         when (val data = it.data) {
@@ -511,9 +514,16 @@ internal suspend fun addNewApplicationToHomeScreen(
                     data.componentName == componentName
 
             is GridItemData.Folder -> {
-                val folderGridItems = getFolderGridItemsById(
-                    folderGridItemRepository = folderGridItemRepository,
-                    folderId = it.id,
+                val previewFolderGridItems =
+                    folderGridItemRepository.getFolderGridItemWrappers()
+                        .asPreviewFolders(
+                            maxFolderColumns = folderSettings.maxFolderColumns,
+                            maxFolderRows = folderSettings.maxFolderRows,
+                        )
+
+                val folderGridItems = getRecursiveFolderGridItems(
+                    gridItem = it,
+                    previewFolderGridItems = previewFolderGridItems,
                 )
 
                 folderGridItems.any { folderGridItem ->

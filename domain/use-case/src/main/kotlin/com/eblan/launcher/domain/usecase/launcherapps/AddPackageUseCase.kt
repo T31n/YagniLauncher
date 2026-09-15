@@ -29,6 +29,7 @@ import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.ApplicationInfoGridItem
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.launcherapps.LauncherAppsActivityInfo
+import com.eblan.launcher.domain.model.userdata.FolderSettings
 import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.domain.repository.ApplicationInfoGridItemRepository
 import com.eblan.launcher.domain.repository.EblanAppWidgetProviderInfoRepository
@@ -90,6 +91,7 @@ class AddPackageUseCase @Inject constructor(
                     lastUpdateTime = it.lastUpdateTime,
                     flags = it.flags,
                     applicationInfoGridItems = newApplicationInfoGridItems,
+                    folderSettings = userData.folderSettings,
                 )
             }
 
@@ -130,6 +132,7 @@ class AddPackageUseCase @Inject constructor(
         lastUpdateTime: Long,
         flags: Int,
         applicationInfoGridItems: MutableList<ApplicationInfoGridItem>,
+        folderSettings: FolderSettings,
     ) {
         eblanApplicationInfoRepository.upsertEblanApplicationInfo(
             eblanApplicationInfo = EblanApplicationInfo(
@@ -165,6 +168,7 @@ class AddPackageUseCase @Inject constructor(
             homeSettings = homeSettings,
             applicationInfoGridItems = applicationInfoGridItems,
             folderGridItemRepository = folderGridItemRepository,
+            folderSettings = folderSettings,
         )
     }
 

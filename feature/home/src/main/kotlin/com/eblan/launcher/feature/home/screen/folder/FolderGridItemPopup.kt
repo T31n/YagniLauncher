@@ -98,7 +98,7 @@ internal fun FolderGridItemPopup(
     onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
     onWidgets: (EblanApplicationInfoGroup) -> Unit,
     onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
-    onResetFolderPopupEntries: () -> Unit,
+    onResetFolderGridItemPopupEntries: () -> Unit,
 ) {
     requireNotNull(popupIntOffset)
 
@@ -232,7 +232,7 @@ internal fun FolderGridItemPopup(
                 onWidgets = onWidgets,
                 onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
                 onDismissRequest = onDismissRequest,
-                onResetFolderPopupEntries = onResetFolderPopupEntries,
+                onResetFolderGridItemPopupEntries = onResetFolderGridItemPopupEntries,
             )
         }
     }
@@ -269,7 +269,7 @@ private fun FolderGridItemPopupContent(
     onWidgets: (EblanApplicationInfoGroup) -> Unit,
     onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
     onDismissRequest: () -> Unit,
-    onResetFolderPopupEntries: () -> Unit,
+    onResetFolderGridItemPopupEntries: () -> Unit,
 ) {
     Surface(
         modifier = modifier.width(IntrinsicSize.Max),
@@ -305,7 +305,7 @@ private fun FolderGridItemPopupContent(
                         onEdit = {
                             onEdit(folderGridItem.id)
 
-                            onResetFolderPopupEntries()
+                            onResetFolderGridItemPopupEntries()
 
                             onUpdateTransitionState(false)
                         },
@@ -332,7 +332,7 @@ private fun FolderGridItemPopupContent(
                                 ),
                             )
 
-                            onResetFolderPopupEntries()
+                            onResetFolderGridItemPopupEntries()
 
                             onDismissRequest()
                         },
@@ -363,7 +363,7 @@ private fun FolderGridItemPopupContent(
                         onEdit = {
                             onEdit(folderGridItem.id)
 
-                            onResetFolderPopupEntries()
+                            onResetFolderGridItemPopupEntries()
 
                             onUpdateTransitionState(false)
                         },

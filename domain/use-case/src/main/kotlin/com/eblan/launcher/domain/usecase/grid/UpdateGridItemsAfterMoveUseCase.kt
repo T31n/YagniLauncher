@@ -24,8 +24,11 @@ import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.repository.FolderGridItemRepository
 import com.eblan.launcher.domain.repository.GridRepository
-import com.eblan.launcher.domain.usecase.util.getFolderGridItemsById
+import com.eblan.launcher.domain.repository.UserDataRepository
+import com.eblan.launcher.domain.usecase.folder.asPreviewFolders
+import com.eblan.launcher.domain.usecase.util.getRecursiveFolderGridItems
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.uuid.ExperimentalUuidApi
@@ -34,10 +37,13 @@ import kotlin.uuid.Uuid
 class UpdateGridItemsAfterMoveUseCase @Inject constructor(
     private val gridRepository: GridRepository,
     private val folderGridItemRepository: FolderGridItemRepository,
+    private val userDataRepository: UserDataRepository,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     suspend operator fun invoke(moveGridItemResult: MoveGridItemResult) {
         withContext(defaultDispatcher) {
+            val userData = userDataRepository.userDataFlow.first()
+
             val conflictingGridItem = moveGridItemResult.conflictingGridItem
 
             val movingGridItem = moveGridItemResult.movingGridItem
@@ -45,9 +51,16 @@ class UpdateGridItemsAfterMoveUseCase @Inject constructor(
             if (conflictingGridItem != null) {
                 when (conflictingGridItem.data) {
                     is GridItemData.Folder -> {
-                        val folderGridItems = getFolderGridItemsById(
-                            folderGridItemRepository = folderGridItemRepository,
-                            folderId = conflictingGridItem.id,
+                        val previewFolderGridItems =
+                            folderGridItemRepository.getFolderGridItemWrappers()
+                                .asPreviewFolders(
+                                    maxFolderColumns = userData.folderSettings.maxFolderColumns,
+                                    maxFolderRows = userData.folderSettings.maxFolderRows,
+                                )
+
+                        val folderGridItems = getRecursiveFolderGridItems(
+                            gridItem = conflictingGridItem,
+                            previewFolderGridItems = previewFolderGridItems,
                         )
 
                         addMovingGridItemIntoFolder(

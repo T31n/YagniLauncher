@@ -22,7 +22,11 @@ import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoWrapper
+import com.eblan.launcher.domain.model.folder.PreviewFolder
 import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
+import com.eblan.launcher.domain.model.grid.FolderGridItemWrapper
+import com.eblan.launcher.domain.model.grid.GridItemData
+import com.eblan.launcher.domain.usecase.util.asGridItem
 import com.eblan.launcher.domain.usecase.util.getGridDimension
 import com.eblan.launcher.domain.usecase.util.getPreviewFolderGridItems
 
@@ -66,7 +70,65 @@ internal fun EblanApplicationInfo.asFolderEblanApplicationInfoGridItem(): Folder
     ),
 )
 
-internal fun FolderEblanApplicationInfoWrapper.asFolderEblanApplicationInfoGridItem(
+internal fun List<FolderEblanApplicationInfoWrapper>.asPreviewFolderEblanApplicationInfos(
+    maxFolderColumns: Int,
+    maxFolderRows: Int,
+): Map<String, PreviewFolderEblanApplicationInfo> = associate {
+    it.folderEblanApplicationInfo.id to it.asPreviewFolderEblanApplicationInfo(
+        maxFolderColumns = maxFolderColumns,
+        maxFolderRows = maxFolderRows,
+    )
+}
+
+internal fun List<FolderGridItemWrapper>.asPreviewFolders(
+    maxFolderColumns: Int,
+    maxFolderRows: Int,
+): Map<String, PreviewFolder> = associate {
+    it.folderGridItem.id to it.asPreviewFolder(
+        maxFolderColumns = maxFolderColumns,
+        maxFolderRows = maxFolderRows,
+    )
+}
+
+internal fun FolderGridItemWrapper.asPreviewFolder(
+    maxFolderColumns: Int,
+    maxFolderRows: Int,
+): PreviewFolder {
+    val folderGridItems = (
+        applicationInfoGridItems.map {
+            it.asGridItem()
+        } + shortcutInfoGridItems.map { it.asGridItem() } +
+            shortcutConfigGridItems.map { it.asGridItem() } +
+            folderGridItems.map { it.asGridItem() }
+        ).sortedBy {
+        when (val data = it.data) {
+            is GridItemData.ApplicationInfo -> data.index
+            is GridItemData.ShortcutInfo -> data.index
+            is GridItemData.ShortcutConfig -> data.index
+            is GridItemData.Folder -> data.index
+            else -> error("Unsupported folder grid item")
+        }
+    }
+
+    val (columns, rows) = getGridDimension(
+        count = folderGridItems.size,
+        maxFolderColumns = maxFolderColumns,
+        maxFolderRows = maxFolderRows,
+    )
+
+    val previewFolderGridItems = getPreviewFolderGridItems(
+        columns = columns,
+        rows = rows,
+        folderGridItems = folderGridItems,
+    )
+
+    return PreviewFolder(
+        previewFolderGridItems = previewFolderGridItems,
+        folderGridItems = folderGridItems,
+    )
+}
+
+private fun FolderEblanApplicationInfoWrapper.asPreviewFolderEblanApplicationInfo(
     maxFolderColumns: Int,
     maxFolderRows: Int,
 ): PreviewFolderEblanApplicationInfo {

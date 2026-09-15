@@ -882,7 +882,7 @@ internal class HomeViewModel @Inject constructor(
                                 id = folderEblanApplicationInfoGridItem.id,
                                 label = data.label,
                                 icon = data.icon,
-                                gridItem = movingGridItem,
+                                movingGridItem = movingGridItem,
                             ),
                         )
                     }
@@ -912,7 +912,7 @@ internal class HomeViewModel @Inject constructor(
                         id = folderEblanApplicationInfo.id,
                         label = folderEblanApplicationInfo.label,
                         icon = folderEblanApplicationInfo.icon,
-                        gridItem = movingGridItem,
+                        movingGridItem = movingGridItem,
                     ),
                 )
             }

@@ -17,10 +17,9 @@
  */
 package com.eblan.launcher.domain.usecase.util
 
-import com.eblan.launcher.domain.common.FileManager
-import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.AppWidgetHostWrapper
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
+import com.eblan.launcher.domain.model.folder.PreviewFolder
 import com.eblan.launcher.domain.model.grid.ApplicationInfoGridItem
 import com.eblan.launcher.domain.model.grid.FolderGridItem
 import com.eblan.launcher.domain.model.grid.FolderGridItemWrapper
@@ -34,7 +33,6 @@ import com.eblan.launcher.domain.model.launcherapps.ShortcutQuery
 import com.eblan.launcher.domain.model.launcherapps.ShortcutQueryFlag
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
-import com.eblan.launcher.domain.repository.FolderGridItemRepository
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlin.math.ceil
@@ -48,68 +46,47 @@ internal suspend fun deleteGridItemData(
     gridItem: GridItem,
     appWidgetHostWrapper: AppWidgetHostWrapper,
     launcherAppsWrapper: LauncherAppsWrapper,
-    folderGridItemRepository: FolderGridItemRepository,
-    fileManager: FileManager,
-    iconKeyGenerator: IconKeyGenerator,
-    iconPackInfoPackageName: String,
 ) {
     when (val data = gridItem.data) {
         is GridItemData.ShortcutInfo -> updatePinShortcutsByPackageName(launcherAppsWrapper, data)
-
         is GridItemData.Widget -> appWidgetHostWrapper.deleteAppWidgetId(data.appWidgetId)
-
-        is GridItemData.Folder -> {
-            val folderGridItems = getFolderGridItemsById(
-                folderGridItemRepository = folderGridItemRepository,
-                folderId = gridItem.id,
-            )
-
-            folderGridItems.forEach { folderGridItem ->
-                deleteGridItemData(
-                    gridItem = folderGridItem,
-                    appWidgetHostWrapper = appWidgetHostWrapper,
-                    launcherAppsWrapper = launcherAppsWrapper,
-                    folderGridItemRepository = folderGridItemRepository,
-                    fileManager = fileManager,
-                    iconKeyGenerator = iconKeyGenerator,
-                    iconPackInfoPackageName = iconPackInfoPackageName,
-                )
-            }
-        }
-
         else -> Unit
     }
 }
 
-suspend fun getFolderGridItemsById(
-    folderGridItemRepository: FolderGridItemRepository,
-    folderId: String,
-): List<GridItem> {
-    val folderGridItemWrapper = folderGridItemRepository.getFolderGridItemWrapperById(
-        id = folderId,
-    ) ?: return emptyList()
+/**
+ * Recursively retrieves the grid items from a preview folder and its nested folders.
+ *
+ * @param gridItem The current grid item representing the folder.
+ * @param previewFolderGridItems A map of preview folder grid items by their IDs.
+ * @return A list of grid items contained within the specified folder and its nested folders.
+ */
+internal fun getRecursiveFolderGridItems(
+    gridItem: GridItem,
+    previewFolderGridItems: Map<String, PreviewFolder>,
+): List<GridItem> = buildList {
+    val previewFolder = previewFolderGridItems[gridItem.id] ?: return@buildList
 
-    val childFolderGridItems = folderGridItemWrapper.folderGridItems.map { folderGridItem ->
-        folderGridItemRepository.getFolderGridItemWrapperById(
-            id = folderGridItem.id,
-        )?.asGridItem() ?: folderGridItem.asGridItem()
-    }
+    add(gridItem)
 
-    return (
-        folderGridItemWrapper.applicationInfoGridItems.map {
-            it.asGridItem()
-        } + folderGridItemWrapper.shortcutInfoGridItems.map {
-            it.asGridItem()
-        } + folderGridItemWrapper.shortcutConfigGridItems.map {
-            it.asGridItem()
-        } + childFolderGridItems
-        ).sortedBy { gridItem ->
-        when (val data = gridItem.data) {
-            is GridItemData.ApplicationInfo -> data.index
-            is GridItemData.ShortcutInfo -> data.index
-            is GridItemData.ShortcutConfig -> data.index
-            is GridItemData.Folder -> data.index
-            else -> error("Unsupported folder grid item")
+    previewFolder.folderGridItems.forEach { folderGridItem ->
+        when (folderGridItem.data) {
+            is GridItemData.ApplicationInfo,
+            is GridItemData.ShortcutInfo,
+            is GridItemData.ShortcutConfig,
+            is GridItemData.Widget,
+            -> {
+                add(folderGridItem)
+            }
+
+            is GridItemData.Folder -> {
+                addAll(
+                    getRecursiveFolderGridItems(
+                        gridItem = folderGridItem,
+                        previewFolderGridItems = previewFolderGridItems,
+                    ),
+                )
+            }
         }
     }
 }
