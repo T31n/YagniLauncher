@@ -28,6 +28,7 @@ import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.util.asGridItem
 import com.eblan.launcher.domain.usecase.util.getGridDimension
 import com.eblan.launcher.domain.usecase.util.getGridItemsByPage
+import com.eblan.launcher.domain.usecase.util.getRecursiveFolderGridItems
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -62,11 +63,17 @@ class GetFolderGridItemsByEntryUseCase @Inject constructor(
         maxFolderColumns: Int,
         maxFolderRows: Int,
     ): FolderGridItemPopup {
-        val childFolderGridItems = folderGridItems.map {
-            folderGridItemRepository.getFolderGridItemWrapperById(
-                id = it.id,
-            )?.asGridItem() ?: it.asGridItem()
-        }
+        val previewFolderGridItems =
+            folderGridItemRepository.getFolderGridItemWrappers()
+                .asPreviewFolders(
+                    maxFolderColumns = maxFolderColumns,
+                    maxFolderRows = maxFolderRows,
+                )
+
+        val childFolderGridItems = getRecursiveFolderGridItems(
+            gridItem = asGridItem(),
+            previewFolderGridItems = previewFolderGridItems,
+        )
 
         val gridItems = (
             applicationInfoGridItems.map {

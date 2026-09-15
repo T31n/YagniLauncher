@@ -26,8 +26,6 @@ interface FolderGridItemRepository {
 
     suspend fun getFolderGridItemWrappers(): List<FolderGridItemWrapper>
 
-    suspend fun getFolderGridItemWrapperById(id: String): FolderGridItemWrapper?
-
     suspend fun updateFolderGridItem(folderGridItem: FolderGridItem)
 
     suspend fun deleteFolderGridItem(folderGridItem: FolderGridItem)
