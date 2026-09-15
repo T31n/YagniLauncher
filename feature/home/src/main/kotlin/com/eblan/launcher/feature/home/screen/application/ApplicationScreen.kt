@@ -142,7 +142,7 @@ internal fun ApplicationScreen(
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
-    folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     onDismiss: () -> Unit,
     onDragEnd: () -> Unit,
     onEditApplicationInfo: (
@@ -219,7 +219,7 @@ internal fun ApplicationScreen(
                     folderCornerRadius = folderCornerRadius,
                     folderBackgroundColor = folderBackgroundColor,
                     customFolderBackgroundColor = customFolderBackgroundColor,
-                    folderEblanApplicationInfos = folderEblanApplicationInfos,
+                    topLevelFolderEblanApplicationInfos = topLevelFolderEblanApplicationInfos,
                     onDismiss = onDismiss,
                     onDragEnd = onDragEnd,
                     onEditApplicationInfo = onEditApplicationInfo,

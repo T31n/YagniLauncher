@@ -32,6 +32,7 @@ import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
 import com.eblan.launcher.domain.usecase.folder.DeleteFolderEblanApplicationInfoCustomIconUseCase
 import com.eblan.launcher.domain.usecase.folder.GetFolderEblanApplicationInfosByIdUseCase
 import com.eblan.launcher.domain.usecase.folder.GetPreviewFolderEblanApplicationInfosUseCase
+import com.eblan.launcher.domain.usecase.folder.GetTopLevelFolderEblanApplicationInfosUseCase
 import com.eblan.launcher.domain.usecase.folder.UpdateFolderEblanApplicationInfoCustomIconUseCase
 import com.eblan.launcher.feature.editfolderapplicationinfo.model.EditFolderApplicationInfoUiState
 import com.eblan.launcher.feature.editfolderapplicationinfo.navigation.EditFolderApplicationInfoRouteData
@@ -57,6 +58,7 @@ internal class EditFolderApplicationInfoViewModel @Inject constructor(
     private val updateFolderEblanApplicationInfoCustomIconUseCase: UpdateFolderEblanApplicationInfoCustomIconUseCase,
     getFolderEblanApplicationInfosByIdUseCase: GetFolderEblanApplicationInfosByIdUseCase,
     getPreviewFolderEblanApplicationInfosUseCase: GetPreviewFolderEblanApplicationInfosUseCase,
+    getTopLevelFolderEblanApplicationInfosUseCase: GetTopLevelFolderEblanApplicationInfosUseCase,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
     private val editFolderApplicationInfoRouteData =
@@ -103,6 +105,13 @@ internal class EditFolderApplicationInfoViewModel @Inject constructor(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = emptyMap(),
+        )
+
+    val topLevelFolderEblanApplicationInfos =
+        getTopLevelFolderEblanApplicationInfosUseCase().stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = emptyList(),
         )
 
     fun updateIconPackInfoPackageName(packageName: String) {

@@ -44,10 +44,10 @@ import com.eblan.launcher.domain.usecase.application.GetEblanApplicationTagsUseC
 import com.eblan.launcher.domain.usecase.application.GetEblanShortcutConfigsByLabelUseCase
 import com.eblan.launcher.domain.usecase.application.GetEblanShortcutInfosUseCase
 import com.eblan.launcher.domain.usecase.folder.GetFolderEblanApplicationInfosByEntryUseCase
-import com.eblan.launcher.domain.usecase.folder.GetFolderEblanApplicationInfosUseCase
 import com.eblan.launcher.domain.usecase.folder.GetFolderGridItemsByEntryUseCase
 import com.eblan.launcher.domain.usecase.folder.GetPreviewFolderEblanApplicationInfosUseCase
 import com.eblan.launcher.domain.usecase.folder.GetPreviewFolderGridItemsUseCase
+import com.eblan.launcher.domain.usecase.folder.GetTopLevelFolderEblanApplicationInfosUseCase
 import com.eblan.launcher.domain.usecase.folder.MoveFolderEblanApplicationInfoGridItemUseCase
 import com.eblan.launcher.domain.usecase.folder.MoveFolderGridItemUseCase
 import com.eblan.launcher.domain.usecase.grid.DeleteGridItemUseCase
@@ -112,7 +112,7 @@ internal class HomeViewModel @Inject constructor(
     getPreviewFolderGridItemsUseCase: GetPreviewFolderGridItemsUseCase,
     getPreviewFolderEblanApplicationInfosUseCase: GetPreviewFolderEblanApplicationInfosUseCase,
     getFolderEblanApplicationInfosByEntryUseCase: GetFolderEblanApplicationInfosByEntryUseCase,
-    getFolderEblanApplicationInfosUseCase: GetFolderEblanApplicationInfosUseCase,
+    getTopLevelFolderEblanApplicationInfosUseCase: GetTopLevelFolderEblanApplicationInfosUseCase,
     private val moveFolderEblanApplicationInfoGridItemUseCase: MoveFolderEblanApplicationInfoGridItemUseCase,
     getEblanApplicationTagsUseCase: GetEblanApplicationTagsUseCase,
 ) : ViewModel() {
@@ -247,7 +247,7 @@ internal class HomeViewModel @Inject constructor(
         initialValue = emptyList(),
     )
 
-    val folderEblanApplicationInfos = getFolderEblanApplicationInfosUseCase().stateIn(
+    val topLevelFolderEblanApplicationInfos = getTopLevelFolderEblanApplicationInfosUseCase().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = emptyList(),

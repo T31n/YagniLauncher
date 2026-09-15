@@ -93,6 +93,8 @@ internal fun EditApplicationInfoRoute(
 
     val previewFolderEblanApplicationInfos by viewModel.previewFolderEblanApplicationInfos.collectAsStateWithLifecycle()
 
+    val topLevelFolderEblanApplicationInfos by viewModel.topLevelFolderEblanApplicationInfos.collectAsStateWithLifecycle()
+
     EditApplicationInfoScreen(
         modifier = modifier,
         eblanApplicationInfoTagsUi = eblanApplicationInfoTagsUi,
@@ -101,6 +103,7 @@ internal fun EditApplicationInfoRoute(
         packageManagerIconPackInfos = packageManagerIconPackInfos,
         folderEblanApplicationInfos = folderEblanApplicationInfos,
         previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+        topLevelFolderEblanApplicationInfos = topLevelFolderEblanApplicationInfos,
         onAddEblanApplicationInfoCrossRef = viewModel::addEblanApplicationInfoTagCrossRef,
         onAddEblanApplicationInfoTag = viewModel::addEblanApplicationInfoTag,
         onDeleteEblanApplicationInfoCrossRef = viewModel::deleteEblanApplicationInfoTagCrossRef,
@@ -127,6 +130,7 @@ internal fun EditApplicationInfoScreen(
     packageManagerIconPackInfos: List<PackageManagerIconPackInfo>,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
+    topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     onAddEblanApplicationInfoCrossRef: (Long) -> Unit,
     onAddEblanApplicationInfoTag: (EblanApplicationInfoTag) -> Unit,
     onDeleteEblanApplicationInfoCrossRef: (Long) -> Unit,
@@ -179,6 +183,7 @@ internal fun EditApplicationInfoScreen(
                     packageManagerIconPackInfos = packageManagerIconPackInfos,
                     folderEblanApplicationInfos = folderEblanApplicationInfos,
                     previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+                    topLevelFolderEblanApplicationInfos = topLevelFolderEblanApplicationInfos,
                     onAddEblanApplicationInfoCrossRef = onAddEblanApplicationInfoCrossRef,
                     onAddEblanApplicationInfoTag = onAddEblanApplicationInfoTag,
                     onDeleteEblanApplicationInfoCrossRef = onDeleteEblanApplicationInfoCrossRef,
@@ -206,6 +211,7 @@ private fun Success(
     packageManagerIconPackInfos: List<PackageManagerIconPackInfo>,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
+    topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     onAddEblanApplicationInfoCrossRef: (Long) -> Unit,
     onAddEblanApplicationInfoTag: (EblanApplicationInfoTag) -> Unit,
     onDeleteEblanApplicationInfoCrossRef: (Long) -> Unit,
@@ -308,6 +314,7 @@ private fun Success(
             eblanApplicationInfo = eblanApplicationInfo,
             folderEblanApplicationInfos = folderEblanApplicationInfos,
             previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+            topLevelFolderEblanApplicationInfos = topLevelFolderEblanApplicationInfos,
             onUpdateEblanApplicationInfo = onUpdateEblanApplicationInfo,
             onAddFolderEblanApplicationInfo = onAddFolderEblanApplicationInfo,
         )
@@ -489,6 +496,7 @@ private fun Folders(
     eblanApplicationInfo: EblanApplicationInfo,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
+    topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
     onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
 ) {
@@ -513,6 +521,7 @@ private fun Folders(
 
     if (showAddFolderDialog) {
         AddFolderDialog(
+            topLevelFolderEblanApplicationInfos = topLevelFolderEblanApplicationInfos,
             onDismissRequest = {
                 showAddFolderDialog = false
             },

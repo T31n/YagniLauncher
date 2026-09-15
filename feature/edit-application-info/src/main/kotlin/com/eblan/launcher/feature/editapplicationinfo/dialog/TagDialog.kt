@@ -103,7 +103,7 @@ internal fun AddTagDialog(
                         onAddEblanApplicationInfoTag(
                             EblanApplicationInfoTag(
                                 name = value,
-                                index = maxIndex,
+                                index = maxIndex + 1,
                             ),
                         )
 

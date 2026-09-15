@@ -80,6 +80,8 @@ internal fun EditFolderApplicationInfoRoute(
 
     val previewFolderEblanApplicationInfos by viewModel.previewFolderEblanApplicationInfos.collectAsStateWithLifecycle()
 
+    val topLevelFolderEblanApplicationInfos by viewModel.topLevelFolderEblanApplicationInfos.collectAsStateWithLifecycle()
+
     EditFolderApplicationInfoScreen(
         modifier = modifier,
         editFolderApplicationInfoUiState = editFolderApplicationInfoUiState,
@@ -87,6 +89,7 @@ internal fun EditFolderApplicationInfoRoute(
         packageManagerIconPackInfos = packageManagerIconPackInfos,
         folderEblanApplicationInfos = folderEblanApplicationInfos,
         previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+        topLevelFolderEblanApplicationInfos = topLevelFolderEblanApplicationInfos,
         onNavigateUp = onNavigateUp,
         onUpdateIconPackInfoPackageName = viewModel::updateIconPackInfoPackageName,
         onResetFolderEblanApplicationInfoCustomIcon = viewModel::resetFolderEblanApplicationInfoCustomIcon,
@@ -107,6 +110,7 @@ internal fun EditFolderApplicationInfoScreen(
     packageManagerIconPackInfos: List<PackageManagerIconPackInfo>,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
+    topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     onNavigateUp: () -> Unit,
     onUpdateIconPackInfoPackageName: (String) -> Unit,
     onResetFolderEblanApplicationInfoCustomIcon: (FolderEblanApplicationInfo) -> Unit,
@@ -153,6 +157,7 @@ internal fun EditFolderApplicationInfoScreen(
                     packageManagerIconPackInfos = packageManagerIconPackInfos,
                     folderEblanApplicationInfos = folderEblanApplicationInfos,
                     previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+                    topLevelFolderEblanApplicationInfos = folderEblanApplicationInfos,
                     onUpdateIconPackInfoPackageName = onUpdateIconPackInfoPackageName,
                     onResetFolderEblanApplicationInfoCustomIcon = onResetFolderEblanApplicationInfoCustomIcon,
                     onUpdateFolderEblanApplicationInfoCustomIcon = onUpdateFolderEblanApplicationInfoCustomIcon,
@@ -175,6 +180,7 @@ internal fun Success(
     packageManagerIconPackInfos: List<PackageManagerIconPackInfo>,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
+    topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     onUpdateIconPackInfoPackageName: (String) -> Unit,
     onResetFolderEblanApplicationInfoCustomIcon: (FolderEblanApplicationInfo) -> Unit,
     onUpdateFolderEblanApplicationInfoCustomIcon: (
@@ -244,6 +250,7 @@ internal fun Success(
             folderEblanApplicationInfo = folderEblanApplicationInfo,
             folderEblanApplicationInfos = folderEblanApplicationInfos,
             previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+            topLevelFolderEblanApplicationInfos = topLevelFolderEblanApplicationInfos,
             onUpdateFolderEblanApplicationInfo = onUpdateFolderEblanApplicationInfo,
             onAddFolderEblanApplicationInfo = onAddFolderEblanApplicationInfo,
         )
@@ -290,6 +297,7 @@ private fun Folders(
     folderEblanApplicationInfo: FolderEblanApplicationInfo,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
+    topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     onUpdateFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
     onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
 ) {
@@ -315,6 +323,7 @@ private fun Folders(
 
     if (showAddFolderDialog) {
         AddFolderDialog(
+            topLevelFolderEblanApplicationInfos = topLevelFolderEblanApplicationInfos,
             onDismissRequest = {
                 showAddFolderDialog = false
             },

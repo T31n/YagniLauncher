@@ -41,9 +41,14 @@ import com.eblan.launcher.common.R as commonR
 @Composable
 fun AddFolderDialog(
     modifier: Modifier = Modifier,
+    topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     onDismissRequest: () -> Unit,
     onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
 ) {
+    val maxIndex = remember(key1 = topLevelFolderEblanApplicationInfos) {
+        topLevelFolderEblanApplicationInfos.maxOfOrNull { it.index } ?: 0
+    }
+
     var value by remember { mutableStateOf("") }
 
     var isError by remember { mutableStateOf(false) }
@@ -95,7 +100,7 @@ fun AddFolderDialog(
                                 id = Uuid.random().toHexString(),
                                 icon = null,
                                 label = value,
-                                index = -1,
+                                index = maxIndex + 1,
                                 folderIndex = -1,
                                 folderId = null,
                             ),

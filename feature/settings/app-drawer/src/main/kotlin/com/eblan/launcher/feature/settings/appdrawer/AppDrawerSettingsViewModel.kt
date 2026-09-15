@@ -28,7 +28,7 @@ import com.eblan.launcher.domain.repository.EblanApplicationInfoTagRepository
 import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.application.GetEblanApplicationTagsUseCase
-import com.eblan.launcher.domain.usecase.folder.GetFolderEblanApplicationInfosUseCase
+import com.eblan.launcher.domain.usecase.folder.GetTopLevelFolderEblanApplicationInfosUseCase
 import com.eblan.launcher.feature.settings.appdrawer.model.AppDrawerSettingsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -44,7 +44,7 @@ internal class AppDrawerSettingsViewModel @Inject constructor(
     getEblanApplicationTagsUseCase: GetEblanApplicationTagsUseCase,
     private val eblanApplicationInfoTagRepository: EblanApplicationInfoTagRepository,
     private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
-    getFolderEblanApplicationInfosUseCase: GetFolderEblanApplicationInfosUseCase,
+    getTopLevelFolderEblanApplicationInfosUseCase: GetTopLevelFolderEblanApplicationInfosUseCase,
 ) : ViewModel() {
     val appDrawerSettingsUiState = combine(
         userDataRepository.userDataFlow,
@@ -68,7 +68,7 @@ internal class AppDrawerSettingsViewModel @Inject constructor(
         initialValue = emptyList(),
     )
 
-    val folderEblanApplicationInfos = getFolderEblanApplicationInfosUseCase().stateIn(
+    val folderEblanApplicationInfos = getTopLevelFolderEblanApplicationInfosUseCase().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = emptyList(),

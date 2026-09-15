@@ -126,7 +126,7 @@ internal fun VerticalApplicationScreen(
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
-    folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     onDismiss: () -> Unit,
     onDragEnd: () -> Unit,
     onEditApplicationInfo: (
@@ -274,7 +274,7 @@ internal fun VerticalApplicationScreen(
                 folderCornerRadius = folderCornerRadius,
                 folderBackgroundColor = folderBackgroundColor,
                 customFolderBackgroundColor = customFolderBackgroundColor,
-                folderEblanApplicationInfos = folderEblanApplicationInfos,
+                topLevelFolderEblanApplicationInfos = topLevelFolderEblanApplicationInfos,
                 onDismiss = onDismiss,
                 onDragEnd = onDragEnd,
                 onUpdateGridItemSource = onUpdateGridItemSource,
@@ -379,7 +379,7 @@ private fun EblanApplicationInfosPage(
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
-    folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     onDismiss: () -> Unit,
     onDragEnd: () -> Unit,
     onUpdateGridItemSource: (GridItemSource) -> Unit,
@@ -471,7 +471,7 @@ private fun EblanApplicationInfosPage(
                 folderCornerRadius = folderCornerRadius,
                 folderBackgroundColor = folderBackgroundColor,
                 customFolderBackgroundColor = customFolderBackgroundColor,
-                folderEblanApplicationInfos = folderEblanApplicationInfos,
+                topLevelFolderEblanApplicationInfos = topLevelFolderEblanApplicationInfos,
                 onDismiss = onDismiss,
                 onDragEnd = onDragEnd,
                 onUpdateGridItemSource = onUpdateGridItemSource,
@@ -544,7 +544,7 @@ private fun EblanApplicationInfos(
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
-    folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     onDismiss: () -> Unit,
     onDragEnd: () -> Unit,
     onUpdateGridItemSource: (GridItemSource) -> Unit,
@@ -641,7 +641,7 @@ private fun EblanApplicationInfos(
         ) {
             when (eblanUserPageKey.eblanUser.eblanUserType) {
                 EblanUserType.Personal -> {
-                    items(items = folderEblanApplicationInfos) {
+                    items(items = topLevelFolderEblanApplicationInfos) {
                         FolderEblanApplicationInfoItem(
                             sharedTransitionScope = sharedTransitionScope,
                             folderEblanApplicationInfo = it,
