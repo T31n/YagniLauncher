@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -100,15 +101,21 @@ internal fun ManageTagsDialog(
                             lazyColumnDragDropState = lazyColumnDragDropState,
                             index = index,
                         ) {
-                            Column(
+                            ElevatedCard(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(horizontal = 4.dp, vertical = 8.dp),
+                                    .padding(5.dp),
                             ) {
-                                Text(
-                                    text = eblanApplicationInfoTag.name,
-                                    style = MaterialTheme.typography.bodyLarge,
-                                )
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(8.dp),
+                                ) {
+                                    Text(
+                                        text = eblanApplicationInfoTag.name,
+                                        style = MaterialTheme.typography.bodyLarge,
+                                    )
+                                }
                             }
                         }
                     }
