@@ -64,4 +64,7 @@ interface FolderEblanApplicationInfoDao {
 
     @Update
     suspend fun updateFolderEblanApplicationInfoEntities(entities: List<FolderEblanApplicationInfoEntity>)
+
+    @Query("DELETE FROM FolderEblanApplicationInfoEntity WHERE id = :id")
+    suspend fun deleteFolderEblanApplicationInfoEntityById(id: String)
 }

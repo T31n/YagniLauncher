@@ -112,4 +112,7 @@ interface EblanApplicationInfoDao {
     """,
     )
     suspend fun getEblanApplicationInfoEntitiesWithoutTags(): List<EblanApplicationInfoEntity>
+
+    @Update
+    suspend fun updateEblanApplicationInfoEntities(entities: List<EblanApplicationInfoEntity>)
 }

@@ -61,4 +61,6 @@ interface EblanApplicationInfoRepository {
     suspend fun getEblanApplicationInfosByTagId(id: Long): List<EblanApplicationInfo>
 
     suspend fun getEblanApplicationInfosWithoutTag(): List<EblanApplicationInfo>
+
+    suspend fun updateEblanApplicationInfos(eblanApplicationInfos: List<EblanApplicationInfo>)
 }

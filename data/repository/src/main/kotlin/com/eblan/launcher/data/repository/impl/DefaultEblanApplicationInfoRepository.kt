@@ -118,6 +118,12 @@ internal class DefaultEblanApplicationInfoRepository @Inject constructor(
             it.asModel()
         }
 
+    override suspend fun updateEblanApplicationInfos(eblanApplicationInfos: List<EblanApplicationInfo>) {
+        val entities = eblanApplicationInfos.map { it.asEntity() }
+
+        eblanApplicationInfoDao.updateEblanApplicationInfoEntities(entities = entities)
+    }
+
     private fun EblanApplicationInfoTagEntity.asModel(): EblanApplicationInfoTag = EblanApplicationInfoTag(
         id = id,
         name = name,

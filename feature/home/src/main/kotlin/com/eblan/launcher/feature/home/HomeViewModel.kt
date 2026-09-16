@@ -877,10 +877,10 @@ internal class HomeViewModel @Inject constructor(
                     _gridItemSource.update {
                         GridItemSource.NewFolder(
                             folderGridItems = getRecursiveFolderEblanApplicationInfosUseCase(
-                                id = folderEblanApplicationInfoGridItem.id,
+                                id = movingGridItem.id,
+                                folderId = folderEblanApplicationInfoGridItem.id,
                                 label = data.label,
                                 icon = data.icon,
-                                movingGridItem = movingGridItem,
                             ),
                         )
                     }
@@ -907,10 +907,10 @@ internal class HomeViewModel @Inject constructor(
             _gridItemSource.update {
                 GridItemSource.NewFolder(
                     folderGridItems = getRecursiveFolderEblanApplicationInfosUseCase(
-                        id = folderEblanApplicationInfo.id,
+                        id = movingGridItem.id,
+                        folderId = folderEblanApplicationInfo.id,
                         label = folderEblanApplicationInfo.label,
                         icon = folderEblanApplicationInfo.icon,
-                        movingGridItem = movingGridItem,
                     ),
                 )
             }

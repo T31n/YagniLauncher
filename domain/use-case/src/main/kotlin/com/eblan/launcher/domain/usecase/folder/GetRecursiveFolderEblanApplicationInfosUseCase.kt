@@ -44,9 +44,9 @@ class GetRecursiveFolderEblanApplicationInfosUseCase @Inject constructor(
     @OptIn(ExperimentalUuidApi::class)
     suspend operator fun invoke(
         id: String,
+        folderId: String,
         label: String,
         icon: String?,
-        movingGridItem: GridItem,
     ): List<GridItem> = withContext(defaultDispatcher) {
         val userData = userDataRepository.userDataFlow.first()
 
@@ -67,27 +67,26 @@ class GetRecursiveFolderEblanApplicationInfosUseCase @Inject constructor(
 
         getRecursiveFolderGridItems(
             gridItemSettings = gridItemSettings,
-            gridItem = movingGridItem,
             eblanAction = eblanAction,
             previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
             id = id,
-            includeRoot = false,
+            folderId = folderId,
         )
     }
 
     @OptIn(ExperimentalUuidApi::class)
     private fun getRecursiveFolderGridItems(
         gridItemSettings: GridItemSettings,
-        gridItem: GridItem,
+        gridItem: GridItem? = null,
         eblanAction: EblanAction,
         previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
         id: String,
-        includeRoot: Boolean = true,
+        folderId: String,
     ): List<GridItem> = buildList {
         val previewFolderEblanApplicationInfo =
-            previewFolderEblanApplicationInfos[id] ?: return@buildList
+            previewFolderEblanApplicationInfos[folderId] ?: return@buildList
 
-        if (includeRoot) {
+        if (gridItem != null) {
             add(gridItem)
         }
 
@@ -111,7 +110,7 @@ class GetRecursiveFolderEblanApplicationInfosUseCase @Inject constructor(
                                 customIcon = data.customIcon,
                                 customLabel = data.customLabel,
                                 index = data.folderIndex,
-                                folderId = gridItem.id,
+                                folderId = id,
                             ),
                             associate = Associate.Grid,
                             override = false,
@@ -135,7 +134,7 @@ class GetRecursiveFolderEblanApplicationInfosUseCase @Inject constructor(
                             label = data.label,
                             icon = data.icon,
                             index = data.folderIndex,
-                            folderId = gridItem.id,
+                            folderId = id,
                         ),
                         associate = Associate.Grid,
                         override = false,
@@ -151,7 +150,8 @@ class GetRecursiveFolderEblanApplicationInfosUseCase @Inject constructor(
                             gridItem = gridItem,
                             eblanAction = eblanAction,
                             previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
-                            id = folderEblanApplicationInfoGridItem.id,
+                            id = gridItem.id,
+                            folderId = folderEblanApplicationInfoGridItem.id,
                         ),
                     )
                 }

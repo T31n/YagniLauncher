@@ -28,7 +28,6 @@ import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.folder.asPreviewFolders
 import com.eblan.launcher.domain.usecase.util.deleteGridItemData
-import com.eblan.launcher.domain.usecase.util.getRecursiveFolderGridItems
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -60,17 +59,12 @@ class UpdatePageItemsUseCase @Inject constructor(
                                 maxFolderRows = userData.folderSettings.maxFolderRows,
                             )
 
-                    getRecursiveFolderGridItems(
+                    deleteGridItemData(
                         gridItem = gridItem,
                         previewFolderGridItems = previewFolderGridItems,
-                        includeRoot = false,
-                    ).forEach { folderGridItem ->
-                        deleteGridItemData(
-                            gridItem = folderGridItem,
-                            appWidgetHostWrapper = appWidgetHostWrapper,
-                            launcherAppsWrapper = launcherAppsWrapper,
-                        )
-                    }
+                        appWidgetHostWrapper = appWidgetHostWrapper,
+                        launcherAppsWrapper = launcherAppsWrapper,
+                    )
                 }
 
                 gridRepository.deleteGridItems(gridItems = pageItem.gridItems)

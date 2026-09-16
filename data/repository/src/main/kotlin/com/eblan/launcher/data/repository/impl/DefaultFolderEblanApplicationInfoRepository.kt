@@ -71,6 +71,10 @@ internal class DefaultFolderEblanApplicationInfoRepository @Inject constructor(p
         it.asModel()
     }
 
+    override suspend fun deleteFolderEblanApplicationInfoById(id: String) {
+        folderEblanApplicationInfoDao.deleteFolderEblanApplicationInfoEntityById(id = id)
+    }
+
     private fun FolderEblanApplicationInfoWrapperEntity.asModel(): FolderEblanApplicationInfoWrapper = FolderEblanApplicationInfoWrapper(
         folderEblanApplicationInfo = folderEblanApplicationInfoEntity.asModel(),
         eblanApplicationInfos = eblanApplicationInfoEntities.map { it.asModel() },

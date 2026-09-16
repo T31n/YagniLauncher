@@ -43,13 +43,48 @@ const val FOLDER_PREVIEW_ROWS = 2
 
 internal suspend fun deleteGridItemData(
     gridItem: GridItem,
+    previewFolderGridItems: Map<String, PreviewFolder>,
     appWidgetHostWrapper: AppWidgetHostWrapper,
     launcherAppsWrapper: LauncherAppsWrapper,
 ) {
-    when (val data = gridItem.data) {
-        is GridItemData.ShortcutInfo -> updatePinShortcutsByPackageName(launcherAppsWrapper, data)
-        is GridItemData.Widget -> appWidgetHostWrapper.deleteAppWidgetId(data.appWidgetId)
-        else -> Unit
+    suspend fun delete(
+        gridItem: GridItem,
+        appWidgetHostWrapper: AppWidgetHostWrapper,
+        launcherAppsWrapper: LauncherAppsWrapper,
+    ) {
+        when (val data = gridItem.data) {
+            is GridItemData.ShortcutInfo -> updatePinShortcutsByPackageName(
+                launcherAppsWrapper,
+                data,
+            )
+
+            is GridItemData.Widget -> appWidgetHostWrapper.deleteAppWidgetId(data.appWidgetId)
+
+            else -> Unit
+        }
+    }
+
+    when (gridItem.data) {
+        is GridItemData.ApplicationInfo,
+        is GridItemData.ShortcutConfig,
+        is GridItemData.ShortcutInfo,
+        is GridItemData.Widget,
+        -> delete(
+            gridItem = gridItem,
+            appWidgetHostWrapper = appWidgetHostWrapper,
+            launcherAppsWrapper = launcherAppsWrapper,
+        )
+
+        is GridItemData.Folder -> getRecursiveFolderGridItems(
+            previewFolderGridItems = previewFolderGridItems,
+            folderId = gridItem.id,
+        ).forEach {
+            delete(
+                gridItem = it,
+                appWidgetHostWrapper = appWidgetHostWrapper,
+                launcherAppsWrapper = launcherAppsWrapper,
+            )
+        }
     }
 }
 
@@ -61,13 +96,13 @@ internal suspend fun deleteGridItemData(
  * @return A list of grid items contained within the specified folder and its nested folders.
  */
 internal fun getRecursiveFolderGridItems(
-    gridItem: GridItem,
+    gridItem: GridItem? = null,
     previewFolderGridItems: Map<String, PreviewFolder>,
-    includeRoot: Boolean = true,
+    folderId: String,
 ): List<GridItem> = buildList {
-    val previewFolder = previewFolderGridItems[gridItem.id] ?: return@buildList
+    val previewFolder = previewFolderGridItems[folderId] ?: return@buildList
 
-    if (includeRoot) {
+    if (gridItem != null) {
         add(gridItem)
     }
 
@@ -86,6 +121,7 @@ internal fun getRecursiveFolderGridItems(
                     getRecursiveFolderGridItems(
                         gridItem = folderGridItem,
                         previewFolderGridItems = previewFolderGridItems,
+                        folderId = folderGridItem.id,
                     ),
                 )
             }
