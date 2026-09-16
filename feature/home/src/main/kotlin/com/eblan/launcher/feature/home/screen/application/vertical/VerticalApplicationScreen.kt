@@ -649,7 +649,10 @@ private fun EblanApplicationInfos(
         ) {
             when (eblanUserPageKey.eblanUser.eblanUserType) {
                 EblanUserType.Personal -> {
-                    items(items = getEblanApplicationInfosByLabelAndTag.folderEblanApplicationInfos) {
+                    items(
+                        items = getEblanApplicationInfosByLabelAndTag.folderEblanApplicationInfos,
+                        key = { it.id },
+                    ) {
                         FolderEblanApplicationInfoItem(
                             sharedTransitionScope = sharedTransitionScope,
                             folderEblanApplicationInfo = it,

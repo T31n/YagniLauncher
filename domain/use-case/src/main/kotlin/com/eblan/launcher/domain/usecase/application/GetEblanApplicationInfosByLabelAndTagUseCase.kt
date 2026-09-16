@@ -66,17 +66,18 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
         val iconPackInfoPackageName = userData.generalSettings.iconPackInfoPackageName
 
         val eblanApplicationInfosByLabel = getEblanApplicationInfos(
-            label = label,
-            fuzzySearch = userData.appDrawerSettings.fuzzySearch,
-            excludeTaggedApps = userData.appDrawerSettings.excludeTaggedApps,
-            tagId = tagId,
             eblanApplicationInfos = eblanApplicationInfos,
+            excludeTaggedApps = userData.appDrawerSettings.excludeTaggedApps,
+            fuzzySearch = userData.appDrawerSettings.fuzzySearch,
+            label = label,
+            tagId = tagId,
         )
 
-        val folderEblanApplicationInfosByLabel = getFolderEblanApplicationInfos(
-            label = label,
-            folderEblanApplicationInfos = folderEblanApplicationInfos,
-        )
+        val folderEblanApplicationInfosByLabel = if (tagId == null && label.isEmpty()) {
+            folderEblanApplicationInfos.filterNot { it.folderId != null }
+        } else {
+            emptyList()
+        }
 
         when (userData.appDrawerSettings.appDrawerType) {
             AppDrawerType.Vertical, AppDrawerType.List ->
@@ -164,11 +165,11 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
     }
 
     private suspend fun getEblanApplicationInfos(
-        label: String,
-        fuzzySearch: Boolean,
-        excludeTaggedApps: Boolean,
-        tagId: Long?,
         eblanApplicationInfos: List<EblanApplicationInfo>,
+        excludeTaggedApps: Boolean,
+        fuzzySearch: Boolean,
+        label: String,
+        tagId: Long?,
     ): List<EblanApplicationInfo> {
         val eblanApplicationInfosByTag = when {
             tagId != null ->
@@ -216,15 +217,6 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
             emptyList()
         }
     }
-
-    private fun getFolderEblanApplicationInfos(
-        label: String,
-        folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
-    ): List<FolderEblanApplicationInfo> = if (label.isEmpty()) {
-        folderEblanApplicationInfos
-    } else {
-        emptyList()
-    }.filterNot { it.folderId != null }
 
     private suspend fun normalize(text: String): String = withContext(defaultDispatcher) {
         Normalizer.normalize(text, Normalizer.Form.NFD)
