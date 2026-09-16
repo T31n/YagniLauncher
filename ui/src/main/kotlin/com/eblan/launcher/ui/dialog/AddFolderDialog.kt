@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.eblan.launcher.designsystem.component.EblanDialog
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
+import com.eblan.launcher.ui.R
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 import com.eblan.launcher.common.R as commonR
@@ -58,7 +59,7 @@ fun AddFolderDialog(
         onDismissRequest = onDismissRequest,
     ) {
         Text(
-            text = "Add Folder",
+            text = stringResource(R.string.add_folder),
             style = MaterialTheme.typography.titleLarge,
         )
 
@@ -70,12 +71,12 @@ fun AddFolderDialog(
             },
             modifier = Modifier.fillMaxWidth(),
             label = {
-                Text(text = "Add Folder")
+                Text(text = stringResource(R.string.add_folder))
             },
             isError = isError,
             supportingText = if (isError) {
                 {
-                    Text(text = "Folder is not valid")
+                    Text(text = stringResource(R.string.folder_is_not_valid))
                 }
             } else {
                 null

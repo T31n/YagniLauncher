@@ -59,7 +59,7 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
             when (val data = folderGridItem.data) {
                 is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
                     val eblanApplicationInfos =
-eblanApplicationInfoRepository.getEblanApplicationInfosByPackageName(
+                        eblanApplicationInfoRepository.getEblanApplicationInfosByPackageName(
                             serialNumber = data.serialNumber,
                             packageName = data.packageName,
                         ).filter { it.componentName == data.componentName && it.folderId != null }
