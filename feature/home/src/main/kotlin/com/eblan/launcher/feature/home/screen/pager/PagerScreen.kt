@@ -515,7 +515,10 @@ internal fun PagerScreen(
     val isVisibleSettingsPopup =
         pagerScreenState.showSettingsPopup && pagerScreenState.settingsPopupIntOffset != null
 
-    val isVisibleFolders = pagerScreenState.isVisibleFolders && folderGridItemPopups.isNotEmpty()
+    val isVisibleFolderGridItems = pagerScreenState.isVisibleFolderGridItems && folderGridItemPopups.isNotEmpty()
+
+    val isVisibleFolderEblanApplicationInfos = pagerScreenState.isVisibleFolderEblanApplicationInfos &&
+        folderEblanApplicationInfoPopups.isNotEmpty()
 
     val isVisibleFolderGridItemPopup = pagerScreenState.showFolderGridItemPopup &&
         pagerScreenState.popupIntOffset != null &&
@@ -527,7 +530,7 @@ internal fun PagerScreen(
     val shouldLockScreenOrientation = homeSettings.lockScreenOrientation ||
         isVisibleGridItemPopup ||
         isVisibleSettingsPopup ||
-        isVisibleFolders ||
+        isVisibleFolderGridItems ||
         isVisibleFolderGridItemPopup ||
         isResizing ||
         pagerScreenState.showApplicationScreen ||
@@ -865,7 +868,7 @@ internal fun PagerScreen(
                             statusBarNotifications = statusBarNotifications,
                             textColor = textColor,
                             isVisibleOverlay = isVisibleOverlay,
-                            isVisibleFolders = pagerScreenState.isVisibleFolders,
+                            isVisibleFolderGridItems = isVisibleFolderGridItems,
                             moveGridItemResult = moveGridItemResult,
                             lockMovement = experimentalSettings.lockMovement,
                             isDragging = pagerScreenState.isDragging,
@@ -899,7 +902,7 @@ internal fun PagerScreen(
                             onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
                             onShowFolderWhenDragging = onShowFolderWhenDragging,
                             onResetGrid = onResetGrid,
-                            onUpdateIsVisibleFolders = pagerScreenState::updateIsVisibleFolders,
+                            onUpdateIsVisibleFolders = pagerScreenState::updateIsVisibleFolderGridItems,
                         )
                     },
                 )
@@ -978,7 +981,7 @@ internal fun PagerScreen(
                                 statusBarNotifications = statusBarNotifications,
                                 textColor = textColor,
                                 isVisibleOverlay = isVisibleOverlay,
-                                isVisibleFolders = pagerScreenState.isVisibleFolders,
+                                isVisibleFolderGridItems = isVisibleFolderGridItems,
                                 moveGridItemResult = moveGridItemResult,
                                 lockMovement = experimentalSettings.lockMovement,
                                 isDragging = pagerScreenState.isDragging,
@@ -1012,7 +1015,7 @@ internal fun PagerScreen(
                                 onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
                                 onShowFolderWhenDragging = onShowFolderWhenDragging,
                                 onResetGrid = onResetGrid,
-                                onUpdateIsVisibleFolders = pagerScreenState::updateIsVisibleFolders,
+                                onUpdateIsVisibleFolders = pagerScreenState::updateIsVisibleFolderGridItems,
                             )
                         },
                     )
@@ -1062,7 +1065,7 @@ internal fun PagerScreen(
             )
         }
 
-        if (isVisibleFolders) {
+        if (isVisibleFolderGridItems) {
             folderGridItemPopups.forEach {
                 FolderScreen(
                     sharedTransitionScope = this@SharedTransitionLayout,
@@ -1109,7 +1112,7 @@ internal fun PagerScreen(
                     onDismissFolderGridItemPopup = pagerScreenState::dismissFolderGridItemPopup,
                     onResetGrid = onResetGrid,
                     onResetGridAfterMoveFolder = onResetGridAfterMoveFolder,
-                    onUpdateIsVisibleFolders = pagerScreenState::updateIsVisibleFolders,
+                    onUpdateIsVisibleFolderGridItems = pagerScreenState::updateIsVisibleFolderGridItems,
                 )
             }
         }
@@ -1166,6 +1169,8 @@ internal fun PagerScreen(
                 folderBackgroundColor = folderSettings.folderBackgroundColor,
                 customFolderBackgroundColor = folderSettings.customFolderBackgroundColor,
                 topLevelFolderEblanApplicationInfos = topLevelFolderEblanApplicationInfos,
+                isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
+                folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                 onDismiss = pagerScreenState::dismissApplicationScreen,
                 onDragEnd = pagerScreenState::handleOnDragEndApplicationScreen,
                 onEditApplicationInfo = onEditApplicationInfo,
@@ -1181,7 +1186,7 @@ internal fun PagerScreen(
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                 onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
                 onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
-                onUpdateIsVisibleFolders = pagerScreenState::updateIsVisibleFolders,
+                onUpdateIsVisibleFolderEblanApplicationInfos = pagerScreenState::updateIsVisibleFolderEblanApplicationInfos,
                 onUpdateFolderEblanApplicationInfo = pagerScreenState::updateFolderEblanApplicationInfo,
                 onUpdateFolderPopupBounds = pagerScreenState::showFolderApplicationPopup,
                 onUpdateFolderPopupMenu = pagerScreenState::updateShowFolderApplicationInfoPopup,
@@ -1285,7 +1290,7 @@ internal fun PagerScreen(
             )
         }
 
-        if (pagerScreenState.isVisibleFolders) {
+        if (pagerScreenState.isVisibleFolderEblanApplicationInfos) {
             folderEblanApplicationInfoPopups.forEach { folderEblanApplicationInfoPopup ->
                 FolderApplicationScreen(
                     sharedTransitionScope = this,
@@ -1315,7 +1320,7 @@ internal fun PagerScreen(
                     showFolderEblanApplicationGridItemPopup = pagerScreenState.showFolderEblanApplicationInfoGridItemPopup,
                     onDeleteFolderEblanApplicationInfoPopupEntry = onDeleteFolderEblanApplicationInfoPopupEntry,
                     onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
-                    onUpdateIsVisibleFolders = pagerScreenState::updateIsVisibleFolders,
+                    onUpdateIsVisibleFolders = pagerScreenState::updateIsVisibleFolderEblanApplicationInfos,
                     onUpdateImageBitmap = pagerScreenState::updateOverlayImageBitmap,
                     onUpdateOverlayBounds = pagerScreenState::updateOverlayBounds,
                     onUpdateSharedElementKey = pagerScreenState::updateSharedElementKey,

@@ -67,6 +67,7 @@ import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderPopupEntry
 import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.Associate
@@ -108,7 +109,9 @@ internal fun FolderEblanApplicationInfoItem(
     isSwiping: Boolean,
     drag: Drag,
     previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
-    onUpdateIsVisibleFolders: (Boolean) -> Unit,
+    isVisibleFolderEblanApplicationInfos: Boolean,
+    folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
+    onUpdateIsVisibleFolderEblanApplicationInfos: (Boolean) -> Unit,
     onUpsertFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
     onUpdateImageBitmap: (ImageBitmap) -> Unit,
     onUpdateOverlayBounds: (
@@ -161,7 +164,16 @@ internal fun FolderEblanApplicationInfoItem(
 
     var isLongPress by remember { mutableStateOf(false) }
 
-    val alpha = if (isLongPress) 0f else 1f
+    val isVisibleFolder = remember(
+        key1 = folderEblanApplicationInfo,
+        key2 = folderEblanApplicationInfoPopups,
+        key3 = isVisibleFolderEblanApplicationInfos,
+    ) {
+        isVisibleFolderEblanApplicationInfos && folderEblanApplicationInfoPopups.any { it.folderPopupEntry.id == folderEblanApplicationInfo.id }
+    }
+
+    val textAlpha = if (isLongPress) 0f else 1f
+    val iconAlpha = if (isLongPress || isVisibleFolder) 0f else 1f
 
     val sharedElementKey = SharedElementKey(
         id = folderEblanApplicationInfo.id,
@@ -205,7 +217,7 @@ internal fun FolderEblanApplicationInfoItem(
                 detectTapGestures(
                     onTap = if (!isVisibleOverlay) {
                         {
-                            onUpdateIsVisibleFolders(true)
+                            onUpdateIsVisibleFolderEblanApplicationInfos(true)
 
                             onUpsertFolderEblanApplicationInfoPopupEntry(
                                 FolderPopupEntry(
@@ -284,7 +296,7 @@ internal fun FolderEblanApplicationInfoItem(
 
                 drawLayer(graphicsLayer)
             }
-            .alpha(alpha)
+            .alpha(iconAlpha)
 
         if (icon != null) {
             AsyncImage(
@@ -325,7 +337,7 @@ internal fun FolderEblanApplicationInfoItem(
             Spacer(modifier = Modifier.height(10.dp))
 
             Text(
-                modifier = Modifier.alpha(alpha),
+                modifier = Modifier.alpha(textAlpha),
                 text = folderEblanApplicationInfo.label,
                 color = textColor,
                 textAlign = TextAlign.Center,

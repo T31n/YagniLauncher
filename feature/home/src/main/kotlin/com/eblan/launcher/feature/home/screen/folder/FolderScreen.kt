@@ -137,7 +137,7 @@ internal fun FolderScreen(
     onResetGrid: () -> Unit,
     onResetGridAfterMoveFolder: () -> Unit,
     onUpsertFolderGridItemPopupEntry: (FolderPopupEntry) -> Unit,
-    onUpdateIsVisibleFolders: (Boolean) -> Unit,
+    onUpdateIsVisibleFolderGridItems: (Boolean) -> Unit,
 ) {
     val folderPopupIntOffset = IntOffset(
         x = folderGridItemPopup.folderPopupEntry.x,
@@ -253,7 +253,7 @@ internal fun FolderScreen(
             onDeleteFolderPopupEntry = onDeleteFolderGridItemPopupEntry,
             onMoveFolderGridItemOutsideFolder = onMoveFolderGridItemOutsideFolder,
             onUpdateSharedElementKey = onUpdateSharedElementKey,
-            onUpdateIsVisibleFolders = onUpdateIsVisibleFolders,
+            onUpdateIsVisibleFolderGridItems = onUpdateIsVisibleFolderGridItems,
         )
     }
 
@@ -514,7 +514,7 @@ private suspend fun handleIsCloseFolder(
     onDeleteFolderPopupEntry: (FolderPopupEntry) -> Unit,
     onMoveFolderGridItemOutsideFolder: (GridItem) -> Unit,
     onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
-    onUpdateIsVisibleFolders: (Boolean) -> Unit,
+    onUpdateIsVisibleFolderGridItems: (Boolean) -> Unit,
 ) {
     if (!folderGridItemPopup.folderPopupEntry.isCloseFolder || !isLastFolderGridItem) return
 
@@ -537,7 +537,7 @@ private suspend fun handleIsCloseFolder(
     )
 
     if (isFirstFolderGridItem) {
-        onUpdateIsVisibleFolders(false)
+        onUpdateIsVisibleFolderGridItems(false)
     }
 
     onDeleteFolderPopupEntry(folderGridItemPopup.folderPopupEntry)

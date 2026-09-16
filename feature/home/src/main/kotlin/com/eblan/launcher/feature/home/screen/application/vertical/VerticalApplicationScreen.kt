@@ -69,6 +69,7 @@ import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderPopupEntry
 import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.GridItem
@@ -128,6 +129,8 @@ internal fun VerticalApplicationScreen(
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
     topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    isVisibleFolderEblanApplicationInfos: Boolean,
+    folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
     onDismiss: () -> Unit,
     onDragEnd: () -> Unit,
     onEditApplicationInfo: (
@@ -148,7 +151,7 @@ internal fun VerticalApplicationScreen(
     onWidgets: (EblanApplicationInfoGroup) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
-    onUpdateIsVisibleFolders: (Boolean) -> Unit,
+    onUpdateIsVisibleFolderEblanApplicationInfos: (Boolean) -> Unit,
     onUpsertFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
     onUpdateFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
     onUpdateFolderPopupBounds: (
@@ -280,6 +283,8 @@ internal fun VerticalApplicationScreen(
                 folderBackgroundColor = folderBackgroundColor,
                 customFolderBackgroundColor = customFolderBackgroundColor,
                 topLevelFolderEblanApplicationInfos = topLevelFolderEblanApplicationInfos,
+                isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
+                folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                 onDismiss = onDismiss,
                 onDragEnd = onDragEnd,
                 onUpdateGridItemSource = onUpdateGridItemSource,
@@ -299,7 +304,7 @@ internal fun VerticalApplicationScreen(
                 },
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                 onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
-                onUpdateIsVisibleFolders = onUpdateIsVisibleFolders,
+                onUpdateIsVisibleFolderEblanApplicationInfos = onUpdateIsVisibleFolderEblanApplicationInfos,
                 onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
                 onUpdatePopupBounds = { intOffset, intSize ->
                     popupIntOffset = intOffset
@@ -386,6 +391,8 @@ private fun EblanApplicationInfosPage(
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
     topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    isVisibleFolderEblanApplicationInfos: Boolean,
+    folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
     onDismiss: () -> Unit,
     onDragEnd: () -> Unit,
     onUpdateGridItemSource: (GridItemSource) -> Unit,
@@ -402,7 +409,7 @@ private fun EblanApplicationInfosPage(
     onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
-    onUpdateIsVisibleFolders: (Boolean) -> Unit,
+    onUpdateIsVisibleFolderEblanApplicationInfos: (Boolean) -> Unit,
     onUpsertFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
     onUpdatePopupBounds: (
         intOffset: IntOffset,
@@ -482,6 +489,8 @@ private fun EblanApplicationInfosPage(
                 folderBackgroundColor = folderBackgroundColor,
                 customFolderBackgroundColor = customFolderBackgroundColor,
                 topLevelFolderEblanApplicationInfos = topLevelFolderEblanApplicationInfos,
+                isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
+                folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                 onDismiss = onDismiss,
                 onDragEnd = onDragEnd,
                 onUpdateGridItemSource = onUpdateGridItemSource,
@@ -495,7 +504,7 @@ private fun EblanApplicationInfosPage(
                 onUpdateEblanApplicationInfo = onUpdateEblanApplicationInfo,
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                 onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
-                onUpdateIsVisibleFolders = onUpdateIsVisibleFolders,
+                onUpdateIsVisibleFolderEblanApplicationInfos = onUpdateIsVisibleFolderEblanApplicationInfos,
                 onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
                 onUpdatePopupBounds = onUpdatePopupBounds,
                 onUpdateFolderEblanApplicationInfo = onUpdateFolderEblanApplicationInfo,
@@ -556,6 +565,8 @@ private fun EblanApplicationInfos(
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
     topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    isVisibleFolderEblanApplicationInfos: Boolean,
+    folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
     onDismiss: () -> Unit,
     onDragEnd: () -> Unit,
     onUpdateGridItemSource: (GridItemSource) -> Unit,
@@ -572,7 +583,7 @@ private fun EblanApplicationInfos(
     onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
-    onUpdateIsVisibleFolders: (Boolean) -> Unit,
+    onUpdateIsVisibleFolderEblanApplicationInfos: (Boolean) -> Unit,
     onUpsertFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
     onUpdatePopupBounds: (
         intOffset: IntOffset,
@@ -671,7 +682,9 @@ private fun EblanApplicationInfos(
                             isScrollInProgress = lazyGridState.isScrollInProgress,
                             isSwiping = swipeY > 0f,
                             drag = drag,
-                            onUpdateIsVisibleFolders = onUpdateIsVisibleFolders,
+                            isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
+                            folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+                            onUpdateIsVisibleFolderEblanApplicationInfos = onUpdateIsVisibleFolderEblanApplicationInfos,
                             onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
                             onUpdateImageBitmap = onUpdateImageBitmap,
                             onUpdateOverlayBounds = onUpdateOverlayBounds,

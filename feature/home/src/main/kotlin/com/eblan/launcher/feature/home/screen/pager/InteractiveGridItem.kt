@@ -117,7 +117,7 @@ internal fun InteractiveGridItem(
     statusBarNotifications: Map<String, Int>,
     textColor: TextColor,
     isVisibleOverlay: Boolean,
-    isVisibleFolders: Boolean,
+    isVisibleFolderGridItems: Boolean,
     moveGridItemResult: MoveGridItemResult?,
     lockMovement: Boolean,
     isDragging: Boolean,
@@ -190,9 +190,9 @@ internal fun InteractiveGridItem(
     val isVisibleFolder = remember(
         key1 = gridItem,
         key2 = folderGridItemPopups,
-        key3 = isVisibleFolders,
+        key3 = isVisibleFolderGridItems,
     ) {
-        isVisibleFolders && folderGridItemPopups.any { it.folderPopupEntry.id == gridItem.id }
+        isVisibleFolderGridItems && folderGridItemPopups.any { it.folderPopupEntry.id == gridItem.id }
     }
 
     val horizontalAlignment =
@@ -227,7 +227,7 @@ internal fun InteractiveGridItem(
                 gridItem = gridItem,
                 gridItemSettings = currentGridItemSettings,
                 isScrollInProgress = isScrollInProgress,
-                isVisibleFolders = isVisibleFolders,
+                isVisibleFolders = isVisibleFolderGridItems,
                 isVisibleOverlay = isVisibleOverlay,
                 sharedElementKey = sharedElementKey,
                 statusBarNotifications = statusBarNotifications,
@@ -283,7 +283,7 @@ internal fun InteractiveGridItem(
                 gridItemSettings = currentGridItemSettings,
                 hasShortcutHostPermission = hasShortcutHostPermission,
                 isScrollInProgress = isScrollInProgress,
-                isVisibleFolders = isVisibleFolders,
+                isVisibleFolders = isVisibleFolderGridItems,
                 isVisibleOverlay = isVisibleOverlay,
                 sharedElementKey = sharedElementKey,
                 textColor = currentTextColor,
@@ -358,7 +358,7 @@ internal fun InteractiveGridItem(
                 gridItem = gridItem,
                 gridItemSettings = currentGridItemSettings,
                 isScrollInProgress = isScrollInProgress,
-                isVisibleFolders = isVisibleFolders,
+                isVisibleFolders = isVisibleFolderGridItems,
                 isVisibleOverlay = isVisibleOverlay,
                 sharedElementKey = sharedElementKey,
                 textColor = currentTextColor,

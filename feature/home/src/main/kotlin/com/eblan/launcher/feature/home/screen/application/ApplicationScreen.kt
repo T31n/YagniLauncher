@@ -84,6 +84,7 @@ import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderPopupEntry
 import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.GridItem
@@ -144,6 +145,8 @@ internal fun ApplicationScreen(
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
     topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    isVisibleFolderEblanApplicationInfos: Boolean,
+    folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
     onDismiss: () -> Unit,
     onDragEnd: () -> Unit,
     onEditApplicationInfo: (
@@ -164,7 +167,7 @@ internal fun ApplicationScreen(
     onWidgets: (EblanApplicationInfoGroup) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
-    onUpdateIsVisibleFolders: (Boolean) -> Unit,
+    onUpdateIsVisibleFolderEblanApplicationInfos: (Boolean) -> Unit,
     onUpsertFolderEblanApplicationInfoPopupEntry: (FolderPopupEntry) -> Unit,
     onUpdateFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
     onUpdateFolderPopupBounds: (
@@ -225,6 +228,8 @@ internal fun ApplicationScreen(
                     folderBackgroundColor = folderBackgroundColor,
                     customFolderBackgroundColor = customFolderBackgroundColor,
                     topLevelFolderEblanApplicationInfos = topLevelFolderEblanApplicationInfos,
+                    isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
+                    folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                     onDismiss = onDismiss,
                     onDragEnd = onDragEnd,
                     onEditApplicationInfo = onEditApplicationInfo,
@@ -239,7 +244,7 @@ internal fun ApplicationScreen(
                     onWidgets = onWidgets,
                     onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                     onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
-                    onUpdateIsVisibleFolders = onUpdateIsVisibleFolders,
+                    onUpdateIsVisibleFolderEblanApplicationInfos = onUpdateIsVisibleFolderEblanApplicationInfos,
                     onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
                     onUpdateFolderEblanApplicationInfo = onUpdateFolderEblanApplicationInfo,
                     onUpdateFolderPopupBounds = onUpdateFolderPopupBounds,
