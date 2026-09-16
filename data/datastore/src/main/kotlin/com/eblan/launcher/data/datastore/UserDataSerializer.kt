@@ -25,6 +25,7 @@ import com.eblan.launcher.data.datastore.proto.appdrawer.AppDrawerTypeProto
 import com.eblan.launcher.data.datastore.proto.experimental.ExperimentalSettingsProto
 import com.eblan.launcher.data.datastore.proto.folder.FolderSettingsProto
 import com.eblan.launcher.data.datastore.proto.general.GeneralSettingsProto
+import com.eblan.launcher.data.datastore.proto.general.ThemeProto
 import com.eblan.launcher.data.datastore.proto.gesture.GestureSettingsProto
 import com.eblan.launcher.data.datastore.proto.home.GridItemSettingsProto
 import com.eblan.launcher.data.datastore.proto.home.HomeSettingsProto
@@ -42,7 +43,7 @@ import javax.inject.Inject
 
 class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
     private val defaultGeneralSettingsProto = GeneralSettingsProto.newBuilder().apply {
-        themeProto = Theme.System.toThemeProto()
+        themeProto = ThemeProto.ThemeSystem
         dynamicTheme = false
         iconPackInfoPackageName = ""
     }.build()
@@ -147,7 +148,9 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
     }.build()
 
     override suspend fun readFrom(input: InputStream): UserDataProto = try {
-        UserDataProto.parseFrom(input)
+        defaultValue.toBuilder()
+            .mergeFrom(UserDataProto.parseFrom(input))
+            .build()
     } catch (exception: InvalidProtocolBufferException) {
         throw CorruptionException("Cannot read proto.", exception)
     }
