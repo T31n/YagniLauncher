@@ -61,6 +61,16 @@ class Migration19To20Test {
                 )
                 """.trimIndent(),
             )
+
+            db.execSQL(
+                """
+                INSERT INTO EblanApplicationInfoTagCrossRefEntity (
+                    componentName, serialNumber, id
+                ) VALUES (
+                    'com.example.app/.MainActivity', 1001, 1
+                )
+                """.trimIndent(),
+            )
         }
 
         helper.runMigrationsAndValidate(
@@ -128,6 +138,29 @@ class Migration19To20Test {
                 assertTrue(cursor.moveToFirst())
                 assertEquals("Work", cursor.getString(cursor.getColumnIndexOrThrow("name")))
                 assertEquals(0, cursor.getInt(cursor.getColumnIndexOrThrow("index")))
+            }
+
+            db.query(
+                """
+                SELECT * FROM EblanApplicationInfoTagCrossRefEntity
+                WHERE componentName = 'com.example.app/.MainActivity'
+                    AND serialNumber = 1001
+                    AND id = 1
+                """.trimIndent(),
+            ).use { cursor ->
+                assertTrue(cursor.moveToFirst())
+                assertEquals(
+                    "com.example.app/.MainActivity",
+                    cursor.getString(cursor.getColumnIndexOrThrow("componentName")),
+                )
+                assertEquals(
+                    1001L,
+                    cursor.getLong(cursor.getColumnIndexOrThrow("serialNumber")),
+                )
+                assertEquals(
+                    1L,
+                    cursor.getLong(cursor.getColumnIndexOrThrow("id")),
+                )
             }
         }
     }

@@ -75,7 +75,10 @@ internal fun FolderApplicationInfoPopup(
     paddingValues: PaddingValues,
     onDismissRequest: () -> Unit,
     onEditFolderApplicationInfo: (String) -> Unit,
-    onDeleteFolderEblanApplicationInfoGridItems: (String) -> Unit,
+    onDeleteFolderEblanApplicationInfoGridItems: (
+        icon: String?,
+        folderId: String,
+    ) -> Unit,
 ) {
     requireNotNull(popupIntOffset)
 
@@ -155,7 +158,10 @@ internal fun FolderApplicationInfoPopup(
         ) {
             FolderApplicationInfoMenu(
                 onDelete = {
-                    onDeleteFolderEblanApplicationInfoGridItems(folderEblanApplicationInfo.id)
+                    onDeleteFolderEblanApplicationInfoGridItems(
+                        folderEblanApplicationInfo.icon,
+                        folderEblanApplicationInfo.id,
+                    )
 
                     transitionState.targetState = false
                 },
@@ -201,7 +207,10 @@ internal fun FolderApplicationInfoGridItemPopup(
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
     onResetFolderEblanApplicationInfoPopupEntries: () -> Unit,
-    onDeleteFolderEblanApplicationInfoGridItems: (String) -> Unit,
+    onDeleteFolderEblanApplicationInfoGridItems: (
+        icon: String?,
+        folderId: String,
+    ) -> Unit,
 ) {
     requireNotNull(popupIntOffset)
 
@@ -330,7 +339,10 @@ private fun FolderApplicationInfoGridItemPopupContent(
     popupIntOffset: IntOffset,
     popupIntSize: IntSize,
     transitionState: MutableTransitionState<Boolean>,
-    onDeleteFolderEblanApplicationInfoGridItems: (String) -> Unit,
+    onDeleteFolderEblanApplicationInfoGridItems: (
+        icon: String?,
+        folderId: String,
+    ) -> Unit,
     onEditApplicationInfo: (Long, String) -> Unit,
     onEditFolderApplicationInfo: (String) -> Unit,
     onResetFolderEblanApplicationInfoPopupEntries: () -> Unit,
@@ -431,7 +443,10 @@ private fun FolderApplicationInfoGridItemPopupContent(
             FolderApplicationInfoMenu(
                 modifier = modifier,
                 onDelete = {
-                    onDeleteFolderEblanApplicationInfoGridItems(folderEblanApplicationInfoGridItem.id)
+                    onDeleteFolderEblanApplicationInfoGridItems(
+                        data.icon,
+                        folderEblanApplicationInfoGridItem.id,
+                    )
 
                     transitionState.targetState = false
                 },

@@ -39,7 +39,10 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     @OptIn(ExperimentalUuidApi::class)
-    suspend operator fun invoke(folderId: String) = withContext(defaultDispatcher) {
+    suspend operator fun invoke(
+        icon: String?,
+        folderId: String,
+    ) = withContext(defaultDispatcher) {
         val userData = userDataRepository.userDataFlow.first()
 
         val previewFolderEblanApplicationInfos =
@@ -59,7 +62,7 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
                         eblanApplicationInfoRepository.getEblanApplicationInfosByPackageName(
                             serialNumber = data.serialNumber,
                             packageName = data.packageName,
-                        ).filter { it.folderId == folderId }
+                        ).filter { it.folderId != null }
                             .map {
                                 it.copy(
                                     folderIndex = -1,
@@ -71,10 +74,12 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
                 }
 
                 is FolderEblanApplicationInfoGridItemData.Folder -> {
-                    deleteCustomIcon(folderEblanApplicationInfoGridItemData = data)
+                    deleteCustomIcon(icon = data.icon)
                 }
             }
         }
+
+        deleteCustomIcon(icon = icon)
 
         folderEblanApplicationInfoRepository.deleteFolderEblanApplicationInfoById(id = folderId)
     }
@@ -111,17 +116,13 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
         }
     }
 
-    private fun deleteCustomIcon(folderEblanApplicationInfoGridItemData: FolderEblanApplicationInfoGridItemData) {
-        val data =
-            folderEblanApplicationInfoGridItemData as? FolderEblanApplicationInfoGridItemData.Folder
-                ?: return
+    private fun deleteCustomIcon(icon: String?) {
+        if (icon == null) return
 
-        data.icon?.let {
-            val customIconFile = File(it)
+        val customIconFile = File(icon)
 
-            if (customIconFile.exists()) {
-                customIconFile.delete()
-            }
+        if (customIconFile.exists()) {
+            customIconFile.delete()
         }
     }
 }

@@ -351,7 +351,10 @@ internal fun HomeScreen(
         movingGridItem: GridItem,
     ) -> Unit,
     onResetFolderEblanApplicationInfoPopupEntries: () -> Unit,
-    onDeleteFolderEblanApplicationInfoGridItems: (String) -> Unit,
+    onDeleteFolderEblanApplicationInfoGridItems: (
+        icon: String?,
+        folderId: String,
+    ) -> Unit,
 ) {
     val paddingValues = WindowInsets.safeDrawing.asPaddingValues()
 
@@ -594,7 +597,10 @@ private fun Success(
         movingGridItem: GridItem,
     ) -> Unit,
     onResetFolderEblanApplicationInfoPopupEntries: () -> Unit,
-    onDeleteFolderEblanApplicationInfoGridItems: (String) -> Unit,
+    onDeleteFolderEblanApplicationInfoGridItems: (
+        icon: String?,
+        folderId: String,
+    ) -> Unit,
 ) {
     AnimatedContent(
         modifier = modifier,

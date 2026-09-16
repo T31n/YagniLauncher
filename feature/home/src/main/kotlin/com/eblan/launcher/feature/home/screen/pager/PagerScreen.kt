@@ -314,7 +314,10 @@ internal fun PagerScreen(
         movingGridItem: GridItem,
     ) -> Unit,
     onResetFolderEblanApplicationInfoPopupEntries: () -> Unit,
-    onDeleteFolderEblanApplicationInfoGridItems: (String) -> Unit,
+    onDeleteFolderEblanApplicationInfoGridItems: (
+        icon: String?,
+        folderId: String,
+    ) -> Unit,
 ) {
     val layoutDirection = LocalLayoutDirection.current
 
@@ -515,10 +518,12 @@ internal fun PagerScreen(
     val isVisibleSettingsPopup =
         pagerScreenState.showSettingsPopup && pagerScreenState.settingsPopupIntOffset != null
 
-    val isVisibleFolderGridItems = pagerScreenState.isVisibleFolderGridItems && folderGridItemPopups.isNotEmpty()
+    val isVisibleFolderGridItems =
+        pagerScreenState.isVisibleFolderGridItems && folderGridItemPopups.isNotEmpty()
 
-    val isVisibleFolderEblanApplicationInfos = pagerScreenState.isVisibleFolderEblanApplicationInfos &&
-        folderEblanApplicationInfoPopups.isNotEmpty()
+    val isVisibleFolderEblanApplicationInfos =
+        pagerScreenState.isVisibleFolderEblanApplicationInfos &&
+            folderEblanApplicationInfoPopups.isNotEmpty()
 
     val isVisibleFolderGridItemPopup = pagerScreenState.showFolderGridItemPopup &&
         pagerScreenState.popupIntOffset != null &&

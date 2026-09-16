@@ -24,6 +24,25 @@ class Migration19To20 : Migration(19, 20) {
     override fun migrate(db: SupportSQLiteDatabase) {
         db.execSQL(
             """
+            CREATE TABLE IF NOT EXISTS `EblanApplicationInfoTagCrossRefEntity_backup` (
+                `componentName` TEXT NOT NULL,
+                `serialNumber` INTEGER NOT NULL,
+                `id` INTEGER NOT NULL,
+                PRIMARY KEY(`componentName`, `serialNumber`, `id`)
+            )
+            """.trimIndent(),
+        )
+
+        db.execSQL(
+            """
+            INSERT OR IGNORE INTO `EblanApplicationInfoTagCrossRefEntity_backup` (`componentName`, `serialNumber`, `id`)
+            SELECT `componentName`, `serialNumber`, `id`
+            FROM `EblanApplicationInfoTagCrossRefEntity`
+            """.trimIndent(),
+        )
+
+        db.execSQL(
+            """
             CREATE TABLE IF NOT EXISTS `EblanApplicationInfoTagEntity_new` (
                 `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 `name` TEXT NOT NULL,
@@ -109,5 +128,20 @@ class Migration19To20 : Migration(19, 20) {
             ON `EblanApplicationInfoEntity` (`folderId`)
             """.trimIndent(),
         )
+
+        db.execSQL(
+            """
+            INSERT OR IGNORE INTO `EblanApplicationInfoTagCrossRefEntity` (`componentName`, `serialNumber`, `id`)
+            SELECT backup.`componentName`, backup.`serialNumber`, backup.`id`
+            FROM `EblanApplicationInfoTagCrossRefEntity_backup` AS backup
+            INNER JOIN `EblanApplicationInfoTagEntity` AS tag
+                ON tag.`id` = backup.`id`
+            INNER JOIN `EblanApplicationInfoEntity` AS app
+                ON app.`componentName` = backup.`componentName`
+               AND app.`serialNumber` = backup.`serialNumber`
+            """.trimIndent(),
+        )
+
+        db.execSQL("DROP TABLE `EblanApplicationInfoTagCrossRefEntity_backup`")
     }
 }
