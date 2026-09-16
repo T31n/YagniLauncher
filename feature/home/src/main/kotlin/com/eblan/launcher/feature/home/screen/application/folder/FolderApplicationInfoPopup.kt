@@ -63,6 +63,7 @@ import com.eblan.launcher.feature.home.component.popup
 import com.eblan.launcher.feature.home.model.GridItemSource
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.screen.application.ApplicationInfoMenu
+import com.eblan.launcher.framework.launcherapps.AndroidLauncherAppsWrapper
 import com.eblan.launcher.ui.local.LocalLauncherApps
 
 @Composable
@@ -74,7 +75,6 @@ internal fun FolderApplicationInfoPopup(
     paddingValues: PaddingValues,
     onDismissRequest: () -> Unit,
     onEditFolderApplicationInfo: (String) -> Unit,
-    onResetFolderEblanApplicationInfoPopupEntries: () -> Unit,
     onDeleteFolderEblanApplicationInfoGridItems: (String) -> Unit,
 ) {
     requireNotNull(popupIntOffset)
@@ -161,8 +161,6 @@ internal fun FolderApplicationInfoPopup(
                 },
                 onEdit = {
                     onEditFolderApplicationInfo(folderEblanApplicationInfo.id)
-
-                    onResetFolderEblanApplicationInfoPopupEntries()
 
                     transitionState.targetState = false
                 },
@@ -289,104 +287,162 @@ internal fun FolderApplicationInfoGridItemPopup(
                 animationSpec = tween(),
             ),
         ) {
-            when (val data = folderEblanApplicationInfoGridItem.data) {
-                is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
-                    ApplicationInfoMenu(
-                        eblanAppWidgetProviderInfosByPackageName = eblanAppWidgetProviderInfosGroup[
-                            data.packageName,
-                        ],
-                        eblanShortcutInfosGroup = eblanShortcutInfosGroup[
-                            EblanShortcutInfoByGroup(
-                                serialNumber = data.serialNumber,
-                                packageName = data.packageName,
+            FolderApplicationInfoGridItemPopupContent(
+                animations = animations,
+                eblanAppWidgetProviderInfosGroup = eblanAppWidgetProviderInfosGroup,
+                eblanShortcutInfosGroup = eblanShortcutInfosGroup,
+                folderEblanApplicationInfoGridItem = folderEblanApplicationInfoGridItem,
+                gridItemSettings = gridItemSettings,
+                hasShortcutHostPermission = hasShortcutHostPermission,
+                isVisibleOverlay = isVisibleOverlay,
+                launcherApps = launcherApps,
+                popupIntOffset = popupIntOffset,
+                popupIntSize = popupIntSize,
+                transitionState = transitionState,
+                onDeleteFolderEblanApplicationInfoGridItems = onDeleteFolderEblanApplicationInfoGridItems,
+                onEditApplicationInfo = onEditApplicationInfo,
+                onEditFolderApplicationInfo = onEditFolderApplicationInfo,
+                onResetFolderEblanApplicationInfoPopupEntries = onResetFolderEblanApplicationInfoPopupEntries,
+                onUpdateGridItemSource = onUpdateGridItemSource,
+                onUpdateImageBitmap = onUpdateImageBitmap,
+                onUpdateIsDragging = onUpdateIsDragging,
+                onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+                onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+                onUpdateOverlayBounds = onUpdateOverlayBounds,
+                onUpdateSharedElementKey = onUpdateSharedElementKey,
+                onWidgets = onWidgets,
+            )
+        }
+    }
+}
+
+@Composable
+private fun FolderApplicationInfoGridItemPopupContent(
+    modifier: Modifier = Modifier,
+    animations: Boolean,
+    eblanAppWidgetProviderInfosGroup: Map<String, List<EblanAppWidgetProviderInfo>>,
+    eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
+    folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
+    gridItemSettings: GridItemSettings,
+    hasShortcutHostPermission: Boolean,
+    isVisibleOverlay: Boolean,
+    launcherApps: AndroidLauncherAppsWrapper,
+    popupIntOffset: IntOffset,
+    popupIntSize: IntSize,
+    transitionState: MutableTransitionState<Boolean>,
+    onDeleteFolderEblanApplicationInfoGridItems: (String) -> Unit,
+    onEditApplicationInfo: (Long, String) -> Unit,
+    onEditFolderApplicationInfo: (String) -> Unit,
+    onResetFolderEblanApplicationInfoPopupEntries: () -> Unit,
+    onUpdateGridItemSource: (GridItemSource) -> Unit,
+    onUpdateImageBitmap: (ImageBitmap) -> Unit,
+    onUpdateIsDragging: (Boolean) -> Unit,
+    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
+    onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
+    onUpdateOverlayBounds: (IntOffset, IntSize) -> Unit,
+    onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
+    onWidgets: (EblanApplicationInfoGroup) -> Unit,
+) {
+    when (val data = folderEblanApplicationInfoGridItem.data) {
+        is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
+            ApplicationInfoMenu(
+                modifier = modifier,
+                eblanAppWidgetProviderInfosByPackageName = eblanAppWidgetProviderInfosGroup[
+                    data.packageName,
+                ],
+                eblanShortcutInfosGroup = eblanShortcutInfosGroup[
+                    EblanShortcutInfoByGroup(
+                        serialNumber = data.serialNumber,
+                        packageName = data.packageName,
+                    ),
+                ],
+                gridItemSettings = gridItemSettings,
+                hasShortcutHostPermission = hasShortcutHostPermission,
+                icon = data.icon,
+                isVisibleOverlay = isVisibleOverlay,
+                animations = animations,
+                onApplicationInfo = {
+                    launcherApps.startAppDetailsActivity(
+                        serialNumber = data.serialNumber,
+                        componentName = data.componentName,
+                        sourceBounds = Rect(
+                            popupIntOffset.x,
+                            popupIntOffset.y,
+                            popupIntOffset.x + popupIntSize.width,
+                            popupIntOffset.y + popupIntSize.height,
+                        ),
+                    )
+
+                    transitionState.targetState = false
+                },
+                onUpdateIsDragging = onUpdateIsDragging,
+                onEdit = {
+                    onEditApplicationInfo(
+                        data.serialNumber,
+                        data.componentName,
+                    )
+
+                    onResetFolderEblanApplicationInfoPopupEntries()
+
+                    transitionState.targetState = false
+                },
+                onTapShortcutInfo = { serialNumber, packageName, shortcutId ->
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+                        launcherApps.startShortcut(
+                            serialNumber = serialNumber,
+                            packageName = packageName,
+                            id = shortcutId,
+                            sourceBounds = Rect(
+                                popupIntOffset.x,
+                                popupIntOffset.y,
+                                popupIntOffset.x + popupIntSize.width,
+                                popupIntOffset.y + popupIntSize.height,
                             ),
-                        ],
-                        gridItemSettings = gridItemSettings,
-                        hasShortcutHostPermission = hasShortcutHostPermission,
-                        icon = data.icon,
-                        isVisibleOverlay = isVisibleOverlay,
-                        animations = animations,
-                        onApplicationInfo = {
-                            launcherApps.startAppDetailsActivity(
-                                serialNumber = data.serialNumber,
-                                componentName = data.componentName,
-                                sourceBounds = Rect(
-                                    popupIntOffset.x,
-                                    popupIntOffset.y,
-                                    popupIntOffset.x + popupIntSize.width,
-                                    popupIntOffset.y + popupIntSize.height,
-                                ),
-                            )
+                        )
+                    }
 
-                            transitionState.targetState = false
-                        },
-                        onUpdateIsDragging = onUpdateIsDragging,
-                        onEdit = {
-                            onEditApplicationInfo(
-                                data.serialNumber,
-                                data.componentName,
-                            )
-
-                            transitionState.targetState = false
-                        },
-                        onTapShortcutInfo = { serialNumber, packageName, shortcutId ->
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
-                                launcherApps.startShortcut(
-                                    serialNumber = serialNumber,
-                                    packageName = packageName,
-                                    id = shortcutId,
-                                    sourceBounds = Rect(
-                                        popupIntOffset.x,
-                                        popupIntOffset.y,
-                                        popupIntOffset.x + popupIntSize.width,
-                                        popupIntOffset.y + popupIntSize.height,
-                                    ),
-                                )
-                            }
-
-                            transitionState.targetState = false
-                        },
-                        onUpdateGridItemSource = onUpdateGridItemSource,
-                        onUpdateImageBitmap = onUpdateImageBitmap,
-                        onUpdateOverlayBounds = onUpdateOverlayBounds,
-                        onUpdateSharedElementKey = onUpdateSharedElementKey,
-                        onWidgets = {
-                            onWidgets(
-                                EblanApplicationInfoGroup(
-                                    serialNumber = data.serialNumber,
-                                    packageName = data.packageName,
-                                    icon = data.icon,
-                                    label = data.label,
-                                ),
-                            )
-
-                            transitionState.targetState = false
-                        },
-                        onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
-                        onUpdateTransitionState = {
-                            transitionState.targetState = it
-                        },
+                    transitionState.targetState = false
+                },
+                onUpdateGridItemSource = onUpdateGridItemSource,
+                onUpdateImageBitmap = onUpdateImageBitmap,
+                onUpdateOverlayBounds = onUpdateOverlayBounds,
+                onUpdateSharedElementKey = onUpdateSharedElementKey,
+                onWidgets = {
+                    onWidgets(
+                        EblanApplicationInfoGroup(
+                            serialNumber = data.serialNumber,
+                            packageName = data.packageName,
+                            icon = data.icon,
+                            label = data.label,
+                        ),
                     )
-                }
 
-                is FolderEblanApplicationInfoGridItemData.Folder -> {
-                    FolderApplicationInfoMenu(
-                        onDelete = {
-                            onDeleteFolderEblanApplicationInfoGridItems(folderEblanApplicationInfoGridItem.id)
+                    transitionState.targetState = false
+                },
+                onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+                onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+                onUpdateTransitionState = {
+                    transitionState.targetState = it
+                },
+            )
+        }
 
-                            transitionState.targetState = false
-                        },
-                        onEdit = {
-                            onEditFolderApplicationInfo(folderEblanApplicationInfoGridItem.id)
+        is FolderEblanApplicationInfoGridItemData.Folder -> {
+            FolderApplicationInfoMenu(
+                modifier = modifier,
+                onDelete = {
+                    onDeleteFolderEblanApplicationInfoGridItems(folderEblanApplicationInfoGridItem.id)
 
-                            onResetFolderEblanApplicationInfoPopupEntries()
+                    transitionState.targetState = false
+                },
+                onEdit = {
+                    onEditFolderApplicationInfo(folderEblanApplicationInfoGridItem.id)
 
-                            transitionState.targetState = false
-                        },
-                    )
-                }
-            }
+                    onResetFolderEblanApplicationInfoPopupEntries()
+
+                    transitionState.targetState = false
+                },
+            )
         }
     }
 }

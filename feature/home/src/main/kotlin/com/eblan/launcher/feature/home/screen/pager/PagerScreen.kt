@@ -1342,7 +1342,6 @@ internal fun PagerScreen(
                 paddingValues = paddingValues,
                 onDismissRequest = pagerScreenState::dismissFolderEblanApplicationPopup,
                 onEditFolderApplicationInfo = onEditFolderApplicationInfo,
-                onResetFolderEblanApplicationInfoPopupEntries = onResetFolderEblanApplicationInfoPopupEntries,
                 onDeleteFolderEblanApplicationInfoGridItems = onDeleteFolderEblanApplicationInfoGridItems,
             )
         }
