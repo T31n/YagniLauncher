@@ -201,6 +201,7 @@ internal fun HomeRoute(
         onMoveFolderEblanApplicationInfoGridItemOutsideFolder = viewModel::moveFolderEblanApplicationInfoGridItemOutsideFolder,
         onDragFolderEblanApplicationInfo = viewModel::dragFolderEblanApplicationInfoToGrid,
         onResetFolderEblanApplicationInfoPopupEntries = viewModel::resetFolderEblanApplicationInfoPopupEntries,
+        onDeleteFolderEblanApplicationInfoGridItems = viewModel::deleteFolderEblanApplicationInfoGridItems,
     )
 }
 
@@ -350,6 +351,7 @@ internal fun HomeScreen(
         movingGridItem: GridItem,
     ) -> Unit,
     onResetFolderEblanApplicationInfoPopupEntries: () -> Unit,
+    onDeleteFolderEblanApplicationInfoGridItems: (String) -> Unit,
 ) {
     val paddingValues = WindowInsets.safeDrawing.asPaddingValues()
 
@@ -437,6 +439,7 @@ internal fun HomeScreen(
                 onMoveFolderEblanApplicationInfoGridItemOutsideFolder = onMoveFolderEblanApplicationInfoGridItemOutsideFolder,
                 onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
                 onResetFolderEblanApplicationInfoPopupEntries = onResetFolderEblanApplicationInfoPopupEntries,
+                onDeleteFolderEblanApplicationInfoGridItems = onDeleteFolderEblanApplicationInfoGridItems,
             )
         }
     }
@@ -591,6 +594,7 @@ private fun Success(
         movingGridItem: GridItem,
     ) -> Unit,
     onResetFolderEblanApplicationInfoPopupEntries: () -> Unit,
+    onDeleteFolderEblanApplicationInfoGridItems: (String) -> Unit,
 ) {
     AnimatedContent(
         modifier = modifier,
@@ -679,6 +683,7 @@ private fun Success(
                     onMoveFolderEblanApplicationInfoGridItemOutsideFolder = onMoveFolderEblanApplicationInfoGridItemOutsideFolder,
                     onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
                     onResetFolderEblanApplicationInfoPopupEntries = onResetFolderGridItemPopupEntries,
+                    onDeleteFolderEblanApplicationInfoGridItems = onDeleteFolderEblanApplicationInfoGridItems,
                 )
             }
 

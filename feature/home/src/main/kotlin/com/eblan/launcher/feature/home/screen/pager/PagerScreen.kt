@@ -314,6 +314,7 @@ internal fun PagerScreen(
         movingGridItem: GridItem,
     ) -> Unit,
     onResetFolderEblanApplicationInfoPopupEntries: () -> Unit,
+    onDeleteFolderEblanApplicationInfoGridItems: (String) -> Unit,
 ) {
     val layoutDirection = LocalLayoutDirection.current
 
@@ -1342,6 +1343,7 @@ internal fun PagerScreen(
                 onDismissRequest = pagerScreenState::dismissFolderEblanApplicationPopup,
                 onEditFolderApplicationInfo = onEditFolderApplicationInfo,
                 onResetFolderEblanApplicationInfoPopupEntries = onResetFolderEblanApplicationInfoPopupEntries,
+                onDeleteFolderEblanApplicationInfoGridItems = onDeleteFolderEblanApplicationInfoGridItems,
             )
         }
 
@@ -1369,6 +1371,8 @@ internal fun PagerScreen(
                 onWidgets = pagerScreenState::openAppWidgetScreen,
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                 onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+                onResetFolderEblanApplicationInfoPopupEntries = onResetFolderEblanApplicationInfoPopupEntries,
+                onDeleteFolderEblanApplicationInfoGridItems = onDeleteFolderEblanApplicationInfoGridItems,
             )
         }
 

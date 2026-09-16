@@ -44,6 +44,7 @@ import com.eblan.launcher.domain.usecase.application.GetEblanApplicationInfosByL
 import com.eblan.launcher.domain.usecase.application.GetEblanApplicationTagsUseCase
 import com.eblan.launcher.domain.usecase.application.GetEblanShortcutConfigsByLabelUseCase
 import com.eblan.launcher.domain.usecase.application.GetEblanShortcutInfosUseCase
+import com.eblan.launcher.domain.usecase.folder.DeleteFolderEblanApplicationInfoGridItemsUseCase
 import com.eblan.launcher.domain.usecase.folder.GetFolderEblanApplicationInfosByEntryUseCase
 import com.eblan.launcher.domain.usecase.folder.GetFolderGridItemsByEntryUseCase
 import com.eblan.launcher.domain.usecase.folder.GetPreviewFolderEblanApplicationInfosUseCase
@@ -118,6 +119,7 @@ internal class HomeViewModel @Inject constructor(
     private val moveFolderEblanApplicationInfoGridItemUseCase: MoveFolderEblanApplicationInfoGridItemUseCase,
     getEblanApplicationTagsUseCase: GetEblanApplicationTagsUseCase,
     private val getRecursiveFolderEblanApplicationInfosUseCase: GetRecursiveFolderEblanApplicationInfosUseCase,
+    private val deleteFolderEblanApplicationInfoGridItemsUseCase: DeleteFolderEblanApplicationInfoGridItemsUseCase,
 ) : ViewModel() {
     val homeUiState = getHomeDataUseCase().map(HomeUiState::Success).stateIn(
         scope = viewModelScope,
@@ -914,6 +916,12 @@ internal class HomeViewModel @Inject constructor(
                     ),
                 )
             }
+        }
+    }
+
+    fun deleteFolderEblanApplicationInfoGridItems(folderId: String) {
+        viewModelScope.launch {
+            deleteFolderEblanApplicationInfoGridItemsUseCase(folderId = folderId)
         }
     }
 }

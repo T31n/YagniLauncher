@@ -22,7 +22,6 @@ import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
 import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
-import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
@@ -33,19 +32,14 @@ import java.io.File
 import javax.inject.Inject
 import kotlin.uuid.ExperimentalUuidApi
 
-class DeleteFolderEblanApplicationInfosUseCase @Inject constructor(
+class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
     private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
     private val userDataRepository: UserDataRepository,
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     @OptIn(ExperimentalUuidApi::class)
-    suspend operator fun invoke(
-        id: String,
-        label: String,
-        icon: String?,
-        movingGridItem: GridItem,
-    ) = withContext(defaultDispatcher) {
+    suspend operator fun invoke(folderId: String) = withContext(defaultDispatcher) {
         val userData = userDataRepository.userDataFlow.first()
 
         val previewFolderEblanApplicationInfos =
@@ -55,19 +49,17 @@ class DeleteFolderEblanApplicationInfosUseCase @Inject constructor(
                     maxFolderRows = userData.folderSettings.maxFolderRows,
                 )
 
-        val folderGridItems = getRecursiveFolderGridItems(
+        getRecursiveFolderGridItems(
             previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
-            id = id,
-        )
-
-        folderGridItems.forEach { folderGridItem ->
+            folderId = folderId,
+        ).forEach { folderGridItem ->
             when (val data = folderGridItem.data) {
                 is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
                     val eblanApplicationInfos =
                         eblanApplicationInfoRepository.getEblanApplicationInfosByPackageName(
                             serialNumber = data.serialNumber,
                             packageName = data.packageName,
-                        ).filter { it.folderId == id }
+                        ).filter { it.folderId == folderId }
                             .map {
                                 it.copy(
                                     folderIndex = -1,
@@ -84,17 +76,17 @@ class DeleteFolderEblanApplicationInfosUseCase @Inject constructor(
             }
         }
 
-        folderEblanApplicationInfoRepository.deleteFolderEblanApplicationInfoById(id = id)
+        folderEblanApplicationInfoRepository.deleteFolderEblanApplicationInfoById(id = folderId)
     }
 
     @OptIn(ExperimentalUuidApi::class)
     private fun getRecursiveFolderGridItems(
         folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem? = null,
         previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
-        id: String,
+        folderId: String,
     ): List<FolderEblanApplicationInfoGridItem> = buildList {
         val previewFolderEblanApplicationInfo =
-            previewFolderEblanApplicationInfos[id] ?: return@buildList
+            previewFolderEblanApplicationInfos[folderId] ?: return@buildList
 
         if (folderEblanApplicationInfoGridItem != null) {
             add(folderEblanApplicationInfoGridItem)
@@ -111,7 +103,7 @@ class DeleteFolderEblanApplicationInfosUseCase @Inject constructor(
                         getRecursiveFolderGridItems(
                             folderEblanApplicationInfoGridItem = it,
                             previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
-                            id = it.id,
+                            folderId = it.id,
                         ),
                     )
                 }

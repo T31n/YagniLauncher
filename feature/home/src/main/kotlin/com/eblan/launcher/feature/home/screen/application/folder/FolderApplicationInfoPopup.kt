@@ -75,6 +75,7 @@ internal fun FolderApplicationInfoPopup(
     onDismissRequest: () -> Unit,
     onEditFolderApplicationInfo: (String) -> Unit,
     onResetFolderEblanApplicationInfoPopupEntries: () -> Unit,
+    onDeleteFolderEblanApplicationInfoGridItems: (String) -> Unit,
 ) {
     requireNotNull(popupIntOffset)
 
@@ -154,7 +155,8 @@ internal fun FolderApplicationInfoPopup(
         ) {
             FolderApplicationInfoMenu(
                 onDelete = {
-                    // TODO
+                    onDeleteFolderEblanApplicationInfoGridItems(folderEblanApplicationInfo.id)
+
                     transitionState.targetState = false
                 },
                 onEdit = {
@@ -200,6 +202,8 @@ internal fun FolderApplicationInfoGridItemPopup(
     onWidgets: (EblanApplicationInfoGroup) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
+    onResetFolderEblanApplicationInfoPopupEntries: () -> Unit,
+    onDeleteFolderEblanApplicationInfoGridItems: (String) -> Unit,
 ) {
     requireNotNull(popupIntOffset)
 
@@ -369,13 +373,15 @@ internal fun FolderApplicationInfoGridItemPopup(
                 is FolderEblanApplicationInfoGridItemData.Folder -> {
                     FolderApplicationInfoMenu(
                         onDelete = {
-                            // TODO
+                            onDeleteFolderEblanApplicationInfoGridItems(folderEblanApplicationInfoGridItem.id)
+
                             transitionState.targetState = false
                         },
                         onEdit = {
                             onEditFolderApplicationInfo(folderEblanApplicationInfoGridItem.id)
 
-                            // Reset the folder pops like in folder screen
+                            onResetFolderEblanApplicationInfoPopupEntries()
+
                             transitionState.targetState = false
                         },
                     )
