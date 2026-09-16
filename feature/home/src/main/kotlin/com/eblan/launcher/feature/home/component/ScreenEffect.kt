@@ -18,7 +18,7 @@
 package com.eblan.launcher.feature.home.component
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -77,33 +77,4 @@ internal fun ScreenEffect(
     HomeHandler(enabled = swipeY < screenHeight.toFloat()) {
         onDismiss()
     }
-}
-
-@Composable
-internal fun rememberNestedScrollConnectionEffect(
-    lazyListState: LazyListState,
-    swipeY: Float,
-    onVerticalDrag: (Float) -> Unit,
-    onDragEnd: () -> Unit,
-): OffsetNestedScrollConnection {
-    val currentOnVerticalDrag by rememberUpdatedState(onVerticalDrag)
-    val currentOnDragEnd by rememberUpdatedState(onDragEnd)
-
-    val nestedScrollConnection = remember {
-        OffsetNestedScrollConnection(
-            onVerticalDrag = currentOnVerticalDrag,
-            onDragEnd = currentOnDragEnd,
-        )
-    }
-
-    LaunchedEffect(
-        key1 = nestedScrollConnection,
-        key2 = swipeY,
-        key3 = lazyListState.canScrollBackward,
-    ) {
-        nestedScrollConnection.updateSwipeY(swipeY)
-        nestedScrollConnection.updateCanScrollBackward(lazyListState.canScrollBackward)
-    }
-
-    return nestedScrollConnection
 }

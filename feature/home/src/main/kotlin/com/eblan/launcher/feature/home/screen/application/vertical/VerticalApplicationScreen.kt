@@ -52,7 +52,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -84,7 +83,7 @@ import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
-import com.eblan.launcher.feature.home.component.OffsetNestedScrollConnection
+import com.eblan.launcher.feature.home.component.rememberNestedScrollConnectionEffect
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.GridItemSource
 import com.eblan.launcher.feature.home.model.SharedElementKey
@@ -128,7 +127,6 @@ internal fun VerticalApplicationScreen(
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
-    topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     isVisibleFolderEblanApplicationInfos: Boolean,
     folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
     onDismiss: () -> Unit,
@@ -282,11 +280,8 @@ internal fun VerticalApplicationScreen(
                 folderCornerRadius = folderCornerRadius,
                 folderBackgroundColor = folderBackgroundColor,
                 customFolderBackgroundColor = customFolderBackgroundColor,
-                topLevelFolderEblanApplicationInfos = topLevelFolderEblanApplicationInfos,
                 isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
                 folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
-                eblanApplicationInfoTags = eblanApplicationInfoTags,
-                searchBarText = textFieldState.text,
                 onDismiss = onDismiss,
                 onDragEnd = onDragEnd,
                 onUpdateGridItemSource = onUpdateGridItemSource,
@@ -392,11 +387,8 @@ private fun EblanApplicationInfosPage(
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
-    topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     isVisibleFolderEblanApplicationInfos: Boolean,
     folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
-    eblanApplicationInfoTags: List<EblanApplicationInfoTag>,
-    searchBarText: CharSequence,
     onDismiss: () -> Unit,
     onDragEnd: () -> Unit,
     onUpdateGridItemSource: (GridItemSource) -> Unit,
@@ -492,11 +484,8 @@ private fun EblanApplicationInfosPage(
                 folderCornerRadius = folderCornerRadius,
                 folderBackgroundColor = folderBackgroundColor,
                 customFolderBackgroundColor = customFolderBackgroundColor,
-                topLevelFolderEblanApplicationInfos = topLevelFolderEblanApplicationInfos,
                 isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
                 folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
-                eblanApplicationInfoTags = eblanApplicationInfoTags,
-                searchBarText = searchBarText,
                 onDismiss = onDismiss,
                 onDragEnd = onDragEnd,
                 onUpdateGridItemSource = onUpdateGridItemSource,
@@ -570,11 +559,8 @@ private fun EblanApplicationInfos(
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
-    topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     isVisibleFolderEblanApplicationInfos: Boolean,
     folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
-    eblanApplicationInfoTags: List<EblanApplicationInfoTag>,
-    searchBarText: CharSequence,
     onDismiss: () -> Unit,
     onDragEnd: () -> Unit,
     onUpdateGridItemSource: (GridItemSource) -> Unit,
@@ -618,15 +604,12 @@ private fun EblanApplicationInfos(
         }
     }
 
-    val currentOnVerticalDrag by rememberUpdatedState(onVerticalDrag)
-    val currentOnDragEnd by rememberUpdatedState(onDragEnd)
-
-    val nestedScrollConnection = remember {
-        OffsetNestedScrollConnection(
-            onVerticalDrag = currentOnVerticalDrag,
-            onDragEnd = currentOnDragEnd,
-        )
-    }
+    val nestedScrollConnection = rememberNestedScrollConnectionEffect(
+        scrollableState = lazyGridState,
+        swipeY = swipeY,
+        onVerticalDrag = onVerticalDrag,
+        onDragEnd = onDragEnd,
+    )
 
     val privateIsQuiteModeEnabled by rememberIsQuietModeEnabled(
         userHandle = getEblanApplicationInfosByLabelAndTag.privateEblanUser?.serialNumber?.let(
@@ -650,15 +633,6 @@ private fun EblanApplicationInfos(
         }
     }
 
-    LaunchedEffect(
-        key1 = nestedScrollConnection,
-        key2 = swipeY,
-        key3 = lazyGridState.canScrollBackward,
-    ) {
-        nestedScrollConnection.updateSwipeY(swipeY)
-        nestedScrollConnection.updateCanScrollBackward(lazyGridState.canScrollBackward)
-    }
-
     Box(
         modifier = modifier
             .nestedScroll(nestedScrollConnection)
@@ -675,39 +649,37 @@ private fun EblanApplicationInfos(
         ) {
             when (eblanUserPageKey.eblanUser.eblanUserType) {
                 EblanUserType.Personal -> {
-                    if (searchBarText.isEmpty() || eblanApplicationInfoTags.isEmpty()) {
-                        items(items = topLevelFolderEblanApplicationInfos) {
-                            FolderEblanApplicationInfoItem(
-                                sharedTransitionScope = sharedTransitionScope,
-                                folderEblanApplicationInfo = it,
-                                appDrawerSettings = appDrawerSettings,
-                                isVisibleOverlay = isVisibleOverlay,
-                                systemTextColor = systemTextColor,
-                                systemCustomTextColor = systemCustomTextColor,
-                                folderCornerRadius = folderCornerRadius,
-                                folderBackgroundColor = folderBackgroundColor,
-                                customFolderBackgroundColor = customFolderBackgroundColor,
-                                animations = animations,
-                                isScrollInProgress = lazyGridState.isScrollInProgress,
-                                isSwiping = swipeY > 0f,
-                                drag = drag,
-                                isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
-                                folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
-                                onUpdateIsVisibleFolderEblanApplicationInfos = onUpdateIsVisibleFolderEblanApplicationInfos,
-                                onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
-                                onUpdateImageBitmap = onUpdateImageBitmap,
-                                onUpdateOverlayBounds = onUpdateOverlayBounds,
-                                onUpdateFolderPopupMenu = onUpdateFolderPopupMenu,
-                                onUpdateSharedElementKey = onUpdateSharedElementKey,
-                                onUpdateFolderEblanApplicationInfo = onUpdateFolderEblanApplicationInfo,
-                                onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                                onUpdateFolderPopupBounds = onUpdateFolderPopupBounds,
-                                previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
-                                onDismiss = onDismiss,
-                                onUpdateIsDragging = onUpdateIsDragging,
-                                onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
-                            )
-                        }
+                    items(items = getEblanApplicationInfosByLabelAndTag.folderEblanApplicationInfos) {
+                        FolderEblanApplicationInfoItem(
+                            sharedTransitionScope = sharedTransitionScope,
+                            folderEblanApplicationInfo = it,
+                            appDrawerSettings = appDrawerSettings,
+                            isVisibleOverlay = isVisibleOverlay,
+                            systemTextColor = systemTextColor,
+                            systemCustomTextColor = systemCustomTextColor,
+                            folderCornerRadius = folderCornerRadius,
+                            folderBackgroundColor = folderBackgroundColor,
+                            customFolderBackgroundColor = customFolderBackgroundColor,
+                            animations = animations,
+                            isScrollInProgress = lazyGridState.isScrollInProgress,
+                            isSwiping = swipeY > 0f,
+                            drag = drag,
+                            isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
+                            folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+                            onUpdateIsVisibleFolderEblanApplicationInfos = onUpdateIsVisibleFolderEblanApplicationInfos,
+                            onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
+                            onUpdateImageBitmap = onUpdateImageBitmap,
+                            onUpdateOverlayBounds = onUpdateOverlayBounds,
+                            onUpdateFolderPopupMenu = onUpdateFolderPopupMenu,
+                            onUpdateSharedElementKey = onUpdateSharedElementKey,
+                            onUpdateFolderEblanApplicationInfo = onUpdateFolderEblanApplicationInfo,
+                            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+                            onUpdateFolderPopupBounds = onUpdateFolderPopupBounds,
+                            previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+                            onDismiss = onDismiss,
+                            onUpdateIsDragging = onUpdateIsDragging,
+                            onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
+                        )
                     }
 
                     items(

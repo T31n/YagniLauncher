@@ -50,7 +50,6 @@ import com.eblan.launcher.domain.usecase.folder.GetFolderGridItemsByEntryUseCase
 import com.eblan.launcher.domain.usecase.folder.GetPreviewFolderEblanApplicationInfosUseCase
 import com.eblan.launcher.domain.usecase.folder.GetPreviewFolderGridItemsUseCase
 import com.eblan.launcher.domain.usecase.folder.GetRecursiveFolderEblanApplicationInfosUseCase
-import com.eblan.launcher.domain.usecase.folder.GetTopLevelFolderEblanApplicationInfosUseCase
 import com.eblan.launcher.domain.usecase.folder.MoveFolderEblanApplicationInfoGridItemUseCase
 import com.eblan.launcher.domain.usecase.folder.MoveFolderGridItemUseCase
 import com.eblan.launcher.domain.usecase.grid.DeleteGridItemUseCase
@@ -115,7 +114,6 @@ internal class HomeViewModel @Inject constructor(
     getPreviewFolderGridItemsUseCase: GetPreviewFolderGridItemsUseCase,
     getPreviewFolderEblanApplicationInfosUseCase: GetPreviewFolderEblanApplicationInfosUseCase,
     getFolderEblanApplicationInfosByEntryUseCase: GetFolderEblanApplicationInfosByEntryUseCase,
-    getTopLevelFolderEblanApplicationInfosUseCase: GetTopLevelFolderEblanApplicationInfosUseCase,
     private val moveFolderEblanApplicationInfoGridItemUseCase: MoveFolderEblanApplicationInfoGridItemUseCase,
     getEblanApplicationTagsUseCase: GetEblanApplicationTagsUseCase,
     private val getRecursiveFolderEblanApplicationInfosUseCase: GetRecursiveFolderEblanApplicationInfosUseCase,
@@ -174,6 +172,7 @@ internal class HomeViewModel @Inject constructor(
             privateEblanUser = null,
             privateEblanApplicationInfos = emptyList(),
             iconPackInfoFilePaths = emptyMap(),
+            folderEblanApplicationInfos = emptyList(),
         ),
     )
 
@@ -251,13 +250,6 @@ internal class HomeViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = emptyList(),
     )
-
-    val topLevelFolderEblanApplicationInfos =
-        getTopLevelFolderEblanApplicationInfosUseCase().stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = emptyList(),
-        )
 
     private val _moveFolderEblanApplicationInfoGridItemResult =
         MutableStateFlow<MoveFolderEblanApplicationInfoGridItemResult?>(null)

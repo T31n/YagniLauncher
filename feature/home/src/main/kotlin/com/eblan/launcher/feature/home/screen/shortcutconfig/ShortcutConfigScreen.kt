@@ -326,7 +326,7 @@ private fun EblanShortcutConfigsPage(
     )
 
     val nestedScrollConnection = rememberNestedScrollConnectionEffect(
-        lazyListState = lazyListState,
+        scrollableState = lazyListState,
         swipeY = swipeY,
         onVerticalDrag = onVerticalDrag,
         onDragEnd = onDragEnd,

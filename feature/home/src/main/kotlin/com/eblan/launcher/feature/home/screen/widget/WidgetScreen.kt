@@ -136,7 +136,7 @@ internal fun WidgetScreen(
     val lazyListState = rememberLazyListState()
 
     val nestedScrollConnection = rememberNestedScrollConnectionEffect(
-        lazyListState = lazyListState,
+        scrollableState = lazyListState,
         swipeY = swipeY,
         onVerticalDrag = onVerticalDrag,
         onDragEnd = onDragEnd,

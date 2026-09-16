@@ -59,7 +59,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -104,9 +103,9 @@ import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfoByGroup
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
-import com.eblan.launcher.feature.home.component.OffsetNestedScrollConnection
 import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
+import com.eblan.launcher.feature.home.component.rememberNestedScrollConnectionEffect
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.GridItemSource
 import com.eblan.launcher.feature.home.model.SharedElementKey
@@ -551,15 +550,12 @@ private fun EblanApplicationInfos(
         }
     }
 
-    val currentOnVerticalDrag by rememberUpdatedState(onVerticalDrag)
-    val currentOnDragEnd by rememberUpdatedState(onDragEnd)
-
-    val nestedScrollConnection = remember {
-        OffsetNestedScrollConnection(
-            onVerticalDrag = currentOnVerticalDrag,
-            onDragEnd = currentOnDragEnd,
-        )
-    }
+    val nestedScrollConnection = rememberNestedScrollConnectionEffect(
+        scrollableState = lazyListState,
+        swipeY = swipeY,
+        onVerticalDrag = onVerticalDrag,
+        onDragEnd = onDragEnd,
+    )
 
     val privateIsQuiteModeEnabled by rememberIsQuietModeEnabled(
         userHandle = getEblanApplicationInfosByLabelAndTag.privateEblanUser?.serialNumber?.let(
@@ -579,15 +575,6 @@ private fun EblanApplicationInfos(
         if (swipeY.toInt() == screenHeight) {
             lazyListState.scrollToItem(0)
         }
-    }
-
-    LaunchedEffect(
-        key1 = nestedScrollConnection,
-        key2 = swipeY,
-        key3 = lazyListState.canScrollBackward,
-    ) {
-        nestedScrollConnection.updateSwipeY(swipeY)
-        nestedScrollConnection.updateCanScrollBackward(lazyListState.canScrollBackward)
     }
 
     Box(

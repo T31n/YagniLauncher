@@ -17,6 +17,7 @@
  */
 package com.eblan.launcher.domain.model.application
 
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.launcherapps.EblanUser
 import com.eblan.launcher.domain.model.launcherapps.EblanUserPageKey
 
@@ -25,4 +26,5 @@ data class GetEblanApplicationInfosByLabelAndTag(
     val privateEblanUser: EblanUser?,
     val privateEblanApplicationInfos: List<EblanApplicationInfo>,
     val iconPackInfoFilePaths: Map<String, String?>,
+    val folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
 )

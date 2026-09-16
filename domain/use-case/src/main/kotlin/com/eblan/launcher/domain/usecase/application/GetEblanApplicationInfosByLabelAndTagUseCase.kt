@@ -25,10 +25,12 @@ import com.eblan.launcher.domain.framework.JaroWinklerSimilarityWrapper
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.launcherapps.EblanUserPageKey
 import com.eblan.launcher.domain.model.launcherapps.EblanUserType
 import com.eblan.launcher.domain.model.userdata.AppDrawerType
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
+import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.util.getIconPackInfoFilePaths
 import kotlinx.coroutines.CoroutineDispatcher
@@ -47,6 +49,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
     private val fileManager: FileManager,
     private val iconKeyGenerator: IconKeyGenerator,
     private val jaroWinklerSimilarityWrapper: JaroWinklerSimilarityWrapper,
+    private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -58,7 +61,8 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
         labelFlow,
         userDataRepository.userDataFlow,
         eblanApplicationInfoRepository.eblanApplicationInfosFlow,
-    ) { tagId, label, userData, eblanApplicationInfos ->
+        folderEblanApplicationInfoRepository.folderEblanApplicationInfosFlow,
+    ) { tagId, label, userData, eblanApplicationInfos, folderEblanApplicationInfos ->
         val iconPackInfoPackageName = userData.generalSettings.iconPackInfoPackageName
 
         val eblanApplicationInfosByLabel = getEblanApplicationInfos(
@@ -69,10 +73,16 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
             eblanApplicationInfos = eblanApplicationInfos,
         )
 
+        val folderEblanApplicationInfosByLabel = getFolderEblanApplicationInfos(
+            label = label,
+            folderEblanApplicationInfos = folderEblanApplicationInfos,
+        )
+
         when (userData.appDrawerSettings.appDrawerType) {
             AppDrawerType.Vertical, AppDrawerType.List ->
                 getVerticalOrListEblanApplicationInfosByLabel(
                     eblanApplicationInfos = eblanApplicationInfosByLabel,
+                    folderEblanApplicationInfos = folderEblanApplicationInfosByLabel,
                     iconPackInfoPackageName = iconPackInfoPackageName,
                 )
 
@@ -88,6 +98,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
 
     private suspend fun getVerticalOrListEblanApplicationInfosByLabel(
         eblanApplicationInfos: List<EblanApplicationInfo>,
+        folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
         iconPackInfoPackageName: String,
     ): GetEblanApplicationInfosByLabelAndTag {
         val groupedEblanApplicationInfos = eblanApplicationInfos.groupBy {
@@ -113,6 +124,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
             privateEblanUser = privateEblanUserPageKey?.eblanUser,
             privateEblanApplicationInfos = groupedEblanApplicationInfos[privateEblanUserPageKey].orEmpty(),
             iconPackInfoFilePaths = iconPackInfoFilePaths,
+            folderEblanApplicationInfos = folderEblanApplicationInfos,
         )
     }
 
@@ -147,6 +159,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
             privateEblanUser = null,
             privateEblanApplicationInfos = emptyList(),
             iconPackInfoFilePaths = iconPackInfoFilePaths,
+            folderEblanApplicationInfos = emptyList(),
         )
     }
 
@@ -170,10 +183,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
         val eblanApplicationInfosByLabel = eblanApplicationInfosByTag.filter {
             val currentLabel = it.customLabel ?: it.label
 
-            currentLabel.startsWith(
-                prefix = label,
-                ignoreCase = true,
-            ) || currentLabel.contains(
+            currentLabel.contains(
                 other = label,
                 ignoreCase = true,
             )
@@ -206,6 +216,15 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
             emptyList()
         }
     }
+
+    private fun getFolderEblanApplicationInfos(
+        label: String,
+        folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    ): List<FolderEblanApplicationInfo> = if (label.isEmpty()) {
+        folderEblanApplicationInfos
+    } else {
+        emptyList()
+    }.filterNot { it.folderId != null }
 
     private suspend fun normalize(text: String): String = withContext(defaultDispatcher) {
         Normalizer.normalize(text, Normalizer.Form.NFD)
