@@ -17,6 +17,7 @@
  */
 package com.eblan.launcher.feature.home.screen.application.folder
 
+import android.R.attr.textColor
 import android.graphics.Rect
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -141,8 +142,8 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
             moveFolderEblanApplicationInfoGridItemResult.folderEblanApplicationInfoGridItem.id == folderEblanApplicationInfoGridItem.id
 
     val textColor = getTextColorFromBackgroundColor(
-        backgroundColor = appDrawerSettings.backgroundColor,
-        customBackgroundColor = appDrawerSettings.customBackgroundColor,
+        backgroundColor = folderBackgroundColor,
+        customBackgroundColor = customFolderBackgroundColor,
         textColor = appDrawerSettings.gridItemSettings.textColor,
         customTextColor = appDrawerSettings.gridItemSettings.customTextColor,
         systemTextColor = systemTextColor,
