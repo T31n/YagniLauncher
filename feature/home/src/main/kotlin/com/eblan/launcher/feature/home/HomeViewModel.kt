@@ -759,7 +759,7 @@ internal class HomeViewModel @Inject constructor(
     }
 
     fun resetFolderEblanApplicationInfoPopupEntries() {
-        _folderGridItemPopupEntries.update { emptyList() }
+        _folderEblanApplicationInfoPopupEntries.update { emptyList() }
     }
 
     fun moveNewFolderGridItem(

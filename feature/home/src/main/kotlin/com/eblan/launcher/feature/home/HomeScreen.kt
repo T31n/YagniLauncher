@@ -682,7 +682,7 @@ private fun Success(
                     onDragEndAfterMoveFolderEblanApplicationInfo = onResetGridAfterMoveFolderEblanApplicationInfo,
                     onMoveFolderEblanApplicationInfoGridItemOutsideFolder = onMoveFolderEblanApplicationInfoGridItemOutsideFolder,
                     onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
-                    onResetFolderEblanApplicationInfoPopupEntries = onResetFolderGridItemPopupEntries,
+                    onResetFolderEblanApplicationInfoPopupEntries = onResetFolderEblanApplicationInfoPopupEntries,
                     onDeleteFolderEblanApplicationInfoGridItems = onDeleteFolderEblanApplicationInfoGridItems,
                 )
             }
