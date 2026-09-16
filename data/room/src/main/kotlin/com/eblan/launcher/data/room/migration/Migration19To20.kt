@@ -41,6 +41,8 @@ class Migration19To20 : Migration(19, 20) {
             """.trimIndent(),
         )
 
+        db.execSQL("DROP TABLE `EblanApplicationInfoTagCrossRefEntity`")
+
         db.execSQL(
             """
             CREATE TABLE IF NOT EXISTS `EblanApplicationInfoTagEntity_new` (
@@ -126,6 +128,33 @@ class Migration19To20 : Migration(19, 20) {
             """
             CREATE INDEX IF NOT EXISTS `index_EblanApplicationInfoEntity_folderId`
             ON `EblanApplicationInfoEntity` (`folderId`)
+            """.trimIndent(),
+        )
+
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS `EblanApplicationInfoTagCrossRefEntity` (
+                `componentName` TEXT NOT NULL,
+                `serialNumber` INTEGER NOT NULL,
+                `id` INTEGER NOT NULL,
+                PRIMARY KEY(`componentName`, `serialNumber`, `id`),
+                FOREIGN KEY(`componentName`, `serialNumber`) REFERENCES `EblanApplicationInfoEntity`(`componentName`, `serialNumber`) ON UPDATE NO ACTION ON DELETE CASCADE,
+                FOREIGN KEY(`id`) REFERENCES `EblanApplicationInfoTagEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE
+            )
+            """.trimIndent(),
+        )
+
+        db.execSQL(
+            """
+            CREATE INDEX IF NOT EXISTS `index_EblanApplicationInfoTagCrossRefEntity_id`
+            ON `EblanApplicationInfoTagCrossRefEntity` (`id`)
+            """.trimIndent(),
+        )
+
+        db.execSQL(
+            """
+            CREATE INDEX IF NOT EXISTS `index_EblanApplicationInfoTagCrossRefEntity_componentName_serialNumber`
+            ON `EblanApplicationInfoTagCrossRefEntity` (`componentName`, `serialNumber`)
             """.trimIndent(),
         )
 
