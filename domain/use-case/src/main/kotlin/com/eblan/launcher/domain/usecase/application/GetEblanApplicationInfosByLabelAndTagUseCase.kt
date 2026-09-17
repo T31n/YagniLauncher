@@ -228,7 +228,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
             fuzzySearch = fuzzySearch,
             label = label,
             getLabel = { it.label },
-        )
+        ).sortedBy { it.index }
     }
 
     private suspend fun <T> getItemsByLabel(
