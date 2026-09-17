@@ -112,7 +112,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
             }
             .toSortedMap(nullsLast(compareBy { it.eblanUser.serialNumber }))
 
-        val groupedEblanApplicationInfosWithPersonalPage =
+        val groupedEblanApplicationInfosWithFolders =
             if (
                 folderEblanApplicationInfos.isNotEmpty() &&
                 groupedEblanApplicationInfos.keys.none {
@@ -130,7 +130,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
             }
 
         val privateEblanUserPageKey =
-            groupedEblanApplicationInfosWithPersonalPage.keys.firstOrNull {
+            groupedEblanApplicationInfosWithFolders.keys.firstOrNull {
                 it.eblanUser.eblanUserType == EblanUserType.Private
             }
 
@@ -142,7 +142,8 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
         )
 
         return GetEblanApplicationInfosByLabelAndTag(
-            eblanApplicationInfos = groupedEblanApplicationInfos.filterKeys { it != privateEblanUserPageKey },
+            eblanApplicationInfos = groupedEblanApplicationInfosWithFolders
+                .filterKeys { it != privateEblanUserPageKey },
             privateEblanUser = privateEblanUserPageKey?.eblanUser,
             privateEblanApplicationInfos = groupedEblanApplicationInfos[privateEblanUserPageKey].orEmpty(),
             iconPackInfoFilePaths = iconPackInfoFilePaths,
