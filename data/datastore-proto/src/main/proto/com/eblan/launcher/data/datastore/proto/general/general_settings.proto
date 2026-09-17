@@ -6,9 +6,7 @@ option java_package = "com.eblan.launcher.data.datastore.proto.general";
 option java_multiple_files = true;
 
 message GeneralSettingsProto {
-  ThemeProto themeProto = 1;
-
-  bool dynamicTheme = 3;
-
-  string iconPackInfoPackageName = 4;
+  optional ThemeProto themeProto = 1;
+  optional bool dynamicTheme = 3;
+  optional string iconPackInfoPackageName = 4;
 }

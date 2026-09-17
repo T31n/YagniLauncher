@@ -4,8 +4,8 @@ option java_package = "com.eblan.launcher.data.datastore.proto.experimental";
 option java_multiple_files = true;
 
 message ExperimentalSettingsProto {
-  bool syncData = 1;
-  bool firstLaunch = 2;
-  bool lockMovement = 3;
-  bool gridItemAnimation = 4;
+  optional bool syncData = 1;
+  optional bool firstLaunch = 2;
+  optional bool lockMovement = 3;
+  optional bool gridItemAnimation = 4;
 }

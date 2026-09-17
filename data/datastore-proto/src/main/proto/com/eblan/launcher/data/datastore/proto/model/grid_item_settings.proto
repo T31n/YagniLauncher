@@ -6,17 +6,17 @@ option java_package = "com.eblan.launcher.data.datastore.proto.home";
 option java_multiple_files = true;
 
 message GridItemSettingsProto {
-  int32 iconSize = 1;
-  TextColorProto textColorProto = 2;
-  int32 textSize = 3;
-  bool showLabel = 4;
-  bool singleLineLabel = 5;
-  HorizontalAlignmentProto horizontalAlignmentProto = 6;
-  VerticalArrangementProto verticalArrangementProto = 7;
-  int32 customTextColor = 8;
-  int32 customBackgroundColor = 9;
-  int32 padding = 10;
-  int32 cornerRadius = 11;
+  optional int32 iconSize = 1;
+  optional TextColorProto textColorProto = 2;
+  optional int32 textSize = 3;
+  optional bool showLabel = 4;
+  optional bool singleLineLabel = 5;
+  optional HorizontalAlignmentProto horizontalAlignmentProto = 6;
+  optional VerticalArrangementProto verticalArrangementProto = 7;
+  optional int32 customTextColor = 8;
+  optional int32 customBackgroundColor = 9;
+  optional int32 padding = 10;
+  optional int32 cornerRadius = 11;
 }
 
 enum HorizontalAlignmentProto {

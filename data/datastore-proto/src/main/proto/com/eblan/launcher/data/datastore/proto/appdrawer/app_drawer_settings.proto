@@ -8,16 +8,16 @@ option java_package = "com.eblan.launcher.data.datastore.proto.appdrawer";
 option java_multiple_files = true;
 
 message AppDrawerSettingsProto {
-  int32 appDrawerColumns = 1;
-  int32 appDrawerRowsHeight = 2;
+  optional int32 appDrawerColumns = 1;
+  optional int32 appDrawerRowsHeight = 2;
   GridItemSettingsProto gridItemSettingsProto = 3;
-  BackgroundColorProto backgroundColorProto = 5;
-  int32 customBackgroundColor = 6;
-  AppDrawerTypeProto AppDrawerTypeProto = 8;
-  int32 horizontalAppDrawerColumns = 9;
-  int32 horizontalAppDrawerRows = 10;
-  bool excludeTaggedApps = 11;
-  bool showKeyboard = 12;
-  bool fuzzySearch = 13;
-  bool blurBehind = 14;
+  optional BackgroundColorProto backgroundColorProto = 5;
+  optional int32 customBackgroundColor = 6;
+  optional AppDrawerTypeProto AppDrawerTypeProto = 8;
+  optional int32 horizontalAppDrawerColumns = 9;
+  optional int32 horizontalAppDrawerRows = 10;
+  optional bool excludeTaggedApps = 11;
+  optional bool showKeyboard = 12;
+  optional bool fuzzySearch = 13;
+  optional bool blurBehind = 14;
 }

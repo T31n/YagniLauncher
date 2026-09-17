@@ -6,11 +6,11 @@ option java_package = "com.eblan.launcher.data.datastore.proto.folder";
 option java_multiple_files = true;
 
 message FolderSettingsProto {
-  int32 folderCellWidth = 1;
-  int32 folderCellHeight = 2;
-  int32 maxFolderColumns = 3;
-  int32 maxFolderRows = 4;
-  int32 folderCornerRadius = 5;
-  BackgroundColorProto folderBackgroundColorProto = 6;
-  int32 customFolderBackgroundColor = 7;
+  optional int32 folderCellWidth = 1;
+  optional int32 folderCellHeight = 2;
+  optional int32 maxFolderColumns = 3;
+  optional int32 maxFolderRows = 4;
+  optional int32 folderCornerRadius = 5;
+  optional BackgroundColorProto folderBackgroundColorProto = 6;
+  optional int32 customFolderBackgroundColor = 7;
 }
