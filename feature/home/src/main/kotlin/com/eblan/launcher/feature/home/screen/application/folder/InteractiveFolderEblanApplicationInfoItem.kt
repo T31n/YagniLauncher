@@ -17,7 +17,6 @@
  */
 package com.eblan.launcher.feature.home.screen.application.folder
 
-import android.R.attr.textColor
 import android.graphics.Rect
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -56,6 +55,7 @@ import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -312,6 +312,8 @@ private fun InteractiveEblanApplicationInfoItem(
 
     val layoutDirection = LocalLayoutDirection.current
 
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     val scope = rememberCoroutineScope()
 
     val icon = data.icon
@@ -382,6 +384,7 @@ private fun InteractiveEblanApplicationInfoItem(
                                     intSize = intSize,
                                     sharedElementKey = sharedElementKey,
                                     folderEblanApplicationInfoGridItem = folderEblanApplicationInfoGridItem,
+                                    keyboardController = keyboardController,
                                     onUpdateImageBitmap = onUpdateImageBitmap,
                                     onUpdateOverlayBounds = onUpdateOverlayBounds,
                                     onUpdateSharedElementKey = onUpdateSharedElementKey,
@@ -493,6 +496,8 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onUpdateMoveFolderEblanApplicationInfoGridItemResult: (MoveFolderEblanApplicationInfoGridItemResult) -> Unit,
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     val scope = rememberCoroutineScope()
 
     val maxLines = if (appDrawerSettings.gridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
@@ -552,6 +557,7 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
                                     intSize = intSize,
                                     sharedElementKey = sharedElementKey,
                                     folderEblanApplicationInfoGridItem = folderEblanApplicationInfoGridItem,
+                                    keyboardController = keyboardController,
                                     onUpdateImageBitmap = onUpdateImageBitmap,
                                     onUpdateOverlayBounds = onUpdateOverlayBounds,
                                     onUpdateSharedElementKey = onUpdateSharedElementKey,

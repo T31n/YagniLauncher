@@ -20,6 +20,7 @@ package com.eblan.launcher.feature.home.screen.application.folder
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.layer.GraphicsLayer
+import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
@@ -38,6 +39,7 @@ internal suspend fun onLongPressFolderEblanApplicationInfoGridItem(
     intSize: IntSize,
     sharedElementKey: SharedElementKey,
     folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
+    keyboardController: SoftwareKeyboardController?,
     onUpdateImageBitmap: (ImageBitmap) -> Unit,
     onUpdateOverlayBounds: (
         intOffset: IntOffset,
@@ -73,6 +75,8 @@ internal suspend fun onLongPressFolderEblanApplicationInfoGridItem(
     )
 
     onUpdateIsVisibleOverlay(true)
+
+    keyboardController?.hide()
 }
 
 internal fun handleDragFolderEblanApplicationInfoGridItem(
