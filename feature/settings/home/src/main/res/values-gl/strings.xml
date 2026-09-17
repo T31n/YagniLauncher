@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~
+  ~   Copyright 2023 Einstein Blanco
+  ~
+  ~   Licensed under the GNU General Public License v3.0 (the "License");
+  ~   you may not use this file except in compliance with the License.
+  ~   You may obtain a copy of the License at
+  ~
+  ~       https://www.gnu.org/licenses/gpl-3.0
+  ~
+  ~   Unless required by applicable law or agreed to in writing, software
+  ~   distributed under the License is distributed on an "AS IS" BASIS,
+  ~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~   See the License for the specific language governing permissions and
+  ~   limitations under the License.
+  ~
+  -->
+<resources>
+    <string name="dock_grid">Grella do molle</string>
+    <string name="dock_columns_is_not_valid">As columnas do molle non son válidas</string>
+    <string name="dock_rows_is_not_valid">As filas do molle non son válidas</string>
+    <string name="dock_height">Altura do molle</string>
+    <string name="dock_height_is_not_valid">A altura do molle non é valida</string>
+    <string name="folder_cell_dimension">Tamaño da cela do cartafol</string>
+    <string name="cell_width">Ancho da cela</string>
+    <string name="cell_width_is_not_valid">O ancho da cela non é válido</string>
+    <string name="cell_height">Altura da cela</string>
+    <string name="cell_height_is_not_valid">A altura da cela non é válida</string>
+    <string name="max_columns">Máx. de columnas</string>
+    <string name="max_columns_is_not_valid">O máximo de columnas non é válido</string>
+    <string name="folder_max_grid">Grella máx. do cartafol</string>
+    <string name="max_rows">Máx de filas</string>
+    <string name="max_rows_is_not_valid">O número de filas non é válido</string>
+    <string name="infinite_scrolling">Desprazamento infinito</string>
+    <string name="seamless_loop_page_scroll">Desprazamento contínuo sen saltos entre páxinas</string>
+    <string name="wallpaper_scrolling">Desprazamento da imaxe de fondo</string>
+    <string name="scroll_wallpaper_across_pages">Despraza o fondo ao cambiar de páxina</string>
+    <string name="lock_screen_orientation">Bloqueo da orientación da pantalla</string>
+    <string name="add_new_apps">Engadir apps novas</string>
+    <string name="add_new_apps_to_home_screen">Engade as novas apps instaladas á pantalla de inicio</string>
+    <string name="dock">Molle</string>
+    <string name="dock_infinite_scroll">Desprazamento infinito no molle</string>
+    <string name="folder">Cartafol</string>
+    <string name="prevent_rotation_when_device_orientation_changes">Evita a rotación cando cambia a orientación do dispositivo</string>
+    <string name="show_page_indicator">Mostrar indicador de páxina</string>
+    <string name="show_an_indicator_for_the_current_page">Mostra un indicador para a páxina actual</string>
+</resources>
