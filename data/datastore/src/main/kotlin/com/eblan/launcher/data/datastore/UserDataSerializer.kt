@@ -35,6 +35,7 @@ import com.eblan.launcher.data.datastore.proto.home.VerticalArrangementProto
 import com.eblan.launcher.data.datastore.proto.model.BackgroundColorProto
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
+import com.eblan.launcher.domain.model.userdata.Theme
 import com.google.protobuf.InvalidProtocolBufferException
 import java.io.InputStream
 import java.io.OutputStream
@@ -147,19 +148,9 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
     }.build()
 
     override suspend fun readFrom(input: InputStream): UserDataProto = try {
-        val userDataProto = UserDataProto.parseFrom(input)
-
-        val builder = defaultValue.toBuilder().mergeFrom(userDataProto)
-
-        if (userDataProto.hasExperimentalSettingsProto() &&
-            !userDataProto.experimentalSettingsProto.hasFirstLaunch()
-        ) {
-            builder.experimentalSettingsProto = builder.experimentalSettingsProto.toBuilder()
-                .setFirstLaunch(false)
-                .build()
-        }
-
-        builder.build()
+        defaultValue.toBuilder()
+            .mergeFrom(UserDataProto.parseFrom(input))
+            .build()
     } catch (exception: InvalidProtocolBufferException) {
         throw CorruptionException("Cannot read proto.", exception)
     }

@@ -210,7 +210,12 @@ class SyncDataUseCase @Inject constructor(
         applicationInfoGridItems: MutableList<ApplicationInfoGridItem>,
         folderSettings: FolderSettings,
     ) {
-        if (!homeSettings.addNewAppsToHomeScreen || experimentalSettings.firstLaunch) return
+        if (!homeSettings.addNewAppsToHomeScreen ||
+            experimentalSettings.firstLaunch ||
+            oldSyncEblanApplicationInfos.isEmpty()
+        ) {
+            return
+        }
 
         val gridItems = gridRepository.getGridItems().toGridItems()
             .filter {
@@ -396,6 +401,19 @@ class SyncDataUseCase @Inject constructor(
         homeSettings: HomeSettings,
     ) {
         if (!experimentalSettings.firstLaunch) return
+
+        val gridItems = gridRepository.getGridItems().toGridItems()
+            .filter {
+                it.isTopLevel() && it.associate == Associate.Grid
+            }
+
+        if (gridItems.isNotEmpty()) {
+            userDataRepository.updateExperimentalSettings(
+                experimentalSettings.copy(firstLaunch = false),
+            )
+
+            return
+        }
 
         val eblanApplicationInfosBySystem = eblanApplicationInfos.filter {
             currentCoroutineContext().ensureActive()
