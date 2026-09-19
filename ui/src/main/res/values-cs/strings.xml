@@ -55,4 +55,6 @@
     <string name="display_app_names_below_icons">Zobrazovat názvy aplikací pod ikonami</string>
     <string name="limit_app_names_to_one_line">Omezit názvy aplikací na jeden řádek</string>
     <string name="custom">Vlastní</string>
+    <string name="add_folder">Přidat složku</string>
+    <string name="folder_is_not_valid">Složka není platná</string>
 </resources>
