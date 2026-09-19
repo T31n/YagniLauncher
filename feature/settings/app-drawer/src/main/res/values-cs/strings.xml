@@ -32,4 +32,10 @@
     <string name="find_apps_even_with_typos_or_accented_characters">Vyhledávat aplikace i s překlepy nebo diakritikou</string>
     <string name="blur_behind">Rozmazání pozadí</string>
     <string name="blurs_the_wallpaper_when_app_drawer_opens">Rozmazat tapetu při otevření nabídky aplikací</string>
+    <string name="no_folders">Žádné složky</string>
+    <string name="no_tags">Žádné štítky</string>
+    <string name="manage_tags">Spravovat štítky</string>
+    <string name="sort_update_and_delete_tags">Seřadit, použít a odstranit štítky</string>
+    <string name="manage_folders">Spravovat složky</string>
+    <string name="sort_update_and_delete_folders">Seřadit, použít a odstranit složky</string>
 </resources>
