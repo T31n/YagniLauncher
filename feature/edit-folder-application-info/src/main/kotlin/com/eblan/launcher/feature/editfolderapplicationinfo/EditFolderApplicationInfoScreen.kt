@@ -297,6 +297,12 @@ private fun Folders(
     onUpdateFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
     onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
 ) {
+    if (folderEblanApplicationInfos.size == 1 &&
+        folderEblanApplicationInfos.single().folderId != null
+    ) {
+        return
+    }
+
     var showAddFolderDialog by remember { mutableStateOf(false) }
 
     FlowRow(modifier = modifier.fillMaxWidth()) {
