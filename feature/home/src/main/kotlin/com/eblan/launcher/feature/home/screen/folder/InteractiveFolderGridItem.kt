@@ -691,7 +691,7 @@ private fun InteractiveShortcutInfoGridItem(
                 model = Builder(context).data(data.eblanApplicationInfoIcon).size(Size.ORIGINAL)
                     .build(),
                 modifier = Modifier
-                    .size((gridItemSettings.iconSize * 0.25).dp)
+                    .size(iconSize * 0.25f)
                     .alpha(alpha)
                     .align(Alignment.BottomEnd),
                 contentDescription = null,
