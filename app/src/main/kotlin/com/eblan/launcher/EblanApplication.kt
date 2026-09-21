@@ -80,7 +80,7 @@ class EblanApplication :
                 appendLine("OS: $androidVersion")
                 appendLine("App: $appVersion")
                 appendLine("Time: ${java.util.Date()}")
-                appendLine("GitHub: https://github.com/JackEblan/YagniLauncher")
+                appendLine("GitHub: https://github.com/T31n/YagniLauncher")
                 appendLine()
                 appendLine(Log.getStackTraceString(throwable))
             }

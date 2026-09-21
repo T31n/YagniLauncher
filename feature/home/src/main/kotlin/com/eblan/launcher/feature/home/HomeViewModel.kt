@@ -386,6 +386,10 @@ internal class HomeViewModel @Inject constructor(
             moveGridItemJob?.cancelAndJoin()
 
             updateGridItemsAfterMoveUseCase(moveGridItemResult = moveGridItemResult)
+
+            if (moveGridItemResult.conflictingGridItem == null) {
+                resetGrid()
+            }
         }
     }
 
@@ -754,37 +758,6 @@ internal class HomeViewModel @Inject constructor(
         _folderEblanApplicationInfoEntries.update { emptyList() }
     }
 
-    fun moveNewFolderGridItem(
-        folderGridItems: List<GridItem>,
-        movingGridItem: GridItem,
-        x: Int,
-        y: Int,
-        columns: Int,
-        rows: Int,
-        gridWidth: Int,
-        gridHeight: Int,
-    ) {
-        moveGridItemJob?.cancel()
-
-        moveGridItemJob = viewModelScope.launch {
-            delay(moveDelay)
-
-            _moveGridItemResult.update {
-                moveGridItemUseCase(
-                    movingGridItem = movingGridItem,
-                    x = x,
-                    y = y,
-                    columns = columns,
-                    rows = rows,
-                    gridWidth = gridWidth,
-                    gridHeight = gridHeight,
-                )
-            }
-
-            gridRepository.upsertGridItems(gridItems = folderGridItems)
-        }
-    }
-
     fun moveFolderEblanApplicationInfoGridItem(
         folderGridItemPopup: FolderEblanApplicationInfoPopup,
         folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
@@ -916,6 +889,23 @@ internal class HomeViewModel @Inject constructor(
                 icon = icon,
                 folderId = folderId,
             )
+        }
+    }
+
+    fun updateGridItemsAfterMoveNewFolder(
+        folderGridItems: List<GridItem>,
+        moveGridItemResult: MoveGridItemResult,
+    ) {
+        viewModelScope.launch {
+            moveGridItemJob?.cancelAndJoin()
+
+            gridRepository.upsertGridItems(gridItems = folderGridItems)
+
+            updateGridItemsAfterMoveUseCase(moveGridItemResult = moveGridItemResult)
+
+            if (moveGridItemResult.conflictingGridItem == null) {
+                resetGrid()
+            }
         }
     }
 }

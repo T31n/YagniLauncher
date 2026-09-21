@@ -285,16 +285,6 @@ internal fun PagerScreen(
     ) -> Unit,
     onResetFolderGridItemPopupEntries: () -> Unit,
     onEditFolderApplicationInfo: (String) -> Unit,
-    onMoveNewFolderGridItem: (
-        folderGridItems: List<GridItem>,
-        movingGridItem: GridItem,
-        x: Int,
-        y: Int,
-        columns: Int,
-        rows: Int,
-        gridWidth: Int,
-        gridHeight: Int,
-    ) -> Unit,
     onUpdateMoveFolderEblanApplicationInfoGridItemResult: (MoveFolderEblanApplicationInfoGridItemResult) -> Unit,
     onMoveFolderEblanApplicationInfoGridItem: (
         folderEblanApplicationInfoPopup: FolderEblanApplicationInfoPopup,
@@ -318,6 +308,10 @@ internal fun PagerScreen(
     onDeleteFolderEblanApplicationInfoGridItems: (
         icon: String?,
         folderId: String,
+    ) -> Unit,
+    onUpdateGridItemsAfterMoveNewFolder: (
+        folderGridItems: List<GridItem>,
+        moveGridItemResult: MoveGridItemResult,
     ) -> Unit,
 ) {
     val layoutDirection = LocalLayoutDirection.current
@@ -605,7 +599,6 @@ internal fun PagerScreen(
             onMoveGridItem = onMoveGridItem,
             onUpdateAssociate = pagerScreenState::updateAssociate,
             onUpdateSharedElementKey = pagerScreenState::updateSharedElementKey,
-            onMoveNewFolderGridItem = onMoveNewFolderGridItem,
         )
     }
 
@@ -644,6 +637,7 @@ internal fun PagerScreen(
             onUpdateIsDragging = pagerScreenState::updateIsDragging,
             onUpdateWidgetGridItem = pagerScreenState::updateWidgetGridItem,
             onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+            onUpdateGridItemsAfterMoveNewFolder = onUpdateGridItemsAfterMoveNewFolder,
         )
     }
 

@@ -191,7 +191,6 @@ internal fun HomeRoute(
         onUpsertFolderEblanApplicationInfoPopupEntry = viewModel::upsertFolderEblanApplicationInfoEntry,
         onDeleteFolderEblanApplicationInfoPopupEntry = viewModel::deleteFolderEblanApplicationInfoEntry,
         onEditFolderApplicationInfo = onEditFolderApplicationInfo,
-        onMoveNewFolderGridItem = viewModel::moveNewFolderGridItem,
         onUpdateMoveFolderEblanApplicationInfoGridItemResult = viewModel::updateMoveFolderEblanApplicationInfoGridItemResult,
         onMoveFolderEblanApplicationInfoGridItem = viewModel::moveFolderEblanApplicationInfoGridItem,
         onResetGridAfterMoveFolderEblanApplicationInfo = viewModel::resetGridAfterMoveFolderEblanApplicationInfo,
@@ -199,6 +198,7 @@ internal fun HomeRoute(
         onDragFolderEblanApplicationInfo = viewModel::dragFolderEblanApplicationInfoToGrid,
         onResetFolderEblanApplicationInfoPopupEntries = viewModel::resetFolderEblanApplicationInfoEntries,
         onDeleteFolderEblanApplicationInfoGridItems = viewModel::deleteFolderEblanApplicationInfoGridItems,
+        onUpdateGridItemsAfterMoveNewFolder = viewModel::updateGridItemsAfterMoveNewFolder,
     )
 }
 
@@ -317,16 +317,6 @@ internal fun HomeScreen(
     onUpsertFolderEblanApplicationInfoPopupEntry: (FolderEntry) -> Unit,
     onDeleteFolderEblanApplicationInfoPopupEntry: (FolderEntry) -> Unit,
     onEditFolderApplicationInfo: (String) -> Unit,
-    onMoveNewFolderGridItem: (
-        folderGridItems: List<GridItem>,
-        movingGridItem: GridItem,
-        x: Int,
-        y: Int,
-        columns: Int,
-        rows: Int,
-        gridWidth: Int,
-        gridHeight: Int,
-    ) -> Unit,
     onUpdateMoveFolderEblanApplicationInfoGridItemResult: (MoveFolderEblanApplicationInfoGridItemResult) -> Unit,
     onMoveFolderEblanApplicationInfoGridItem: (
         folderEblanApplicationInfoPopup: FolderEblanApplicationInfoPopup,
@@ -350,6 +340,10 @@ internal fun HomeScreen(
     onDeleteFolderEblanApplicationInfoGridItems: (
         icon: String?,
         folderId: String,
+    ) -> Unit,
+    onUpdateGridItemsAfterMoveNewFolder: (
+        folderGridItems: List<GridItem>,
+        moveGridItemResult: MoveGridItemResult,
     ) -> Unit,
 ) {
     val paddingValues = WindowInsets.safeDrawing.asPaddingValues()
@@ -430,7 +424,6 @@ internal fun HomeScreen(
                 onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
                 onDeleteFolderEblanApplicationInfoPopupEntry = onDeleteFolderEblanApplicationInfoPopupEntry,
                 onEditFolderApplicationInfo = onEditFolderApplicationInfo,
-                onMoveNewFolderGridItem = onMoveNewFolderGridItem,
                 onUpdateMoveFolderEblanApplicationInfoGridItemResult = onUpdateMoveFolderEblanApplicationInfoGridItemResult,
                 onMoveFolderEblanApplicationInfoGridItem = onMoveFolderEblanApplicationInfoGridItem,
                 onResetGridAfterMoveFolderEblanApplicationInfo = onResetGridAfterMoveFolderEblanApplicationInfo,
@@ -438,6 +431,7 @@ internal fun HomeScreen(
                 onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
                 onResetFolderEblanApplicationInfoPopupEntries = onResetFolderEblanApplicationInfoPopupEntries,
                 onDeleteFolderEblanApplicationInfoGridItems = onDeleteFolderEblanApplicationInfoGridItems,
+                onUpdateGridItemsAfterMoveNewFolder = onUpdateGridItemsAfterMoveNewFolder,
             )
         }
     }
@@ -561,16 +555,6 @@ private fun Success(
     onUpsertFolderEblanApplicationInfoPopupEntry: (FolderEntry) -> Unit,
     onDeleteFolderEblanApplicationInfoPopupEntry: (FolderEntry) -> Unit,
     onEditFolderApplicationInfo: (String) -> Unit,
-    onMoveNewFolderGridItem: (
-        folderGridItems: List<GridItem>,
-        movingGridItem: GridItem,
-        x: Int,
-        y: Int,
-        columns: Int,
-        rows: Int,
-        gridWidth: Int,
-        gridHeight: Int,
-    ) -> Unit,
     onUpdateMoveFolderEblanApplicationInfoGridItemResult: (MoveFolderEblanApplicationInfoGridItemResult) -> Unit,
     onMoveFolderEblanApplicationInfoGridItem: (
         folderEblanApplicationInfoPopup: FolderEblanApplicationInfoPopup,
@@ -594,6 +578,10 @@ private fun Success(
     onDeleteFolderEblanApplicationInfoGridItems: (
         icon: String?,
         folderId: String,
+    ) -> Unit,
+    onUpdateGridItemsAfterMoveNewFolder: (
+        folderGridItems: List<GridItem>,
+        moveGridItemResult: MoveGridItemResult,
     ) -> Unit,
 ) {
     AnimatedContent(
@@ -675,7 +663,6 @@ private fun Success(
                     onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
                     onDeleteFolderEblanApplicationInfoPopupEntry = onDeleteFolderEblanApplicationInfoPopupEntry,
                     onEditFolderApplicationInfo = onEditFolderApplicationInfo,
-                    onMoveNewFolderGridItem = onMoveNewFolderGridItem,
                     onUpdateMoveFolderEblanApplicationInfoGridItemResult = onUpdateMoveFolderEblanApplicationInfoGridItemResult,
                     onMoveFolderEblanApplicationInfoGridItem = onMoveFolderEblanApplicationInfoGridItem,
                     onDragEndAfterMoveFolderEblanApplicationInfo = onResetGridAfterMoveFolderEblanApplicationInfo,
@@ -683,6 +670,7 @@ private fun Success(
                     onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
                     onResetFolderEblanApplicationInfoPopupEntries = onResetFolderEblanApplicationInfoPopupEntries,
                     onDeleteFolderEblanApplicationInfoGridItems = onDeleteFolderEblanApplicationInfoGridItems,
+                    onUpdateGridItemsAfterMoveNewFolder = onUpdateGridItemsAfterMoveNewFolder,
                 )
             }
 
