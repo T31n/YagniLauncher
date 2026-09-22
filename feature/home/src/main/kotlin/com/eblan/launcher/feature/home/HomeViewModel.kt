@@ -22,7 +22,7 @@ import androidx.lifecycle.viewModelScope
 import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
-import com.eblan.launcher.domain.model.PageItem
+import com.eblan.launcher.domain.model.home.PageItem
 import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem

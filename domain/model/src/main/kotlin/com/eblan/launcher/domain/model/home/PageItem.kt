@@ -15,7 +15,7 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.domain.model
+package com.eblan.launcher.domain.model.home
 
 import com.eblan.launcher.domain.model.grid.GridItem
 

@@ -25,7 +25,7 @@ import android.content.IntentFilter
 import android.os.Build
 import android.view.accessibility.AccessibilityEvent
 import androidx.core.content.ContextCompat
-import com.eblan.launcher.domain.model.GlobalAction
+import com.eblan.launcher.domain.model.home.GlobalAction
 
 class EblanAccessibilityService : AccessibilityService() {
     private val globalActionBroadcastReceiver = object : BroadcastReceiver() {

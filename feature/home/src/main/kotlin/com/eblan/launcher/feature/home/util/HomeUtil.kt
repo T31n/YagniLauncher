@@ -29,7 +29,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
-import com.eblan.launcher.domain.model.GlobalAction
+import com.eblan.launcher.domain.model.home.GlobalAction
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.HorizontalAlignment
 import com.eblan.launcher.domain.model.grid.VerticalArrangement
