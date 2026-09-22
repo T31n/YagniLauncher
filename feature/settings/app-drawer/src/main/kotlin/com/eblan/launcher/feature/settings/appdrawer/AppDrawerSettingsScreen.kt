@@ -47,6 +47,8 @@ import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.AppDrawerType
+import com.eblan.launcher.domain.model.userdata.ScrollBarType
+import com.eblan.launcher.domain.model.userdata.SearchBarPosition
 import com.eblan.launcher.feature.settings.appdrawer.dialog.EditHorizontalGridDialog
 import com.eblan.launcher.feature.settings.appdrawer.dialog.EditVerticalGridDialog
 import com.eblan.launcher.feature.settings.appdrawer.dialog.HiddenEblanApplicationInfosDialog
@@ -164,6 +166,10 @@ private fun Success(
 
     var showManageFoldersDialog by remember { mutableStateOf(false) }
 
+    var showSearchBarPositionDialog by remember { mutableStateOf(false) }
+
+    var showScrollBarTypeDialog by remember { mutableStateOf(false) }
+
     val items = buildAppDrawerSettingsItems(
         appDrawerSettings = appDrawerSettings,
         onAppDrawerTypeClick = {
@@ -187,6 +193,12 @@ private fun Success(
         },
         onManageFolders = {
             showManageFoldersDialog = true
+        },
+        onSearchBarPositionClick = {
+            showSearchBarPositionDialog = true
+        },
+        onScrollBarTypeClick = {
+            showScrollBarTypeDialog = true
         },
     )
 
@@ -312,6 +324,40 @@ private fun Success(
             onUpdateFolderEblanApplicationInfos = onUpdateFolderEblanApplicationInfos,
         )
     }
+
+    if (showSearchBarPositionDialog) {
+        RadioOptionsDialog(
+            title = stringResource(R.string.search_bar_position),
+            options = SearchBarPosition.entries,
+            selected = appDrawerSettings.searchBarPosition,
+            label = {
+                it.getTitle()
+            },
+            onDismissRequest = {
+                showSearchBarPositionDialog = false
+            },
+            onUpdateClick = {
+                onUpdateAppDrawerSettings(appDrawerSettings.copy(searchBarPosition = it))
+            },
+        )
+    }
+
+    if (showScrollBarTypeDialog) {
+        RadioOptionsDialog(
+            title = stringResource(R.string.scroll_bar_type),
+            options = ScrollBarType.entries,
+            selected = appDrawerSettings.scrollBarType,
+            label = {
+                it.getTitle()
+            },
+            onDismissRequest = {
+                showScrollBarTypeDialog = false
+            },
+            onUpdateClick = {
+                onUpdateAppDrawerSettings(appDrawerSettings.copy(scrollBarType = it))
+            },
+        )
+    }
 }
 
 @Composable
@@ -325,6 +371,8 @@ private fun buildAppDrawerSettingsItems(
     onUpdateAppDrawerSettings: (AppDrawerSettings) -> Unit,
     onManageTags: () -> Unit,
     onManageFolders: () -> Unit,
+    onSearchBarPositionClick: () -> Unit,
+    onScrollBarTypeClick: () -> Unit,
 ): List<SettingsItem> = buildList {
     add(
         SettingsItem.Column(
@@ -345,7 +393,7 @@ private fun buildAppDrawerSettingsItems(
     add(
         SettingsItem.Column(
             title = stringResource(R.string.app_drawer_type),
-            subtitle = appDrawerSettings.appDrawerType.name,
+            subtitle = appDrawerSettings.appDrawerType.getTitle(),
             onClick = onAppDrawerTypeClick,
         ),
     )
@@ -475,4 +523,41 @@ private fun buildAppDrawerSettingsItems(
             ),
         )
     }
+
+    add(
+        SettingsItem.Column(
+            title = stringResource(R.string.search_bar_position),
+            subtitle = appDrawerSettings.searchBarPosition.getTitle(),
+            onClick = onSearchBarPositionClick,
+        ),
+    )
+
+    add(
+        SettingsItem.Column(
+            title = stringResource(R.string.scroll_bar_type),
+            subtitle = appDrawerSettings.scrollBarType.getTitle(),
+            onClick = onScrollBarTypeClick,
+        ),
+    )
+}
+
+@Composable
+private fun AppDrawerType.getTitle(): String = when (this) {
+    AppDrawerType.Vertical -> stringResource(R.string.vertical)
+    AppDrawerType.Horizontal -> stringResource(R.string.horizontal)
+    AppDrawerType.List -> stringResource(R.string.list)
+}
+
+@Composable
+fun SearchBarPosition.getTitle(): String = when (this) {
+    SearchBarPosition.Top -> stringResource(R.string.top)
+    SearchBarPosition.Bottom -> stringResource(R.string.bottom)
+    SearchBarPosition.None -> stringResource(commonR.string.none)
+}
+
+@Composable
+fun ScrollBarType.getTitle(): String = when (this) {
+    ScrollBarType.ScrollBar -> stringResource(R.string.scroll_bar)
+    ScrollBarType.Alphabetical -> stringResource(R.string.alphabetical)
+    ScrollBarType.None -> stringResource(commonR.string.none)
 }

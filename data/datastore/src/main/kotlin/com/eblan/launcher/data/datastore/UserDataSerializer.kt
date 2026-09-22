@@ -22,6 +22,8 @@ import androidx.datastore.core.Serializer
 import com.eblan.launcher.data.datastore.proto.UserDataProto
 import com.eblan.launcher.data.datastore.proto.appdrawer.AppDrawerSettingsProto
 import com.eblan.launcher.data.datastore.proto.appdrawer.AppDrawerTypeProto
+import com.eblan.launcher.data.datastore.proto.appdrawer.ScrollBarTypeProto
+import com.eblan.launcher.data.datastore.proto.appdrawer.SearchBarPositionProto
 import com.eblan.launcher.data.datastore.proto.experimental.ExperimentalSettingsProto
 import com.eblan.launcher.data.datastore.proto.folder.FolderSettingsProto
 import com.eblan.launcher.data.datastore.proto.general.GeneralSettingsProto
@@ -98,6 +100,8 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
         showKeyboard = false
         fuzzySearch = false
         blurBehind = false
+        searchBarPositionProto = SearchBarPositionProto.SearchBarPositionTop
+        scrollBarTypeProto = ScrollBarTypeProto.ScrollBarTypeScrollBar
     }.build()
 
     private val defaultGestureSettingsProto = GestureSettingsProto.newBuilder().apply {

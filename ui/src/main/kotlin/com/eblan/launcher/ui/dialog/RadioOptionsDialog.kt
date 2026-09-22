@@ -42,7 +42,7 @@ fun <T> RadioOptionsDialog(
     modifier: Modifier = Modifier,
     options: List<T>,
     selected: T,
-    label: (T) -> String,
+    label: @Composable (T) -> String,
     onDismissRequest: () -> Unit,
     onUpdateClick: (T) -> Unit,
 ) {

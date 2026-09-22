@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.eblan.launcher.domain.model.userdata.SearchBarPosition
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.ceil
@@ -59,14 +60,21 @@ internal fun ScrollBarThumb(
     appDrawerColumns: Int,
     lazyGridState: LazyGridState,
     paddingValues: PaddingValues,
+    searchBarPosition: SearchBarPosition,
     onScrollToItem: suspend (Int) -> Unit,
 ) {
     val density = LocalDensity.current
 
     val scope = rememberCoroutineScope()
 
-    val bottomPadding = with(density) {
-        paddingValues.calculateBottomPadding().roundToPx()
+    val bottomPadding = if (searchBarPosition == SearchBarPosition.Bottom) {
+        0.dp
+    } else {
+        paddingValues.calculateBottomPadding()
+    }
+
+    val bottomPaddingPx = with(density) {
+        bottomPadding.roundToPx()
     }
 
     val thumbHeight by remember(lazyGridState) {
@@ -84,7 +92,7 @@ internal fun ScrollBarThumb(
                 appDrawerColumns = appDrawerColumns,
                 density = density,
                 thumbHeight = thumbHeight,
-                bottomPadding = bottomPadding,
+                bottomPadding = bottomPaddingPx,
             )
         }
     }
@@ -104,23 +112,26 @@ internal fun ScrollBarThumb(
             modifier = Modifier
                 .width(10.dp)
                 .fillMaxHeight()
-                .padding(bottom = paddingValues.calculateBottomPadding())
+                .padding(bottom = bottomPadding)
                 .background(
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
                     shape = RoundedCornerShape(10.dp),
-                ).pointerInput(lazyGridState) {
-                    detectTapGestures(onTap = {
-                        handleOnTap(
-                            lazyGridState = lazyGridState,
-                            bottomPadding = bottomPadding,
-                            density = density,
-                            thumbHeight = thumbHeight,
-                            offset = it,
-                            appDrawerColumns = appDrawerColumns,
-                            scope = scope,
-                            onScrollToItem = onScrollToItem,
-                        )
-                    })
+                )
+                .pointerInput(lazyGridState) {
+                    detectTapGestures(
+                        onTap = {
+                            handleOnTap(
+                                lazyGridState = lazyGridState,
+                                bottomPadding = bottomPaddingPx,
+                                density = density,
+                                thumbHeight = thumbHeight,
+                                offset = it,
+                                appDrawerColumns = appDrawerColumns,
+                                scope = scope,
+                                onScrollToItem = onScrollToItem,
+                            )
+                        },
+                    )
                 },
         ) {
             Box(
@@ -136,7 +147,8 @@ internal fun ScrollBarThumb(
                     .background(
                         color = MaterialTheme.colorScheme.primary,
                         shape = RoundedCornerShape(10.dp),
-                    ).pointerInput(key1 = lazyGridState) {
+                    )
+                    .pointerInput(key1 = lazyGridState) {
                         detectDragGestures(
                             onDragStart = {
                                 thumbY = viewPortThumbY
@@ -149,7 +161,7 @@ internal fun ScrollBarThumb(
                                     appDrawerColumns = appDrawerColumns,
                                     density = density,
                                     thumbHeight = thumbHeight,
-                                    bottomPadding = bottomPadding,
+                                    bottomPadding = bottomPaddingPx,
                                     thumbY = thumbY,
                                     deltaY = dragAmount.y,
                                     scope = scope,

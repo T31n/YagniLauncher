@@ -17,7 +17,6 @@
  */
 package com.eblan.launcher.feature.settings.general
 
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
@@ -173,7 +172,7 @@ private fun Success(
             options = Theme.entries,
             selected = generalSettings.theme,
             label = {
-                it.getTitle(context = context)
+                it.getTitle()
             },
             onDismissRequest = {
                 showThemeDialog = false
@@ -257,7 +256,7 @@ private fun buildGeneralSettingsItems(
         add(
             SettingsItem.Column(
                 title = stringResource(R.string.theme),
-                subtitle = generalSettings.theme.getTitle(context = context),
+                subtitle = generalSettings.theme.getTitle(),
                 onClick = onThemeClick,
             ),
         )
@@ -293,8 +292,9 @@ private fun buildGeneralSettingsItems(
     }
 }
 
-private fun Theme.getTitle(context: Context) = when (this) {
-    Theme.System -> context.getString(commonR.string.system)
-    Theme.Light -> context.getString(commonR.string.light)
-    Theme.Dark -> context.getString(commonR.string.dark)
+@Composable
+private fun Theme.getTitle() = when (this) {
+    Theme.System -> stringResource(commonR.string.system)
+    Theme.Light -> stringResource(commonR.string.light)
+    Theme.Dark -> stringResource(commonR.string.dark)
 }

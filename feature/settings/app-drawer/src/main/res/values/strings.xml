@@ -38,4 +38,13 @@
     <string name="sort_update_and_delete_tags">Sort, update and delete tags</string>
     <string name="manage_folders">Manage Folders</string>
     <string name="sort_update_and_delete_folders">Sort, update and delete folders</string>
+    <string name="vertical">Vertical</string>
+    <string name="horizontal">Horizontal</string>
+    <string name="list">List</string>
+    <string name="top">Top</string>
+    <string name="bottom">Bottom</string>
+    <string name="scroll_bar">Scroll Bar</string>
+    <string name="alphabetical">Alphabetical</string>
+    <string name="search_bar_position">Search Bar Position</string>
+    <string name="scroll_bar_type">Scroll Bar Type</string>
 </resources>
