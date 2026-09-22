@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -58,7 +59,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
@@ -77,9 +77,11 @@ import com.eblan.launcher.domain.model.launcherapps.EblanUserPageKey
 import com.eblan.launcher.domain.model.launcherapps.EblanUserType
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
+import com.eblan.launcher.domain.model.userdata.ScrollBarType
 import com.eblan.launcher.domain.model.userdata.SearchBarPosition
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.rememberNestedScrollConnectionEffect
+import com.eblan.launcher.feature.home.model.AlphabeticalScrollBarItem
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.screen.application.ApplicationScreenEffect
@@ -513,13 +515,33 @@ private fun EblanApplicationInfos(
         paddingValues.calculateBottomPadding()
     }
 
+    val applications = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos[eblanUserPageKey].orEmpty()
+    val alphabeticalItems = remember(applications, eblanUserPageKey, appDrawerSettings.scrollBarType) {
+        val itemOffset = if (eblanUserPageKey.eblanUser.eblanUserType == EblanUserType.Personal) {
+            getEblanApplicationInfosByLabelAndTag.folderEblanApplicationInfos.size
+        } else {
+            0
+        }
+
+        applications.mapIndexedNotNull { index, application ->
+            (application.customLabel ?: application.label).firstOrNull()
+                ?.uppercaseChar()
+                ?.takeIf(Char::isLetter)
+                ?.let { letter -> letter to (itemOffset + index) }
+        }.distinctBy { it.first }
+            .sortedBy { it.first }
+            .map { (letter, index) ->
+                AlphabeticalScrollBarItem(letter = letter, index = index)
+            }
+    }
+
     LaunchedEffect(key1 = swipeY) {
         if (swipeY.toInt() == screenHeight) {
             lazyGridState.scrollToItem(0)
         }
     }
 
-    Box(
+    Row(
         modifier = modifier
             .nestedScroll(nestedScrollConnection)
             .fillMaxSize(),
@@ -527,7 +549,7 @@ private fun EblanApplicationInfos(
         LazyVerticalGrid(
             columns = GridCells.Fixed(count = appDrawerSettings.appDrawerColumns),
             state = lazyGridState,
-            modifier = Modifier.matchParentSize(),
+            modifier = Modifier.weight(1f),
             contentPadding = PaddingValues(bottom = bottomPadding),
             userScrollEnabled = !isVisibleOverlay,
         ) {
@@ -635,16 +657,32 @@ private fun EblanApplicationInfos(
         }
 
         if (!WindowInsets.isImeVisible && canScroll) {
-            ScrollBarThumb(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .fillMaxHeight(),
-                appDrawerColumns = appDrawerSettings.appDrawerColumns,
-                lazyGridState = lazyGridState,
-                paddingValues = paddingValues,
-                searchBarPosition = appDrawerSettings.searchBarPosition,
-                onScrollToItem = lazyGridState::scrollToItem,
-            )
+            when (appDrawerSettings.scrollBarType) {
+                ScrollBarType.ScrollBar -> {
+                    ScrollBarThumb(
+                        appDrawerColumns = appDrawerSettings.appDrawerColumns,
+                        lazyGridState = lazyGridState,
+                        paddingValues = paddingValues,
+                        searchBarPosition = appDrawerSettings.searchBarPosition,
+                        onScrollToItem = lazyGridState::scrollToItem,
+                    )
+                }
+
+                ScrollBarType.Alphabetical -> {
+                    if (alphabeticalItems.isNotEmpty()) {
+                        AlphabeticalScrollBar(
+                            items = alphabeticalItems,
+                            currentIndex = lazyGridState.firstVisibleItemIndex,
+                            isScrollInProgress = lazyGridState.isScrollInProgress,
+                            paddingValues = paddingValues,
+                            searchBarPosition = appDrawerSettings.searchBarPosition,
+                            onScrollToItem = lazyGridState::scrollToItem,
+                        )
+                    }
+                }
+
+                ScrollBarType.None -> Unit
+            }
         }
     }
 }

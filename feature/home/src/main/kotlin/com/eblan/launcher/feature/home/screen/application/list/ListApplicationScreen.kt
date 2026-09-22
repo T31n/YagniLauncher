@@ -32,7 +32,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.isImeVisible
@@ -97,11 +96,13 @@ import com.eblan.launcher.domain.model.launcherapps.EblanUser
 import com.eblan.launcher.domain.model.launcherapps.EblanUserPageKey
 import com.eblan.launcher.domain.model.launcherapps.EblanUserType
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
+import com.eblan.launcher.domain.model.userdata.ScrollBarType
 import com.eblan.launcher.domain.model.userdata.SearchBarPosition
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.component.rememberNestedScrollConnectionEffect
+import com.eblan.launcher.feature.home.model.AlphabeticalScrollBarItem
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.screen.application.ApplicationScreenEffect
@@ -114,6 +115,7 @@ import com.eblan.launcher.feature.home.screen.application.handleOnLongPressEblan
 import com.eblan.launcher.feature.home.screen.application.handleOnTapEblanApplicationInfoItem
 import com.eblan.launcher.feature.home.screen.application.rememberIsPrivateQuietModeEnabled
 import com.eblan.launcher.feature.home.screen.application.rememberIsQuietModeEnabled
+import com.eblan.launcher.feature.home.screen.application.vertical.AlphabeticalScrollBar
 import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
 import com.eblan.launcher.feature.home.util.handleOnPress
 import com.eblan.launcher.ui.local.LocalLauncherApps
@@ -465,20 +467,34 @@ private fun EblanApplicationInfos(
         paddingValues.calculateBottomPadding()
     }
 
+    val applications = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos[eblanUserPageKey].orEmpty()
+    val alphabeticalItems = remember(applications, appDrawerSettings.scrollBarType) {
+        applications.mapIndexedNotNull { index, application ->
+            (application.customLabel ?: application.label).firstOrNull()
+                ?.uppercaseChar()
+                ?.takeIf(Char::isLetter)
+                ?.let { letter -> letter to index }
+        }.distinctBy { it.first }
+            .sortedBy { it.first }
+            .map { (letter, index) ->
+                AlphabeticalScrollBarItem(letter = letter, index = index)
+            }
+    }
+
     LaunchedEffect(key1 = swipeY) {
         if (swipeY.toInt() == screenHeight) {
             lazyListState.scrollToItem(0)
         }
     }
 
-    Box(
+    Row(
         modifier = modifier
             .nestedScroll(nestedScrollConnection)
             .fillMaxSize(),
     ) {
         LazyColumn(
             state = lazyListState,
-            modifier = Modifier.matchParentSize(),
+            modifier = Modifier.weight(1f),
             contentPadding = PaddingValues(bottom = bottomPadding),
             userScrollEnabled = !isVisibleOverlay,
         ) {
@@ -556,15 +572,31 @@ private fun EblanApplicationInfos(
         }
 
         if (!WindowInsets.isImeVisible && canScroll) {
-            ScrollBarThumb(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .fillMaxHeight(),
-                lazyListState = lazyListState,
-                paddingValues = paddingValues,
-                searchBarPosition = appDrawerSettings.searchBarPosition,
-                onScrollToItem = lazyListState::scrollToItem,
-            )
+            when (appDrawerSettings.scrollBarType) {
+                ScrollBarType.ScrollBar -> {
+                    ScrollBarThumb(
+                        lazyListState = lazyListState,
+                        paddingValues = paddingValues,
+                        searchBarPosition = appDrawerSettings.searchBarPosition,
+                        onScrollToItem = lazyListState::scrollToItem,
+                    )
+                }
+
+                ScrollBarType.Alphabetical -> {
+                    if (alphabeticalItems.isNotEmpty()) {
+                        AlphabeticalScrollBar(
+                            items = alphabeticalItems,
+                            currentIndex = lazyListState.firstVisibleItemIndex,
+                            isScrollInProgress = lazyListState.isScrollInProgress,
+                            paddingValues = paddingValues,
+                            searchBarPosition = appDrawerSettings.searchBarPosition,
+                            onScrollToItem = lazyListState::scrollToItem,
+                        )
+                    }
+                }
+
+                ScrollBarType.None -> Unit
+            }
         }
     }
 }
