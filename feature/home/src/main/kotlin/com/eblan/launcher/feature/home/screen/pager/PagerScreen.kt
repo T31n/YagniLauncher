@@ -942,7 +942,7 @@ internal fun PagerScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(dockHeight),
+                    .height(dockHeight + paddingValues.calculateBottomPadding()),
             ) {
                 Box(
                     modifier = Modifier
