@@ -23,6 +23,7 @@ import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.JaroWinklerSimilarityWrapper
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
+import com.eblan.launcher.domain.model.application.AlphabeticalScrollBarItem
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
@@ -41,6 +42,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import java.text.Normalizer
 import javax.inject.Inject
+import kotlin.collections.mapIndexedNotNull
 
 class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
@@ -148,6 +150,10 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
             privateEblanApplicationInfos = groupedEblanApplicationInfos[privateEblanUserPageKey].orEmpty(),
             iconPackInfoFilePaths = iconPackInfoFilePaths,
             folderEblanApplicationInfos = folderEblanApplicationInfos,
+            alphabeticalScrollBarItems = getAlphabeticalScrollBarItems(
+                eblanApplicationInfos = groupedEblanApplicationInfosWithFolders,
+                folderEblanApplicationInfos = folderEblanApplicationInfos,
+            ),
         )
     }
 
@@ -176,6 +182,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
             privateEblanApplicationInfos = emptyList(),
             iconPackInfoFilePaths = iconPackInfoFilePaths,
             folderEblanApplicationInfos = emptyList(),
+            alphabeticalScrollBarItems = emptyMap(),
         )
     }
 
@@ -265,5 +272,27 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
         Normalizer.normalize(text, Normalizer.Form.NFD)
             .replace("\\p{M}+".toRegex(), "")
             .lowercase()
+    }
+
+    private fun getAlphabeticalScrollBarItems(
+        eblanApplicationInfos: Map<EblanUserPageKey, List<EblanApplicationInfo>>,
+        folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    ): Map<EblanUserPageKey, List<AlphabeticalScrollBarItem>> = eblanApplicationInfos.mapValues { entry ->
+        val itemOffset = if (entry.key.eblanUser.eblanUserType == EblanUserType.Personal) {
+            folderEblanApplicationInfos.size
+        } else {
+            0
+        }
+
+        entry.value.mapIndexedNotNull { index, application ->
+            (application.customLabel ?: application.label).firstOrNull()
+                ?.uppercaseChar()
+                ?.takeIf(Char::isLetter)
+                ?.let { letter -> letter to (itemOffset + index) }
+        }.distinctBy { it.first }
+            .sortedBy { it.first }
+            .map { (letter, index) ->
+                AlphabeticalScrollBarItem(letter = letter, index = index)
+            }
     }
 }

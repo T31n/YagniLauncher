@@ -102,7 +102,6 @@ import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.component.rememberNestedScrollConnectionEffect
-import com.eblan.launcher.feature.home.model.AlphabeticalScrollBarItem
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.screen.application.ApplicationScreenEffect
@@ -468,19 +467,8 @@ private fun EblanApplicationInfos(
         paddingValues.calculateBottomPadding()
     }
 
-    val applications = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos[eblanUserPageKey].orEmpty()
-    val alphabeticalItems = remember(applications, appDrawerSettings.scrollBarType) {
-        applications.mapIndexedNotNull { index, application ->
-            (application.customLabel ?: application.label).firstOrNull()
-                ?.uppercaseChar()
-                ?.takeIf(Char::isLetter)
-                ?.let { letter -> letter to index }
-        }.distinctBy { it.first }
-            .sortedBy { it.first }
-            .map { (letter, index) ->
-                AlphabeticalScrollBarItem(letter = letter, index = index)
-            }
-    }
+    val alphabeticalScrollBarItems =
+        getEblanApplicationInfosByLabelAndTag.alphabeticalScrollBarItems[eblanUserPageKey].orEmpty()
 
     LaunchedEffect(key1 = swipeY) {
         if (swipeY.toInt() == screenHeight) {
@@ -584,9 +572,9 @@ private fun EblanApplicationInfos(
                 }
 
                 ScrollBarType.Alphabetical -> {
-                    if (alphabeticalItems.isNotEmpty()) {
+                    if (alphabeticalScrollBarItems.isNotEmpty()) {
                         AlphabeticalScrollBar(
-                            items = alphabeticalItems,
+                            alphabeticalScrollBarItems = alphabeticalScrollBarItems,
                             paddingValues = paddingValues,
                             searchBarPosition = appDrawerSettings.searchBarPosition,
                             onScrollToItem = lazyListState::scrollToItem,

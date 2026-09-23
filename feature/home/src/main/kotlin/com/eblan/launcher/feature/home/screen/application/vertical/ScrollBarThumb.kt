@@ -56,8 +56,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.eblan.launcher.domain.model.application.AlphabeticalScrollBarItem
 import com.eblan.launcher.domain.model.userdata.SearchBarPosition
-import com.eblan.launcher.feature.home.model.AlphabeticalScrollBarItem
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -219,7 +219,7 @@ internal fun ScrollBarThumb(
 @Composable
 internal fun AlphabeticalScrollBar(
     modifier: Modifier = Modifier,
-    items: List<AlphabeticalScrollBarItem>,
+    alphabeticalScrollBarItems: List<AlphabeticalScrollBarItem>,
     paddingValues: PaddingValues,
     searchBarPosition: SearchBarPosition,
     onScrollToItem: suspend (Int) -> Unit,
@@ -232,7 +232,7 @@ internal fun AlphabeticalScrollBar(
 
     val listState = rememberLazyListState()
 
-    var selectedLetter by remember(items) { mutableStateOf<Char?>(null) }
+    var selectedLetter by remember(alphabeticalScrollBarItems) { mutableStateOf<Char?>(null) }
 
     LaunchedEffect(key1 = selectedLetter) {
         if (selectedLetter != null) {
@@ -254,8 +254,8 @@ internal fun AlphabeticalScrollBar(
             onScrollToItem(item.index)
 
             val visibleItems = listState.layoutInfo.visibleItemsInfo
-            if (visibleItems.none { it.index == items.indexOf(item) }) {
-                listState.animateScrollToItem(items.indexOf(item))
+            if (visibleItems.none { it.index == alphabeticalScrollBarItems.indexOf(item) }) {
+                listState.animateScrollToItem(alphabeticalScrollBarItems.indexOf(item))
             }
         }
     }
@@ -266,7 +266,7 @@ internal fun AlphabeticalScrollBar(
             abs(it.offset + it.size / 2f - y)
         } ?: return
 
-        selectItem(items[target.index])
+        selectItem(alphabeticalScrollBarItems[target.index])
     }
 
     Box(
@@ -278,12 +278,12 @@ internal fun AlphabeticalScrollBar(
             state = listState,
             modifier = Modifier
                 .fillMaxHeight()
-                .pointerInput(items) {
+                .pointerInput(alphabeticalScrollBarItems) {
                     detectTapGestures(
                         onTap = { selectItemAt(it.y) },
                     )
                 }
-                .pointerInput(items) {
+                .pointerInput(alphabeticalScrollBarItems) {
                     detectDragGestures(
                         onDragStart = { selectItemAt(it.y) },
                         onDrag = { change, dragAmount ->
@@ -312,7 +312,7 @@ internal fun AlphabeticalScrollBar(
             userScrollEnabled = false,
         ) {
             items(
-                items = items,
+                items = alphabeticalScrollBarItems,
                 key = { it.letter },
             ) { item ->
                 Box(

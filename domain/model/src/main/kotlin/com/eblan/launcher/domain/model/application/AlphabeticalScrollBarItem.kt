@@ -15,9 +15,9 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.feature.home.model
+package com.eblan.launcher.domain.model.application
 
-internal data class AlphabeticalScrollBarItem(
+data class AlphabeticalScrollBarItem(
     val letter: Char,
     val index: Int,
 )
