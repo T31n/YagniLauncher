@@ -139,7 +139,8 @@ internal fun HorizontalApplicationScreen(
         selectedEblanApplicationInfoTagId = selectedEblanApplicationInfoTagId,
         swipeY = swipeY,
         textFieldState = textFieldState,
-        showKeyboard = appDrawerSettings.showKeyboard,
+        showKeyboard = appDrawerSettings.showKeyboard &&
+            appDrawerSettings.searchBarPosition != SearchBarPosition.None,
         focusRequester = focusRequester,
         onDismiss = onDismiss,
         onGetEblanApplicationInfosByLabel = onGetEblanApplicationInfosByLabel,

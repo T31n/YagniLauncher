@@ -188,7 +188,8 @@ internal fun ListApplicationScreen(
         selectedEblanApplicationInfoTagId = selectedEblanApplicationInfoTagId,
         swipeY = swipeY,
         textFieldState = textFieldState,
-        showKeyboard = appDrawerSettings.showKeyboard,
+        showKeyboard = appDrawerSettings.showKeyboard &&
+            appDrawerSettings.searchBarPosition != SearchBarPosition.None,
         focusRequester = focusRequester,
         onDismiss = onDismiss,
         onGetEblanApplicationInfosByLabel = onGetEblanApplicationInfosByLabel,
@@ -586,8 +587,6 @@ private fun EblanApplicationInfos(
                     if (alphabeticalItems.isNotEmpty()) {
                         AlphabeticalScrollBar(
                             items = alphabeticalItems,
-                            currentIndex = lazyListState.firstVisibleItemIndex,
-                            isScrollInProgress = lazyListState.isScrollInProgress,
                             paddingValues = paddingValues,
                             searchBarPosition = appDrawerSettings.searchBarPosition,
                             onScrollToItem = lazyListState::scrollToItem,

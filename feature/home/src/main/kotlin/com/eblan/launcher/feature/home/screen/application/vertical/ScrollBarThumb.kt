@@ -220,8 +220,6 @@ internal fun ScrollBarThumb(
 internal fun AlphabeticalScrollBar(
     modifier: Modifier = Modifier,
     items: List<AlphabeticalScrollBarItem>,
-    currentIndex: Int,
-    isScrollInProgress: Boolean,
     paddingValues: PaddingValues,
     searchBarPosition: SearchBarPosition,
     onScrollToItem: suspend (Int) -> Unit,
@@ -236,19 +234,10 @@ internal fun AlphabeticalScrollBar(
 
     var selectedLetter by remember(items) { mutableStateOf<Char?>(null) }
 
-    LaunchedEffect(
-        key1 = currentIndex,
-        key2 = isScrollInProgress,
-    ) {
-        if (isScrollInProgress) {
-            selectedLetter = items.lastOrNull { it.index <= currentIndex }?.letter
-                ?: items.firstOrNull()?.letter
-        }
-    }
-
     LaunchedEffect(key1 = selectedLetter) {
         if (selectedLetter != null) {
             delay(1000L.milliseconds)
+
             selectedLetter = null
         }
     }

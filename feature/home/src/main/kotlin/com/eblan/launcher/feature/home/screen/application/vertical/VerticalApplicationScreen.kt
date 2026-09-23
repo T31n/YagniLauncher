@@ -28,7 +28,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.isImeVisible
@@ -180,7 +179,8 @@ internal fun VerticalApplicationScreen(
         selectedEblanApplicationInfoTagId = selectedEblanApplicationInfoTagId,
         swipeY = swipeY,
         textFieldState = textFieldState,
-        showKeyboard = appDrawerSettings.showKeyboard,
+        showKeyboard = appDrawerSettings.showKeyboard &&
+            appDrawerSettings.searchBarPosition != SearchBarPosition.None,
         focusRequester = focusRequester,
         onDismiss = onDismiss,
         onGetEblanApplicationInfosByLabel = onGetEblanApplicationInfosByLabel,
@@ -515,15 +515,21 @@ private fun EblanApplicationInfos(
         paddingValues.calculateBottomPadding()
     }
 
-    val applications = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos[eblanUserPageKey].orEmpty()
-    val alphabeticalItems = remember(applications, eblanUserPageKey, appDrawerSettings.scrollBarType) {
+    val alphabeticalItems = remember(
+        key1 = getEblanApplicationInfosByLabelAndTag,
+        key2 = eblanUserPageKey,
+        key3 = appDrawerSettings.scrollBarType,
+    ) {
+        val eblanApplicationInfos =
+            getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos[eblanUserPageKey].orEmpty()
+
         val itemOffset = if (eblanUserPageKey.eblanUser.eblanUserType == EblanUserType.Personal) {
             getEblanApplicationInfosByLabelAndTag.folderEblanApplicationInfos.size
         } else {
             0
         }
 
-        applications.mapIndexedNotNull { index, application ->
+        eblanApplicationInfos.mapIndexedNotNull { index, application ->
             (application.customLabel ?: application.label).firstOrNull()
                 ?.uppercaseChar()
                 ?.takeIf(Char::isLetter)
@@ -672,8 +678,6 @@ private fun EblanApplicationInfos(
                     if (alphabeticalItems.isNotEmpty()) {
                         AlphabeticalScrollBar(
                             items = alphabeticalItems,
-                            currentIndex = lazyGridState.firstVisibleItemIndex,
-                            isScrollInProgress = lazyGridState.isScrollInProgress,
                             paddingValues = paddingValues,
                             searchBarPosition = appDrawerSettings.searchBarPosition,
                             onScrollToItem = lazyGridState::scrollToItem,
