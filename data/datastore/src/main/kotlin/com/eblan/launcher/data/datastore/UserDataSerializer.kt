@@ -70,7 +70,7 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
         infiniteScroll = false
         dockColumns = 5
         dockRows = 1
-        dockHeight = 100
+        dockHeight = 120
         initialPage = 0
         wallpaperScroll = false
         gridItemSettingsProto = defaultGridItemSettingsProto
@@ -85,6 +85,7 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
         dockTopEndCornerRadius = 0
         dockBottomStartCornerRadius = 0
         dockBottomEndCornerRadius = 0
+        excludeDockBottomPadding = false
     }.build()
 
     private val defaultAppDrawerSettingsProto = AppDrawerSettingsProto.newBuilder().apply {

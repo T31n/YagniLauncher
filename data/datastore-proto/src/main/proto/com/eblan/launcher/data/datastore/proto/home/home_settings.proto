@@ -28,4 +28,5 @@ message HomeSettingsProto {
   optional int32 dockTopEndCornerRadius = 26;
   optional int32 dockBottomStartCornerRadius = 27;
   optional int32 dockBottomEndCornerRadius = 28;
+  optional bool excludeDockBottomPadding = 29;
 }

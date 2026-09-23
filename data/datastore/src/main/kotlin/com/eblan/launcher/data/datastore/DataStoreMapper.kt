@@ -75,6 +75,7 @@ internal fun HomeSettingsProto.toHomeSettings(): HomeSettings = HomeSettings(
     dockTopEndCornerRadius = dockTopEndCornerRadius,
     dockBottomStartCornerRadius = dockBottomStartCornerRadius,
     dockBottomEndCornerRadius = dockBottomEndCornerRadius,
+    excludeDockBottomPadding = excludeDockBottomPadding,
 )
 
 internal fun AppDrawerSettingsProto.toAppDrawerSettings(): AppDrawerSettings = AppDrawerSettings(
@@ -151,6 +152,7 @@ internal fun HomeSettings.toHomeSettingsProto(): HomeSettingsProto = HomeSetting
     builder.dockTopEndCornerRadius = dockTopEndCornerRadius
     builder.dockBottomStartCornerRadius = dockBottomStartCornerRadius
     builder.dockBottomEndCornerRadius = dockBottomEndCornerRadius
+    builder.excludeDockBottomPadding = excludeDockBottomPadding
 }.build()
 
 internal fun AppDrawerSettings.toAppDrawerSettingsProto(): AppDrawerSettingsProto = AppDrawerSettingsProto.newBuilder().also { builder ->

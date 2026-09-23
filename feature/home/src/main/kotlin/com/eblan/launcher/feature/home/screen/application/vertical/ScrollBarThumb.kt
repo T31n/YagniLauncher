@@ -232,7 +232,9 @@ internal fun AlphabeticalScrollBar(
 
     val listState = rememberLazyListState()
 
-    var selectedLetter by remember(alphabeticalScrollBarItems) { mutableStateOf<Char?>(null) }
+    var selectedLetter by remember(key1 = alphabeticalScrollBarItems) {
+        mutableStateOf<Char?>(null)
+    }
 
     LaunchedEffect(key1 = selectedLetter) {
         if (selectedLetter != null) {
