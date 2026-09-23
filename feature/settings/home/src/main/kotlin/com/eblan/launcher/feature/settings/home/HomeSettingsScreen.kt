@@ -463,17 +463,17 @@ private fun buildDockHomeSettingsItems(
 
     add(
         SettingsItem.Switch(
-            checked = homeSettings.excludeDockBottomPadding,
-            title = stringResource(R.string.exclude_bottom_padding),
-            subtitle = stringResource(R.string.exclude_the_bottom_padding_of_the_dock),
+            checked = homeSettings.addDockBottomPadding,
+            title = stringResource(R.string.add_bottom_padding),
+            subtitle = stringResource(R.string.add_the_bottom_padding_of_the_dock),
             onClick = {
                 onUpdateHomeSettings(
-                    homeSettings.copy(excludeDockBottomPadding = !homeSettings.excludeDockBottomPadding),
+                    homeSettings.copy(addDockBottomPadding = !homeSettings.addDockBottomPadding),
                 )
             },
             onCheckedChange = {
                 onUpdateHomeSettings(
-                    homeSettings.copy(excludeDockBottomPadding = it),
+                    homeSettings.copy(addDockBottomPadding = it),
                 )
             },
         ),

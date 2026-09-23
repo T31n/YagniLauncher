@@ -42,5 +42,5 @@ data class HomeSettings(
     val dockTopEndCornerRadius: Int,
     val dockBottomStartCornerRadius: Int,
     val dockBottomEndCornerRadius: Int,
-    val excludeDockBottomPadding: Boolean,
+    val addDockBottomPadding: Boolean,
 )

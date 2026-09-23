@@ -951,10 +951,10 @@ internal fun PagerScreen(
                             start = homeSettings.dockPadding.dp,
                             top = homeSettings.dockPadding.dp,
                             end = homeSettings.dockPadding.dp,
-                            bottom = if (homeSettings.excludeDockBottomPadding) {
-                                homeSettings.dockPadding.dp
-                            } else {
+                            bottom = if (homeSettings.addDockBottomPadding) {
                                 homeSettings.dockPadding.dp + paddingValues.calculateBottomPadding()
+                            } else {
+                                homeSettings.dockPadding.dp
                             },
                         )
                         .background(

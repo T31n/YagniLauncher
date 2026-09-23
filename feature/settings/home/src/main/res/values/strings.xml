@@ -46,6 +46,6 @@
     <string name="bottom_end">Bottom End</string>
     <string name="bottom_end_is_not_valid">Bottom End is not valid</string>
     <string name="set_the_radius_for_each_dock_corner">Set the radius for each dock corner</string>
-    <string name="exclude_bottom_padding">Exclude Bottom Padding</string>
-    <string name="exclude_the_bottom_padding_of_the_dock">Exclude the bottom padding of the dock</string>
+    <string name="add_bottom_padding">Add Bottom Padding</string>
+    <string name="add_the_bottom_padding_of_the_dock">Add the bottom padding of the dock</string>
 </resources>

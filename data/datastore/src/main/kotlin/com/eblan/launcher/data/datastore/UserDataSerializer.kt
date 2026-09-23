@@ -78,14 +78,14 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
         dockPageCount = 1
         dockInfiniteScroll = false
         addNewAppsToHomeScreen = true
-        showPageIndicator = false
+        showPageIndicator = true
         dockCustomBackgroundColor = 0x00000000
         dockPadding = 0
         dockTopStartCornerRadius = 0
         dockTopEndCornerRadius = 0
         dockBottomStartCornerRadius = 0
         dockBottomEndCornerRadius = 0
-        excludeDockBottomPadding = false
+        addDockBottomPadding = true
     }.build()
 
     private val defaultAppDrawerSettingsProto = AppDrawerSettingsProto.newBuilder().apply {
