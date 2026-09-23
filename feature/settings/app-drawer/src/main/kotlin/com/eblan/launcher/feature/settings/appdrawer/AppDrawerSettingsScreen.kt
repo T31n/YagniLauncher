@@ -229,7 +229,7 @@ private fun Success(
             options = AppDrawerType.entries,
             selected = appDrawerSettings.appDrawerType,
             label = {
-                it.name
+                it.getTitle()
             },
             onDismissRequest = {
                 showAppDrawerTypeDialog = false
