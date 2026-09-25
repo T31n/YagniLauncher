@@ -47,10 +47,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -79,14 +82,16 @@ import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.grid.MoveFolderEblanApplicationInfoGridItemResult
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
+import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_COLUMNS
 import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_ROWS
 import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
+import com.eblan.launcher.feature.home.component.clipShape
 import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
-import com.eblan.launcher.feature.home.component.recordBoundsIfNotInProgress
-import com.eblan.launcher.feature.home.component.recordToGraphicsLayerIfNotInProgress
+import com.eblan.launcher.feature.home.component.iconShape
+import com.eblan.launcher.feature.home.component.toShape
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.getHorizontalAlignment
@@ -120,6 +125,7 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
     drag: Drag,
     showFolderEblanApplicationInfoGridItemMenu: Boolean,
     iconPackInfoFilePaths: Map<String, String?>,
+    iconShape: IconShape,
     onLongPressFolderEblanApplicationInfoGridItem: (
         folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
         imageBitmap: ImageBitmap,
@@ -215,6 +221,7 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
                 padding = padding,
                 iconSize = iconSize,
                 iconPackInfoFilePaths = iconPackInfoFilePaths,
+                iconShape = iconShape,
                 onLongPressFolderEblanApplicationInfoGridItem = onLongPressFolderEblanApplicationInfoGridItem,
             )
         }
@@ -245,6 +252,7 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
                 iconSize = iconSize,
                 isVisibleFolder = isVisibleFolder,
                 iconPackInfoFilePaths = iconPackInfoFilePaths,
+                iconShape = iconShape,
                 onLongPressFolderEblanApplicationInfoGridItem = onLongPressFolderEblanApplicationInfoGridItem,
                 onTapFolderEblanApplicationInfoItem = onTapFolderEblanApplicationInfoItem,
             )
@@ -273,6 +281,7 @@ private fun InteractiveEblanApplicationInfoItem(
     padding: Dp,
     iconSize: Dp,
     iconPackInfoFilePaths: Map<String, String?>,
+    iconShape: IconShape,
     onLongPressFolderEblanApplicationInfoGridItem: (
         folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
         imageBitmap: ImageBitmap,
@@ -384,7 +393,8 @@ private fun InteractiveEblanApplicationInfoItem(
             contentDescription = null,
             modifier = Modifier
                 .size(iconSize)
-                .recordBoundsIfNotInProgress(isInProgress = isInProgress) {
+                .iconShape(iconShape)
+                .onGloballyPositioned {
                     intOffset = it.positionInRoot().round()
 
                     intSize = it.size
@@ -400,10 +410,17 @@ private fun InteractiveEblanApplicationInfoItem(
                     sharedTransitionScope = sharedTransitionScope,
                     visible = !isScrollInProgress && !hasInteraction,
                 )
-                .recordToGraphicsLayerIfNotInProgress(
-                    isInProgress = isInProgress,
-                    graphicsLayer = graphicsLayer,
-                )
+                .drawWithContent {
+                    graphicsLayer.record {
+                        iconShape.toShape()?.let {
+                            clipShape(it) {
+                                this@drawWithContent.drawContent()
+                            }
+                        } ?: this@drawWithContent.drawContent()
+                    }
+
+                    drawLayer(graphicsLayer)
+                }
                 .alpha(alpha),
         )
 
@@ -449,6 +466,7 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
     iconSize: Dp,
     isVisibleFolder: Boolean,
     iconPackInfoFilePaths: Map<String, String?>,
+    iconShape: IconShape,
     onLongPressFolderEblanApplicationInfoGridItem: (
         folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
         imageBitmap: ImageBitmap,
@@ -537,7 +555,7 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
         val commonModifier =
             Modifier
                 .size(iconSize)
-                .recordBoundsIfNotInProgress(isInProgress = isInProgress) {
+                .onGloballyPositioned {
                     intOffset = it.positionInRoot().round()
 
                     intSize = it.size
@@ -553,10 +571,13 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
                     sharedTransitionScope = sharedTransitionScope,
                     visible = !isScrollInProgress && !hasInteraction,
                 )
-                .recordToGraphicsLayerIfNotInProgress(
-                    isInProgress = isInProgress,
-                    graphicsLayer = graphicsLayer,
-                )
+                .drawWithContent {
+                    graphicsLayer.record {
+                        this@drawWithContent.drawContent()
+                    }
+
+                    drawLayer(graphicsLayer)
+                }
                 .alpha(iconAlpha)
 
         if (data.icon != null) {
@@ -590,6 +611,7 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
                             systemTextColor = systemTextColor,
                             systemCustomTextColor = systemCustomTextColor,
                             iconPackInfoFilePaths = iconPackInfoFilePaths,
+                            iconShape = iconShape,
                         )
                     },
                 )
@@ -623,6 +645,7 @@ private fun PreviewFolderEblanApplicationInfoItem(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     iconPackInfoFilePaths: Map<String, String?>,
+    iconShape: IconShape,
 ) {
     key(folderEblanApplicationInfoGridItem.id) {
         val context = LocalContext.current
@@ -639,6 +662,7 @@ private fun PreviewFolderEblanApplicationInfoItem(
 
         val commonModifier = modifier
             .padding(1.dp)
+            .iconShape(iconShape)
             .alpha(alpha)
 
         when (val data = folderEblanApplicationInfoGridItem.data) {

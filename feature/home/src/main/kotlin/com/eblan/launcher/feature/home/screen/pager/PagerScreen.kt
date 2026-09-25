@@ -122,6 +122,7 @@ import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
 import com.eblan.launcher.domain.model.userdata.FolderSettings
+import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.domain.model.userdata.GestureSettings
 import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.domain.model.userdata.TextColor
@@ -201,6 +202,7 @@ internal fun PagerScreen(
     previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
     folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
     moveFolderEblanApplicationInfoGridItemResult: MoveFolderEblanApplicationInfoGridItemResult?,
+    generalSettings: GeneralSettings,
     onDeleteGridItem: (GridItem) -> Unit,
     onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
@@ -890,6 +892,7 @@ internal fun PagerScreen(
                             customFolderBackgroundColor = folderSettings.customFolderBackgroundColor,
                             systemCustomTextColor = homeSettings.gridItemSettings.customTextColor,
                             folderGridItemPopups = folderGridItemPopups,
+                            iconShape = generalSettings.iconShape,
                             onOpenAppDrawer = pagerScreenState::openApplicationScreen,
                             onShowFolderWhenDragging = { folderPopupEntry, gridItem ->
                                 pagerScreenState.showFolderWhenDragging(
@@ -1026,6 +1029,7 @@ internal fun PagerScreen(
                                 customFolderBackgroundColor = folderSettings.customFolderBackgroundColor,
                                 systemCustomTextColor = homeSettings.gridItemSettings.customTextColor,
                                 folderGridItemPopups = folderGridItemPopups,
+                                iconShape = generalSettings.iconShape,
                                 onOpenAppDrawer = pagerScreenState::openApplicationScreen,
                                 onShowFolderWhenDragging = { folderPopupEntry, gridItem ->
                                     pagerScreenState.showFolderWhenDragging(
@@ -1145,6 +1149,7 @@ internal fun PagerScreen(
                     folderBackgroundColor = folderSettings.folderBackgroundColor,
                     folderCornerRadius = folderSettings.folderCornerRadius,
                     customFolderBackgroundColor = folderSettings.customFolderBackgroundColor,
+                    iconShape = generalSettings.iconShape,
                     onMoveFolderGridItemOutsideFolder = { gridItem, sharedElementKey ->
                         pagerScreenState.moveFolderGridItemOutsideFolder(
                             gridItem = gridItem,
@@ -1245,6 +1250,7 @@ internal fun PagerScreen(
                 customFolderBackgroundColor = folderSettings.customFolderBackgroundColor,
                 isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
                 folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+                iconShape = generalSettings.iconShape,
                 onDismiss = pagerScreenState::dismissApplicationScreen,
                 onDragEnd = pagerScreenState::handleOnDragEndApplicationScreen,
                 onGetEblanApplicationInfosByLabel = onGetEblanApplicationInfosByLabel,
@@ -1505,6 +1511,7 @@ internal fun PagerScreen(
                     dragIntOffset = pagerScreenState.dragIntOffset,
                     showFolderEblanApplicationInfoGridItemMenu = pagerScreenState.showFolderEblanApplicationInfoGridItemMenu,
                     iconPackInfoFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackInfoFilePaths,
+                    iconShape = generalSettings.iconShape,
                     onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
                     onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                     onMoveFolderEblanApplicationInfoGridItem = onMoveFolderEblanApplicationInfoGridItem,

@@ -27,14 +27,11 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
@@ -64,7 +61,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.application.AlphabeticalScrollBarItem
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
@@ -78,7 +74,7 @@ import com.eblan.launcher.domain.model.launcherapps.EblanUserPageKey
 import com.eblan.launcher.domain.model.launcherapps.EblanUserType
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
-import com.eblan.launcher.domain.model.userdata.ScrollBarType
+import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.SearchBarPosition
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.rememberNestedScrollConnectionEffect
@@ -122,6 +118,7 @@ internal fun VerticalApplicationScreen(
     customFolderBackgroundColor: Int,
     isVisibleFolderEblanApplicationInfos: Boolean,
     folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
+    iconShape: IconShape,
     onDismiss: () -> Unit,
     onDragEnd: () -> Unit,
     onGetEblanApplicationInfosByLabel: (String) -> Unit,
@@ -267,6 +264,7 @@ internal fun VerticalApplicationScreen(
                     customFolderBackgroundColor = customFolderBackgroundColor,
                     isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
                     folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+                    iconShape = iconShape,
                     onDragEnd = onDragEnd,
                     onVerticalDrag = onVerticalDrag,
                     onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
@@ -316,6 +314,7 @@ private fun EblanApplicationInfosPage(
     customFolderBackgroundColor: Int,
     isVisibleFolderEblanApplicationInfos: Boolean,
     folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
+    iconShape: IconShape,
     onDragEnd: () -> Unit,
     onVerticalDrag: (Float) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
@@ -403,6 +402,7 @@ private fun EblanApplicationInfosPage(
                 customFolderBackgroundColor = customFolderBackgroundColor,
                 isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
                 folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+                iconShape = iconShape,
                 onDragEnd = onDragEnd,
                 onVerticalDrag = onVerticalDrag,
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
@@ -465,6 +465,7 @@ private fun EblanApplicationInfos(
     customFolderBackgroundColor: Int,
     isVisibleFolderEblanApplicationInfos: Boolean,
     folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
+    iconShape: IconShape,
     onDragEnd: () -> Unit,
     onVerticalDrag: (Float) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
@@ -561,6 +562,7 @@ private fun EblanApplicationInfos(
                             isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
                             folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                             iconPackInfoFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackInfoFilePaths,
+                            iconShape = iconShape,
                             onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                             previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
                             onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
@@ -587,6 +589,7 @@ private fun EblanApplicationInfos(
                             systemCustomTextColor = systemCustomTextColor,
                             iconPackInfoFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackInfoFilePaths,
                             animations = animations,
+                            iconShape = iconShape,
                             onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                             onDragApplicationInfo = onDragApplicationInfo,
                             onLongPressApplicationInfo = onLongPressApplicationInfo,
@@ -632,6 +635,7 @@ private fun EblanApplicationInfos(
                             systemCustomTextColor = systemCustomTextColor,
                             iconPackInfoFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackInfoFilePaths,
                             animations = animations,
+                            iconShape = iconShape,
                             onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                             onDragApplicationInfo = onDragApplicationInfo,
                             onLongPressApplicationInfo = onLongPressApplicationInfo,

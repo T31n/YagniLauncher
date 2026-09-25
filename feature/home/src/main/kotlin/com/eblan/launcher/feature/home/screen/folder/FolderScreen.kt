@@ -62,6 +62,7 @@ import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
+import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.FolderGridLayout
 import com.eblan.launcher.feature.home.component.FolderTitle
@@ -107,6 +108,7 @@ internal fun FolderScreen(
     folderBackgroundColor: BackgroundColor,
     folderCornerRadius: Int,
     customFolderBackgroundColor: Int,
+    iconShape: IconShape,
     onMoveFolderGridItemOutsideFolder: (
         gridItem: GridItem,
         sharedElementKey: SharedElementKey,
@@ -466,6 +468,7 @@ internal fun FolderScreen(
                                 folderBackgroundColor = folderBackgroundColor,
                                 customFolderBackgroundColor = customFolderBackgroundColor,
                                 folderGridItemPopups = folderGridItemPopups,
+                                iconShape = iconShape,
                                 onOpenAppDrawer = onOpenAppDrawer,
                                 onUpsertFolderGridItemPopupEntry = onUpsertFolderGridItemPopupEntry,
                                 onLongPressFolderGridItem = onLongPressFolderGridItem,

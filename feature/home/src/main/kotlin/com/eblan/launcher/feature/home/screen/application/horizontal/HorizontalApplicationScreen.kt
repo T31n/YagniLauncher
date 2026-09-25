@@ -60,6 +60,7 @@ import com.eblan.launcher.domain.model.launcherapps.EblanUser
 import com.eblan.launcher.domain.model.launcherapps.EblanUserPageKey
 import com.eblan.launcher.domain.model.launcherapps.EblanUserType
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
+import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.SearchBarPosition
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.HorizontalAppDrawerGridLayout
@@ -94,6 +95,7 @@ internal fun HorizontalApplicationScreen(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     animations: Boolean,
+    iconShape: IconShape,
     onDismiss: () -> Unit,
     onDragEnd: () -> Unit,
     onGetEblanApplicationInfosByLabel: (String) -> Unit,
@@ -211,9 +213,9 @@ internal fun HorizontalApplicationScreen(
                     systemTextColor = systemTextColor,
                     systemCustomTextColor = systemCustomTextColor,
                     animations = animations,
+                    iconShape = iconShape,
                     onDragEnd = onDragEnd,
                     onVerticalDrag = onVerticalDrag,
-
                     onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                     onDragApplicationInfo = onDragApplicationInfo,
                     onLongPressApplicationInfo = onLongPressApplicationInfo,
@@ -252,6 +254,7 @@ private fun EblanApplicationInfosPage(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     animations: Boolean,
+    iconShape: IconShape,
     onDragEnd: () -> Unit,
     onVerticalDrag: (Float) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
@@ -321,6 +324,7 @@ private fun EblanApplicationInfosPage(
                 systemTextColor = systemTextColor,
                 systemCustomTextColor = systemCustomTextColor,
                 animations = animations,
+                iconShape = iconShape,
                 onDragEnd = onDragEnd,
                 onVerticalDrag = onVerticalDrag,
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
@@ -374,6 +378,7 @@ private fun EblanApplicationInfos(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     animations: Boolean,
+    iconShape: IconShape,
     onDragEnd: () -> Unit,
     onVerticalDrag: (Float) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
@@ -428,6 +433,7 @@ private fun EblanApplicationInfos(
                         systemCustomTextColor = systemCustomTextColor,
                         iconPackInfoFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackInfoFilePaths,
                         animations = animations,
+                        iconShape = iconShape,
                         onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                         onDragApplicationInfo = onDragApplicationInfo,
                         onLongPressApplicationInfo = onLongPressApplicationInfo,

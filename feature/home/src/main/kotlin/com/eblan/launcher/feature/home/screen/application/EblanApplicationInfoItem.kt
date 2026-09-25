@@ -75,9 +75,11 @@ import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.AppDrawerType
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
+import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
+import com.eblan.launcher.feature.home.component.iconShape
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.getHorizontalAlignment
@@ -111,6 +113,7 @@ internal fun EblanApplicationInfoItem(
     systemCustomTextColor: Int,
     iconPackInfoFilePaths: Map<String, String?>,
     animations: Boolean,
+    iconShape: IconShape,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onDragApplicationInfo: (GridItem) -> Unit,
     onLongPressApplicationInfo: (
@@ -276,6 +279,7 @@ internal fun EblanApplicationInfoItem(
             contentDescription = null,
             modifier = Modifier
                 .size(appDrawerSettings.gridItemSettings.iconSize.dp)
+                .iconShape(iconShape)
                 .onGloballyPositioned {
                     intOffset = it.positionInRoot().round()
 

@@ -622,6 +622,7 @@ private fun Success(
                     iconPackInfoFilePaths = homeData.iconPackInfoFilePaths,
                     previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
                     folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+                    generalSettings = homeData.userData.generalSettings,
                     moveFolderEblanApplicationInfoGridItemResult = moveFolderEblanApplicationInfoGridItemResult,
                     onDeleteGridItem = onDeleteGridItem,
                     onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,

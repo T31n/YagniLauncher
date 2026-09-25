@@ -22,6 +22,8 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -30,6 +32,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.clipPath
+import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.layer.GraphicsLayer
 import androidx.compose.ui.graphics.layer.drawLayer
@@ -43,6 +52,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
+import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.handleEblanAction
 import com.eblan.launcher.ui.local.LocalLauncherApps
@@ -67,9 +77,9 @@ internal fun Modifier.swipeGestures(
     val currentOnOpenAppDrawer by rememberUpdatedState(onOpenAppDrawer)
 
     return if ((
-            swipeUp.eblanActionType != EblanActionType.None ||
-                swipeDown.eblanActionType != EblanActionType.None
-            ) && enabled
+                swipeUp.eblanActionType != EblanActionType.None ||
+                        swipeDown.eblanActionType != EblanActionType.None
+                ) && enabled
     ) {
         val swipeY = remember { Animatable(0f) }
 
@@ -201,26 +211,36 @@ internal fun Modifier.gridItemScaleAnimation(
     }
 }
 
-internal fun Modifier.recordToGraphicsLayerIfNotInProgress(
-    isInProgress: Boolean,
-    graphicsLayer: GraphicsLayer,
-): Modifier = if (!isInProgress) {
-    drawWithContent {
-        graphicsLayer.record {
-            this@drawWithContent.drawContent()
-        }
-
-        drawLayer(graphicsLayer)
-    }
-} else {
-    this
+internal fun IconShape.toShape(): Shape? = when (this) {
+    IconShape.Circle -> CircleShape
+    IconShape.Squircle -> RoundedCornerShape(28.dp)
+    IconShape.Square -> RectangleShape
+    IconShape.RoundedSquare -> RoundedCornerShape(12.dp)
+    IconShape.None -> null
 }
 
-internal fun Modifier.recordBoundsIfNotInProgress(
-    isInProgress: Boolean,
-    onGloballyPositioned: (LayoutCoordinates) -> Unit,
-): Modifier = if (!isInProgress) {
-    onGloballyPositioned(onGloballyPositioned)
-} else {
-    this
+internal inline fun DrawScope.clipShape(
+    shape: Shape,
+    block: DrawScope.() -> Unit,
+) {
+    when (val outline = shape.createOutline(size, layoutDirection, this)) {
+        is Outline.Rectangle -> clipRect(
+            left = outline.rect.left,
+            top = outline.rect.top,
+            right = outline.rect.right,
+            bottom = outline.rect.bottom,
+            block = block,
+        )
+        is Outline.Rounded -> clipPath(Path().apply { addRoundRect(outline.roundRect) }, block = block)
+        is Outline.Generic -> clipPath(outline.path, block = block)
+    }
+}
+
+internal fun Modifier.iconShape(iconShape: IconShape): Modifier {
+    return iconShape.toShape()?.let {
+        graphicsLayer {
+            shape = it
+            clip = true
+        }
+    } ?: this
 }

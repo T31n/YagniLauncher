@@ -94,17 +94,19 @@ internal fun handleEblanAction(
     }
 }
 
-internal fun getHorizontalAlignment(horizontalAlignment: HorizontalAlignment): Alignment.Horizontal = when (horizontalAlignment) {
-    HorizontalAlignment.Start -> Alignment.Start
-    HorizontalAlignment.CenterHorizontally -> Alignment.CenterHorizontally
-    HorizontalAlignment.End -> Alignment.End
-}
+internal fun getHorizontalAlignment(horizontalAlignment: HorizontalAlignment): Alignment.Horizontal =
+    when (horizontalAlignment) {
+        HorizontalAlignment.Start -> Alignment.Start
+        HorizontalAlignment.CenterHorizontally -> Alignment.CenterHorizontally
+        HorizontalAlignment.End -> Alignment.End
+    }
 
-internal fun getVerticalArrangement(verticalArrangement: VerticalArrangement): Arrangement.Vertical = when (verticalArrangement) {
-    VerticalArrangement.Top -> Arrangement.Top
-    VerticalArrangement.Center -> Arrangement.Center
-    VerticalArrangement.Bottom -> Arrangement.Bottom
-}
+internal fun getVerticalArrangement(verticalArrangement: VerticalArrangement): Arrangement.Vertical =
+    when (verticalArrangement) {
+        VerticalArrangement.Top -> Arrangement.Top
+        VerticalArrangement.Center -> Arrangement.Center
+        VerticalArrangement.Bottom -> Arrangement.Bottom
+    }
 
 internal fun onDoubleTap(
     context: Context,

@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+option java_package = "com.eblan.launcher.data.datastore.proto.general";
+option java_multiple_files = true;
+
+enum IconShapeProto {
+  IconShapeNone = 0;
+  IconShapeCircle = 1;
+  IconShapeSquircle = 2;
+  IconShapeSquare = 3;
+  IconShapeRoundedSquare = 4;
+}

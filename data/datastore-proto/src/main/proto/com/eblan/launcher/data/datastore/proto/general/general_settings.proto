@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 import "com/eblan/launcher/data/datastore/proto/general/theme.proto";
+import "com/eblan/launcher/data/datastore/proto/general/icon_shape.proto";
 
 option java_package = "com.eblan.launcher.data.datastore.proto.general";
 option java_multiple_files = true;
@@ -9,4 +10,5 @@ message GeneralSettingsProto {
   optional ThemeProto themeProto = 1;
   optional bool dynamicTheme = 3;
   optional string iconPackInfoPackageName = 4;
+  optional IconShapeProto iconShapeProto = 5;
 }

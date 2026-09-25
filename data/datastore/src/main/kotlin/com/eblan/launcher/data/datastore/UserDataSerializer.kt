@@ -27,6 +27,7 @@ import com.eblan.launcher.data.datastore.proto.appdrawer.SearchBarPositionProto
 import com.eblan.launcher.data.datastore.proto.experimental.ExperimentalSettingsProto
 import com.eblan.launcher.data.datastore.proto.folder.FolderSettingsProto
 import com.eblan.launcher.data.datastore.proto.general.GeneralSettingsProto
+import com.eblan.launcher.data.datastore.proto.general.IconShapeProto
 import com.eblan.launcher.data.datastore.proto.general.ThemeProto
 import com.eblan.launcher.data.datastore.proto.gesture.GestureSettingsProto
 import com.eblan.launcher.data.datastore.proto.home.GridItemSettingsProto
@@ -47,6 +48,7 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
         themeProto = ThemeProto.ThemeSystem
         dynamicTheme = false
         iconPackInfoPackageName = ""
+        iconShapeProto = IconShapeProto.IconShapeNone
     }.build()
 
     private val defaultGridItemSettingsProto = GridItemSettingsProto.newBuilder().apply {

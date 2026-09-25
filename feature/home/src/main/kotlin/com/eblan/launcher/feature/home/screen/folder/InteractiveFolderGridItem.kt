@@ -49,10 +49,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -81,15 +84,17 @@ import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
+import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_COLUMNS
 import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_ROWS
 import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
+import com.eblan.launcher.feature.home.component.clipShape
 import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
-import com.eblan.launcher.feature.home.component.recordBoundsIfNotInProgress
-import com.eblan.launcher.feature.home.component.recordToGraphicsLayerIfNotInProgress
+import com.eblan.launcher.feature.home.component.iconShape
 import com.eblan.launcher.feature.home.component.swipeGestures
+import com.eblan.launcher.feature.home.component.toShape
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.getHorizontalAlignment
@@ -130,6 +135,7 @@ internal fun InteractiveFolderGridItem(
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
     folderGridItemPopups: List<FolderGridItemPopup>,
+    iconShape: IconShape,
     onOpenAppDrawer: () -> Unit,
     onUpsertFolderGridItemPopupEntry: (FolderEntry) -> Unit,
     onLongPressFolderGridItem: (
@@ -242,6 +248,7 @@ internal fun InteractiveFolderGridItem(
                 horizontalAlignment = horizontalAlignment,
                 verticalArrangement = verticalArrangement,
                 maxLines = maxLines,
+                iconShape = iconShape,
                 onOpenAppDrawer = onOpenAppDrawer,
                 onLongPressFolderGridItem = onLongPressFolderGridItem,
             )
@@ -268,6 +275,7 @@ internal fun InteractiveFolderGridItem(
                 horizontalAlignment = horizontalAlignment,
                 verticalArrangement = verticalArrangement,
                 maxLines = maxLines,
+                iconShape = iconShape,
                 onOpenAppDrawer = onOpenAppDrawer,
                 onLongPressFolderGridItem = onLongPressFolderGridItem,
             )
@@ -292,6 +300,7 @@ internal fun InteractiveFolderGridItem(
                 horizontalAlignment = horizontalAlignment,
                 verticalArrangement = verticalArrangement,
                 maxLines = maxLines,
+                iconShape = iconShape,
                 onOpenAppDrawer = onOpenAppDrawer,
                 onLongPressFolderGridItem = onLongPressFolderGridItem,
             )
@@ -325,6 +334,7 @@ internal fun InteractiveFolderGridItem(
                 systemTextColor = systemTextColor,
                 systemCustomTextColor = systemCustomTextColor,
                 isVisibleFolder = isVisibleFolder,
+                iconShape = iconShape,
                 onOpenAppDrawer = onOpenAppDrawer,
                 onUpsertFolderGridItemPopupEntry = onUpsertFolderGridItemPopupEntry,
                 onLongPressFolderGridItem = onLongPressFolderGridItem,
@@ -358,6 +368,7 @@ private fun InteractiveApplicationInfoGridItem(
     horizontalAlignment: Alignment.Horizontal,
     verticalArrangement: Arrangement.Vertical,
     maxLines: Int,
+    iconShape: IconShape,
     onOpenAppDrawer: () -> Unit,
     onLongPressFolderGridItem: (
         gridItem: GridItem,
@@ -473,7 +484,7 @@ private fun InteractiveApplicationInfoGridItem(
                 contentDescription = null,
                 modifier = Modifier
                     .matchParentSize()
-                    .recordBoundsIfNotInProgress(isInProgress = isInProgress) {
+                    .onGloballyPositioned {
                         intOffset = it.positionInRoot().round()
 
                         intSize = it.size
@@ -489,10 +500,18 @@ private fun InteractiveApplicationInfoGridItem(
                         sharedTransitionScope = sharedTransitionScope,
                         visible = !isScrollInProgress && !hasInteraction,
                     )
-                    .recordToGraphicsLayerIfNotInProgress(
-                        isInProgress = isInProgress,
-                        graphicsLayer = graphicsLayer,
-                    ),
+                    .iconShape(iconShape)
+                    .drawWithContent {
+                        graphicsLayer.record {
+                            iconShape.toShape()?.let {
+                                clipShape(it) {
+                                    this@drawWithContent.drawContent()
+                                }
+                            } ?: this@drawWithContent.drawContent()
+                        }
+
+                        drawLayer(graphicsLayer)
+                    },
             )
 
             if (isNotificationAccessGranted && hasNotifications) {
@@ -544,6 +563,7 @@ private fun InteractiveShortcutInfoGridItem(
     horizontalAlignment: Alignment.Horizontal,
     verticalArrangement: Arrangement.Vertical,
     maxLines: Int,
+    iconShape: IconShape,
     onOpenAppDrawer: () -> Unit,
     onLongPressFolderGridItem: (
         gridItem: GridItem,
@@ -664,7 +684,7 @@ private fun InteractiveShortcutInfoGridItem(
                     .size(Size.ORIGINAL).build(),
                 modifier = Modifier
                     .matchParentSize()
-                    .recordBoundsIfNotInProgress(isInProgress = isInProgress) {
+                    .onGloballyPositioned {
                         intOffset = it.positionInRoot().round()
 
                         intSize = it.size
@@ -680,10 +700,22 @@ private fun InteractiveShortcutInfoGridItem(
                         sharedTransitionScope = sharedTransitionScope,
                         visible = !isScrollInProgress && !hasInteraction,
                     )
-                    .recordToGraphicsLayerIfNotInProgress(
-                        isInProgress = isInProgress,
-                        graphicsLayer = graphicsLayer,
-                    ),
+                    .iconShape(iconShape)
+                    .drawWithContent {
+                        graphicsLayer.apply {
+                            this.alpha = alpha
+                        }
+
+                        graphicsLayer.record {
+                            iconShape.toShape()?.let {
+                                clipShape(it) {
+                                    this@drawWithContent.drawContent()
+                                }
+                            } ?: this@drawWithContent.drawContent()
+                        }
+
+                        drawLayer(graphicsLayer)
+                    },
                 contentDescription = null,
             )
 
@@ -731,6 +763,7 @@ private fun InteractiveShortcutConfigGridItem(
     textColor: Color,
     horizontalAlignment: Alignment.Horizontal,
     verticalArrangement: Arrangement.Vertical,
+    iconShape: IconShape,
     maxLines: Int,
     onOpenAppDrawer: () -> Unit,
     onLongPressFolderGridItem: (
@@ -845,7 +878,7 @@ private fun InteractiveShortcutConfigGridItem(
             contentDescription = null,
             modifier = Modifier
                 .size(iconSize)
-                .recordBoundsIfNotInProgress(isInProgress = isInProgress) {
+                .onGloballyPositioned {
                     intOffset = it.positionInRoot().round()
 
                     intSize = it.size
@@ -861,10 +894,18 @@ private fun InteractiveShortcutConfigGridItem(
                     sharedTransitionScope = sharedTransitionScope,
                     visible = !isScrollInProgress && !hasInteraction,
                 )
-                .recordToGraphicsLayerIfNotInProgress(
-                    isInProgress = isInProgress,
-                    graphicsLayer = graphicsLayer,
-                )
+                .iconShape(iconShape)
+                .drawWithContent {
+                    graphicsLayer.record {
+                        iconShape.toShape()?.let {
+                            clipShape(it) {
+                                this@drawWithContent.drawContent()
+                            }
+                        } ?: this@drawWithContent.drawContent()
+                    }
+
+                    drawLayer(graphicsLayer)
+                }
                 .alpha(alpha),
         )
 
@@ -911,6 +952,7 @@ private fun InteractiveNestedFolderGridItem(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     isVisibleFolder: Boolean,
+    iconShape: IconShape,
     onOpenAppDrawer: () -> Unit,
     onUpsertFolderGridItemPopupEntry: (FolderEntry) -> Unit,
     onLongPressFolderGridItem: (
@@ -1015,7 +1057,7 @@ private fun InteractiveNestedFolderGridItem(
     ) {
         val commonModifier = Modifier
             .size(iconSize)
-            .recordBoundsIfNotInProgress(isInProgress = isInProgress) {
+            .onGloballyPositioned {
                 intOffset = it.positionInRoot().round()
 
                 intSize = it.size
@@ -1031,10 +1073,13 @@ private fun InteractiveNestedFolderGridItem(
                 sharedTransitionScope = sharedTransitionScope,
                 visible = !isScrollInProgress && !hasInteraction,
             )
-            .recordToGraphicsLayerIfNotInProgress(
-                isInProgress = isInProgress,
-                graphicsLayer = graphicsLayer,
-            )
+            .drawWithContent {
+                graphicsLayer.record {
+                    this@drawWithContent.drawContent()
+                }
+
+                drawLayer(graphicsLayer)
+            }
             .alpha(iconAlpha)
 
         if (data.icon != null) {
@@ -1069,6 +1114,7 @@ private fun InteractiveNestedFolderGridItem(
                             customFolderBackgroundColor = customFolderBackgroundColor,
                             systemTextColor = systemTextColor,
                             systemCustomTextColor = systemCustomTextColor,
+                            iconShape = iconShape
                         )
                     },
                 )
@@ -1101,6 +1147,7 @@ private fun PreviewNestedFolderGridItem(
     customFolderBackgroundColor: Int,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
+    iconShape: IconShape,
 ) {
     val context = LocalContext.current
 
@@ -1135,6 +1182,7 @@ private fun PreviewNestedFolderGridItem(
 
         val commonModifier = modifier
             .padding(1.dp)
+            .iconShape(iconShape)
             .alpha(alpha)
 
         when (val data = gridItem.data) {

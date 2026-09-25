@@ -21,4 +21,5 @@ data class GeneralSettings(
     val theme: Theme,
     val dynamicTheme: Boolean,
     val iconPackInfoPackageName: String,
+    val iconShape: IconShape,
 )

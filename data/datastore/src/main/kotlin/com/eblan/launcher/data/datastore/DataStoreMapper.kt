@@ -24,6 +24,7 @@ import com.eblan.launcher.data.datastore.proto.appdrawer.SearchBarPositionProto
 import com.eblan.launcher.data.datastore.proto.experimental.ExperimentalSettingsProto
 import com.eblan.launcher.data.datastore.proto.folder.FolderSettingsProto
 import com.eblan.launcher.data.datastore.proto.general.GeneralSettingsProto
+import com.eblan.launcher.data.datastore.proto.general.IconShapeProto
 import com.eblan.launcher.data.datastore.proto.general.ThemeProto
 import com.eblan.launcher.data.datastore.proto.gesture.EblanActionProto
 import com.eblan.launcher.data.datastore.proto.gesture.EblanActionTypeProto
@@ -47,6 +48,7 @@ import com.eblan.launcher.domain.model.userdata.FolderSettings
 import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.domain.model.userdata.GestureSettings
 import com.eblan.launcher.domain.model.userdata.HomeSettings
+import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.ScrollBarType
 import com.eblan.launcher.domain.model.userdata.SearchBarPosition
 import com.eblan.launcher.domain.model.userdata.TextColor
@@ -113,90 +115,99 @@ internal fun GeneralSettingsProto.toGeneralSettings(): GeneralSettings = General
     theme = themeProto.toTheme(),
     dynamicTheme = dynamicTheme,
     iconPackInfoPackageName = iconPackInfoPackageName,
+    iconShape = iconShapeProto.toIconShape(),
 )
 
-internal fun GridItemSettings.toGridItemSettingsProto(): GridItemSettingsProto = GridItemSettingsProto.newBuilder().also { builder ->
-    builder.iconSize = iconSize
-    builder.textColorProto = textColor.toTextColorProto()
-    builder.textSize = textSize
-    builder.showLabel = showLabel
-    builder.singleLineLabel = singleLineLabel
-    builder.horizontalAlignmentProto = horizontalAlignment.toHorizontalAlignmentProto()
-    builder.verticalArrangementProto = verticalArrangement.toVerticalArrangementProto()
-    builder.customTextColor = customTextColor
-    builder.customBackgroundColor = customBackgroundColor
-    builder.padding = padding
-    builder.cornerRadius = cornerRadius
-}.build()
+internal fun GridItemSettings.toGridItemSettingsProto(): GridItemSettingsProto =
+    GridItemSettingsProto.newBuilder().also { builder ->
+        builder.iconSize = iconSize
+        builder.textColorProto = textColor.toTextColorProto()
+        builder.textSize = textSize
+        builder.showLabel = showLabel
+        builder.singleLineLabel = singleLineLabel
+        builder.horizontalAlignmentProto = horizontalAlignment.toHorizontalAlignmentProto()
+        builder.verticalArrangementProto = verticalArrangement.toVerticalArrangementProto()
+        builder.customTextColor = customTextColor
+        builder.customBackgroundColor = customBackgroundColor
+        builder.padding = padding
+        builder.cornerRadius = cornerRadius
+    }.build()
 
-internal fun HomeSettings.toHomeSettingsProto(): HomeSettingsProto = HomeSettingsProto.newBuilder().also { builder ->
-    builder.columns = columns
-    builder.rows = rows
-    builder.pageCount = pageCount
-    builder.infiniteScroll = infiniteScroll
-    builder.dockColumns = dockColumns
-    builder.dockRows = dockRows
-    builder.dockHeight = dockHeight
-    builder.initialPage = initialPage
-    builder.wallpaperScroll = wallpaperScroll
-    builder.gridItemSettingsProto = gridItemSettings.toGridItemSettingsProto()
-    builder.lockScreenOrientation = lockScreenOrientation
-    builder.dockPageCount = dockPageCount
-    builder.dockInfiniteScroll = dockInfiniteScroll
-    builder.dockInitialPage = dockInitialPage
-    builder.addNewAppsToHomeScreen = addNewAppsToHomeScreen
-    builder.showPageIndicator = showPageIndicator
-    builder.dockCustomBackgroundColor = dockCustomBackgroundColor
-    builder.dockPadding = dockPadding
-    builder.dockTopStartCornerRadius = dockTopStartCornerRadius
-    builder.dockTopEndCornerRadius = dockTopEndCornerRadius
-    builder.dockBottomStartCornerRadius = dockBottomStartCornerRadius
-    builder.dockBottomEndCornerRadius = dockBottomEndCornerRadius
-    builder.addDockBottomPadding = addDockBottomPadding
-}.build()
+internal fun HomeSettings.toHomeSettingsProto(): HomeSettingsProto =
+    HomeSettingsProto.newBuilder().also { builder ->
+        builder.columns = columns
+        builder.rows = rows
+        builder.pageCount = pageCount
+        builder.infiniteScroll = infiniteScroll
+        builder.dockColumns = dockColumns
+        builder.dockRows = dockRows
+        builder.dockHeight = dockHeight
+        builder.initialPage = initialPage
+        builder.wallpaperScroll = wallpaperScroll
+        builder.gridItemSettingsProto = gridItemSettings.toGridItemSettingsProto()
+        builder.lockScreenOrientation = lockScreenOrientation
+        builder.dockPageCount = dockPageCount
+        builder.dockInfiniteScroll = dockInfiniteScroll
+        builder.dockInitialPage = dockInitialPage
+        builder.addNewAppsToHomeScreen = addNewAppsToHomeScreen
+        builder.showPageIndicator = showPageIndicator
+        builder.dockCustomBackgroundColor = dockCustomBackgroundColor
+        builder.dockPadding = dockPadding
+        builder.dockTopStartCornerRadius = dockTopStartCornerRadius
+        builder.dockTopEndCornerRadius = dockTopEndCornerRadius
+        builder.dockBottomStartCornerRadius = dockBottomStartCornerRadius
+        builder.dockBottomEndCornerRadius = dockBottomEndCornerRadius
+        builder.addDockBottomPadding = addDockBottomPadding
+    }.build()
 
-internal fun AppDrawerSettings.toAppDrawerSettingsProto(): AppDrawerSettingsProto = AppDrawerSettingsProto.newBuilder().also { builder ->
-    builder.appDrawerColumns = appDrawerColumns
-    builder.appDrawerRowsHeight = appDrawerRowsHeight
-    builder.gridItemSettingsProto = gridItemSettings.toGridItemSettingsProto()
-    builder.backgroundColorProto = backgroundColor.toBackgroundColorProto()
-    builder.customBackgroundColor = customBackgroundColor
-    builder.appDrawerTypeProto = appDrawerType.toAppDrawerTypeProto()
-    builder.horizontalAppDrawerColumns = horizontalAppDrawerColumns
-    builder.horizontalAppDrawerRows = horizontalAppDrawerRows
-    builder.excludeTaggedApps = excludeTaggedApps
-    builder.showKeyboard = showKeyboard
-    builder.fuzzySearch = fuzzySearch
-    builder.blurBehind = blurBehind
-    builder.searchBarPositionProto = searchBarPosition.toSearchBarPositionProto()
-    builder.scrollBarTypeProto = scrollBarType.toScrollBarTypeProto()
-}.build()
+internal fun AppDrawerSettings.toAppDrawerSettingsProto(): AppDrawerSettingsProto =
+    AppDrawerSettingsProto.newBuilder().also { builder ->
+        builder.appDrawerColumns = appDrawerColumns
+        builder.appDrawerRowsHeight = appDrawerRowsHeight
+        builder.gridItemSettingsProto = gridItemSettings.toGridItemSettingsProto()
+        builder.backgroundColorProto = backgroundColor.toBackgroundColorProto()
+        builder.customBackgroundColor = customBackgroundColor
+        builder.appDrawerTypeProto = appDrawerType.toAppDrawerTypeProto()
+        builder.horizontalAppDrawerColumns = horizontalAppDrawerColumns
+        builder.horizontalAppDrawerRows = horizontalAppDrawerRows
+        builder.excludeTaggedApps = excludeTaggedApps
+        builder.showKeyboard = showKeyboard
+        builder.fuzzySearch = fuzzySearch
+        builder.blurBehind = blurBehind
+        builder.searchBarPositionProto = searchBarPosition.toSearchBarPositionProto()
+        builder.scrollBarTypeProto = scrollBarType.toScrollBarTypeProto()
+    }.build()
 
-internal fun GeneralSettings.toGeneralSettingsProto(): GeneralSettingsProto = GeneralSettingsProto.newBuilder().also { builder ->
-    builder.themeProto = theme.toThemeProto()
-    builder.dynamicTheme = dynamicTheme
-    builder.iconPackInfoPackageName = iconPackInfoPackageName
-}.build()
+internal fun GeneralSettings.toGeneralSettingsProto(): GeneralSettingsProto =
+    GeneralSettingsProto.newBuilder().also { builder ->
+        builder.themeProto = theme.toThemeProto()
+        builder.dynamicTheme = dynamicTheme
+        builder.iconPackInfoPackageName = iconPackInfoPackageName
+        builder.iconShapeProto = iconShape.toIconShapeProto()
+    }.build()
 
-internal fun GestureSettings.toGestureSettingsProto(): GestureSettingsProto = GestureSettingsProto.newBuilder().also { builder ->
-    builder.doubleTapProto = doubleTap.toEblanActionProto()
-    builder.swipeUpProto = swipeUp.toEblanActionProto()
-    builder.swipeDownProto = swipeDown.toEblanActionProto()
-}.build()
+internal fun GestureSettings.toGestureSettingsProto(): GestureSettingsProto =
+    GestureSettingsProto.newBuilder().also { builder ->
+        builder.doubleTapProto = doubleTap.toEblanActionProto()
+        builder.swipeUpProto = swipeUp.toEblanActionProto()
+        builder.swipeDownProto = swipeDown.toEblanActionProto()
+    }.build()
 
-internal fun ExperimentalSettings.toExperimentalSettingsProto(): ExperimentalSettingsProto = ExperimentalSettingsProto.newBuilder().also { builder ->
-    builder.syncData = syncData
-    builder.firstLaunch = firstLaunch
-    builder.lockMovement = lockMovement
-    builder.gridItemAnimation = gridItemAnimation
-}.build()
+internal fun ExperimentalSettings.toExperimentalSettingsProto(): ExperimentalSettingsProto =
+    ExperimentalSettingsProto.newBuilder().also { builder ->
+        builder.syncData = syncData
+        builder.firstLaunch = firstLaunch
+        builder.lockMovement = lockMovement
+        builder.gridItemAnimation = gridItemAnimation
+    }.build()
 
-internal fun ExperimentalSettingsProto.toExperimentalSettings(): ExperimentalSettings = ExperimentalSettings(
-    syncData = syncData,
-    firstLaunch = firstLaunch,
-    lockMovement = lockMovement,
-    gridItemAnimation = gridItemAnimation,
-)
+internal fun ExperimentalSettingsProto.toExperimentalSettings(): ExperimentalSettings =
+    ExperimentalSettings(
+        syncData = syncData,
+        firstLaunch = firstLaunch,
+        lockMovement = lockMovement,
+        gridItemAnimation = gridItemAnimation,
+    )
 
 internal fun FolderSettingsProto.toFolderSettings(): FolderSettings = FolderSettings(
     folderCellWidth = folderCellWidth,
@@ -208,21 +219,23 @@ internal fun FolderSettingsProto.toFolderSettings(): FolderSettings = FolderSett
     customFolderBackgroundColor = customFolderBackgroundColor,
 )
 
-internal fun FolderSettings.toFolderSettingsProto(): FolderSettingsProto = FolderSettingsProto.newBuilder().also { builder ->
-    builder.folderCellWidth = folderCellWidth
-    builder.folderCellHeight = folderCellHeight
-    builder.maxFolderColumns = maxFolderColumns
-    builder.maxFolderRows = maxFolderRows
-    builder.folderCornerRadius = folderCornerRadius
-    builder.folderBackgroundColorProto = folderBackgroundColor.toBackgroundColorProto()
-    builder.customFolderBackgroundColor = customFolderBackgroundColor
-}.build()
+internal fun FolderSettings.toFolderSettingsProto(): FolderSettingsProto =
+    FolderSettingsProto.newBuilder().also { builder ->
+        builder.folderCellWidth = folderCellWidth
+        builder.folderCellHeight = folderCellHeight
+        builder.maxFolderColumns = maxFolderColumns
+        builder.maxFolderRows = maxFolderRows
+        builder.folderCornerRadius = folderCornerRadius
+        builder.folderBackgroundColorProto = folderBackgroundColor.toBackgroundColorProto()
+        builder.customFolderBackgroundColor = customFolderBackgroundColor
+    }.build()
 
-internal fun EblanAction.toEblanActionProto(): EblanActionProto = EblanActionProto.newBuilder().also { builder ->
-    builder.eblanActionTypeProto = eblanActionType.toEblanActionTypeProto()
-    builder.serialNumber = serialNumber
-    builder.componentName = componentName
-}.build()
+internal fun EblanAction.toEblanActionProto(): EblanActionProto =
+    EblanActionProto.newBuilder().also { builder ->
+        builder.eblanActionTypeProto = eblanActionType.toEblanActionTypeProto()
+        builder.serialNumber = serialNumber
+        builder.componentName = componentName
+    }.build()
 
 internal fun GestureSettingsProto.toGestureSettings(): GestureSettings = GestureSettings(
     doubleTap = doubleTapProto.toEblanAction(),
@@ -296,11 +309,12 @@ private fun BackgroundColorProto.toBackgroundColor(): BackgroundColor = when (th
     BackgroundColorProto.BackgroundColorCustom -> BackgroundColor.Custom
 }
 
-private fun HorizontalAlignment.toHorizontalAlignmentProto(): HorizontalAlignmentProto = when (this) {
-    HorizontalAlignment.Start -> HorizontalAlignmentProto.Start
-    HorizontalAlignment.CenterHorizontally -> HorizontalAlignmentProto.CenterHorizontally
-    HorizontalAlignment.End -> HorizontalAlignmentProto.End
-}
+private fun HorizontalAlignment.toHorizontalAlignmentProto(): HorizontalAlignmentProto =
+    when (this) {
+        HorizontalAlignment.Start -> HorizontalAlignmentProto.Start
+        HorizontalAlignment.CenterHorizontally -> HorizontalAlignmentProto.CenterHorizontally
+        HorizontalAlignment.End -> HorizontalAlignmentProto.End
+    }
 
 private fun HorizontalAlignmentProto.toHorizontalAlignment(): HorizontalAlignment = when (this) {
     HorizontalAlignmentProto.Start -> HorizontalAlignment.Start
@@ -308,11 +322,12 @@ private fun HorizontalAlignmentProto.toHorizontalAlignment(): HorizontalAlignmen
     HorizontalAlignmentProto.End -> HorizontalAlignment.End
 }
 
-private fun VerticalArrangement.toVerticalArrangementProto(): VerticalArrangementProto = when (this) {
-    VerticalArrangement.Top -> VerticalArrangementProto.Top
-    VerticalArrangement.Center -> VerticalArrangementProto.Center
-    VerticalArrangement.Bottom -> VerticalArrangementProto.Bottom
-}
+private fun VerticalArrangement.toVerticalArrangementProto(): VerticalArrangementProto =
+    when (this) {
+        VerticalArrangement.Top -> VerticalArrangementProto.Top
+        VerticalArrangement.Center -> VerticalArrangementProto.Center
+        VerticalArrangement.Bottom -> VerticalArrangementProto.Bottom
+    }
 
 private fun VerticalArrangementProto.toVerticalArrangement(): VerticalArrangement = when (this) {
     VerticalArrangementProto.Top -> VerticalArrangement.Top
@@ -354,4 +369,20 @@ private fun ScrollBarType.toScrollBarTypeProto(): ScrollBarTypeProto = when (thi
     ScrollBarType.ScrollBar -> ScrollBarTypeProto.ScrollBarTypeScrollBar
     ScrollBarType.Alphabetical -> ScrollBarTypeProto.ScrollBarTypeAlphabetical
     ScrollBarType.None -> ScrollBarTypeProto.ScrollBarTypeNone
+}
+
+private fun IconShapeProto.toIconShape(): IconShape = when (this) {
+    IconShapeProto.IconShapeNone, IconShapeProto.UNRECOGNIZED -> IconShape.None
+    IconShapeProto.IconShapeCircle -> IconShape.Circle
+    IconShapeProto.IconShapeSquircle -> IconShape.Squircle
+    IconShapeProto.IconShapeSquare -> IconShape.Square
+    IconShapeProto.IconShapeRoundedSquare -> IconShape.RoundedSquare
+}
+
+private fun IconShape.toIconShapeProto(): IconShapeProto = when (this) {
+    IconShape.None -> IconShapeProto.IconShapeNone
+    IconShape.Circle -> IconShapeProto.IconShapeCircle
+    IconShape.Squircle -> IconShapeProto.IconShapeSquircle
+    IconShape.Square -> IconShapeProto.IconShapeSquare
+    IconShape.RoundedSquare -> IconShapeProto.IconShapeRoundedSquare
 }

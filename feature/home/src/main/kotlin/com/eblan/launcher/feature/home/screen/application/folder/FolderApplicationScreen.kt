@@ -67,6 +67,7 @@ import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
+import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.FolderGridLayout
 import com.eblan.launcher.feature.home.component.FolderTitle
@@ -112,6 +113,7 @@ internal fun FolderApplicationScreen(
     dragIntOffset: IntOffset,
     showFolderEblanApplicationInfoGridItemMenu: Boolean,
     iconPackInfoFilePaths: Map<String, String?>,
+    iconShape: IconShape,
     onUpsertFolderEblanApplicationInfoPopupEntry: (FolderEntry) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onMoveFolderEblanApplicationInfoGridItem: (
@@ -474,6 +476,7 @@ internal fun FolderApplicationScreen(
                                 drag = drag,
                                 showFolderEblanApplicationInfoGridItemMenu = showFolderEblanApplicationInfoGridItemMenu,
                                 iconPackInfoFilePaths = iconPackInfoFilePaths,
+                                iconShape = iconShape,
                                 onLongPressFolderEblanApplicationInfoGridItem = onLongPressFolderEblanApplicationInfoGridItem,
                                 onDragFolderEblanApplicationInfoGridItem = onDragFolderEblanApplicationInfoGridItem,
                                 onTapFolderEblanApplicationInfoItem = onTapFolderEblanApplicationInfoItem,

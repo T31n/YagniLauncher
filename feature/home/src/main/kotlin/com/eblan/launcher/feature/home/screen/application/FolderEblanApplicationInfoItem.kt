@@ -79,10 +79,12 @@ import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
+import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
 import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
+import com.eblan.launcher.feature.home.component.iconShape
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.getHorizontalAlignment
@@ -113,6 +115,7 @@ internal fun FolderEblanApplicationInfoItem(
     isVisibleFolderEblanApplicationInfos: Boolean,
     folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
     iconPackInfoFilePaths: Map<String, String?>,
+    iconShape: IconShape,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onDragFolderEblanApplicationInfo: (
         folderEblanApplicationInfo: FolderEblanApplicationInfo,
@@ -272,9 +275,9 @@ internal fun FolderEblanApplicationInfoItem(
                 sharedElementKey = sharedElementKey,
                 sharedTransitionScope = sharedTransitionScope,
                 visible = !isSwiping &&
-                    !isScrollInProgress &&
-                    !isLongPress &&
-                    !isVisibleOverlay,
+                        !isScrollInProgress &&
+                        !isLongPress &&
+                        !isVisibleOverlay,
             )
             .drawWithContent {
                 graphicsLayer.record {
@@ -315,6 +318,7 @@ internal fun FolderEblanApplicationInfoItem(
                             systemTextColor = systemTextColor,
                             systemCustomTextColor = systemCustomTextColor,
                             iconPackInfoFilePaths = iconPackInfoFilePaths,
+                            iconShape = iconShape,
                         )
                     },
                 )
@@ -347,6 +351,7 @@ private fun PreviewFolderEblanApplicationInfoItem(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     iconPackInfoFilePaths: Map<String, String?>,
+    iconShape: IconShape,
 ) {
     key(folderEblanApplicationInfoGridItem.id) {
         val context = LocalContext.current
@@ -361,7 +366,9 @@ private fun PreviewFolderEblanApplicationInfoItem(
             defaultColor = MaterialTheme.colorScheme.onSurface,
         )
 
-        val commonModifier = modifier.padding(1.dp)
+        val commonModifier = modifier
+            .padding(1.dp)
+            .iconShape(iconShape)
 
         when (val data = folderEblanApplicationInfoGridItem.data) {
             is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {

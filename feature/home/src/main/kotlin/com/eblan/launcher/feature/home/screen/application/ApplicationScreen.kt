@@ -93,6 +93,7 @@ import com.eblan.launcher.domain.model.launcherapps.EblanUserType
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.AppDrawerType
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
+import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.R
 import com.eblan.launcher.feature.home.component.HomeHandler
@@ -136,6 +137,7 @@ internal fun ApplicationScreen(
     customFolderBackgroundColor: Int,
     isVisibleFolderEblanApplicationInfos: Boolean,
     folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
+    iconShape: IconShape,
     onDismiss: () -> Unit,
     onDragEnd: () -> Unit,
     onGetEblanApplicationInfosByLabel: (String) -> Unit,
@@ -211,6 +213,7 @@ internal fun ApplicationScreen(
                     customFolderBackgroundColor = customFolderBackgroundColor,
                     isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
                     folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+                    iconShape = iconShape,
                     onDismiss = onDismiss,
                     onDragEnd = onDragEnd,
                     onGetEblanApplicationInfosByLabel = onGetEblanApplicationInfosByLabel,
@@ -240,6 +243,7 @@ internal fun ApplicationScreen(
                     systemTextColor = systemTextColor,
                     systemCustomTextColor = systemCustomTextColor,
                     animations = animations,
+                    iconShape = iconShape,
                     onDismiss = onDismiss,
                     onDragEnd = onDragEnd,
                     onGetEblanApplicationInfosByLabel = onGetEblanApplicationInfosByLabel,
