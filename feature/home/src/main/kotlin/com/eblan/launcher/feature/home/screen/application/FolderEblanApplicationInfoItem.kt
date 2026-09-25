@@ -275,9 +275,9 @@ internal fun FolderEblanApplicationInfoItem(
                 sharedElementKey = sharedElementKey,
                 sharedTransitionScope = sharedTransitionScope,
                 visible = !isSwiping &&
-                        !isScrollInProgress &&
-                        !isLongPress &&
-                        !isVisibleOverlay,
+                    !isScrollInProgress &&
+                    !isLongPress &&
+                    !isVisibleOverlay,
             )
             .drawWithContent {
                 graphicsLayer.record {

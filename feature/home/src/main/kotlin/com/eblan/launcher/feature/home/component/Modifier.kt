@@ -77,9 +77,9 @@ internal fun Modifier.swipeGestures(
     val currentOnOpenAppDrawer by rememberUpdatedState(onOpenAppDrawer)
 
     return if ((
-                swipeUp.eblanActionType != EblanActionType.None ||
-                        swipeDown.eblanActionType != EblanActionType.None
-                ) && enabled
+            swipeUp.eblanActionType != EblanActionType.None ||
+                swipeDown.eblanActionType != EblanActionType.None
+            ) && enabled
     ) {
         val swipeY = remember { Animatable(0f) }
 
@@ -231,16 +231,16 @@ internal inline fun DrawScope.clipShape(
             bottom = outline.rect.bottom,
             block = block,
         )
+
         is Outline.Rounded -> clipPath(Path().apply { addRoundRect(outline.roundRect) }, block = block)
+
         is Outline.Generic -> clipPath(outline.path, block = block)
     }
 }
 
-internal fun Modifier.iconShape(iconShape: IconShape): Modifier {
-    return iconShape.toShape()?.let {
-        graphicsLayer {
-            shape = it
-            clip = true
-        }
-    } ?: this
-}
+internal fun Modifier.iconShape(iconShape: IconShape): Modifier = iconShape.toShape()?.let {
+    graphicsLayer {
+        shape = it
+        clip = true
+    }
+} ?: this

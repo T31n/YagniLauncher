@@ -28,4 +28,10 @@
     <string name="show_notification_dots">Show notification dots</string>
     <string name="apply_icons_from_supported_icon_packs">Apply icons from supported icon packs</string>
     <string name="adapt_colors_to_your_wallpaper_automatically">Adapt colors to your wallpaper automatically</string>
+    <string name="none">None</string>
+    <string name="circle">Circle</string>
+    <string name="squircle">Squircle</string>
+    <string name="square">Square</string>
+    <string name="rounded_square">Rounded Square</string>
+    <string name="icon_shape">Icon Shape</string>
 </resources>

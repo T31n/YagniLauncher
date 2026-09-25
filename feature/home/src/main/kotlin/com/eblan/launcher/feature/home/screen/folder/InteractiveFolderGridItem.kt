@@ -1114,7 +1114,7 @@ private fun InteractiveNestedFolderGridItem(
                             customFolderBackgroundColor = customFolderBackgroundColor,
                             systemTextColor = systemTextColor,
                             systemCustomTextColor = systemCustomTextColor,
-                            iconShape = iconShape
+                            iconShape = iconShape,
                         )
                     },
                 )

@@ -86,12 +86,12 @@ import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
+import com.eblan.launcher.feature.home.component.clipShape
 import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
-import com.eblan.launcher.feature.home.component.clipShape
 import com.eblan.launcher.feature.home.component.iconShape
-import com.eblan.launcher.feature.home.component.toShape
 import com.eblan.launcher.feature.home.component.swipeGestures
+import com.eblan.launcher.feature.home.component.toShape
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.SCALE
@@ -1363,7 +1363,7 @@ private fun PreviewFolderGridItem(
             is GridItemData.Folder,
             is GridItemData.ShortcutConfig,
             is GridItemData.Widget,
-                -> if (hasInteraction) 0f else 1f
+            -> if (hasInteraction) 0f else 1f
 
             is GridItemData.ShortcutInfo -> {
                 if (hasInteraction) {
