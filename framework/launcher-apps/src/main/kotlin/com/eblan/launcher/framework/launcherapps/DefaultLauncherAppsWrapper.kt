@@ -545,6 +545,8 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
                 ?.takeIf { it.intrinsicWidth > 0 && it.intrinsicHeight > 0 }
         } catch (_: IllegalArgumentException) {
             null
+        } catch (_: ArithmeticException) {
+            null
         }
 
         val icon = shortcutBadgedIconDrawable?.let { drawable ->
