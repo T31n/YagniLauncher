@@ -25,4 +25,6 @@
     <string name="enable_or_disable_sync_data">Włącz lub wyłącz synchronizację danych</string>
     <string name="lock_movement">Zablokuj przemieszczanie</string>
     <string name="prevent_other_grid_items_from_moving">Zablokuj możliwość przesuwania innych elementów siatki</string>
+    <string name="grid_item_animation">Animacja elementów siatki</string>
+    <string name="enable_or_disable_animations">Włącz lub wyłącz animacje elementów siatki</string>
 </resources>
