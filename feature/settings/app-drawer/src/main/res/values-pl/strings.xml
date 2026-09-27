@@ -30,4 +30,21 @@
     <string name="show_keyboard_when_app_drawer_opens">Otwieraj klawiaturę po otwarciu szuflady aplikacji</string>
     <string name="fuzzy_search">Wyszukiwanie rozmyte</string>
     <string name="find_apps_even_with_typos_or_accented_characters">Znajduj aplikacje pomimo literówek lub znaków diakrytycznych</string>
+    <string name="blur_behind">Rozmycie tła</string>
+    <string name="blurs_the_wallpaper_when_app_drawer_opens">Rozmywa tapetę po otwarciu szuflady aplikacji</string>
+    <string name="no_folders">Brak folderów</string>
+    <string name="no_tags">Brak tagów</string>
+    <string name="manage_tags">Zarządzaj tagami</string>
+    <string name="sort_update_and_delete_tags">Sortuj, aktualizuj i usuwaj tagi</string>
+    <string name="manage_folders">Zarządzaj folderami</string>
+    <string name="sort_update_and_delete_folders">Sortuj, aktualizuj i usuwaj foldery</string>
+    <string name="vertical">Pionowo</string>
+    <string name="horizontal">Poziomo</string>
+    <string name="list">Lista</string>
+    <string name="top">Na górze</string>
+    <string name="bottom">Na dole</string>
+    <string name="scroll_bar">Pasek przewijania</string>
+    <string name="alphabetical">Alfabetycznie</string>
+    <string name="search_bar_position">Pozycja paska wyszukiwania</string>
+    <string name="scroll_bar_type">Typ paska przewijania</string>
 </resources>
