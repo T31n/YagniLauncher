@@ -541,11 +541,13 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         val serialNumber = userManagerWrapper.getSerialNumberForUser(userHandle = userHandle)
 
         val shortcutBadgedIconDrawable = try {
-            launcherApps.getShortcutBadgedIconDrawable(this, 0)
-                ?.takeIf { it.intrinsicWidth > 0 && it.intrinsicHeight > 0 }
+            launcherApps.getShortcutBadgedIconDrawable(
+                this,
+                context.resources.displayMetrics.densityDpi,
+            )?.takeIf {
+                it.intrinsicWidth > 0 && it.intrinsicHeight > 0
+            }
         } catch (_: IllegalArgumentException) {
-            null
-        } catch (_: ArithmeticException) {
             null
         }
 
