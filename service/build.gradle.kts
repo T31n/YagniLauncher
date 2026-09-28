@@ -33,5 +33,5 @@ dependencies {
     implementation(projects.framework.notificationManager)
     implementation(projects.framework.userManager)
 
-    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.core.core)
 }

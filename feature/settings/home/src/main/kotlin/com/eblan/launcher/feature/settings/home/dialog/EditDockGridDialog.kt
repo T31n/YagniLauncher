@@ -35,22 +35,25 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.component.EblanDialog
-import com.eblan.launcher.domain.model.HomeSettings
 import com.eblan.launcher.feature.settings.home.R
 import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun EditDockGridDialog(
     modifier: Modifier = Modifier,
-    homeSettings: HomeSettings,
+    dockColumns: Int,
+    dockRows: Int,
     onDismissRequest: () -> Unit,
-    onUpdateHomeSettings: (HomeSettings) -> Unit,
+    onUpdateDockGrid: (
+        dockColumns: Int,
+        dockRows: Int,
+    ) -> Unit,
 ) {
-    var dockColumns by remember { mutableStateOf("${homeSettings.dockColumns}") }
-    var dockRows by remember { mutableStateOf("${homeSettings.dockRows}") }
+    var currentDockColumns by remember { mutableStateOf("$dockColumns") }
+    var currentDockRows by remember { mutableStateOf("$dockRows") }
 
-    var firstError by remember { mutableStateOf(false) }
-    var secondError by remember { mutableStateOf(false) }
+    var isErrorDockColumns by remember { mutableStateOf(false) }
+    var isErrorDockRows by remember { mutableStateOf(false) }
 
     EblanDialog(
         modifier = modifier,
@@ -65,42 +68,42 @@ internal fun EditDockGridDialog(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             TextField(
-                value = dockColumns,
+                value = currentDockColumns,
                 onValueChange = {
-                    dockColumns = it
-                    firstError = false
+                    currentDockColumns = it
+                    isErrorDockColumns = false
                 },
                 modifier = Modifier.weight(1f),
                 label = { Text(text = stringResource(commonR.string.columns)) },
-                supportingText = if (firstError) {
+                supportingText = if (isErrorDockColumns) {
                     {
                         Text(text = stringResource(R.string.dock_columns_is_not_valid))
                     }
                 } else {
                     null
                 },
-                isError = firstError,
+                isError = isErrorDockColumns,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
                 ),
             )
 
             TextField(
-                value = dockRows,
+                value = currentDockRows,
                 onValueChange = {
-                    dockRows = it
-                    secondError = false
+                    currentDockRows = it
+                    isErrorDockRows = false
                 },
                 modifier = Modifier.weight(1f),
                 label = { Text(text = stringResource(commonR.string.rows)) },
-                supportingText = if (secondError) {
+                supportingText = if (isErrorDockRows) {
                     {
                         Text(text = stringResource(R.string.dock_rows_is_not_valid))
                     }
                 } else {
                     null
                 },
-                isError = secondError,
+                isError = isErrorDockRows,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
                 ),
@@ -119,21 +122,16 @@ internal fun EditDockGridDialog(
 
             TextButton(
                 onClick = {
-                    val newDockColumns = dockColumns.toIntOrNull()
-                    val newDockRows = dockRows.toIntOrNull()
+                    val newDockColumns = currentDockColumns.toIntOrNull()
+                    val newDockRows = currentDockRows.toIntOrNull()
 
-                    firstError = newDockColumns == null || newDockColumns <= 0
-                    secondError = newDockRows == null || newDockRows <= 0
+                    isErrorDockColumns = newDockColumns == null || newDockColumns <= 0
+                    isErrorDockRows = newDockRows == null || newDockRows <= 0
 
                     if (newDockColumns != null && newDockRows != null &&
                         newDockColumns > 0 && newDockRows > 0
                     ) {
-                        onUpdateHomeSettings(
-                            homeSettings.copy(
-                                dockColumns = newDockColumns,
-                                dockRows = newDockRows,
-                            ),
-                        )
+                        onUpdateDockGrid(newDockColumns, newDockRows)
 
                         onDismissRequest()
                     }

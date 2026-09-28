@@ -24,6 +24,7 @@ import android.content.pm.ShortcutInfo
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.os.Build
+import android.os.Handler
 import androidx.annotation.RequiresApi
 
 interface AndroidLauncherAppsWrapper {
@@ -70,4 +71,11 @@ interface AndroidLauncherAppsWrapper {
     ): IntentSender?
 
     fun getPrivateSpaceSettingsIntent(): IntentSender?
+
+    fun registerCallback(
+        callback: LauncherApps.Callback,
+        handler: Handler,
+    )
+
+    fun unregisterCallback(callback: LauncherApps.Callback)
 }

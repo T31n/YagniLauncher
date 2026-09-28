@@ -24,6 +24,8 @@ import com.eblan.launcher.feature.settings.appdrawer.navigation.appDrawerSetting
 import com.eblan.launcher.feature.settings.appdrawer.navigation.navigateToAppDrawerSettings
 import com.eblan.launcher.feature.settings.experimental.navigation.experimentalSettingsScreen
 import com.eblan.launcher.feature.settings.experimental.navigation.navigateToExperimentalSettings
+import com.eblan.launcher.feature.settings.folder.navigation.folderSettingsScreen
+import com.eblan.launcher.feature.settings.folder.navigation.navigateToFolderSettings
 import com.eblan.launcher.feature.settings.general.navigation.generalSettingsScreen
 import com.eblan.launcher.feature.settings.general.navigation.navigateToGeneralSettings
 import com.eblan.launcher.feature.settings.gestures.navigation.gesturesSettingsScreen
@@ -49,9 +51,12 @@ fun SettingsNavHost(
             onGeneral = navController::navigateToGeneralSettings,
             onGestures = navController::navigateToGesturesSettings,
             onHome = navController::navigateToHomeSettings,
+            onFolder = navController::navigateToFolderSettings,
         )
 
         homeSettingsScreen(onNavigateUp = navController::navigateUp)
+
+        folderSettingsScreen(onNavigateUp = navController::navigateUp)
 
         appDrawerSettingsScreen(onNavigateUp = navController::navigateUp)
 

@@ -41,17 +41,18 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.HomeSettings
+import com.eblan.launcher.domain.model.userdata.HomeSettings
+import com.eblan.launcher.feature.settings.home.dialog.EditDockCornerRadiusDialog
 import com.eblan.launcher.feature.settings.home.dialog.EditDockGridDialog
 import com.eblan.launcher.feature.settings.home.dialog.EditDockHeightDialog
-import com.eblan.launcher.feature.settings.home.dialog.EditFolderCellDimensionDialog
-import com.eblan.launcher.feature.settings.home.dialog.EditFolderMaxGridDialog
+import com.eblan.launcher.feature.settings.home.dialog.EditDockPaddingDialog
 import com.eblan.launcher.feature.settings.home.dialog.EditGridDialog
 import com.eblan.launcher.feature.settings.home.model.HomeSettingsUiState
+import com.eblan.launcher.ui.dialog.ColorPickerDialog
 import com.eblan.launcher.ui.model.SettingsItem
 import com.eblan.launcher.ui.settings.GridItemSettings
 import com.eblan.launcher.ui.settings.SettingsCategoryText
-import com.eblan.launcher.ui.settings.SettingsItemContent
+import com.eblan.launcher.ui.settings.SettingsItems
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -123,9 +124,11 @@ private fun Success(
 
     var showDockHeightDialog by remember { mutableStateOf(false) }
 
-    var showFolderCellDimensionDialog by remember { mutableStateOf(false) }
+    var showDockCustomBackgroundColorDialog by remember { mutableStateOf(false) }
 
-    var showFolderMaxGridDialog by remember { mutableStateOf(false) }
+    var showDockPaddingDialog by remember { mutableStateOf(false) }
+
+    var showDockCornerRadiusDialog by remember { mutableStateOf(false) }
 
     val homeSettingsItems = buildHomeSettingsItems(
         homeSettings = homeSettings,
@@ -144,15 +147,14 @@ private fun Success(
             showDockHeightDialog = true
         },
         onUpdateHomeSettings = onUpdateHomeSettings,
-    )
-
-    val folderHomeSettingsItems = buildFolderHomeSettingsItems(
-        homeSettings = homeSettings,
-        onFolderCellDimensionClick = {
-            showFolderCellDimensionDialog = true
+        onDockCustomBackgroundColorClick = {
+            showDockCustomBackgroundColorDialog = true
         },
-        onFolderMaxGridClick = {
-            showFolderMaxGridDialog = true
+        onDockPaddingClick = {
+            showDockPaddingDialog = true
+        },
+        onDockCornerRadiusClick = {
+            showDockCornerRadiusDialog = true
         },
     )
 
@@ -163,33 +165,11 @@ private fun Success(
             .padding(10.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        homeSettingsItems.forEachIndexed { index, settingsItem ->
-            SettingsItemContent(
-                settingsItem = settingsItem,
-                index = index,
-                size = homeSettingsItems.size,
-            )
-        }
+        SettingsItems(items = homeSettingsItems)
 
         SettingsCategoryText(text = stringResource(R.string.dock))
 
-        dockHomeSettingsItems.forEachIndexed { index, settingsItem ->
-            SettingsItemContent(
-                settingsItem = settingsItem,
-                index = index,
-                size = dockHomeSettingsItems.size,
-            )
-        }
-
-        SettingsCategoryText(text = stringResource(R.string.folder))
-
-        folderHomeSettingsItems.forEachIndexed { index, settingsItem ->
-            SettingsItemContent(
-                settingsItem = settingsItem,
-                index = index,
-                size = folderHomeSettingsItems.size,
-            )
-        }
+        SettingsItems(items = dockHomeSettingsItems)
 
         GridItemSettings(
             gridItemSettings = homeSettings.gridItemSettings,
@@ -203,21 +183,37 @@ private fun Success(
 
     if (showGridDialog) {
         EditGridDialog(
-            homeSettings = homeSettings,
+            columns = homeSettings.columns,
+            rows = homeSettings.rows,
             onDismissRequest = {
                 showGridDialog = false
             },
-            onUpdateHomeSettings = onUpdateHomeSettings,
+            onUpdateGrid = { columns, rows ->
+                onUpdateHomeSettings(
+                    homeSettings.copy(
+                        columns = columns,
+                        rows = rows,
+                    ),
+                )
+            },
         )
     }
 
     if (showDockGridDialog) {
         EditDockGridDialog(
-            homeSettings = homeSettings,
+            dockColumns = homeSettings.dockColumns,
+            dockRows = homeSettings.dockRows,
             onDismissRequest = {
                 showDockGridDialog = false
             },
-            onUpdateHomeSettings = onUpdateHomeSettings,
+            onUpdateDockGrid = { dockColumns, dockRows ->
+                onUpdateHomeSettings(
+                    homeSettings.copy(
+                        dockColumns = dockColumns,
+                        dockRows = dockRows,
+                    ),
+                )
+            },
         )
     }
 
@@ -239,23 +235,55 @@ private fun Success(
         )
     }
 
-    if (showFolderCellDimensionDialog) {
-        EditFolderCellDimensionDialog(
-            homeSettings = homeSettings,
+    if (showDockCustomBackgroundColorDialog) {
+        ColorPickerDialog(
+            title = stringResource(R.string.dock_background_color),
+            customColor = homeSettings.dockCustomBackgroundColor,
             onDismissRequest = {
-                showFolderCellDimensionDialog = false
+                showDockCustomBackgroundColorDialog = false
             },
-            onUpdateHomeSettings = onUpdateHomeSettings,
+            onSelectColor = {
+                onUpdateHomeSettings(homeSettings.copy(dockCustomBackgroundColor = it))
+            },
         )
     }
 
-    if (showFolderMaxGridDialog) {
-        EditFolderMaxGridDialog(
-            homeSettings = homeSettings,
+    if (showDockPaddingDialog) {
+        EditDockPaddingDialog(
+            padding = homeSettings.dockPadding,
             onDismissRequest = {
-                showFolderMaxGridDialog = false
+                showDockPaddingDialog = false
             },
-            onUpdateHomeSettings = onUpdateHomeSettings,
+            onUpdatePadding = {
+                onUpdateHomeSettings(
+                    homeSettings.copy(
+                        dockPadding = it,
+                    ),
+                )
+            },
+        )
+    }
+
+    if (showDockCornerRadiusDialog) {
+        EditDockCornerRadiusDialog(
+            dockTopStartCornerRadius = homeSettings.dockTopStartCornerRadius,
+            dockTopEndCornerRadius = homeSettings.dockTopEndCornerRadius,
+            dockBottomStartCornerRadius = homeSettings.dockBottomStartCornerRadius,
+            dockBottomEndCornerRadius = homeSettings.dockBottomEndCornerRadius,
+            onDismissRequest = {
+                showDockCornerRadiusDialog = false
+            },
+            onUpdateCornerRadius = { dockTopStartCornerRadius, dockTopEndCornerRadius, dockBottomStartCornerRadius, dockBottomEndCornerRadius ->
+                onUpdateHomeSettings(
+                    homeSettings.copy(
+                        dockTopStartCornerRadius = dockTopStartCornerRadius,
+                        dockTopEndCornerRadius = dockTopEndCornerRadius,
+                        dockBottomStartCornerRadius = dockBottomStartCornerRadius,
+                        dockBottomEndCornerRadius = dockBottomEndCornerRadius,
+                    ),
+                )
+            },
+
         )
     }
 }
@@ -370,6 +398,9 @@ private fun buildDockHomeSettingsItems(
     homeSettings: HomeSettings,
     onDockGridClick: () -> Unit,
     onDockHeightClick: () -> Unit,
+    onDockCustomBackgroundColorClick: () -> Unit,
+    onDockPaddingClick: () -> Unit,
+    onDockCornerRadiusClick: () -> Unit,
     onUpdateHomeSettings: (HomeSettings) -> Unit,
 ): List<SettingsItem> = buildList {
     add(
@@ -405,27 +436,46 @@ private fun buildDockHomeSettingsItems(
             },
         ),
     )
-}
 
-@Composable
-private fun buildFolderHomeSettingsItems(
-    homeSettings: HomeSettings,
-    onFolderCellDimensionClick: () -> Unit,
-    onFolderMaxGridClick: () -> Unit,
-): List<SettingsItem> = buildList {
     add(
-        SettingsItem.Column(
-            title = stringResource(R.string.folder_cell_dimension),
-            subtitle = "${homeSettings.folderCellWidth}x${homeSettings.folderCellHeight}",
-            onClick = onFolderCellDimensionClick,
+        SettingsItem.CustomBackgroundColor(
+            title = stringResource(R.string.dock_background_color),
+            customBackgroundColor = homeSettings.dockCustomBackgroundColor,
+            onClick = onDockCustomBackgroundColorClick,
         ),
     )
 
     add(
         SettingsItem.Column(
-            title = stringResource(R.string.folder_max_grid),
-            subtitle = "${homeSettings.maxFolderColumns}x${homeSettings.maxFolderRows}",
-            onClick = onFolderMaxGridClick,
+            title = stringResource(R.string.dock_padding),
+            subtitle = "${homeSettings.dockPadding}",
+            onClick = onDockPaddingClick,
+        ),
+    )
+
+    add(
+        SettingsItem.Column(
+            title = stringResource(R.string.dock_corner_radius),
+            subtitle = stringResource(R.string.set_the_radius_for_each_dock_corner),
+            onClick = onDockCornerRadiusClick,
+        ),
+    )
+
+    add(
+        SettingsItem.Switch(
+            checked = homeSettings.addDockBottomPadding,
+            title = stringResource(R.string.add_bottom_padding),
+            subtitle = stringResource(R.string.add_the_bottom_padding_of_the_dock),
+            onClick = {
+                onUpdateHomeSettings(
+                    homeSettings.copy(addDockBottomPadding = !homeSettings.addDockBottomPadding),
+                )
+            },
+            onCheckedChange = {
+                onUpdateHomeSettings(
+                    homeSettings.copy(addDockBottomPadding = it),
+                )
+            },
         ),
     )
 }

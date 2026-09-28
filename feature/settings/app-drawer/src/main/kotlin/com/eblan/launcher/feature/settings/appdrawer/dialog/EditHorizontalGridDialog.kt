@@ -35,27 +35,25 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.component.EblanDialog
-import com.eblan.launcher.domain.model.AppDrawerSettings
 import com.eblan.launcher.feature.settings.appdrawer.R
 import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun EditHorizontalGridDialog(
     modifier: Modifier = Modifier,
-    appDrawerSettings: AppDrawerSettings,
+    horizontalAppDrawerColumns: Int,
+    horizontalAppDrawerRows: Int,
     onDismissRequest: () -> Unit,
-    onUpdateAppDrawerSettings: (AppDrawerSettings) -> Unit,
+    onUpdateHorizontalGrid: (
+        horizontalAppDrawerColumns: Int,
+        horizontalAppDrawerRows: Int,
+    ) -> Unit,
 ) {
-    var columns by remember {
-        mutableStateOf("${appDrawerSettings.horizontalAppDrawerColumns}")
-    }
+    var currentHorizontalAppDrawerColumns by remember { mutableStateOf("$horizontalAppDrawerColumns") }
+    var currentHorizontalAppDrawerRows by remember { mutableStateOf("$horizontalAppDrawerRows") }
 
-    var rows by remember {
-        mutableStateOf("${appDrawerSettings.horizontalAppDrawerRows}")
-    }
-
-    var firstError by remember { mutableStateOf(false) }
-    var secondError by remember { mutableStateOf(false) }
+    var isErrorHorizontalAppDrawerColumns by remember { mutableStateOf(false) }
+    var isErrorHorizontalAppDrawerRows by remember { mutableStateOf(false) }
 
     EblanDialog(
         modifier = modifier,
@@ -71,42 +69,42 @@ internal fun EditHorizontalGridDialog(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             TextField(
-                value = columns,
+                value = currentHorizontalAppDrawerColumns,
                 onValueChange = {
-                    columns = it
-                    firstError = false
+                    currentHorizontalAppDrawerColumns = it
+                    isErrorHorizontalAppDrawerColumns = false
                 },
                 modifier = Modifier.weight(1f),
                 label = { Text(text = stringResource(commonR.string.columns)) },
-                supportingText = if (firstError) {
+                supportingText = if (isErrorHorizontalAppDrawerColumns) {
                     {
                         Text(text = stringResource(commonR.string.columns_is_not_valid))
                     }
                 } else {
                     null
                 },
-                isError = firstError,
+                isError = isErrorHorizontalAppDrawerColumns,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
                 ),
             )
 
             TextField(
-                value = rows,
+                value = currentHorizontalAppDrawerRows,
                 onValueChange = {
-                    rows = it
-                    secondError = false
+                    currentHorizontalAppDrawerRows = it
+                    isErrorHorizontalAppDrawerRows = false
                 },
                 modifier = Modifier.weight(1f),
                 label = { Text(text = stringResource(commonR.string.rows)) },
-                supportingText = if (secondError) {
+                supportingText = if (isErrorHorizontalAppDrawerRows) {
                     {
                         Text(text = stringResource(commonR.string.rows_is_not_valid))
                     }
                 } else {
                     null
                 },
-                isError = secondError,
+                isError = isErrorHorizontalAppDrawerRows,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
                 ),
@@ -125,20 +123,21 @@ internal fun EditHorizontalGridDialog(
 
             TextButton(
                 onClick = {
-                    val newColumns = columns.toIntOrNull()
-                    val newRows = rows.toIntOrNull()
+                    val newHorizontalAppDrawerColumns =
+                        currentHorizontalAppDrawerColumns.toIntOrNull()
+                    val newHorizontalAppDrawerRows = currentHorizontalAppDrawerRows.toIntOrNull()
 
-                    firstError = newColumns == null || newColumns <= 2
-                    secondError = newRows == null || newRows <= 2
+                    isErrorHorizontalAppDrawerColumns =
+                        newHorizontalAppDrawerColumns == null || newHorizontalAppDrawerColumns <= 2
+                    isErrorHorizontalAppDrawerRows =
+                        newHorizontalAppDrawerRows == null || newHorizontalAppDrawerRows <= 2
 
-                    if (newColumns != null && newRows != null &&
-                        newColumns > 2 && newRows > 2
+                    if (newHorizontalAppDrawerColumns != null && newHorizontalAppDrawerRows != null &&
+                        newHorizontalAppDrawerColumns > 2 && newHorizontalAppDrawerRows > 2
                     ) {
-                        onUpdateAppDrawerSettings(
-                            appDrawerSettings.copy(
-                                horizontalAppDrawerColumns = newColumns,
-                                horizontalAppDrawerRows = newRows,
-                            ),
+                        onUpdateHorizontalGrid(
+                            newHorizontalAppDrawerColumns,
+                            newHorizontalAppDrawerRows,
                         )
 
                         onDismissRequest()

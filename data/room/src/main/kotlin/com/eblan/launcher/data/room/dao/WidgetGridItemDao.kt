@@ -24,7 +24,7 @@ import androidx.room.Query
 import androidx.room.Update
 import androidx.room.Upsert
 import com.eblan.launcher.data.room.entity.WidgetGridItemEntity
-import com.eblan.launcher.domain.model.PartialUpdateWidgetGridItem
+import com.eblan.launcher.domain.model.widget.PartialUpdateWidgetGridItem
 
 @Dao
 interface WidgetGridItemDao {
@@ -44,7 +44,7 @@ interface WidgetGridItemDao {
     suspend fun deleteWidgetGridItemEntity(entity: WidgetGridItemEntity)
 
     @Query("DELETE FROM WidgetGridItemEntity WHERE serialNumber = :serialNumber AND packageName = :packageName")
-    suspend fun deleteWidgetGridItemEntity(
+    suspend fun deleteWidgetGridItemEntityByPackageName(
         serialNumber: Long,
         packageName: String,
     )

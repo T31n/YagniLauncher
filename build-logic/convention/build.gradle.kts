@@ -45,6 +45,8 @@ dependencies {
     compileOnly(libs.ksp.gradlePlugin)
     compileOnly(libs.room.gradlePlugin)
 
+    implementation(libs.kotlin.allopen.gradlePlugin)
+    implementation(libs.kotlinx.benchmark.gradlePlugin)
     implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
 }
 
@@ -90,6 +92,11 @@ gradlePlugin {
         register("jvmLibrary") {
             id = "com.eblan.launcher.jvmLibrary"
             implementationClass = "JvmLibraryConventionPlugin"
+        }
+
+        register("jvmBenchmarkLibrary") {
+            id = "com.eblan.launcher.jvmBenchmarkLibrary"
+            implementationClass = "JvmBenchmarkLibraryConventionPlugin"
         }
     }
 }

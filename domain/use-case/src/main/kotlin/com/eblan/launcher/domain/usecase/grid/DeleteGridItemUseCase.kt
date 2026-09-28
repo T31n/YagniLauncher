@@ -19,14 +19,14 @@ package com.eblan.launcher.domain.usecase.grid
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
-import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.AppWidgetHostWrapper
-import com.eblan.launcher.domain.framework.FileManager
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
-import com.eblan.launcher.domain.model.GridItem
+import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.repository.FolderGridItemRepository
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
+import com.eblan.launcher.domain.usecase.folder.asPreviewFolders
+import com.eblan.launcher.domain.usecase.util.deleteGridItemData
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -38,21 +38,23 @@ class DeleteGridItemUseCase @Inject constructor(
     private val appWidgetHostWrapper: AppWidgetHostWrapper,
     private val launcherAppsWrapper: LauncherAppsWrapper,
     private val folderGridItemRepository: FolderGridItemRepository,
-    private val fileManager: FileManager,
-    private val iconKeyGenerator: IconKeyGenerator,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     suspend operator fun invoke(gridItem: GridItem) = withContext(defaultDispatcher) {
         val userData = userDataRepository.userDataFlow.first()
 
-        cleanupGridItemRecursively(
+        val previewFolderGridItems =
+            folderGridItemRepository.getFolderGridItemWrappers()
+                .asPreviewFolders(
+                    maxFolderColumns = userData.folderSettings.maxFolderColumns,
+                    maxFolderRows = userData.folderSettings.maxFolderRows,
+                )
+
+        deleteGridItemData(
             gridItem = gridItem,
+            previewFolderGridItems = previewFolderGridItems,
             appWidgetHostWrapper = appWidgetHostWrapper,
             launcherAppsWrapper = launcherAppsWrapper,
-            folderGridItemRepository = folderGridItemRepository,
-            fileManager = fileManager,
-            iconKeyGenerator = iconKeyGenerator,
-            iconPackInfoPackageName = userData.generalSettings.iconPackInfoPackageName,
         )
 
         gridRepository.deleteGridItem(gridItem = gridItem)

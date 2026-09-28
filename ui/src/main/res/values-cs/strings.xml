@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~
+  ~   Copyright 2023 Einstein Blanco
+  ~
+  ~   Licensed under the GNU General Public License v3.0 (the "License");
+  ~   you may not use this file except in compliance with the License.
+  ~   You may obtain a copy of the License at
+  ~
+  ~       https://www.gnu.org/licenses/gpl-3.0
+  ~
+  ~   Unless required by applicable law or agreed to in writing, software
+  ~   distributed under the License is distributed on an "AS IS" BASIS,
+  ~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~   See the License for the specific language governing permissions and
+  ~   limitations under the License.
+  ~
+  -->
+<resources>
+    <string name="open">Otevřít %1$s</string>
+    <string name="app">Aplikace</string>
+    <string name="open_app_drawer">Otevřít nabídku aplikací</string>
+    <string name="open_notification_panel">Otevřít panel oznámení</string>
+    <string name="lock_screen">Zamknout obrazovku</string>
+    <string name="open_quick_settings">Otevřít rychlá nastavení</string>
+    <string name="open_recents">Otevřít nedávné</string>
+    <string name="enable_the_accessibility_service_permission_to_use_additional_actions">Povolit oprávnění ke službě přístupnosti pro používání dalších akcí</string>
+    <string name="corner_radius">Zaoblení rohů</string>
+    <string name="corner_radius_is_not_valid">Zaoblení rohů není platné</string>
+    <string name="icon_size">Velikost ikon</string>
+    <string name="icon_size_is_not_valid">Velikost ikon není platná</string>
+    <string name="padding">Odsazení</string>
+    <string name="padding_is_not_valid">Odsazení není platné</string>
+    <string name="text_size">Velikost textu</string>
+    <string name="text_size_is_not_valid">Velikost textu není platná</string>
+    <string name="select_application">Vybrat aplikaci</string>
+    <string name="custom_icon">Vlastní ikona</string>
+    <string name="gallery">Galerie</string>
+    <string name="pick_icons_from_your_gallery">Vyberte ikony z vaší galerie</string>
+    <string name="reset_custom_icon">Resetovat vlastní ikonu</string>
+    <string name="grid_item">Položka mřížky</string>
+    <string name="text_color">Barva textu</string>
+    <string name="show_label">Zobrazovat název</string>
+    <string name="single_line_label">Jednořádkový název</string>
+    <string name="horizontal_alignment">Horizontální zarovnání</string>
+    <string name="vertical_arrangement">Vertikální zarovnání</string>
+    <string name="start">Vlevo</string>
+    <string name="center_horizontally">Uprostřed</string>
+    <string name="end">Vpravo</string>
+    <string name="bottom">Dole</string>
+    <string name="top">Nahoře</string>
+    <string name="center">Uprostřed</string>
+    <string name="double_tap">Poklepání</string>
+    <string name="swipe_up">Přejetí prstem nahoru</string>
+    <string name="swipe_down">Přejetí prstem dolů</string>
+    <string name="display_app_names_below_icons">Zobrazovat názvy aplikací pod ikonami</string>
+    <string name="limit_app_names_to_one_line">Omezit názvy aplikací na jeden řádek</string>
+    <string name="custom">Vlastní</string>
+    <string name="add_folder">Přidat složku</string>
+    <string name="folder_is_not_valid">Složka není platná</string>
+</resources>

@@ -24,3 +24,7 @@ plugins {
 android {
     namespace = "com.eblan.launcher.framework.settings"
 }
+
+dependencies {
+    implementation(projects.domain.common)
+}

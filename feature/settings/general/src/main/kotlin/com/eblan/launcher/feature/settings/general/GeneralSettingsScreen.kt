@@ -17,7 +17,6 @@
  */
 package com.eblan.launcher.feature.settings.general
 
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
@@ -46,18 +45,18 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.EblanIconPackInfo
-import com.eblan.launcher.domain.model.GeneralSettings
-import com.eblan.launcher.domain.model.PackageManagerIconPackInfo
-import com.eblan.launcher.domain.model.Theme
+import com.eblan.launcher.domain.model.iconpackinfo.EblanIconPackInfo
+import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPackInfo
+import com.eblan.launcher.domain.model.userdata.GeneralSettings
+import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.feature.settings.general.dialog.ImportIconPackInfoDialog
 import com.eblan.launcher.feature.settings.general.dialog.SelectIconPackInfoDialog
 import com.eblan.launcher.feature.settings.general.model.GeneralSettingsUiState
 import com.eblan.launcher.service.IconPackInfoService
 import com.eblan.launcher.ui.dialog.RadioOptionsDialog
-import com.eblan.launcher.ui.local.LocalSettings
 import com.eblan.launcher.ui.model.SettingsItem
-import com.eblan.launcher.ui.settings.SettingsItemContent
+import com.eblan.launcher.ui.settings.SettingsItems
+import com.eblan.launcher.ui.settings.rememberIsNotificationAccessGranted
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -141,9 +140,7 @@ private fun Success(
 ) {
     val context = LocalContext.current
 
-    val settings = LocalSettings.current
-
-    var showDarkThemeConfigDialog by remember { mutableStateOf(false) }
+    var showThemeDialog by remember { mutableStateOf(false) }
 
     var showImportIconPackDialog by remember { mutableStateOf(false) }
 
@@ -151,18 +148,11 @@ private fun Success(
 
     val items = buildGeneralSettingsItems(
         generalSettings = generalSettings,
-        isNotificationAccessGranted = settings.isNotificationAccessGranted(),
         onImportIconPackClick = { showImportIconPackDialog = true },
         onSelectIconPackClick = { selectIconPackDialog = true },
-        onThemeClick = { showDarkThemeConfigDialog = true },
+        onThemeClick = { showThemeDialog = true },
         onDynamicThemeChange = {
             onUpdateGeneralSettings(generalSettings.copy(dynamicTheme = it))
-        },
-        onNotificationDotsClick = {
-            context.startActivity(
-                Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
-            )
         },
     )
 
@@ -173,30 +163,22 @@ private fun Success(
             .padding(10.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        items.forEachIndexed { index, settingsItem ->
-            SettingsItemContent(
-                settingsItem = settingsItem,
-                index = index,
-                size = items.size,
-            )
-        }
+        SettingsItems(items = items)
     }
 
-    if (showDarkThemeConfigDialog) {
+    if (showThemeDialog) {
         RadioOptionsDialog(
-            title = "Theme",
+            title = stringResource(R.string.theme),
             options = Theme.entries,
             selected = generalSettings.theme,
             label = {
-                it.getThemeTitle(context = context)
+                it.getTitle()
             },
             onDismissRequest = {
-                showDarkThemeConfigDialog = false
+                showThemeDialog = false
             },
             onUpdateClick = {
                 onUpdateGeneralSettings(generalSettings.copy(theme = it))
-
-                showDarkThemeConfigDialog = false
             },
         )
     }
@@ -218,8 +200,6 @@ private fun Success(
                 } else {
                     context.startService(intent)
                 }
-
-                showImportIconPackDialog = false
             },
         )
     }
@@ -234,13 +214,9 @@ private fun Success(
             },
             onReset = {
                 onUpdateGeneralSettings(generalSettings.copy(iconPackInfoPackageName = ""))
-
-                selectIconPackDialog = false
             },
             onUpdateIconPackInfoPackageName = {
                 onUpdateGeneralSettings(generalSettings.copy(iconPackInfoPackageName = it))
-
-                selectIconPackDialog = false
             },
         )
     }
@@ -249,66 +225,76 @@ private fun Success(
 @Composable
 private fun buildGeneralSettingsItems(
     generalSettings: GeneralSettings,
-    isNotificationAccessGranted: Boolean,
     onImportIconPackClick: () -> Unit,
     onSelectIconPackClick: () -> Unit,
     onThemeClick: () -> Unit,
     onDynamicThemeChange: (Boolean) -> Unit,
-    onNotificationDotsClick: () -> Unit,
-): List<SettingsItem> = buildList {
-    add(
-        SettingsItem.Column(
-            title = stringResource(R.string.import_icon_pack),
-            subtitle = stringResource(R.string.apply_icons_from_supported_icon_packs),
-            onClick = onImportIconPackClick,
-        ),
-    )
+): List<SettingsItem> {
+    val context = LocalContext.current
 
-    add(
-        SettingsItem.Column(
-            title = stringResource(R.string.select_icon_pack),
-            subtitle = generalSettings.iconPackInfoPackageName.ifEmpty {
-                stringResource(R.string.default_icon_pack)
-            },
-            onClick = onSelectIconPackClick,
-        ),
-    )
+    val isNotificationAccessGranted by rememberIsNotificationAccessGranted()
 
-    add(
-        SettingsItem.Column(
-            title = stringResource(R.string.theme),
-            subtitle = generalSettings.theme.name,
-            onClick = onThemeClick,
-        ),
-    )
-
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        add(
-            SettingsItem.Switch(
-                checked = generalSettings.dynamicTheme,
-                title = stringResource(R.string.dynamic_theme),
-                subtitle = stringResource(R.string.adapt_colors_to_your_wallpaper_automatically),
-                onClick = {
-                    onDynamicThemeChange(!generalSettings.dynamicTheme)
-                },
-                onCheckedChange = onDynamicThemeChange,
-            ),
-        )
-    }
-
-    if (!isNotificationAccessGranted) {
+    return buildList {
         add(
             SettingsItem.Column(
-                title = stringResource(R.string.notification_dots),
-                subtitle = stringResource(R.string.show_notification_dots),
-                onClick = onNotificationDotsClick,
+                title = stringResource(R.string.import_icon_pack),
+                subtitle = stringResource(R.string.apply_icons_from_supported_icon_packs),
+                onClick = onImportIconPackClick,
             ),
         )
+
+        add(
+            SettingsItem.Column(
+                title = stringResource(R.string.select_icon_pack),
+                subtitle = generalSettings.iconPackInfoPackageName.ifEmpty {
+                    stringResource(R.string.default_icon_pack)
+                },
+                onClick = onSelectIconPackClick,
+            ),
+        )
+
+        add(
+            SettingsItem.Column(
+                title = stringResource(R.string.theme),
+                subtitle = generalSettings.theme.getTitle(),
+                onClick = onThemeClick,
+            ),
+        )
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            add(
+                SettingsItem.Switch(
+                    checked = generalSettings.dynamicTheme,
+                    title = stringResource(R.string.dynamic_theme),
+                    subtitle = stringResource(R.string.adapt_colors_to_your_wallpaper_automatically),
+                    onClick = {
+                        onDynamicThemeChange(!generalSettings.dynamicTheme)
+                    },
+                    onCheckedChange = onDynamicThemeChange,
+                ),
+            )
+        }
+
+        if (!isNotificationAccessGranted) {
+            add(
+                SettingsItem.Column(
+                    title = stringResource(R.string.notification_dots),
+                    subtitle = stringResource(R.string.show_notification_dots),
+                    onClick = {
+                        context.startActivity(
+                            Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                        )
+                    },
+                ),
+            )
+        }
     }
 }
 
-private fun Theme.getThemeTitle(context: Context) = when (this) {
-    Theme.System -> context.getString(commonR.string.system)
-    Theme.Light -> context.getString(commonR.string.light)
-    Theme.Dark -> context.getString(commonR.string.dark)
+@Composable
+private fun Theme.getTitle() = when (this) {
+    Theme.System -> stringResource(commonR.string.system)
+    Theme.Light -> stringResource(commonR.string.light)
+    Theme.Dark -> stringResource(commonR.string.dark)
 }

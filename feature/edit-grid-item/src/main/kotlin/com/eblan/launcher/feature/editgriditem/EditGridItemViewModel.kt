@@ -25,12 +25,14 @@ import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.framework.IconPackManager
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.IconPackInfoComponent
-import com.eblan.launcher.domain.model.PackageManagerIconPackInfo
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.iconpackinfo.IconPackInfoComponent
+import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPackInfo
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.usecase.application.GetEblanApplicationInfosUseCase
-import com.eblan.launcher.domain.usecase.grid.GetGridItemsUseCase
+import com.eblan.launcher.domain.usecase.grid.DeleteGridItemCustomIconUseCase
+import com.eblan.launcher.domain.usecase.grid.GetGridItemByIdUseCase
+import com.eblan.launcher.domain.usecase.grid.UpdateGridItemCustomIconUseCase
 import com.eblan.launcher.feature.editgriditem.model.EditGridItemUiState
 import com.eblan.launcher.feature.editgriditem.navigation.EditGridItemRouteData
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -52,7 +54,9 @@ internal class EditGridItemViewModel @Inject constructor(
     packageManagerWrapper: PackageManagerWrapper,
     private val gridRepository: GridRepository,
     getEblanApplicationInfosUseCase: GetEblanApplicationInfosUseCase,
-    private val getGridItemsUseCase: GetGridItemsUseCase,
+    private val updateGridItemCustomIconUseCase: UpdateGridItemCustomIconUseCase,
+    private val deleteGridItemCustomIconUseCase: DeleteGridItemCustomIconUseCase,
+    private val getGridItemByIdUseCase: GetGridItemByIdUseCase,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
     private val editGridItemRouteData = savedStateHandle.toRoute<EditGridItemRouteData>()
@@ -105,7 +109,7 @@ internal class EditGridItemViewModel @Inject constructor(
 
     fun resetGridItemCustomIcon(gridItem: GridItem) {
         viewModelScope.launch {
-            gridRepository.resetGridItemCustomIcon(gridItem = gridItem)
+            deleteGridItemCustomIconUseCase(gridItem = gridItem)
 
             getGridItem()
         }
@@ -147,13 +151,25 @@ internal class EditGridItemViewModel @Inject constructor(
         }
     }
 
+    fun updateGridItemCustomIcon(
+        gridItem: GridItem,
+        uri: String,
+    ) {
+        viewModelScope.launch {
+            updateGridItemCustomIconUseCase(
+                gridItem = gridItem,
+                uri = uri,
+            )
+
+            getGridItem()
+        }
+    }
+
     private fun getGridItem() {
-        viewModelScope.launch(defaultDispatcher) {
+        viewModelScope.launch {
             _editGridItemUiState.update {
                 EditGridItemUiState.Success(
-                    gridItem = getGridItemsUseCase().find {
-                        it.id == editGridItemRouteData.id
-                    },
+                    gridItem = getGridItemByIdUseCase(id = editGridItemRouteData.id),
                 )
             }
         }

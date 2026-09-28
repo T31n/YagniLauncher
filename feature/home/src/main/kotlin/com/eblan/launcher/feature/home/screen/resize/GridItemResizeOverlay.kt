@@ -18,6 +18,7 @@
 package com.eblan.launcher.feature.home.screen.resize
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.VectorConverter
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -42,13 +43,11 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.domain.grid.isGridItemSpanWithinBounds
 import com.eblan.launcher.domain.grid.resizeGridItemWithPixels
-import com.eblan.launcher.domain.model.Anchor
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.feature.home.screen.DRAG_HANDLE_SIZE
-import kotlinx.coroutines.delay
+import com.eblan.launcher.domain.model.grid.Anchor
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.feature.home.util.DRAG_HANDLE_SIZE
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
-import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 internal fun GridItemResizeOverlay(
@@ -76,13 +75,33 @@ internal fun GridItemResizeOverlay(
 
     val scope = rememberCoroutineScope()
 
-    val currentX = remember { Animatable(x.toFloat()) }
+    val currentX = remember {
+        Animatable(
+            initialValue = x,
+            typeConverter = Int.VectorConverter,
+        )
+    }
 
-    val currentY = remember { Animatable(y.toFloat()) }
+    val currentY = remember {
+        Animatable(
+            initialValue = y,
+            typeConverter = Int.VectorConverter,
+        )
+    }
 
-    val currentWidth = remember { Animatable(width.toFloat()) }
+    val currentWidth = remember {
+        Animatable(
+            initialValue = width,
+            typeConverter = Int.VectorConverter,
+        )
+    }
 
-    val currentHeight = remember { Animatable(height.toFloat()) }
+    val currentHeight = remember {
+        Animatable(
+            initialValue = height,
+            typeConverter = Int.VectorConverter,
+        )
+    }
 
     var isResizing by remember {
         mutableStateOf(true)
@@ -97,7 +116,7 @@ internal fun GridItemResizeOverlay(
     val borderWidth by remember {
         derivedStateOf {
             with(density) {
-                currentWidth.value.roundToInt().coerceAtLeast(dragHandleSizePx).toDp()
+                currentWidth.value.coerceAtLeast(dragHandleSizePx).toDp()
             }
         }
     }
@@ -105,84 +124,34 @@ internal fun GridItemResizeOverlay(
     val borderHeight by remember {
         derivedStateOf {
             with(density) {
-                currentHeight.value.roundToInt().coerceAtLeast(dragHandleSizePx).toDp()
+                currentHeight.value.coerceAtLeast(dragHandleSizePx).toDp()
             }
         }
     }
 
     val borderX by remember {
         derivedStateOf {
-            when (dragHandle) {
-                Alignment.TopStart -> {
-                    if (currentWidth.value >= dragHandleSizePx) {
-                        currentX.value.roundToInt()
-                    } else {
-                        (x + width) - dragHandleSizePx
-                    }
-                }
-
-                Alignment.TopEnd -> {
-                    if (currentWidth.value >= dragHandleSizePx) {
-                        currentX.value.roundToInt()
-                    } else {
-                        x
-                    }
-                }
-
-                Alignment.BottomStart -> {
-                    if (currentWidth.value >= dragHandleSizePx) {
-                        currentX.value.roundToInt()
-                    } else {
-                        (x + width) - dragHandleSizePx
-                    }
-                }
-
-                else -> {
-                    if (currentWidth.value >= dragHandleSizePx) {
-                        currentX.value.roundToInt()
-                    } else {
-                        x
-                    }
-                }
-            }
+            getBorderX(
+                dragHandle = dragHandle,
+                currentWidth = currentWidth.value,
+                dragHandleSizePx = dragHandleSizePx,
+                currentX = currentX.value,
+                x = x,
+                width = width,
+            )
         }
     }
 
     val borderY by remember {
         derivedStateOf {
-            when (dragHandle) {
-                Alignment.TopStart -> {
-                    if (currentHeight.value >= dragHandleSizePx) {
-                        currentY.value.roundToInt()
-                    } else {
-                        (y + height) - dragHandleSizePx
-                    }
-                }
-
-                Alignment.TopEnd -> {
-                    if (currentHeight.value >= dragHandleSizePx) {
-                        currentY.value.roundToInt()
-                    } else {
-                        (y + height) - dragHandleSizePx
-                    }
-                }
-
-                Alignment.BottomStart -> {
-                    if (currentHeight.value >= dragHandleSizePx) {
-                        currentY.value.roundToInt()
-                    } else {
-                        y
-                    }
-                }
-
-                else -> {
-                    if (currentHeight.value >= dragHandleSizePx) {
-                        currentY.value.roundToInt()
-                    } else {
-                        y
-                    }
-                }
-            }
+            getBorderY(
+                dragHandle = dragHandle,
+                currentHeight = currentHeight.value,
+                dragHandleSizePx = dragHandleSizePx,
+                currentY = currentY.value,
+                y = y,
+                height = height,
+            )
         }
     }
 
@@ -194,93 +163,32 @@ internal fun GridItemResizeOverlay(
         key1 = currentWidth.value,
         key2 = currentHeight.value,
     ) {
-        val allowedWidth = currentWidth.value.roundToInt().coerceAtLeast(cellWidth)
-
-        val allowedHeight = currentHeight.value.roundToInt().coerceAtLeast(cellHeight)
-
-        val resizingGridItem = when (dragHandle) {
-            Alignment.TopStart -> {
-                resizeGridItemWithPixels(
-                    gridItem = gridItem,
-                    width = allowedWidth,
-                    height = allowedHeight,
-                    rows = rows,
-                    columns = columns,
-                    gridWidth = gridWidth,
-                    gridHeight = gridHeight,
-                    anchor = Anchor.BottomEnd,
-                )
-            }
-
-            Alignment.TopEnd -> {
-                resizeGridItemWithPixels(
-                    gridItem = gridItem,
-                    width = allowedWidth,
-                    height = allowedHeight,
-                    rows = rows,
-                    columns = columns,
-                    gridWidth = gridWidth,
-                    gridHeight = gridHeight,
-                    anchor = Anchor.BottomStart,
-                )
-            }
-
-            Alignment.BottomStart -> {
-                resizeGridItemWithPixels(
-                    gridItem = gridItem,
-                    width = allowedWidth,
-                    height = allowedHeight,
-                    rows = rows,
-                    columns = columns,
-                    gridWidth = gridWidth,
-                    gridHeight = gridHeight,
-                    anchor = Anchor.TopEnd,
-                )
-            }
-
-            Alignment.BottomEnd -> {
-                resizeGridItemWithPixels(
-                    gridItem = gridItem,
-                    width = allowedWidth,
-                    height = allowedHeight,
-                    rows = rows,
-                    columns = columns,
-                    gridWidth = gridWidth,
-                    gridHeight = gridHeight,
-                    anchor = Anchor.TopStart,
-                )
-            }
-
-            else -> null
-        }
-
-        if (isResizing &&
-            resizingGridItem != null &&
-            isGridItemSpanWithinBounds(
-                gridItem = resizingGridItem,
-                columns = columns,
-                rows = rows,
-            ) && !lockMovement
-        ) {
-            delay(50L.milliseconds)
-
-            onResizeGridItem(
-                resizingGridItem,
-                columns,
-                rows,
-            )
-        }
+        resizeGridItem(
+            currentWidth = currentWidth.value,
+            cellWidth = cellWidth,
+            currentHeight = currentHeight.value,
+            cellHeight = cellHeight,
+            dragHandle = dragHandle,
+            gridItem = gridItem,
+            rows = rows,
+            columns = columns,
+            gridWidth = gridWidth,
+            gridHeight = gridHeight,
+            isResizing = isResizing,
+            lockMovement = lockMovement,
+            onResizeGridItem = onResizeGridItem,
+        )
     }
 
     LaunchedEffect(key1 = isResizing) {
         if (!isResizing) {
-            launch { currentX.animateTo(x.toFloat()) }
+            launch { currentX.animateTo(targetValue = x) }
 
-            launch { currentY.animateTo(y.toFloat()) }
+            launch { currentY.animateTo(targetValue = y) }
 
-            launch { currentWidth.animateTo(width.toFloat()) }
+            launch { currentWidth.animateTo(targetValue = width) }
 
-            launch { currentHeight.animateTo(height.toFloat()) }
+            launch { currentHeight.animateTo(targetValue = height) }
         }
     }
 
@@ -315,13 +223,13 @@ internal fun GridItemResizeOverlay(
                         },
                         onDrag = { _, dragAmount ->
                             scope.launch {
-                                currentWidth.snapTo(currentWidth.value - dragAmount.x)
+                                currentWidth.snapTo((currentWidth.value - dragAmount.x).roundToInt())
 
-                                currentHeight.snapTo(currentHeight.value - dragAmount.y)
+                                currentHeight.snapTo((currentHeight.value - dragAmount.y).roundToInt())
 
-                                currentX.snapTo(currentX.value + dragAmount.x)
+                                currentX.snapTo((currentX.value + dragAmount.x).roundToInt())
 
-                                currentY.snapTo(currentY.value + dragAmount.y)
+                                currentY.snapTo((currentY.value + dragAmount.y).roundToInt())
                             }
                         },
                     )
@@ -345,11 +253,11 @@ internal fun GridItemResizeOverlay(
                         },
                         onDrag = { _, dragAmount ->
                             scope.launch {
-                                currentWidth.snapTo(currentWidth.value + dragAmount.x)
+                                currentWidth.snapTo((currentWidth.value + dragAmount.x).roundToInt())
 
-                                currentHeight.snapTo(currentHeight.value - dragAmount.y)
+                                currentHeight.snapTo((currentHeight.value - dragAmount.y).roundToInt())
 
-                                currentY.snapTo(currentY.value + dragAmount.y)
+                                currentY.snapTo((currentY.value + dragAmount.y).roundToInt())
                             }
                         },
                     )
@@ -373,11 +281,11 @@ internal fun GridItemResizeOverlay(
                         },
                         onDrag = { _, dragAmount ->
                             scope.launch {
-                                currentWidth.snapTo(currentWidth.value - dragAmount.x)
+                                currentWidth.snapTo((currentWidth.value - dragAmount.x).roundToInt())
 
-                                currentHeight.snapTo(currentHeight.value + dragAmount.y)
+                                currentHeight.snapTo((currentHeight.value + dragAmount.y).roundToInt())
 
-                                currentX.snapTo(currentX.value + dragAmount.x)
+                                currentX.snapTo((currentX.value + dragAmount.x).roundToInt())
                             }
                         },
                     )
@@ -401,13 +309,160 @@ internal fun GridItemResizeOverlay(
                         },
                         onDrag = { _, dragAmount ->
                             scope.launch {
-                                currentWidth.snapTo(currentWidth.value + dragAmount.x)
+                                currentWidth.snapTo((currentWidth.value + dragAmount.x).roundToInt())
 
-                                currentHeight.snapTo(currentHeight.value + dragAmount.y)
+                                currentHeight.snapTo((currentHeight.value + dragAmount.y).roundToInt())
                             }
                         },
                     )
                 },
+        )
+    }
+}
+
+private fun getBorderY(
+    dragHandle: Alignment,
+    currentHeight: Int,
+    dragHandleSizePx: Int,
+    currentY: Int,
+    y: Int,
+    height: Int,
+): Int = if (currentHeight >= dragHandleSizePx) {
+    currentY
+} else if (dragHandle == Alignment.TopStart || dragHandle == Alignment.TopEnd) {
+    (y + height) - dragHandleSizePx
+} else {
+    y
+}
+
+private fun getBorderX(
+    dragHandle: Alignment,
+    currentWidth: Int,
+    dragHandleSizePx: Int,
+    currentX: Int,
+    x: Int,
+    width: Int,
+): Int = when (dragHandle) {
+    Alignment.TopStart -> {
+        if (currentWidth >= dragHandleSizePx) {
+            currentX
+        } else {
+            (x + width) - dragHandleSizePx
+        }
+    }
+
+    Alignment.TopEnd -> {
+        if (currentWidth >= dragHandleSizePx) {
+            currentX
+        } else {
+            x
+        }
+    }
+
+    Alignment.BottomStart -> {
+        if (currentWidth >= dragHandleSizePx) {
+            currentX
+        } else {
+            (x + width) - dragHandleSizePx
+        }
+    }
+
+    else -> {
+        if (currentWidth >= dragHandleSizePx) {
+            currentX
+        } else {
+            x
+        }
+    }
+}
+
+private fun resizeGridItem(
+    currentWidth: Int,
+    cellWidth: Int,
+    currentHeight: Int,
+    cellHeight: Int,
+    dragHandle: Alignment,
+    gridItem: GridItem,
+    rows: Int,
+    columns: Int,
+    gridWidth: Int,
+    gridHeight: Int,
+    isResizing: Boolean,
+    lockMovement: Boolean,
+    onResizeGridItem: (GridItem, Int, Int) -> Unit,
+) {
+    val allowedWidth = currentWidth.coerceAtLeast(cellWidth)
+
+    val allowedHeight = currentHeight.coerceAtLeast(cellHeight)
+
+    val resizingGridItem = when (dragHandle) {
+        Alignment.TopStart -> {
+            resizeGridItemWithPixels(
+                gridItem = gridItem,
+                width = allowedWidth,
+                height = allowedHeight,
+                rows = rows,
+                columns = columns,
+                gridWidth = gridWidth,
+                gridHeight = gridHeight,
+                anchor = Anchor.BottomEnd,
+            )
+        }
+
+        Alignment.TopEnd -> {
+            resizeGridItemWithPixels(
+                gridItem = gridItem,
+                width = allowedWidth,
+                height = allowedHeight,
+                rows = rows,
+                columns = columns,
+                gridWidth = gridWidth,
+                gridHeight = gridHeight,
+                anchor = Anchor.BottomStart,
+            )
+        }
+
+        Alignment.BottomStart -> {
+            resizeGridItemWithPixels(
+                gridItem = gridItem,
+                width = allowedWidth,
+                height = allowedHeight,
+                rows = rows,
+                columns = columns,
+                gridWidth = gridWidth,
+                gridHeight = gridHeight,
+                anchor = Anchor.TopEnd,
+            )
+        }
+
+        Alignment.BottomEnd -> {
+            resizeGridItemWithPixels(
+                gridItem = gridItem,
+                width = allowedWidth,
+                height = allowedHeight,
+                rows = rows,
+                columns = columns,
+                gridWidth = gridWidth,
+                gridHeight = gridHeight,
+                anchor = Anchor.TopStart,
+            )
+        }
+
+        else -> null
+    }
+
+    if (isResizing &&
+        resizingGridItem != null &&
+        isGridItemSpanWithinBounds(
+            gridItem = resizingGridItem,
+            columns = columns,
+            rows = rows,
+        ) && !lockMovement
+    ) {
+        onResizeGridItem(
+            resizingGridItem,
+            columns,
+            rows,
         )
     }
 }

@@ -29,7 +29,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import com.eblan.launcher.domain.model.Theme
+import com.eblan.launcher.domain.model.userdata.Theme
 
 private val LightColorScheme = lightColorScheme(
     primary = Color(0xFF4C662B),
@@ -127,17 +127,9 @@ fun EblanLauncherTheme(
 
 @Composable
 private fun getGreenColorScheme(theme: Theme): ColorScheme = when (theme) {
-    Theme.System -> {
-        if (isSystemInDarkTheme()) DarkColorScheme else LightColorScheme
-    }
-
-    Theme.Light -> {
-        LightColorScheme
-    }
-
-    Theme.Dark -> {
-        DarkColorScheme
-    }
+    Theme.System -> if (isSystemInDarkTheme()) DarkColorScheme else LightColorScheme
+    Theme.Light -> LightColorScheme
+    Theme.Dark -> DarkColorScheme
 }
 
 @RequiresApi(Build.VERSION_CODES.S)
@@ -146,22 +138,16 @@ private fun getDynamicColorScheme(theme: Theme): ColorScheme {
     val context = LocalContext.current
 
     return when (theme) {
-        Theme.System -> {
-            if (isSystemInDarkTheme()) {
-                dynamicDarkColorScheme(context)
-            } else {
-                dynamicLightColorScheme(
-                    context,
-                )
-            }
-        }
-
-        Theme.Light -> {
-            dynamicLightColorScheme(context)
-        }
-
-        Theme.Dark -> {
+        Theme.System -> if (isSystemInDarkTheme()) {
             dynamicDarkColorScheme(context)
+        } else {
+            dynamicLightColorScheme(
+                context,
+            )
         }
+
+        Theme.Light -> dynamicLightColorScheme(context)
+
+        Theme.Dark -> dynamicDarkColorScheme(context)
     }
 }

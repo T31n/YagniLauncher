@@ -44,6 +44,7 @@ interface AndroidAppWidgetHostWrapper {
         requestCode: Int,
         bundle: Bundle?,
     )
+
     companion object {
         const val CONFIGURE_REQUEST_CODE = 1
     }

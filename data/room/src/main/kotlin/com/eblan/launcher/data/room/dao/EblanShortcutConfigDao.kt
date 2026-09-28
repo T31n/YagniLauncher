@@ -22,7 +22,7 @@ import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
 import com.eblan.launcher.data.room.entity.EblanShortcutConfigEntity
-import com.eblan.launcher.domain.model.DeleteEblanShortcutConfig
+import com.eblan.launcher.domain.model.shortcutconfig.DeleteEblanShortcutConfig
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -31,13 +31,13 @@ interface EblanShortcutConfigDao {
     fun getEblanShortcutConfigEntitiesFlow(): Flow<List<EblanShortcutConfigEntity>>
 
     @Query("SELECT * FROM EblanShortcutConfigEntity")
-    fun getEblanShortcutConfigEntities(): List<EblanShortcutConfigEntity>
+    suspend fun getEblanShortcutConfigEntities(): List<EblanShortcutConfigEntity>
 
     @Upsert
     suspend fun upsertEblanShortcutConfigEntities(entities: List<EblanShortcutConfigEntity>)
 
     @Query("DELETE FROM EblanShortcutConfigEntity WHERE serialNumber = :serialNumber AND packageName = :packageName")
-    suspend fun deleteEblanShortcutConfigEntity(
+    suspend fun deleteEblanShortcutConfigEntityByPackageName(
         serialNumber: Long,
         packageName: String,
     )

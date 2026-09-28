@@ -17,6 +17,7 @@
  */
 package com.eblan.launcher.feature.settings.appdrawer
 
+import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,19 +42,25 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.AppDrawerSettings
-import com.eblan.launcher.domain.model.AppDrawerType
-import com.eblan.launcher.domain.model.EblanApplicationInfo
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
+import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
+import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
+import com.eblan.launcher.domain.model.userdata.AppDrawerType
+import com.eblan.launcher.domain.model.userdata.ScrollBarType
+import com.eblan.launcher.domain.model.userdata.SearchBarPosition
 import com.eblan.launcher.feature.settings.appdrawer.dialog.EditHorizontalGridDialog
 import com.eblan.launcher.feature.settings.appdrawer.dialog.EditVerticalGridDialog
 import com.eblan.launcher.feature.settings.appdrawer.dialog.HiddenEblanApplicationInfosDialog
+import com.eblan.launcher.feature.settings.appdrawer.dialog.ManageFoldersDialog
+import com.eblan.launcher.feature.settings.appdrawer.dialog.ManageTagsDialog
 import com.eblan.launcher.feature.settings.appdrawer.model.AppDrawerSettingsUiState
+import com.eblan.launcher.ui.dialog.BackgroundColorDialog
 import com.eblan.launcher.ui.dialog.RadioOptionsDialog
-import com.eblan.launcher.ui.dialog.TextColorDialog
+import com.eblan.launcher.ui.dialog.getBackgroundColorTitle
 import com.eblan.launcher.ui.model.SettingsItem
 import com.eblan.launcher.ui.settings.GridItemSettings
-import com.eblan.launcher.ui.settings.SettingsItemContent
-import com.eblan.launcher.ui.settings.getTitle
+import com.eblan.launcher.ui.settings.SettingsItems
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -64,12 +71,20 @@ internal fun AppDrawerSettingsRoute(
 ) {
     val appDrawerSettingsUiState by viewModel.appDrawerSettingsUiState.collectAsStateWithLifecycle()
 
+    val eblanApplicationInfoTags by viewModel.eblanApplicationInfoTags.collectAsStateWithLifecycle()
+
+    val folderEblanApplicationInfos by viewModel.folderEblanApplicationInfos.collectAsStateWithLifecycle()
+
     AppDrawerSettingsScreen(
         modifier = modifier,
         appDrawerSettingsUiState = appDrawerSettingsUiState,
+        eblanApplicationInfoTags = eblanApplicationInfoTags,
+        folderEblanApplicationInfos = folderEblanApplicationInfos,
         onNavigateUp = onNavigateUp,
         onUpdateAppDrawerSettings = viewModel::updateAppDrawerSettings,
         onUpdateEblanApplicationInfo = viewModel::updateEblanApplicationInfo,
+        onUpdateEblanApplicationInfoTags = viewModel::updateEblanApplicationInfoTags,
+        onUpdateFolderEblanApplicationInfos = viewModel::updateFolderEblanApplicationInfos,
     )
 }
 
@@ -78,9 +93,13 @@ internal fun AppDrawerSettingsRoute(
 internal fun AppDrawerSettingsScreen(
     modifier: Modifier = Modifier,
     appDrawerSettingsUiState: AppDrawerSettingsUiState,
+    eblanApplicationInfoTags: List<EblanApplicationInfoTag>,
+    folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     onNavigateUp: () -> Unit,
     onUpdateAppDrawerSettings: (AppDrawerSettings) -> Unit,
     onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
+    onUpdateEblanApplicationInfoTags: (List<EblanApplicationInfoTag>) -> Unit,
+    onUpdateFolderEblanApplicationInfos: (List<FolderEblanApplicationInfo>) -> Unit,
 ) {
     Scaffold(
         modifier = modifier,
@@ -109,8 +128,12 @@ internal fun AppDrawerSettingsScreen(
                 Success(
                     appDrawerSettings = appDrawerSettingsUiState.appDrawerSettings,
                     eblanApplicationInfos = appDrawerSettingsUiState.eblanApplicationInfos,
+                    eblanApplicationInfoTags = eblanApplicationInfoTags,
+                    folderEblanApplicationInfos = folderEblanApplicationInfos,
                     onUpdateAppDrawerSettings = onUpdateAppDrawerSettings,
                     onUpdateEblanApplicationInfo = onUpdateEblanApplicationInfo,
+                    onUpdateEblanApplicationInfoTags = onUpdateEblanApplicationInfoTags,
+                    onUpdateFolderEblanApplicationInfos = onUpdateFolderEblanApplicationInfos,
                 )
             }
         }
@@ -122,8 +145,12 @@ private fun Success(
     modifier: Modifier = Modifier,
     appDrawerSettings: AppDrawerSettings,
     eblanApplicationInfos: List<EblanApplicationInfo>,
+    eblanApplicationInfoTags: List<EblanApplicationInfoTag>,
+    folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     onUpdateAppDrawerSettings: (AppDrawerSettings) -> Unit,
     onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
+    onUpdateEblanApplicationInfoTags: (List<EblanApplicationInfoTag>) -> Unit,
+    onUpdateFolderEblanApplicationInfos: (List<FolderEblanApplicationInfo>) -> Unit,
 ) {
     var showAppDrawerTypeDialog by remember { mutableStateOf(false) }
 
@@ -133,7 +160,15 @@ private fun Success(
 
     var showHiddenEblanApplicationInfosDialog by remember { mutableStateOf(false) }
 
-    var showTextColorDialog by remember { mutableStateOf(false) }
+    var showBackgroundColorDialog by remember { mutableStateOf(false) }
+
+    var showManageTagsDialog by remember { mutableStateOf(false) }
+
+    var showManageFoldersDialog by remember { mutableStateOf(false) }
+
+    var showSearchBarPositionDialog by remember { mutableStateOf(false) }
+
+    var showScrollBarTypeDialog by remember { mutableStateOf(false) }
 
     val items = buildAppDrawerSettingsItems(
         appDrawerSettings = appDrawerSettings,
@@ -147,12 +182,24 @@ private fun Success(
             showHorizontalGridDialog = true
         },
         onBackgroundColorClick = {
-            showTextColorDialog = true
+            showBackgroundColorDialog = true
         },
         onHiddenApplicationsClick = {
             showHiddenEblanApplicationInfosDialog = true
         },
         onUpdateAppDrawerSettings = onUpdateAppDrawerSettings,
+        onManageTags = {
+            showManageTagsDialog = true
+        },
+        onManageFolders = {
+            showManageFoldersDialog = true
+        },
+        onSearchBarPositionClick = {
+            showSearchBarPositionDialog = true
+        },
+        onScrollBarTypeClick = {
+            showScrollBarTypeDialog = true
+        },
     )
 
     Column(
@@ -162,13 +209,7 @@ private fun Success(
             .padding(10.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        items.forEachIndexed { index, settingsItem ->
-            SettingsItemContent(
-                settingsItem = settingsItem,
-                index = index,
-                size = items.size,
-            )
-        }
+        SettingsItems(items = items)
 
         GridItemSettings(
             gridItemSettings = appDrawerSettings.gridItemSettings,
@@ -188,36 +229,50 @@ private fun Success(
             options = AppDrawerType.entries,
             selected = appDrawerSettings.appDrawerType,
             label = {
-                it.name
+                it.getTitle()
             },
             onDismissRequest = {
                 showAppDrawerTypeDialog = false
             },
             onUpdateClick = {
                 onUpdateAppDrawerSettings(appDrawerSettings.copy(appDrawerType = it))
-
-                showAppDrawerTypeDialog = false
             },
         )
     }
 
     if (showVerticalGridDialog) {
         EditVerticalGridDialog(
-            appDrawerSettings = appDrawerSettings,
+            appDrawerColumns = appDrawerSettings.appDrawerColumns,
+            appDrawerRowsHeight = appDrawerSettings.appDrawerRowsHeight,
             onDismissRequest = {
                 showVerticalGridDialog = false
             },
-            onUpdateAppDrawerSettings = onUpdateAppDrawerSettings,
+            onUpdateVerticalGrid = { appDrawerColumns, appDrawerRowsHeight ->
+                onUpdateAppDrawerSettings(
+                    appDrawerSettings.copy(
+                        appDrawerColumns = appDrawerColumns,
+                        appDrawerRowsHeight = appDrawerRowsHeight,
+                    ),
+                )
+            },
         )
     }
 
     if (showHorizontalGridDialog) {
         EditHorizontalGridDialog(
-            appDrawerSettings = appDrawerSettings,
+            horizontalAppDrawerColumns = appDrawerSettings.horizontalAppDrawerColumns,
+            horizontalAppDrawerRows = appDrawerSettings.horizontalAppDrawerRows,
             onDismissRequest = {
                 showHorizontalGridDialog = false
             },
-            onUpdateAppDrawerSettings = onUpdateAppDrawerSettings,
+            onUpdateHorizontalGrid = { horizontalAppDrawerColumns, horizontalAppDrawerRows ->
+                onUpdateAppDrawerSettings(
+                    appDrawerSettings.copy(
+                        horizontalAppDrawerColumns = horizontalAppDrawerColumns,
+                        horizontalAppDrawerRows = horizontalAppDrawerRows,
+                    ),
+                )
+            },
         )
     }
 
@@ -231,23 +286,75 @@ private fun Success(
         )
     }
 
-    if (showTextColorDialog) {
-        TextColorDialog(
+    if (showBackgroundColorDialog) {
+        BackgroundColorDialog(
             title = stringResource(commonR.string.background_color),
-            textColor = appDrawerSettings.backgroundColor,
-            customTextColor = appDrawerSettings.customBackgroundColor,
+            backgroundColor = appDrawerSettings.backgroundColor,
+            customBackgroundColor = appDrawerSettings.customBackgroundColor,
             onDismissRequest = {
-                showTextColorDialog = false
+                showBackgroundColorDialog = false
             },
-            onUpdateClick = { textColor, customColor ->
+            onUpdateClick = { backgroundColor, customColor ->
                 onUpdateAppDrawerSettings(
                     appDrawerSettings.copy(
-                        backgroundColor = textColor,
+                        backgroundColor = backgroundColor,
                         customBackgroundColor = customColor,
                     ),
                 )
+            },
+        )
+    }
 
-                showTextColorDialog = false
+    if (showManageTagsDialog) {
+        ManageTagsDialog(
+            eblanApplicationInfoTags = eblanApplicationInfoTags,
+            onDismissRequest = {
+                showManageTagsDialog = false
+            },
+            onUpdateEblanApplicationInfoTags = onUpdateEblanApplicationInfoTags,
+        )
+    }
+
+    if (showManageFoldersDialog) {
+        ManageFoldersDialog(
+            folderEblanApplicationInfos = folderEblanApplicationInfos,
+            onDismissRequest = {
+                showManageFoldersDialog = false
+            },
+            onUpdateFolderEblanApplicationInfos = onUpdateFolderEblanApplicationInfos,
+        )
+    }
+
+    if (showSearchBarPositionDialog) {
+        RadioOptionsDialog(
+            title = stringResource(R.string.search_bar_position),
+            options = SearchBarPosition.entries,
+            selected = appDrawerSettings.searchBarPosition,
+            label = {
+                it.getTitle()
+            },
+            onDismissRequest = {
+                showSearchBarPositionDialog = false
+            },
+            onUpdateClick = {
+                onUpdateAppDrawerSettings(appDrawerSettings.copy(searchBarPosition = it))
+            },
+        )
+    }
+
+    if (showScrollBarTypeDialog) {
+        RadioOptionsDialog(
+            title = stringResource(R.string.scroll_bar_type),
+            options = ScrollBarType.entries,
+            selected = appDrawerSettings.scrollBarType,
+            label = {
+                it.getTitle()
+            },
+            onDismissRequest = {
+                showScrollBarTypeDialog = false
+            },
+            onUpdateClick = {
+                onUpdateAppDrawerSettings(appDrawerSettings.copy(scrollBarType = it))
             },
         )
     }
@@ -262,11 +369,31 @@ private fun buildAppDrawerSettingsItems(
     onBackgroundColorClick: () -> Unit,
     onHiddenApplicationsClick: () -> Unit,
     onUpdateAppDrawerSettings: (AppDrawerSettings) -> Unit,
+    onManageTags: () -> Unit,
+    onManageFolders: () -> Unit,
+    onSearchBarPositionClick: () -> Unit,
+    onScrollBarTypeClick: () -> Unit,
 ): List<SettingsItem> = buildList {
     add(
         SettingsItem.Column(
+            title = stringResource(R.string.manage_tags),
+            subtitle = stringResource(R.string.sort_update_and_delete_tags),
+            onClick = onManageTags,
+        ),
+    )
+
+    add(
+        SettingsItem.Column(
+            title = stringResource(R.string.manage_folders),
+            subtitle = stringResource(R.string.sort_update_and_delete_folders),
+            onClick = onManageFolders,
+        ),
+    )
+
+    add(
+        SettingsItem.Column(
             title = stringResource(R.string.app_drawer_type),
-            subtitle = appDrawerSettings.appDrawerType.name,
+            subtitle = appDrawerSettings.appDrawerType.getTitle(),
             onClick = onAppDrawerTypeClick,
         ),
     )
@@ -294,7 +421,7 @@ private fun buildAppDrawerSettingsItems(
     add(
         SettingsItem.Column(
             title = stringResource(commonR.string.background_color),
-            subtitle = appDrawerSettings.backgroundColor.getTitle(),
+            subtitle = appDrawerSettings.backgroundColor.getBackgroundColorTitle(),
             onClick = onBackgroundColorClick,
         ),
     )
@@ -372,4 +499,65 @@ private fun buildAppDrawerSettingsItems(
             },
         ),
     )
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        add(
+            SettingsItem.Switch(
+                checked = appDrawerSettings.blurBehind,
+                title = stringResource(R.string.blur_behind),
+                subtitle = stringResource(R.string.blurs_the_wallpaper_when_app_drawer_opens),
+                onClick = {
+                    onUpdateAppDrawerSettings(
+                        appDrawerSettings.copy(
+                            blurBehind = !appDrawerSettings.blurBehind,
+                        ),
+                    )
+                },
+                onCheckedChange = {
+                    onUpdateAppDrawerSettings(
+                        appDrawerSettings.copy(
+                            blurBehind = it,
+                        ),
+                    )
+                },
+            ),
+        )
+    }
+
+    add(
+        SettingsItem.Column(
+            title = stringResource(R.string.search_bar_position),
+            subtitle = appDrawerSettings.searchBarPosition.getTitle(),
+            onClick = onSearchBarPositionClick,
+        ),
+    )
+
+    add(
+        SettingsItem.Column(
+            title = stringResource(R.string.scroll_bar_type),
+            subtitle = appDrawerSettings.scrollBarType.getTitle(),
+            onClick = onScrollBarTypeClick,
+        ),
+    )
+}
+
+@Composable
+private fun AppDrawerType.getTitle(): String = when (this) {
+    AppDrawerType.Vertical -> stringResource(R.string.vertical)
+    AppDrawerType.Horizontal -> stringResource(R.string.horizontal)
+    AppDrawerType.List -> stringResource(R.string.list)
+}
+
+@Composable
+fun SearchBarPosition.getTitle(): String = when (this) {
+    SearchBarPosition.Top -> stringResource(R.string.top)
+    SearchBarPosition.Bottom -> stringResource(R.string.bottom)
+    SearchBarPosition.None -> stringResource(commonR.string.none)
+}
+
+@Composable
+fun ScrollBarType.getTitle(): String = when (this) {
+    ScrollBarType.ScrollBar -> stringResource(R.string.scroll_bar)
+    ScrollBarType.Alphabetical -> stringResource(R.string.alphabetical)
+    ScrollBarType.None -> stringResource(commonR.string.none)
 }

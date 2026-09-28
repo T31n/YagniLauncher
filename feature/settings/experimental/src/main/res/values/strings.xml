@@ -25,4 +25,6 @@
     <string name="enable_or_disable_sync_data">Enable or disable sync data</string>
     <string name="lock_movement">Lock Movement</string>
     <string name="prevent_other_grid_items_from_moving">Prevent other grid items from moving</string>
+    <string name="grid_item_animation">Grid Item Animation</string>
+    <string name="enable_or_disable_animations">Enable or disable grid item animation</string>
 </resources>

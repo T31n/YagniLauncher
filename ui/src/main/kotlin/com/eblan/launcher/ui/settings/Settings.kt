@@ -38,8 +38,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -50,11 +52,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import coil3.compose.AsyncImage
 import com.eblan.launcher.designsystem.component.VerticalSlideReveal
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.PackageManagerIconPackInfo
+import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPackInfo
 import com.eblan.launcher.ui.R
+import com.eblan.launcher.ui.local.LocalAccessibilityManager
+import com.eblan.launcher.ui.local.LocalPackageManager
+import com.eblan.launcher.ui.local.LocalSettings
 import com.eblan.launcher.ui.model.SettingsItem
 import com.eblan.launcher.common.R as commonR
 
@@ -146,72 +154,72 @@ fun SettingsSwitch(
 }
 
 @Composable
-fun SettingsItemContent(
+fun SettingsItems(
     modifier: Modifier = Modifier,
-    settingsItem: SettingsItem,
-    index: Int,
-    size: Int,
+    items: List<SettingsItem>,
 ) {
-    when (settingsItem) {
-        is SettingsItem.Column -> {
-            SettingsColumn(
-                modifier = modifier,
-                index = index,
-                size = size,
-                title = settingsItem.title,
-                subtitle = settingsItem.subtitle,
-                onClick = settingsItem.onClick,
-            )
-        }
+    items.forEachIndexed { index, settingsItem ->
+        when (settingsItem) {
+            is SettingsItem.Column -> {
+                SettingsColumn(
+                    modifier = modifier,
+                    index = index,
+                    size = items.size,
+                    title = settingsItem.title,
+                    subtitle = settingsItem.subtitle,
+                    onClick = settingsItem.onClick,
+                )
+            }
 
-        is SettingsItem.Switch -> {
-            SettingsSwitch(
-                modifier = modifier,
-                index = index,
-                size = size,
-                checked = settingsItem.checked,
-                title = settingsItem.title,
-                subtitle = settingsItem.subtitle,
-                onClick = settingsItem.onClick,
-                onCheckedChange = settingsItem.onCheckedChange,
-            )
-        }
+            is SettingsItem.Switch -> {
+                SettingsSwitch(
+                    modifier = modifier,
+                    index = index,
+                    size = items.size,
+                    checked = settingsItem.checked,
+                    title = settingsItem.title,
+                    subtitle = settingsItem.subtitle,
+                    onClick = settingsItem.onClick,
+                    onCheckedChange = settingsItem.onCheckedChange,
+                )
+            }
 
-        is SettingsItem.CustomBackgroundColor,
-        -> {
-            CustomBackgroundColor(
-                modifier = modifier,
-                index = index,
-                size = size,
-                title = settingsItem.title,
-                customBackgroundColor = settingsItem.customBackgroundColor,
-                onClick = settingsItem.onClick,
-            )
-        }
+            is SettingsItem.CustomBackgroundColor,
+            -> {
+                CustomBackgroundColor(
+                    modifier = modifier,
+                    index = index,
+                    size = items.size,
+                    title = settingsItem.title,
+                    customBackgroundColor = settingsItem.customBackgroundColor,
+                    onClick = settingsItem.onClick,
+                )
+            }
 
-        is SettingsItem.Row -> {
-            SettingsRow(
-                modifier = modifier,
-                index = index,
-                size = size,
-                imageVector = settingsItem.imageVector,
-                title = settingsItem.title,
-                subtitle = settingsItem.subtitle,
-                onClick = settingsItem.onClick,
-            )
-        }
+            is SettingsItem.Row -> {
+                SettingsRow(
+                    modifier = modifier,
+                    index = index,
+                    size = items.size,
+                    imageVector = settingsItem.imageVector,
+                    title = settingsItem.title,
+                    subtitle = settingsItem.subtitle,
+                    onClick = settingsItem.onClick,
+                )
+            }
 
-        is SettingsItem.CustomIcon -> {
-            CustomIcon(
-                modifier = modifier,
-                index = index,
-                size = size,
-                customIcon = settingsItem.customIcon,
-                packageManagerIconPackInfos = settingsItem.packageManagerIconPackInfos,
-                onUpdateIconPackInfoPackageName = settingsItem.onUpdateIconPackInfoPackageName,
-                onUpdateUri = settingsItem.onUpdateUri,
-                onResetCustomIcon = settingsItem.onResetCustomIcon,
-            )
+            is SettingsItem.CustomIcon -> {
+                CustomIcon(
+                    modifier = modifier,
+                    index = index,
+                    size = items.size,
+                    customIcon = settingsItem.customIcon,
+                    packageManagerIconPackInfos = settingsItem.packageManagerIconPackInfos,
+                    onUpdateIconPackInfoPackageName = settingsItem.onUpdateIconPackInfoPackageName,
+                    onUpdateUri = settingsItem.onUpdateUri,
+                    onResetCustomIcon = settingsItem.onResetCustomIcon,
+                )
+            }
         }
     }
 }
@@ -226,6 +234,57 @@ fun SettingsCategoryText(
         text = text,
         style = MaterialTheme.typography.bodySmall,
     )
+}
+
+@Composable
+fun rememberIsDefaultLauncher(): State<Boolean> {
+    val packageManager = LocalPackageManager.current
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    return produceState(
+        initialValue = false,
+        key1 = lifecycleOwner,
+        key2 = packageManager,
+    ) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            value = packageManager.isDefaultLauncher()
+        }
+    }
+}
+
+@Composable
+fun rememberIsNotificationAccessGranted(): State<Boolean> {
+    val settingsWrapper = LocalSettings.current
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    return produceState(
+        initialValue = false,
+        key1 = lifecycleOwner,
+        key2 = settingsWrapper,
+    ) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            value = settingsWrapper.isNotificationAccessGranted()
+        }
+    }
+}
+
+@Composable
+fun rememberIsAccessibilityServiceEnabled(): State<Boolean> {
+    val accessibilityManager = LocalAccessibilityManager.current
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    return produceState(
+        initialValue = false,
+        key1 = lifecycleOwner,
+        key2 = accessibilityManager,
+    ) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            value = accessibilityManager.isAccessibilityServiceEnabled()
+        }
+    }
 }
 
 fun settingsItemShape(

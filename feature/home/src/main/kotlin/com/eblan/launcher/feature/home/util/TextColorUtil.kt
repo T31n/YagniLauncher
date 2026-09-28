@@ -18,51 +18,114 @@
 package com.eblan.launcher.feature.home.util
 
 import androidx.compose.ui.graphics.Color
-import com.eblan.launcher.domain.model.TextColor
+import androidx.compose.ui.graphics.luminance
+import com.eblan.launcher.domain.model.userdata.BackgroundColor
+import com.eblan.launcher.domain.model.userdata.TextColor
 
 internal fun getGridItemTextColor(
     gridItemCustomTextColor: Int,
     gridItemTextColor: TextColor,
     systemCustomTextColor: Int,
     systemTextColor: TextColor,
+    defaultColor: Color = Color.Unspecified,
 ): Color = when (gridItemTextColor) {
-    TextColor.System -> {
-        getSystemTextColor(
-            systemCustomTextColor = systemCustomTextColor,
-            systemTextColor = systemTextColor,
+    TextColor.System -> getTextColor(
+        customTextColor = systemCustomTextColor,
+        textColor = systemTextColor,
+        defaultColor = defaultColor,
+    )
+
+    TextColor.Light -> Color.White
+
+    TextColor.Dark -> Color.Black
+
+    TextColor.Custom -> Color(gridItemCustomTextColor)
+}
+
+internal fun getTextColor(
+    customTextColor: Int,
+    textColor: TextColor,
+    defaultColor: Color = Color.Unspecified,
+): Color = when (textColor) {
+    TextColor.System -> defaultColor
+    TextColor.Light -> Color.White
+    TextColor.Dark -> Color.Black
+    TextColor.Custom -> Color(customTextColor)
+}
+
+internal fun getTextColorFromBackgroundColor(
+    backgroundColor: BackgroundColor,
+    customBackgroundColor: Int,
+    textColor: TextColor,
+    customTextColor: Int,
+    systemCustomTextColor: Int,
+    systemTextColor: TextColor,
+    defaultColor: Color = Color.Unspecified,
+): Color = when (backgroundColor) {
+    BackgroundColor.System -> defaultColor
+
+    BackgroundColor.Light -> Color.Black
+
+    BackgroundColor.Dark -> Color.White
+
+    BackgroundColor.Custom -> {
+        val gridItemTextColor = getTextColor(
+            customTextColor = systemCustomTextColor,
+            textColor = systemTextColor,
+            defaultColor = defaultColor,
         )
-    }
 
-    TextColor.Light -> {
-        Color.White
-    }
+        val textColorByLuminance = getTextColorByLuminance(
+            customBackgroundColor = Color(customBackgroundColor),
+            systemTextColor = gridItemTextColor,
+        )
 
-    TextColor.Dark -> {
-        Color.Black
-    }
-
-    TextColor.Custom -> {
-        Color(gridItemCustomTextColor)
+        getTextColor(
+            customTextColor = customTextColor,
+            textColor = textColor,
+            defaultColor = textColorByLuminance,
+        )
     }
 }
 
-internal fun getSystemTextColor(
+internal fun getApplicationScreenTextColor(
+    backgroundColor: BackgroundColor,
+    customBackgroundColor: Int,
     systemCustomTextColor: Int,
     systemTextColor: TextColor,
-): Color = when (systemTextColor) {
-    TextColor.System -> {
-        Color.Unspecified
-    }
+    defaultColor: Color = Color.Unspecified,
+): Color = when (backgroundColor) {
+    BackgroundColor.System -> defaultColor
 
-    TextColor.Light -> {
-        Color.White
-    }
+    BackgroundColor.Light -> Color.Black
 
-    TextColor.Dark -> {
+    BackgroundColor.Dark -> Color.White
+
+    BackgroundColor.Custom -> {
+        val gridItemTextColor = getTextColor(
+            customTextColor = systemCustomTextColor,
+            textColor = systemTextColor,
+            defaultColor = defaultColor,
+        )
+
+        getTextColorByLuminance(
+            customBackgroundColor = Color(customBackgroundColor),
+            systemTextColor = gridItemTextColor,
+        )
+    }
+}
+
+private fun getTextColorByLuminance(
+    customBackgroundColor: Color,
+    systemTextColor: Color,
+    alphaThreshold: Float = 0.5f,
+    luminanceCrossover: Float = 0.5f,
+): Color {
+    if (customBackgroundColor.alpha < alphaThreshold) return systemTextColor
+
+    return if (customBackgroundColor.luminance() >= luminanceCrossover) {
         Color.Black
-    }
-
-    TextColor.Custom -> {
-        Color(systemCustomTextColor)
+    } else {
+        Color.White
     }
 }

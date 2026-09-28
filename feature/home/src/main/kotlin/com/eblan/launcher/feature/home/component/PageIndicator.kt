@@ -17,7 +17,6 @@
  */
 package com.eblan.launcher.feature.home.component
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,68 +27,17 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.unit.dp
-import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.EblanAction
-import com.eblan.launcher.domain.model.EblanActionType
 import com.eblan.launcher.feature.home.util.calculatePage
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.onEach
 import kotlin.math.abs
-import kotlin.time.Duration.Companion.milliseconds
-
-@OptIn(FlowPreview::class)
-@Composable
-internal fun GridPagerIndicator(
-    modifier: Modifier = Modifier,
-    color: Color,
-    gridHorizontalPagerState: PagerState,
-    infiniteScroll: Boolean,
-    pageCount: Int,
-    swipeUp: EblanAction,
-    swipeDown: EblanAction,
-    showPageIndicator: Boolean,
-) {
-    var isScrollInProgress by remember { mutableStateOf(false) }
-
-    LaunchedEffect(key1 = gridHorizontalPagerState) {
-        snapshotFlow { gridHorizontalPagerState.isScrollInProgress }
-            .debounce(100L.milliseconds)
-            .onEach { isScrollInProgress = it }
-            .collect()
-    }
-
-    Box(
-        modifier = modifier,
-        contentAlignment = Alignment.Center,
-    ) {
-        GridPageIndicatorContent(
-            color = color,
-            gridHorizontalPagerState = gridHorizontalPagerState,
-            infiniteScroll = infiniteScroll,
-            isScrollInProgress = isScrollInProgress,
-            pageCount = pageCount,
-            showPageIndicator = showPageIndicator,
-            swipeDown = swipeDown,
-            swipeUp = swipeUp,
-        )
-    }
-}
 
 @Composable
 internal fun PageIndicator(
@@ -99,97 +47,77 @@ internal fun PageIndicator(
     infiniteScroll: Boolean,
     pageCount: Int,
 ) {
-    val baseWidth = 8.dp
-    val baseHeight = 8.dp
-    val activeWidth = 16.dp
+    if (pageCount < 1) return
 
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
     ) {
-        if (pageCount > 1) {
-            repeat(pageCount) { index ->
-                val distance by remember(key1 = index) {
-                    derivedStateOf {
-                        val currentPage = calculatePage(
-                            index = gridHorizontalPagerState.currentPage,
-                            infiniteScroll = infiniteScroll,
-                            pageCount = pageCount,
-                        )
-
-                        val relative =
-                            (currentPage + gridHorizontalPagerState.currentPageOffsetFraction) - index
-
-                        relative.coerceIn(-1f, 1f)
-                    }
-                }
-
-                val width by remember {
-                    derivedStateOf {
-                        when (distance) {
-                            0f -> activeWidth
-                            in -1f..0f -> baseWidth + (activeWidth - baseWidth) * (1f + distance)
-                            in 0f..1f -> baseWidth + (activeWidth - baseWidth) * (1f - distance)
-                            else -> baseWidth
-                        }
-                    }
-                }
-
-                Box(
-                    modifier = Modifier
-                        .padding(3.dp)
-                        .width(width)
-                        .height(baseHeight)
-                        .clip(CircleShape)
-                        .background(
-                            color = lerp(
-                                start = color.copy(alpha = 0.5f),
-                                stop = color,
-                                fraction = 1f - abs(distance).coerceIn(0f, 1f),
-                            ),
-                        ),
-                )
-            }
+        repeat(pageCount) { index ->
+            PageIndicatorContent(
+                modifier = modifier,
+                color = color,
+                gridHorizontalPagerState = gridHorizontalPagerState,
+                index = index,
+                infiniteScroll = infiniteScroll,
+                pageCount = pageCount,
+            )
         }
     }
 }
 
 @Composable
-private fun GridPageIndicatorContent(
+private fun PageIndicatorContent(
     modifier: Modifier = Modifier,
     color: Color,
     gridHorizontalPagerState: PagerState,
+    index: Int,
     infiniteScroll: Boolean,
-    isScrollInProgress: Boolean,
     pageCount: Int,
-    showPageIndicator: Boolean,
-    swipeDown: EblanAction,
-    swipeUp: EblanAction,
 ) {
-    if (!showPageIndicator) return
+    val baseWidth = 8.dp
+    val baseHeight = 8.dp
+    val activeWidth = 16.dp
 
-    if (isScrollInProgress) {
-        PageIndicator(
-            modifier = modifier,
-            color = color,
-            gridHorizontalPagerState = gridHorizontalPagerState,
-            infiniteScroll = infiniteScroll,
-            pageCount = pageCount,
-        )
-    } else if (swipeUp.eblanActionType == EblanActionType.OpenAppDrawer) {
-        Image(
-            modifier = modifier,
-            imageVector = EblanLauncherIcons.KeyboardArrowUp,
-            contentDescription = null,
-            colorFilter = ColorFilter.tint(color = color),
-        )
-    } else if (swipeDown.eblanActionType == EblanActionType.OpenAppDrawer) {
-        Image(
-            modifier = modifier,
-            imageVector = EblanLauncherIcons.KeyboardArrowDown,
-            contentDescription = null,
-            colorFilter = ColorFilter.tint(color = color),
-        )
+    val distance by remember(key1 = index) {
+        derivedStateOf {
+            val currentPage = calculatePage(
+                index = gridHorizontalPagerState.currentPage,
+                infiniteScroll = infiniteScroll,
+                pageCount = pageCount,
+            )
+
+            val relative =
+                (currentPage + gridHorizontalPagerState.currentPageOffsetFraction) - index
+
+            relative.coerceIn(-1f, 1f)
+        }
     }
+
+    val width by remember {
+        derivedStateOf {
+            when (distance) {
+                0f -> activeWidth
+                in -1f..0f -> baseWidth + (activeWidth - baseWidth) * (1f + distance)
+                in 0f..1f -> baseWidth + (activeWidth - baseWidth) * (1f - distance)
+                else -> baseWidth
+            }
+        }
+    }
+
+    Box(
+        modifier = modifier
+            .padding(3.dp)
+            .width(width)
+            .height(baseHeight)
+            .clip(CircleShape)
+            .background(
+                color = lerp(
+                    start = color.copy(alpha = 0.5f),
+                    stop = color,
+                    fraction = 1f - abs(distance).coerceIn(0f, 1f),
+                ),
+            ),
+    )
 }

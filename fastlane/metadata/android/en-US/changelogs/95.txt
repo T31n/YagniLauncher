@@ -1,0 +1,5 @@
+- Folder Background and Corner Radius (#995)
+- fix: Stale PagerScreenState After Settings Changed (#989)
+- fix: Widget and Shortcut Fast Long Press Bug And Drag Cancelled (#985)
+- No Animations Settings (#983)
+- Added Item Scale Animation (#982)

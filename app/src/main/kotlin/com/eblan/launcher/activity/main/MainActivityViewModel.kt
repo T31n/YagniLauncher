@@ -19,7 +19,7 @@ package com.eblan.launcher.activity.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.eblan.launcher.domain.usecase.GetApplicationThemeUseCase
+import com.eblan.launcher.domain.usecase.home.GetApplicationThemeUseCase
 import com.eblan.launcher.model.ActivityUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted

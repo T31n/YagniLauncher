@@ -18,8 +18,11 @@
 package com.eblan.launcher.feature.pin
 
 import android.appwidget.AppWidgetManager
+import android.appwidget.AppWidgetProviderInfo
 import android.content.ClipData
+import android.content.Context
 import android.content.pm.LauncherApps.PinItemRequest
+import android.content.pm.ShortcutInfo
 import android.os.Build
 import android.view.View
 import android.widget.Toast
@@ -69,8 +72,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
-import com.eblan.launcher.domain.framework.FileManager
-import com.eblan.launcher.domain.model.GridItem
+import com.eblan.launcher.common.AndroidImageSerializer
+import com.eblan.launcher.domain.common.FileManager
+import com.eblan.launcher.domain.common.IconKeyGenerator
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.framework.launcherapps.AndroidLauncherAppsWrapper
+import com.eblan.launcher.framework.usermanager.AndroidUserManagerWrapper
 import com.eblan.launcher.ui.local.LocalAppWidgetHost
 import com.eblan.launcher.ui.local.LocalAppWidgetManager
 import com.eblan.launcher.ui.local.LocalFileManager
@@ -152,13 +159,13 @@ private fun PinShortcutScreen(
     onFinish: () -> Unit,
     onUpdateGridItems: () -> Unit,
 ) {
+    val shortcutInfo = pinItemRequest.shortcutInfo ?: return
+
     val pinItemRequestWrapper = LocalPinItemRequest.current
 
     val androidLauncherAppsWrapper = LocalLauncherApps.current
 
     val imageSerializer = LocalImageSerializer.current
-
-    val shortcutInfo = pinItemRequest.shortcutInfo
 
     val androidUserManagerWrapper = LocalUserManager.current
 
@@ -170,98 +177,62 @@ private fun PinShortcutScreen(
 
     val scope = rememberCoroutineScope()
 
-    if (shortcutInfo != null) {
-        val icon = remember {
-            androidLauncherAppsWrapper.getShortcutBadgedIconDrawable(
-                shortcutInfo = shortcutInfo,
-                density = 0,
-            )
+    val icon = remember {
+        androidLauncherAppsWrapper.getShortcutBadgedIconDrawable(
+            shortcutInfo = shortcutInfo,
+            density = 0,
+        )
+    }
+
+    LaunchedEffect(key1 = gridItem) {
+        handleGridItem(
+            gridItem = gridItem,
+            pinItemRequest = pinItemRequest,
+            context = context,
+            onUpdateGridItems = onUpdateGridItems,
+            onDeleteShortcutGridItem = onDeleteShortcutGridItem,
+        )
+    }
+
+    LaunchedEffect(key1 = isFinished) {
+        if (isFinished) {
+            onFinish()
         }
+    }
 
-        LaunchedEffect(key1 = gridItem) {
-            if (gridItem == null) return@LaunchedEffect
-
-            if (pinItemRequest.isValid && pinItemRequest.accept()) {
-                Toast.makeText(
-                    context,
-                    """
-                ${gridItem.page}
-                ${gridItem.startRow}
-                ${gridItem.startColumn}
-                    """.trimIndent(),
-                    Toast.LENGTH_LONG,
-                ).show()
-
-                onUpdateGridItems()
-            } else {
-                onDeleteShortcutGridItem(gridItem)
-            }
-        }
-
-        LaunchedEffect(key1 = isFinished) {
-            if (isFinished) {
-                onFinish()
-            }
-        }
-
-        Scaffold(containerColor = Color.Transparent) { paddingValues ->
-            Box(
-                modifier = modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-            ) {
-                PinBottomSheet(
-                    icon = icon,
-                    label = shortcutInfo.shortLabel.toString(),
-                    onAdd = {
-                        scope.launch {
-                            val serialNumber =
-                                androidUserManagerWrapper.getSerialNumberForUser(userHandle = shortcutInfo.userHandle)
-
-                            val icon = androidLauncherAppsWrapper.getShortcutBadgedIconDrawable(
-                                shortcutInfo = shortcutInfo,
-                                density = 0,
-                            )?.let { drawable ->
-                                val directory =
-                                    fileManager.getFilesDirectory(FileManager.SHORTCUTS_DIR)
-
-                                val file = File(
-                                    directory,
-                                    iconKeyGenerator.getShortcutIconKey(
-                                        serialNumber = serialNumber,
-                                        packageName = shortcutInfo.`package`,
-                                        id = shortcutInfo.id,
-                                    ),
-                                )
-
-                                imageSerializer.createDrawablePath(drawable = drawable, file = file)
-
-                                file.absolutePath
-                            }
-
-                            onAddPinShortcutToHomeScreen(
-                                serialNumber,
-                                shortcutInfo.id,
-                                shortcutInfo.`package`,
-                                shortcutInfo.shortLabel.toString(),
-                                shortcutInfo.longLabel.toString(),
-                                shortcutInfo.isEnabled,
-                                icon,
-                            )
-                        }
-                    },
-                    onFinish = onFinish,
-                    onLongPress = {
-                        pinItemRequestWrapper.updatePinItemRequest(
-                            pinItemRequest = pinItemRequest,
+    Scaffold(containerColor = Color.Transparent) { paddingValues ->
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+        ) {
+            PinBottomSheet(
+                icon = icon,
+                label = shortcutInfo.shortLabel.toString(),
+                onAdd = {
+                    scope.launch {
+                        addPinShortcutToHomeScreen(
+                            androidUserManagerWrapper = androidUserManagerWrapper,
+                            shortcutInfo = shortcutInfo,
+                            androidLauncherAppsWrapper = androidLauncherAppsWrapper,
+                            fileManager = fileManager,
+                            iconKeyGenerator = iconKeyGenerator,
+                            imageSerializer = imageSerializer,
+                            onAddPinShortcutToHomeScreen = onAddPinShortcutToHomeScreen,
                         )
+                    }
+                },
+                onFinish = onFinish,
+                onLongPress = {
+                    pinItemRequestWrapper.updatePinItemRequest(
+                        pinItemRequest = pinItemRequest,
+                    )
 
-                        onDragStart()
+                    onDragStart()
 
-                        onFinish()
-                    },
-                )
-            }
+                    onFinish()
+                },
+            )
         }
     }
 }
@@ -298,6 +269,10 @@ private fun PinWidgetScreen(
     onUpdateGridItemCache: (GridItem) -> Unit,
     onUpdateGridItems: () -> Unit,
 ) {
+    val context = LocalContext.current
+
+    val appWidgetProviderInfo = pinItemRequest.getAppWidgetProviderInfo(context) ?: return
+
     val pinItemRequestWrapper = LocalPinItemRequest.current
 
     val appWidgetHostWrapper = LocalAppWidgetHost.current
@@ -306,158 +281,110 @@ private fun PinWidgetScreen(
 
     val userManager = LocalUserManager.current
 
-    val context = LocalContext.current
-
     val fileManager = LocalFileManager.current
 
     val iconKeyGenerator = LocalIconKeyGenerator.current
 
     val paddingValues = WindowInsets.safeDrawing.asPaddingValues()
 
-    val appWidgetProviderInfo = pinItemRequest.getAppWidgetProviderInfo(context)
-
     var appWidgetId by remember { mutableIntStateOf(AppWidgetManager.INVALID_APPWIDGET_ID) }
 
     var deleteAppWidgetId by remember { mutableStateOf(false) }
 
-    if (appWidgetProviderInfo != null) {
-        val icon = remember {
-            appWidgetProviderInfo.loadPreviewImage(context, 0)
-        }
+    val icon = remember {
+        appWidgetProviderInfo.loadPreviewImage(context, 0)
+    }
 
-        val appWidgetLauncher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.StartActivityForResult(),
-        ) { result ->
-            handleAppWidgetLauncherResult(
-                gridItem = gridItem,
-                result = result,
-                onDeleteAppWidgetId = {
-                    deleteAppWidgetId = true
-                },
-                onUpdateGridItemCache = onUpdateGridItemCache,
-            )
-        }
+    val appWidgetLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+    ) { result ->
+        handleAppWidgetLauncherResult(
+            gridItem = gridItem,
+            result = result,
+            onDeleteAppWidgetId = {
+                deleteAppWidgetId = true
+            },
+            onUpdateGridItemCache = onUpdateGridItemCache,
+        )
+    }
 
-        LaunchedEffect(key1 = gridItem) {
-            handleGridItem(
-                appWidgetHostWrapper = appWidgetHostWrapper,
-                appWidgetManager = appWidgetManager,
-                gridItem = gridItem,
-                userHandle = appWidgetProviderInfo.profile,
-                onAddedToHomeScreenToast = {
-                    Toast.makeText(
-                        context,
-                        it,
-                        Toast.LENGTH_LONG,
-                    ).show()
-                },
-                onLaunch = appWidgetLauncher::launch,
-                onUpdateAppWidgetId = {
-                    appWidgetId = it
-                },
-                onUpdateGridItemCache = onUpdateGridItemCache,
-            )
-        }
+    LaunchedEffect(key1 = gridItem) {
+        handleGridItem(
+            appWidgetHostWrapper = appWidgetHostWrapper,
+            appWidgetManager = appWidgetManager,
+            gridItem = gridItem,
+            userHandle = appWidgetProviderInfo.profile,
+            onAddedToHomeScreenToast = {
+                Toast.makeText(
+                    context,
+                    it,
+                    Toast.LENGTH_LONG,
+                ).show()
+            },
+            onLaunch = appWidgetLauncher::launch,
+            onUpdateAppWidgetId = {
+                appWidgetId = it
+            },
+            onUpdateGridItemCache = onUpdateGridItemCache,
+        )
+    }
 
-        LaunchedEffect(key1 = deleteAppWidgetId) {
-            handleDeleteAppWidgetId(
-                appWidgetId = appWidgetId,
-                deleteAppWidgetId = deleteAppWidgetId,
-                gridItem = gridItem,
-                onDeleteGridItem = onDeleteGridItemCache,
-            )
-        }
+    LaunchedEffect(key1 = deleteAppWidgetId) {
+        handleDeleteAppWidgetId(
+            appWidgetId = appWidgetId,
+            deleteAppWidgetId = deleteAppWidgetId,
+            gridItem = gridItem,
+            onDeleteGridItem = onDeleteGridItemCache,
+        )
+    }
 
-        LaunchedEffect(key1 = isBoundWidget) {
-            handleIsBoundWidget(
-                appWidgetId = appWidgetId,
-                gridItem = gridItem,
-                isBoundWidget = isBoundWidget,
-                pinItemRequest = pinItemRequest,
-                onDeleteGridItem = onDeleteGridItemCache,
-                onUpdateGridItems = onUpdateGridItems,
-            )
-        }
+    LaunchedEffect(key1 = isBoundWidget) {
+        handleIsBoundWidget(
+            appWidgetId = appWidgetId,
+            gridItem = gridItem,
+            isBoundWidget = isBoundWidget,
+            pinItemRequest = pinItemRequest,
+            onDeleteGridItem = onDeleteGridItemCache,
+            onUpdateGridItems = onUpdateGridItems,
+        )
+    }
 
-        LaunchedEffect(key1 = isFinished) {
-            if (isFinished) {
+    LaunchedEffect(key1 = isFinished) {
+        if (isFinished) {
+            onFinish()
+        }
+    }
+
+    BoxWithConstraints(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(paddingValues),
+    ) {
+        PinBottomSheet(
+            icon = icon,
+            label = appWidgetProviderInfo.loadLabel(context.packageManager),
+            onAdd = {
+                addPinWidgetToHomeScreen(
+                    appWidgetProviderInfo = appWidgetProviderInfo,
+                    fileManager = fileManager,
+                    iconKeyGenerator = iconKeyGenerator,
+                    maxWidth = constraints.maxWidth,
+                    maxHeight = constraints.maxHeight,
+                    onAddPinWidgetToHomeScreen = onAddPinWidgetToHomeScreen,
+                    userManager = userManager,
+                )
+            },
+            onFinish = onFinish,
+            onLongPress = {
+                pinItemRequestWrapper.updatePinItemRequest(
+                    pinItemRequest = pinItemRequest,
+                )
+
+                onDragStart()
+
                 onFinish()
-            }
-        }
-
-        BoxWithConstraints(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-        ) {
-            PinBottomSheet(
-                icon = icon,
-                label = appWidgetProviderInfo.loadLabel(context.packageManager),
-                onAdd = {
-                    val componentName = appWidgetProviderInfo.provider.flattenToString()
-
-                    val directory =
-                        fileManager.getFilesDirectory(FileManager.WIDGETS_DIR)
-
-                    val file = File(
-                        directory,
-                        iconKeyGenerator.getHashedName(name = componentName),
-                    )
-
-                    val preview = file.absolutePath
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                        onAddPinWidgetToHomeScreen(
-                            userManager.getSerialNumberForUser(userHandle = appWidgetProviderInfo.profile),
-                            componentName,
-                            appWidgetProviderInfo.configure.flattenToString(),
-                            appWidgetProviderInfo.provider.packageName,
-                            appWidgetProviderInfo.targetCellHeight,
-                            appWidgetProviderInfo.targetCellWidth,
-                            appWidgetProviderInfo.minWidth,
-                            appWidgetProviderInfo.minHeight,
-                            appWidgetProviderInfo.resizeMode,
-                            appWidgetProviderInfo.minResizeWidth,
-                            appWidgetProviderInfo.minResizeHeight,
-                            appWidgetProviderInfo.maxResizeWidth,
-                            appWidgetProviderInfo.maxResizeHeight,
-                            constraints.maxWidth,
-                            constraints.maxHeight,
-                            preview,
-                        )
-                    } else {
-                        onAddPinWidgetToHomeScreen(
-                            userManager.getSerialNumberForUser(userHandle = appWidgetProviderInfo.profile),
-                            appWidgetProviderInfo.provider.flattenToString(),
-                            appWidgetProviderInfo.configure.flattenToString(),
-                            appWidgetProviderInfo.provider.packageName,
-                            0,
-                            0,
-                            appWidgetProviderInfo.minWidth,
-                            appWidgetProviderInfo.minHeight,
-                            appWidgetProviderInfo.resizeMode,
-                            appWidgetProviderInfo.minResizeWidth,
-                            appWidgetProviderInfo.minResizeHeight,
-                            0,
-                            0,
-                            constraints.maxWidth,
-                            constraints.maxHeight,
-                            preview,
-                        )
-                    }
-                },
-                onFinish = onFinish,
-                onLongPress = {
-                    pinItemRequestWrapper.updatePinItemRequest(
-                        pinItemRequest = pinItemRequest,
-                    )
-
-                    onDragStart()
-
-                    onFinish()
-                },
-            )
-        }
+            },
+        )
     }
 }
 
@@ -562,5 +489,164 @@ private fun PinBottomSheet(
                 }
             }
         }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+private fun handleGridItem(
+    gridItem: GridItem?,
+    pinItemRequest: PinItemRequest,
+    context: Context,
+    onUpdateGridItems: () -> Unit,
+    onDeleteShortcutGridItem: (GridItem) -> Unit,
+) {
+    if (gridItem == null) return
+
+    if (pinItemRequest.isValid && pinItemRequest.accept()) {
+        Toast.makeText(
+            context,
+            """
+                ${gridItem.page}
+                ${gridItem.startRow}
+                ${gridItem.startColumn}
+            """.trimIndent(),
+            Toast.LENGTH_LONG,
+        ).show()
+
+        onUpdateGridItems()
+    } else {
+        onDeleteShortcutGridItem(gridItem)
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+private suspend fun addPinShortcutToHomeScreen(
+    androidUserManagerWrapper: AndroidUserManagerWrapper,
+    shortcutInfo: ShortcutInfo,
+    androidLauncherAppsWrapper: AndroidLauncherAppsWrapper,
+    fileManager: FileManager,
+    iconKeyGenerator: IconKeyGenerator,
+    imageSerializer: AndroidImageSerializer,
+    onAddPinShortcutToHomeScreen: (
+        serialNumber: Long,
+        shortcutId: String,
+        packageName: String,
+        shortLabel: String,
+        longLabel: String,
+        isEnabled: Boolean,
+        icon: String?,
+    ) -> Unit,
+) {
+    val serialNumber =
+        androidUserManagerWrapper.getSerialNumberForUser(userHandle = shortcutInfo.userHandle)
+
+    val icon = androidLauncherAppsWrapper.getShortcutBadgedIconDrawable(
+        shortcutInfo = shortcutInfo,
+        density = 0,
+    )?.let { drawable ->
+        val directory =
+            fileManager.getFilesDirectory(FileManager.SHORTCUTS_DIR)
+
+        val file = File(
+            directory,
+            iconKeyGenerator.getShortcutIconKey(
+                serialNumber = serialNumber,
+                packageName = shortcutInfo.`package`,
+                id = shortcutInfo.id,
+            ),
+        )
+
+        imageSerializer.createDrawablePath(drawable = drawable, file = file)
+
+        file.absolutePath
+    }
+
+    onAddPinShortcutToHomeScreen(
+        serialNumber,
+        shortcutInfo.id,
+        shortcutInfo.`package`,
+        shortcutInfo.shortLabel.toString(),
+        shortcutInfo.longLabel.toString(),
+        shortcutInfo.isEnabled,
+        icon,
+    )
+}
+
+private suspend fun addPinWidgetToHomeScreen(
+    appWidgetProviderInfo: AppWidgetProviderInfo,
+    fileManager: FileManager,
+    iconKeyGenerator: IconKeyGenerator,
+    maxWidth: Int,
+    maxHeight: Int,
+    onAddPinWidgetToHomeScreen: (
+        serialNumber: Long,
+        componentName: String,
+        configure: String?,
+        packageName: String,
+        targetCellHeight: Int,
+        targetCellWidth: Int,
+        minWidth: Int,
+        minHeight: Int,
+        resizeMode: Int,
+        minResizeWidth: Int,
+        minResizeHeight: Int,
+        maxResizeWidth: Int,
+        maxResizeHeight: Int,
+        rootWidth: Int,
+        rootHeight: Int,
+        preview: String?,
+    ) -> Unit,
+    userManager: AndroidUserManagerWrapper,
+) {
+    val componentName = appWidgetProviderInfo.provider.flattenToString()
+
+    val directory =
+        fileManager.getFilesDirectory(FileManager.WIDGETS_DIR)
+
+    val file = File(
+        directory,
+        iconKeyGenerator.getHashedName(name = componentName),
+    )
+
+    val preview = file.absolutePath
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        onAddPinWidgetToHomeScreen(
+            userManager.getSerialNumberForUser(userHandle = appWidgetProviderInfo.profile),
+            componentName,
+            appWidgetProviderInfo.configure.flattenToString(),
+            appWidgetProviderInfo.provider.packageName,
+            appWidgetProviderInfo.targetCellHeight,
+            appWidgetProviderInfo.targetCellWidth,
+            appWidgetProviderInfo.minWidth,
+            appWidgetProviderInfo.minHeight,
+            appWidgetProviderInfo.resizeMode,
+            appWidgetProviderInfo.minResizeWidth,
+            appWidgetProviderInfo.minResizeHeight,
+            appWidgetProviderInfo.maxResizeWidth,
+            appWidgetProviderInfo.maxResizeHeight,
+            maxWidth,
+            maxHeight,
+            preview,
+        )
+    } else {
+        onAddPinWidgetToHomeScreen(
+            userManager.getSerialNumberForUser(userHandle = appWidgetProviderInfo.profile),
+            appWidgetProviderInfo.provider.flattenToString(),
+            appWidgetProviderInfo.configure.flattenToString(),
+            appWidgetProviderInfo.provider.packageName,
+            0,
+            0,
+            appWidgetProviderInfo.minWidth,
+            appWidgetProviderInfo.minHeight,
+            appWidgetProviderInfo.resizeMode,
+            appWidgetProviderInfo.minResizeWidth,
+            appWidgetProviderInfo.minResizeHeight,
+            0,
+            0,
+            maxWidth,
+            maxHeight,
+            preview,
+        )
     }
 }

@@ -1,9 +1,0 @@
-syntax = "proto3";
-
-option java_package = "com.eblan.launcher.data.datastore.proto.appdrawer";
-option java_multiple_files = true;
-
-enum EblanApplicationInfoOrderProto {
-  Alphabetical = 0;
-  Index = 1;
-}

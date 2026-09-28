@@ -17,10 +17,10 @@
  */
 package com.eblan.launcher.domain.repository
 
-import com.eblan.launcher.domain.model.DeleteEblanApplicationInfo
-import com.eblan.launcher.domain.model.EblanApplicationInfo
-import com.eblan.launcher.domain.model.EblanApplicationInfoTag
-import com.eblan.launcher.domain.model.SyncEblanApplicationInfo
+import com.eblan.launcher.domain.model.application.DeleteEblanApplicationInfo
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
+import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
+import com.eblan.launcher.domain.model.application.SyncEblanApplicationInfo
 import kotlinx.coroutines.flow.Flow
 
 interface EblanApplicationInfoRepository {
@@ -29,8 +29,6 @@ interface EblanApplicationInfoRepository {
     suspend fun getEblanApplicationInfos(): List<EblanApplicationInfo>
 
     suspend fun upsertEblanApplicationInfo(eblanApplicationInfo: EblanApplicationInfo)
-
-    suspend fun updateEblanApplicationInfos(eblanApplicationInfos: List<EblanApplicationInfo>)
 
     suspend fun deleteEblanApplicationInfoByPackageName(
         serialNumber: Long,
@@ -44,8 +42,6 @@ interface EblanApplicationInfoRepository {
     suspend fun deleteSyncEblanApplicationInfos(deleteEblanApplicationInfos: List<DeleteEblanApplicationInfo>)
 
     suspend fun updateEblanApplicationInfo(eblanApplicationInfo: EblanApplicationInfo)
-
-    suspend fun resetEblanApplicationInfoCustomIcon(eblanApplicationInfo: EblanApplicationInfo)
 
     suspend fun getEblanApplicationInfoByComponentName(
         serialNumber: Long,
@@ -65,4 +61,6 @@ interface EblanApplicationInfoRepository {
     suspend fun getEblanApplicationInfosByTagId(id: Long): List<EblanApplicationInfo>
 
     suspend fun getEblanApplicationInfosWithoutTag(): List<EblanApplicationInfo>
+
+    suspend fun updateEblanApplicationInfos(eblanApplicationInfos: List<EblanApplicationInfo>)
 }

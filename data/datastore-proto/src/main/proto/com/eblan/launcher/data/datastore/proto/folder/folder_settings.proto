@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+import "com/eblan/launcher/data/datastore/proto/model/background_color.proto";
+
+option java_package = "com.eblan.launcher.data.datastore.proto.folder";
+option java_multiple_files = true;
+
+message FolderSettingsProto {
+  optional int32 folderCellWidth = 1;
+  optional int32 folderCellHeight = 2;
+  optional int32 maxFolderColumns = 3;
+  optional int32 maxFolderRows = 4;
+  optional int32 folderCornerRadius = 5;
+  optional BackgroundColorProto folderBackgroundColorProto = 6;
+  optional int32 customFolderBackgroundColor = 7;
+}

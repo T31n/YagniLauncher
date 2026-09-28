@@ -17,8 +17,8 @@
  */
 package com.eblan.launcher.domain.grid
 
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.ResolveDirection
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.ResolveDirection
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 
@@ -66,21 +66,13 @@ fun getResolveDirectionByX(
     val xInGridItem = x - gridItemX
 
     return when {
-        xInGridItem < gridItemWidth / 3 -> {
-            ResolveDirection.Right
-        }
-
-        xInGridItem < 2 * gridItemWidth / 3 -> {
-            ResolveDirection.Center
-        }
-
-        else -> {
-            ResolveDirection.Left
-        }
+        xInGridItem < gridItemWidth / 3 -> ResolveDirection.Right
+        xInGridItem < 2 * gridItemWidth / 3 -> ResolveDirection.Center
+        else -> ResolveDirection.Left
     }
 }
 
-suspend fun getGridItemByCoordinates(
+fun getGridItemByCoordinates(
     id: String,
     gridItems: List<GridItem>,
     columns: Int,
@@ -95,8 +87,6 @@ suspend fun getGridItemByCoordinates(
     val cellHeight = gridHeight / rows
 
     return gridItems.find { gridItem ->
-        currentCoroutineContext().ensureActive()
-
         val startColumn = x / cellWidth
 
         val startRow = y / cellHeight
@@ -132,8 +122,6 @@ suspend fun findAvailableRegionByPage(
         currentCoroutineContext().ensureActive()
 
         for (row in 0..(rows - gridItem.rowSpan)) {
-            currentCoroutineContext().ensureActive()
-
             for (column in 0..(columns - gridItem.columnSpan)) {
                 val candidateGridItem = gridItem.copy(
                     page = page,
@@ -141,12 +129,10 @@ suspend fun findAvailableRegionByPage(
                     startRow = row,
                 )
 
-                val isFree = gridItems.none { otherGridItem ->
-                    currentCoroutineContext().ensureActive()
-
-                    otherGridItem.page == page && rectanglesOverlap(
+                val isFree = gridItems.none {
+                    it.page == page && rectanglesOverlap(
                         moving = candidateGridItem,
-                        other = otherGridItem,
+                        other = it,
                     )
                 }
 

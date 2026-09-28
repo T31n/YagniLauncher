@@ -33,7 +33,7 @@ interface AndroidUserManagerWrapper {
     fun isQuietModeEnabled(userHandle: UserHandle): Boolean
 
     @RequiresApi(Build.VERSION_CODES.P)
-    fun requestQuietModeEnabled(
+    suspend fun requestQuietModeEnabled(
         enableQuiteMode: Boolean,
         userHandle: UserHandle,
     ): Boolean

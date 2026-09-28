@@ -21,11 +21,9 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.LauncherApps.PinItemRequest
-import android.graphics.Rect
 import android.os.Build
 import android.os.IBinder
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.IntentSenderRequest
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -33,10 +31,8 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -53,40 +49,38 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
+import com.eblan.launcher.common.AndroidImageSerializer
+import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
-import com.eblan.launcher.domain.framework.FileManager
-import com.eblan.launcher.domain.model.Associate
-import com.eblan.launcher.domain.model.EblanAction
-import com.eblan.launcher.domain.model.EblanActionType
-import com.eblan.launcher.domain.model.EblanApplicationInfoGroup
-import com.eblan.launcher.domain.model.ExperimentalSettings
-import com.eblan.launcher.domain.model.GestureSettings
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.HomeSettings
-import com.eblan.launcher.domain.model.ManagedProfileResult
-import com.eblan.launcher.domain.model.MoveGridItemResult
-import com.eblan.launcher.domain.model.PinItemRequestType
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
+import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
+import com.eblan.launcher.domain.model.folder.FolderEntry
+import com.eblan.launcher.domain.model.grid.Associate
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.MoveFolderEblanApplicationInfoGridItemResult
+import com.eblan.launcher.domain.model.grid.MoveGridItemResult
+import com.eblan.launcher.domain.model.launcherapps.PinItemRequestType
+import com.eblan.launcher.domain.model.userdata.EblanAction
+import com.eblan.launcher.domain.model.userdata.EblanActionType
+import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
+import com.eblan.launcher.domain.model.userdata.GestureSettings
+import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.GridItemSource
 import com.eblan.launcher.feature.home.model.PageDirection
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.calculatePage
 import com.eblan.launcher.feature.home.util.handleEblanAction
-import com.eblan.launcher.framework.imageserializer.AndroidImageSerializer
 import com.eblan.launcher.framework.launcherapps.AndroidLauncherAppsWrapper
 import com.eblan.launcher.framework.launcherapps.PinItemRequestWrapper
 import com.eblan.launcher.framework.usermanager.AndroidUserManagerWrapper
 import com.eblan.launcher.framework.wallpapermanager.AndroidWallpaperManagerWrapper
-import com.eblan.launcher.framework.widgetmanager.AndroidAppWidgetHostWrapper
-import com.eblan.launcher.framework.widgetmanager.AndroidAppWidgetManagerWrapper
-import com.eblan.launcher.ui.local.LocalAppWidgetHost
-import com.eblan.launcher.ui.local.LocalAppWidgetManager
 import com.eblan.launcher.ui.local.LocalFileManager
 import com.eblan.launcher.ui.local.LocalIconKeyGenerator
 import com.eblan.launcher.ui.local.LocalImageSerializer
@@ -109,7 +103,6 @@ import kotlin.math.roundToInt
 @OptIn(ExperimentalFoundationApi::class)
 internal class PagerScreenState(
     density: Density,
-    private val screenWidth: Int,
     private val screenHeight: Int,
     private val fileManager: FileManager,
     private val androidImageSerializer: AndroidImageSerializer,
@@ -120,10 +113,7 @@ internal class PagerScreenState(
     private val pinItemRequestWrapper: PinItemRequestWrapper,
     private val gestureSettings: GestureSettings,
     private val homeSettings: HomeSettings,
-    private val androidAppWidgetHostWrapper: AndroidAppWidgetHostWrapper,
-    private val androidAppWidgetManagerWrapper: AndroidAppWidgetManagerWrapper,
     private val androidWallpaperManagerWrapper: AndroidWallpaperManagerWrapper,
-    private val experimentalSettings: ExperimentalSettings,
     private val iconKeyGenerator: IconKeyGenerator,
     private val onGetPinGridItem: (PinItemRequestType) -> Unit,
     private val onResetPinGridItem: () -> Unit,
@@ -131,19 +121,16 @@ internal class PagerScreenState(
     var hasDoubleTap by mutableStateOf(false)
         private set
 
-    var isPressHome by mutableStateOf(false)
-        private set
-
     var eblanApplicationInfoGroup by mutableStateOf<EblanApplicationInfoGroup?>(null)
         private set
 
-    var showGridItemPopup by mutableStateOf(false)
+    var showGridItemMenu by mutableStateOf(false)
         private set
 
-    var showSettingsPopup by mutableStateOf(false)
+    var showSettingsMenu by mutableStateOf(false)
         private set
 
-    var showFolderGridItemPopup by mutableStateOf(false)
+    var showFolderGridItemMenu by mutableStateOf(false)
         private set
 
     var isDragging by mutableStateOf(false)
@@ -152,19 +139,16 @@ internal class PagerScreenState(
     var isResizing by mutableStateOf(false)
         private set
 
-    var settingsPopupIntOffset by mutableStateOf<IntOffset?>(null)
+    var settingsMenuIntOffset by mutableStateOf<IntOffset?>(null)
         private set
 
-    var popupIntOffset by mutableStateOf<IntOffset?>(null)
+    var menuIntOffset by mutableStateOf<IntOffset?>(null)
         private set
 
-    var popupIntSize by mutableStateOf<IntSize?>(null)
+    var menuIntSize by mutableStateOf<IntSize?>(null)
         private set
 
-    var deleteAppWidgetId by mutableStateOf(false)
-        private set
-
-    var updatedWidgetGridItem by mutableStateOf<GridItem?>(null)
+    var widgetGridItem by mutableStateOf<GridItem?>(null)
         private set
 
     var gridPageDirection by mutableStateOf<PageDirection?>(null)
@@ -191,13 +175,13 @@ internal class PagerScreenState(
     var sharedElementKey by mutableStateOf<SharedElementKey?>(null)
         private set
 
-    var managedProfileResult by mutableStateOf<ManagedProfileResult?>(null)
-        private set
-
-    var statusBarNotifications by mutableStateOf<Map<String, Int>>(emptyMap())
-        private set
-
     var associate by mutableStateOf<Associate?>(null)
+        private set
+
+    var isVisibleFolderGridItems by mutableStateOf(false)
+        private set
+
+    var isVisibleFolderEblanApplicationInfos by mutableStateOf(false)
         private set
 
     val swipeUpY = Animatable(screenHeight.toFloat())
@@ -244,10 +228,14 @@ internal class PagerScreenState(
         override fun onDrop(event: DragAndDropEvent): Boolean = true
     }
 
-    val swipeY by derivedStateOf {
-        if (swipeUpY.value < screenHeight.toFloat() && gestureSettings.swipeUp.eblanActionType == EblanActionType.OpenAppDrawer) {
+    val applicationScreenSwipeY by derivedStateOf {
+        if (swipeUpY.value < screenHeight.toFloat() &&
+            gestureSettings.swipeUp.eblanActionType == EblanActionType.OpenAppDrawer
+        ) {
             swipeUpY
-        } else if (swipeDownY.value < screenHeight.toFloat() && gestureSettings.swipeDown.eblanActionType == EblanActionType.OpenAppDrawer) {
+        } else if (swipeDownY.value < screenHeight.toFloat() &&
+            gestureSettings.swipeDown.eblanActionType == EblanActionType.OpenAppDrawer
+        ) {
             swipeDownY
         } else {
             Animatable(screenHeight.toFloat())
@@ -255,15 +243,15 @@ internal class PagerScreenState(
     }
 
     val isApplicationScreenVisible by derivedStateOf {
-        swipeY.value < screenHeight.toFloat()
+        applicationScreenSwipeY.value < screenHeight.toFloat()
     }
 
     val applicationScreenAlpha by derivedStateOf {
-        ((screenHeight - swipeY.value) / (screenHeight / 2)).coerceIn(0f, 1f)
+        ((screenHeight - applicationScreenSwipeY.value) / (screenHeight / 2)).coerceIn(0f, 1f)
     }
 
     val applicationScreenCornerSize by derivedStateOf {
-        val progress = (swipeY.value / screenHeight).coerceIn(0f, 1f)
+        val progress = (applicationScreenSwipeY.value / screenHeight).coerceIn(0f, 1f)
 
         (20 * progress).dp
     }
@@ -271,7 +259,7 @@ internal class PagerScreenState(
     val pagerScreenAlpha by derivedStateOf {
         val threshold = screenHeight / 2
 
-        ((swipeY.value - threshold) / threshold).coerceIn(0f, 1f)
+        ((applicationScreenSwipeY.value - threshold) / threshold).coerceIn(0f, 1f)
     }
 
     val widgetScreenSwipeY = Animatable(screenHeight.toFloat())
@@ -300,10 +288,13 @@ internal class PagerScreenState(
 
     val appWidgetScreenSwipeY = Animatable(screenHeight.toFloat())
 
-    var isCloseGridItemPopup by mutableStateOf(false)
+    var isCloseGridItemMenu by mutableStateOf(false)
         private set
 
-    var isCloseFolderGridItemPopup by mutableStateOf(false)
+    var isCloseFolderGridItemMenu by mutableStateOf(false)
+        private set
+
+    var showApplicationScreen by mutableStateOf(false)
         private set
 
     var showWidgetScreen by mutableStateOf(false)
@@ -312,13 +303,59 @@ internal class PagerScreenState(
     var showShortcutConfigScreen by mutableStateOf(false)
         private set
 
+    var lastAppWidgetId by mutableIntStateOf(AppWidgetManager.INVALID_APPWIDGET_ID)
+        private set
+
+    val isAvailableSystemNavigation
+        get() = applicationScreenSwipeY.value == screenHeight.toFloat() &&
+            !showWidgetScreen &&
+            !showShortcutConfigScreen &&
+            !showGridItemMenu &&
+            !showSettingsMenu &&
+            !showFolderGridItemMenu &&
+            eblanApplicationInfoGroup == null
+
+    var showFolderEblanApplicationInfoMenu by mutableStateOf(false)
+        private set
+
+    var isCloseFolderEblanApplicationInfoMenu by mutableStateOf(false)
+        private set
+
+    var showFolderEblanApplicationInfoGridItemMenu by mutableStateOf(false)
+        private set
+
+    var isCloseFolderEblanApplicationInfoGridItemMenu by mutableStateOf(false)
+        private set
+
+    var showEblanApplicationInfoMenu by mutableStateOf(false)
+        private set
+
+    var showPrivateEblanApplicationInfoMenu by mutableStateOf(false)
+        private set
+
+    var selectedEblanApplicationInfo by mutableStateOf<EblanApplicationInfo?>(null)
+        private set
+
+    var selectedFolderEblanApplicationInfo by mutableStateOf<FolderEblanApplicationInfo?>(null)
+        private set
+
+    var isCloseEblanApplicationInfoMenu by mutableStateOf(false)
+        private set
+
+    var selectedGridItem by mutableStateOf<GridItem?>(null)
+        private set
+
+    var selectedFolderEblanApplicationInfoGridItem by mutableStateOf<FolderEblanApplicationInfoGridItem?>(null)
+        private set
+
+    var isClosePrivateEblanApplicationInfoMenu by mutableStateOf(false)
+        private set
+
     private val touchSlop = with(density) {
         50.dp.toPx()
     }
 
     private var accumulatedDragOffset by mutableStateOf(Offset.Zero)
-
-    private var lastAppWidgetId by mutableIntStateOf(AppWidgetManager.INVALID_APPWIDGET_ID)
 
     suspend fun handlePinGridItemEffect(
         pinGridItem: GridItem?,
@@ -331,7 +368,7 @@ internal class PagerScreenState(
         val pinItemRequest = pinItemRequestWrapper.getPinItemRequest() ?: return
 
         if (isApplicationScreenVisible) {
-            swipeY.animateTo(
+            applicationScreenSwipeY.animateTo(
                 targetValue = screenHeight.toFloat(),
                 animationSpec = tween(
                     easing = FastOutSlowInEasing,
@@ -356,145 +393,6 @@ internal class PagerScreenState(
         isDragging = true
     }
 
-    fun handleDragGridItemEffect(
-        gridCurrentPage: Int,
-        dockGridCurrentPage: Int,
-        density: Density,
-        dockHeight: Dp,
-        isGridScrollInProgress: Boolean,
-        isDockScrollInProgress: Boolean,
-        lockMovement: Boolean,
-        paddingValues: PaddingValues,
-        gridItemSource: State<GridItemSource?>,
-        isVisibleOverlay: State<Boolean>,
-        moveGridItemResult: State<MoveGridItemResult?>,
-        layoutDirection: LayoutDirection,
-        onMoveGridItem: (
-            movingGridItem: GridItem,
-            x: Int,
-            y: Int,
-            columns: Int,
-            rows: Int,
-            gridWidth: Int,
-            gridHeight: Int,
-        ) -> Unit,
-    ) {
-        handleDragGridItem(
-            columns = homeSettings.columns,
-            gridCurrentPage = gridCurrentPage,
-            dockGridCurrentPage = dockGridCurrentPage,
-            density = density,
-            dockColumns = homeSettings.dockColumns,
-            dockHeight = dockHeight,
-            dockRows = homeSettings.dockRows,
-            drag = drag,
-            dragIntOffset = dragIntOffset,
-            gridItemSource = gridItemSource,
-            isDragging = isDragging,
-            isVisibleOverlay = isVisibleOverlay,
-            isGridScrollInProgress = isGridScrollInProgress,
-            isDockScrollInProgress = isDockScrollInProgress,
-            lockMovement = lockMovement,
-            paddingValues = paddingValues,
-            rows = homeSettings.rows,
-            screenHeight = screenHeight,
-            screenWidth = screenWidth,
-            moveGridItemResult = moveGridItemResult,
-            layoutDirection = layoutDirection,
-            onMoveGridItem = onMoveGridItem,
-            onUpdateAssociate = {
-                associate = it
-            },
-            onUpdateSharedElementKey = {
-                sharedElementKey = it
-            },
-        )
-    }
-
-    suspend fun handleDropGridItemEffect(
-        moveGridItemResult: State<MoveGridItemResult?>,
-        onLaunchShortcutConfigIntent: (Intent) -> Unit,
-        onLaunchShortcutConfigIntentSenderRequest: (IntentSenderRequest) -> Unit,
-        onLaunchWidgetIntent: (Intent) -> Unit,
-        gridItemSource: State<GridItemSource?>,
-        isVisibleOverlay: State<Boolean>,
-        onUpdateIsVisibleOverlay: (Boolean) -> Unit,
-        onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
-        onResetGrid: () -> Unit,
-        onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
-    ) {
-        handleDropGridItem(
-            androidAppWidgetHostWrapper = androidAppWidgetHostWrapper,
-            androidAppWidgetManagerWrapper = androidAppWidgetManagerWrapper,
-            androidLauncherAppsWrapper = androidLauncherAppsWrapper,
-            androidUserManagerWrapper = androidUserManagerWrapper,
-            context = context,
-            drag = drag,
-            gridItemSource = gridItemSource,
-            isDragging = isDragging,
-            isVisibleOverlay = isVisibleOverlay,
-            moveGridItemResult = moveGridItemResult,
-            lockMovement = experimentalSettings.lockMovement,
-            onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
-            onResetGrid = onResetGrid,
-            onUpdateGridItemsAfterMove = onUpdateGridItemsAfterMove,
-            onLaunchShortcutConfigIntent = onLaunchShortcutConfigIntent,
-            onLaunchShortcutConfigIntentSenderRequest = onLaunchShortcutConfigIntentSenderRequest,
-            onLaunchWidgetIntent = onLaunchWidgetIntent,
-            onUpdateAppWidgetId = {
-                lastAppWidgetId = it
-            },
-            onUpdateIsDragging = {
-                isDragging = it
-            },
-            onUpdateWidgetGridItem = {
-                updatedWidgetGridItem = it
-            },
-            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-        )
-    }
-
-    fun handleDeleteAppWidgetIdEffect(
-        moveGridItemResult: MoveGridItemResult?,
-        onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
-    ) {
-        handleDeleteAppWidgetId(
-            appWidgetId = lastAppWidgetId,
-            deleteAppWidgetId = deleteAppWidgetId,
-            moveGridItemResult = moveGridItemResult,
-            onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
-            onResetAppWidgetId = {
-                lastAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
-
-                deleteAppWidgetId = false
-            },
-        )
-    }
-
-    fun handleAnimateScrollToPageEffect(
-        density: Density,
-        paddingValues: PaddingValues,
-        gridItemSource: State<GridItemSource?>,
-        layoutDirection: LayoutDirection,
-    ) {
-        handleAnimateScrollToPage(
-            associate = associate,
-            density = density,
-            dragIntOffset = dragIntOffset,
-            gridItemSource = gridItemSource,
-            isDragging = isDragging,
-            paddingValues = paddingValues,
-            screenWidth = screenWidth,
-            layoutDirection = layoutDirection,
-            onUpdateDockPageDirection = {
-                dockPageDirection = it
-            },
-            onUpdateGridPageDirection = {
-                gridPageDirection = it
-            },
-        )
-    }
-
     fun handleHasDoubleTap() {
         if (!hasDoubleTap) return
 
@@ -502,237 +400,10 @@ internal class PagerScreenState(
             context = context,
             eblanAction = gestureSettings.doubleTap,
             launcherApps = androidLauncherAppsWrapper,
-            onOpenAppDrawer = {
-                scope.launch {
-                    swipeY.animateTo(
-                        targetValue = 0f,
-                        animationSpec = spring(
-                            dampingRatio = Spring.DampingRatioNoBouncy,
-                            stiffness = Spring.StiffnessLow,
-                        ),
-                    )
-                }
-            },
+            onOpenAppDrawer = ::openApplicationScreen,
         )
 
         hasDoubleTap = false
-    }
-
-    fun handleNewIntent(
-        dockGridHorizontalPagerState: PagerState,
-        gridHorizontalPagerState: PagerState,
-        intent: Intent,
-        windowToken: IBinder,
-    ) {
-        handleActionMainIntent(
-            dockGridHorizontalPagerState = dockGridHorizontalPagerState,
-            gridHorizontalPagerState = gridHorizontalPagerState,
-            intent = intent,
-            windowToken = windowToken,
-        )
-
-        handleEblanActionIntent(intent = intent)
-    }
-
-    fun handleAppWidgetLauncherResult(
-        moveGridItemResult: MoveGridItemResult?,
-        result: ActivityResult,
-    ) {
-        handleAppWidgetLauncherResult(
-            androidAppWidgetManagerWrapper = androidAppWidgetManagerWrapper,
-            moveGridItemResult = moveGridItemResult,
-            result = result,
-            onDeleteAppWidgetId = {
-                deleteAppWidgetId = true
-            },
-            onUpdateWidgetGridItem = {
-                updatedWidgetGridItem = it
-            },
-        )
-    }
-
-    fun swipeEblanAction() {
-        val swipeThreshold = 100f
-
-        if (swipeUpY.value < screenHeight - swipeThreshold) {
-            handleEblanAction(
-                context = context,
-                eblanAction = gestureSettings.swipeUp,
-                launcherApps = androidLauncherAppsWrapper,
-                onOpenAppDrawer = {},
-            )
-        }
-
-        if (swipeDownY.value < screenHeight - swipeThreshold) {
-            handleEblanAction(
-                context = context,
-                eblanAction = gestureSettings.swipeDown,
-                launcherApps = androidLauncherAppsWrapper,
-                onOpenAppDrawer = {},
-            )
-        }
-    }
-
-    fun resetSwipeOffset() {
-        suspend fun animateOffset(
-            eblanAction: EblanAction,
-            swipeY: Animatable<Float, AnimationVector1D>,
-        ) {
-            if (eblanAction.eblanActionType == EblanActionType.OpenAppDrawer) {
-                val targetValue = if (swipeY.value < screenHeight - 200f) {
-                    0f
-                } else {
-                    screenHeight.toFloat()
-                }
-
-                swipeY.animateTo(
-                    targetValue = targetValue,
-                    animationSpec = tween(
-                        easing = FastOutSlowInEasing,
-                    ),
-                )
-            } else {
-                swipeY.snapTo(screenHeight.toFloat())
-            }
-        }
-
-        scope.launch {
-            animateOffset(
-                eblanAction = gestureSettings.swipeUp,
-                swipeY = swipeUpY,
-            )
-
-            animateOffset(
-                eblanAction = gestureSettings.swipeDown,
-                swipeY = swipeDownY,
-            )
-        }
-    }
-
-    fun handleActionMainIntent(
-        dockGridHorizontalPagerState: PagerState,
-        gridHorizontalPagerState: PagerState,
-        intent: Intent,
-        windowToken: IBinder,
-    ) {
-        if (intent.action != Intent.ACTION_MAIN && !intent.hasCategory(Intent.CATEGORY_HOME)) {
-            return
-        }
-
-        if ((intent.flags and Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
-            return
-        }
-
-        isPressHome = true
-
-        if (swipeY.value < screenHeight.toFloat() ||
-            widgetScreenSwipeY.value < screenHeight.toFloat() ||
-            shortcutConfigScreenSwipeY.value < screenHeight.toFloat() ||
-            eblanApplicationInfoGroup != null
-        ) {
-            return
-        }
-
-        animateScrollToPages(
-            dockGridHorizontalPagerState = dockGridHorizontalPagerState,
-            gridHorizontalPagerState = gridHorizontalPagerState,
-        )
-
-        if (homeSettings.wallpaperScroll) {
-            val page = calculatePage(
-                index = gridHorizontalPagerState.currentPage,
-                infiniteScroll = homeSettings.infiniteScroll,
-                pageCount = homeSettings.pageCount,
-            )
-
-            androidWallpaperManagerWrapper.setWallpaperOffsetSteps(
-                xStep = 1f / (homeSettings.pageCount.toFloat() - 1),
-                yStep = 1f,
-            )
-
-            androidWallpaperManagerWrapper.setWallpaperOffsets(
-                windowToken = windowToken,
-                xOffset = page / (homeSettings.pageCount.toFloat() - 1),
-                yOffset = 0f,
-            )
-        }
-    }
-
-    fun animateScrollToPages(
-        dockGridHorizontalPagerState: PagerState,
-        gridHorizontalPagerState: PagerState,
-    ) {
-        fun getInfiniteScrollInitialPage(
-            currentPage: Int,
-            initialPage: Int,
-            pageCount: Int,
-            center: Int = Int.MAX_VALUE / 2,
-        ): Int {
-            var diff = initialPage - Math.floorMod(currentPage - center, pageCount)
-
-            val halfCount = pageCount / 2
-
-            if (diff > halfCount) {
-                diff -= pageCount
-            } else if (diff < -halfCount) {
-                diff += pageCount
-            }
-
-            return currentPage + diff
-        }
-
-        scope.launch {
-            gridHorizontalPagerState.animateScrollToPage(
-                if (homeSettings.infiniteScroll) {
-                    getInfiniteScrollInitialPage(
-                        currentPage = gridHorizontalPagerState.currentPage,
-                        initialPage = homeSettings.initialPage,
-                        pageCount = homeSettings.pageCount,
-                    )
-                } else {
-                    homeSettings.initialPage
-                },
-            )
-        }
-
-        scope.launch {
-            dockGridHorizontalPagerState.animateScrollToPage(
-                if (homeSettings.dockInfiniteScroll) {
-                    getInfiniteScrollInitialPage(
-                        currentPage = dockGridHorizontalPagerState.currentPage,
-                        initialPage = homeSettings.dockInitialPage,
-                        pageCount = homeSettings.dockPageCount,
-                    )
-                } else {
-                    homeSettings.dockInitialPage
-                },
-            )
-        }
-    }
-
-    fun handleEblanActionIntent(intent: Intent) {
-        if (intent.action != EblanAction.ACTION) return
-
-        val eblanAction = intent.getStringExtra(EblanAction.NAME)?.let { eblanAction ->
-            Json.decodeFromString<EblanAction>(eblanAction)
-        } ?: return
-
-        handleEblanAction(
-            context = context,
-            eblanAction = eblanAction,
-            launcherApps = androidLauncherAppsWrapper,
-            onOpenAppDrawer = {
-                scope.launch {
-                    swipeY.animateTo(
-                        targetValue = 0f,
-                        animationSpec = spring(
-                            dampingRatio = Spring.DampingRatioNoBouncy,
-                            stiffness = Spring.StiffnessLow,
-                        ),
-                    )
-                }
-            },
-        )
     }
 
     fun dragStart(offset: Offset) {
@@ -755,15 +426,6 @@ internal class PagerScreenState(
         overlayIntOffset = overlayIntOffset?.plus(dragAmount.round())
     }
 
-    fun updateOverlayBounds(
-        intOffset: IntOffset,
-        intSize: IntSize,
-    ) {
-        overlayIntOffset = intOffset
-
-        overlayIntSize = intSize
-    }
-
     fun resetOverlay() {
         overlayImageBitmap = null
 
@@ -780,46 +442,76 @@ internal class PagerScreenState(
         hasDoubleTap = value
     }
 
-    fun showGridItemPopup(
-        intOffset: IntOffset,
-        intSize: IntSize,
-    ) {
-        popupIntOffset = intOffset
+    fun dismissGridItemMenu() {
+        menuIntOffset = null
 
-        popupIntSize = intSize
+        menuIntSize = null
 
-        showGridItemPopup = true
+        selectedGridItem = null
+
+        showGridItemMenu = false
+
+        isCloseGridItemMenu = false
     }
 
-    fun dismissGridItemPopup() {
-        popupIntOffset = null
+    fun dismissFolderGridItemMenu() {
+        menuIntOffset = null
 
-        popupIntSize = null
+        menuIntSize = null
 
-        showGridItemPopup = false
+        selectedGridItem = null
 
-        isCloseGridItemPopup = false
+        showFolderGridItemMenu = false
+
+        isCloseFolderGridItemMenu = false
     }
 
-    fun showFolderGridItemPopup(
-        intOffset: IntOffset,
-        intSize: IntSize,
-    ) {
-        popupIntOffset = intOffset
+    fun dismissFolderEblanApplicationMenu() {
+        menuIntOffset = null
 
-        popupIntSize = intSize
+        menuIntSize = null
 
-        showFolderGridItemPopup = true
+        selectedFolderEblanApplicationInfo = null
+
+        showFolderEblanApplicationInfoMenu = false
+
+        isCloseFolderEblanApplicationInfoMenu = false
     }
 
-    fun dismissFolderGridItemPopup() {
-        popupIntOffset = null
+    fun dismissFolderEblanApplicationInfoGridItemMenu() {
+        menuIntOffset = null
 
-        popupIntSize = null
+        menuIntSize = null
 
-        showFolderGridItemPopup = false
+        selectedFolderEblanApplicationInfoGridItem = null
 
-        isCloseFolderGridItemPopup = false
+        showFolderEblanApplicationInfoGridItemMenu = false
+
+        isCloseFolderEblanApplicationInfoGridItemMenu = false
+    }
+
+    fun dismissEblanApplicationInfoMenu() {
+        menuIntOffset = null
+
+        menuIntSize = null
+
+        selectedEblanApplicationInfo = null
+
+        showEblanApplicationInfoMenu = false
+
+        isCloseEblanApplicationInfoMenu = false
+    }
+
+    fun dismissPrivateEblanApplicationInfoMenu() {
+        menuIntOffset = null
+
+        menuIntSize = null
+
+        selectedEblanApplicationInfo = null
+
+        showPrivateEblanApplicationInfoMenu = false
+
+        isClosePrivateEblanApplicationInfoMenu = false
     }
 
     fun updateIsDragging(value: Boolean) {
@@ -830,10 +522,6 @@ internal class PagerScreenState(
         isResizing = value
     }
 
-    fun updateOverlayImageBitmap(value: ImageBitmap?) {
-        overlayImageBitmap = value
-    }
-
     fun updateDrag(value: Drag) {
         drag = value
     }
@@ -842,20 +530,10 @@ internal class PagerScreenState(
         sharedElementKey = value
     }
 
-    fun updateManagedProfileResult(value: ManagedProfileResult?) {
-        managedProfileResult = value
-    }
-
-    fun updateStatusBarNotifications(value: Map<String, Int>) {
-        statusBarNotifications = value
-    }
-
-    fun handleIsPressHome() {
-        if (isPressHome) {
-            showGridItemPopup = false
-
-            showSettingsPopup = false
-        }
+    fun verticalDragStart() {
+        showApplicationScreen =
+            gestureSettings.swipeUp.eblanActionType == EblanActionType.OpenAppDrawer ||
+            gestureSettings.swipeDown.eblanActionType == EblanActionType.OpenAppDrawer
     }
 
     fun verticalDrag(dragAmount: Float) {
@@ -867,6 +545,64 @@ internal class PagerScreenState(
     }
 
     fun verticalDragEnd() {
+        val swipeThreshold = 100f
+
+        suspend fun animateSwipeY(
+            eblanAction: EblanAction,
+            swipeY: Animatable<Float, AnimationVector1D>,
+        ) {
+            val targetValue = if (eblanAction.eblanActionType == EblanActionType.OpenAppDrawer &&
+                swipeY.value < screenHeight - swipeThreshold
+            ) {
+                0f
+            } else {
+                screenHeight.toFloat()
+            }
+
+            swipeY.animateTo(
+                targetValue = targetValue,
+                animationSpec = tween(
+                    easing = FastOutSlowInEasing,
+                ),
+            )
+        }
+
+        if (swipeUpY.value < screenHeight - swipeThreshold) {
+            handleEblanAction(
+                context = context,
+                eblanAction = gestureSettings.swipeUp,
+                launcherApps = androidLauncherAppsWrapper,
+                onOpenAppDrawer = {},
+            )
+        }
+
+        if (swipeDownY.value < screenHeight - swipeThreshold) {
+            handleEblanAction(
+                context = context,
+                eblanAction = gestureSettings.swipeDown,
+                launcherApps = androidLauncherAppsWrapper,
+                onOpenAppDrawer = {},
+            )
+        }
+
+        scope.launch {
+            animateSwipeY(
+                eblanAction = gestureSettings.swipeUp,
+                swipeY = swipeUpY,
+            )
+
+            animateSwipeY(
+                eblanAction = gestureSettings.swipeDown,
+                swipeY = swipeDownY,
+            )
+
+            if (applicationScreenSwipeY.value == screenHeight.toFloat()) {
+                showApplicationScreen = false
+            }
+        }
+    }
+
+    fun verticalDragCancel() {
         scope.launch {
             swipeUpY.animateTo(screenHeight.toFloat())
 
@@ -874,21 +610,23 @@ internal class PagerScreenState(
         }
     }
 
-    fun showSettingsPopup(offset: Offset) {
-        settingsPopupIntOffset = offset.round()
+    fun showSettingsMenu(offset: Offset) {
+        settingsMenuIntOffset = offset.round()
 
-        showSettingsPopup = true
+        showSettingsMenu = true
     }
 
-    fun dismissSettingsPopup() {
-        settingsPopupIntOffset = null
+    fun dismissSettingsMenu() {
+        settingsMenuIntOffset = null
 
-        showSettingsPopup = false
+        showSettingsMenu = false
     }
 
     fun openApplicationScreen() {
         scope.launch {
-            swipeY.animateTo(
+            showApplicationScreen = true
+
+            applicationScreenSwipeY.animateTo(
                 targetValue = 0f,
                 animationSpec = spring(
                     dampingRatio = Spring.DampingRatioNoBouncy,
@@ -898,33 +636,27 @@ internal class PagerScreenState(
         }
     }
 
-    fun resize(
-        resizeGridItem: GridItem,
-        onUpdateResizeGridItem: (GridItem) -> Unit,
-    ) {
-        isResizing = true
-
-        onUpdateResizeGridItem(resizeGridItem)
-    }
-
     fun dismissApplicationScreen() {
         scope.launch {
-            swipeY.animateTo(
+            applicationScreenSwipeY.animateTo(
                 targetValue = screenHeight.toFloat(),
                 animationSpec = tween(
                     easing = FastOutSlowInEasing,
                 ),
             )
 
-            if (isPressHome) {
-                isPressHome = false
-            }
+            showApplicationScreen = false
         }
     }
 
     fun verticalDragApplicationScreen(dragAmount: Float) {
         scope.launch {
-            swipeY.snapTo((swipeY.value + dragAmount).coerceIn(0f, screenHeight.toFloat()))
+            applicationScreenSwipeY.snapTo(
+                (applicationScreenSwipeY.value + dragAmount).coerceIn(
+                    0f,
+                    screenHeight.toFloat(),
+                ),
+            )
         }
     }
 
@@ -951,10 +683,6 @@ internal class PagerScreenState(
             )
 
             showWidgetScreen = false
-
-            if (isPressHome) {
-                isPressHome = false
-            }
         }
     }
 
@@ -1003,10 +731,6 @@ internal class PagerScreenState(
             )
 
             showShortcutConfigScreen = false
-
-            if (isPressHome) {
-                isPressHome = false
-            }
         }
     }
 
@@ -1020,15 +744,21 @@ internal class PagerScreenState(
             )
 
             eblanApplicationInfoGroup = null
-
-            if (isPressHome) {
-                isPressHome = false
-            }
         }
     }
 
-    fun openAppWidgetScreen(value: EblanApplicationInfoGroup) {
+    fun openAppWidgetScreen(
+        value: EblanApplicationInfoGroup,
+        onResetFolderGridItemPopupEntries: () -> Unit,
+        onResetFolderEblanApplicationInfoPopupEntries: () -> Unit,
+    ) {
         scope.launch {
+            onResetFolderGridItemPopupEntries()
+
+            onResetFolderEblanApplicationInfoPopupEntries()
+
+            dismissApplicationScreen()
+
             eblanApplicationInfoGroup = value
 
             appWidgetScreenSwipeY.animateTo(
@@ -1037,64 +767,6 @@ internal class PagerScreenState(
                     easing = FastOutSlowInEasing,
                 ),
             )
-        }
-    }
-
-    fun startAppDetailsActivity(
-        left: Int?,
-        top: Int?,
-        width: Int?,
-        height: Int?,
-        serialNumber: Long,
-        componentName: String,
-    ) {
-        if (left != null && top != null && width != null && height != null) {
-            androidLauncherAppsWrapper.startAppDetailsActivity(
-                serialNumber = serialNumber,
-                componentName = componentName,
-                sourceBounds = Rect(
-                    left,
-                    top,
-                    left + width,
-                    top + height,
-                ),
-            )
-        }
-    }
-
-    fun startPopupShortcut(
-        leftPadding: Int,
-        topPadding: Int,
-        serialNumber: Long,
-        packageName: String,
-        shortcutId: String,
-    ) {
-        val x = popupIntOffset?.x
-
-        val y = popupIntOffset?.y
-
-        val width = popupIntSize?.width
-
-        val height = popupIntSize?.height
-
-        if (x != null && y != null && width != null && height != null) {
-            val sourceBoundsX = x + leftPadding
-
-            val sourceBoundsY = y + topPadding
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
-                androidLauncherAppsWrapper.startShortcut(
-                    serialNumber = serialNumber,
-                    packageName = packageName,
-                    id = shortcutId,
-                    sourceBounds = Rect(
-                        sourceBoundsX,
-                        sourceBoundsY,
-                        sourceBoundsX + width,
-                        sourceBoundsY + height,
-                    ),
-                )
-            }
         }
     }
 
@@ -1110,157 +782,207 @@ internal class PagerScreenState(
     }
 
     suspend fun handlePinItemRequest(pinItemRequest: PinItemRequest?) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && pinItemRequest != null) {
-            when (pinItemRequest.requestType) {
-                PinItemRequest.REQUEST_TYPE_APPWIDGET -> {
-                    val appWidgetProviderInfo = pinItemRequest.getAppWidgetProviderInfo(context)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O ||
+            pinItemRequest == null
+        ) {
+            return
+        }
 
-                    if (appWidgetProviderInfo != null) {
-                        val componentName = appWidgetProviderInfo.provider.flattenToString()
+        when (pinItemRequest.requestType) {
+            PinItemRequest.REQUEST_TYPE_APPWIDGET -> {
+                pinItemRequest.handleAppWidgetRequestType()
+            }
 
-                        val preview =
-                            appWidgetProviderInfo.loadPreviewImage(context, 0)?.let { drawable ->
-                                val directory =
-                                    fileManager.getFilesDirectory(FileManager.WIDGETS_DIR)
-
-                                val file = File(
-                                    directory,
-                                    iconKeyGenerator.getHashedName(name = componentName),
-                                )
-
-                                androidImageSerializer.createDrawablePath(
-                                    drawable = drawable,
-                                    file = file,
-                                )
-
-                                file.absolutePath
-                            }
-
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                            onGetPinGridItem(
-                                PinItemRequestType.Widget(
-                                    appWidgetId = 0,
-                                    componentName = componentName,
-                                    packageName = appWidgetProviderInfo.provider.packageName,
-                                    serialNumber = androidUserManagerWrapper.getSerialNumberForUser(
-                                        userHandle = appWidgetProviderInfo.profile,
-                                    ),
-                                    configure = appWidgetProviderInfo.configure.flattenToString(),
-                                    minWidth = appWidgetProviderInfo.minWidth,
-                                    minHeight = appWidgetProviderInfo.minHeight,
-                                    resizeMode = appWidgetProviderInfo.resizeMode,
-                                    minResizeWidth = appWidgetProviderInfo.minResizeWidth,
-                                    minResizeHeight = appWidgetProviderInfo.minResizeHeight,
-                                    maxResizeWidth = appWidgetProviderInfo.maxResizeWidth,
-                                    maxResizeHeight = appWidgetProviderInfo.maxResizeHeight,
-                                    targetCellHeight = appWidgetProviderInfo.targetCellHeight,
-                                    targetCellWidth = appWidgetProviderInfo.targetCellWidth,
-                                    preview = preview,
-                                ),
-                            )
-                        } else {
-                            onGetPinGridItem(
-                                PinItemRequestType.Widget(
-                                    appWidgetId = 0,
-                                    componentName = appWidgetProviderInfo.provider.flattenToString(),
-                                    packageName = appWidgetProviderInfo.provider.packageName,
-                                    serialNumber = androidUserManagerWrapper.getSerialNumberForUser(
-                                        userHandle = appWidgetProviderInfo.profile,
-                                    ),
-                                    configure = appWidgetProviderInfo.configure.flattenToString(),
-                                    minWidth = appWidgetProviderInfo.minWidth,
-                                    minHeight = appWidgetProviderInfo.minHeight,
-                                    resizeMode = appWidgetProviderInfo.resizeMode,
-                                    minResizeWidth = appWidgetProviderInfo.minResizeWidth,
-                                    minResizeHeight = appWidgetProviderInfo.minResizeHeight,
-                                    maxResizeWidth = 0,
-                                    maxResizeHeight = 0,
-                                    targetCellHeight = 0,
-                                    targetCellWidth = 0,
-                                    preview = preview,
-                                ),
-                            )
-                        }
-                    }
-                }
-
-                PinItemRequest.REQUEST_TYPE_SHORTCUT -> {
-                    val shortcutInfo = pinItemRequest.shortcutInfo
-
-                    if (shortcutInfo != null) {
-                        val serialNumber =
-                            androidUserManagerWrapper.getSerialNumberForUser(userHandle = shortcutInfo.userHandle)
-
-                        val icon = androidLauncherAppsWrapper.getShortcutBadgedIconDrawable(
-                            shortcutInfo = shortcutInfo,
-                            density = 0,
-                        )?.let { drawable ->
-                            val directory = fileManager.getFilesDirectory(FileManager.SHORTCUTS_DIR)
-
-                            val file = File(
-                                directory,
-                                iconKeyGenerator.getShortcutIconKey(
-                                    serialNumber = serialNumber,
-                                    packageName = shortcutInfo.`package`,
-                                    id = shortcutInfo.id,
-                                ),
-                            )
-
-                            androidImageSerializer.createDrawablePath(
-                                drawable = drawable,
-                                file = file,
-                            )
-
-                            file.absolutePath
-                        }
-
-                        onGetPinGridItem(
-                            PinItemRequestType.ShortcutInfo(
-                                serialNumber = androidUserManagerWrapper.getSerialNumberForUser(
-                                    userHandle = shortcutInfo.userHandle,
-                                ),
-                                shortcutId = shortcutInfo.id,
-                                packageName = shortcutInfo.`package`,
-                                shortLabel = shortcutInfo.shortLabel.toString(),
-                                longLabel = shortcutInfo.longLabel.toString(),
-                                isEnabled = shortcutInfo.isEnabled,
-                                disabledMessage = shortcutInfo.disabledMessage?.toString(),
-                                icon = icon,
-                            ),
-                        )
-                    }
-                }
+            PinItemRequest.REQUEST_TYPE_SHORTCUT -> {
+                pinItemRequest.handleRequestTypeShortcut()
             }
         }
     }
 
-    fun updateIsCloseGridItemPopup(value: Boolean) {
-        isCloseGridItemPopup = value
+    @RequiresApi(Build.VERSION_CODES.O)
+    private suspend fun PinItemRequest.handleRequestTypeShortcut() {
+        val shortcutInfo = shortcutInfo ?: return
+
+        val serialNumber =
+            androidUserManagerWrapper.getSerialNumberForUser(userHandle = shortcutInfo.userHandle)
+
+        val icon = androidLauncherAppsWrapper.getShortcutBadgedIconDrawable(
+            shortcutInfo = shortcutInfo,
+            density = 0,
+        )?.let {
+            val directory = fileManager.getFilesDirectory(FileManager.SHORTCUTS_DIR)
+
+            val file = File(
+                directory,
+                iconKeyGenerator.getShortcutIconKey(
+                    serialNumber = serialNumber,
+                    packageName = shortcutInfo.`package`,
+                    id = shortcutInfo.id,
+                ),
+            )
+
+            androidImageSerializer.createDrawablePath(
+                drawable = it,
+                file = file,
+            )
+
+            file.absolutePath
+        }
+
+        onGetPinGridItem(
+            PinItemRequestType.ShortcutInfo(
+                serialNumber = androidUserManagerWrapper.getSerialNumberForUser(
+                    userHandle = shortcutInfo.userHandle,
+                ),
+                shortcutId = shortcutInfo.id,
+                packageName = shortcutInfo.`package`,
+                shortLabel = shortcutInfo.shortLabel.toString(),
+                longLabel = shortcutInfo.longLabel.toString(),
+                isEnabled = shortcutInfo.isEnabled,
+                disabledMessage = shortcutInfo.disabledMessage?.toString(),
+                icon = icon,
+            ),
+        )
     }
 
-    fun updateIsCloseFolderGridItemPopup(value: Boolean) {
-        isCloseFolderGridItemPopup = value
+    @RequiresApi(Build.VERSION_CODES.O)
+    private suspend fun PinItemRequest.handleAppWidgetRequestType() {
+        val appWidgetProviderInfo = getAppWidgetProviderInfo(context) ?: return
+
+        val componentName = appWidgetProviderInfo.provider.flattenToString()
+
+        val preview =
+            appWidgetProviderInfo.loadPreviewImage(context, 0)?.let {
+                val directory =
+                    fileManager.getFilesDirectory(FileManager.WIDGETS_DIR)
+
+                val file = File(
+                    directory,
+                    iconKeyGenerator.getHashedName(name = componentName),
+                )
+
+                androidImageSerializer.createDrawablePath(
+                    drawable = it,
+                    file = file,
+                )
+
+                file.absolutePath
+            }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            onGetPinGridItem(
+                PinItemRequestType.Widget(
+                    appWidgetId = 0,
+                    componentName = componentName,
+                    packageName = appWidgetProviderInfo.provider.packageName,
+                    serialNumber = androidUserManagerWrapper.getSerialNumberForUser(
+                        userHandle = appWidgetProviderInfo.profile,
+                    ),
+                    configure = appWidgetProviderInfo.configure.flattenToString(),
+                    minWidth = appWidgetProviderInfo.minWidth,
+                    minHeight = appWidgetProviderInfo.minHeight,
+                    resizeMode = appWidgetProviderInfo.resizeMode,
+                    minResizeWidth = appWidgetProviderInfo.minResizeWidth,
+                    minResizeHeight = appWidgetProviderInfo.minResizeHeight,
+                    maxResizeWidth = appWidgetProviderInfo.maxResizeWidth,
+                    maxResizeHeight = appWidgetProviderInfo.maxResizeHeight,
+                    targetCellHeight = appWidgetProviderInfo.targetCellHeight,
+                    targetCellWidth = appWidgetProviderInfo.targetCellWidth,
+                    preview = preview,
+                ),
+            )
+        } else {
+            onGetPinGridItem(
+                PinItemRequestType.Widget(
+                    appWidgetId = 0,
+                    componentName = appWidgetProviderInfo.provider.flattenToString(),
+                    packageName = appWidgetProviderInfo.provider.packageName,
+                    serialNumber = androidUserManagerWrapper.getSerialNumberForUser(
+                        userHandle = appWidgetProviderInfo.profile,
+                    ),
+                    configure = appWidgetProviderInfo.configure.flattenToString(),
+                    minWidth = appWidgetProviderInfo.minWidth,
+                    minHeight = appWidgetProviderInfo.minHeight,
+                    resizeMode = appWidgetProviderInfo.resizeMode,
+                    minResizeWidth = appWidgetProviderInfo.minResizeWidth,
+                    minResizeHeight = appWidgetProviderInfo.minResizeHeight,
+                    maxResizeWidth = 0,
+                    maxResizeHeight = 0,
+                    targetCellHeight = 0,
+                    targetCellWidth = 0,
+                    preview = preview,
+                ),
+            )
+        }
     }
 
     fun handleOnDragEndApplicationScreen() {
-        handleApplyFling(swipeY = swipeY)
+        scope.launch {
+            if (applicationScreenSwipeY.value > 200f) {
+                applicationScreenSwipeY.animateTo(
+                    targetValue = screenHeight.toFloat(),
+                    animationSpec = tween(easing = FastOutSlowInEasing),
+                )
+
+                showApplicationScreen = false
+            } else {
+                applicationScreenSwipeY.animateTo(
+                    targetValue = 0f,
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioNoBouncy,
+                        stiffness = Spring.StiffnessLow,
+                    ),
+                )
+            }
+        }
     }
 
     fun handleOnDragEndWidgetScreen() {
-        handleApplyFling(swipeY = widgetScreenSwipeY)
+        scope.launch {
+            if (widgetScreenSwipeY.value > 200f) {
+                widgetScreenSwipeY.animateTo(
+                    targetValue = screenHeight.toFloat(),
+                    animationSpec = tween(easing = FastOutSlowInEasing),
+                )
+
+                showWidgetScreen = false
+            } else {
+                widgetScreenSwipeY.animateTo(
+                    targetValue = 0f,
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioNoBouncy,
+                        stiffness = Spring.StiffnessLow,
+                    ),
+                )
+            }
+        }
     }
 
     fun handleOnDragEndShortcutConfigScreen() {
-        handleApplyFling(swipeY = shortcutConfigScreenSwipeY)
+        scope.launch {
+            if (shortcutConfigScreenSwipeY.value > 200f) {
+                shortcutConfigScreenSwipeY.animateTo(
+                    targetValue = screenHeight.toFloat(),
+                    animationSpec = tween(easing = FastOutSlowInEasing),
+                )
+
+                showShortcutConfigScreen = false
+            } else {
+                shortcutConfigScreenSwipeY.animateTo(
+                    targetValue = 0f,
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioNoBouncy,
+                        stiffness = Spring.StiffnessLow,
+                    ),
+                )
+            }
+        }
     }
 
     fun handleOnDragEndAppWidgetScreen() {
         scope.launch {
             if (appWidgetScreenSwipeY.value > 200f) {
-                appWidgetScreenSwipeY.animateTo(
-                    targetValue = screenHeight.toFloat(),
-                    animationSpec = tween(easing = FastOutSlowInEasing),
-                )
+                dismissAppWidgetScreen()
             } else {
                 appWidgetScreenSwipeY.animateTo(
                     targetValue = 0f,
@@ -1274,7 +996,7 @@ internal class PagerScreenState(
         horizontalPagerState: PagerState,
         windowToken: IBinder,
     ) {
-        if (!homeSettings.wallpaperScroll) return
+        if (!homeSettings.wallpaperScroll || homeSettings.pageCount <= 1) return
 
         var reverseXOffset: Float
 
@@ -1324,23 +1046,712 @@ internal class PagerScreenState(
         }
     }
 
-    private fun handleApplyFling(swipeY: Animatable<Float, AnimationVector1D>) {
-        scope.launch {
-            if (swipeY.value > 200f) {
-                swipeY.animateTo(
-                    targetValue = screenHeight.toFloat(),
-                    animationSpec = tween(easing = FastOutSlowInEasing),
-                )
-            } else {
-                swipeY.animateTo(
-                    targetValue = 0f,
-                    animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioNoBouncy,
-                        stiffness = Spring.StiffnessLow,
-                    ),
-                )
+    fun handleSystemNavigation(
+        dockGridHorizontalPagerState: PagerState,
+        gridHorizontalPagerState: PagerState,
+        windowToken: IBinder,
+    ) {
+        fun getInfiniteScrollInitialPage(
+            currentPage: Int,
+            initialPage: Int,
+            pageCount: Int,
+            center: Int = Int.MAX_VALUE / 2,
+        ): Int {
+            var diff = initialPage - Math.floorMod(currentPage - center, pageCount)
+
+            val halfCount = pageCount / 2
+
+            if (diff > halfCount) {
+                diff -= pageCount
+            } else if (diff < -halfCount) {
+                diff += pageCount
             }
+
+            return currentPage + diff
         }
+
+        scope.launch {
+            gridHorizontalPagerState.animateScrollToPage(
+                if (homeSettings.infiniteScroll) {
+                    getInfiniteScrollInitialPage(
+                        currentPage = gridHorizontalPagerState.currentPage,
+                        initialPage = homeSettings.initialPage,
+                        pageCount = homeSettings.pageCount,
+                    )
+                } else {
+                    homeSettings.initialPage
+                },
+            )
+        }
+
+        scope.launch {
+            dockGridHorizontalPagerState.animateScrollToPage(
+                if (homeSettings.dockInfiniteScroll) {
+                    getInfiniteScrollInitialPage(
+                        currentPage = dockGridHorizontalPagerState.currentPage,
+                        initialPage = homeSettings.dockInitialPage,
+                        pageCount = homeSettings.dockPageCount,
+                    )
+                } else {
+                    homeSettings.dockInitialPage
+                },
+            )
+        }
+
+        if (homeSettings.wallpaperScroll && homeSettings.pageCount > 1) {
+            val page = calculatePage(
+                index = gridHorizontalPagerState.currentPage,
+                infiniteScroll = homeSettings.infiniteScroll,
+                pageCount = homeSettings.pageCount,
+            )
+
+            androidWallpaperManagerWrapper.setWallpaperOffsetSteps(
+                xStep = 1f / (homeSettings.pageCount - 1),
+                yStep = 1f,
+            )
+
+            androidWallpaperManagerWrapper.setWallpaperOffsets(
+                windowToken = windowToken,
+                xOffset = page.toFloat() / (homeSettings.pageCount - 1),
+                yOffset = 0f,
+            )
+        }
+    }
+
+    fun handleEblanActionIntent(intent: Intent) {
+        if (intent.action != EblanAction.ACTION || !isAvailableSystemNavigation) return
+
+        val eblanAction = intent.getStringExtra(EblanAction.NAME)?.let {
+            Json.decodeFromString<EblanAction>(it)
+        } ?: return
+
+        handleEblanAction(
+            context = context,
+            eblanAction = eblanAction,
+            launcherApps = androidLauncherAppsWrapper,
+            onOpenAppDrawer = ::openApplicationScreen,
+        )
+    }
+
+    fun updateAssociate(value: Associate) {
+        associate = value
+    }
+
+    fun updateLastAppWidgetId(value: Int) {
+        lastAppWidgetId = value
+    }
+
+    fun updateWidgetGridItem(value: GridItem) {
+        widgetGridItem = value
+    }
+
+    fun updateGridPageDirection(value: PageDirection?) {
+        gridPageDirection = value
+    }
+
+    fun updateDockPageDirection(value: PageDirection?) {
+        dockPageDirection = value
+    }
+
+    fun dragShortcutInfoFromGridItemMenu(
+        gridItem: GridItem,
+        imageBitmap: ImageBitmap,
+        intOffset: IntOffset,
+        intSize: IntSize,
+        newSharedElementKey: SharedElementKey,
+        onUpdateGridItemSource: (GridItemSource) -> Unit,
+        onUpdateIsVisibleOverlay: (Boolean) -> Unit,
+        onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
+    ) {
+        onUpdateGridItemSource(GridItemSource.New)
+
+        onUpdateMoveGridItemResult(
+            MoveGridItemResult(
+                isSuccess = false,
+                movingGridItem = gridItem,
+                conflictingGridItem = null,
+            ),
+        )
+
+        overlayImageBitmap = imageBitmap
+
+        overlayIntOffset = intOffset
+
+        overlayIntSize = intSize
+
+        sharedElementKey = newSharedElementKey
+
+        isDragging = true
+
+        isCloseGridItemMenu = true
+
+        onUpdateIsVisibleOverlay(true)
+    }
+
+    fun dragShortcutInfoFromApplicationMenu(
+        gridItem: GridItem,
+        imageBitmap: ImageBitmap,
+        intOffset: IntOffset,
+        intSize: IntSize,
+        newSharedElementKey: SharedElementKey,
+        onUpdateGridItemSource: (GridItemSource) -> Unit,
+        onUpdateIsVisibleOverlay: (Boolean) -> Unit,
+        onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
+    ) {
+        onUpdateGridItemSource(GridItemSource.New)
+
+        onUpdateMoveGridItemResult(
+            MoveGridItemResult(
+                isSuccess = false,
+                movingGridItem = gridItem,
+                conflictingGridItem = null,
+            ),
+        )
+
+        overlayImageBitmap = imageBitmap
+
+        overlayIntOffset = intOffset
+
+        overlayIntSize = intSize
+
+        sharedElementKey = newSharedElementKey
+
+        isDragging = true
+
+        isCloseEblanApplicationInfoMenu = true
+
+        dismissApplicationScreen()
+
+        onUpdateIsVisibleOverlay(true)
+    }
+
+    fun dragShortcutInfoFromFolderGridItemMenu(
+        gridItem: GridItem,
+        imageBitmap: ImageBitmap,
+        intOffset: IntOffset,
+        intSize: IntSize,
+        newSharedElementKey: SharedElementKey,
+        onUpdateGridItemSource: (GridItemSource) -> Unit,
+        onUpdateIsVisibleOverlay: (Boolean) -> Unit,
+        onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
+        onResetFolderGridItemPopupEntries: () -> Unit,
+    ) {
+        onUpdateGridItemSource(GridItemSource.New)
+
+        onUpdateMoveGridItemResult(
+            MoveGridItemResult(
+                isSuccess = false,
+                movingGridItem = gridItem,
+                conflictingGridItem = null,
+            ),
+        )
+
+        overlayImageBitmap = imageBitmap
+
+        overlayIntOffset = intOffset
+
+        overlayIntSize = intSize
+
+        sharedElementKey = newSharedElementKey
+
+        isDragging = true
+
+        isCloseFolderGridItemMenu = true
+
+        onResetFolderGridItemPopupEntries()
+
+        onUpdateIsVisibleOverlay(true)
+    }
+
+    fun dragShortcutInfoFromFolderApplicationGridItemMenu(
+        gridItem: GridItem,
+        imageBitmap: ImageBitmap,
+        intOffset: IntOffset,
+        intSize: IntSize,
+        newSharedElementKey: SharedElementKey,
+        onUpdateGridItemSource: (GridItemSource) -> Unit,
+        onUpdateIsVisibleOverlay: (Boolean) -> Unit,
+        onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
+        onResetFolderEblanApplicationInfoPopupEntries: () -> Unit,
+    ) {
+        onUpdateGridItemSource(GridItemSource.New)
+
+        onUpdateMoveGridItemResult(
+            MoveGridItemResult(
+                isSuccess = false,
+                movingGridItem = gridItem,
+                conflictingGridItem = null,
+            ),
+        )
+
+        overlayImageBitmap = imageBitmap
+
+        overlayIntOffset = intOffset
+
+        overlayIntSize = intSize
+
+        sharedElementKey = newSharedElementKey
+
+        isDragging = true
+
+        isCloseFolderEblanApplicationInfoGridItemMenu = true
+
+        onResetFolderEblanApplicationInfoPopupEntries()
+
+        dismissApplicationScreen()
+
+        onUpdateIsVisibleOverlay(true)
+    }
+
+    fun dragAppWidget(
+        gridItem: GridItem,
+        imageBitmap: ImageBitmap,
+        intOffset: IntOffset,
+        intSize: IntSize,
+        newSharedElementKey: SharedElementKey,
+        onUpdateGridItemSource: (GridItemSource) -> Unit,
+        onUpdateIsVisibleOverlay: (Boolean) -> Unit,
+        onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
+    ) {
+        onUpdateGridItemSource(GridItemSource.New)
+
+        onUpdateMoveGridItemResult(
+            MoveGridItemResult(
+                isSuccess = false,
+                movingGridItem = gridItem,
+                conflictingGridItem = null,
+            ),
+        )
+
+        overlayImageBitmap = imageBitmap
+
+        overlayIntOffset = intOffset
+
+        overlayIntSize = intSize
+
+        sharedElementKey = newSharedElementKey
+
+        isDragging = true
+
+        dismissAppWidgetScreen()
+
+        onUpdateIsVisibleOverlay(true)
+    }
+
+    fun longPressGridItem(
+        gridItem: GridItem,
+        imageBitmap: ImageBitmap,
+        intOffset: IntOffset,
+        intSize: IntSize,
+        newSharedElementKey: SharedElementKey,
+        onUpdateGridItemSource: (GridItemSource) -> Unit,
+        onUpdateIsVisibleOverlay: (Boolean) -> Unit,
+        onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
+    ) {
+        onUpdateGridItemSource(GridItemSource.Existing)
+
+        onUpdateMoveGridItemResult(
+            MoveGridItemResult(
+                isSuccess = false,
+                movingGridItem = gridItem,
+                conflictingGridItem = null,
+            ),
+        )
+
+        overlayImageBitmap = imageBitmap
+
+        overlayIntOffset = intOffset
+
+        overlayIntSize = intSize
+
+        sharedElementKey = newSharedElementKey
+
+        menuIntOffset = intOffset
+
+        menuIntSize = intSize
+
+        selectedGridItem = gridItem
+
+        showGridItemMenu = true
+
+        onUpdateIsVisibleOverlay(true)
+    }
+
+    fun showFolderWhenDragging(
+        folderEntry: FolderEntry,
+        movingGridItem: GridItem,
+        onShowFolderWhenDragging: (
+            folderEntry: FolderEntry,
+            movingGridItem: GridItem,
+        ) -> Unit,
+    ) {
+        sharedElementKey = SharedElementKey(
+            id = movingGridItem.id,
+            parent = SharedElementKey.Parent.Folder,
+        )
+
+        isVisibleFolderGridItems = true
+
+        onShowFolderWhenDragging(
+            folderEntry,
+            movingGridItem,
+        )
+    }
+
+    fun tapFolderGridItem(
+        folderEntry: FolderEntry,
+        onUpsertFolderGridItemPopupEntry: (FolderEntry) -> Unit,
+    ) {
+        isVisibleFolderGridItems = true
+
+        onUpsertFolderGridItemPopupEntry(folderEntry)
+    }
+
+    fun dragGridItem() {
+        isDragging = true
+
+        isCloseGridItemMenu = true
+    }
+
+    fun longPressFolderGridItem(
+        gridItem: GridItem,
+        imageBitmap: ImageBitmap,
+        intOffset: IntOffset,
+        intSize: IntSize,
+        newSharedElementKey: SharedElementKey,
+        onUpdateIsVisibleOverlay: (Boolean) -> Unit,
+        onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
+    ) {
+        onUpdateMoveGridItemResult(
+            MoveGridItemResult(
+                isSuccess = true,
+                movingGridItem = gridItem,
+                conflictingGridItem = null,
+            ),
+        )
+
+        overlayImageBitmap = imageBitmap
+
+        overlayIntOffset = intOffset
+
+        overlayIntSize = intSize
+
+        sharedElementKey = newSharedElementKey
+
+        menuIntOffset = intOffset
+
+        menuIntSize = intSize
+
+        selectedGridItem = gridItem
+
+        showFolderGridItemMenu = true
+
+        onUpdateIsVisibleOverlay(true)
+    }
+
+    fun dragFolderGridItem() {
+        isDragging = true
+
+        isCloseFolderGridItemMenu = true
+    }
+
+    fun moveFolderGridItemOutsideFolder(
+        gridItem: GridItem,
+        newSharedElementKey: SharedElementKey,
+        onMoveFolderGridItemOutsideFolder: (GridItem) -> Unit,
+    ) {
+        sharedElementKey = newSharedElementKey
+
+        onMoveFolderGridItemOutsideFolder(gridItem)
+    }
+
+    fun closeFolderGridItem(
+        folderEntry: FolderEntry,
+        isFirstFolderGridItem: Boolean,
+        onDeleteFolderGridItemPopupEntry: (FolderEntry) -> Unit,
+    ) {
+        isVisibleFolderGridItems = !isFirstFolderGridItem
+
+        onDeleteFolderGridItemPopupEntry(folderEntry)
+    }
+
+    fun dragWidget(
+        gridItem: GridItem,
+        imageBitmap: ImageBitmap,
+        intOffset: IntOffset,
+        intSize: IntSize,
+        newSharedElementKey: SharedElementKey,
+        onUpdateGridItemSource: (GridItemSource) -> Unit,
+        onUpdateIsVisibleOverlay: (Boolean) -> Unit,
+        onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
+    ) {
+        onUpdateGridItemSource(GridItemSource.New)
+
+        onUpdateMoveGridItemResult(
+            MoveGridItemResult(
+                isSuccess = false,
+                movingGridItem = gridItem,
+                conflictingGridItem = null,
+            ),
+        )
+
+        overlayImageBitmap = imageBitmap
+
+        overlayIntOffset = intOffset
+
+        overlayIntSize = intSize
+
+        sharedElementKey = newSharedElementKey
+
+        isDragging = true
+
+        dismissWidgetScreen()
+
+        onUpdateIsVisibleOverlay(true)
+    }
+
+    fun dragShortcutConfig(
+        gridItem: GridItem,
+        imageBitmap: ImageBitmap,
+        intOffset: IntOffset,
+        intSize: IntSize,
+        newSharedElementKey: SharedElementKey,
+        onUpdateGridItemSource: (GridItemSource) -> Unit,
+        onUpdateIsVisibleOverlay: (Boolean) -> Unit,
+        onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
+    ) {
+        onUpdateGridItemSource(GridItemSource.New)
+
+        onUpdateMoveGridItemResult(
+            MoveGridItemResult(
+                isSuccess = false,
+                movingGridItem = gridItem,
+                conflictingGridItem = null,
+            ),
+        )
+
+        overlayImageBitmap = imageBitmap
+
+        overlayIntOffset = intOffset
+
+        overlayIntSize = intSize
+
+        sharedElementKey = newSharedElementKey
+
+        isDragging = true
+
+        dismissShortcutConfigScreen()
+
+        onUpdateIsVisibleOverlay(true)
+    }
+
+    fun longPressEblanApplicationInfo(
+        eblanApplicationInfo: EblanApplicationInfo,
+        imageBitmap: ImageBitmap,
+        intOffset: IntOffset,
+        intSize: IntSize,
+        newSharedElementKey: SharedElementKey,
+        onUpdateIsVisibleOverlay: (Boolean) -> Unit,
+    ) {
+        overlayImageBitmap = imageBitmap
+
+        overlayIntOffset = intOffset
+
+        overlayIntSize = intSize
+
+        sharedElementKey = newSharedElementKey
+
+        menuIntOffset = intOffset
+
+        menuIntSize = intSize
+
+        selectedEblanApplicationInfo = eblanApplicationInfo
+
+        showEblanApplicationInfoMenu = true
+
+        onUpdateIsVisibleOverlay(true)
+    }
+
+    fun dragEblanApplicationInfo(
+        gridItem: GridItem,
+        onUpdateGridItemSource: (GridItemSource) -> Unit,
+        onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
+    ) {
+        onUpdateGridItemSource(GridItemSource.New)
+
+        onUpdateMoveGridItemResult(
+            MoveGridItemResult(
+                isSuccess = false,
+                movingGridItem = gridItem,
+                conflictingGridItem = null,
+            ),
+        )
+
+        isDragging = true
+
+        isCloseEblanApplicationInfoMenu = true
+
+        dismissApplicationScreen()
+    }
+
+    fun longPressPrivateSpaceEblanApplicationInfoItem(
+        eblanApplicationInfo: EblanApplicationInfo,
+        intOffset: IntOffset,
+        intSize: IntSize,
+    ) {
+        menuIntOffset = intOffset
+
+        menuIntSize = intSize
+
+        selectedEblanApplicationInfo = eblanApplicationInfo
+
+        showPrivateEblanApplicationInfoMenu = true
+    }
+
+    fun dragFolderEblanApplicationInfo(
+        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        gridItem: GridItem,
+        onDragFolderEblanApplicationInfoToGrid: (
+            folderEblanApplicationInfo: FolderEblanApplicationInfo,
+            movingGridItem: GridItem,
+        ) -> Unit,
+        onUpdateGridItemSource: (GridItemSource) -> Unit,
+        onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
+    ) {
+        onUpdateGridItemSource(GridItemSource.New)
+
+        onUpdateMoveGridItemResult(
+            MoveGridItemResult(
+                isSuccess = false,
+                movingGridItem = gridItem,
+                conflictingGridItem = null,
+            ),
+        )
+
+        isDragging = true
+
+        isCloseFolderEblanApplicationInfoMenu = true
+
+        dismissApplicationScreen()
+
+        onDragFolderEblanApplicationInfoToGrid(
+            folderEblanApplicationInfo,
+            gridItem,
+        )
+    }
+
+    fun tapFolderEblanApplicationInfo(
+        folderEntry: FolderEntry,
+        onUpsertFolderEblanApplicationInfoPopupEntry: (FolderEntry) -> Unit,
+    ) {
+        isVisibleFolderEblanApplicationInfos = true
+
+        onUpsertFolderEblanApplicationInfoPopupEntry(folderEntry)
+    }
+
+    fun longPressFolderEblanApplicationInfo(
+        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        imageBitmap: ImageBitmap,
+        intOffset: IntOffset,
+        intSize: IntSize,
+        newSharedElementKey: SharedElementKey,
+        onUpdateIsVisibleOverlay: (Boolean) -> Unit,
+    ) {
+        overlayImageBitmap = imageBitmap
+
+        overlayIntOffset = intOffset
+
+        overlayIntSize = intSize
+
+        sharedElementKey = newSharedElementKey
+
+        menuIntOffset = intOffset
+
+        menuIntSize = intSize
+
+        selectedFolderEblanApplicationInfo = folderEblanApplicationInfo
+
+        showFolderEblanApplicationInfoMenu = true
+
+        onUpdateIsVisibleOverlay(true)
+    }
+
+    fun longPressFolderEblanApplicationInfoGridItem(
+        folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
+        imageBitmap: ImageBitmap,
+        intOffset: IntOffset,
+        intSize: IntSize,
+        newSharedElementKey: SharedElementKey,
+        onUpdateMoveFolderEblanApplicationInfoGridItemResult: (MoveFolderEblanApplicationInfoGridItemResult) -> Unit,
+        onUpdateIsVisibleOverlay: (Boolean) -> Unit,
+    ) {
+        onUpdateMoveFolderEblanApplicationInfoGridItemResult(
+            MoveFolderEblanApplicationInfoGridItemResult(
+                isSuccess = true,
+                folderEblanApplicationInfoGridItem = folderEblanApplicationInfoGridItem,
+            ),
+        )
+
+        overlayImageBitmap = imageBitmap
+
+        overlayIntOffset = intOffset
+
+        overlayIntSize = intSize
+
+        sharedElementKey = newSharedElementKey
+
+        menuIntOffset = intOffset
+
+        menuIntSize = intSize
+
+        selectedFolderEblanApplicationInfoGridItem = folderEblanApplicationInfoGridItem
+
+        showFolderEblanApplicationInfoGridItemMenu = true
+
+        onUpdateIsVisibleOverlay(true)
+    }
+
+    fun dragFolderEblanApplicationInfoGridItem() {
+        isDragging = true
+
+        isCloseFolderEblanApplicationInfoGridItemMenu = true
+    }
+
+    fun moveFolderEblanApplicationInfoGridItemOutsideFolder(
+        folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
+        movingGridItem: GridItem,
+        onMoveFolderEblanApplicationInfoGridItemOutsideFolder: (
+            folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
+            movingGridItem: GridItem,
+        ) -> Unit,
+    ) {
+        isDragging = true
+
+        dismissApplicationScreen()
+
+        onMoveFolderEblanApplicationInfoGridItemOutsideFolder(
+            folderEblanApplicationInfoGridItem,
+            movingGridItem,
+        )
+    }
+
+    fun closeFolderEblanApplicationInfo(
+        folderEntry: FolderEntry,
+        isFirstFolderEblanApplicationInfo: Boolean,
+        onDeleteFolderPopupEntry: (FolderEntry) -> Unit,
+    ) {
+        isVisibleFolderEblanApplicationInfos = !isFirstFolderEblanApplicationInfo
+
+        onDeleteFolderPopupEntry(folderEntry)
+    }
+
+    fun tapFolderEblanApplicationInfoGridItem(
+        folderEntry: FolderEntry,
+        onUpsertFolderEntry: (FolderEntry) -> Unit,
+    ) {
+        isVisibleFolderEblanApplicationInfos = true
+
+        onUpsertFolderEntry(folderEntry)
     }
 }
 
@@ -1349,7 +1760,6 @@ internal fun rememberPagerScreenState(
     gestureSettings: GestureSettings,
     homeSettings: HomeSettings,
     screenHeight: Int,
-    screenWidth: Int,
     experimentalSettings: ExperimentalSettings,
     onGetPinGridItem: (PinItemRequestType) -> Unit,
     onResetPinGridItem: () -> Unit,
@@ -1364,22 +1774,17 @@ internal fun rememberPagerScreenState(
 
     val density = LocalDensity.current
 
-    val androidAppWidgetManagerWrapper = LocalAppWidgetManager.current
-
     val androidUserManagerWrapper = LocalUserManager.current
 
     val androidImageSerializer = LocalImageSerializer.current
 
     val fileManager = LocalFileManager.current
 
-    val androidAppWidgetHostWrapper = LocalAppWidgetHost.current
-
     val pinItemRequestWrapper = LocalPinItemRequest.current
 
     val iconKeyGenerator = LocalIconKeyGenerator.current
 
     return remember(
-        screenWidth,
         screenHeight,
         gestureSettings,
         homeSettings,
@@ -1387,7 +1792,6 @@ internal fun rememberPagerScreenState(
     ) {
         PagerScreenState(
             density = density,
-            screenWidth = screenWidth,
             screenHeight = screenHeight,
             fileManager = fileManager,
             androidImageSerializer = androidImageSerializer,
@@ -1398,10 +1802,7 @@ internal fun rememberPagerScreenState(
             pinItemRequestWrapper = pinItemRequestWrapper,
             gestureSettings = gestureSettings,
             homeSettings = homeSettings,
-            androidAppWidgetHostWrapper = androidAppWidgetHostWrapper,
-            androidAppWidgetManagerWrapper = androidAppWidgetManagerWrapper,
             androidWallpaperManagerWrapper = androidWallpaperManagerWrapper,
-            experimentalSettings = experimentalSettings,
             iconKeyGenerator = iconKeyGenerator,
             onGetPinGridItem = onGetPinGridItem,
             onResetPinGridItem = onResetPinGridItem,

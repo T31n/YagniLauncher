@@ -18,10 +18,13 @@
 
 plugins {
     alias(libs.plugins.com.eblan.launcher.jvmLibrary)
+    `java-test-fixtures`
 }
 
 dependencies {
     api(projects.domain.model)
 
     implementation(libs.kotlinx.coroutines.core)
+
+    testFixturesImplementation(libs.kotlinx.coroutines.core)
 }

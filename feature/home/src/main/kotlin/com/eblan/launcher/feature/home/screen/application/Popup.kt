@@ -18,6 +18,7 @@
 package com.eblan.launcher.feature.home.screen.application
 
 import android.graphics.Rect
+import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
@@ -52,16 +53,15 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.EblanAppWidgetProviderInfo
-import com.eblan.launcher.domain.model.EblanApplicationInfo
-import com.eblan.launcher.domain.model.EblanApplicationInfoGroup
-import com.eblan.launcher.domain.model.EblanShortcutInfo
-import com.eblan.launcher.domain.model.EblanShortcutInfoByGroup
-import com.eblan.launcher.domain.model.GridItemSettings
-import com.eblan.launcher.domain.model.MoveGridItemResult
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
+import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.GridItemSettings
+import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfo
+import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfoByGroup
+import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
+import com.eblan.launcher.feature.home.component.HomeHandler
 import com.eblan.launcher.feature.home.component.popup
-import com.eblan.launcher.feature.home.model.Drag
-import com.eblan.launcher.feature.home.model.GridItemSource
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.screen.shortcutinfo.PrivateShortcutInfoMenu
 import com.eblan.launcher.feature.home.screen.shortcutinfo.ShortcutInfoScreen
@@ -75,33 +75,29 @@ internal fun ApplicationInfoPopup(
     eblanApplicationInfo: EblanApplicationInfo?,
     gridItemSettings: GridItemSettings,
     hasShortcutHostPermission: Boolean,
-    popupIntOffset: IntOffset,
-    popupIntSize: IntSize,
+    popupIntOffset: IntOffset?,
+    popupIntSize: IntSize?,
     isVisibleOverlay: Boolean,
     paddingValues: PaddingValues,
+    animations: Boolean,
+    isCloseEblanApplicationInfoMenu: Boolean,
     onDismissRequest: () -> Unit,
-    onUpdateIsDragging: (Boolean) -> Unit,
     onEditApplicationInfo: (
         serialNumber: Long,
         componentName: String,
     ) -> Unit,
-    onTapShortcutInfo: (
-        serialNumber: Long,
-        packageName: String,
-        shortcutId: String,
-    ) -> Unit,
-    onUpdateGridItemSource: (GridItemSource) -> Unit,
-    onUpdateImageBitmap: (ImageBitmap) -> Unit,
-    onUpdateOverlayBounds: (
+    onWidgets: (EblanApplicationInfoGroup) -> Unit,
+    onDragShortcutInfo: (
+        gridItem: GridItem,
+        imageBitmap: ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
+        sharedElementKey: SharedElementKey,
     ) -> Unit,
-    onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
-    onWidgets: (EblanApplicationInfoGroup) -> Unit,
-    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
-    onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
 ) {
     requireNotNull(eblanApplicationInfo)
+    requireNotNull(popupIntOffset)
+    requireNotNull(popupIntSize)
 
     val launcherApps = LocalLauncherApps.current
 
@@ -136,12 +132,24 @@ internal fun ApplicationInfoPopup(
         }
     }
 
+    LaunchedEffect(key1 = isCloseEblanApplicationInfoMenu) {
+        if (isCloseEblanApplicationInfoMenu) {
+            transitionState.targetState = false
+        }
+    }
+
     BackHandler(enabled = transitionState.targetState) {
+        transitionState.targetState = false
+    }
+
+    HomeHandler(enabled = transitionState.targetState) {
         transitionState.targetState = false
     }
 
     Box(
         modifier = modifier
+            .fillMaxSize()
+            .padding(paddingValues)
             .pointerInput(Unit) {
                 detectTapGestures(
                     onPress = {
@@ -150,9 +158,7 @@ internal fun ApplicationInfoPopup(
                         transitionState.targetState = false
                     },
                 )
-            }
-            .fillMaxSize()
-            .padding(paddingValues),
+            },
     ) {
         AnimatedVisibility(
             modifier = Modifier.popup(
@@ -185,6 +191,7 @@ internal fun ApplicationInfoPopup(
                 hasShortcutHostPermission = hasShortcutHostPermission,
                 icon = eblanApplicationInfo.icon,
                 isVisibleOverlay = isVisibleOverlay,
+                animations = animations,
                 onApplicationInfo = {
                     launcherApps.startAppDetailsActivity(
                         serialNumber = eblanApplicationInfo.serialNumber,
@@ -199,7 +206,6 @@ internal fun ApplicationInfoPopup(
 
                     transitionState.targetState = false
                 },
-                onUpdateIsDragging = onUpdateIsDragging,
                 onEdit = {
                     onEditApplicationInfo(
                         eblanApplicationInfo.serialNumber,
@@ -209,18 +215,22 @@ internal fun ApplicationInfoPopup(
                     transitionState.targetState = false
                 },
                 onTapShortcutInfo = { serialNumber, packageName, shortcutId ->
-                    onTapShortcutInfo(
-                        serialNumber,
-                        packageName,
-                        shortcutId,
-                    )
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+                        launcherApps.startShortcut(
+                            serialNumber = serialNumber,
+                            packageName = packageName,
+                            id = shortcutId,
+                            sourceBounds = Rect(
+                                popupIntOffset.x,
+                                popupIntOffset.y,
+                                popupIntOffset.x + popupIntSize.width,
+                                popupIntOffset.y + popupIntSize.height,
+                            ),
+                        )
+                    }
 
                     transitionState.targetState = false
                 },
-                onUpdateGridItemSource = onUpdateGridItemSource,
-                onUpdateImageBitmap = onUpdateImageBitmap,
-                onUpdateOverlayBounds = onUpdateOverlayBounds,
-                onUpdateSharedElementKey = onUpdateSharedElementKey,
                 onWidgets = {
                     onWidgets(
                         EblanApplicationInfoGroup(
@@ -233,11 +243,7 @@ internal fun ApplicationInfoPopup(
 
                     transitionState.targetState = false
                 },
-                onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
-                onUpdateTransitionState = {
-                    transitionState.targetState = it
-                },
+                onDragShortcutInfo = onDragShortcutInfo,
             )
         }
     }
@@ -246,25 +252,22 @@ internal fun ApplicationInfoPopup(
 @Composable
 internal fun PrivateApplicationInfoPopup(
     modifier: Modifier = Modifier,
-    drag: Drag,
     eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
     eblanApplicationInfo: EblanApplicationInfo?,
     hasShortcutHostPermission: Boolean,
-    popupIntOffset: IntOffset,
-    popupIntSize: IntSize,
+    popupIntOffset: IntOffset?,
+    popupIntSize: IntSize?,
     paddingValues: PaddingValues,
+    isClosePrivateEblanApplicationInfoMenu: Boolean,
     onDismissRequest: () -> Unit,
     onEditApplicationInfo: (
         serialNumber: Long,
         componentName: String,
     ) -> Unit,
-    onTapShortcutInfo: (
-        serialNumber: Long,
-        packageName: String,
-        shortcutId: String,
-    ) -> Unit,
 ) {
     requireNotNull(eblanApplicationInfo)
+    requireNotNull(popupIntOffset)
+    requireNotNull(popupIntSize)
 
     val launcherApps = LocalLauncherApps.current
 
@@ -299,12 +302,24 @@ internal fun PrivateApplicationInfoPopup(
         }
     }
 
+    LaunchedEffect(key1 = isClosePrivateEblanApplicationInfoMenu) {
+        if (isClosePrivateEblanApplicationInfoMenu) {
+            transitionState.targetState = false
+        }
+    }
+
     BackHandler(enabled = transitionState.targetState) {
+        transitionState.targetState = false
+    }
+
+    HomeHandler(enabled = transitionState.targetState) {
         transitionState.targetState = false
     }
 
     Box(
         modifier = modifier
+            .fillMaxSize()
+            .padding(paddingValues)
             .pointerInput(Unit) {
                 detectTapGestures(
                     onPress = {
@@ -313,9 +328,7 @@ internal fun PrivateApplicationInfoPopup(
                         transitionState.targetState = false
                     },
                 )
-            }
-            .fillMaxSize()
-            .padding(paddingValues),
+            },
     ) {
         AnimatedVisibility(
             modifier = Modifier.popup(
@@ -335,7 +348,6 @@ internal fun PrivateApplicationInfoPopup(
             ),
         ) {
             PrivateApplicationInfoMenu(
-                drag = drag,
                 eblanShortcutInfosGroup = eblanShortcutInfosGroup[
                     EblanShortcutInfoByGroup(
                         serialNumber = eblanApplicationInfo.serialNumber,
@@ -366,11 +378,19 @@ internal fun PrivateApplicationInfoPopup(
                     transitionState.targetState = false
                 },
                 onTapShortcutInfo = { serialNumber, packageName, shortcutId ->
-                    onTapShortcutInfo(
-                        serialNumber,
-                        packageName,
-                        shortcutId,
-                    )
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+                        launcherApps.startShortcut(
+                            serialNumber = serialNumber,
+                            packageName = packageName,
+                            id = shortcutId,
+                            sourceBounds = Rect(
+                                popupIntOffset.x,
+                                popupIntOffset.y,
+                                popupIntOffset.x + popupIntSize.width,
+                                popupIntOffset.y + popupIntSize.height,
+                            ),
+                        )
+                    }
 
                     transitionState.targetState = false
                 },
@@ -380,7 +400,7 @@ internal fun PrivateApplicationInfoPopup(
 }
 
 @Composable
-private fun ApplicationInfoMenu(
+internal fun ApplicationInfoMenu(
     modifier: Modifier = Modifier,
     eblanAppWidgetProviderInfosByPackageName: List<EblanAppWidgetProviderInfo>?,
     eblanShortcutInfosGroup: List<EblanShortcutInfo>?,
@@ -388,25 +408,22 @@ private fun ApplicationInfoMenu(
     hasShortcutHostPermission: Boolean,
     icon: String?,
     isVisibleOverlay: Boolean,
+    animations: Boolean,
     onApplicationInfo: () -> Unit,
-    onUpdateIsDragging: (Boolean) -> Unit,
     onEdit: () -> Unit,
     onTapShortcutInfo: (
         serialNumber: Long,
         packageName: String,
         shortcutId: String,
     ) -> Unit,
-    onUpdateGridItemSource: (GridItemSource) -> Unit,
-    onUpdateImageBitmap: (ImageBitmap) -> Unit,
-    onUpdateOverlayBounds: (
+    onWidgets: () -> Unit,
+    onDragShortcutInfo: (
+        gridItem: GridItem,
+        imageBitmap: ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
+        sharedElementKey: SharedElementKey,
     ) -> Unit,
-    onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
-    onWidgets: () -> Unit,
-    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
-    onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
-    onUpdateTransitionState: (Boolean) -> Unit,
 ) {
     Surface(
         modifier = modifier.padding(5.dp),
@@ -418,20 +435,13 @@ private fun ApplicationInfoMenu(
             ) {
                 if (hasShortcutHostPermission && !eblanShortcutInfosGroup.isNullOrEmpty()) {
                     ShortcutInfoScreen(
-                        modifier = modifier,
                         eblanShortcutInfosGroup = eblanShortcutInfosGroup,
                         gridItemSettings = gridItemSettings,
                         icon = icon,
                         isVisibleOverlay = isVisibleOverlay,
-                        onUpdateIsDragging = onUpdateIsDragging,
+                        animations = animations,
                         onTapShortcutInfo = onTapShortcutInfo,
-                        onUpdateGridItemSource = onUpdateGridItemSource,
-                        onUpdateImageBitmap = onUpdateImageBitmap,
-                        onUpdateOverlayBounds = onUpdateOverlayBounds,
-                        onUpdateSharedElementKey = onUpdateSharedElementKey,
-                        onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
-                        onUpdateTransitionState = onUpdateTransitionState,
+                        onDragShortcutInfo = onDragShortcutInfo,
                     )
 
                     Spacer(modifier = Modifier.height(5.dp))
@@ -475,7 +485,6 @@ private fun ApplicationInfoMenu(
 @Composable
 private fun PrivateApplicationInfoMenu(
     modifier: Modifier = Modifier,
-    drag: Drag,
     eblanShortcutInfosGroup: List<EblanShortcutInfo>?,
     hasShortcutHostPermission: Boolean,
     onApplicationInfo: () -> Unit,
@@ -496,8 +505,6 @@ private fun PrivateApplicationInfoMenu(
             ) {
                 if (hasShortcutHostPermission && !eblanShortcutInfosGroup.isNullOrEmpty()) {
                     PrivateShortcutInfoMenu(
-                        modifier = modifier,
-                        drag = drag,
                         eblanShortcutInfosGroup = eblanShortcutInfosGroup,
                         onTapShortcutInfo = onTapShortcutInfo,
                     )

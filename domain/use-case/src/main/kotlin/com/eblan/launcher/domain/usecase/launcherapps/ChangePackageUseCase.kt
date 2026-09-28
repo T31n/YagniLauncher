@@ -19,14 +19,12 @@ package com.eblan.launcher.domain.usecase.launcherapps
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
+import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.AppWidgetManagerWrapper
-import com.eblan.launcher.domain.framework.FileManager
-import com.eblan.launcher.domain.framework.IconPackManager
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
-import com.eblan.launcher.domain.model.EblanShortcutConfig
-import com.eblan.launcher.domain.model.FastLauncherAppsActivityInfo
+import com.eblan.launcher.domain.model.shortcutconfig.EblanShortcutConfig
 import com.eblan.launcher.domain.repository.ApplicationInfoGridItemRepository
 import com.eblan.launcher.domain.repository.EblanAppWidgetProviderInfoRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
@@ -34,19 +32,14 @@ import com.eblan.launcher.domain.repository.EblanShortcutConfigRepository
 import com.eblan.launcher.domain.repository.EblanShortcutInfoRepository
 import com.eblan.launcher.domain.repository.ShortcutConfigGridItemRepository
 import com.eblan.launcher.domain.repository.ShortcutInfoGridItemRepository
-import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.repository.WidgetGridItemRepository
-import com.eblan.launcher.domain.usecase.iconpack.cacheIconPackFile
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
-import java.io.File
 import javax.inject.Inject
 
 class ChangePackageUseCase @Inject constructor(
-    private val userDataRepository: UserDataRepository,
     private val packageManagerWrapper: PackageManagerWrapper,
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
     private val applicationInfoGridItemRepository: ApplicationInfoGridItemRepository,
@@ -58,7 +51,6 @@ class ChangePackageUseCase @Inject constructor(
     private val shortcutConfigGridItemRepository: ShortcutConfigGridItemRepository,
     private val eblanShortcutConfigRepository: EblanShortcutConfigRepository,
     private val fileManager: FileManager,
-    private val iconPackManager: IconPackManager,
     private val widgetGridItemRepository: WidgetGridItemRepository,
     private val iconKeyGenerator: IconKeyGenerator,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
@@ -68,10 +60,6 @@ class ChangePackageUseCase @Inject constructor(
         packageName: String,
     ) {
         withContext(ioDispatcher) {
-            val userData = userDataRepository.userDataFlow.first()
-
-            if (!userData.experimentalSettings.syncData) return@withContext
-
             updateEblanApplicationInfo(
                 packageName = packageName,
                 serialNumber = serialNumber,
@@ -86,11 +74,6 @@ class ChangePackageUseCase @Inject constructor(
                 serialNumber = serialNumber,
                 packageName = packageName,
             )
-
-            updateIconPackInfos(
-                serialNumber = serialNumber,
-                packageName = packageName,
-            )
         }
     }
 
@@ -98,7 +81,7 @@ class ChangePackageUseCase @Inject constructor(
         packageName: String,
         serialNumber: Long,
     ) {
-        val launcherAppsActivityInfosByPackageName = launcherAppsWrapper.getActivityList(
+        val launcherAppsActivityInfosByPackageName = launcherAppsWrapper.getActivityListWithCacheIcons(
             serialNumber = serialNumber,
             packageName = packageName,
         )
@@ -118,7 +101,7 @@ class ChangePackageUseCase @Inject constructor(
                 currentCoroutineContext().ensureActive()
 
                 newEblanShortcutConfigs.addAll(
-                    launcherAppsWrapper.getShortcutConfigActivityList(
+                    launcherAppsWrapper.getShortcutConfigActivityListWithCacheIcons(
                         serialNumber = launcherAppsActivityInfo.serialNumber,
                         packageName = launcherAppsActivityInfo.packageName,
                     ).map {
@@ -136,32 +119,30 @@ class ChangePackageUseCase @Inject constructor(
             }
         }
 
-        if (oldSyncEblanApplicationInfosByPackageName.toSet() != newSyncEblanApplicationInfosByPackageName.toSet()) {
-            val newDeleteEblanApplicationInfos =
-                newSyncEblanApplicationInfosByPackageName.map {
-                    it.toDeleteEblanApplicationInfo()
-                }.toSet()
+        val newDeleteEblanApplicationInfos =
+            newSyncEblanApplicationInfosByPackageName.map {
+                it.toDeleteEblanApplicationInfo()
+            }.toSet()
 
-            val oldDeleteEblanApplicationInfos =
-                oldSyncEblanApplicationInfosByPackageName.map {
-                    it.toDeleteEblanApplicationInfo()
-                }
-                    .filter { it !in newDeleteEblanApplicationInfos }
+        val oldDeleteEblanApplicationInfos =
+            oldSyncEblanApplicationInfosByPackageName.map {
+                it.toDeleteEblanApplicationInfo()
+            }
+                .filterNot { it in newDeleteEblanApplicationInfos }
 
-            eblanApplicationInfoRepository.upsertSyncEblanApplicationInfos(
-                syncEblanApplicationInfos = newSyncEblanApplicationInfosByPackageName,
-            )
+        eblanApplicationInfoRepository.upsertSyncEblanApplicationInfos(
+            syncEblanApplicationInfos = newSyncEblanApplicationInfosByPackageName,
+        )
 
-            eblanApplicationInfoRepository.deleteSyncEblanApplicationInfos(
-                deleteEblanApplicationInfos = oldDeleteEblanApplicationInfos,
-            )
+        eblanApplicationInfoRepository.deleteSyncEblanApplicationInfos(
+            deleteEblanApplicationInfos = oldDeleteEblanApplicationInfos,
+        )
 
-            deleteEblanApplicationInfoIcons(
-                eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos(),
-                eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos(),
-                oldDeleteEblanApplicationInfos = oldDeleteEblanApplicationInfos,
-            )
-        }
+        deleteEblanApplicationInfoIcons(
+            eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos(),
+            eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos(),
+            oldDeleteEblanApplicationInfos = oldDeleteEblanApplicationInfos,
+        )
 
         updateApplicationInfoGridItems(
             eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos(),
@@ -182,7 +163,7 @@ class ChangePackageUseCase @Inject constructor(
         if (!packageManagerWrapper.hasSystemFeatureAppWidgets) return
 
         val appWidgetManagerAppWidgetProviderInfosByPackageName =
-            appWidgetManagerWrapper.getInstalledProviders()
+            appWidgetManagerWrapper.getInstalledProvidersWithCacheIcons()
                 .filter {
                     it.serialNumber == serialNumber && it.packageName == packageName
                 }
@@ -204,41 +185,39 @@ class ChangePackageUseCase @Inject constructor(
                 )
             }
 
-        if (oldEblanAppWidgetProviderInfosByPackageName.toSet() != newEblanAppWidgetProviderInfosByPackageName.toSet()) {
-            val newDeleteEblanAppWidgetProviderInfos =
-                newEblanAppWidgetProviderInfosByPackageName.map {
-                    it.toDeleteEblanAppWidgetProviderInfo()
-                }.toSet()
+        val newDeleteEblanAppWidgetProviderInfos =
+            newEblanAppWidgetProviderInfosByPackageName.map {
+                it.toDeleteEblanAppWidgetProviderInfo()
+            }.toSet()
 
-            val oldDeleteEblanAppWidgetProviderInfos =
-                oldEblanAppWidgetProviderInfosByPackageName.map {
-                    it.toDeleteEblanAppWidgetProviderInfo()
-                }.filter {
-                    it !in newDeleteEblanAppWidgetProviderInfos
-                }
+        val oldDeleteEblanAppWidgetProviderInfos =
+            oldEblanAppWidgetProviderInfosByPackageName.map {
+                it.toDeleteEblanAppWidgetProviderInfo()
+            }.filterNot {
+                it in newDeleteEblanAppWidgetProviderInfos
+            }
 
-            eblanAppWidgetProviderInfoRepository.upsertEblanAppWidgetProviderInfos(
-                eblanAppWidgetProviderInfos = newEblanAppWidgetProviderInfosByPackageName,
-            )
+        eblanAppWidgetProviderInfoRepository.upsertEblanAppWidgetProviderInfos(
+            eblanAppWidgetProviderInfos = newEblanAppWidgetProviderInfosByPackageName,
+        )
 
-            eblanAppWidgetProviderInfoRepository.deleteEblanAppWidgetProviderInfos(
-                deleteEblanAppWidgetProviderInfos = oldDeleteEblanAppWidgetProviderInfos,
-            )
+        eblanAppWidgetProviderInfoRepository.deleteEblanAppWidgetProviderInfos(
+            deleteEblanAppWidgetProviderInfos = oldDeleteEblanAppWidgetProviderInfos,
+        )
 
-            deleteEblanAppWidgetProviderInfoIcons(
-                eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos(),
-                eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos(),
-                oldDeleteEblanAppWidgetProviderInfos = oldDeleteEblanAppWidgetProviderInfos,
-            )
+        deleteEblanAppWidgetProviderInfoIcons(
+            eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos(),
+            eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos(),
+            oldDeleteEblanAppWidgetProviderInfos = oldDeleteEblanAppWidgetProviderInfos,
+        )
 
-            updateWidgetGridItems(
-                eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos(),
-                fileManager = fileManager,
-                packageManagerWrapper = packageManagerWrapper,
-                widgetGridItemRepository = widgetGridItemRepository,
-                iconKeyGenerator = iconKeyGenerator,
-            )
-        }
+        updateWidgetGridItems(
+            eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos(),
+            fileManager = fileManager,
+            packageManagerWrapper = packageManagerWrapper,
+            widgetGridItemRepository = widgetGridItemRepository,
+            iconKeyGenerator = iconKeyGenerator,
+        )
     }
 
     private suspend fun updateEblanShortcutInfo(
@@ -247,58 +226,54 @@ class ChangePackageUseCase @Inject constructor(
     ) {
         if (!launcherAppsWrapper.hasShortcutHostPermission) return
 
-        val launcherAppsShortcutInfosByPackageName = launcherAppsWrapper.getShortcutsByPackageName(
+        val launcherAppsShortcutInfosByPackageName = launcherAppsWrapper.getShortcutsByPackageNameWithCacheIcons(
             serialNumber = serialNumber,
             packageName = packageName,
         ) ?: return
 
         val oldEblanShortcutInfosByPackageName =
-            eblanShortcutInfoRepository.getEblanShortcutInfos(
+            eblanShortcutInfoRepository.getEblanShortcutInfosByPackageName(
                 serialNumber = serialNumber,
                 packageName = packageName,
             )
 
         val newEblanShortcutInfosByPackageName =
             launcherAppsShortcutInfosByPackageName.map {
-                currentCoroutineContext().ensureActive()
-
                 it.toEblanShortcutInfo()
             }
 
-        if (oldEblanShortcutInfosByPackageName.toSet() != newEblanShortcutInfosByPackageName.toSet()) {
-            val newDeleteEblanShortcutInfos =
-                newEblanShortcutInfosByPackageName.map {
-                    it.toDeleteEblanShortcutInfo()
-                }.toSet()
+        val newDeleteEblanShortcutInfos =
+            newEblanShortcutInfosByPackageName.map {
+                it.toDeleteEblanShortcutInfo()
+            }.toSet()
 
-            val oldDeleteEblanShortcutInfos =
-                oldEblanShortcutInfosByPackageName.map {
-                    it.toDeleteEblanShortcutInfo()
-                }.filter {
-                    it !in newDeleteEblanShortcutInfos
-                }
+        val oldDeleteEblanShortcutInfos =
+            oldEblanShortcutInfosByPackageName.map {
+                it.toDeleteEblanShortcutInfo()
+            }.filterNot {
+                it in newDeleteEblanShortcutInfos
+            }
 
-            eblanShortcutInfoRepository.upsertEblanShortcutInfos(
-                eblanShortcutInfos = newEblanShortcutInfosByPackageName,
-            )
+        eblanShortcutInfoRepository.upsertEblanShortcutInfos(
+            eblanShortcutInfos = newEblanShortcutInfosByPackageName,
+        )
 
-            eblanShortcutInfoRepository.deleteEblanShortcutInfos(
-                deleteEblanShortcutInfos = oldDeleteEblanShortcutInfos,
-            )
+        eblanShortcutInfoRepository.deleteEblanShortcutInfos(
+            deleteEblanShortcutInfos = oldDeleteEblanShortcutInfos,
+        )
 
-            deleteEblanShortInfoIcons(
-                eblanShortcutInfos = eblanShortcutInfoRepository.getEblanShortcutInfos(),
-                oldDeleteEblanShortcutInfos = oldDeleteEblanShortcutInfos,
-            )
+        deleteEblanShortInfoIcons(
+            eblanShortcutInfos = eblanShortcutInfoRepository.getEblanShortcutInfos(),
+            oldDeleteEblanShortcutInfos = oldDeleteEblanShortcutInfos,
+        )
 
-            updateShortcutInfoGridItems(
-                eblanShortcutInfos = eblanShortcutInfoRepository.getEblanShortcutInfos(),
-                shortcutInfoGridItemRepository = shortcutInfoGridItemRepository,
-                fileManager = fileManager,
-                packageManagerWrapper = packageManagerWrapper,
-                iconKeyGenerator = iconKeyGenerator,
-            )
-        }
+        updateShortcutInfoGridItems(
+            eblanShortcutInfos = eblanShortcutInfoRepository.getEblanShortcutInfos(),
+            shortcutInfoGridItemRepository = shortcutInfoGridItemRepository,
+            fileManager = fileManager,
+            packageManagerWrapper = packageManagerWrapper,
+            iconKeyGenerator = iconKeyGenerator,
+        )
     }
 
     private suspend fun updateEblanShortcutConfigs(
@@ -312,106 +287,33 @@ class ChangePackageUseCase @Inject constructor(
                 packageName = packageName,
             )
 
-        if (oldEblanShortcutConfigsByPackageName.toSet() != newEblanShortcutConfigs.toSet()) {
-            val newDeleteEblanShortcutConfigs = newEblanShortcutConfigs.map {
+        val newDeleteEblanShortcutConfigs = newEblanShortcutConfigs.map {
+            it.toDeleteEblanShortcutConfig()
+        }.toSet()
+
+        val oldDeleteEblanShortcutConfigs =
+            oldEblanShortcutConfigsByPackageName.map {
                 it.toDeleteEblanShortcutConfig()
-            }.toSet()
-
-            val oldDeleteEblanShortcutConfigs =
-                oldEblanShortcutConfigsByPackageName.map {
-                    it.toDeleteEblanShortcutConfig()
-                }.filter {
-                    it !in newDeleteEblanShortcutConfigs
-                }
-
-            eblanShortcutConfigRepository.upsertEblanShortcutConfigs(
-                eblanShortcutConfigs = newEblanShortcutConfigs,
-            )
-
-            eblanShortcutConfigRepository.deleteEblanShortcutConfigs(
-                deleteEblanShortcutConfigs = oldDeleteEblanShortcutConfigs,
-            )
-
-            deleteEblanShortcutConfigIcons(oldDeleteEblanShortcutConfigs = oldDeleteEblanShortcutConfigs)
-
-            updateShortcutConfigGridItems(
-                eblanShortcutConfigs = eblanShortcutConfigRepository.getEblanShortcutConfigs(),
-                shortcutConfigGridItemRepository = shortcutConfigGridItemRepository,
-                fileManager = fileManager,
-                packageManagerWrapper = packageManagerWrapper,
-                iconKeyGenerator = iconKeyGenerator,
-            )
-        }
-    }
-
-    private suspend fun updateIconPackInfos(
-        serialNumber: Long,
-        packageName: String,
-    ) {
-        val iconPackInfoPackageName =
-            userDataRepository.userDataFlow.first().generalSettings.iconPackInfoPackageName
-
-        if (iconPackInfoPackageName.isEmpty()) return
-
-        val oldFastEblanLauncherAppsActivityInfo =
-            eblanApplicationInfoRepository.getEblanApplicationInfosByPackageName(
-                serialNumber = serialNumber,
-                packageName = packageName,
-            ).map {
-                FastLauncherAppsActivityInfo(
-                    serialNumber = it.serialNumber,
-                    componentName = it.componentName,
-                    packageName = it.packageName,
-                    lastUpdateTime = it.lastUpdateTime,
-                )
+            }.filterNot {
+                it in newDeleteEblanShortcutConfigs
             }
 
-        val fastLauncherAppsActivityInfos = launcherAppsWrapper.getFastActivityList(
-            serialNumber = serialNumber,
-            packageName = packageName,
+        eblanShortcutConfigRepository.upsertEblanShortcutConfigs(
+            eblanShortcutConfigs = newEblanShortcutConfigs,
         )
 
-        val iconPackInfoDirectory = File(
-            fileManager.getFilesDirectory(name = FileManager.ICON_PACKS_DIR),
-            iconPackInfoPackageName,
-        ).apply { if (!exists()) mkdirs() }
+        eblanShortcutConfigRepository.deleteEblanShortcutConfigs(
+            deleteEblanShortcutConfigs = oldDeleteEblanShortcutConfigs,
+        )
 
-        val appFilter =
-            iconPackManager.getIconPackInfoComponents(packageName = iconPackInfoPackageName)
+        deleteEblanShortcutConfigIcons(oldDeleteEblanShortcutConfigs = oldDeleteEblanShortcutConfigs)
 
-        val installedComponentHashCodes = buildSet {
-            fastLauncherAppsActivityInfos.forEach {
-                currentCoroutineContext().ensureActive()
-
-                val file = File(
-                    iconPackInfoDirectory,
-                    iconKeyGenerator.getHashedName(name = it.componentName),
-                )
-
-                cacheIconPackFile(
-                    iconPackManager = iconPackManager,
-                    appFilter = appFilter,
-                    iconPackInfoPackageName = iconPackInfoPackageName,
-                    file = file,
-                    componentName = it.componentName,
-                )
-
-                add(iconKeyGenerator.getHashedName(name = it.componentName))
-            }
-        }
-
-        if (oldFastEblanLauncherAppsActivityInfo.toSet() != fastLauncherAppsActivityInfos.toSet()) {
-            iconPackInfoDirectory.listFiles()
-                ?.filter {
-                    currentCoroutineContext().ensureActive()
-
-                    it.isFile && it.name !in installedComponentHashCodes
-                }
-                ?.forEach {
-                    currentCoroutineContext().ensureActive()
-
-                    it.delete()
-                }
-        }
+        updateShortcutConfigGridItems(
+            eblanShortcutConfigs = eblanShortcutConfigRepository.getEblanShortcutConfigs(),
+            shortcutConfigGridItemRepository = shortcutConfigGridItemRepository,
+            fileManager = fileManager,
+            packageManagerWrapper = packageManagerWrapper,
+            iconKeyGenerator = iconKeyGenerator,
+        )
     }
 }

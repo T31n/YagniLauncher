@@ -38,17 +38,22 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import com.eblan.launcher.designsystem.component.EblanDialog
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.EblanApplicationInfoTag
-import com.eblan.launcher.domain.model.EblanApplicationInfoTagUi
+import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
+import com.eblan.launcher.domain.model.application.EblanApplicationInfoTagUi
 import com.eblan.launcher.feature.editapplicationinfo.R
 import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun AddTagDialog(
     modifier: Modifier = Modifier,
+    eblanApplicationInfoTagsUi: List<EblanApplicationInfoTagUi>,
     onDismissRequest: () -> Unit,
     onAddEblanApplicationInfoTag: (EblanApplicationInfoTag) -> Unit,
 ) {
+    val maxIndex = remember(key1 = eblanApplicationInfoTagsUi) {
+        eblanApplicationInfoTagsUi.maxOfOrNull { it.index } ?: 0
+    }
+
     var value by remember { mutableStateOf("") }
 
     var isError by remember { mutableStateOf(false) }
@@ -98,6 +103,7 @@ internal fun AddTagDialog(
                         onAddEblanApplicationInfoTag(
                             EblanApplicationInfoTag(
                                 name = value,
+                                index = maxIndex + 1,
                             ),
                         )
 
@@ -147,6 +153,7 @@ internal fun UpdateTagDialog(
                         EblanApplicationInfoTag(
                             id = eblanApplicationInfoTagUi.id,
                             name = eblanApplicationInfoTagUi.name,
+                            index = eblanApplicationInfoTagUi.index,
                         ),
                     )
 
@@ -199,6 +206,7 @@ internal fun UpdateTagDialog(
                             EblanApplicationInfoTag(
                                 id = eblanApplicationInfoTagUi.id,
                                 name = value,
+                                index = eblanApplicationInfoTagUi.index,
                             ),
                         )
 

@@ -44,9 +44,9 @@ internal fun EditIconSizeDialog(
     onDismissRequest: () -> Unit,
     onUpdateIconSize: (Int) -> Unit,
 ) {
-    var value by remember { mutableStateOf("$iconSize") }
+    var currentIconSize by remember { mutableStateOf("$iconSize") }
 
-    var isError by remember { mutableStateOf(false) }
+    var isErrorIconSize by remember { mutableStateOf(false) }
 
     EblanDialog(
         modifier = modifier,
@@ -58,17 +58,17 @@ internal fun EditIconSizeDialog(
         )
 
         TextField(
-            value = value,
+            value = currentIconSize,
             onValueChange = {
-                value = it
-                isError = false
+                currentIconSize = it
+                isErrorIconSize = false
             },
             modifier = Modifier.fillMaxWidth(),
             label = {
                 Text(text = stringResource(R.string.icon_size))
             },
-            isError = isError,
-            supportingText = if (isError) {
+            isError = isErrorIconSize,
+            supportingText = if (isErrorIconSize) {
                 {
                     Text(text = stringResource(R.string.icon_size_is_not_valid))
                 }
@@ -92,12 +92,14 @@ internal fun EditIconSizeDialog(
 
             TextButton(
                 onClick = {
-                    val newIconSize = value.toIntOrNull()
+                    val newIconSize = currentIconSize.toIntOrNull()
 
-                    if (newIconSize != null && newIconSize >= 1) {
+                    isErrorIconSize = newIconSize == null || newIconSize <= 1
+
+                    if (newIconSize != null && newIconSize > 1) {
                         onUpdateIconSize(newIconSize)
-                    } else {
-                        isError = true
+
+                        onDismissRequest()
                     }
                 },
             ) {

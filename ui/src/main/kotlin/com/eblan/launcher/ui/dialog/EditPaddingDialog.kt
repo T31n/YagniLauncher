@@ -44,9 +44,9 @@ internal fun EditPaddingDialog(
     onDismissRequest: () -> Unit,
     onUpdatePadding: (Int) -> Unit,
 ) {
-    var value by remember { mutableStateOf("$padding") }
+    var currentPadding by remember { mutableStateOf("$padding") }
 
-    var isError by remember { mutableStateOf(false) }
+    var isErrorPadding by remember { mutableStateOf(false) }
 
     EblanDialog(
         modifier = modifier,
@@ -58,17 +58,17 @@ internal fun EditPaddingDialog(
         )
 
         TextField(
-            value = value,
+            value = currentPadding,
             onValueChange = {
-                value = it
-                isError = false
+                currentPadding = it
+                isErrorPadding = false
             },
             modifier = Modifier.fillMaxWidth(),
             label = {
                 Text(text = stringResource(R.string.padding))
             },
-            isError = isError,
-            supportingText = if (isError) {
+            isError = isErrorPadding,
+            supportingText = if (isErrorPadding) {
                 {
                     Text(text = stringResource(R.string.padding_is_not_valid))
                 }
@@ -92,12 +92,14 @@ internal fun EditPaddingDialog(
 
             TextButton(
                 onClick = {
-                    val newPadding = value.toIntOrNull()
+                    val newPadding = currentPadding.toIntOrNull()
+
+                    isErrorPadding = newPadding == null || newPadding < 0
 
                     if (newPadding != null && newPadding >= 0) {
-                        onUpdatePadding(value.toInt())
-                    } else {
-                        isError = true
+                        onUpdatePadding(currentPadding.toInt())
+
+                        onDismissRequest()
                     }
                 },
             ) {

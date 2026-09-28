@@ -20,20 +20,29 @@ package com.eblan.launcher.framework.accessibilitymanager
 import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.Context
 import android.view.accessibility.AccessibilityManager
+import com.eblan.launcher.domain.common.Dispatcher
+import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.service.EblanAccessibilityService
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-internal class DefaultAccessibilityManagerWrapper @Inject constructor(@param:ApplicationContext private val context: Context) : AndroidAccessibilityManagerWrapper {
+internal class DefaultAccessibilityManagerWrapper @Inject constructor(
+    @param:ApplicationContext private val context: Context,
+    @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
+) : AndroidAccessibilityManagerWrapper {
     private val accessibilityManager = context.getSystemService(Context.ACCESSIBILITY_SERVICE)
         as AccessibilityManager
 
-    override fun isAccessibilityServiceEnabled(): Boolean = accessibilityManager.isEnabled && accessibilityManager
-        .getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK)
-        .any { serviceInfo ->
-            val resolvedInfo = serviceInfo.resolveInfo.serviceInfo
+    override suspend fun isAccessibilityServiceEnabled(): Boolean = withContext(ioDispatcher) {
+        accessibilityManager.isEnabled && accessibilityManager
+            .getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK)
+            .any {
+                val resolvedInfo = it.resolveInfo.serviceInfo
 
-            resolvedInfo.packageName == context.packageName &&
-                resolvedInfo.name == EblanAccessibilityService::class.java.name
-        }
+                resolvedInfo.packageName == context.packageName &&
+                    resolvedInfo.name == EblanAccessibilityService::class.java.name
+            }
+    }
 }

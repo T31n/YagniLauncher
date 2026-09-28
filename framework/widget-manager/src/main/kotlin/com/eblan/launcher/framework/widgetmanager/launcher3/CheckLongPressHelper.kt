@@ -46,9 +46,7 @@ internal class CheckLongPressHelper(
 
             MotionEvent.ACTION_CANCEL,
             MotionEvent.ACTION_UP,
-            -> {
-                cancelLongPress()
-            }
+            -> cancelLongPress()
 
             MotionEvent.ACTION_MOVE -> {
                 val dx = ev.x - downPoint.x

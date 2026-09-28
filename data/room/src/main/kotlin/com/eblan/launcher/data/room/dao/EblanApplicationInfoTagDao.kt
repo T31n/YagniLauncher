@@ -38,4 +38,7 @@ interface EblanApplicationInfoTagDao {
 
     @Delete
     suspend fun deleteEblanApplicationInfoTagEntity(entity: EblanApplicationInfoTagEntity)
+
+    @Update
+    suspend fun updateEblanApplicationInfoTagEntities(entities: List<EblanApplicationInfoTagEntity>)
 }

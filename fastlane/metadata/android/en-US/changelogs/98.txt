@@ -1,0 +1,3 @@
+- App drawer folders
+- Folders and Tags rearrangement
+- Bug fixes and stability improvements

@@ -40,33 +40,94 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.CoroutineScope
+import com.eblan.launcher.domain.model.application.AlphabeticalScrollBarItem
+import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
+import com.eblan.launcher.domain.model.userdata.ScrollBarType
+import com.eblan.launcher.domain.model.userdata.SearchBarPosition
+import com.eblan.launcher.feature.home.model.ScrollBarItemLayout
+import com.eblan.launcher.feature.home.screen.application.vertical.AlphabeticalScrollBar
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 @Composable
-internal fun ScrollBarThumb(
+internal fun ScrollBarType(
+    modifier: Modifier = Modifier,
+    alphabeticalScrollBarItems: List<AlphabeticalScrollBarItem>,
+    appDrawerSettings: AppDrawerSettings,
+    canScroll: Boolean,
+    lazyListState: LazyListState,
+    paddingValues: PaddingValues,
+    itemLayout: ScrollBarItemLayout,
+) {
+    Box(
+        modifier = modifier.fillMaxHeight(),
+        contentAlignment = Alignment.TopCenter,
+    ) {
+        when (appDrawerSettings.scrollBarType) {
+            ScrollBarType.ScrollBar -> {
+                ScrollBarThumb(
+                    lazyListState = lazyListState,
+                    paddingValues = paddingValues,
+                    searchBarPosition = appDrawerSettings.searchBarPosition,
+                    canScroll = canScroll,
+                    scrollBarItemLayout = itemLayout,
+                    onScrollToItem = lazyListState::scrollToItem,
+                )
+            }
+
+            ScrollBarType.Alphabetical -> {
+                if (alphabeticalScrollBarItems.isNotEmpty()) {
+                    AlphabeticalScrollBar(
+                        alphabeticalScrollBarItems = alphabeticalScrollBarItems,
+                        paddingValues = paddingValues,
+                        searchBarPosition = appDrawerSettings.searchBarPosition,
+                        canScroll = canScroll,
+                        onScrollToItem = lazyListState::scrollToItem,
+                    )
+                }
+            }
+
+            ScrollBarType.None -> Unit
+        }
+    }
+}
+
+@Composable
+private fun ScrollBarThumb(
     modifier: Modifier = Modifier,
     lazyListState: LazyListState,
     paddingValues: PaddingValues,
+    searchBarPosition: SearchBarPosition,
+    canScroll: Boolean,
+    scrollBarItemLayout: ScrollBarItemLayout = ScrollBarItemLayout.Regular,
     onScrollToItem: suspend (Int) -> Unit,
 ) {
+    if (!canScroll) return
+
     val density = LocalDensity.current
 
     val scope = rememberCoroutineScope()
 
-    val bottomPadding = with(density) {
-        paddingValues.calculateBottomPadding().roundToPx()
+    val bottomPadding = if (searchBarPosition == SearchBarPosition.Bottom) {
+        0.dp
+    } else {
+        paddingValues.calculateBottomPadding()
     }
 
-    val thumbHeight by remember(lazyListState) {
+    val bottomPaddingPx = with(density) {
+        bottomPadding.roundToPx()
+    }
+
+    val thumbHeight by remember(key1 = lazyListState) {
         derivedStateOf {
             with(density) {
                 (lazyListState.layoutInfo.viewportSize.height / 4).toDp()
@@ -74,13 +135,14 @@ internal fun ScrollBarThumb(
         }
     }
 
-    val viewPortThumbY by remember(lazyListState) {
+    val viewPortThumbY by remember(key1 = lazyListState) {
         derivedStateOf {
             getViewPortThumbY(
                 lazyListState = lazyListState,
                 density = density,
                 thumbHeight = thumbHeight,
-                bottomPadding = bottomPadding,
+                bottomPadding = bottomPaddingPx,
+                scrollBarItemLayout = scrollBarItemLayout,
             )
         }
     }
@@ -95,145 +157,106 @@ internal fun ScrollBarThumb(
         }
     }
 
-    Row(modifier = modifier) {
-        Box(
-            modifier = Modifier
-                .pointerInput(lazyListState) {
-                    detectTapGestures { offset ->
-                        val viewportHeight =
-                            lazyListState.layoutInfo.viewportSize.height - bottomPadding
+    fun scrollToTap(offset: Offset) {
+        val viewportHeight = lazyListState.layoutInfo.viewportSize.height - bottomPaddingPx
+        val thumbHeightPx = with(density) { thumbHeight.roundToPx() }
+        val maxThumbY = (viewportHeight - thumbHeightPx).coerceAtLeast(0)
+        val targetThumbY = (offset.y - thumbHeightPx / 2f)
+            .coerceIn(0f, maxThumbY.toFloat())
+        val totalItems = lazyListState.layoutInfo.totalItemsCount
+        val targetIndex = (
+            targetThumbY / maxThumbY.coerceAtLeast(1) * (totalItems - 1)
+            ).roundToInt().coerceAtMost(totalItems - 1)
 
-                        val maxThumbY =
-                            (viewportHeight - with(density) { thumbHeight.roundToPx() })
-                                .coerceAtLeast(0)
-
-                        val targetThumbY =
-                            (offset.y - with(density) { thumbHeight.roundToPx() / 2f })
-                                .coerceIn(0f, maxThumbY.toFloat())
-
-                        val totalItems =
-                            lazyListState.layoutInfo.totalItemsCount
-
-                        val item =
-                            (
-                                targetThumbY /
-                                    maxThumbY.coerceAtLeast(1)
-                                ) * (totalItems - 1)
-
-                        scope.launch {
-                            onScrollToItem(
-                                item.roundToInt()
-                                    .coerceAtMost(totalItems - 1),
-                            )
-                        }
-                    }
-                }
-                .width(10.dp)
-                .fillMaxHeight()
-                .padding(bottom = paddingValues.calculateBottomPadding())
-                .background(
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
-                    shape = RoundedCornerShape(10.dp),
-                ),
-        ) {
-            Box(
-                modifier = Modifier
-                    .offset {
-                        IntOffset(
-                            x = 0,
-                            y = animatedThumbY.roundToInt(),
-                        )
-                    }
-                    .pointerInput(lazyListState) {
-                        detectDragGestures(
-                            onDragStart = {
-                                thumbY = viewPortThumbY
-                                isDraggingThumb = true
-                            },
-                            onDrag = { _, dragAmount ->
-                                handleVerticalDrag(
-                                    lazyListState = lazyListState,
-                                    density = density,
-                                    thumbHeight = thumbHeight,
-                                    bottomPadding = bottomPadding,
-                                    thumbY = thumbY,
-                                    deltaY = dragAmount.y,
-                                    scope = scope,
-                                    onScrollToItem = onScrollToItem,
-                                    onUpdateThumbY = {
-                                        thumbY = it
-                                    },
-                                )
-                            },
-                            onDragEnd = {
-                                isDraggingThumb = false
-                            },
-                            onDragCancel = {
-                                isDraggingThumb = false
-                            },
-                        )
-                    }
-                    .fillMaxWidth()
-                    .height(thumbHeight)
-                    .background(
-                        color = MaterialTheme.colorScheme.primary,
-                        shape = RoundedCornerShape(10.dp),
-                    ),
-            )
+        scope.launch {
+            onScrollToItem(targetIndex)
         }
     }
-}
 
-private fun handleVerticalDrag(
-    lazyListState: LazyListState,
-    density: Density,
-    thumbHeight: Dp,
-    bottomPadding: Int,
-    thumbY: Float,
-    deltaY: Float,
-    scope: CoroutineScope,
-    onScrollToItem: suspend (Int) -> Unit,
-    onUpdateThumbY: (Float) -> Unit,
-) {
-    if (deltaY == 0f) return
+    fun scrollToDrag(deltaY: Float) {
+        if (deltaY == 0f) return
 
-    val layoutInfo = lazyListState.layoutInfo
-    val visibleItems = layoutInfo.visibleItemsInfo
+        val layoutInfo = lazyListState.layoutInfo
+        val visibleItems = layoutInfo.visibleItemsInfo
+        val avgItemSize = visibleItems.sumOf { it.size } / visibleItems.size
+        val totalItems = layoutInfo.totalItemsCount
+        val viewportHeight = layoutInfo.viewportSize.height
+        val thumbHeightPx = with(density) { thumbHeight.toPx() }
+        val availableHeight = (viewportHeight - thumbHeightPx - bottomPaddingPx).coerceAtLeast(0f)
+        val newThumbY = (thumbY + deltaY).coerceIn(0f, availableHeight)
+        val progress = if (availableHeight > 0f) newThumbY / availableHeight else 0f
+        val headerHeight = if (scrollBarItemLayout == ScrollBarItemLayout.StickyHeader) {
+            visibleItems.firstOrNull { it.index == 0 }?.size ?: 0
+        } else {
+            0
+        }
+        val itemCount = totalItems - if (headerHeight > 0) 1 else 0
+        val totalContentHeight = headerHeight + itemCount * avgItemSize
+        val scrollableHeight = (
+            totalContentHeight - (viewportHeight - bottomPaddingPx)
+            ).coerceAtLeast(0)
+        val targetScrollY = (progress * scrollableHeight).coerceIn(0f, scrollableHeight.toFloat())
+        val targetIndex = if (headerHeight > 0 && targetScrollY >= headerHeight) {
+            (1 + ((targetScrollY - headerHeight) / avgItemSize).toInt())
+                .coerceIn(1, totalItems - 1)
+        } else {
+            0
+        }
 
-    val avgItemSize = visibleItems.sumOf { it.size } / visibleItems.size
-
-    val totalItems = layoutInfo.totalItemsCount
-    val viewportHeight = layoutInfo.viewportSize.height
-
-    val thumbHeightPx = with(density) { thumbHeight.toPx() }
-
-    val availableHeight = (viewportHeight - thumbHeightPx - bottomPadding)
-        .coerceAtLeast(0f)
-
-    val newThumbY = (thumbY + deltaY)
-        .coerceIn(0f, availableHeight)
-
-    val progress = if (availableHeight > 0f) {
-        (newThumbY / availableHeight).coerceIn(0f, 1f)
-    } else {
-        0f
+        thumbY = newThumbY
+        scope.launch {
+            onScrollToItem(targetIndex)
+        }
     }
 
-    val totalContentHeight = totalItems * avgItemSize
-    val scrollableHeight = (totalContentHeight - viewportHeight)
-        .coerceAtLeast(0)
-
-    val targetScrollY = (progress * scrollableHeight)
-        .coerceIn(0f, scrollableHeight.toFloat())
-
-    val targetIndex = (targetScrollY / avgItemSize)
-        .toInt()
-        .coerceIn(0, totalItems - 1)
-
-    onUpdateThumbY(newThumbY)
-
-    scope.launch {
-        onScrollToItem(targetIndex)
+    Box(
+        modifier = modifier
+            .width(10.dp)
+            .fillMaxHeight()
+            .padding(bottom = bottomPadding)
+            .background(
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
+                shape = RoundedCornerShape(10.dp),
+            )
+            .pointerInput(lazyListState) {
+                detectTapGestures(
+                    onTap = ::scrollToTap,
+                )
+            },
+        contentAlignment = Alignment.TopCenter,
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(thumbHeight)
+                .offset {
+                    IntOffset(
+                        x = 0,
+                        y = animatedThumbY.roundToInt(),
+                    )
+                }
+                .background(
+                    color = MaterialTheme.colorScheme.primary,
+                    shape = RoundedCornerShape(10.dp),
+                )
+                .pointerInput(lazyListState) {
+                    detectDragGestures(
+                        onDragStart = {
+                            thumbY = viewPortThumbY
+                            isDraggingThumb = true
+                        },
+                        onDrag = { _, dragAmount ->
+                            scrollToDrag(dragAmount.y)
+                        },
+                        onDragEnd = {
+                            isDraggingThumb = false
+                        },
+                        onDragCancel = {
+                            isDraggingThumb = false
+                        },
+                    )
+                },
+        )
     }
 }
 
@@ -242,24 +265,35 @@ private fun getViewPortThumbY(
     density: Density,
     thumbHeight: Dp,
     bottomPadding: Int,
+    scrollBarItemLayout: ScrollBarItemLayout,
 ): Float {
     val layoutInfo = lazyListState.layoutInfo
     val visibleItems = layoutInfo.visibleItemsInfo
 
-    val firstItem = visibleItems.first()
-
-    val visibleHeight = visibleItems.sumOf { it.size }
-    val avgItemSize = visibleHeight / visibleItems.size
-
     val totalItems = layoutInfo.totalItemsCount
-    val totalContentHeight = totalItems * avgItemSize
-
-    val scrollY = (firstItem.index * avgItemSize) - firstItem.offset
+    val header = if (scrollBarItemLayout == ScrollBarItemLayout.StickyHeader) {
+        visibleItems.firstOrNull { it.index == 0 }
+    } else {
+        null
+    }
+    val appItems = visibleItems.filter { it.index != 0 || header == null }
+    val avgItemSize = appItems.map { it.size }.average().toFloat()
+    val itemCount = totalItems - if (header != null) 1 else 0
+    val totalContentHeight = (header?.size ?: 0) + itemCount * avgItemSize
+    val firstItem = appItems.firstOrNull()
+    val scrollY = if (header != null && firstItem != null) {
+        header.size + ((firstItem.index - 1) * avgItemSize) - firstItem.offset
+    } else if (firstItem != null) {
+        (firstItem.index * avgItemSize) - firstItem.offset
+    } else {
+        0f
+    }
 
     val viewportHeight = layoutInfo.viewportSize.height.toFloat()
 
-    val scrollableHeight = (totalContentHeight - viewportHeight)
-        .coerceAtLeast(0f)
+    val scrollableHeight = (
+        totalContentHeight - (viewportHeight - bottomPadding)
+        ).coerceAtLeast(0f)
 
     val progress = if (scrollableHeight > 0f) {
         (scrollY / scrollableHeight).coerceIn(0f, 1f)
@@ -269,9 +303,7 @@ private fun getViewPortThumbY(
 
     val thumbHeightPx = with(density) { thumbHeight.toPx() }
 
-    val availableHeight = (viewportHeight - thumbHeightPx - bottomPadding)
-        .coerceAtLeast(0f)
+    val availableHeight = (viewportHeight - thumbHeightPx - bottomPadding).coerceAtLeast(0f)
 
-    return (progress * availableHeight)
-        .coerceIn(0f, availableHeight)
+    return (progress * availableHeight).coerceIn(0f, availableHeight)
 }

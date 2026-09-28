@@ -24,8 +24,8 @@ import androidx.room.Update
 import androidx.room.Upsert
 import com.eblan.launcher.data.room.entity.EblanApplicationInfoEntity
 import com.eblan.launcher.data.room.entity.EblanApplicationInfoTagEntity
-import com.eblan.launcher.domain.model.DeleteEblanApplicationInfo
-import com.eblan.launcher.domain.model.SyncEblanApplicationInfo
+import com.eblan.launcher.domain.model.application.DeleteEblanApplicationInfo
+import com.eblan.launcher.domain.model.application.SyncEblanApplicationInfo
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -34,10 +34,10 @@ interface EblanApplicationInfoDao {
     fun getEblanApplicationInfoEntitiesFlow(): Flow<List<EblanApplicationInfoEntity>>
 
     @Query("SELECT * FROM EblanApplicationInfoEntity")
-    fun getEblanApplicationInfoEntity(): List<EblanApplicationInfoEntity>
+    suspend fun getEblanApplicationInfoEntities(): List<EblanApplicationInfoEntity>
 
-    @Update
-    suspend fun updateEblanApplicationInfoEntities(entities: List<EblanApplicationInfoEntity>)
+    @Upsert
+    suspend fun upsertEblanApplicationInfoEntities(entities: List<EblanApplicationInfoEntity>)
 
     @Upsert
     suspend fun upsertEblanApplicationInfoEntity(entity: EblanApplicationInfoEntity)
@@ -89,21 +89,6 @@ interface EblanApplicationInfoDao {
 
     @Query(
         """
-        SELECT tag.*
-        FROM EblanApplicationInfoTagEntity AS tag
-        INNER JOIN EblanApplicationInfoTagCrossRefEntity AS ref
-            ON tag.id = ref.id
-        WHERE ref.componentName = :componentName
-          AND ref.serialNumber = :serialNumber
-    """,
-    )
-    fun getEblanApplicationInfoTagEntities(
-        serialNumber: Long,
-        componentName: String,
-    ): List<EblanApplicationInfoTagEntity>
-
-    @Query(
-        """
     SELECT DISTINCT app.*
     FROM EblanApplicationInfoEntity AS app
     INNER JOIN EblanApplicationInfoTagCrossRefEntity AS ref
@@ -127,4 +112,7 @@ interface EblanApplicationInfoDao {
     """,
     )
     suspend fun getEblanApplicationInfoEntitiesWithoutTags(): List<EblanApplicationInfoEntity>
+
+    @Update
+    suspend fun updateEblanApplicationInfoEntities(entities: List<EblanApplicationInfoEntity>)
 }

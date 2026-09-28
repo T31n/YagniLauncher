@@ -17,8 +17,8 @@
  */
 package com.eblan.launcher.domain.repository
 
-import com.eblan.launcher.domain.model.PartialShortcutConfigGridItem
-import com.eblan.launcher.domain.model.ShortcutConfigGridItem
+import com.eblan.launcher.domain.model.grid.PartialShortcutConfigGridItem
+import com.eblan.launcher.domain.model.grid.ShortcutConfigGridItem
 
 interface ShortcutConfigGridItemRepository {
     suspend fun getShortcutConfigGridItems(): List<ShortcutConfigGridItem>
@@ -34,7 +34,7 @@ interface ShortcutConfigGridItemRepository {
         packageName: String,
     ): List<ShortcutConfigGridItem>
 
-    suspend fun deleteShortcutConfigGridItem(
+    suspend fun deleteShortcutConfigGridItemByPackageName(
         serialNumber: Long,
         packageName: String,
     )

@@ -4,11 +4,9 @@ option java_package = "com.eblan.launcher.data.datastore.proto.gesture";
 option java_multiple_files = true;
 
 message EblanActionProto {
-  EblanActionTypeProto eblanActionTypeProto = 1;
-
-  int64 serialNumber = 2;
-
-  string componentName = 3;
+  optional EblanActionTypeProto eblanActionTypeProto = 1;
+  optional int64 serialNumber = 2;
+  optional string componentName = 3;
 }
 
 enum EblanActionTypeProto {

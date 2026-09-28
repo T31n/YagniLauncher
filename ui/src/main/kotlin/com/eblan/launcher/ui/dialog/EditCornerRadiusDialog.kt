@@ -38,15 +38,15 @@ import com.eblan.launcher.ui.R
 import com.eblan.launcher.common.R as commonR
 
 @Composable
-internal fun EditCornerRadiusDialog(
+fun EditCornerRadiusDialog(
     modifier: Modifier = Modifier,
     cornerRadius: Int,
     onDismissRequest: () -> Unit,
     onUpdateCornerRadius: (Int) -> Unit,
 ) {
-    var value by remember { mutableStateOf("$cornerRadius") }
+    var currentCornerRadius by remember { mutableStateOf("$cornerRadius") }
 
-    var isError by remember { mutableStateOf(false) }
+    var isErrorCornerRadius by remember { mutableStateOf(false) }
 
     EblanDialog(
         modifier = modifier,
@@ -58,17 +58,17 @@ internal fun EditCornerRadiusDialog(
         )
 
         TextField(
-            value = value,
+            value = currentCornerRadius,
             onValueChange = {
-                value = it
-                isError = false
+                currentCornerRadius = it
+                isErrorCornerRadius = false
             },
             modifier = Modifier.fillMaxWidth(),
             label = {
                 Text(text = stringResource(R.string.corner_radius))
             },
-            isError = isError,
-            supportingText = if (isError) {
+            isError = isErrorCornerRadius,
+            supportingText = if (isErrorCornerRadius) {
                 {
                     Text(text = stringResource(R.string.corner_radius_is_not_valid))
                 }
@@ -92,12 +92,14 @@ internal fun EditCornerRadiusDialog(
 
             TextButton(
                 onClick = {
-                    val newCornerRadius = value.toIntOrNull()
+                    val newCornerRadius = currentCornerRadius.toIntOrNull()
+
+                    isErrorCornerRadius = newCornerRadius == null || newCornerRadius < 0
 
                     if (newCornerRadius != null && newCornerRadius >= 0) {
                         onUpdateCornerRadius(newCornerRadius)
-                    } else {
-                        isError = true
+
+                        onDismissRequest()
                     }
                 },
             ) {

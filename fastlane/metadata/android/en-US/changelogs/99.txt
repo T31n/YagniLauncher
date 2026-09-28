@@ -1,0 +1,3 @@
+- Scroll bar type
+- Search bar position
+- Bug fixes and stability improvements

@@ -17,25 +17,22 @@
  */
 package com.eblan.launcher.feature.home.component
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.animateIntAsState
-import androidx.compose.animation.core.snap
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.VectorConverter
+import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ParentDataModifier
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
-import androidx.compose.ui.util.lerp
-import com.eblan.launcher.domain.model.EblanApplicationInfoWithIconPackInfo
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.feature.home.util.FOLDER_PREVIEW_COLUMNS
-import com.eblan.launcher.feature.home.util.FOLDER_PREVIEW_ROWS
-import kotlin.math.roundToInt
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
+import com.eblan.launcher.domain.model.grid.GridItem
 
 @Composable
 internal fun GridLayout(
@@ -43,6 +40,7 @@ internal fun GridLayout(
     columns: Int,
     gridItems: List<GridItem>?,
     rows: Int,
+    animate: Boolean,
     content: @Composable BoxScope.(GridItem) -> Unit,
 ) {
     SubcomposeLayout(modifier = modifier) { constraints ->
@@ -53,36 +51,12 @@ internal fun GridLayout(
         layout(width = constraints.maxWidth, height = constraints.maxHeight) {
             gridItems?.forEach { gridItem ->
                 subcompose(gridItem.id) {
-                    val width by animateIntAsState(
-                        targetValue = gridItem.columnSpan * cellWidth,
-                        label = "width",
-                    )
-
-                    val height by animateIntAsState(
-                        targetValue = gridItem.rowSpan * cellHeight,
-                        label = "height",
-                    )
-
-                    val x by animateIntAsState(
-                        targetValue = gridItem.startColumn * cellWidth,
-                        label = "x",
-                    )
-
-                    val y by animateIntAsState(
-                        targetValue = gridItem.startRow * cellHeight,
-                        label = "y",
-                    )
-
-                    Box(
-                        modifier = Modifier.gridItem(
-                            width = width,
-                            height = height,
-                            x = x,
-                            y = y,
-                        ),
-                        content = {
-                            content(gridItem)
-                        },
+                    GridLayoutItem(
+                        gridItem = gridItem,
+                        cellWidth = cellWidth,
+                        cellHeight = cellHeight,
+                        animate = animate,
+                        content = content,
                     )
                 }.forEach { measurable ->
                     val parentData = measurable.parentData as GridItemParentData
@@ -103,239 +77,12 @@ internal fun GridLayout(
 }
 
 @Composable
-internal fun PreviewFolderGridLayout(
-    modifier: Modifier = Modifier,
-    gridItems: List<GridItem>?,
-    previewColumns: Int = FOLDER_PREVIEW_COLUMNS,
-    previewRows: Int = FOLDER_PREVIEW_ROWS,
-    content: @Composable BoxScope.(GridItem) -> Unit,
-) {
-    SubcomposeLayout(modifier = modifier) { constraints ->
-        val previewCellSize = minOf(
-            constraints.maxWidth,
-            constraints.maxHeight,
-        ) / maxOf(
-            previewColumns,
-            previewRows,
-        ).toFloat()
-
-        val previewGridWidth = previewCellSize * previewColumns
-
-        val previewGridHeight = previewCellSize * previewRows
-
-        val previewOffsetX = (constraints.maxWidth - previewGridWidth) / 2f
-
-        val previewOffsetY = (constraints.maxHeight - previewGridHeight) / 2f
-
-        layout(
-            width = constraints.maxWidth,
-            height = constraints.maxHeight,
-        ) {
-            gridItems
-                ?.take(previewColumns * previewRows)
-                ?.forEachIndexed { index, gridItem ->
-                    subcompose(gridItem.id) {
-                        val x = previewOffsetX + (index % previewColumns) * previewCellSize
-
-                        val y = previewOffsetY + (index / previewColumns) * previewCellSize
-
-                        Box(
-                            modifier = Modifier.folderGridItem(
-                                x = x.roundToInt(),
-                                y = y.roundToInt(),
-                                width = previewCellSize.roundToInt(),
-                                height = previewCellSize.roundToInt(),
-                                alpha = 1f,
-                            ),
-                        ) {
-                            content(gridItem)
-                        }
-                    }.forEach { measurable ->
-                        val parentData = measurable.parentData as FolderGridItemParentData
-
-                        measurable.measure(
-                            Constraints.fixed(
-                                width = parentData.width,
-                                height = parentData.height,
-                            ),
-                        ).placeRelative(
-                            x = parentData.x,
-                            y = parentData.y,
-                        )
-                    }
-                }
-        }
-    }
-}
-
-@Composable
-internal fun FolderGridLayout(
-    modifier: Modifier = Modifier,
-    gridItems: List<GridItem>?,
-    columns: Int,
-    rows: Int,
-    layoutWidth: Int,
-    layoutHeight: Int,
-    previewEnabled: Boolean = false,
-    previewColumns: Int = FOLDER_PREVIEW_COLUMNS,
-    previewRows: Int = FOLDER_PREVIEW_ROWS,
-    progress: Float = 0f,
-    content: @Composable BoxScope.(GridItem) -> Unit,
-) {
-    SubcomposeLayout(modifier = modifier) { constraints ->
-        val endCellWidth = layoutWidth / columns
-
-        val endCellHeight = layoutHeight / rows
-
-        val previewItemCount = previewColumns * previewRows
-
-        val previewCellSize =
-            minOf(
-                constraints.maxWidth,
-                constraints.maxHeight,
-            ) / maxOf(
-                previewColumns,
-                previewRows,
-            ).toFloat()
-
-        val previewGridWidth = previewCellSize * previewColumns
-        val previewGridHeight = previewCellSize * previewRows
-
-        val previewOffsetX =
-            (constraints.maxWidth - previewGridWidth) / 2f
-
-        val previewOffsetY =
-            (constraints.maxHeight - previewGridHeight) / 2f
-
-        layout(
-            width = constraints.maxWidth,
-            height = constraints.maxHeight,
-        ) {
-            gridItems?.forEachIndexed { index, gridItem ->
-                subcompose(gridItem.id) {
-                    val endX = (index % columns) * endCellWidth
-                    val endY = (index / columns) * endCellHeight
-
-                    val isPreview = previewEnabled && index < previewItemCount
-
-                    val startX = if (isPreview) {
-                        previewOffsetX +
-                            (index % previewColumns) * previewCellSize
-                    } else {
-                        endX.toFloat()
-                    }
-
-                    val startY = if (isPreview) {
-                        previewOffsetY +
-                            (index / previewColumns) * previewCellSize
-                    } else {
-                        endY.toFloat()
-                    }
-
-                    val startWidth = if (isPreview) {
-                        previewCellSize
-                    } else {
-                        endCellWidth.toFloat()
-                    }
-
-                    val startHeight = if (isPreview) {
-                        previewCellSize
-                    } else {
-                        endCellHeight.toFloat()
-                    }
-
-                    val targetX = lerp(
-                        startX,
-                        endX.toFloat(),
-                        progress,
-                    )
-
-                    val targetY = lerp(
-                        startY,
-                        endY.toFloat(),
-                        progress,
-                    )
-
-                    val targetWidth = lerp(
-                        startWidth,
-                        endCellWidth.toFloat(),
-                        progress,
-                    )
-
-                    val targetHeight = lerp(
-                        startHeight,
-                        endCellHeight.toFloat(),
-                        progress,
-                    )
-
-                    val targetAlpha = if (previewEnabled && !isPreview) {
-                        progress
-                    } else {
-                        1f
-                    }
-
-                    val animationSpec = if (progress < 1f) {
-                        snap<Float>()
-                    } else {
-                        spring()
-                    }
-
-                    val animatedX by animateFloatAsState(
-                        targetValue = targetX,
-                        animationSpec = animationSpec,
-                        label = "x",
-                    )
-
-                    val animatedY by animateFloatAsState(
-                        targetValue = targetY,
-                        animationSpec = animationSpec,
-                        label = "y",
-                    )
-
-                    val animatedAlpha by animateFloatAsState(
-                        targetValue = targetAlpha,
-                        animationSpec = animationSpec,
-                        label = "alpha",
-                    )
-
-                    Box(
-                        modifier = Modifier.folderGridItem(
-                            x = animatedX.roundToInt(),
-                            y = animatedY.roundToInt(),
-                            width = targetWidth.roundToInt(),
-                            height = targetHeight.roundToInt(),
-                            alpha = animatedAlpha,
-                        ),
-                    ) {
-                        content(gridItem)
-                    }
-                }.forEach { measurable ->
-                    val parentData = measurable.parentData as FolderGridItemParentData
-
-                    measurable.measure(
-                        Constraints.fixed(
-                            width = parentData.width,
-                            height = parentData.height,
-                        ),
-                    ).placeRelativeWithLayer(
-                        x = parentData.x,
-                        y = parentData.y,
-                    ) {
-                        alpha = parentData.alpha
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
 internal fun HorizontalAppDrawerGridLayout(
     modifier: Modifier = Modifier,
     columns: Int,
-    eblanApplicationInfoWithIconPackInfos: List<EblanApplicationInfoWithIconPackInfo>?,
+    eblanApplicationInfos: List<EblanApplicationInfo>?,
     rows: Int,
-    content: @Composable BoxScope.(EblanApplicationInfoWithIconPackInfo) -> Unit,
+    content: @Composable BoxScope.(EblanApplicationInfo) -> Unit,
 ) {
     SubcomposeLayout(modifier = modifier) { constraints ->
         val cellWidth = constraints.maxWidth / columns
@@ -343,14 +90,14 @@ internal fun HorizontalAppDrawerGridLayout(
         val cellHeight = constraints.maxHeight / rows
 
         layout(constraints.maxWidth, constraints.maxHeight) {
-            eblanApplicationInfoWithIconPackInfos?.forEachIndexed { index, eblanApplicationInfoWithIconPackInfo ->
+            eblanApplicationInfos?.forEachIndexed { index, eblanApplicationInfo ->
                 val row = index / columns
 
                 val column = index % columns
 
                 subcompose(
-                    eblanApplicationInfoWithIconPackInfo.eblanApplicationInfo.serialNumber to
-                        eblanApplicationInfoWithIconPackInfo.eblanApplicationInfo.componentName,
+                    eblanApplicationInfo.serialNumber to
+                        eblanApplicationInfo.componentName,
                 ) {
                     Box(
                         modifier = Modifier.gridItem(
@@ -360,7 +107,7 @@ internal fun HorizontalAppDrawerGridLayout(
                             y = row * cellHeight,
                         ),
                     ) {
-                        content(eblanApplicationInfoWithIconPackInfo)
+                        content(eblanApplicationInfo)
                     }
                 }.forEach { measurable ->
                     measurable.measure(
@@ -378,19 +125,73 @@ internal fun HorizontalAppDrawerGridLayout(
     }
 }
 
+@Composable
+internal fun animateGridIntAsState(
+    targetValue: Int,
+    animate: Boolean,
+): Int {
+    val animatable = remember {
+        Animatable(
+            initialValue = targetValue,
+            typeConverter = Int.VectorConverter,
+        )
+    }
+
+    LaunchedEffect(
+        key1 = targetValue,
+        key2 = animate,
+    ) {
+        if (animate) {
+            animatable.animateTo(
+                targetValue = targetValue,
+                animationSpec = spring(visibilityThreshold = Int.VisibilityThreshold),
+            )
+        } else {
+            animatable.snapTo(targetValue)
+        }
+    }
+
+    return animatable.value
+}
+
+@Composable
+private fun GridLayoutItem(
+    modifier: Modifier = Modifier,
+    gridItem: GridItem,
+    cellWidth: Int,
+    cellHeight: Int,
+    animate: Boolean,
+    content: @Composable (BoxScope.(GridItem) -> Unit),
+) {
+    val width = gridItem.columnSpan * cellWidth
+    val height = gridItem.rowSpan * cellHeight
+
+    val x = gridItem.startColumn * cellWidth
+    val y = gridItem.startRow * cellHeight
+
+    val animatedWidth = animateGridIntAsState(targetValue = width, animate = animate)
+    val animatedHeight = animateGridIntAsState(targetValue = height, animate = animate)
+    val animatedX = animateGridIntAsState(targetValue = x, animate = animate)
+    val animatedY = animateGridIntAsState(targetValue = y, animate = animate)
+
+    Box(
+        modifier = modifier.gridItem(
+            width = animatedWidth,
+            height = animatedHeight,
+            x = animatedX,
+            y = animatedY,
+        ),
+        content = {
+            content(gridItem)
+        },
+    )
+}
+
 private data class GridItemParentData(
     val width: Int,
     val height: Int,
     val x: Int,
     val y: Int,
-)
-
-private data class FolderGridItemParentData(
-    val x: Int,
-    val y: Int,
-    val width: Int,
-    val height: Int,
-    val alpha: Float,
 )
 
 private fun Modifier.gridItem(
@@ -405,24 +206,6 @@ private fun Modifier.gridItem(
             height = height,
             x = x,
             y = y,
-        )
-    },
-)
-
-private fun Modifier.folderGridItem(
-    x: Int,
-    y: Int,
-    width: Int,
-    height: Int,
-    alpha: Float,
-) = then(
-    object : ParentDataModifier {
-        override fun Density.modifyParentData(parentData: Any?) = FolderGridItemParentData(
-            x = x,
-            y = y,
-            width = width,
-            height = height,
-            alpha = alpha,
         )
     },
 )

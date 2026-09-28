@@ -35,21 +35,24 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.component.EblanDialog
-import com.eblan.launcher.domain.model.HomeSettings
 import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun EditGridDialog(
     modifier: Modifier = Modifier,
-    homeSettings: HomeSettings,
+    columns: Int,
+    rows: Int,
     onDismissRequest: () -> Unit,
-    onUpdateHomeSettings: (HomeSettings) -> Unit,
+    onUpdateGrid: (
+        columns: Int,
+        rows: Int,
+    ) -> Unit,
 ) {
-    var columns by remember { mutableStateOf("${homeSettings.columns}") }
-    var rows by remember { mutableStateOf("${homeSettings.rows}") }
+    var currentColumns by remember { mutableStateOf("$columns") }
+    var currentRows by remember { mutableStateOf("$rows") }
 
-    var firstError by remember { mutableStateOf(false) }
-    var secondError by remember { mutableStateOf(false) }
+    var isErrorColumns by remember { mutableStateOf(false) }
+    var isErrorRows by remember { mutableStateOf(false) }
 
     EblanDialog(
         modifier = modifier,
@@ -64,42 +67,42 @@ internal fun EditGridDialog(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             TextField(
-                value = columns,
+                value = currentColumns,
                 onValueChange = {
-                    columns = it
-                    firstError = false
+                    currentColumns = it
+                    isErrorColumns = false
                 },
                 modifier = Modifier.weight(1f),
                 label = { Text(text = stringResource(commonR.string.columns)) },
-                supportingText = if (firstError) {
+                supportingText = if (isErrorColumns) {
                     {
                         Text(text = stringResource(commonR.string.columns_is_not_valid))
                     }
                 } else {
                     null
                 },
-                isError = firstError,
+                isError = isErrorColumns,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
                 ),
             )
 
             TextField(
-                value = rows,
+                value = currentRows,
                 onValueChange = {
-                    rows = it
-                    secondError = false
+                    currentRows = it
+                    isErrorRows = false
                 },
                 modifier = Modifier.weight(1f),
                 label = { Text(text = stringResource(commonR.string.rows)) },
-                supportingText = if (secondError) {
+                supportingText = if (isErrorRows) {
                     {
                         Text(text = stringResource(commonR.string.rows_is_not_valid))
                     }
                 } else {
                     null
                 },
-                isError = secondError,
+                isError = isErrorRows,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
                 ),
@@ -118,23 +121,18 @@ internal fun EditGridDialog(
 
             TextButton(
                 onClick = {
-                    val newColumns = columns.toIntOrNull()
-                    val newRows = rows.toIntOrNull()
+                    val newColumns = currentColumns.toIntOrNull()
+                    val newRows = currentRows.toIntOrNull()
 
-                    firstError = newColumns == null || newColumns <= 0
-                    secondError = newRows == null || newRows <= 0
+                    isErrorColumns = newColumns == null || newColumns <= 0
+                    isErrorRows = newRows == null || newRows <= 0
 
                     if (newColumns != null &&
                         newRows != null &&
                         newColumns > 0 &&
                         newRows > 0
                     ) {
-                        onUpdateHomeSettings(
-                            homeSettings.copy(
-                                columns = newColumns,
-                                rows = newRows,
-                            ),
-                        )
+                        onUpdateGrid(newColumns, newRows)
 
                         onDismissRequest()
                     }

@@ -7,8 +7,6 @@ option java_multiple_files = true;
 
 message GestureSettingsProto {
   EblanActionProto doubleTapProto = 1;
-
   EblanActionProto swipeUpProto = 2;
-
   EblanActionProto swipeDownProto = 3;
 }

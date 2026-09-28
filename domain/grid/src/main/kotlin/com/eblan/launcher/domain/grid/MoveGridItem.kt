@@ -17,8 +17,8 @@
  */
 package com.eblan.launcher.domain.grid
 
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.ResolveDirection
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.ResolveDirection
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 
@@ -45,8 +45,6 @@ suspend fun resolveConflicts(
         val current = gridItems[currentIndex]
 
         for (i in gridItems.indices) {
-            currentCoroutineContext().ensureActive()
-
             val other = gridItems[i]
 
             if (other.id == current.id) continue

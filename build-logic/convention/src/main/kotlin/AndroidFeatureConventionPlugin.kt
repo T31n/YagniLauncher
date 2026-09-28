@@ -19,15 +19,14 @@
 import com.eblan.launcher.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.dependencies
 
 class AndroidFeatureConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
-            apply(plugin = libs.plugins.com.eblan.launcher.library.get().pluginId)
-            apply(plugin = libs.plugins.com.eblan.launcher.hilt.get().pluginId)
-            apply(plugin = libs.plugins.kotlin.serialization.get().pluginId)
+            pluginManager.apply(libs.plugins.com.eblan.launcher.library.get().pluginId)
+            pluginManager.apply(libs.plugins.com.eblan.launcher.hilt.get().pluginId)
+            pluginManager.apply(libs.plugins.kotlin.serialization.get().pluginId)
 
             dependencies {
                 add("implementation", project(":design-system"))

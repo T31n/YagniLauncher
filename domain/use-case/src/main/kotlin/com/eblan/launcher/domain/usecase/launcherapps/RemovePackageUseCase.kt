@@ -19,8 +19,8 @@ package com.eblan.launcher.domain.usecase.launcherapps
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
+import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
-import com.eblan.launcher.domain.framework.FileManager
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.repository.ApplicationInfoGridItemRepository
 import com.eblan.launcher.domain.repository.EblanAppWidgetProviderInfoRepository
@@ -59,8 +59,6 @@ class RemovePackageUseCase @Inject constructor(
         packageName: String,
     ) {
         withContext(ioDispatcher) {
-            if (!userDataRepository.userDataFlow.first().experimentalSettings.syncData) return@withContext
-
             deleteEblanApplicationInfoFiles(
                 packageName = packageName,
                 serialNumber = serialNumber,
@@ -92,7 +90,7 @@ class RemovePackageUseCase @Inject constructor(
                 packageName = packageName,
             )
 
-            eblanShortcutConfigRepository.deleteEblanShortcutConfig(
+            eblanShortcutConfigRepository.deleteEblanShortcutConfigByPackageName(
                 serialNumber = serialNumber,
                 packageName = packageName,
             )
@@ -102,17 +100,17 @@ class RemovePackageUseCase @Inject constructor(
                 packageName = packageName,
             )
 
-            widgetGridItemRepository.deleteWidgetGridItem(
+            widgetGridItemRepository.deleteWidgetGridItemByPackageName(
                 serialNumber = serialNumber,
                 packageName = packageName,
             )
 
-            shortcutInfoGridItemRepository.deleteShortcutInfoGridItem(
+            shortcutInfoGridItemRepository.deleteShortcutInfoGridItemByPackageName(
                 serialNumber = serialNumber,
                 packageName = packageName,
             )
 
-            shortcutConfigGridItemRepository.deleteShortcutConfigGridItem(
+            shortcutConfigGridItemRepository.deleteShortcutConfigGridItemByPackageName(
                 serialNumber = serialNumber,
                 packageName = packageName,
             )
@@ -139,8 +137,6 @@ class RemovePackageUseCase @Inject constructor(
             val hasNoIconReference = icon != null &&
                 eblanApplicationInfoRepository.getEblanApplicationInfos()
                     .none {
-                        currentCoroutineContext().ensureActive()
-
                         it.icon == icon
                     }
 
@@ -182,8 +178,6 @@ class RemovePackageUseCase @Inject constructor(
 
         val hasNoIconPackInfoReference = eblanApplicationInfoRepository.getEblanApplicationInfos()
             .none {
-                currentCoroutineContext().ensureActive()
-
                 it.componentName == componentName
             }
 
@@ -232,7 +226,7 @@ class RemovePackageUseCase @Inject constructor(
         serialNumber: Long,
         packageName: String,
     ) {
-        eblanShortcutInfoRepository.getEblanShortcutInfos(
+        eblanShortcutInfoRepository.getEblanShortcutInfosByPackageName(
             serialNumber = serialNumber,
             packageName = packageName,
         ).forEach { eblanShortcutInfoByPackageName ->
@@ -287,8 +281,6 @@ class RemovePackageUseCase @Inject constructor(
             val hasNoIconReference = activityIcon != null &&
                 eblanShortcutConfigRepository.getEblanShortcutConfigs()
                     .none {
-                        currentCoroutineContext().ensureActive()
-
                         it.activityIcon == activityIcon
                     }
 

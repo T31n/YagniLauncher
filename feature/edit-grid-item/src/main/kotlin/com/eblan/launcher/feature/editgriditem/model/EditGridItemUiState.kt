@@ -17,7 +17,7 @@
  */
 package com.eblan.launcher.feature.editgriditem.model
 
-import com.eblan.launcher.domain.model.GridItem
+import com.eblan.launcher.domain.model.grid.GridItem
 
 internal sealed interface EditGridItemUiState {
     data object Loading : EditGridItemUiState

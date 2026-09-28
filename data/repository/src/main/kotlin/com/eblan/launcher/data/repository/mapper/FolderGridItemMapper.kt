@@ -19,10 +19,10 @@ package com.eblan.launcher.data.repository.mapper
 
 import com.eblan.launcher.data.room.entity.FolderGridItemEntity
 import com.eblan.launcher.data.room.entity.FolderGridItemWrapperEntity
-import com.eblan.launcher.domain.model.FolderGridItem
-import com.eblan.launcher.domain.model.FolderGridItemWrapper
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.GridItemData
+import com.eblan.launcher.domain.model.grid.FolderGridItem
+import com.eblan.launcher.domain.model.grid.FolderGridItemWrapper
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.GridItemData
 
 internal fun FolderGridItemWrapperEntity.asFolderGridItemWrapper(): FolderGridItemWrapper = FolderGridItemWrapper(
     folderGridItem = folderGridItemEntity.asModel(),

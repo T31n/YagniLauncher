@@ -23,10 +23,17 @@ import android.os.Build
 import android.os.UserHandle
 import android.os.UserManager
 import androidx.annotation.RequiresApi
+import com.eblan.launcher.domain.common.Dispatcher
+import com.eblan.launcher.domain.common.EblanDispatchers
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-internal class DefaultUserManagerWrapper @Inject constructor(@param:ApplicationContext private val context: Context) : AndroidUserManagerWrapper {
+internal class DefaultUserManagerWrapper @Inject constructor(
+    @param:ApplicationContext private val context: Context,
+    @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
+) : AndroidUserManagerWrapper {
     private val userManager = context.getSystemService(USER_SERVICE) as UserManager
 
     override fun getSerialNumberForUser(userHandle: UserHandle): Long = userManager.getSerialNumberForUser(userHandle)
@@ -40,11 +47,13 @@ internal class DefaultUserManagerWrapper @Inject constructor(@param:ApplicationC
     override fun isQuietModeEnabled(userHandle: UserHandle): Boolean = userManager.isQuietModeEnabled(userHandle)
 
     @RequiresApi(Build.VERSION_CODES.P)
-    override fun requestQuietModeEnabled(
+    override suspend fun requestQuietModeEnabled(
         enableQuiteMode: Boolean,
         userHandle: UserHandle,
-    ): Boolean = userManager.requestQuietModeEnabled(
-        enableQuiteMode,
-        userHandle,
-    )
+    ): Boolean = withContext(ioDispatcher) {
+        userManager.requestQuietModeEnabled(
+            enableQuiteMode,
+            userHandle,
+        )
+    }
 }

@@ -19,16 +19,17 @@ package com.eblan.launcher.feature.home.screen.editpage
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
@@ -46,18 +47,17 @@ import coil3.request.ImageRequest.Builder
 import coil3.request.addLastModifiedToFileCacheKey
 import coil3.size.Size
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.GridItemData
-import com.eblan.launcher.domain.model.GridItemSettings
-import com.eblan.launcher.domain.model.TextColor
+import com.eblan.launcher.domain.model.folder.PreviewFolder
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.GridItemData
+import com.eblan.launcher.domain.model.grid.GridItemSettings
+import com.eblan.launcher.domain.model.userdata.BackgroundColor
+import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
-import com.eblan.launcher.feature.home.screen.getHorizontalAlignment
-import com.eblan.launcher.feature.home.screen.getVerticalArrangement
-import com.eblan.launcher.feature.home.util.FOLDER_PREVIEW_COLUMNS
-import com.eblan.launcher.feature.home.util.FOLDER_PREVIEW_ROWS
 import com.eblan.launcher.feature.home.util.getGridItemTextColor
-import com.eblan.launcher.feature.home.util.getSystemTextColor
-import com.eblan.launcher.ui.local.LocalSettings
+import com.eblan.launcher.feature.home.util.getHorizontalAlignment
+import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
+import com.eblan.launcher.feature.home.util.getVerticalArrangement
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -66,9 +66,14 @@ internal fun GridItemContent(
     gridItem: GridItem,
     gridItemSettings: GridItemSettings,
     hasShortcutHostPermission: Boolean,
-    statusBarNotifications: Map<String, Int>,
     textColor: TextColor,
-    previewFolderGridItems: Map<String, List<GridItem>>,
+    previewFolderGridItems: Map<String, PreviewFolder>,
+    iconPackInfoFilePaths: Map<String, String?>,
+    folderBackgroundColor: BackgroundColor,
+    customFolderBackgroundColor: Int,
+    systemTextColor: TextColor,
+    systemCustomTextColor: Int,
+    folderCornerRadius: Int,
 ) {
     val currentGridItemSettings = if (gridItem.override) {
         gridItem.gridItemSettings
@@ -76,46 +81,52 @@ internal fun GridItemContent(
         gridItemSettings
     }
 
-    val currentTextColor = if (gridItem.override) {
-        getGridItemTextColor(
-            gridItemCustomTextColor = gridItem.gridItemSettings.customTextColor,
-            gridItemTextColor = gridItem.gridItemSettings.textColor,
-            systemCustomTextColor = gridItemSettings.customTextColor,
-            systemTextColor = textColor,
-        )
-    } else {
-        getSystemTextColor(
-            systemCustomTextColor = gridItemSettings.customTextColor,
-            systemTextColor = textColor,
-        )
-    }
+    val currentTextColor = getGridItemTextColor(
+        gridItemCustomTextColor = currentGridItemSettings.customTextColor,
+        gridItemTextColor = currentGridItemSettings.textColor,
+        systemCustomTextColor = gridItemSettings.customTextColor,
+        systemTextColor = textColor,
+    )
+
+    val horizontalAlignment =
+        getHorizontalAlignment(horizontalAlignment = currentGridItemSettings.horizontalAlignment)
+
+    val verticalArrangement =
+        getVerticalArrangement(verticalArrangement = currentGridItemSettings.verticalArrangement)
+
+    val maxLines = if (currentGridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
 
     when (val data = gridItem.data) {
-        is GridItemData.ApplicationInfo -> {
+        is GridItemData.ApplicationInfo ->
             ApplicationInfoGridItem(
                 modifier = modifier,
                 data = data,
                 gridItemSettings = currentGridItemSettings,
-                statusBarNotifications = statusBarNotifications,
                 textColor = currentTextColor,
+                iconPackInfoFilePaths = iconPackInfoFilePaths,
+                horizontalAlignment = horizontalAlignment,
+                verticalArrangement = verticalArrangement,
+                maxLines = maxLines,
             )
-        }
 
-        is GridItemData.Widget -> {
-            WidgetGridItem(modifier = modifier, data = data)
-        }
+        is GridItemData.Widget -> WidgetGridItem(
+            modifier = modifier,
+            data = data,
+        )
 
-        is GridItemData.ShortcutInfo -> {
+        is GridItemData.ShortcutInfo ->
             ShortcutInfoGridItem(
                 modifier = modifier,
                 data = data,
                 gridItemSettings = currentGridItemSettings,
                 hasShortcutHostPermission = hasShortcutHostPermission,
                 textColor = currentTextColor,
+                horizontalAlignment = horizontalAlignment,
+                verticalArrangement = verticalArrangement,
+                maxLines = maxLines,
             )
-        }
 
-        is GridItemData.Folder -> {
+        is GridItemData.Folder ->
             FolderGridItem(
                 modifier = modifier,
                 gridItem = gridItem,
@@ -123,17 +134,28 @@ internal fun GridItemContent(
                 gridItemSettings = currentGridItemSettings,
                 textColor = currentTextColor,
                 previewFolderGridItems = previewFolderGridItems,
+                hasShortcutHostPermission = hasShortcutHostPermission,
+                iconPackInfoFilePaths = iconPackInfoFilePaths,
+                horizontalAlignment = horizontalAlignment,
+                verticalArrangement = verticalArrangement,
+                maxLines = maxLines,
+                folderBackgroundColor = folderBackgroundColor,
+                customFolderBackgroundColor = customFolderBackgroundColor,
+                systemTextColor = systemTextColor,
+                systemCustomTextColor = systemCustomTextColor,
+                folderCornerRadius = folderCornerRadius,
             )
-        }
 
-        is GridItemData.ShortcutConfig -> {
+        is GridItemData.ShortcutConfig ->
             ShortcutConfigGridItem(
                 modifier = modifier,
                 data = data,
                 gridItemSettings = currentGridItemSettings,
                 textColor = currentTextColor,
+                horizontalAlignment = horizontalAlignment,
+                verticalArrangement = verticalArrangement,
+                maxLines = maxLines,
             )
-        }
     }
 }
 
@@ -143,26 +165,13 @@ private fun ApplicationInfoGridItem(
     modifier: Modifier = Modifier,
     data: GridItemData.ApplicationInfo,
     gridItemSettings: GridItemSettings,
-    statusBarNotifications: Map<String, Int>,
     textColor: Color,
+    iconPackInfoFilePaths: Map<String, String?>,
+    horizontalAlignment: Alignment.Horizontal,
+    verticalArrangement: Arrangement.Vertical,
+    maxLines: Int,
 ) {
-    val settings = LocalSettings.current
-
-    val horizontalAlignment =
-        getHorizontalAlignment(horizontalAlignment = gridItemSettings.horizontalAlignment)
-
-    val verticalArrangement =
-        getVerticalArrangement(verticalArrangement = gridItemSettings.verticalArrangement)
-
-    val maxLines = if (gridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
-
-    val icon = data.iconPackInfoFilePath ?: data.icon
-
-    val hasNotifications =
-        statusBarNotifications[data.packageName] != null && (
-            statusBarNotifications[data.packageName]
-                ?: 0
-            ) > 0
+    val icon = iconPackInfoFilePaths[data.componentName] ?: data.icon
 
     Column(
         modifier = modifier
@@ -182,18 +191,6 @@ private fun ApplicationInfoGridItem(
                 contentDescription = null,
                 modifier = Modifier.matchParentSize(),
             )
-
-            if (settings.isNotificationAccessGranted() && hasNotifications) {
-                Box(
-                    modifier = Modifier
-                        .size((gridItemSettings.iconSize * 0.4).dp)
-                        .align(Alignment.TopEnd)
-                        .background(
-                            color = MaterialTheme.colorScheme.primary,
-                            shape = CircleShape,
-                        ),
-                )
-            }
 
             if (data.serialNumber != 0L) {
                 ElevatedCard(
@@ -231,15 +228,10 @@ private fun ShortcutInfoGridItem(
     gridItemSettings: GridItemSettings,
     hasShortcutHostPermission: Boolean,
     textColor: Color,
+    horizontalAlignment: Alignment.Horizontal,
+    verticalArrangement: Arrangement.Vertical,
+    maxLines: Int,
 ) {
-    val horizontalAlignment =
-        getHorizontalAlignment(horizontalAlignment = gridItemSettings.horizontalAlignment)
-
-    val verticalArrangement =
-        getVerticalArrangement(verticalArrangement = gridItemSettings.verticalArrangement)
-
-    val maxLines = if (gridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
-
     val customIcon = data.customIcon ?: data.icon
 
     val customShortLabel = data.customShortLabel ?: data.shortLabel
@@ -257,12 +249,15 @@ private fun ShortcutInfoGridItem(
         horizontalAlignment = horizontalAlignment,
         verticalArrangement = verticalArrangement,
     ) {
-        Box(modifier = Modifier.size(gridItemSettings.iconSize.dp)) {
+        Box(
+            modifier = Modifier
+                .size(gridItemSettings.iconSize.dp)
+                .alpha(alpha),
+        ) {
             AsyncImage(
                 model = customIcon,
                 modifier = Modifier
-                    .matchParentSize()
-                    .alpha(alpha),
+                    .matchParentSize(),
                 contentDescription = null,
             )
 
@@ -270,8 +265,7 @@ private fun ShortcutInfoGridItem(
                 model = data.eblanApplicationInfoIcon,
                 modifier = Modifier
                     .size((gridItemSettings.iconSize * 0.25).dp)
-                    .align(Alignment.BottomEnd)
-                    .alpha(alpha),
+                    .align(Alignment.BottomEnd),
                 contentDescription = null,
             )
         }
@@ -298,16 +292,18 @@ private fun FolderGridItem(
     data: GridItemData.Folder,
     gridItemSettings: GridItemSettings,
     textColor: Color,
-    previewFolderGridItems: Map<String, List<GridItem>>,
+    previewFolderGridItems: Map<String, PreviewFolder>,
+    hasShortcutHostPermission: Boolean,
+    iconPackInfoFilePaths: Map<String, String?>,
+    horizontalAlignment: Alignment.Horizontal,
+    verticalArrangement: Arrangement.Vertical,
+    maxLines: Int,
+    folderBackgroundColor: BackgroundColor,
+    customFolderBackgroundColor: Int,
+    systemTextColor: TextColor,
+    systemCustomTextColor: Int,
+    folderCornerRadius: Int,
 ) {
-    val horizontalAlignment =
-        getHorizontalAlignment(horizontalAlignment = gridItemSettings.horizontalAlignment)
-
-    val verticalArrangement =
-        getVerticalArrangement(verticalArrangement = gridItemSettings.verticalArrangement)
-
-    val maxLines = if (gridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
-
     val commonModifier = Modifier.size(gridItemSettings.iconSize.dp)
 
     Column(
@@ -328,19 +324,30 @@ private fun FolderGridItem(
                 modifier = commonModifier,
             )
         } else {
-            Box(
-                modifier = commonModifier.background(
-                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.5f),
-                    shape = RoundedCornerShape(5.dp),
-                ),
+            Surface(
+                modifier = commonModifier,
+                shape = RoundedCornerShape(folderCornerRadius.dp),
+                color = when (folderBackgroundColor) {
+                    BackgroundColor.System -> MaterialTheme.colorScheme.surface
+                    BackgroundColor.Light -> Color.White
+                    BackgroundColor.Dark -> Color.Black
+                    BackgroundColor.Custom -> Color(customFolderBackgroundColor)
+                },
             ) {
                 PreviewFolderGridLayout(
-                    modifier = Modifier.matchParentSize(),
-                    gridItems = previewFolderGridItems[gridItem.id]?.take(FOLDER_PREVIEW_COLUMNS * FOLDER_PREVIEW_ROWS),
+                    modifier = Modifier.fillMaxSize(),
+                    gridItems = previewFolderGridItems[gridItem.id]?.previewFolderGridItems,
+                    slotId = { it.id },
                     content = {
                         PreviewFolderGridItemContent(
                             gridItem = it,
-                            textColor = textColor,
+                            hasShortcutHostPermission = hasShortcutHostPermission,
+                            iconPackInfoFilePaths = iconPackInfoFilePaths,
+                            gridItemSettings = gridItemSettings,
+                            folderBackgroundColor = folderBackgroundColor,
+                            customFolderBackgroundColor = customFolderBackgroundColor,
+                            systemTextColor = systemTextColor,
+                            systemCustomTextColor = systemCustomTextColor,
                         )
                     },
                 )
@@ -377,49 +384,22 @@ private fun ShortcutConfigGridItem(
     data: GridItemData.ShortcutConfig,
     gridItemSettings: GridItemSettings,
     textColor: Color,
+    horizontalAlignment: Alignment.Horizontal,
+    verticalArrangement: Arrangement.Vertical,
+    maxLines: Int,
 ) {
-    val horizontalAlignment =
-        getHorizontalAlignment(horizontalAlignment = gridItemSettings.horizontalAlignment)
-
-    val verticalArrangement =
-        getVerticalArrangement(verticalArrangement = gridItemSettings.verticalArrangement)
-
-    val maxLines = if (gridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
-
     val icon = when {
-        data.customIcon != null -> {
-            data.customIcon
-        }
-
-        data.shortcutIntentIcon != null -> {
-            data.shortcutIntentIcon
-        }
-
-        data.activityIcon != null -> {
-            data.activityIcon
-        }
-
-        else -> {
-            data.applicationIcon
-        }
+        data.customIcon != null -> data.customIcon
+        data.shortcutIntentIcon != null -> data.shortcutIntentIcon
+        data.activityIcon != null -> data.activityIcon
+        else -> data.applicationIcon
     }
 
     val label = when {
-        data.customLabel != null -> {
-            data.customLabel
-        }
-
-        data.shortcutIntentName != null -> {
-            data.shortcutIntentName
-        }
-
-        data.activityLabel != null -> {
-            data.activityLabel
-        }
-
-        else -> {
-            data.applicationLabel
-        }
+        data.customLabel != null -> data.customLabel
+        data.shortcutIntentName != null -> data.shortcutIntentName
+        data.activityLabel != null -> data.activityLabel
+        else -> data.applicationLabel
     }
 
     Column(
@@ -473,17 +453,52 @@ private fun ShortcutConfigGridItem(
 private fun PreviewFolderGridItemContent(
     modifier: Modifier = Modifier,
     gridItem: GridItem,
-    textColor: Color,
+    hasShortcutHostPermission: Boolean,
+    iconPackInfoFilePaths: Map<String, String?>,
+    gridItemSettings: GridItemSettings,
+    folderBackgroundColor: BackgroundColor,
+    customFolderBackgroundColor: Int,
+    systemTextColor: TextColor,
+    systemCustomTextColor: Int,
 ) {
     val context = LocalContext.current
 
     key(gridItem.id) {
+        val currentGridItemSettings = if (gridItem.override) {
+            gridItem.gridItemSettings
+        } else {
+            gridItemSettings
+        }
+
+        val alpha = when (val data = gridItem.data) {
+            is GridItemData.ApplicationInfo,
+            is GridItemData.Folder,
+            is GridItemData.ShortcutConfig,
+            is GridItemData.Widget,
+            -> 1f
+
+            is GridItemData.ShortcutInfo -> {
+                if (hasShortcutHostPermission && data.isEnabled) 1f else 0.3f
+            }
+        }
+
+        val folderIconTint = getTextColorFromBackgroundColor(
+            backgroundColor = folderBackgroundColor,
+            customBackgroundColor = customFolderBackgroundColor,
+            textColor = currentGridItemSettings.textColor,
+            customTextColor = currentGridItemSettings.customTextColor,
+            systemTextColor = systemTextColor,
+            systemCustomTextColor = systemCustomTextColor,
+            defaultColor = MaterialTheme.colorScheme.onSurface,
+        )
+
         val commonModifier = modifier
             .padding(1.dp)
+            .alpha(alpha)
 
         when (val data = gridItem.data) {
             is GridItemData.ApplicationInfo -> {
-                val icon = data.iconPackInfoFilePath ?: data.icon
+                val icon = iconPackInfoFilePaths[data.componentName] ?: data.icon
 
                 AsyncImage(
                     model = Builder(context)
@@ -496,21 +511,10 @@ private fun PreviewFolderGridItemContent(
 
             is GridItemData.ShortcutConfig -> {
                 val icon = when {
-                    data.customIcon != null -> {
-                        data.customIcon
-                    }
-
-                    data.shortcutIntentIcon != null -> {
-                        data.shortcutIntentIcon
-                    }
-
-                    data.activityIcon != null -> {
-                        data.activityIcon
-                    }
-
-                    else -> {
-                        data.applicationIcon
-                    }
+                    data.customIcon != null -> data.customIcon
+                    data.shortcutIntentIcon != null -> data.shortcutIntentIcon
+                    data.activityIcon != null -> data.activityIcon
+                    else -> data.applicationIcon
                 }
 
                 AsyncImage(
@@ -547,7 +551,7 @@ private fun PreviewFolderGridItemContent(
                     Icon(
                         imageVector = EblanLauncherIcons.Folder,
                         contentDescription = null,
-                        tint = textColor,
+                        tint = folderIconTint,
                         modifier = commonModifier,
                     )
                 }

@@ -19,12 +19,21 @@ package com.eblan.launcher.framework.settings
 
 import android.content.Context
 import android.provider.Settings
+import com.eblan.launcher.domain.common.Dispatcher
+import com.eblan.launcher.domain.common.EblanDispatchers
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-internal class DefaultSettingsWrapper @Inject constructor(@param:ApplicationContext private val context: Context) : AndroidSettingsWrapper {
-    override fun isNotificationAccessGranted(): Boolean = Settings.Secure.getString(
-        context.contentResolver,
-        "enabled_notification_listeners",
-    )?.contains(context.packageName) == true
+internal class DefaultSettingsWrapper @Inject constructor(
+    @param:ApplicationContext private val context: Context,
+    @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
+) : AndroidSettingsWrapper {
+    override suspend fun isNotificationAccessGranted(): Boolean = withContext(ioDispatcher) {
+        Settings.Secure.getString(
+            context.contentResolver,
+            "enabled_notification_listeners",
+        )?.contains(context.packageName) == true
+    }
 }

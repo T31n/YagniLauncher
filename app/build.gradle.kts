@@ -26,8 +26,8 @@ android {
 
     defaultConfig {
         applicationId = "com.eblan.launcher"
-        versionCode = 89
-        versionName = "0.8.9-alpha"
+        versionCode = 100
+        versionName = "1.0.0-alpha"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -58,15 +58,18 @@ dependencies {
     implementation(projects.domain.repository)
     implementation(projects.feature.action)
     implementation(projects.feature.editApplicationInfo)
+    implementation(projects.feature.editFolderApplicationInfo)
     implementation(projects.feature.editGridItem)
     implementation(projects.feature.home)
     implementation(projects.feature.pin)
     implementation(projects.feature.settings.appDrawer)
     implementation(projects.feature.settings.experimental)
+    implementation(projects.feature.settings.folder)
     implementation(projects.feature.settings.general)
     implementation(projects.feature.settings.gestures)
     implementation(projects.feature.settings.home)
     implementation(projects.feature.settings.settings)
+    implementation(projects.framework.contentResolver)
     implementation(projects.framework.jaroWinklerSimilarity)
     implementation(projects.framework.notificationManager)
     implementation(projects.framework.resources)
@@ -75,7 +78,6 @@ dependencies {
 
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.kotlinx.serialization.json)

@@ -19,7 +19,7 @@ package com.eblan.launcher.feature.settings.experimental
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.eblan.launcher.domain.model.ExperimentalSettings
+import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.feature.settings.experimental.model.ExperimentalSettingsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel

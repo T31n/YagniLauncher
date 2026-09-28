@@ -17,9 +17,10 @@
  */
 package com.eblan.launcher.feature.home.screen.shortcutinfo
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
@@ -28,7 +29,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.layer.GraphicsLayer
 import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
@@ -47,17 +48,16 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import coil3.compose.AsyncImage
-import com.eblan.launcher.domain.model.Associate
-import com.eblan.launcher.domain.model.EblanAction
-import com.eblan.launcher.domain.model.EblanActionType
-import com.eblan.launcher.domain.model.EblanShortcutInfo
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.GridItemData
-import com.eblan.launcher.domain.model.GridItemSettings
-import com.eblan.launcher.domain.model.MoveGridItemResult
-import com.eblan.launcher.feature.home.model.Drag
-import com.eblan.launcher.feature.home.model.GridItemSource
+import com.eblan.launcher.domain.model.grid.Associate
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.GridItemData
+import com.eblan.launcher.domain.model.grid.GridItemSettings
+import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfo
+import com.eblan.launcher.domain.model.userdata.EblanAction
+import com.eblan.launcher.domain.model.userdata.EblanActionType
+import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.model.SharedElementKey
+import com.eblan.launcher.feature.home.util.SCALE
 import kotlinx.coroutines.launch
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
@@ -69,22 +69,19 @@ internal fun ShortcutInfoScreen(
     gridItemSettings: GridItemSettings,
     icon: String?,
     isVisibleOverlay: Boolean,
-    onUpdateIsDragging: (Boolean) -> Unit,
+    animations: Boolean,
     onTapShortcutInfo: (
         serialNumber: Long,
         packageName: String,
         shortcutId: String,
     ) -> Unit,
-    onUpdateGridItemSource: (GridItemSource) -> Unit,
-    onUpdateImageBitmap: (ImageBitmap) -> Unit,
-    onUpdateOverlayBounds: (
+    onDragShortcutInfo: (
+        gridItem: GridItem,
+        imageBitmap: ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
+        sharedElementKey: SharedElementKey,
     ) -> Unit,
-    onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
-    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
-    onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
-    onUpdateTransitionState: (Boolean) -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -100,15 +97,9 @@ internal fun ShortcutInfoScreen(
                 gridItemSettings = gridItemSettings,
                 icon = icon,
                 isVisibleOverlay = isVisibleOverlay,
-                onUpdateIsDragging = onUpdateIsDragging,
+                animations = animations,
                 onTapShortcutInfo = onTapShortcutInfo,
-                onUpdateGridItemSource = onUpdateGridItemSource,
-                onUpdateImageBitmap = onUpdateImageBitmap,
-                onUpdateOverlayBounds = onUpdateOverlayBounds,
-                onUpdateSharedElementKey = onUpdateSharedElementKey,
-                onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
-                onUpdateTransitionState = onUpdateTransitionState,
+                onDragShortcutInfo = onDragShortcutInfo,
             )
         }
     }
@@ -117,7 +108,6 @@ internal fun ShortcutInfoScreen(
 @Composable
 internal fun PrivateShortcutInfoMenu(
     modifier: Modifier = Modifier,
-    drag: Drag,
     eblanShortcutInfosGroup: List<EblanShortcutInfo>,
     onTapShortcutInfo: (
         serialNumber: Long,
@@ -135,7 +125,6 @@ internal fun PrivateShortcutInfoMenu(
     ) {
         eblanShortcutInfosGroup.forEach { eblanShortcutInfo ->
             PrivateShortcutInfoMenuItem(
-                drag = drag,
                 eblanShortcutInfo = eblanShortcutInfo,
                 onTapShortcutInfo = onTapShortcutInfo,
             )
@@ -151,28 +140,25 @@ private fun ShortcutInfoMenuItem(
     gridItemSettings: GridItemSettings,
     icon: String?,
     isVisibleOverlay: Boolean,
-    onUpdateIsDragging: (Boolean) -> Unit,
+    animations: Boolean,
     onTapShortcutInfo: (Long, String, String) -> Unit,
-    onUpdateGridItemSource: (GridItemSource) -> Unit,
-    onUpdateImageBitmap: (ImageBitmap) -> Unit,
-    onUpdateOverlayBounds: (
+    onDragShortcutInfo: (
+        gridItem: GridItem,
+        imageBitmap: ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
+        sharedElementKey: SharedElementKey,
     ) -> Unit,
-    onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
-    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
-    onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
-    onUpdateTransitionState: (Boolean) -> Unit,
 ) {
     val graphicsLayer = rememberGraphicsLayer()
 
     val scope = rememberCoroutineScope()
 
-    var isLongPress by remember { mutableStateOf(false) }
-
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
 
     var intSize by remember { mutableStateOf(IntSize.Zero) }
+
+    val scale = remember { Animatable(1f) }
 
     ListItem(
         modifier = modifier
@@ -187,8 +173,21 @@ private fun ShortcutInfoMenuItem(
             Text(text = eblanShortcutInfo.shortLabel)
         },
         leadingContent = {
-            Box(
+            AsyncImage(
+                model = eblanShortcutInfo.icon,
+                contentDescription = null,
                 modifier = Modifier
+                    .size(30.dp)
+                    .onGloballyPositioned {
+                        intOffset = it.positionInRoot().round()
+
+                        intSize = it.size
+                    }
+                    .gridItemScaleAnimation(
+                        enabled = animations,
+                        isVisibleOverlay = isVisibleOverlay,
+                        scale = scale,
+                    )
                     .drawWithContent {
                         graphicsLayer.record {
                             this@drawWithContent.drawContent()
@@ -196,68 +195,103 @@ private fun ShortcutInfoMenuItem(
 
                         drawLayer(graphicsLayer)
                     }
-                    .pointerInput(key1 = isVisibleOverlay) {
+                    .pointerInput(
+                        isVisibleOverlay,
+                        gridItemSettings,
+                        animations,
+                    ) {
                         detectTapGestures(
                             onLongPress = {
                                 scope.launch {
-                                    val id = Uuid.random().toHexString()
-
-                                    val gridItem = getShortcutInfoGridItem(
+                                    handleOnLongPress(
                                         eblanShortcutInfo = eblanShortcutInfo,
+                                        graphicsLayer = graphicsLayer,
                                         gridItemSettings = gridItemSettings,
                                         icon = icon,
-                                        id = id,
+                                        intOffset = intOffset,
+                                        intSize = intSize,
+                                        scale = scale,
+                                        animations = animations,
+                                        onDragShortcutInfo = onDragShortcutInfo,
                                     )
-
-                                    onUpdateGridItemSource(GridItemSource.New)
-
-                                    onUpdateMoveGridItemResult(
-                                        MoveGridItemResult(
-                                            isSuccess = false,
-                                            movingGridItem = gridItem,
-                                            conflictingGridItem = null,
-                                        ),
-                                    )
-
-                                    onUpdateImageBitmap(graphicsLayer.toImageBitmap())
-
-                                    onUpdateOverlayBounds(
-                                        intOffset,
-                                        intSize,
-                                    )
-
-                                    onUpdateSharedElementKey(
-                                        SharedElementKey(
-                                            id = id,
-                                            parent = SharedElementKey.Parent.Grid,
-                                        ),
-                                    )
-
-                                    onUpdateIsVisibleOverlay(true)
-
-                                    onUpdateTransitionState(false)
-
-                                    onUpdateIsDragging(true)
                                 }
                             },
                         )
-                    }
-                    .onGloballyPositioned { layoutCoordinates ->
-                        intOffset = layoutCoordinates.positionInRoot().round()
-
-                        intSize = layoutCoordinates.size
-                    }
-                    .size(30.dp),
-            ) {
-                if (!isLongPress) {
-                    AsyncImage(
-                        model = eblanShortcutInfo.icon,
-                        contentDescription = null,
-                        modifier = Modifier.matchParentSize(),
-                    )
-                }
-            }
+                    },
+            )
         },
+    )
+}
+
+@OptIn(ExperimentalUuidApi::class)
+@Composable
+private fun PrivateShortcutInfoMenuItem(
+    modifier: Modifier = Modifier,
+    eblanShortcutInfo: EblanShortcutInfo,
+    onTapShortcutInfo: (Long, String, String) -> Unit,
+) {
+    ListItem(
+        modifier = modifier
+            .clickable {
+                onTapShortcutInfo(
+                    eblanShortcutInfo.serialNumber,
+                    eblanShortcutInfo.packageName,
+                    eblanShortcutInfo.shortcutId,
+                )
+            },
+        headlineContent = {
+            Text(text = eblanShortcutInfo.shortLabel)
+        },
+        leadingContent = {
+            AsyncImage(
+                model = eblanShortcutInfo.icon,
+                contentDescription = null,
+                modifier = Modifier.size(30.dp),
+            )
+        },
+    )
+}
+
+@OptIn(ExperimentalUuidApi::class)
+private suspend fun handleOnLongPress(
+    eblanShortcutInfo: EblanShortcutInfo,
+    graphicsLayer: GraphicsLayer,
+    gridItemSettings: GridItemSettings,
+    icon: String?,
+    intOffset: IntOffset,
+    intSize: IntSize,
+    scale: Animatable<Float, AnimationVector1D>,
+    animations: Boolean,
+    onDragShortcutInfo: (
+        gridItem: GridItem,
+        imageBitmap: ImageBitmap,
+        intOffset: IntOffset,
+        intSize: IntSize,
+        sharedElementKey: SharedElementKey,
+    ) -> Unit,
+) {
+    val id = Uuid.random().toHexString()
+
+    val gridItem = getShortcutInfoGridItem(
+        eblanShortcutInfo = eblanShortcutInfo,
+        gridItemSettings = gridItemSettings,
+        icon = icon,
+        id = id,
+    )
+
+    if (animations) {
+        scale.animateTo(SCALE)
+    }
+
+    onDragShortcutInfo(
+        gridItem,
+        graphicsLayer.toImageBitmap(),
+        intOffset,
+        intSize,
+        SharedElementKey(
+            id = id,
+            parent = SharedElementKey.Parent.Grid,
+        ),
     )
 }
 
@@ -288,7 +322,7 @@ private fun getShortcutInfoGridItem(
         componentName = "",
     )
 
-    val gridItem = GridItem(
+    return GridItem(
         id = id,
         page = 0,
         startColumn = -1,
@@ -302,48 +336,5 @@ private fun getShortcutInfoGridItem(
         doubleTap = eblanAction,
         swipeUp = eblanAction,
         swipeDown = eblanAction,
-    )
-    return gridItem
-}
-
-@OptIn(ExperimentalUuidApi::class)
-@Composable
-private fun PrivateShortcutInfoMenuItem(
-    modifier: Modifier = Modifier,
-    drag: Drag,
-    eblanShortcutInfo: EblanShortcutInfo,
-    onTapShortcutInfo: (Long, String, String) -> Unit,
-) {
-    var isLongPress by remember { mutableStateOf(false) }
-
-    LaunchedEffect(key1 = drag) {
-        if (drag == Drag.End || drag == Drag.Cancel) {
-            isLongPress = false
-        }
-    }
-
-    ListItem(
-        modifier = modifier
-            .clickable {
-                onTapShortcutInfo(
-                    eblanShortcutInfo.serialNumber,
-                    eblanShortcutInfo.packageName,
-                    eblanShortcutInfo.shortcutId,
-                )
-            },
-        headlineContent = {
-            Text(text = eblanShortcutInfo.shortLabel)
-        },
-        leadingContent = {
-            Box(modifier = Modifier.size(30.dp)) {
-                if (!isLongPress) {
-                    AsyncImage(
-                        model = eblanShortcutInfo.icon,
-                        contentDescription = null,
-                        modifier = Modifier.matchParentSize(),
-                    )
-                }
-            }
-        },
     )
 }

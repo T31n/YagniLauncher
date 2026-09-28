@@ -17,26 +17,22 @@
  */
 package com.eblan.launcher.domain.framework
 
-import com.eblan.launcher.domain.model.EblanUser
-import com.eblan.launcher.domain.model.FastLauncherAppsActivityInfo
-import com.eblan.launcher.domain.model.FastLauncherAppsShortcutInfo
-import com.eblan.launcher.domain.model.LauncherAppsActivityInfo
-import com.eblan.launcher.domain.model.LauncherAppsEvent
-import com.eblan.launcher.domain.model.LauncherAppsShortcutInfo
-import com.eblan.launcher.domain.model.ShortcutConfigActivityInfo
-import com.eblan.launcher.domain.model.ShortcutQuery
-import kotlinx.coroutines.flow.Flow
+import com.eblan.launcher.domain.model.launcherapps.EblanUser
+import com.eblan.launcher.domain.model.launcherapps.FastLauncherAppsActivityInfo
+import com.eblan.launcher.domain.model.launcherapps.FastLauncherAppsShortcutInfo
+import com.eblan.launcher.domain.model.launcherapps.LauncherAppsActivityInfo
+import com.eblan.launcher.domain.model.launcherapps.LauncherAppsShortcutInfo
+import com.eblan.launcher.domain.model.launcherapps.ShortcutConfigActivityInfo
+import com.eblan.launcher.domain.model.launcherapps.ShortcutQuery
 
 interface LauncherAppsWrapper {
-    val launcherAppsEvent: Flow<LauncherAppsEvent>
-
     val hasShortcutHostPermission: Boolean
 
-    suspend fun getActivityList(): List<LauncherAppsActivityInfo>
+    suspend fun getActivityListWithCacheIcons(): List<LauncherAppsActivityInfo>
 
     suspend fun getFastActivityList(): List<FastLauncherAppsActivityInfo>
 
-    suspend fun getActivityList(
+    suspend fun getActivityListWithCacheIcons(
         serialNumber: Long,
         packageName: String,
     ): List<LauncherAppsActivityInfo>
@@ -46,21 +42,21 @@ interface LauncherAppsWrapper {
         packageName: String,
     ): List<FastLauncherAppsActivityInfo>
 
-    suspend fun getShortcuts(shortcutQuery: ShortcutQuery?): List<LauncherAppsShortcutInfo>?
+    suspend fun getShortcutsWithCacheIcons(shortcutQuery: ShortcutQuery?): List<LauncherAppsShortcutInfo>?
 
-    suspend fun getFastShortcuts(): List<FastLauncherAppsShortcutInfo>?
+    suspend fun getFastShortcuts(shortcutQuery: ShortcutQuery?): List<FastLauncherAppsShortcutInfo>?
 
-    suspend fun getShortcutsByPackageName(
+    suspend fun getShortcutsByPackageNameWithCacheIcons(
         serialNumber: Long,
         packageName: String,
     ): List<LauncherAppsShortcutInfo>?
 
-    suspend fun getShortcutConfigActivityList(
+    suspend fun getShortcutConfigActivityListWithCacheIcons(
         serialNumber: Long,
         packageName: String,
     ): List<ShortcutConfigActivityInfo>
 
-    fun getUser(serialNumber: Long): EblanUser
+    suspend fun getUser(serialNumber: Long): EblanUser
 
     fun pinShortcuts(
         packageName: String,

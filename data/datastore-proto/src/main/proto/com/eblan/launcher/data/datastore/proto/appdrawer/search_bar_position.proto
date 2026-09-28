@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+option java_package = "com.eblan.launcher.data.datastore.proto.appdrawer";
+option java_multiple_files = true;
+
+enum SearchBarPositionProto {
+  SearchBarPositionTop = 0;
+  SearchBarPositionBottom = 1;
+  SearchBarPositionNone = 2;
+}

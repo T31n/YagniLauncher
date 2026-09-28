@@ -4,7 +4,7 @@
 
 # Yagni Launcher
 
-Only 2 MB Android Launcher, total control, zero bloat, zero tracking
+Stock Android Launcher From Scratch
 
 ![GitHub Release](https://img.shields.io/github/v/release/JackEblan/YagniLauncher?style=for-the-badge&color=mediumseagreen)
 ![IzzyOnDroid Version](https://img.shields.io/f-droid/v/com.eblan.launcher?baseUrl=https%3A%2F%2Fapt.izzysoft.de%2Ffdroid&style=for-the-badge&label=IzzyOnDroid&color=mediumseagreen)
@@ -21,28 +21,29 @@ Only 2 MB Android Launcher, total control, zero bloat, zero tracking
 > [!WARNING]
 > This is an Alpha Stage Build. Expect bugs, instability, and incomplete features.
 
+> [!NOTE]
+> AI tools (like CodeRabbitAI) are welcome here and help me review PRs, but no bot-submitted PRs or unreviewed **AI slop**. Every contribution must be understood and stood behind by a human. Meow 🐱
+
 ## About The Project
 
 Closed-source launchers are locking features behind paywalls and adding trackers. My goal is to offer powerful features with no compromises on privacy.
 
 **YAGNI ("You Aren't Gonna Need It")** is a principle which arose from extreme programming (XP) that states a programmer should not add functionality until deemed necessary.
 
-## Features
-* No fixed grid size. You can set the grid width and height to any value you want.
-* Each grid item is fully customizable:
-  * Size and rotation
-  * Background color
-  * Icon size
-  * Text and label size
-  * Label color
-  * Show or hide icons and labels
+## Why Choose Yagni Launcher?
 
-* Infinite scrolling
-* Multiple dock pages
-* Adjustable dock height
-* Custom dock grid size
+The launcher is the first thing you see every time you unlock your phone. It shouldn't be slow, heavy, or draining your battery in the background.
 
-We keep the APK size minimal and heavily cache icons and images, which improves the launcher’s performance. Each launch uses less memory because there’s less overhead, with no trackers or ads.
+There are a lot of launchers out there. What sets Yagni Launcher apart is a relentless focus on performance and user experience over feature bloat.
+
+Yagni Launcher matches stock launcher functionality and goes beyond it, rebuilt from scratch with modern Android tooling.
+
+- ⚡ Fast — Built with Kotlin & Jetpack Compose, no legacy overhead
+- 🪶 Small — ~2MB total size, 80–90% smaller than typical stock launchers (which often run 10–60MB+)
+- 🔋 Efficient — Minimal resource and battery footprint
+- 🛠️ Modern — 100% Kotlin, 100% Jetpack Compose, written from the ground up (no forked codebase)
+
+If it's not something you need, it's not in the app. That's the whole philosophy behind the name and it's why Yagni Launcher stays fast where others get slower with every update.
 
 ## Screenshots
 
@@ -58,9 +59,8 @@ We keep the APK size minimal and heavily cache icons and images, which improves 
 
 </div>
 
-## Links
-- [Android Launchers Memory Usage In The Cached Processes](https://youtu.be/-0cEKr-H5FU?si=RhaWvdf5ElBFoHnJ)
-- [Support Me On Ko-Fi](https://ko-fi.com/I3I01OJG21)
+## Documentation
+If you're interested in contributing to the project, I recommend reading the [Yagni Launcher Architecture](docs/ARCHITECTURE.md) first.
 
 ## License
 **Yagni Launcher** is licensed under the GNU General Public License v3.0. See the [license](LICENSE)

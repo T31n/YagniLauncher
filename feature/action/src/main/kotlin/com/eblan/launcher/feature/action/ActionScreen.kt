@@ -47,9 +47,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.EblanAction
-import com.eblan.launcher.domain.model.EblanActionType
-import com.eblan.launcher.domain.model.EblanApplicationInfo
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
+import com.eblan.launcher.domain.model.userdata.EblanAction
+import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.feature.action.model.ActionUiState
 import com.eblan.launcher.ui.dialog.SelectApplicationDialog
 import com.eblan.launcher.ui.settings.getEblanActionTypeSubtitle
@@ -108,16 +108,11 @@ internal fun ActionScreen(
                 .fillMaxSize()
                 .padding(paddingValues),
         ) {
-            when (actionUiState) {
-                ActionUiState.Loading -> {
-                }
-
-                is ActionUiState.Success -> {
-                    Success(
-                        eblanApplicationInfos = actionUiState.eblanApplicationInfos,
-                        onUpdateEblanAction = onUpdateEblanAction,
-                    )
-                }
+            if (actionUiState is ActionUiState.Success) {
+                Success(
+                    eblanApplicationInfos = actionUiState.eblanApplicationInfos,
+                    onUpdateEblanAction = onUpdateEblanAction,
+                )
             }
         }
     }

@@ -18,9 +18,9 @@
 package com.eblan.launcher.data.repository.mapper
 
 import com.eblan.launcher.data.room.entity.ShortcutConfigGridItemEntity
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.GridItemData
-import com.eblan.launcher.domain.model.ShortcutConfigGridItem
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.GridItemData
+import com.eblan.launcher.domain.model.grid.ShortcutConfigGridItem
 
 internal fun ShortcutConfigGridItemEntity.asModel(): ShortcutConfigGridItem = ShortcutConfigGridItem(
     id = id,

@@ -1,0 +1,2 @@
+- App drawer search bar and tab are now adaptable to custom background color
+- Added Blur Behind settings to enable blur effect when app drawer opens

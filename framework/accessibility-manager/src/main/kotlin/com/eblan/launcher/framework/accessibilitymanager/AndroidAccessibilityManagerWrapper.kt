@@ -18,5 +18,5 @@
 package com.eblan.launcher.framework.accessibilitymanager
 
 interface AndroidAccessibilityManagerWrapper {
-    fun isAccessibilityServiceEnabled(): Boolean
+    suspend fun isAccessibilityServiceEnabled(): Boolean
 }

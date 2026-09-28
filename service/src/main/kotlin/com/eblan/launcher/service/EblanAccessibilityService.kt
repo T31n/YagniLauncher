@@ -25,7 +25,7 @@ import android.content.IntentFilter
 import android.os.Build
 import android.view.accessibility.AccessibilityEvent
 import androidx.core.content.ContextCompat
-import com.eblan.launcher.domain.model.GlobalAction
+import com.eblan.launcher.domain.model.home.GlobalAction
 
 class EblanAccessibilityService : AccessibilityService() {
     private val globalActionBroadcastReceiver = object : BroadcastReceiver() {
@@ -33,23 +33,19 @@ class EblanAccessibilityService : AccessibilityService() {
             when (intent?.action) {
                 GlobalAction.NAME -> {
                     when (intent.getStringExtra(GlobalAction.GLOBAL_ACTION_TYPE)) {
-                        GlobalAction.Notifications.name -> {
+                        GlobalAction.Notifications.name ->
                             performGlobalAction(GLOBAL_ACTION_NOTIFICATIONS)
-                        }
 
-                        GlobalAction.QuickSettings.name -> {
+                        GlobalAction.QuickSettings.name ->
                             performGlobalAction(GLOBAL_ACTION_QUICK_SETTINGS)
-                        }
 
-                        GlobalAction.LockScreen.name -> {
+                        GlobalAction.LockScreen.name ->
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                                 performGlobalAction(GLOBAL_ACTION_LOCK_SCREEN)
                             }
-                        }
 
-                        GlobalAction.Recents.name -> {
+                        GlobalAction.Recents.name ->
                             performGlobalAction(GLOBAL_ACTION_RECENTS)
-                        }
                     }
                 }
             }

@@ -18,6 +18,8 @@
 package com.eblan.launcher.feature.home.screen.pager
 
 import android.appwidget.AppWidgetProviderInfo
+import android.graphics.Rect
+import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
@@ -52,25 +54,25 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.EblanAppWidgetProviderInfo
-import com.eblan.launcher.domain.model.EblanApplicationInfoGroup
-import com.eblan.launcher.domain.model.EblanShortcutInfo
-import com.eblan.launcher.domain.model.EblanShortcutInfoByGroup
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.GridItemData
-import com.eblan.launcher.domain.model.GridItemSettings
-import com.eblan.launcher.domain.model.MoveGridItemResult
+import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.GridItemData
+import com.eblan.launcher.domain.model.grid.GridItemSettings
+import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfo
+import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfoByGroup
+import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
+import com.eblan.launcher.feature.home.component.HomeHandler
 import com.eblan.launcher.feature.home.component.popup
-import com.eblan.launcher.feature.home.model.GridItemSource
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.screen.shortcutinfo.ShortcutInfoScreen
+import com.eblan.launcher.ui.local.LocalLauncherApps
 
 @Composable
 internal fun GridItemPopup(
     modifier: Modifier = Modifier,
     eblanAppWidgetProviderInfosGroup: Map<String, List<EblanAppWidgetProviderInfo>>,
     eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
-    gridItem: GridItem,
+    gridItem: GridItem?,
     gridItemSettings: GridItemSettings,
     hasShortcutHostPermission: Boolean,
     popupIntOffset: IntOffset?,
@@ -78,21 +80,23 @@ internal fun GridItemPopup(
     isVisibleOverlay: Boolean,
     paddingValues: PaddingValues,
     isCloseGridItemPopup: Boolean,
+    animations: Boolean,
     onDeleteGridItem: (GridItem) -> Unit,
     onDismissRequest: () -> Unit,
-    onUpdateIsDragging: (Boolean) -> Unit,
     onEdit: (String) -> Unit,
-    onInfo: (Long, String) -> Unit,
     onResize: (GridItem) -> Unit,
-    onTapShortcutInfo: (Long, String, String) -> Unit,
-    onUpdateGridItemSource: (GridItemSource) -> Unit,
-    onUpdateImageBitmap: (ImageBitmap) -> Unit,
-    onUpdateOverlayBounds: (intOffset: IntOffset, intSize: IntSize) -> Unit,
-    onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
     onWidgets: (EblanApplicationInfoGroup) -> Unit,
-    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
-    onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
+    onUpdateIsResizing: (Boolean) -> Unit,
+    onDragShortcutInfo: (
+        gridItem: GridItem,
+        imageBitmap: ImageBitmap,
+        intOffset: IntOffset,
+        intSize: IntSize,
+        sharedElementKey: SharedElementKey,
+    ) -> Unit,
 ) {
+    requireNotNull(gridItem)
+
     requireNotNull(popupIntOffset)
 
     requireNotNull(popupIntSize)
@@ -100,6 +104,8 @@ internal fun GridItemPopup(
     val density = LocalDensity.current
 
     val layoutDirection = LocalLayoutDirection.current
+
+    val launcherApps = LocalLauncherApps.current
 
     val transitionState = remember {
         MutableTransitionState(false).apply { targetState = true }
@@ -137,6 +143,22 @@ internal fun GridItemPopup(
         transitionState.targetState = false
     }
 
+    HomeHandler(enabled = transitionState.targetState) {
+        transitionState.targetState = false
+    }
+
+    fun getSourceBounds(): Rect {
+        val left = popupIntOffset.x + leftPadding
+        val top = popupIntOffset.y + topPadding
+
+        return Rect(
+            left,
+            top,
+            left + popupIntSize.width,
+            top + popupIntSize.height,
+        )
+    }
+
     Box(
         modifier = modifier
             .pointerInput(Unit) {
@@ -169,22 +191,33 @@ internal fun GridItemPopup(
                 gridItemSettings = gridItemSettings,
                 hasShortcutHostPermission = hasShortcutHostPermission,
                 isVisibleOverlay = isVisibleOverlay,
+                animations = animations,
                 onDeleteGridItem = onDeleteGridItem,
-                onUpdateTransitionState = {
-                    transitionState.targetState = it
+                onDismiss = {
+                    transitionState.targetState = false
                 },
-                onUpdateIsDragging = onUpdateIsDragging,
                 onEdit = onEdit,
-                onInfo = onInfo,
+                onInfo = { serialNumber, componentName ->
+                    launcherApps.startAppDetailsActivity(
+                        serialNumber = serialNumber,
+                        componentName = componentName,
+                        sourceBounds = getSourceBounds(),
+                    )
+                },
                 onResize = onResize,
-                onTapShortcutInfo = onTapShortcutInfo,
-                onUpdateGridItemSource = onUpdateGridItemSource,
-                onUpdateImageBitmap = onUpdateImageBitmap,
-                onUpdateOverlayBounds = onUpdateOverlayBounds,
-                onUpdateSharedElementKey = onUpdateSharedElementKey,
+                onTapShortcutInfo = { serialNumber, packageName, shortcutId ->
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+                        launcherApps.startShortcut(
+                            serialNumber = serialNumber,
+                            packageName = packageName,
+                            id = shortcutId,
+                            sourceBounds = getSourceBounds(),
+                        )
+                    }
+                },
                 onWidgets = onWidgets,
-                onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+                onUpdateIsResizing = onUpdateIsResizing,
+                onDragShortcutInfo = onDragShortcutInfo,
             )
         }
     }
@@ -199,9 +232,9 @@ private fun GridItemPopupContent(
     gridItemSettings: GridItemSettings,
     hasShortcutHostPermission: Boolean,
     isVisibleOverlay: Boolean,
+    animations: Boolean,
     onDeleteGridItem: (GridItem) -> Unit,
-    onUpdateTransitionState: (Boolean) -> Unit,
-    onUpdateIsDragging: (Boolean) -> Unit,
+    onDismiss: () -> Unit,
     onEdit: (String) -> Unit,
     onInfo: (
         serialNumber: Long,
@@ -213,16 +246,15 @@ private fun GridItemPopupContent(
         packageName: String,
         shortcutId: String,
     ) -> Unit,
-    onUpdateGridItemSource: (GridItemSource) -> Unit,
-    onUpdateImageBitmap: (ImageBitmap) -> Unit,
-    onUpdateOverlayBounds: (
+    onWidgets: (EblanApplicationInfoGroup) -> Unit,
+    onUpdateIsResizing: (Boolean) -> Unit,
+    onDragShortcutInfo: (
+        gridItem: GridItem,
+        imageBitmap: ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
+        sharedElementKey: SharedElementKey,
     ) -> Unit,
-    onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
-    onWidgets: (EblanApplicationInfoGroup) -> Unit,
-    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
-    onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
 ) {
     Surface(
         modifier = modifier.padding(5.dp),
@@ -243,20 +275,16 @@ private fun GridItemPopupContent(
                         hasShortcutHostPermission = hasShortcutHostPermission,
                         icon = data.icon,
                         isVisibleOverlay = isVisibleOverlay,
+                        animations = animations,
                         onDelete = {
                             onDeleteGridItem(gridItem)
 
-                            onUpdateTransitionState(false)
-                        },
-                        onUpdateIsDragging = {
-                            onUpdateIsDragging(it)
-
-                            onUpdateTransitionState(false)
+                            onDismiss()
                         },
                         onEdit = {
-                            onUpdateTransitionState(false)
-
                             onEdit(gridItem.id)
+
+                            onDismiss()
                         },
                         onInfo = {
                             onInfo(
@@ -264,12 +292,14 @@ private fun GridItemPopupContent(
                                 data.componentName,
                             )
 
-                            onUpdateTransitionState(false)
+                            onDismiss()
                         },
                         onResize = {
                             onResize(gridItem)
 
-                            onUpdateTransitionState(false)
+                            onUpdateIsResizing(true)
+
+                            onDismiss()
                         },
                         onTapShortcutInfo = { serialNumber, packageName, shortcutId ->
                             onTapShortcutInfo(
@@ -278,12 +308,8 @@ private fun GridItemPopupContent(
                                 shortcutId,
                             )
 
-                            onUpdateTransitionState(false)
+                            onDismiss()
                         },
-                        onUpdateGridItemSource = onUpdateGridItemSource,
-                        onUpdateImageBitmap = onUpdateImageBitmap,
-                        onUpdateOverlayBounds = onUpdateOverlayBounds,
-                        onUpdateSharedElementKey = onUpdateSharedElementKey,
                         onWidgets = {
                             onWidgets(
                                 EblanApplicationInfoGroup(
@@ -294,11 +320,9 @@ private fun GridItemPopupContent(
                                 ),
                             )
 
-                            onUpdateTransitionState(false)
+                            onDismiss()
                         },
-                        onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
-                        onUpdateTransitionState = onUpdateTransitionState,
+                        onDragShortcutInfo = onDragShortcutInfo,
                     )
                 }
 
@@ -307,17 +331,19 @@ private fun GridItemPopupContent(
                         onDelete = {
                             onDeleteGridItem(gridItem)
 
-                            onUpdateTransitionState(false)
+                            onDismiss()
                         },
                         onEdit = {
                             onEdit(gridItem.id)
 
-                            onUpdateTransitionState(false)
+                            onDismiss()
                         },
                         onResize = {
                             onResize(gridItem)
 
-                            onUpdateTransitionState(false)
+                            onUpdateIsResizing(true)
+
+                            onDismiss()
                         },
                     )
                 }
@@ -330,12 +356,14 @@ private fun GridItemPopupContent(
                         onDelete = {
                             onDeleteGridItem(gridItem)
 
-                            onUpdateTransitionState(false)
+                            onDismiss()
                         },
                         onResize = {
                             onResize(gridItem)
 
-                            onUpdateTransitionState(false)
+                            onUpdateIsResizing(true)
+
+                            onDismiss()
                         },
                     )
                 }
@@ -353,8 +381,8 @@ private fun ApplicationInfoGridItemMenu(
     hasShortcutHostPermission: Boolean,
     icon: String?,
     isVisibleOverlay: Boolean,
+    animations: Boolean,
     onDelete: () -> Unit,
-    onUpdateIsDragging: (Boolean) -> Unit,
     onEdit: () -> Unit,
     onInfo: () -> Unit,
     onResize: () -> Unit,
@@ -363,17 +391,14 @@ private fun ApplicationInfoGridItemMenu(
         packageName: String,
         shortcutId: String,
     ) -> Unit,
-    onUpdateGridItemSource: (GridItemSource) -> Unit,
-    onUpdateImageBitmap: (ImageBitmap) -> Unit,
-    onUpdateOverlayBounds: (
+    onWidgets: () -> Unit,
+    onDragShortcutInfo: (
+        gridItem: GridItem,
+        imageBitmap: ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
+        sharedElementKey: SharedElementKey,
     ) -> Unit,
-    onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
-    onWidgets: () -> Unit,
-    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
-    onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
-    onUpdateTransitionState: (Boolean) -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -388,15 +413,9 @@ private fun ApplicationInfoGridItemMenu(
                 gridItemSettings = gridItemSettings,
                 icon = icon,
                 isVisibleOverlay = isVisibleOverlay,
-                onUpdateIsDragging = onUpdateIsDragging,
+                animations = animations,
                 onTapShortcutInfo = onTapShortcutInfo,
-                onUpdateGridItemSource = onUpdateGridItemSource,
-                onUpdateImageBitmap = onUpdateImageBitmap,
-                onUpdateOverlayBounds = onUpdateOverlayBounds,
-                onUpdateSharedElementKey = onUpdateSharedElementKey,
-                onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
-                onUpdateTransitionState = onUpdateTransitionState,
+                onDragShortcutInfo = onDragShortcutInfo,
             )
 
             Spacer(modifier = Modifier.height(5.dp))

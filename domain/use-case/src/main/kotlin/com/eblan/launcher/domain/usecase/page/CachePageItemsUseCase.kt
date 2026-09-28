@@ -20,9 +20,9 @@ package com.eblan.launcher.domain.usecase.page
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.grid.isGridItemSpanWithinBounds
-import com.eblan.launcher.domain.model.Associate
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.PageItem
+import com.eblan.launcher.domain.model.grid.Associate
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.home.PageItem
 import com.eblan.launcher.domain.repository.UserDataRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
@@ -65,7 +65,7 @@ class CachePageItemsUseCase @Inject constructor(
         (0 until pageCount).map {
             PageItem(
                 id = it,
-                gridItems = gridItemsByPage[it] ?: emptyList(),
+                gridItems = gridItemsByPage[it].orEmpty(),
             )
         }
     }

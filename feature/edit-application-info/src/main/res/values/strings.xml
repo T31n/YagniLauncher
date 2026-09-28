@@ -21,4 +21,5 @@
     <string name="update_tag">Update Tag</string>
     <string name="hide_from_drawer">Hide From Drawer</string>
     <string name="view_hidden_apps_in_app_drawer_settings">View hidden apps in App Drawer settings</string>
+    <string name="tags">Tags</string>
 </resources>

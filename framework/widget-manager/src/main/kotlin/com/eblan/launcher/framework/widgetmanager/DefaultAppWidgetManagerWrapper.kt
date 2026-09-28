@@ -24,18 +24,19 @@ import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.os.UserHandle
+import com.eblan.launcher.common.AndroidImageSerializer
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
+import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.AppWidgetManagerWrapper
-import com.eblan.launcher.domain.framework.FileManager
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
-import com.eblan.launcher.domain.model.AppWidgetManagerAppWidgetProviderInfo
-import com.eblan.launcher.domain.model.FastAppWidgetManagerAppWidgetProviderInfo
-import com.eblan.launcher.framework.imageserializer.AndroidImageSerializer
+import com.eblan.launcher.domain.model.widget.AppWidgetManagerAppWidgetProviderInfo
 import com.eblan.launcher.framework.usermanager.AndroidUserManagerWrapper
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
@@ -47,19 +48,17 @@ internal class DefaultAppWidgetManagerWrapper @Inject constructor(
     private val fileManager: FileManager,
     private val packageManagerWrapper: PackageManagerWrapper,
     private val iconKeyGenerator: IconKeyGenerator,
-    @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
+    @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : AppWidgetManagerWrapper,
     AndroidAppWidgetManagerWrapper {
     private val appWidgetManager = AppWidgetManager.getInstance(context)
 
-    override suspend fun getInstalledProviders(): List<AppWidgetManagerAppWidgetProviderInfo> = withContext(defaultDispatcher) {
-        appWidgetManager.installedProviders.map { appWidgetProviderInfo ->
-            appWidgetProviderInfo.toEblanAppWidgetProviderInfo()
-        }
-    }
+    override suspend fun getInstalledProvidersWithCacheIcons(): List<AppWidgetManagerAppWidgetProviderInfo> = withContext(ioDispatcher) {
+        appWidgetManager.installedProviders.map {
+            currentCoroutineContext().ensureActive()
 
-    override suspend fun getFastInstalledProviders(): List<FastAppWidgetManagerAppWidgetProviderInfo> = appWidgetManager.installedProviders.map { appWidgetProviderInfo ->
-        appWidgetProviderInfo.toFastEblanAppWidgetProviderInfo()
+            it.toEblanAppWidgetProviderInfo()
+        }
     }
 
     override fun getAppWidgetInfo(appWidgetId: Int): AppWidgetProviderInfo? = appWidgetManager.getAppWidgetInfo(appWidgetId)
@@ -133,50 +132,6 @@ internal class DefaultAppWidgetManagerWrapper @Inject constructor(
                 maxResizeWidth = 0,
                 maxResizeHeight = 0,
                 preview = preview,
-                lastUpdateTime = packageManagerWrapper.getLastUpdateTime(packageName = provider.packageName),
-                label = loadLabel(context.packageManager),
-                description = null,
-            )
-        }
-    }
-
-    private fun AppWidgetProviderInfo.toFastEblanAppWidgetProviderInfo(): FastAppWidgetManagerAppWidgetProviderInfo {
-        val serialNumber = userManagerWrapper.getSerialNumberForUser(userHandle = profile)
-
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            FastAppWidgetManagerAppWidgetProviderInfo(
-                serialNumber = serialNumber,
-                packageName = provider.packageName,
-                componentName = provider.flattenToString(),
-                configure = configure?.flattenToString(),
-                targetCellWidth = targetCellWidth,
-                targetCellHeight = targetCellHeight,
-                minWidth = minWidth,
-                minHeight = minHeight,
-                resizeMode = resizeMode,
-                minResizeWidth = minResizeWidth,
-                minResizeHeight = minResizeHeight,
-                maxResizeWidth = maxResizeWidth,
-                maxResizeHeight = maxResizeHeight,
-                lastUpdateTime = packageManagerWrapper.getLastUpdateTime(packageName = provider.packageName),
-                label = loadLabel(context.packageManager),
-                description = loadDescription(context)?.let(CharSequence::toString),
-            )
-        } else {
-            FastAppWidgetManagerAppWidgetProviderInfo(
-                serialNumber = serialNumber,
-                packageName = provider.packageName,
-                componentName = provider.flattenToString(),
-                configure = configure?.flattenToString(),
-                targetCellWidth = 0,
-                targetCellHeight = 0,
-                minWidth = minWidth,
-                minHeight = minHeight,
-                resizeMode = resizeMode,
-                minResizeWidth = minResizeWidth,
-                minResizeHeight = minResizeHeight,
-                maxResizeWidth = 0,
-                maxResizeHeight = 0,
                 lastUpdateTime = packageManagerWrapper.getLastUpdateTime(packageName = provider.packageName),
                 label = loadLabel(context.packageManager),
                 description = null,

@@ -19,14 +19,14 @@ package com.eblan.launcher.domain.usecase.grid
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
-import com.eblan.launcher.domain.common.IconKeyGenerator
-import com.eblan.launcher.domain.framework.FileManager
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.GridItemData
-import com.eblan.launcher.domain.model.MoveGridItemResult
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.GridItemData
+import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.repository.FolderGridItemRepository
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
+import com.eblan.launcher.domain.usecase.folder.asPreviewFolders
+import com.eblan.launcher.domain.usecase.util.getRecursiveFolderGridItems
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -35,11 +35,9 @@ import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 class UpdateGridItemsAfterMoveUseCase @Inject constructor(
-    private val userDataRepository: UserDataRepository,
     private val gridRepository: GridRepository,
     private val folderGridItemRepository: FolderGridItemRepository,
-    private val fileManager: FileManager,
-    private val iconKeyGenerator: IconKeyGenerator,
+    private val userDataRepository: UserDataRepository,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     suspend operator fun invoke(moveGridItemResult: MoveGridItemResult) {
@@ -53,11 +51,15 @@ class UpdateGridItemsAfterMoveUseCase @Inject constructor(
             if (conflictingGridItem != null) {
                 when (conflictingGridItem.data) {
                     is GridItemData.Folder -> {
-                        val folderGridItems = getFolderGridItemsById(
-                            folderGridItemRepository = folderGridItemRepository,
-                            fileManager = fileManager,
-                            iconKeyGenerator = iconKeyGenerator,
-                            iconPackInfoPackageName = userData.generalSettings.iconPackInfoPackageName,
+                        val previewFolderGridItems =
+                            folderGridItemRepository.getFolderGridItemWrappers()
+                                .asPreviewFolders(
+                                    maxFolderColumns = userData.folderSettings.maxFolderColumns,
+                                    maxFolderRows = userData.folderSettings.maxFolderRows,
+                                )
+
+                        val folderGridItems = getRecursiveFolderGridItems(
+                            previewFolderGridItems = previewFolderGridItems,
                             folderId = conflictingGridItem.id,
                         )
 
@@ -125,7 +127,10 @@ class UpdateGridItemsAfterMoveUseCase @Inject constructor(
         }
 
         gridRepository.updateGridItem(
-            gridItem = movingGridItem.copy(data = newData),
+            gridItem = movingGridItem.copy(
+                associate = conflictingGridItem.associate,
+                data = newData,
+            ),
         )
     }
 
@@ -202,7 +207,10 @@ class UpdateGridItemsAfterMoveUseCase @Inject constructor(
                     ),
                 ),
                 conflictingGridItem.copy(data = conflictingData),
-                movingGridItem.copy(data = movingData),
+                movingGridItem.copy(
+                    associate = conflictingGridItem.associate,
+                    data = movingData,
+                ),
             ),
         )
     }

@@ -8,7 +8,7 @@ on:
 jobs:
   build_release_apk:
     name: "Build Release APK"
-    if: github.repository == 'JackEblan/YagniLauncher'
+    if: github.repository == 'T31n/YagniLauncher'
     runs-on: ubuntu-latest
     timeout-minutes: 120
 
@@ -24,7 +24,7 @@ jobs:
           ls /dev/kvm
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Grant execute permission to Gradle wrapper
         run: chmod +x ./gradlew
@@ -36,7 +36,7 @@ jobs:
         run: mkdir -p ~/.gradle ; cp .github/ci-gradle.properties ~/.gradle/gradle.properties
 
       - name: Setup JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v6
         with:
           distribution: 'zulu'
           java-version: 17
@@ -47,7 +47,7 @@ jobs:
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
 
       - name: Accept licenses
         run: yes | sdkmanager --licenses || true
@@ -87,7 +87,7 @@ jobs:
         run: ./gradlew :app:assembleRelease
 
       - name: Upload mapping file
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: mapping-${{ github.ref_name }}
           path: app/build/outputs/mapping/release/mapping.txt

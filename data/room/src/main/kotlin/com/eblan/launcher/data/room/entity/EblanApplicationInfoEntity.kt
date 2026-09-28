@@ -19,8 +19,23 @@ package com.eblan.launcher.data.room.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.Index
 
-@Entity(primaryKeys = ["componentName", "serialNumber"])
+@Entity(
+    primaryKeys = ["componentName", "serialNumber"],
+    foreignKeys = [
+        ForeignKey(
+            entity = FolderEblanApplicationInfoEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["folderId"],
+            onDelete = ForeignKey.CASCADE,
+        ),
+    ],
+    indices = [
+        Index("folderId"),
+    ],
+)
 data class EblanApplicationInfoEntity(
     val componentName: String,
     val serialNumber: Long,
@@ -33,8 +48,10 @@ data class EblanApplicationInfoEntity(
     val isHidden: Boolean,
     @ColumnInfo(defaultValue = "0")
     val lastUpdateTime: Long,
-    @ColumnInfo(defaultValue = "-1")
-    val index: Int,
     @ColumnInfo(defaultValue = "0")
     val flags: Int,
+    @ColumnInfo(defaultValue = "-1")
+    val folderIndex: Int,
+    @ColumnInfo(defaultValue = "NULL")
+    val folderId: String?,
 )

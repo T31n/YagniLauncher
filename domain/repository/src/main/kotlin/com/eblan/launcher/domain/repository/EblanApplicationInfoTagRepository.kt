@@ -17,7 +17,7 @@
  */
 package com.eblan.launcher.domain.repository
 
-import com.eblan.launcher.domain.model.EblanApplicationInfoTag
+import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import kotlinx.coroutines.flow.Flow
 
 interface EblanApplicationInfoTagRepository {
@@ -28,4 +28,6 @@ interface EblanApplicationInfoTagRepository {
     suspend fun updateEblanApplicationInfoTag(eblanApplicationInfoTag: EblanApplicationInfoTag)
 
     suspend fun deleteEblanApplicationInfoTag(eblanApplicationInfoTag: EblanApplicationInfoTag)
+
+    suspend fun updateEblanApplicationInfoTags(eblanApplicationInfoTags: List<EblanApplicationInfoTag>)
 }

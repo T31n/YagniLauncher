@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~
+  ~   Copyright 2023 Einstein Blanco
+  ~
+  ~   Licensed under the GNU General Public License v3.0 (the "License");
+  ~   you may not use this file except in compliance with the License.
+  ~   You may obtain a copy of the License at
+  ~
+  ~       https://www.gnu.org/licenses/gpl-3.0
+  ~
+  ~   Unless required by applicable law or agreed to in writing, software
+  ~   distributed under the License is distributed on an "AS IS" BASIS,
+  ~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~   See the License for the specific language governing permissions and
+  ~   limitations under the License.
+  ~
+  -->
+<resources>
+    <string name="personal">Osobní</string>
+    <string name="clone">Klonované</string>
+    <string name="work">Pracovní</string>
+    <string name="work_apps_are_paused">Pracovní aplikace jsou pozastavené</string>
+    <string name="you_won_t_receive_notifications_from_your_work_apps">Nebudete dostávat upozornění od pracovních aplikací</string>
+    <string name="unpause">Probudit</string>
+    <string name="private_space">Soukromý prostor</string>
+    <string name="please_wait_for_the_white_box_indicator">Počkejte prosím, až se objeví indikátor bílého rámečku</string>
+    <string name="edit_pages">Upravit stránky</string>
+    <string name="edit_dock_pages">Upravit stránky dokovací oblasti</string>
+    <string name="widgets">Widgety</string>
+    <string name="shortcuts">Zkratky</string>
+    <string name="wallpaper">Tapeta</string>
+    <string name="search_widgets">Hledat widgety</string>
+    <string name="request_permissions">Žádost o oprávnění</string>
+    <string name="allow_permissions_so_we_can_inform_you_about_important_crash_reports_and_make_phone_shortcuts">Povolit oprávnění, abychom vás mohli informovat o důležitých hlášeních o selháních a vytvářet zkratky telefonu</string>
+    <string name="later">Později</string>
+</resources>

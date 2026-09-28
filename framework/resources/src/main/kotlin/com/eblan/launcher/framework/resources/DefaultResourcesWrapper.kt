@@ -20,7 +20,7 @@ package com.eblan.launcher.framework.resources
 import android.content.Context
 import android.content.res.Configuration
 import com.eblan.launcher.domain.framework.ResourcesWrapper
-import com.eblan.launcher.domain.model.Theme
+import com.eblan.launcher.domain.model.userdata.Theme
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 

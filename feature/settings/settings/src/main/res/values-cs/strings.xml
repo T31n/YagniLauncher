@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~
+  ~   Copyright 2023 Einstein Blanco
+  ~
+  ~   Licensed under the GNU General Public License v3.0 (the "License");
+  ~   you may not use this file except in compliance with the License.
+  ~   You may obtain a copy of the License at
+  ~
+  ~       https://www.gnu.org/licenses/gpl-3.0
+  ~
+  ~   Unless required by applicable law or agreed to in writing, software
+  ~   distributed under the License is distributed on an "AS IS" BASIS,
+  ~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~   See the License for the specific language governing permissions and
+  ~   limitations under the License.
+  ~
+  -->
+<resources>
+    <string name="choose_yagni_launcher">Vybrat Yagni spouštěč</string>
+    <string name="default_launcher">Výchozí spouštěč</string>
+    <string name="themes_icon_packs">Motivy, balíčky ikon</string>
+    <string name="grid_icon_dock_and_more">Mřížka, ikony</string>
+    <string name="columns_and_rows_count">Počty sloupců a řádků</string>
+    <string name="swipe_gesture_actions">Akce pro gesta přejetí prstem</string>
+    <string name="advanced_options_for_power_users">Pokročilé možnosti pro náročné uživatele</string>
+    <string name="thank_you_for_using_yagni_launcher_alpha">Děkujeme, že používáte Yagni spouštěč v alfa verzi!</string>
+    <string name="about_development_description">
+    Vývoj začal v lednu 2025 s pravidelnými týdenními aktualizacemi. Toto je můj dosud nejsložitější projekt a věnuji značné úsilí jeho vylepšování.
+</string>
+    <string name="support_message">
+    Pokud shledáte aplikaci hodnotnou, velmi uvítáme vaši podporu, ať už darem na Ko-Fi nebo udělením hvězdičky repozitáři na GitHubu.
+</string>
+    <string name="support_on_ko_fi">Podpořit na Ko-Fi</string>
+    <string name="star_on_github">Hvězdička na GitHubu</string>
+    <string name="note_this_informational_card_will_be_removed_in_future_stable_releases">Poznámka: Tato informační karta bude odstraněna v budoucích stabilních vydáních</string>
+    <string name="corner_radius_background_color_and_more">Zaoblení rohů, barva pozadí</string>
+</resources>

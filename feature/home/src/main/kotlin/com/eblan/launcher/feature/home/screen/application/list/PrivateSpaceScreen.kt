@@ -18,6 +18,7 @@
 package com.eblan.launcher.feature.home.screen.application.list
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -33,6 +34,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,7 +43,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
@@ -60,15 +62,16 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.addLastModifiedToFileCacheKey
 import coil3.request.crossfade
-import com.eblan.launcher.domain.model.AppDrawerSettings
-import com.eblan.launcher.domain.model.EblanApplicationInfo
-import com.eblan.launcher.domain.model.EblanApplicationInfoWithIconPackInfo
-import com.eblan.launcher.domain.model.EblanUser
-import com.eblan.launcher.domain.model.ManagedProfileResult
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
+import com.eblan.launcher.domain.model.launcherapps.EblanUser
+import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
+import com.eblan.launcher.domain.model.userdata.BackgroundColor
+import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.screen.application.PrivateSpaceStickyHeader
 import com.eblan.launcher.feature.home.screen.application.handleOnLongPressPrivateSpaceEblanApplicationInfoItem
 import com.eblan.launcher.feature.home.screen.application.handleOnTapEblanApplicationInfoItem
-import com.eblan.launcher.feature.home.util.getSystemTextColor
+import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
+import com.eblan.launcher.feature.home.util.handleOnPress
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import kotlinx.coroutines.launch
 import kotlin.uuid.ExperimentalUuidApi
@@ -76,27 +79,32 @@ import kotlin.uuid.ExperimentalUuidApi
 internal fun LazyListScope.privateSpace(
     appDrawerSettings: AppDrawerSettings,
     isQuietModeEnabled: Boolean,
-    managedProfileResult: ManagedProfileResult?,
     paddingValues: PaddingValues,
-    privateEblanApplicationInfos: List<EblanApplicationInfoWithIconPackInfo>,
+    privateEblanApplicationInfos: List<EblanApplicationInfo>,
     privateEblanUser: EblanUser?,
     isVisibleOverlay: Boolean,
-    onUpdateIsQuietModeEnabled: (Boolean) -> Unit,
-    onUpdateOverlayBounds: (
+    backgroundColor: BackgroundColor,
+    customBackgroundColor: Int,
+    systemCustomTextColor: Int,
+    systemTextColor: TextColor,
+    iconPackInfoFilePaths: Map<String, String?>,
+    animations: Boolean,
+    onLongPressPrivateSpaceApplicationInfoItem: (
+        eblanApplicationInfo: EblanApplicationInfo,
         intOffset: IntOffset,
         intSize: IntSize,
     ) -> Unit,
-    onUpdatePopupMenu: (Boolean) -> Unit,
-    onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
 ) {
     if (privateEblanUser == null || privateEblanUser.isPrivateSpaceEntryPointHidden) return
 
     stickyHeader {
         PrivateSpaceStickyHeader(
+            serialNumber = privateEblanUser.serialNumber,
             isQuietModeEnabled = isQuietModeEnabled,
-            managedProfileResult = managedProfileResult,
-            privateEblanUser = privateEblanUser,
-            onUpdateIsQuietModeEnabled = onUpdateIsQuietModeEnabled,
+            backgroundColor = backgroundColor,
+            customBackgroundColor = customBackgroundColor,
+            systemCustomTextColor = systemCustomTextColor,
+            systemTextColor = systemTextColor,
         )
     }
 
@@ -104,12 +112,14 @@ internal fun LazyListScope.privateSpace(
         items(privateEblanApplicationInfos) { eblanApplicationInfo ->
             PrivateSpaceEblanApplicationInfoItem(
                 appDrawerSettings = appDrawerSettings,
-                eblanApplicationInfoWithIconPackInfo = eblanApplicationInfo,
+                eblanApplicationInfo = eblanApplicationInfo,
                 paddingValues = paddingValues,
                 isVisibleOverlay = isVisibleOverlay,
-                onUpdateOverlayBounds = onUpdateOverlayBounds,
-                onUpdatePopupMenu = onUpdatePopupMenu,
-                onUpdateEblanApplicationInfo = onUpdateEblanApplicationInfo,
+                systemTextColor = systemTextColor,
+                systemCustomTextColor = systemCustomTextColor,
+                iconPackInfoFilePaths = iconPackInfoFilePaths,
+                animations = animations,
+                onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
             )
         }
     }
@@ -124,15 +134,18 @@ internal fun LazyListScope.privateSpace(
 private fun PrivateSpaceEblanApplicationInfoItem(
     modifier: Modifier = Modifier,
     appDrawerSettings: AppDrawerSettings,
-    eblanApplicationInfoWithIconPackInfo: EblanApplicationInfoWithIconPackInfo,
+    eblanApplicationInfo: EblanApplicationInfo,
     paddingValues: PaddingValues,
     isVisibleOverlay: Boolean,
-    onUpdateOverlayBounds: (
+    systemCustomTextColor: Int,
+    systemTextColor: TextColor,
+    iconPackInfoFilePaths: Map<String, String?>,
+    animations: Boolean,
+    onLongPressPrivateSpaceApplicationInfoItem: (
+        eblanApplicationInfo: EblanApplicationInfo,
         intOffset: IntOffset,
         intSize: IntSize,
     ) -> Unit,
-    onUpdatePopupMenu: (Boolean) -> Unit,
-    onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -146,14 +159,19 @@ private fun PrivateSpaceEblanApplicationInfoItem(
 
     val scope = rememberCoroutineScope()
 
-    val textColor = getSystemTextColor(
-        systemCustomTextColor = appDrawerSettings.gridItemSettings.customTextColor,
-        systemTextColor = appDrawerSettings.gridItemSettings.textColor,
+    val textColor = getTextColorFromBackgroundColor(
+        backgroundColor = appDrawerSettings.backgroundColor,
+        customBackgroundColor = appDrawerSettings.customBackgroundColor,
+        textColor = appDrawerSettings.gridItemSettings.textColor,
+        customTextColor = appDrawerSettings.gridItemSettings.customTextColor,
+        systemTextColor = systemTextColor,
+        systemCustomTextColor = systemCustomTextColor,
     )
 
     val maxLines = if (appDrawerSettings.gridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
 
-    val icon = eblanApplicationInfoWithIconPackInfo.iconPackInfoFilePath ?: eblanApplicationInfoWithIconPackInfo.eblanApplicationInfo.icon
+    val icon = iconPackInfoFilePaths[eblanApplicationInfo.componentName]
+        ?: eblanApplicationInfo.icon
 
     val leftPadding = with(density) {
         paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
@@ -171,15 +189,35 @@ private fun PrivateSpaceEblanApplicationInfoItem(
         appDrawerSettings.gridItemSettings.iconSize.dp.roundToPx()
     }
 
+    val scale = remember { Animatable(1f) }
+
+    LaunchedEffect(
+        key1 = isVisibleOverlay,
+        key2 = animations,
+    ) {
+        if (isVisibleOverlay && animations) {
+            scale.snapTo(targetValue = 1f)
+        }
+    }
+
     Row(
         modifier = modifier
+            .fillMaxWidth()
+            .padding(10.dp)
+            .background(
+                color = Color(appDrawerSettings.gridItemSettings.customBackgroundColor),
+                shape = RoundedCornerShape(
+                    size = appDrawerSettings.gridItemSettings.cornerRadius.dp,
+                ),
+            )
             .pointerInput(key1 = isVisibleOverlay) {
                 detectTapGestures(
                     onTap = if (!isVisibleOverlay) {
                         {
                             scope.launch {
                                 handleOnTapEblanApplicationInfoItem(
-                                    eblanApplicationInfoWithIconPackInfo = eblanApplicationInfoWithIconPackInfo,
+                                    componentName = eblanApplicationInfo.componentName,
+                                    serialNumber = eblanApplicationInfo.serialNumber,
                                     intOffset = intOffset,
                                     intSize = intSize,
                                     keyboardController = keyboardController,
@@ -196,52 +234,56 @@ private fun PrivateSpaceEblanApplicationInfoItem(
                         {
                             scope.launch {
                                 handleOnLongPressPrivateSpaceEblanApplicationInfoItem(
-                                    onUpdateEblanApplicationInfo = onUpdateEblanApplicationInfo,
-                                    eblanApplicationInfo = eblanApplicationInfoWithIconPackInfo.eblanApplicationInfo,
-                                    onUpdateOverlayBounds = onUpdateOverlayBounds,
+                                    eblanApplicationInfo = eblanApplicationInfo,
                                     intOffset = intOffset,
                                     intSize = intSize,
-                                    onUpdatePopupMenu = onUpdatePopupMenu,
                                     keyboardController = keyboardController,
+                                    onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
                                 )
                             }
                         }
                     } else {
                         null
                     },
+                    onPress = {
+                        handleOnPress(
+                            animations = animations,
+                            scale = scale,
+                        )
+                    },
                 )
-            }
-            .fillMaxWidth()
-            .padding(10.dp)
-            .background(
-                color = Color(appDrawerSettings.gridItemSettings.customBackgroundColor),
-                shape = RoundedCornerShape(size = appDrawerSettings.gridItemSettings.cornerRadius.dp),
-            ),
+            },
         verticalAlignment = Alignment.CenterVertically,
     ) {
         AsyncImage(
             model = ImageRequest.Builder(context)
-                .data(eblanApplicationInfoWithIconPackInfo.eblanApplicationInfo.customIcon ?: icon)
-                .addLastModifiedToFileCacheKey(true)
-                .size(iconSizePx)
-                .crossfade(false)
-                .build(),
+                .data(eblanApplicationInfo.customIcon ?: icon)
+                .addLastModifiedToFileCacheKey(true).size(iconSizePx).crossfade(false).build(),
             contentDescription = null,
             modifier = Modifier
-                .onGloballyPositioned { layoutCoordinates ->
-                    intOffset = layoutCoordinates.positionInRoot().round()
+                .size(appDrawerSettings.gridItemSettings.iconSize.dp)
+                .onGloballyPositioned {
+                    intOffset = it.positionInRoot().round()
 
-                    intSize = layoutCoordinates.size
+                    intSize = it.size
                 }
-                .size(appDrawerSettings.gridItemSettings.iconSize.dp),
-            placeholder = ColorPainter(Color.Transparent),
-            error = ColorPainter(Color.Transparent),
+                .run {
+                    if (animations) {
+                        graphicsLayer {
+                            scaleX = scale.value
+                            scaleY = scale.value
+                        }
+                    } else {
+                        this
+                    }
+                },
         )
 
         Spacer(modifier = Modifier.width(10.dp))
 
         Text(
-            text = eblanApplicationInfoWithIconPackInfo.eblanApplicationInfo.customLabel ?: eblanApplicationInfoWithIconPackInfo.eblanApplicationInfo.label,
+            text = eblanApplicationInfo.customLabel
+                ?: eblanApplicationInfo.label,
             color = textColor,
             textAlign = TextAlign.Center,
             maxLines = maxLines,

@@ -5,23 +5,15 @@
 
 <p><b>YAGNI ("You Aren't Gonna Need It")</b> is a principle which arose from extreme programming (XP) that states a programmer should not add functionality until deemed necessary.</p>
 
-<p><b>Features</b></p>
+<p><b>Why Choose Yagni Launcher?</b></p>
+<p>The launcher is the first thing you see every time you unlock your phone. It shouldn't be slow, heavy, or draining your battery in the background.</p>
+<p>There are a lot of launchers out there. What sets Yagni Launcher apart is a relentless focus on performance and user experience over feature bloat.</p>
+<p>Yagni Launcher matches stock launcher functionality and goes beyond it, rebuilt from scratch with modern Android tooling.</p>
 <ul>
-<li>No fixed grid size. You can set the grid width and height to any value you want.</li>
-<li>Each grid item is fully customizable:
-  <ul>
-    <li>Size and rotation</li>
-    <li>Background color</li>
-    <li>Icon size</li>
-    <li>Text and label size</li>
-    <li>Label color</li>
-    <li>Show or hide icons and labels</li>
-  </ul>
-</li>
-<li>Infinite scrolling</li>
-<li>Multiple dock pages</li>
-<li>Adjustable dock height</li>
-<li>Custom dock grid size</li>
+<li>⚡ Fast — Built with Kotlin & Jetpack Compose, no legacy overhead</li>
+<li>🪶 Small — ~2MB total size, 80–90% smaller than typical stock launchers (which often run 10–60MB+)</li>
+<li>🔋 Efficient — Minimal resource and battery footprint</li>
+<li>🛠️ Modern — 100% Kotlin, 100% Jetpack Compose, written from the ground up (no forked codebase)</li>
 </ul>
 
-<p>Explore and discover more features, only ~2MB</p>
+<p>If it's not something you need, it's not in the app. That's the whole philosophy behind the name and it's why Yagni Launcher stays fast where others get slower with every update.</p>

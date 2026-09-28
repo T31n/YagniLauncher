@@ -20,7 +20,7 @@ package com.eblan.launcher.framework.packagemanager
 import android.os.UserHandle
 
 interface AndroidPackageManagerWrapper {
-    fun isDefaultLauncher(): Boolean
+    suspend fun isDefaultLauncher(): Boolean
 
-    fun getUserBadgedLabel(label: CharSequence, userHandle: UserHandle): CharSequence
+    suspend fun getUserBadgedLabel(label: CharSequence, userHandle: UserHandle): CharSequence
 }

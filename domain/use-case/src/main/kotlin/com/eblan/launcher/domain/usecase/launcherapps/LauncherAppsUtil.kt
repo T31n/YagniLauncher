@@ -17,45 +17,46 @@
  */
 package com.eblan.launcher.domain.usecase.launcherapps
 
+import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
-import com.eblan.launcher.domain.framework.FileManager
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.grid.findAvailableRegionByPage
-import com.eblan.launcher.domain.model.AddNewEblanApplicationInfo
-import com.eblan.launcher.domain.model.AppWidgetManagerAppWidgetProviderInfo
-import com.eblan.launcher.domain.model.ApplicationInfoGridItem
-import com.eblan.launcher.domain.model.Associate
-import com.eblan.launcher.domain.model.DeleteEblanAppWidgetProviderInfo
-import com.eblan.launcher.domain.model.DeleteEblanApplicationInfo
-import com.eblan.launcher.domain.model.DeleteEblanShortcutConfig
-import com.eblan.launcher.domain.model.DeleteEblanShortcutInfo
-import com.eblan.launcher.domain.model.EblanAction
-import com.eblan.launcher.domain.model.EblanActionType
-import com.eblan.launcher.domain.model.EblanAppWidgetProviderInfo
-import com.eblan.launcher.domain.model.EblanApplicationInfo
-import com.eblan.launcher.domain.model.EblanShortcutConfig
-import com.eblan.launcher.domain.model.EblanShortcutInfo
-import com.eblan.launcher.domain.model.FastLauncherAppsActivityInfo
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.GridItemData
-import com.eblan.launcher.domain.model.HomeSettings
-import com.eblan.launcher.domain.model.LauncherAppsActivityInfo
-import com.eblan.launcher.domain.model.LauncherAppsShortcutInfo
-import com.eblan.launcher.domain.model.PartialApplicationInfoGridItem
-import com.eblan.launcher.domain.model.PartialShortcutConfigGridItem
-import com.eblan.launcher.domain.model.PartialShortcutInfoGridItem
-import com.eblan.launcher.domain.model.PartialUpdateWidgetGridItem
-import com.eblan.launcher.domain.model.ShortcutConfigActivityInfo
-import com.eblan.launcher.domain.model.ShortcutConfigGridItem
-import com.eblan.launcher.domain.model.ShortcutInfoGridItem
-import com.eblan.launcher.domain.model.SyncEblanApplicationInfo
-import com.eblan.launcher.domain.model.WidgetGridItem
+import com.eblan.launcher.domain.model.application.AddNewEblanApplicationInfo
+import com.eblan.launcher.domain.model.application.DeleteEblanApplicationInfo
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
+import com.eblan.launcher.domain.model.application.SyncEblanApplicationInfo
+import com.eblan.launcher.domain.model.grid.ApplicationInfoGridItem
+import com.eblan.launcher.domain.model.grid.Associate
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.GridItemData
+import com.eblan.launcher.domain.model.grid.PartialApplicationInfoGridItem
+import com.eblan.launcher.domain.model.grid.PartialShortcutConfigGridItem
+import com.eblan.launcher.domain.model.grid.PartialShortcutInfoGridItem
+import com.eblan.launcher.domain.model.grid.ShortcutConfigGridItem
+import com.eblan.launcher.domain.model.grid.ShortcutInfoGridItem
+import com.eblan.launcher.domain.model.grid.WidgetGridItem
+import com.eblan.launcher.domain.model.launcherapps.LauncherAppsActivityInfo
+import com.eblan.launcher.domain.model.launcherapps.LauncherAppsShortcutInfo
+import com.eblan.launcher.domain.model.launcherapps.ShortcutConfigActivityInfo
+import com.eblan.launcher.domain.model.shortcutconfig.DeleteEblanShortcutConfig
+import com.eblan.launcher.domain.model.shortcutconfig.EblanShortcutConfig
+import com.eblan.launcher.domain.model.shortcutinfo.DeleteEblanShortcutInfo
+import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfo
+import com.eblan.launcher.domain.model.userdata.EblanAction
+import com.eblan.launcher.domain.model.userdata.EblanActionType
+import com.eblan.launcher.domain.model.userdata.FolderSettings
+import com.eblan.launcher.domain.model.userdata.HomeSettings
+import com.eblan.launcher.domain.model.widget.AppWidgetManagerAppWidgetProviderInfo
+import com.eblan.launcher.domain.model.widget.DeleteEblanAppWidgetProviderInfo
+import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
+import com.eblan.launcher.domain.model.widget.PartialUpdateWidgetGridItem
 import com.eblan.launcher.domain.repository.ApplicationInfoGridItemRepository
 import com.eblan.launcher.domain.repository.FolderGridItemRepository
 import com.eblan.launcher.domain.repository.ShortcutConfigGridItemRepository
 import com.eblan.launcher.domain.repository.ShortcutInfoGridItemRepository
 import com.eblan.launcher.domain.repository.WidgetGridItemRepository
-import com.eblan.launcher.domain.usecase.grid.getFolderGridItemsById
+import com.eblan.launcher.domain.usecase.folder.asPreviewFolders
+import com.eblan.launcher.domain.usecase.util.getRecursiveFolderGridItems
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import java.io.File
@@ -74,12 +75,8 @@ internal suspend fun deleteEblanApplicationInfoIcons(
 
         val hasNoIconReference =
             icon != null && eblanApplicationInfos.none {
-                currentCoroutineContext().ensureActive()
-
                 it.icon == icon
             } && eblanAppWidgetProviderInfos.none {
-                currentCoroutineContext().ensureActive()
-
                 it.applicationIcon == icon
             }
 
@@ -105,12 +102,8 @@ internal suspend fun deleteEblanAppWidgetProviderInfoIcons(
 
         val hasNoIconReference =
             applicationIcon != null && eblanAppWidgetProviderInfos.none {
-                currentCoroutineContext().ensureActive()
-
                 it.applicationIcon == applicationIcon
             } && eblanApplicationInfos.none {
-                currentCoroutineContext().ensureActive()
-
                 it.icon == applicationIcon
             }
 
@@ -143,8 +136,6 @@ internal suspend fun deleteEblanShortInfoIcons(
 
         val hasNoIconReference =
             icon != null && eblanShortcutInfos.none {
-                currentCoroutineContext().ensureActive()
-
                 it.icon == icon
             }
 
@@ -186,15 +177,11 @@ internal suspend fun updateApplicationInfoGridItems(
         applicationInfoGridItemRepository.getApplicationInfoGridItems()
 
     applicationInfoGridItems.filterNot {
-        currentCoroutineContext().ensureActive()
-
         it.override
     }.forEach { applicationInfoGridItem ->
         currentCoroutineContext().ensureActive()
 
         val eblanApplicationInfo = eblanApplicationInfos.find {
-            currentCoroutineContext().ensureActive()
-
             it.serialNumber == applicationInfoGridItem.serialNumber && it.componentName == applicationInfoGridItem.componentName
         }
 
@@ -241,8 +228,6 @@ internal suspend fun updateShortcutInfoGridItems(
             currentCoroutineContext().ensureActive()
 
             val eblanShortcutInfo = eblanShortcutInfos.find {
-                currentCoroutineContext().ensureActive()
-
                 it.serialNumber == shortcutInfoGridItem.serialNumber && it.shortcutId == shortcutInfoGridItem.shortcutId
             }
 
@@ -295,8 +280,6 @@ internal suspend fun updateShortcutConfigGridItems(
         currentCoroutineContext().ensureActive()
 
         val eblanShortcutConfig = eblanShortcutConfigs.find {
-            currentCoroutineContext().ensureActive()
-
             it.serialNumber == shortcutConfigGridItem.serialNumber && it.componentName == shortcutConfigGridItem.componentName
         }
 
@@ -355,8 +338,6 @@ internal suspend fun updateWidgetGridItems(
 
         val eblanAppWidgetProviderInfo =
             eblanAppWidgetProviderInfos.find {
-                currentCoroutineContext().ensureActive()
-
                 it.serialNumber == widgetGridItem.serialNumber && it.componentName == widgetGridItem.componentName
             }
 
@@ -429,13 +410,6 @@ internal suspend fun AppWidgetManagerAppWidgetProviderInfo.toEblanAppWidgetProvi
     lastUpdateTime = lastUpdateTime,
     label = label,
     description = description,
-)
-
-internal fun EblanApplicationInfo.toFastLauncherAppsActivityInfo(): FastLauncherAppsActivityInfo = FastLauncherAppsActivityInfo(
-    serialNumber = serialNumber,
-    componentName = componentName,
-    packageName = packageName,
-    lastUpdateTime = lastUpdateTime,
 )
 
 internal fun EblanApplicationInfo.toSyncEblanApplicationInfo() = SyncEblanApplicationInfo(
@@ -527,13 +501,11 @@ internal suspend fun addNewApplicationToHomeScreen(
     componentName: String,
     packageName: String,
     icon: String?,
-    label: String?,
+    label: String,
     homeSettings: HomeSettings,
     applicationInfoGridItems: MutableList<ApplicationInfoGridItem>,
     folderGridItemRepository: FolderGridItemRepository,
-    fileManager: FileManager,
-    iconKeyGenerator: IconKeyGenerator,
-    iconPackInfoPackageName: String,
+    folderSettings: FolderSettings,
 ) {
     val alreadyOnHome = gridItems.any {
         when (val data = it.data) {
@@ -542,11 +514,15 @@ internal suspend fun addNewApplicationToHomeScreen(
                     data.componentName == componentName
 
             is GridItemData.Folder -> {
-                val folderGridItems = getFolderGridItemsById(
-                    folderGridItemRepository = folderGridItemRepository,
-                    fileManager = fileManager,
-                    iconKeyGenerator = iconKeyGenerator,
-                    iconPackInfoPackageName = iconPackInfoPackageName,
+                val previewFolderGridItems =
+                    folderGridItemRepository.getFolderGridItemWrappers()
+                        .asPreviewFolders(
+                            maxFolderColumns = folderSettings.maxFolderColumns,
+                            maxFolderRows = folderSettings.maxFolderRows,
+                        )
+
+                val folderGridItems = getRecursiveFolderGridItems(
+                    previewFolderGridItems = previewFolderGridItems,
                     folderId = it.id,
                 )
 
@@ -579,12 +555,11 @@ internal suspend fun addNewApplicationToHomeScreen(
         componentName = componentName,
         packageName = packageName,
         icon = icon,
-        label = label.toString(),
+        label = label,
         customIcon = null,
         customLabel = null,
         index = -1,
         folderId = null,
-        iconPackInfoFilePath = null,
     )
 
     val gridItem = GridItem(

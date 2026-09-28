@@ -18,7 +18,7 @@
 package com.eblan.launcher.data.repository.mapper
 
 import com.eblan.launcher.data.room.entity.EblanApplicationInfoEntity
-import com.eblan.launcher.domain.model.EblanApplicationInfo
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 
 fun EblanApplicationInfo.asEntity(): EblanApplicationInfoEntity = EblanApplicationInfoEntity(
     componentName = componentName,
@@ -30,8 +30,9 @@ fun EblanApplicationInfo.asEntity(): EblanApplicationInfoEntity = EblanApplicati
     customLabel = customLabel,
     isHidden = isHidden,
     lastUpdateTime = lastUpdateTime,
-    index = index,
     flags = flags,
+    folderIndex = folderIndex,
+    folderId = folderId,
 )
 
 fun EblanApplicationInfoEntity.asModel(): EblanApplicationInfo = EblanApplicationInfo(
@@ -44,6 +45,7 @@ fun EblanApplicationInfoEntity.asModel(): EblanApplicationInfo = EblanApplicatio
     customLabel = customLabel,
     isHidden = isHidden,
     lastUpdateTime = lastUpdateTime,
-    index = index,
     flags = flags,
+    folderIndex = folderIndex,
+    folderId = folderId,
 )

@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+option java_package = "com.eblan.launcher.data.datastore.proto.model";
+option java_multiple_files = true;
+
+enum BackgroundColorProto {
+  BackgroundColorSystem = 0;
+  BackgroundColorLight = 1;
+  BackgroundColorDark = 2;
+  BackgroundColorCustom = 3;
+}

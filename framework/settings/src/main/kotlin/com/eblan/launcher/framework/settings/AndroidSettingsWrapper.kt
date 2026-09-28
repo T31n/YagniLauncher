@@ -18,5 +18,5 @@
 package com.eblan.launcher.framework.settings
 
 interface AndroidSettingsWrapper {
-    fun isNotificationAccessGranted(): Boolean
+    suspend fun isNotificationAccessGranted(): Boolean
 }

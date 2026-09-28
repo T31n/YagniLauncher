@@ -4,7 +4,7 @@ option java_package = "com.eblan.launcher.data.datastore.proto.general";
 option java_multiple_files = true;
 
 enum ThemeProto {
-  DarkThemeConfigSystem = 0;
-  DarkThemeConfigLight = 1;
-  DarkThemeConfigDark = 2;
+  ThemeSystem = 0;
+  ThemeLight = 1;
+  ThemeDark = 2;
 }

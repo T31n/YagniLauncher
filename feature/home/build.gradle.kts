@@ -36,4 +36,5 @@ dependencies {
     implementation(projects.service)
 
     implementation(libs.accompanist.permissions)
+    implementation(libs.androidx.core.core)
 }

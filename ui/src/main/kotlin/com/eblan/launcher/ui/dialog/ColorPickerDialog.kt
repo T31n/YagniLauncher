@@ -129,6 +129,8 @@ fun ColorPickerDialog(
                             .copy(alpha = alpha)
                             .toArgb(),
                     )
+
+                    onDismissRequest()
                 },
             ) {
                 Text(text = stringResource(commonR.string.save))

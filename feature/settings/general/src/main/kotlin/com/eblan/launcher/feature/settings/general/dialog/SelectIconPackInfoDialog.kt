@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.eblan.launcher.designsystem.component.EblanDialog
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.EblanIconPackInfo
+import com.eblan.launcher.domain.model.iconpackinfo.EblanIconPackInfo
 import com.eblan.launcher.feature.settings.general.R
 import com.eblan.launcher.common.R as commonR
 
@@ -106,6 +106,8 @@ internal fun SelectIconPackInfoDialog(
                                     onUpdateIconPackInfoPackageName(
                                         eblanIconPackInfo.packageName,
                                     )
+
+                                    onDismissRequest()
                                 }
                                 .fillMaxWidth(),
                         )
@@ -125,7 +127,11 @@ internal fun SelectIconPackInfoDialog(
             }
 
             TextButton(
-                onClick = onReset,
+                onClick = {
+                    onReset()
+
+                    onDismissRequest()
+                },
             ) {
                 Text(text = stringResource(R.string.reset))
             }

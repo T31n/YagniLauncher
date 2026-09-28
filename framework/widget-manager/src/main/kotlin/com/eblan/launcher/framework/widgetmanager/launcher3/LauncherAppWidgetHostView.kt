@@ -70,9 +70,7 @@ internal class LauncherAppWidgetHostView(context: Context) :
                 }
             }
 
-            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                parent?.requestDisallowInterceptTouchEvent(false)
-            }
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> parent?.requestDisallowInterceptTouchEvent(false)
         }
 
         mLongPressHelper.onTouchEvent(ev)

@@ -19,7 +19,7 @@ package com.eblan.launcher.activity.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.eblan.launcher.domain.model.ApplicationTheme
+import com.eblan.launcher.domain.model.userdata.ApplicationTheme
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.model.ActivityUiState
 import dagger.hilt.android.lifecycle.HiltViewModel

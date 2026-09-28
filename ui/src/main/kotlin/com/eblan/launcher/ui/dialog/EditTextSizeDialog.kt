@@ -44,9 +44,9 @@ internal fun EditTextSizeDialog(
     onDismissRequest: () -> Unit,
     onUpdateTextSize: (Int) -> Unit,
 ) {
-    var value by remember { mutableStateOf("$textSize") }
+    var currentTextSize by remember { mutableStateOf("$textSize") }
 
-    var isError by remember { mutableStateOf(false) }
+    var isErrorTextSize by remember { mutableStateOf(false) }
 
     EblanDialog(
         modifier = modifier,
@@ -58,17 +58,17 @@ internal fun EditTextSizeDialog(
         )
 
         TextField(
-            value = value,
+            value = currentTextSize,
             onValueChange = {
-                value = it
-                isError = false
+                currentTextSize = it
+                isErrorTextSize = false
             },
             modifier = Modifier.fillMaxWidth(),
             label = {
                 Text(text = stringResource(R.string.text_size))
             },
-            isError = isError,
-            supportingText = if (isError) {
+            isError = isErrorTextSize,
+            supportingText = if (isErrorTextSize) {
                 {
                     Text(text = stringResource(R.string.text_size_is_not_valid))
                 }
@@ -92,12 +92,14 @@ internal fun EditTextSizeDialog(
 
             TextButton(
                 onClick = {
-                    val newTextSize = value.toIntOrNull()
+                    val newTextSize = currentTextSize.toIntOrNull()
 
-                    if (newTextSize != null && newTextSize >= 1) {
+                    isErrorTextSize = newTextSize == null || newTextSize <= 1
+
+                    if (newTextSize != null && newTextSize > 1) {
                         onUpdateTextSize(newTextSize)
-                    } else {
-                        isError = true
+
+                        onDismissRequest()
                     }
                 },
             ) {

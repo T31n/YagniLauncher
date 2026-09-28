@@ -22,16 +22,16 @@ import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.grid.getRelativeResolveDirection
 import com.eblan.launcher.domain.grid.rectanglesOverlap
 import com.eblan.launcher.domain.grid.resolveConflicts
-import com.eblan.launcher.domain.model.GridItem
+import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.repository.GridRepository
+import com.eblan.launcher.domain.usecase.util.isTopLevel
+import com.eblan.launcher.domain.usecase.util.toGridItems
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class ResizeGridItemUseCase @Inject constructor(
     private val gridRepository: GridRepository,
-    private val getGridItemsUseCase: GetGridItemsUseCase,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     suspend operator fun invoke(
@@ -40,16 +40,13 @@ class ResizeGridItemUseCase @Inject constructor(
         rows: Int,
     ): GridItem = withContext(defaultDispatcher) {
         val gridItems =
-            getGridItemsUseCase().filter {
-                ensureActive()
-
+            gridRepository.getGridItems().toGridItems().filter {
                 it.isTopLevel() && it.page == resizingGridItem.page &&
                     it.associate == resizingGridItem.associate
             }.toMutableList()
 
         val index =
             gridItems.indexOfFirst {
-                ensureActive()
                 it.id == resizingGridItem.id
             }
 
@@ -58,8 +55,6 @@ class ResizeGridItemUseCase @Inject constructor(
         gridItems[index] = resizingGridItem
 
         val gridItemBySpan = gridItems.find {
-            ensureActive()
-
             it.id != resizingGridItem.id && rectanglesOverlap(
                 moving = resizingGridItem,
                 other = it,

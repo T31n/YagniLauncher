@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~
+  ~   Copyright 2023 Einstein Blanco
+  ~
+  ~   Licensed under the GNU General Public License v3.0 (the "License");
+  ~   you may not use this file except in compliance with the License.
+  ~   You may obtain a copy of the License at
+  ~
+  ~       https://www.gnu.org/licenses/gpl-3.0
+  ~
+  ~   Unless required by applicable law or agreed to in writing, software
+  ~   distributed under the License is distributed on an "AS IS" BASIS,
+  ~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~   See the License for the specific language governing permissions and
+  ~   limitations under the License.
+  ~
+  -->
+<resources>
+    <string name="dock_grid">Mřížka dokovací oblasti</string>
+    <string name="dock_columns_is_not_valid">Počet sloupců dokovací oblasti není platný</string>
+    <string name="dock_rows_is_not_valid">Počet řádků dokovací oblasti není platný</string>
+    <string name="dock_height">Výška dokovací oblasti</string>
+    <string name="dock_height_is_not_valid">Výška dokovací oblasti není platná</string>
+    <string name="infinite_scrolling">Nekonečné rolování</string>
+    <string name="seamless_loop_page_scroll">Bezešvá smyčka při rolování stránek</string>
+    <string name="wallpaper_scrolling">Rolování tapety</string>
+    <string name="scroll_wallpaper_across_pages">Rolování tapety napříč stránkami</string>
+    <string name="lock_screen_orientation">Zamknout otáčení obrazovky</string>
+    <string name="add_new_apps">Přidat nové aplikace</string>
+    <string name="add_new_apps_to_home_screen">Přidat nové aplikace na domovskou obrazovku</string>
+    <string name="dock">Dokovací oblast</string>
+    <string name="dock_infinite_scroll">Nekonečné rolování dokovací oblasti</string>
+    <string name="prevent_rotation_when_device_orientation_changes">Zabránit otáčení při změně natočení zařízení</string>
+    <string name="show_page_indicator">Zobrazit indikátor stránky</string>
+    <string name="show_an_indicator_for_the_current_page">Zobrazit indikátor pro aktuální stránku</string>
+    <string name="dock_background_color">Barva pozadí dokovací oblasti</string>
+    <string name="dock_padding">Odsazení dokovací oblasti</string>
+    <string name="dock_corner_radius">Zaoblení rohů dokovací oblasti</string>
+    <string name="dock_padding_is_not_valid">Odsazení dokovací oblasti není platné</string>
+    <string name="top_start">Levý horní</string>
+    <string name="top_start_is_not_valid">Levý horní není platný</string>
+    <string name="top_end">Pravý horní</string>
+    <string name="top_end_is_not_valid">Pravý horní není platný</string>
+    <string name="bottom_start">Levý dolní</string>
+    <string name="bottom_start_is_not_valid">Levý dolní není platný</string>
+    <string name="bottom_end">Pravý dolní</string>
+    <string name="bottom_end_is_not_valid">Pravý dolní není platný</string>
+    <string name="set_the_radius_for_each_dock_corner">Nastavit zaoblení každého rohu dokovací oblasti</string>
+    <string name="add_bottom_padding">Přidat dolní odsazení</string>
+    <string name="add_the_bottom_padding_of_the_dock">Přidat dolní odsazení dokovací oblasti</string>
+</resources>

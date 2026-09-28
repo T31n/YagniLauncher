@@ -17,6 +17,8 @@
  */
 package com.eblan.launcher.feature.home.screen.folder
 
+import android.graphics.Rect
+import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
@@ -53,19 +55,18 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.EblanAppWidgetProviderInfo
-import com.eblan.launcher.domain.model.EblanApplicationInfoGroup
-import com.eblan.launcher.domain.model.EblanShortcutInfo
-import com.eblan.launcher.domain.model.EblanShortcutInfoByGroup
-import com.eblan.launcher.domain.model.FolderPopupEntry
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.GridItemData
-import com.eblan.launcher.domain.model.GridItemSettings
-import com.eblan.launcher.domain.model.MoveGridItemResult
+import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
+import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.GridItemData
+import com.eblan.launcher.domain.model.grid.GridItemSettings
+import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfo
+import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfoByGroup
+import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
+import com.eblan.launcher.feature.home.component.HomeHandler
 import com.eblan.launcher.feature.home.component.popup
-import com.eblan.launcher.feature.home.model.GridItemSource
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.screen.shortcutinfo.ShortcutInfoScreen
+import com.eblan.launcher.ui.local.LocalLauncherApps
 
 @Composable
 internal fun FolderGridItemPopup(
@@ -76,34 +77,26 @@ internal fun FolderGridItemPopup(
     hasShortcutHostPermission: Boolean,
     popupIntOffset: IntOffset?,
     popupIntSize: IntSize?,
-    movingGridItem: GridItem,
+    folderGridItem: GridItem?,
     isVisibleOverlay: Boolean,
     paddingValues: PaddingValues,
     isCloseFolderGridItemPopup: Boolean,
-    lastFolderPopupEntry: FolderPopupEntry,
+    animations: Boolean,
     onDeleteGridItem: (GridItem) -> Unit,
-    onUpsertFolderPopupEntry: (FolderPopupEntry) -> Unit,
-    onDeleteFolderPopupEntry: (FolderPopupEntry) -> Unit,
     onDismissRequest: () -> Unit,
-    onUpdateIsDragging: (Boolean) -> Unit,
     onEdit: (String) -> Unit,
-    onInfo: (Long, String) -> Unit,
-    onTapShortcutInfo: (
-        serialNumber: Long,
-        packageName: String,
-        shortcutId: String,
-    ) -> Unit,
-    onUpdateGridItemSource: (GridItemSource) -> Unit,
-    onUpdateImageBitmap: (ImageBitmap) -> Unit,
-    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
-    onUpdateOverlayBounds: (
+    onWidgets: (EblanApplicationInfoGroup) -> Unit,
+    onResetFolderGridItemPopupEntries: () -> Unit,
+    onDragShortcutInfo: (
+        gridItem: GridItem,
+        imageBitmap: ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
+        sharedElementKey: SharedElementKey,
     ) -> Unit,
-    onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
-    onWidgets: (EblanApplicationInfoGroup) -> Unit,
-    onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
 ) {
+    requireNotNull(folderGridItem)
+
     requireNotNull(popupIntOffset)
 
     requireNotNull(popupIntSize)
@@ -111,6 +104,8 @@ internal fun FolderGridItemPopup(
     val density = LocalDensity.current
 
     val layoutDirection = LocalLayoutDirection.current
+
+    val launcherApps = LocalLauncherApps.current
 
     val transitionState = remember {
         MutableTransitionState(false).apply {
@@ -148,6 +143,22 @@ internal fun FolderGridItemPopup(
         transitionState.targetState = false
     }
 
+    HomeHandler(enabled = transitionState.targetState) {
+        transitionState.targetState = false
+    }
+
+    fun getSourceBounds(): Rect {
+        val left = popupIntOffset.x + leftPadding
+        val top = popupIntOffset.y + topPadding
+
+        return Rect(
+            left,
+            top,
+            left + popupIntSize.width,
+            top + popupIntSize.height,
+        )
+    }
+
     Box(
         modifier = modifier
             .pointerInput(Unit) {
@@ -183,28 +194,35 @@ internal fun FolderGridItemPopup(
                 eblanAppWidgetProviderInfosGroup = eblanAppWidgetProviderInfosGroup,
                 eblanShortcutInfosGroup = eblanShortcutInfosGroup,
                 gridItemSettings = gridItemSettings,
-                movingFolderGridItem = movingGridItem,
+                folderGridItem = folderGridItem,
                 hasShortcutHostPermission = hasShortcutHostPermission,
                 isVisibleOverlay = isVisibleOverlay,
-                lastFolderPopupEntry = lastFolderPopupEntry,
+                animations = animations,
                 onDeleteGridItem = onDeleteGridItem,
-                onUpsertFolderPopupEntry = onUpsertFolderPopupEntry,
-                onDeleteFolderPopupEntry = onDeleteFolderPopupEntry,
-                onUpdateTransitionState = {
-                    transitionState.targetState = it
+                onDismiss = {
+                    transitionState.targetState = false
                 },
-                onUpdateIsDragging = onUpdateIsDragging,
                 onEdit = onEdit,
-                onInfo = onInfo,
-                onTapShortcutInfo = onTapShortcutInfo,
-                onUpdateGridItemSource = onUpdateGridItemSource,
-                onUpdateImageBitmap = onUpdateImageBitmap,
-                onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                onUpdateOverlayBounds = onUpdateOverlayBounds,
-                onUpdateSharedElementKey = onUpdateSharedElementKey,
+                onInfo = { serialNumber, componentName ->
+                    launcherApps.startAppDetailsActivity(
+                        serialNumber = serialNumber,
+                        componentName = componentName,
+                        sourceBounds = getSourceBounds(),
+                    )
+                },
+                onTapShortcutInfo = { serialNumber, packageName, shortcutId ->
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+                        launcherApps.startShortcut(
+                            serialNumber = serialNumber,
+                            packageName = packageName,
+                            id = shortcutId,
+                            sourceBounds = getSourceBounds(),
+                        )
+                    }
+                },
                 onWidgets = onWidgets,
-                onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
-                onDismissRequest = onDismissRequest,
+                onResetFolderGridItemPopupEntries = onResetFolderGridItemPopupEntries,
+                onDragShortcutInfo = onDragShortcutInfo,
             )
         }
     }
@@ -216,15 +234,12 @@ private fun FolderGridItemPopupContent(
     eblanAppWidgetProviderInfosGroup: Map<String, List<EblanAppWidgetProviderInfo>>,
     eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
     gridItemSettings: GridItemSettings,
-    movingFolderGridItem: GridItem,
+    folderGridItem: GridItem,
     hasShortcutHostPermission: Boolean,
     isVisibleOverlay: Boolean,
-    lastFolderPopupEntry: FolderPopupEntry,
+    animations: Boolean,
     onDeleteGridItem: (GridItem) -> Unit,
-    onUpsertFolderPopupEntry: (FolderPopupEntry) -> Unit,
-    onDeleteFolderPopupEntry: (FolderPopupEntry) -> Unit,
-    onUpdateTransitionState: (Boolean) -> Unit,
-    onUpdateIsDragging: (Boolean) -> Unit,
+    onDismiss: () -> Unit,
     onEdit: (String) -> Unit,
     onInfo: (Long, String) -> Unit,
     onTapShortcutInfo: (
@@ -232,24 +247,22 @@ private fun FolderGridItemPopupContent(
         packageName: String,
         shortcutId: String,
     ) -> Unit,
-    onUpdateGridItemSource: (GridItemSource) -> Unit,
-    onUpdateImageBitmap: (ImageBitmap) -> Unit,
-    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
-    onUpdateOverlayBounds: (
+    onWidgets: (EblanApplicationInfoGroup) -> Unit,
+    onResetFolderGridItemPopupEntries: () -> Unit,
+    onDragShortcutInfo: (
+        gridItem: GridItem,
+        imageBitmap: ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
+        sharedElementKey: SharedElementKey,
     ) -> Unit,
-    onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
-    onWidgets: (EblanApplicationInfoGroup) -> Unit,
-    onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
-    onDismissRequest: () -> Unit,
 ) {
     Surface(
         modifier = modifier.width(IntrinsicSize.Max),
         shape = RoundedCornerShape(30.dp),
         shadowElevation = 2.dp,
         content = {
-            when (val data = movingFolderGridItem.data) {
+            when (val data = folderGridItem.data) {
                 is GridItemData.ApplicationInfo -> {
                     ApplicationInfoFolderGridItemPopupContent(
                         modifier = modifier,
@@ -264,20 +277,18 @@ private fun FolderGridItemPopupContent(
                         hasShortcutHostPermission = hasShortcutHostPermission,
                         icon = data.icon,
                         isVisibleOverlay = isVisibleOverlay,
-                        onUpdateIsDragging = {
-                            onUpdateIsDragging(it)
-
-                            onUpdateTransitionState(false)
-                        },
+                        animations = animations,
                         onDelete = {
-                            onDeleteGridItem(movingFolderGridItem)
+                            onDeleteGridItem(folderGridItem)
 
-                            onUpdateTransitionState(false)
+                            onDismiss()
                         },
                         onEdit = {
-                            onEdit(movingFolderGridItem.id)
+                            onEdit(folderGridItem.id)
 
-                            onUpdateTransitionState(false)
+                            onResetFolderGridItemPopupEntries()
+
+                            onDismiss()
                         },
                         onTapShortcutInfo = { serialNumber, packageName, shortcutId ->
                             onTapShortcutInfo(
@@ -286,12 +297,8 @@ private fun FolderGridItemPopupContent(
                                 shortcutId,
                             )
 
-                            onUpdateTransitionState(false)
+                            onDismiss()
                         },
-                        onUpdateGridItemSource = onUpdateGridItemSource,
-                        onUpdateImageBitmap = onUpdateImageBitmap,
-                        onUpdateOverlayBounds = onUpdateOverlayBounds,
-                        onUpdateSharedElementKey = onUpdateSharedElementKey,
                         onWidgets = {
                             onWidgets(
                                 EblanApplicationInfoGroup(
@@ -302,23 +309,17 @@ private fun FolderGridItemPopupContent(
                                 ),
                             )
 
-                            onUpsertFolderPopupEntry(lastFolderPopupEntry.copy(isCloseFolder = true))
-
-                            onDeleteFolderPopupEntry(lastFolderPopupEntry)
-
-                            onDismissRequest()
+                            onDismiss()
                         },
-                        onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                         onInfo = {
                             onInfo(
                                 data.serialNumber,
                                 data.componentName,
                             )
 
-                            onUpdateTransitionState(false)
+                            onDismiss()
                         },
-                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
-                        onUpdateTransitionState = onUpdateTransitionState,
+                        onDragShortcutInfo = onDragShortcutInfo,
                     )
                 }
 
@@ -328,14 +329,16 @@ private fun FolderGridItemPopupContent(
                 -> {
                     FolderGridItemMenu(
                         onDelete = {
-                            onDeleteGridItem(movingFolderGridItem)
+                            onDeleteGridItem(folderGridItem)
 
-                            onUpdateTransitionState(false)
+                            onDismiss()
                         },
                         onEdit = {
-                            onEdit(movingFolderGridItem.id)
+                            onEdit(folderGridItem.id)
 
-                            onUpdateTransitionState(false)
+                            onResetFolderGridItemPopupEntries()
+
+                            onDismiss()
                         },
                     )
                 }
@@ -355,26 +358,23 @@ private fun ApplicationInfoFolderGridItemPopupContent(
     hasShortcutHostPermission: Boolean,
     icon: String?,
     isVisibleOverlay: Boolean,
+    animations: Boolean,
     onDelete: () -> Unit,
-    onUpdateIsDragging: (Boolean) -> Unit,
     onEdit: () -> Unit,
     onTapShortcutInfo: (
         serialNumber: Long,
         packageName: String,
         shortcutId: String,
     ) -> Unit,
-    onUpdateGridItemSource: (GridItemSource) -> Unit,
-    onUpdateImageBitmap: (ImageBitmap) -> Unit,
-    onUpdateOverlayBounds: (
+    onWidgets: () -> Unit,
+    onInfo: () -> Unit,
+    onDragShortcutInfo: (
+        gridItem: GridItem,
+        imageBitmap: ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
+        sharedElementKey: SharedElementKey,
     ) -> Unit,
-    onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
-    onWidgets: () -> Unit,
-    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
-    onInfo: () -> Unit,
-    onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
-    onUpdateTransitionState: (Boolean) -> Unit,
 ) {
     Surface(
         modifier = modifier.width(IntrinsicSize.Max),
@@ -392,15 +392,9 @@ private fun ApplicationInfoFolderGridItemPopupContent(
                         gridItemSettings = gridItemSettings,
                         icon = icon,
                         isVisibleOverlay = isVisibleOverlay,
-                        onUpdateIsDragging = onUpdateIsDragging,
+                        animations = animations,
                         onTapShortcutInfo = onTapShortcutInfo,
-                        onUpdateGridItemSource = onUpdateGridItemSource,
-                        onUpdateImageBitmap = onUpdateImageBitmap,
-                        onUpdateOverlayBounds = onUpdateOverlayBounds,
-                        onUpdateSharedElementKey = onUpdateSharedElementKey,
-                        onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
-                        onUpdateTransitionState = onUpdateTransitionState,
+                        onDragShortcutInfo = onDragShortcutInfo,
                     )
 
                     Spacer(modifier = Modifier.height(5.dp))

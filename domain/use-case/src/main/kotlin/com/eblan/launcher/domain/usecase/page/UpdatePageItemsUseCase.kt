@@ -19,16 +19,15 @@ package com.eblan.launcher.domain.usecase.page
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
-import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.AppWidgetHostWrapper
-import com.eblan.launcher.domain.framework.FileManager
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
-import com.eblan.launcher.domain.model.Associate
-import com.eblan.launcher.domain.model.PageItem
+import com.eblan.launcher.domain.model.grid.Associate
+import com.eblan.launcher.domain.model.home.PageItem
 import com.eblan.launcher.domain.repository.FolderGridItemRepository
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
-import com.eblan.launcher.domain.usecase.grid.cleanupGridItemRecursively
+import com.eblan.launcher.domain.usecase.folder.asPreviewFolders
+import com.eblan.launcher.domain.usecase.util.deleteGridItemData
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -40,8 +39,6 @@ class UpdatePageItemsUseCase @Inject constructor(
     private val appWidgetHostWrapper: AppWidgetHostWrapper,
     private val launcherAppsWrapper: LauncherAppsWrapper,
     private val folderGridItemRepository: FolderGridItemRepository,
-    private val fileManager: FileManager,
-    private val iconKeyGenerator: IconKeyGenerator,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     suspend operator fun invoke(
@@ -53,20 +50,24 @@ class UpdatePageItemsUseCase @Inject constructor(
         withContext(defaultDispatcher) {
             val userData = userDataRepository.userDataFlow.first()
 
-            pageItemsToDelete.forEach {
-                it.gridItems.forEach { gridItem ->
-                    cleanupGridItemRecursively(
+            pageItemsToDelete.forEach { pageItem ->
+                pageItem.gridItems.forEach { gridItem ->
+                    val previewFolderGridItems =
+                        folderGridItemRepository.getFolderGridItemWrappers()
+                            .asPreviewFolders(
+                                maxFolderColumns = userData.folderSettings.maxFolderColumns,
+                                maxFolderRows = userData.folderSettings.maxFolderRows,
+                            )
+
+                    deleteGridItemData(
                         gridItem = gridItem,
+                        previewFolderGridItems = previewFolderGridItems,
                         appWidgetHostWrapper = appWidgetHostWrapper,
                         launcherAppsWrapper = launcherAppsWrapper,
-                        folderGridItemRepository = folderGridItemRepository,
-                        fileManager = fileManager,
-                        iconKeyGenerator = iconKeyGenerator,
-                        iconPackInfoPackageName = userData.generalSettings.iconPackInfoPackageName,
                     )
                 }
 
-                gridRepository.deleteGridItems(gridItems = it.gridItems)
+                gridRepository.deleteGridItems(gridItems = pageItem.gridItems)
             }
 
             val gridItems = pageItems.flatMapIndexed { index, pageItem ->

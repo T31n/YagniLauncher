@@ -35,27 +35,25 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.component.EblanDialog
-import com.eblan.launcher.domain.model.AppDrawerSettings
 import com.eblan.launcher.feature.settings.appdrawer.R
 import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun EditVerticalGridDialog(
     modifier: Modifier = Modifier,
-    appDrawerSettings: AppDrawerSettings,
+    appDrawerColumns: Int,
+    appDrawerRowsHeight: Int,
     onDismissRequest: () -> Unit,
-    onUpdateAppDrawerSettings: (AppDrawerSettings) -> Unit,
+    onUpdateVerticalGrid: (
+        appDrawerColumns: Int,
+        appDrawerRowsHeight: Int,
+    ) -> Unit,
 ) {
-    var columns by remember {
-        mutableStateOf("${appDrawerSettings.appDrawerColumns}")
-    }
+    var currentAppDrawerColumns by remember { mutableStateOf("$appDrawerColumns") }
+    var currentAppDrawerRowsHeight by remember { mutableStateOf("$appDrawerRowsHeight") }
 
-    var rowsHeight by remember {
-        mutableStateOf("${appDrawerSettings.appDrawerRowsHeight}")
-    }
-
-    var firstError by remember { mutableStateOf(false) }
-    var secondError by remember { mutableStateOf(false) }
+    var isErrorAppDrawerColumns by remember { mutableStateOf(false) }
+    var isErrorAppDrawerRowsHeight by remember { mutableStateOf(false) }
 
     EblanDialog(
         modifier = modifier,
@@ -71,42 +69,42 @@ internal fun EditVerticalGridDialog(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             TextField(
-                value = columns,
+                value = currentAppDrawerColumns,
                 onValueChange = {
-                    columns = it
-                    firstError = false
+                    currentAppDrawerColumns = it
+                    isErrorAppDrawerColumns = false
                 },
                 modifier = Modifier.weight(1f),
                 label = { Text(text = stringResource(commonR.string.columns)) },
-                supportingText = if (firstError) {
+                supportingText = if (isErrorAppDrawerColumns) {
                     {
                         Text(text = stringResource(commonR.string.columns_is_not_valid))
                     }
                 } else {
                     null
                 },
-                isError = firstError,
+                isError = isErrorAppDrawerColumns,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
                 ),
             )
 
             TextField(
-                value = rowsHeight,
+                value = currentAppDrawerRowsHeight,
                 onValueChange = {
-                    rowsHeight = it
-                    secondError = false
+                    currentAppDrawerRowsHeight = it
+                    isErrorAppDrawerRowsHeight = false
                 },
                 modifier = Modifier.weight(1f),
                 label = { Text(text = stringResource(R.string.rows_height)) },
-                supportingText = if (secondError) {
+                supportingText = if (isErrorAppDrawerRowsHeight) {
                     {
                         Text(text = stringResource(R.string.rows_height_is_not_valid))
                     }
                 } else {
                     null
                 },
-                isError = secondError,
+                isError = isErrorAppDrawerRowsHeight,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
                 ),
@@ -125,22 +123,20 @@ internal fun EditVerticalGridDialog(
 
             TextButton(
                 onClick = {
-                    val newColumns = columns.toIntOrNull()
-                    val newRowsHeight = rowsHeight.toIntOrNull()
+                    val newColumns = currentAppDrawerColumns.toIntOrNull()
+                    val newRowsHeight = currentAppDrawerRowsHeight.toIntOrNull()
 
-                    firstError = newColumns == null || newColumns <= 0
-                    secondError = newRowsHeight == null || newRowsHeight <= 0
+                    isErrorAppDrawerColumns = newColumns == null || newColumns <= 0
+                    isErrorAppDrawerRowsHeight = newRowsHeight == null || newRowsHeight <= 0
 
                     if (newColumns != null &&
                         newRowsHeight != null &&
                         newColumns > 0 &&
                         newRowsHeight > 0
                     ) {
-                        onUpdateAppDrawerSettings(
-                            appDrawerSettings.copy(
-                                appDrawerColumns = newColumns,
-                                appDrawerRowsHeight = newRowsHeight,
-                            ),
+                        onUpdateVerticalGrid(
+                            newColumns,
+                            newRowsHeight,
                         )
 
                         onDismissRequest()

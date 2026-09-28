@@ -27,6 +27,9 @@ dependencies {
     implementation(projects.domain.framework)
     implementation(projects.domain.grid)
     implementation(projects.domain.repository)
-
     implementation(libs.kotlinx.coroutines.core)
+
+    testImplementation(testFixtures(projects.domain.model))
+    testImplementation(testFixtures(projects.domain.repository))
+    testImplementation(libs.kotlinx.coroutines.test)
 }

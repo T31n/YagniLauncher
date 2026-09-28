@@ -19,28 +19,31 @@ package com.eblan.launcher.domain.usecase.application
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
+import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
-import com.eblan.launcher.domain.framework.FileManager
 import com.eblan.launcher.domain.framework.JaroWinklerSimilarityWrapper
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
-import com.eblan.launcher.domain.model.AppDrawerType
-import com.eblan.launcher.domain.model.EblanApplicationInfo
-import com.eblan.launcher.domain.model.EblanApplicationInfoOrder
-import com.eblan.launcher.domain.model.EblanApplicationInfoWithIconPackInfo
-import com.eblan.launcher.domain.model.EblanUserPageKey
-import com.eblan.launcher.domain.model.EblanUserType
-import com.eblan.launcher.domain.model.GetEblanApplicationInfosByLabelAndTag
+import com.eblan.launcher.domain.model.application.AlphabeticalScrollBarItem
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
+import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
+import com.eblan.launcher.domain.model.launcherapps.EblanUserPageKey
+import com.eblan.launcher.domain.model.launcherapps.EblanUserType
+import com.eblan.launcher.domain.model.userdata.AppDrawerType
+import com.eblan.launcher.domain.model.userdata.ScrollBarType
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
+import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
+import com.eblan.launcher.domain.usecase.util.getIconPackInfoFilePaths
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
-import java.io.File
 import java.text.Normalizer
 import javax.inject.Inject
+import kotlin.collections.mapIndexedNotNull
 
 class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
@@ -49,7 +52,8 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
     private val fileManager: FileManager,
     private val iconKeyGenerator: IconKeyGenerator,
     private val jaroWinklerSimilarityWrapper: JaroWinklerSimilarityWrapper,
-    @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
+    private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
+    @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke(
@@ -60,184 +64,253 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
         labelFlow,
         userDataRepository.userDataFlow,
         eblanApplicationInfoRepository.eblanApplicationInfosFlow,
-    ) { tagId, label, userData, eblanApplicationInfos ->
-        val iconPacksDirectory = fileManager.getFilesDirectory(
-            FileManager.ICON_PACKS_DIR,
-        )
-
+        folderEblanApplicationInfoRepository.folderEblanApplicationInfosFlow,
+    ) { tagId, label, userData, eblanApplicationInfos, folderEblanApplicationInfos ->
         val iconPackInfoPackageName = userData.generalSettings.iconPackInfoPackageName
 
-        val iconPackDirectory = File(
-            iconPacksDirectory,
-            iconPackInfoPackageName,
-        )
-
-        val eblanApplicationInfoWithIconPackInfosByLabel = filterEblanApplicationInfos(
-            iconPackDirectory = iconPackDirectory,
-            label = label,
-            fuzzySearch = userData.appDrawerSettings.fuzzySearch,
-            excludeTaggedApps = userData.appDrawerSettings.excludeTaggedApps,
-            tagId = tagId,
+        val eblanApplicationInfosByLabel = getEblanApplicationInfos(
             eblanApplicationInfos = eblanApplicationInfos,
+            excludeTaggedApps = userData.appDrawerSettings.excludeTaggedApps,
+            fuzzySearch = userData.appDrawerSettings.fuzzySearch,
+            label = label,
+            tagId = tagId,
         )
 
-        updateEblanApplicationInfoIndexes(
-            eblanApplicationInfoOrder = userData.appDrawerSettings.eblanApplicationInfoOrder,
-            eblanApplicationInfos = eblanApplicationInfoWithIconPackInfosByLabel,
+        val folderEblanApplicationInfosByLabel = getFolderEblanApplicationInfos(
+            folderEblanApplicationInfos = folderEblanApplicationInfos,
+            fuzzySearch = userData.appDrawerSettings.fuzzySearch,
+            label = label,
+            tagId = tagId,
         )
 
-        when (userData.appDrawerSettings.appDrawerType) {
-            AppDrawerType.Vertical, AppDrawerType.List -> {
-                getVerticalOrListEblanApplicationInfosByLabel(eblanApplicationInfos = eblanApplicationInfoWithIconPackInfosByLabel)
-            }
+        val iconPackInfoFilePaths = getIconPackInfoFilePaths(
+            iconPackInfoPackageName = iconPackInfoPackageName,
+            componentNames = eblanApplicationInfos.map { it.componentName },
+            fileManager = fileManager,
+            iconKeyGenerator = iconKeyGenerator,
+        )
 
-            AppDrawerType.Horizontal -> {
+        when (val appDrawerType = userData.appDrawerSettings.appDrawerType) {
+            AppDrawerType.Vertical, AppDrawerType.List ->
+                getVerticalOrListEblanApplicationInfosByLabel(
+                    eblanApplicationInfos = eblanApplicationInfosByLabel,
+                    folderEblanApplicationInfos = folderEblanApplicationInfosByLabel,
+                    iconPackInfoFilePaths = iconPackInfoFilePaths,
+                    appDrawerType = appDrawerType,
+                    scrollBarType = userData.appDrawerSettings.scrollBarType,
+                )
+
+            AppDrawerType.Horizontal ->
                 getHorizontalEblanApplicationInfosByLabel(
                     horizontalAppDrawerColumns = userData.appDrawerSettings.horizontalAppDrawerColumns,
                     horizontalAppDrawerRows = userData.appDrawerSettings.horizontalAppDrawerRows,
-                    eblanApplicationInfosByLabel = eblanApplicationInfoWithIconPackInfosByLabel,
+                    eblanApplicationInfos = eblanApplicationInfosByLabel,
+                    iconPackInfoFilePaths = iconPackInfoFilePaths,
+                )
+        }
+    }.flowOn(defaultDispatcher)
+
+    private suspend fun getVerticalOrListEblanApplicationInfosByLabel(
+        eblanApplicationInfos: List<EblanApplicationInfo>,
+        folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+        iconPackInfoFilePaths: Map<String, String?>,
+        appDrawerType: AppDrawerType,
+        scrollBarType: ScrollBarType,
+    ): GetEblanApplicationInfosByLabelAndTag {
+        val groupedEblanApplicationInfos = eblanApplicationInfos
+            .groupBy {
+                EblanUserPageKey(
+                    eblanUser = launcherAppsWrapper.getUser(serialNumber = it.serialNumber),
+                    page = 0,
                 )
             }
-        }
-    }.flowOn(ioDispatcher)
+            .toSortedMap(nullsLast(compareBy { it.eblanUser.serialNumber }))
 
-    private fun getVerticalOrListEblanApplicationInfosByLabel(eblanApplicationInfos: MutableList<EblanApplicationInfoWithIconPackInfo>): GetEblanApplicationInfosByLabelAndTag {
-        val groupedEblanApplicationInfos = eblanApplicationInfos.groupBy {
-            EblanUserPageKey(
-                eblanUser = launcherAppsWrapper.getUser(serialNumber = it.eblanApplicationInfo.serialNumber),
-                page = 0,
-            )
-        }.toSortedMap(nullsLast(compareBy { it.eblanUser.serialNumber }))
+        val groupedEblanApplicationInfosWithFolders =
+            if (
+                folderEblanApplicationInfos.isNotEmpty() &&
+                groupedEblanApplicationInfos.keys.none {
+                    it.eblanUser.eblanUserType == EblanUserType.Personal
+                }
+            ) {
+                val personalEblanUserPageKey = EblanUserPageKey(
+                    eblanUser = launcherAppsWrapper.getUser(serialNumber = 0L),
+                    page = 0,
+                )
 
-        val privateEblanUserPageKey = groupedEblanApplicationInfos.keys.firstOrNull {
-            it.eblanUser.eblanUserType == EblanUserType.Private
-        }
+                groupedEblanApplicationInfos + (personalEblanUserPageKey to emptyList())
+            } else {
+                groupedEblanApplicationInfos
+            }
+
+        val privateEblanUserPageKey =
+            groupedEblanApplicationInfosWithFolders.keys.firstOrNull {
+                it.eblanUser.eblanUserType == EblanUserType.Private
+            }
 
         return GetEblanApplicationInfosByLabelAndTag(
-            eblanApplicationInfoWithIconPackInfos = groupedEblanApplicationInfos.filterKeys { it != privateEblanUserPageKey },
+            eblanApplicationInfos = groupedEblanApplicationInfosWithFolders
+                .filterKeys { it != privateEblanUserPageKey },
             privateEblanUser = privateEblanUserPageKey?.eblanUser,
-            privateEblanApplicationInfoWithIconPackInfos = groupedEblanApplicationInfos[privateEblanUserPageKey].orEmpty(),
+            privateEblanApplicationInfos = groupedEblanApplicationInfos[privateEblanUserPageKey].orEmpty(),
+            iconPackInfoFilePaths = iconPackInfoFilePaths,
+            folderEblanApplicationInfos = folderEblanApplicationInfos,
+            alphabeticalScrollBarItems = getAlphabeticalScrollBarItems(
+                eblanApplicationInfos = groupedEblanApplicationInfosWithFolders,
+                folderEblanApplicationInfos = folderEblanApplicationInfos,
+                appDrawerType = appDrawerType,
+                scrollBarType = scrollBarType,
+            ),
         )
     }
 
-    private fun getHorizontalEblanApplicationInfosByLabel(
+    private suspend fun getHorizontalEblanApplicationInfosByLabel(
         horizontalAppDrawerColumns: Int,
         horizontalAppDrawerRows: Int,
-        eblanApplicationInfosByLabel: MutableList<EblanApplicationInfoWithIconPackInfo>,
+        eblanApplicationInfos: List<EblanApplicationInfo>,
+        iconPackInfoFilePaths: Map<String, String?>,
     ): GetEblanApplicationInfosByLabelAndTag {
-        val groupedEblanApplicationInfos = eblanApplicationInfosByLabel.groupBy {
-            launcherAppsWrapper.getUser(serialNumber = it.eblanApplicationInfo.serialNumber)
+        val groupedEblanApplicationInfos = eblanApplicationInfos.groupBy {
+            launcherAppsWrapper.getUser(serialNumber = it.serialNumber)
         }.toSortedMap(nullsLast(compareBy { it.serialNumber }))
             .flatMap { (eblanUser, eblanApplicationInfos) ->
-                eblanApplicationInfos.chunked(horizontalAppDrawerColumns * horizontalAppDrawerRows).mapIndexed { index, eblanApplicationInfos ->
-                    EblanUserPageKey(
-                        eblanUser = eblanUser,
-                        page = index,
-                    ) to eblanApplicationInfos
-                }
+                eblanApplicationInfos.chunked(horizontalAppDrawerColumns * horizontalAppDrawerRows)
+                    .mapIndexed { index, eblanApplicationInfos ->
+                        EblanUserPageKey(
+                            eblanUser = eblanUser,
+                            page = index,
+                        ) to eblanApplicationInfos
+                    }
             }.toMap()
 
         return GetEblanApplicationInfosByLabelAndTag(
-            eblanApplicationInfoWithIconPackInfos = groupedEblanApplicationInfos,
+            eblanApplicationInfos = groupedEblanApplicationInfos,
             privateEblanUser = null,
-            privateEblanApplicationInfoWithIconPackInfos = emptyList(),
+            privateEblanApplicationInfos = emptyList(),
+            iconPackInfoFilePaths = iconPackInfoFilePaths,
+            folderEblanApplicationInfos = emptyList(),
+            alphabeticalScrollBarItems = emptyMap(),
         )
     }
 
-    private fun updateEblanApplicationInfoIndexes(
-        eblanApplicationInfoOrder: EblanApplicationInfoOrder,
-        eblanApplicationInfos: MutableList<EblanApplicationInfoWithIconPackInfo>,
-    ) {
-        if (eblanApplicationInfoOrder != EblanApplicationInfoOrder.Index) return
+    private suspend fun getEblanApplicationInfos(
+        eblanApplicationInfos: List<EblanApplicationInfo>,
+        excludeTaggedApps: Boolean,
+        fuzzySearch: Boolean,
+        label: String,
+        tagId: Long?,
+    ): List<EblanApplicationInfo> {
+        val eblanApplicationInfosByTag = when {
+            tagId != null ->
+                eblanApplicationInfoRepository.getEblanApplicationInfosByTagId(id = tagId)
 
-        eblanApplicationInfos.filter { it.eblanApplicationInfo.index >= 0 }.forEach {
-            val fromIndex = eblanApplicationInfos.indexOf(it)
+            excludeTaggedApps ->
+                eblanApplicationInfoRepository.getEblanApplicationInfosWithoutTag()
 
-            if (fromIndex > -1) {
-                eblanApplicationInfos.removeAt(fromIndex)
+            else -> eblanApplicationInfos
+        }.filterNot { it.isHidden || it.folderId != null }
 
-                val toIndex = it.eblanApplicationInfo.index.coerceAtMost(eblanApplicationInfos.size)
-
-                eblanApplicationInfos.add(toIndex, it)
-            }
-        }
+        return getItemsByLabel(
+            items = eblanApplicationInfosByTag,
+            fuzzySearch = fuzzySearch,
+            label = label,
+            getLabel = { it.customLabel ?: it.label },
+        )
     }
 
-    private suspend fun filterEblanApplicationInfos(
-        iconPackDirectory: File,
-        label: String,
+    private suspend fun getFolderEblanApplicationInfos(
+        folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
         fuzzySearch: Boolean,
-        excludeTaggedApps: Boolean,
+        label: String,
         tagId: Long?,
-        eblanApplicationInfos: List<EblanApplicationInfo>,
-    ): MutableList<EblanApplicationInfoWithIconPackInfo> {
-        val eblanApplicationInfosByTag = when {
-            tagId != null -> {
-                eblanApplicationInfoRepository.getEblanApplicationInfosByTagId(id = tagId)
-            }
+    ): List<FolderEblanApplicationInfo> {
+        val folderEblanApplicationInfosByTag = if (tagId == null) {
+            folderEblanApplicationInfos.filterNot { it.folderId != null }
+        } else {
+            emptyList()
+        }
 
-            excludeTaggedApps -> {
-                eblanApplicationInfoRepository.getEblanApplicationInfosWithoutTag()
-            }
+        return getItemsByLabel(
+            items = folderEblanApplicationInfosByTag,
+            fuzzySearch = fuzzySearch,
+            label = label,
+            getLabel = { it.label },
+        ).sortedBy { it.index }
+    }
 
-            else -> {
-                eblanApplicationInfos
-            }
-        }.filterNot { it.isHidden }
-
-        val eblanApplicationInfosByLabel = eblanApplicationInfosByTag.filter {
-            it.label.startsWith(
-                prefix = label,
-                ignoreCase = true,
-            ) || it.label.contains(
+    private suspend fun <T> getItemsByLabel(
+        items: List<T>,
+        fuzzySearch: Boolean,
+        label: String,
+        getLabel: (T) -> String,
+    ): List<T> {
+        val itemsByLabel = items.filter {
+            getLabel(it).contains(
                 other = label,
                 ignoreCase = true,
             )
         }
 
-        val filterEblanApplicationInfos = if (fuzzySearch || eblanApplicationInfosByLabel.isNotEmpty()) {
+        return if (fuzzySearch || itemsByLabel.isNotEmpty()) {
             val fuzzyMatches = if (fuzzySearch) {
-                (eblanApplicationInfosByTag - eblanApplicationInfosByLabel.toSet())
+                (items - itemsByLabel.toSet())
                     .map {
                         it to jaroWinklerSimilarityWrapper.apply(
                             left = normalize(text = label),
-                            right = normalize(text = it.label),
+                            right = normalize(text = getLabel(it)),
                         )
                     }
-                    .filter { (_, score) -> score >= FUZZY_MATCH_THRESHOLD }
+                    .filter { (_, score) -> score >= 0.85 }
                     .sortedByDescending { (_, score) -> score }
-                    .map { (eblanApplicationInfo, _) -> eblanApplicationInfo }
+                    .map { (item, _) -> item }
             } else {
                 emptyList()
             }
 
-            eblanApplicationInfosByLabel.sortedBy { it.label.lowercase() } + fuzzyMatches
+            itemsByLabel.sortedBy {
+                getLabel(it).lowercase()
+            } + fuzzyMatches
         } else {
             emptyList()
         }
-
-        return filterEblanApplicationInfos
-            .map {
-                val iconPackInfoFilePath = File(
-                    iconPackDirectory,
-                    iconKeyGenerator.getHashedName(name = it.componentName),
-                )
-
-                EblanApplicationInfoWithIconPackInfo(
-                    eblanApplicationInfo = it,
-                    iconPackInfoFilePath = iconPackInfoFilePath
-                        .takeIf(File::exists)
-                        ?.absolutePath,
-                )
-            }
-            .toMutableList()
     }
 
-    private suspend fun normalize(text: String): String = withContext(ioDispatcher) {
+    private suspend fun normalize(text: String): String = withContext(defaultDispatcher) {
         Normalizer.normalize(text, Normalizer.Form.NFD)
             .replace("\\p{M}+".toRegex(), "")
             .lowercase()
     }
-}
 
-private const val FUZZY_MATCH_THRESHOLD = 0.85
+    private fun getAlphabeticalScrollBarItems(
+        eblanApplicationInfos: Map<EblanUserPageKey, List<EblanApplicationInfo>>,
+        folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+        appDrawerType: AppDrawerType,
+        scrollBarType: ScrollBarType,
+    ): Map<EblanUserPageKey, List<AlphabeticalScrollBarItem>> {
+        if (scrollBarType != ScrollBarType.Alphabetical) return emptyMap()
+
+        return eblanApplicationInfos.mapValues { entry ->
+            val offset = if (
+                appDrawerType == AppDrawerType.Vertical &&
+                entry.key.eblanUser.eblanUserType == EblanUserType.Personal &&
+                folderEblanApplicationInfos.isNotEmpty()
+            ) {
+                folderEblanApplicationInfos.size
+            } else {
+                0
+            }
+
+            entry.value.mapIndexedNotNull { index, application ->
+                (application.customLabel ?: application.label).firstOrNull()
+                    ?.uppercaseChar()
+                    ?.let { character ->
+                        (if (character.isLetter()) character else '#') to (offset + index)
+                    }
+            }.distinctBy { it.first }
+                .sortedBy { it.first }
+                .map { (letter, index) ->
+                    AlphabeticalScrollBarItem(letter = letter, index = index)
+                }
+        }
+    }
+}

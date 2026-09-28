@@ -1,0 +1,4 @@
+- Fixed App Drawer custom background text contrast
+- Fixed Shortcut transparency when launcher is not the default
+- Revamped folder animation to Clip reveal
+- Bug fixes and stability improvements

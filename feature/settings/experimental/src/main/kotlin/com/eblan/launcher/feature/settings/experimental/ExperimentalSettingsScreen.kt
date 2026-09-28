@@ -41,11 +41,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.ExperimentalSettings
+import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
 import com.eblan.launcher.feature.settings.experimental.dialog.SyncDataDialog
 import com.eblan.launcher.feature.settings.experimental.model.ExperimentalSettingsUiState
 import com.eblan.launcher.ui.model.SettingsItem
-import com.eblan.launcher.ui.settings.SettingsItemContent
+import com.eblan.launcher.ui.settings.SettingsItems
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -128,13 +128,7 @@ private fun Success(
             .padding(10.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        items.forEachIndexed { index, settingsItem ->
-            SettingsItemContent(
-                settingsItem = settingsItem,
-                index = index,
-                size = items.size,
-            )
-        }
+        SettingsItems(items = items)
     }
 
     if (showSyncDataDialog) {
@@ -180,6 +174,28 @@ private fun buildExperimentalSettingsItems(
                 onUpdateExperimentalSettings(
                     experimentalSettings.copy(
                         lockMovement = it,
+                    ),
+                )
+            },
+        ),
+    )
+
+    add(
+        SettingsItem.Switch(
+            checked = experimentalSettings.gridItemAnimation,
+            title = stringResource(R.string.grid_item_animation),
+            subtitle = stringResource(R.string.enable_or_disable_animations),
+            onClick = {
+                onUpdateExperimentalSettings(
+                    experimentalSettings.copy(
+                        gridItemAnimation = !experimentalSettings.gridItemAnimation,
+                    ),
+                )
+            },
+            onCheckedChange = {
+                onUpdateExperimentalSettings(
+                    experimentalSettings.copy(
+                        gridItemAnimation = it,
                     ),
                 )
             },

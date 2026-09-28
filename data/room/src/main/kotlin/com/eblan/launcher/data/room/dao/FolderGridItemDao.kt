@@ -30,9 +30,8 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface FolderGridItemDao {
-    @Transaction
     @Query("SELECT * FROM FolderGridItemEntity")
-    fun getFolderGridItemEntities(): List<FolderGridItemEntity>
+    suspend fun getFolderGridItemEntities(): List<FolderGridItemEntity>
 
     @Transaction
     @Query("SELECT * FROM FolderGridItemEntity")
@@ -41,10 +40,6 @@ interface FolderGridItemDao {
     @Transaction
     @Query("SELECT * FROM FolderGridItemEntity")
     fun getFolderGridItemWrapperEntities(): List<FolderGridItemWrapperEntity>
-
-    @Transaction
-    @Query("SELECT * FROM FolderGridItemEntity WHERE id = :id")
-    suspend fun getFolderGridItemWrapperEntity(id: String): FolderGridItemWrapperEntity?
 
     @Upsert
     suspend fun upsertFolderGridItemEntities(entities: List<FolderGridItemEntity>)

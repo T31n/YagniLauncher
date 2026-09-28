@@ -44,9 +44,9 @@ internal fun EditDockHeightDialog(
     onDismissRequest: () -> Unit,
     onUpdateDockHeight: (Int) -> Unit,
 ) {
-    var value by remember { mutableStateOf("$dockHeight") }
+    var currentDockHeight by remember { mutableStateOf("$dockHeight") }
 
-    var isError by remember { mutableStateOf(false) }
+    var isErrorDockHeight by remember { mutableStateOf(false) }
 
     EblanDialog(
         modifier = modifier,
@@ -58,17 +58,17 @@ internal fun EditDockHeightDialog(
         )
 
         TextField(
-            value = value,
+            value = currentDockHeight,
             onValueChange = {
-                value = it
-                isError = false
+                currentDockHeight = it
+                isErrorDockHeight = false
             },
             modifier = Modifier.fillMaxWidth(),
             label = {
                 Text(text = stringResource(R.string.dock_height))
             },
-            isError = isError,
-            supportingText = if (isError) {
+            isError = isErrorDockHeight,
+            supportingText = if (isErrorDockHeight) {
                 {
                     Text(text = stringResource(R.string.dock_height_is_not_valid))
                 }
@@ -92,11 +92,11 @@ internal fun EditDockHeightDialog(
 
             TextButton(
                 onClick = {
-                    val newDockHeight = value.toIntOrNull()
+                    val newDockHeight = currentDockHeight.toIntOrNull()
 
-                    isError = newDockHeight == null || newDockHeight <= 0
+                    isErrorDockHeight = newDockHeight == null || newDockHeight < 0
 
-                    if (newDockHeight != null && newDockHeight > 0) {
+                    if (newDockHeight != null && newDockHeight >= 0) {
                         onUpdateDockHeight(newDockHeight)
                     }
                 },

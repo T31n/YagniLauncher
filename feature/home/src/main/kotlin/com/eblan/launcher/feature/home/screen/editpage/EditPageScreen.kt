@@ -66,16 +66,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.core.util.Consumer
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.Associate
-import com.eblan.launcher.domain.model.GridItem
-import com.eblan.launcher.domain.model.HomeSettings
-import com.eblan.launcher.domain.model.PageItem
-import com.eblan.launcher.domain.model.TextColor
+import com.eblan.launcher.domain.model.folder.PreviewFolder
+import com.eblan.launcher.domain.model.grid.Associate
+import com.eblan.launcher.domain.model.home.PageItem
+import com.eblan.launcher.domain.model.userdata.BackgroundColor
+import com.eblan.launcher.domain.model.userdata.FolderSettings
+import com.eblan.launcher.domain.model.userdata.HomeSettings
+import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.GridLayout
+import com.eblan.launcher.feature.home.component.HomeHandler
 import com.eblan.launcher.feature.home.model.Screen
+import com.eblan.launcher.ui.lazylist.DraggableColumnItem
+import com.eblan.launcher.ui.lazylist.dragColumnContainer
+import com.eblan.launcher.ui.lazylist.rememberLazyColumnDragDropState
 import kotlinx.coroutines.launch
 import com.eblan.launcher.common.R as commonR
 
@@ -90,7 +99,13 @@ internal fun EditGridPageScreen(
     screenWidth: Int,
     screenHeight: Int,
     textColor: TextColor,
-    previewFolderGridItems: Map<String, List<GridItem>>,
+    previewFolderGridItems: Map<String, PreviewFolder>,
+    iconPackInfoFilePaths: Map<String, String?>,
+    folderBackgroundColor: BackgroundColor,
+    customFolderBackgroundColor: Int,
+    systemTextColor: TextColor,
+    systemCustomTextColor: Int,
+    folderSettings: FolderSettings,
     onSaveEditPage: (
         id: Int,
         pageItems: List<PageItem>,
@@ -105,33 +120,13 @@ internal fun EditGridPageScreen(
 
     val layoutDirection = LocalLayoutDirection.current
 
-    val leftPadding = with(density) {
-        paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
-    }
-
-    val topPadding = with(density) {
-        paddingValues.calculateTopPadding().roundToPx()
-    }
-
-    val rightPadding = with(density) {
-        paddingValues.calculateRightPadding(layoutDirection).roundToPx()
-    }
-
-    val bottomPadding = with(density) {
-        paddingValues.calculateBottomPadding().roundToPx()
-    }
-
-    val horizontalPadding = leftPadding + rightPadding
-
-    val verticalPadding = topPadding + bottomPadding
-
-    val gridWidthDp = with(density) {
-        (screenWidth - horizontalPadding).toDp()
-    }
-
-    val gridHeightDp = with(density) {
-        (screenHeight - verticalPadding).toDp()
-    }
+    val (gridWidthDp, gridHeightDp) = getGridSize(
+        density = density,
+        paddingValues = paddingValues,
+        layoutDirection = layoutDirection,
+        screenWidth = screenWidth,
+        screenHeight = screenHeight,
+    )
 
     var currentPageItems by remember { mutableStateOf(pageItems) }
 
@@ -182,6 +177,10 @@ internal fun EditGridPageScreen(
         onUpdateScreen(Screen.Pager)
     }
 
+    HomeHandler {
+        onUpdateScreen(Screen.Pager)
+    }
+
     Box(modifier = modifier.fillMaxSize()) {
         LazyRow(
             modifier = Modifier
@@ -214,14 +213,20 @@ internal fun EditGridPageScreen(
                         columns = columns,
                         gridItems = pageItem.gridItems,
                         rows = rows,
+                        animate = false,
                         content = {
                             GridItemContent(
                                 gridItem = it,
                                 gridItemSettings = homeSettings.gridItemSettings,
                                 hasShortcutHostPermission = hasShortcutHostPermission,
-                                statusBarNotifications = emptyMap(),
                                 textColor = textColor,
                                 previewFolderGridItems = previewFolderGridItems,
+                                iconPackInfoFilePaths = iconPackInfoFilePaths,
+                                folderBackgroundColor = folderBackgroundColor,
+                                customFolderBackgroundColor = customFolderBackgroundColor,
+                                systemTextColor = systemTextColor,
+                                systemCustomTextColor = systemCustomTextColor,
+                                folderCornerRadius = folderSettings.folderCornerRadius,
                             )
                         },
                     )
@@ -280,6 +285,44 @@ internal fun EditGridPageScreen(
     }
 }
 
+private fun getGridSize(
+    density: Density,
+    paddingValues: PaddingValues,
+    layoutDirection: LayoutDirection,
+    screenWidth: Int,
+    screenHeight: Int,
+): Pair<Dp, Dp> {
+    val leftPadding = with(density) {
+        paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
+    }
+
+    val topPadding = with(density) {
+        paddingValues.calculateTopPadding().roundToPx()
+    }
+
+    val rightPadding = with(density) {
+        paddingValues.calculateRightPadding(layoutDirection).roundToPx()
+    }
+
+    val bottomPadding = with(density) {
+        paddingValues.calculateBottomPadding().roundToPx()
+    }
+
+    val horizontalPadding = leftPadding + rightPadding
+
+    val verticalPadding = topPadding + bottomPadding
+
+    val gridWidthDp = with(density) {
+        (screenWidth - horizontalPadding).toDp()
+    }
+
+    val gridHeightDp = with(density) {
+        (screenHeight - verticalPadding).toDp()
+    }
+
+    return gridWidthDp to gridHeightDp
+}
+
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 internal fun EditDockGridPageScreen(
@@ -289,7 +332,13 @@ internal fun EditDockGridPageScreen(
     homeSettings: HomeSettings,
     paddingValues: PaddingValues,
     textColor: TextColor,
-    previewFolderGridItems: Map<String, List<GridItem>>,
+    previewFolderGridItems: Map<String, PreviewFolder>,
+    iconPackInfoFilePaths: Map<String, String?>,
+    folderBackgroundColor: BackgroundColor,
+    customFolderBackgroundColor: Int,
+    systemTextColor: TextColor,
+    systemCustomTextColor: Int,
+    folderSettings: FolderSettings,
     onSaveEditPage: (
         id: Int,
         pageItems: List<PageItem>,
@@ -353,6 +402,10 @@ internal fun EditDockGridPageScreen(
         onUpdateScreen(Screen.Pager)
     }
 
+    HomeHandler {
+        onUpdateScreen(Screen.Pager)
+    }
+
     Box(modifier = modifier.fillMaxSize()) {
         LazyColumn(
             modifier = Modifier
@@ -387,14 +440,20 @@ internal fun EditDockGridPageScreen(
                             columns = columns,
                             gridItems = pageItem.gridItems,
                             rows = rows,
+                            animate = false,
                             content = {
                                 GridItemContent(
                                     gridItem = it,
                                     gridItemSettings = homeSettings.gridItemSettings,
                                     hasShortcutHostPermission = hasShortcutHostPermission,
-                                    statusBarNotifications = emptyMap(),
                                     textColor = textColor,
                                     previewFolderGridItems = previewFolderGridItems,
+                                    iconPackInfoFilePaths = iconPackInfoFilePaths,
+                                    folderBackgroundColor = folderBackgroundColor,
+                                    customFolderBackgroundColor = customFolderBackgroundColor,
+                                    systemTextColor = systemTextColor,
+                                    systemCustomTextColor = systemCustomTextColor,
+                                    folderCornerRadius = folderSettings.folderCornerRadius,
                                 )
                             },
                         )

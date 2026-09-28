@@ -17,11 +17,13 @@
  */
 
 plugins {
-    alias(libs.plugins.com.eblan.launcher.jvmLibrary)
+    alias(libs.plugins.com.eblan.launcher.jvmBenchmarkLibrary)
 }
 
 dependencies {
     implementation(projects.domain.model)
-
     implementation(libs.kotlinx.coroutines.core)
+
+    testImplementation(testFixtures(projects.domain.model))
+    benchmarkImplementation(testFixtures(projects.domain.model))
 }

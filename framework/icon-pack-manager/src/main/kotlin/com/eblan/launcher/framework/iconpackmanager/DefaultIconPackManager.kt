@@ -21,11 +21,11 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.XmlResourceParser
 import android.graphics.drawable.Drawable
+import com.eblan.launcher.common.AndroidImageSerializer
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.framework.IconPackManager
-import com.eblan.launcher.domain.model.IconPackInfoComponent
-import com.eblan.launcher.framework.imageserializer.AndroidImageSerializer
+import com.eblan.launcher.domain.model.iconpackinfo.IconPackInfoComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.currentCoroutineContext
@@ -66,36 +66,24 @@ internal class DefaultIconPackManager @Inject constructor(
             )
 
             val autoCloseable = when {
-                xmlId != 0 -> {
-                    resources.getXml(xmlId)
-                }
-
-                rawId != 0 -> {
-                    resources.openRawResource(rawId)
-                }
-
-                else -> {
-                    packageContext.assets.open("appfilter.xml")
-                }
+                xmlId != 0 -> resources.getXml(xmlId)
+                rawId != 0 -> resources.openRawResource(rawId)
+                else -> packageContext.assets.open("appfilter.xml")
             }
 
-            autoCloseable.use { autoCloseable ->
-                when (autoCloseable) {
-                    is XmlResourceParser -> {
-                        parseXml(xmlPullParser = autoCloseable)
-                    }
+            autoCloseable.use {
+                when (it) {
+                    is XmlResourceParser -> parseXml(xmlPullParser = it)
 
                     is InputStream -> {
                         val xmlPullParser = XmlPullParserFactory.newInstance().newPullParser()
 
-                        xmlPullParser.setInput(autoCloseable.reader())
+                        xmlPullParser.setInput(it.reader())
 
                         parseXml(xmlPullParser = xmlPullParser)
                     }
 
-                    else -> {
-                        emptyList()
-                    }
+                    else -> emptyList()
                 }
             }
         } catch (_: Exception) {
@@ -152,29 +140,27 @@ internal class DefaultIconPackManager @Inject constructor(
     }
 
     private suspend fun parseXml(xmlPullParser: XmlPullParser): List<IconPackInfoComponent> {
-        val iconPackInfoComponents = mutableListOf<IconPackInfoComponent>()
-
         var eventType = xmlPullParser.eventType
 
-        while (currentCoroutineContext().isActive && eventType != XmlPullParser.END_DOCUMENT) {
-            if (eventType == XmlPullParser.START_TAG && xmlPullParser.name == "item") {
-                val component = xmlPullParser.getAttributeValue(null, "component")
+        return buildList {
+            while (currentCoroutineContext().isActive && eventType != XmlPullParser.END_DOCUMENT) {
+                if (eventType == XmlPullParser.START_TAG && xmlPullParser.name == "item") {
+                    val component = xmlPullParser.getAttributeValue(null, "component")
 
-                val drawable = xmlPullParser.getAttributeValue(null, "drawable")
+                    val drawable = xmlPullParser.getAttributeValue(null, "drawable")
 
-                if (!component.isNullOrBlank() && !drawable.isNullOrBlank()) {
-                    iconPackInfoComponents.add(
-                        IconPackInfoComponent(
-                            componentName = component,
-                            drawableName = drawable,
-                        ),
-                    )
+                    if (component != null && drawable != null) {
+                        add(
+                            IconPackInfoComponent(
+                                componentName = component,
+                                drawableName = drawable,
+                            ),
+                        )
+                    }
                 }
+
+                eventType = xmlPullParser.next()
             }
-
-            eventType = xmlPullParser.next()
         }
-
-        return iconPackInfoComponents
     }
 }

@@ -17,6 +17,9 @@
  */
 package com.eblan.launcher.feature.home.screen.pager
 
+import android.content.Intent
+import android.content.Intent.ACTION_SET_WALLPAPER
+import android.content.Intent.createChooser
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
@@ -44,14 +47,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.Associate
-import com.eblan.launcher.domain.model.GridItem
+import com.eblan.launcher.domain.model.grid.Associate
+import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.feature.home.R
+import com.eblan.launcher.feature.home.component.HomeHandler
 import com.eblan.launcher.feature.home.model.SettingsMenuItem
 import com.eblan.launcher.ui.settings.settingsItemShape
 import com.eblan.launcher.common.R as commonR
@@ -68,10 +73,11 @@ internal fun SettingsPopup(
     ) -> Unit,
     onSettings: () -> Unit,
     onShortcutConfigActivities: () -> Unit,
-    onWallpaper: () -> Unit,
     onWidgets: () -> Unit,
 ) {
     requireNotNull(popupSettingsIntOffset)
+
+    val context = LocalContext.current
 
     val transitionState = remember {
         MutableTransitionState(false).apply {
@@ -113,7 +119,11 @@ internal fun SettingsPopup(
             transitionState.targetState = false
         },
         onWallpaperClick = {
-            onWallpaper()
+            val intent = Intent(ACTION_SET_WALLPAPER)
+
+            val chooser = createChooser(intent, "Set Wallpaper")
+
+            context.startActivity(chooser)
 
             transitionState.targetState = false
         },
@@ -129,6 +139,10 @@ internal fun SettingsPopup(
     }
 
     BackHandler(enabled = transitionState.targetState) {
+        transitionState.targetState = false
+    }
+
+    HomeHandler(enabled = transitionState.targetState) {
         transitionState.targetState = false
     }
 
