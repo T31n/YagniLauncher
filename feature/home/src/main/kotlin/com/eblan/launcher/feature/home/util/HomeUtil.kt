@@ -31,6 +31,8 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.HorizontalAlignment
+import com.eblan.launcher.domain.model.grid.HorizontalArrangement
+import com.eblan.launcher.domain.model.grid.VerticalAlignment
 import com.eblan.launcher.domain.model.grid.VerticalArrangement
 import com.eblan.launcher.domain.model.home.GlobalAction
 import com.eblan.launcher.domain.model.userdata.EblanAction
@@ -104,6 +106,18 @@ internal fun getVerticalArrangement(verticalArrangement: VerticalArrangement): A
     VerticalArrangement.Top -> Arrangement.Top
     VerticalArrangement.Center -> Arrangement.Center
     VerticalArrangement.Bottom -> Arrangement.Bottom
+}
+
+internal fun getHorizontalArrangement(horizontalArrangement: HorizontalArrangement): Arrangement.Horizontal = when (horizontalArrangement) {
+    HorizontalArrangement.Start -> Arrangement.Start
+    HorizontalArrangement.Center -> Arrangement.Center
+    HorizontalArrangement.End -> Arrangement.End
+}
+
+internal fun getVerticalAlignment(verticalAlignment: VerticalAlignment): Alignment.Vertical = when (verticalAlignment) {
+    VerticalAlignment.Top -> Alignment.Top
+    VerticalAlignment.CenterVertically -> Alignment.CenterVertically
+    VerticalAlignment.Bottom -> Alignment.Bottom
 }
 
 internal fun onDoubleTap(

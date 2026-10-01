@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.grid.HorizontalAlignment
 import com.eblan.launcher.domain.model.grid.HorizontalArrangement
+import com.eblan.launcher.domain.model.grid.LayoutType
 import com.eblan.launcher.domain.model.grid.VerticalAlignment
 import com.eblan.launcher.domain.model.grid.VerticalArrangement
 import com.eblan.launcher.domain.model.userdata.TextColor
@@ -82,6 +83,8 @@ fun GridItemSettings(
 
     var showVerticalAlignment by remember { mutableStateOf(false) }
 
+    var showLayoutType by remember { mutableStateOf(false) }
+
     val items = buildGridItemSettingsItems(
         gridItemSettings = gridItemSettings,
         onIconSizeClick = {
@@ -113,6 +116,9 @@ fun GridItemSettings(
         },
         onVerticalAlignmentClick = {
             showVerticalAlignment = true
+        },
+        onLayoutTypeClick = {
+            showLayoutType = true
         },
         onUpdateGridItemSettings = onUpdateGridItemSettings,
     )
@@ -289,6 +295,23 @@ fun GridItemSettings(
             },
         )
     }
+
+    if (showLayoutType) {
+        RadioOptionsDialog(
+            title = "Layout Type",
+            options = LayoutType.entries,
+            selected = gridItemSettings.layoutType,
+            label = {
+                it.getLayoutTypeTitle()
+            },
+            onDismissRequest = {
+                showLayoutType = false
+            },
+            onUpdateClick = {
+                onUpdateGridItemSettings(gridItemSettings.copy(layoutType = it))
+            },
+        )
+    }
 }
 
 @Composable
@@ -353,6 +376,7 @@ private fun buildGridItemSettingsItems(
     onVerticalArrangementClick: () -> Unit,
     onHorizontalArrangementClick: () -> Unit,
     onVerticalAlignmentClick: () -> Unit,
+    onLayoutTypeClick: () -> Unit,
     onUpdateGridItemSettings: (GridItemSettings) -> Unit,
 ): List<SettingsItem> = buildList {
     add(
@@ -470,6 +494,14 @@ private fun buildGridItemSettingsItems(
             onClick = onVerticalAlignmentClick,
         ),
     )
+
+    add(
+        SettingsItem.Column(
+            title = "Layout Type",
+            subtitle = gridItemSettings.layoutType.getLayoutTypeTitle(),
+            onClick = onLayoutTypeClick,
+        ),
+    )
 }
 
 @Composable
@@ -498,4 +530,12 @@ private fun VerticalAlignment.getVerticalAlignmentTitle(): String = when (this) 
     VerticalAlignment.Top -> stringResource(R.string.top)
     VerticalAlignment.CenterVertically -> "Center Vertically"
     VerticalAlignment.Bottom -> stringResource(R.string.bottom)
+}
+
+@Composable
+private fun LayoutType.getLayoutTypeTitle(): String = when (this) {
+    LayoutType.TopIconBottomLabel -> "Top Icon Bottom Label"
+    LayoutType.TopLabelBottomIcon -> "Top Label Bottom Icon"
+    LayoutType.StartIconEndLabel -> "Start Icon End Label"
+    LayoutType.StartLabelEndIcon -> "Start Label End Icon"
 }
