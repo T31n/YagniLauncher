@@ -62,6 +62,8 @@ internal fun ApplicationInfoGridItem(
     verticalAlignment: Alignment.Vertical,
     maxLines: Int,
 ) {
+    val context = LocalContext.current
+
     val icon = iconPackInfoFilePaths[data.componentName] ?: data.icon
 
     val itemModifier = modifier
@@ -72,237 +74,159 @@ internal fun ApplicationInfoGridItem(
             shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
         )
 
+    val iconContent: @Composable () -> Unit = {
+        Box(
+            modifier = Modifier
+                .size(gridItemSettings.iconSize.dp)
+                .padding(gridItemSettings.iconPadding.dp),
+        ) {
+            AsyncImage(
+                model = Builder(context)
+                    .data(data.customIcon ?: icon)
+                    .addLastModifiedToFileCacheKey(true)
+                    .size(Size.ORIGINAL)
+                    .build(),
+                contentDescription = null,
+                modifier = Modifier.matchParentSize(),
+            )
+
+            if (data.serialNumber != 0L) {
+                ElevatedCard(
+                    modifier = Modifier
+                        .size((gridItemSettings.iconSize * 0.4).dp)
+                        .align(Alignment.BottomEnd),
+                ) {
+                    Icon(
+                        imageVector = EblanLauncherIcons.Work,
+                        contentDescription = null,
+                        modifier = Modifier.padding(2.dp),
+                    )
+                }
+            }
+        }
+    }
+
+    val labelContent: @Composable () -> Unit = {
+        if (gridItemSettings.showLabel) {
+            Text(
+                modifier = Modifier.padding(gridItemSettings.textPadding.dp),
+                text = data.customLabel ?: data.label,
+                color = textColor,
+                textAlign = TextAlign.Center,
+                maxLines = maxLines,
+                fontSize = gridItemSettings.textSize.sp,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+    }
+
     when (gridItemSettings.layoutType) {
         LayoutType.TopIconBottomLabel ->
             TopIconBottomLabel(
                 modifier = itemModifier,
-                data = data,
-                icon = icon,
-                gridItemSettings = gridItemSettings,
-                textColor = textColor,
                 horizontalAlignment = horizontalAlignment,
                 verticalArrangement = verticalArrangement,
-                maxLines = maxLines,
+                icon = iconContent,
+                label = labelContent,
             )
 
         LayoutType.TopLabelBottomIcon ->
             TopLabelBottomIcon(
                 modifier = itemModifier,
-                data = data,
-                icon = icon,
-                gridItemSettings = gridItemSettings,
-                textColor = textColor,
                 horizontalAlignment = horizontalAlignment,
                 verticalArrangement = verticalArrangement,
-                maxLines = maxLines,
+                icon = iconContent,
+                label = labelContent,
             )
 
         LayoutType.StartIconEndLabel ->
             StartIconEndLabel(
                 modifier = itemModifier,
-                data = data,
-                icon = icon,
-                gridItemSettings = gridItemSettings,
-                textColor = textColor,
                 horizontalArrangement = horizontalArrangement,
                 verticalAlignment = verticalAlignment,
-                maxLines = maxLines,
+                icon = iconContent,
+                label = labelContent,
             )
 
         LayoutType.StartLabelEndIcon ->
             StartLabelEndIcon(
                 modifier = itemModifier,
-                data = data,
-                icon = icon,
-                gridItemSettings = gridItemSettings,
-                textColor = textColor,
                 horizontalArrangement = horizontalArrangement,
                 verticalAlignment = verticalAlignment,
-                maxLines = maxLines,
+                icon = iconContent,
+                label = labelContent,
             )
     }
 }
 
 @Composable
 private fun TopIconBottomLabel(
-    modifier: Modifier,
-    data: GridItemData.ApplicationInfo,
-    icon: String?,
-    gridItemSettings: GridItemSettings,
-    textColor: Color,
+    modifier: Modifier = Modifier,
     horizontalAlignment: Alignment.Horizontal,
     verticalArrangement: Arrangement.Vertical,
-    maxLines: Int,
+    icon: @Composable () -> Unit,
+    label: @Composable () -> Unit,
 ) {
     Column(
         modifier = modifier,
         horizontalAlignment = horizontalAlignment,
         verticalArrangement = verticalArrangement,
     ) {
-        ApplicationInfoIcon(
-            data = data,
-            icon = icon,
-            gridItemSettings = gridItemSettings,
-        )
-
-        ApplicationInfoLabel(
-            data = data,
-            gridItemSettings = gridItemSettings,
-            textColor = textColor,
-            maxLines = maxLines,
-        )
+        icon()
+        label()
     }
 }
 
 @Composable
 private fun TopLabelBottomIcon(
-    modifier: Modifier,
-    data: GridItemData.ApplicationInfo,
-    icon: String?,
-    gridItemSettings: GridItemSettings,
-    textColor: Color,
+    modifier: Modifier = Modifier,
     horizontalAlignment: Alignment.Horizontal,
     verticalArrangement: Arrangement.Vertical,
-    maxLines: Int,
+    icon: @Composable () -> Unit,
+    label: @Composable () -> Unit,
 ) {
     Column(
         modifier = modifier,
         horizontalAlignment = horizontalAlignment,
         verticalArrangement = verticalArrangement,
     ) {
-        ApplicationInfoLabel(
-            data = data,
-            gridItemSettings = gridItemSettings,
-            textColor = textColor,
-            maxLines = maxLines,
-        )
-
-        ApplicationInfoIcon(
-            data = data,
-            icon = icon,
-            gridItemSettings = gridItemSettings,
-        )
+        label()
+        icon()
     }
 }
 
 @Composable
 private fun StartIconEndLabel(
-    modifier: Modifier,
-    data: GridItemData.ApplicationInfo,
-    icon: String?,
-    gridItemSettings: GridItemSettings,
-    textColor: Color,
+    modifier: Modifier = Modifier,
     horizontalArrangement: Arrangement.Horizontal,
     verticalAlignment: Alignment.Vertical,
-    maxLines: Int,
+    icon: @Composable () -> Unit,
+    label: @Composable () -> Unit,
 ) {
     Row(
         modifier = modifier,
         horizontalArrangement = horizontalArrangement,
         verticalAlignment = verticalAlignment,
     ) {
-        ApplicationInfoIcon(
-            data = data,
-            icon = icon,
-            gridItemSettings = gridItemSettings,
-        )
-
-        ApplicationInfoLabel(
-            data = data,
-            gridItemSettings = gridItemSettings,
-            textColor = textColor,
-            maxLines = maxLines,
-        )
+        icon()
+        label()
     }
 }
 
 @Composable
 private fun StartLabelEndIcon(
-    modifier: Modifier,
-    data: GridItemData.ApplicationInfo,
-    icon: String?,
-    gridItemSettings: GridItemSettings,
-    textColor: Color,
+    modifier: Modifier = Modifier,
     horizontalArrangement: Arrangement.Horizontal,
     verticalAlignment: Alignment.Vertical,
-    maxLines: Int,
+    icon: @Composable () -> Unit,
+    label: @Composable () -> Unit,
 ) {
     Row(
         modifier = modifier,
         horizontalArrangement = horizontalArrangement,
         verticalAlignment = verticalAlignment,
     ) {
-        ApplicationInfoLabel(
-            data = data,
-            gridItemSettings = gridItemSettings,
-            textColor = textColor,
-            maxLines = maxLines,
-        )
-
-        ApplicationInfoIcon(
-            data = data,
-            icon = icon,
-            gridItemSettings = gridItemSettings,
-        )
-    }
-}
-
-@Composable
-private fun ApplicationInfoIcon(
-    modifier: Modifier = Modifier,
-    data: GridItemData.ApplicationInfo,
-    icon: String?,
-    gridItemSettings: GridItemSettings,
-) {
-    val context = LocalContext.current
-
-    Box(
-        modifier = modifier
-            .size(gridItemSettings.iconSize.dp)
-            .padding(gridItemSettings.iconPadding.dp),
-    ) {
-        AsyncImage(
-            model = Builder(context)
-                .data(data.customIcon ?: icon)
-                .addLastModifiedToFileCacheKey(true)
-                .size(Size.ORIGINAL)
-                .build(),
-            contentDescription = null,
-            modifier = Modifier.matchParentSize(),
-        )
-
-        if (data.serialNumber != 0L) {
-            ElevatedCard(
-                modifier = Modifier
-                    .size((gridItemSettings.iconSize * 0.4).dp)
-                    .align(Alignment.BottomEnd),
-            ) {
-                Icon(
-                    imageVector = EblanLauncherIcons.Work,
-                    contentDescription = null,
-                    modifier = Modifier.padding(2.dp),
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun ApplicationInfoLabel(
-    data: GridItemData.ApplicationInfo,
-    gridItemSettings: GridItemSettings,
-    textColor: Color,
-    maxLines: Int,
-) {
-    if (gridItemSettings.showLabel) {
-        Text(
-            modifier = Modifier.padding(gridItemSettings.textPadding.dp),
-            text = data.customLabel ?: data.label,
-            color = textColor,
-            textAlign = TextAlign.Center,
-            maxLines = maxLines,
-            fontSize = gridItemSettings.textSize.sp,
-            overflow = TextOverflow.Ellipsis,
-        )
+        label()
+        icon()
     }
 }

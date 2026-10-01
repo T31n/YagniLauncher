@@ -112,865 +112,278 @@ internal fun InteractiveApplicationInfoGridItem(
         sharedElementKey: SharedElementKey,
     ) -> Unit,
 ) {
+    val androidLauncherAppsWrapper = LocalLauncherApps.current
+
+    val context = LocalContext.current
+
+    var intOffset by remember { mutableStateOf(IntOffset.Zero) }
+    var intSize by remember { mutableStateOf(IntSize.Zero) }
+
+    val graphicsLayer = rememberGraphicsLayer()
+
+    val scope = rememberCoroutineScope()
+
+    val alpha = if (hasInteraction) 0f else 1f
+
+    val scale = remember { Animatable(1f) }
+
+    val currentOnOpenAppDrawer by rememberUpdatedState(onOpenAppDrawer)
+    val currentOnLongPressGridItem by rememberUpdatedState(onLongPressGridItem)
+
     val icon = iconPackInfoFilePaths[data.componentName] ?: data.icon
+
     val hasNotifications = (statusBarNotifications[data.packageName] ?: 0) > 0
+
     val isNotificationAccessGranted by rememberIsNotificationAccessGranted()
+
+    val itemModifier = modifier
+        .fillMaxSize()
+        .padding(gridItemSettings.padding.dp)
+        .background(
+            color = Color(gridItemSettings.customBackgroundColor),
+            shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
+        )
+        .whiteBox(
+            textColor = textColor,
+            visible = isVisibleWhiteBox && !isVisibleFolders,
+        )
+        .pointerInput(key1 = isVisibleOverlay) {
+            detectTapGestures(
+                onDoubleTap = if (!isVisibleOverlay) {
+                    {
+                        onDoubleTap(
+                            context = context,
+                            doubleTap = gridItem.doubleTap,
+                            launcherApps = androidLauncherAppsWrapper,
+                            onOpenAppDrawer = currentOnOpenAppDrawer,
+                        )
+                    }
+                } else {
+                    null
+                },
+                onLongPress = if (!isVisibleOverlay) {
+                    {
+                        scope.launch {
+                            currentOnLongPressGridItem(
+                                gridItem,
+                                graphicsLayer.toImageBitmap(),
+                                intOffset,
+                                intSize,
+                                sharedElementKey,
+                            )
+                        }
+                    }
+                } else {
+                    null
+                },
+                onTap = if (!isVisibleOverlay) {
+                    {
+                        androidLauncherAppsWrapper.startMainActivity(
+                            serialNumber = data.serialNumber,
+                            componentName = data.componentName,
+                            sourceBounds = sourceBounds,
+                        )
+                    }
+                } else {
+                    null
+                },
+                onPress = {
+                    handleOnPress(
+                        animations = animations,
+                        scale = scale,
+                    )
+                },
+            )
+        }
+        .swipeGestures(
+            swipeDown = gridItem.swipeDown,
+            swipeUp = gridItem.swipeUp,
+            onOpenAppDrawer = onOpenAppDrawer,
+        )
+
+    val iconContent: @Composable () -> Unit = {
+        Box(
+            modifier = Modifier
+                .size(gridItemSettings.iconSize.dp)
+                .padding(gridItemSettings.iconPadding.dp)
+                .alpha(alpha = alpha),
+        ) {
+            AsyncImage(
+                model = Builder(context = context)
+                    .data(data.customIcon ?: icon)
+                    .addLastModifiedToFileCacheKey(true)
+                    .size(Size.ORIGINAL)
+                    .build(),
+                contentDescription = null,
+                modifier = Modifier
+                    .matchParentSize()
+                    .onGloballyPositioned(
+                        onGloballyPositioned = {
+                            intOffset = it.positionInRoot().round()
+                            intSize = it.size
+                        },
+                    )
+                    .gridItemScaleAnimation(
+                        enabled = animations,
+                        isVisibleOverlay = isVisibleOverlay,
+                        scale = scale,
+                    )
+                    .gridItemSharedElement(
+                        enabled = animations,
+                        sharedElementKey = sharedElementKey,
+                        sharedTransitionScope = sharedTransitionScope,
+                        visible = !isScrollInProgress && !hasInteraction,
+                    )
+                    .drawWithContent {
+                        graphicsLayer.record {
+                            this@drawWithContent.drawContent()
+                        }
+
+                        drawLayer(graphicsLayer = graphicsLayer)
+                    },
+            )
+
+            if (isNotificationAccessGranted && hasNotifications) {
+                Box(
+                    modifier = Modifier
+                        .size(gridItemSettings.iconSize.dp * 0.3f)
+                        .align(Alignment.TopEnd)
+                        .background(
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = CircleShape,
+                        ),
+                )
+            }
+        }
+    }
+
+    val labelContent: @Composable () -> Unit = {
+        if (gridItemSettings.showLabel) {
+            Text(
+                modifier = Modifier
+                    .padding(gridItemSettings.textPadding.dp)
+                    .alpha(alpha = alpha),
+                text = data.customLabel ?: data.label,
+                color = textColor,
+                textAlign = TextAlign.Center,
+                maxLines = maxLines,
+                fontSize = gridItemSettings.textSize.sp,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+    }
 
     when (gridItemSettings.layoutType) {
         LayoutType.TopIconBottomLabel -> {
             TopIconBottomLabel(
-                modifier = modifier,
-                sharedTransitionScope = sharedTransitionScope,
-                data = data,
-                icon = icon,
-                hasNotifications = hasNotifications,
-                isNotificationAccessGranted = isNotificationAccessGranted,
-                gridItem = gridItem,
-                gridItemSettings = gridItemSettings,
-                isScrollInProgress = isScrollInProgress,
-                isVisibleFolders = isVisibleFolders,
-                isVisibleOverlay = isVisibleOverlay,
-                sharedElementKey = sharedElementKey,
-                textColor = textColor,
-                hasInteraction = hasInteraction,
-                isVisibleWhiteBox = isVisibleWhiteBox,
-                sourceBounds = sourceBounds,
-                animations = animations,
+                modifier = itemModifier,
                 horizontalAlignment = horizontalAlignment,
                 verticalArrangement = verticalArrangement,
-                maxLines = maxLines,
-                onOpenAppDrawer = onOpenAppDrawer,
-                onLongPressGridItem = onLongPressGridItem,
+                icon = iconContent,
+                label = labelContent,
             )
         }
 
         LayoutType.TopLabelBottomIcon -> {
             TopLabelBottomIcon(
-                modifier = modifier,
-                sharedTransitionScope = sharedTransitionScope,
-                data = data,
-                icon = icon,
-                hasNotifications = hasNotifications,
-                isNotificationAccessGranted = isNotificationAccessGranted,
-                gridItem = gridItem,
-                gridItemSettings = gridItemSettings,
-                isScrollInProgress = isScrollInProgress,
-                isVisibleFolders = isVisibleFolders,
-                isVisibleOverlay = isVisibleOverlay,
-                sharedElementKey = sharedElementKey,
-                textColor = textColor,
-                hasInteraction = hasInteraction,
-                isVisibleWhiteBox = isVisibleWhiteBox,
-                sourceBounds = sourceBounds,
-                animations = animations,
+                modifier = itemModifier,
                 horizontalAlignment = horizontalAlignment,
                 verticalArrangement = verticalArrangement,
-                maxLines = maxLines,
-                onOpenAppDrawer = onOpenAppDrawer,
-                onLongPressGridItem = onLongPressGridItem,
+                icon = iconContent,
+                label = labelContent,
             )
         }
 
         LayoutType.StartIconEndLabel -> {
             StartIconEndLabel(
-                modifier = modifier,
-                sharedTransitionScope = sharedTransitionScope,
-                data = data,
-                icon = icon,
-                hasNotifications = hasNotifications,
-                isNotificationAccessGranted = isNotificationAccessGranted,
-                gridItem = gridItem,
-                gridItemSettings = gridItemSettings,
-                isScrollInProgress = isScrollInProgress,
-                isVisibleFolders = isVisibleFolders,
-                isVisibleOverlay = isVisibleOverlay,
-                sharedElementKey = sharedElementKey,
-                textColor = textColor,
-                hasInteraction = hasInteraction,
-                isVisibleWhiteBox = isVisibleWhiteBox,
-                sourceBounds = sourceBounds,
-                animations = animations,
+                modifier = itemModifier,
                 horizontalArrangement = horizontalArrangement,
                 verticalAlignment = verticalAlignment,
-                maxLines = maxLines,
-                onOpenAppDrawer = onOpenAppDrawer,
-                onLongPressGridItem = onLongPressGridItem,
+                icon = iconContent,
+                label = labelContent,
             )
         }
 
         LayoutType.StartLabelEndIcon -> {
             StartLabelEndIcon(
-                modifier = modifier,
-                sharedTransitionScope = sharedTransitionScope,
-                data = data,
-                icon = icon,
-                hasNotifications = hasNotifications,
-                isNotificationAccessGranted = isNotificationAccessGranted,
-                gridItem = gridItem,
-                gridItemSettings = gridItemSettings,
-                isScrollInProgress = isScrollInProgress,
-                isVisibleFolders = isVisibleFolders,
-                isVisibleOverlay = isVisibleOverlay,
-                sharedElementKey = sharedElementKey,
-                textColor = textColor,
-                hasInteraction = hasInteraction,
-                isVisibleWhiteBox = isVisibleWhiteBox,
-                sourceBounds = sourceBounds,
-                animations = animations,
+                modifier = itemModifier,
                 horizontalArrangement = horizontalArrangement,
                 verticalAlignment = verticalAlignment,
-                maxLines = maxLines,
-                onOpenAppDrawer = onOpenAppDrawer,
-                onLongPressGridItem = onLongPressGridItem,
+                icon = iconContent,
+                label = labelContent,
             )
         }
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun TopIconBottomLabel(
-    modifier: Modifier = Modifier,
-    sharedTransitionScope: SharedTransitionScope,
-    data: GridItemData.ApplicationInfo,
-    icon: String?,
-    hasNotifications: Boolean,
-    isNotificationAccessGranted: Boolean,
-    gridItem: GridItem,
-    gridItemSettings: GridItemSettings,
-    isScrollInProgress: Boolean,
-    isVisibleFolders: Boolean,
-    isVisibleOverlay: Boolean,
-    sharedElementKey: SharedElementKey,
-    textColor: Color,
-    hasInteraction: Boolean,
-    isVisibleWhiteBox: Boolean,
-    sourceBounds: Rect,
-    animations: Boolean,
+    modifier: Modifier,
     horizontalAlignment: Alignment.Horizontal,
     verticalArrangement: Arrangement.Vertical,
-    maxLines: Int,
-    onOpenAppDrawer: () -> Unit,
-    onLongPressGridItem: (
-        gridItem: GridItem,
-        imageBitmap: ImageBitmap,
-        intOffset: IntOffset,
-        intSize: IntSize,
-        sharedElementKey: SharedElementKey,
-    ) -> Unit,
+    icon: @Composable () -> Unit,
+    label: @Composable () -> Unit,
 ) {
-    val androidLauncherAppsWrapper = LocalLauncherApps.current
-
-    val context = LocalContext.current
-
-    var intOffset by remember { mutableStateOf(IntOffset.Zero) }
-
-    var intSize by remember { mutableStateOf(IntSize.Zero) }
-
-    val graphicsLayer = rememberGraphicsLayer()
-
-    val scope = rememberCoroutineScope()
-
-    val alpha = if (hasInteraction) 0f else 1f
-
-    val scale = remember { Animatable(1f) }
-
-    val currentOnOpenAppDrawer by rememberUpdatedState(onOpenAppDrawer)
-    val currentOnLongPressGridItem by rememberUpdatedState(onLongPressGridItem)
-
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(gridItemSettings.padding.dp)
-            .background(
-                color = Color(gridItemSettings.customBackgroundColor),
-                shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
-            )
-            .whiteBox(
-                textColor = textColor,
-                visible = isVisibleWhiteBox && !isVisibleFolders,
-            )
-            .pointerInput(key1 = isVisibleOverlay) {
-                detectTapGestures(
-                    onDoubleTap = if (!isVisibleOverlay) {
-                        {
-                            onDoubleTap(
-                                context = context,
-                                doubleTap = gridItem.doubleTap,
-                                launcherApps = androidLauncherAppsWrapper,
-                                onOpenAppDrawer = currentOnOpenAppDrawer,
-                            )
-                        }
-                    } else {
-                        null
-                    },
-                    onLongPress = if (!isVisibleOverlay) {
-                        {
-                            scope.launch {
-                                currentOnLongPressGridItem(
-                                    gridItem,
-                                    graphicsLayer.toImageBitmap(),
-                                    intOffset,
-                                    intSize,
-                                    sharedElementKey,
-                                )
-                            }
-                        }
-                    } else {
-                        null
-                    },
-                    onTap = if (!isVisibleOverlay) {
-                        {
-                            androidLauncherAppsWrapper.startMainActivity(
-                                serialNumber = data.serialNumber,
-                                componentName = data.componentName,
-                                sourceBounds = sourceBounds,
-                            )
-                        }
-                    } else {
-                        null
-                    },
-                    onPress = {
-                        handleOnPress(
-                            animations = animations,
-                            scale = scale,
-                        )
-                    },
-                )
-            }
-            .swipeGestures(
-                swipeDown = gridItem.swipeDown,
-                swipeUp = gridItem.swipeUp,
-                onOpenAppDrawer = onOpenAppDrawer,
-            ),
+        modifier = modifier,
         horizontalAlignment = horizontalAlignment,
         verticalArrangement = verticalArrangement,
     ) {
-        Box(
-            modifier = Modifier
-                .size(gridItemSettings.iconSize.dp)
-                .padding(gridItemSettings.iconPadding.dp)
-                .alpha(alpha),
-        ) {
-            AsyncImage(
-                model = Builder(context).data(data.customIcon ?: icon)
-                    .addLastModifiedToFileCacheKey(true)
-                    .size(Size.ORIGINAL)
-                    .build(),
-                contentDescription = null,
-                modifier = Modifier
-                    .matchParentSize()
-                    .onGloballyPositioned {
-                        intOffset = it.positionInRoot().round()
-
-                        intSize = it.size
-                    }
-                    .gridItemScaleAnimation(
-                        enabled = animations,
-                        isVisibleOverlay = isVisibleOverlay,
-                        scale = scale,
-                    )
-                    .gridItemSharedElement(
-                        enabled = animations,
-                        sharedElementKey = sharedElementKey,
-                        sharedTransitionScope = sharedTransitionScope,
-                        visible = !isScrollInProgress && !hasInteraction,
-                    )
-                    .drawWithContent {
-                        graphicsLayer.record {
-                            this@drawWithContent.drawContent()
-                        }
-
-                        drawLayer(graphicsLayer)
-                    },
-            )
-
-            if (isNotificationAccessGranted && hasNotifications) {
-                Box(
-                    modifier = Modifier
-                        .size(gridItemSettings.iconSize.dp * 0.3f)
-                        .align(Alignment.TopEnd)
-                        .background(
-                            color = MaterialTheme.colorScheme.primary,
-                            shape = CircleShape,
-                        ),
-                )
-            }
-        }
-
-        if (gridItemSettings.showLabel) {
-            Text(
-                modifier = Modifier
-                    .padding(gridItemSettings.textPadding.dp)
-                    .alpha(alpha),
-                text = data.customLabel ?: data.label,
-                color = textColor,
-                textAlign = TextAlign.Center,
-                maxLines = maxLines,
-                fontSize = gridItemSettings.textSize.sp,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
+        icon()
+        label()
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun TopLabelBottomIcon(
-    modifier: Modifier = Modifier,
-    sharedTransitionScope: SharedTransitionScope,
-    data: GridItemData.ApplicationInfo,
-    icon: String?,
-    hasNotifications: Boolean,
-    isNotificationAccessGranted: Boolean,
-    gridItem: GridItem,
-    gridItemSettings: GridItemSettings,
-    isScrollInProgress: Boolean,
-    isVisibleFolders: Boolean,
-    isVisibleOverlay: Boolean,
-    sharedElementKey: SharedElementKey,
-    textColor: Color,
-    hasInteraction: Boolean,
-    isVisibleWhiteBox: Boolean,
-    sourceBounds: Rect,
-    animations: Boolean,
+    modifier: Modifier,
     horizontalAlignment: Alignment.Horizontal,
     verticalArrangement: Arrangement.Vertical,
-    maxLines: Int,
-    onOpenAppDrawer: () -> Unit,
-    onLongPressGridItem: (
-        gridItem: GridItem,
-        imageBitmap: ImageBitmap,
-        intOffset: IntOffset,
-        intSize: IntSize,
-        sharedElementKey: SharedElementKey,
-    ) -> Unit,
+    icon: @Composable () -> Unit,
+    label: @Composable () -> Unit,
 ) {
-    val androidLauncherAppsWrapper = LocalLauncherApps.current
-
-    val context = LocalContext.current
-
-    var intOffset by remember { mutableStateOf(IntOffset.Zero) }
-
-    var intSize by remember { mutableStateOf(IntSize.Zero) }
-
-    val graphicsLayer = rememberGraphicsLayer()
-
-    val scope = rememberCoroutineScope()
-
-    val alpha = if (hasInteraction) 0f else 1f
-
-    val scale = remember { Animatable(1f) }
-
-    val currentOnOpenAppDrawer by rememberUpdatedState(onOpenAppDrawer)
-    val currentOnLongPressGridItem by rememberUpdatedState(onLongPressGridItem)
-
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(gridItemSettings.padding.dp)
-            .background(
-                color = Color(gridItemSettings.customBackgroundColor),
-                shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
-            )
-            .whiteBox(
-                textColor = textColor,
-                visible = isVisibleWhiteBox && !isVisibleFolders,
-            )
-            .pointerInput(key1 = isVisibleOverlay) {
-                detectTapGestures(
-                    onDoubleTap = if (!isVisibleOverlay) {
-                        {
-                            onDoubleTap(
-                                context = context,
-                                doubleTap = gridItem.doubleTap,
-                                launcherApps = androidLauncherAppsWrapper,
-                                onOpenAppDrawer = currentOnOpenAppDrawer,
-                            )
-                        }
-                    } else {
-                        null
-                    },
-                    onLongPress = if (!isVisibleOverlay) {
-                        {
-                            scope.launch {
-                                currentOnLongPressGridItem(
-                                    gridItem,
-                                    graphicsLayer.toImageBitmap(),
-                                    intOffset,
-                                    intSize,
-                                    sharedElementKey,
-                                )
-                            }
-                        }
-                    } else {
-                        null
-                    },
-                    onTap = if (!isVisibleOverlay) {
-                        {
-                            androidLauncherAppsWrapper.startMainActivity(
-                                serialNumber = data.serialNumber,
-                                componentName = data.componentName,
-                                sourceBounds = sourceBounds,
-                            )
-                        }
-                    } else {
-                        null
-                    },
-                    onPress = {
-                        handleOnPress(
-                            animations = animations,
-                            scale = scale,
-                        )
-                    },
-                )
-            }
-            .swipeGestures(
-                swipeDown = gridItem.swipeDown,
-                swipeUp = gridItem.swipeUp,
-                onOpenAppDrawer = onOpenAppDrawer,
-            ),
+        modifier = modifier,
         horizontalAlignment = horizontalAlignment,
         verticalArrangement = verticalArrangement,
     ) {
-        if (gridItemSettings.showLabel) {
-            Text(
-                modifier = Modifier
-                    .padding(gridItemSettings.textPadding.dp)
-                    .alpha(alpha),
-                text = data.customLabel ?: data.label,
-                color = textColor,
-                textAlign = TextAlign.Center,
-                maxLines = maxLines,
-                fontSize = gridItemSettings.textSize.sp,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
-
-        Box(
-            modifier = Modifier
-                .size(gridItemSettings.iconSize.dp)
-                .padding(gridItemSettings.iconPadding.dp)
-                .alpha(alpha),
-        ) {
-            AsyncImage(
-                model = Builder(context).data(data.customIcon ?: icon)
-                    .addLastModifiedToFileCacheKey(true)
-                    .size(Size.ORIGINAL)
-                    .build(),
-                contentDescription = null,
-                modifier = Modifier
-                    .matchParentSize()
-                    .onGloballyPositioned {
-                        intOffset = it.positionInRoot().round()
-
-                        intSize = it.size
-                    }
-                    .gridItemScaleAnimation(
-                        enabled = animations,
-                        isVisibleOverlay = isVisibleOverlay,
-                        scale = scale,
-                    )
-                    .gridItemSharedElement(
-                        enabled = animations,
-                        sharedElementKey = sharedElementKey,
-                        sharedTransitionScope = sharedTransitionScope,
-                        visible = !isScrollInProgress && !hasInteraction,
-                    )
-                    .drawWithContent {
-                        graphicsLayer.record {
-                            this@drawWithContent.drawContent()
-                        }
-
-                        drawLayer(graphicsLayer)
-                    },
-            )
-
-            if (isNotificationAccessGranted && hasNotifications) {
-                Box(
-                    modifier = Modifier
-                        .size(gridItemSettings.iconSize.dp * 0.3f)
-                        .align(Alignment.TopEnd)
-                        .background(
-                            color = MaterialTheme.colorScheme.primary,
-                            shape = CircleShape,
-                        ),
-                )
-            }
-        }
+        label()
+        icon()
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun StartIconEndLabel(
-    modifier: Modifier = Modifier,
-    sharedTransitionScope: SharedTransitionScope,
-    data: GridItemData.ApplicationInfo,
-    icon: String?,
-    hasNotifications: Boolean,
-    isNotificationAccessGranted: Boolean,
-    gridItem: GridItem,
-    gridItemSettings: GridItemSettings,
-    isScrollInProgress: Boolean,
-    isVisibleFolders: Boolean,
-    isVisibleOverlay: Boolean,
-    sharedElementKey: SharedElementKey,
-    textColor: Color,
-    hasInteraction: Boolean,
-    isVisibleWhiteBox: Boolean,
-    sourceBounds: Rect,
-    animations: Boolean,
+    modifier: Modifier,
     horizontalArrangement: Arrangement.Horizontal,
     verticalAlignment: Alignment.Vertical,
-    maxLines: Int,
-    onOpenAppDrawer: () -> Unit,
-    onLongPressGridItem: (
-        gridItem: GridItem,
-        imageBitmap: ImageBitmap,
-        intOffset: IntOffset,
-        intSize: IntSize,
-        sharedElementKey: SharedElementKey,
-    ) -> Unit,
+    icon: @Composable () -> Unit,
+    label: @Composable () -> Unit,
 ) {
-    val androidLauncherAppsWrapper = LocalLauncherApps.current
-
-    val context = LocalContext.current
-
-    var intOffset by remember { mutableStateOf(IntOffset.Zero) }
-
-    var intSize by remember { mutableStateOf(IntSize.Zero) }
-
-    val graphicsLayer = rememberGraphicsLayer()
-
-    val scope = rememberCoroutineScope()
-
-    val alpha = if (hasInteraction) 0f else 1f
-
-    val scale = remember { Animatable(1f) }
-
-    val currentOnOpenAppDrawer by rememberUpdatedState(onOpenAppDrawer)
-    val currentOnLongPressGridItem by rememberUpdatedState(onLongPressGridItem)
-
     Row(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(gridItemSettings.padding.dp)
-            .background(
-                color = Color(gridItemSettings.customBackgroundColor),
-                shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
-            )
-            .whiteBox(
-                textColor = textColor,
-                visible = isVisibleWhiteBox && !isVisibleFolders,
-            )
-            .pointerInput(key1 = isVisibleOverlay) {
-                detectTapGestures(
-                    onDoubleTap = if (!isVisibleOverlay) {
-                        {
-                            onDoubleTap(
-                                context = context,
-                                doubleTap = gridItem.doubleTap,
-                                launcherApps = androidLauncherAppsWrapper,
-                                onOpenAppDrawer = currentOnOpenAppDrawer,
-                            )
-                        }
-                    } else {
-                        null
-                    },
-                    onLongPress = if (!isVisibleOverlay) {
-                        {
-                            scope.launch {
-                                currentOnLongPressGridItem(
-                                    gridItem,
-                                    graphicsLayer.toImageBitmap(),
-                                    intOffset,
-                                    intSize,
-                                    sharedElementKey,
-                                )
-                            }
-                        }
-                    } else {
-                        null
-                    },
-                    onTap = if (!isVisibleOverlay) {
-                        {
-                            androidLauncherAppsWrapper.startMainActivity(
-                                serialNumber = data.serialNumber,
-                                componentName = data.componentName,
-                                sourceBounds = sourceBounds,
-                            )
-                        }
-                    } else {
-                        null
-                    },
-                    onPress = {
-                        handleOnPress(
-                            animations = animations,
-                            scale = scale,
-                        )
-                    },
-                )
-            }
-            .swipeGestures(
-                swipeDown = gridItem.swipeDown,
-                swipeUp = gridItem.swipeUp,
-                onOpenAppDrawer = onOpenAppDrawer,
-            ),
+        modifier = modifier,
         horizontalArrangement = horizontalArrangement,
         verticalAlignment = verticalAlignment,
     ) {
-        Box(
-            modifier = Modifier
-                .size(gridItemSettings.iconSize.dp)
-                .padding(gridItemSettings.iconPadding.dp)
-                .alpha(alpha),
-        ) {
-            AsyncImage(
-                model = Builder(context).data(data.customIcon ?: icon)
-                    .addLastModifiedToFileCacheKey(true)
-                    .size(Size.ORIGINAL)
-                    .build(),
-                contentDescription = null,
-                modifier = Modifier
-                    .matchParentSize()
-                    .onGloballyPositioned {
-                        intOffset = it.positionInRoot().round()
-
-                        intSize = it.size
-                    }
-                    .gridItemScaleAnimation(
-                        enabled = animations,
-                        isVisibleOverlay = isVisibleOverlay,
-                        scale = scale,
-                    )
-                    .gridItemSharedElement(
-                        enabled = animations,
-                        sharedElementKey = sharedElementKey,
-                        sharedTransitionScope = sharedTransitionScope,
-                        visible = !isScrollInProgress && !hasInteraction,
-                    )
-                    .drawWithContent {
-                        graphicsLayer.record {
-                            this@drawWithContent.drawContent()
-                        }
-
-                        drawLayer(graphicsLayer)
-                    },
-            )
-
-            if (isNotificationAccessGranted && hasNotifications) {
-                Box(
-                    modifier = Modifier
-                        .size(gridItemSettings.iconSize.dp * 0.3f)
-                        .align(Alignment.TopEnd)
-                        .background(
-                            color = MaterialTheme.colorScheme.primary,
-                            shape = CircleShape,
-                        ),
-                )
-            }
-        }
-
-        if (gridItemSettings.showLabel) {
-            Text(
-                modifier = Modifier
-                    .padding(gridItemSettings.textPadding.dp)
-                    .alpha(alpha),
-                text = data.customLabel ?: data.label,
-                color = textColor,
-                textAlign = TextAlign.Center,
-                maxLines = maxLines,
-                fontSize = gridItemSettings.textSize.sp,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
+        icon()
+        label()
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun StartLabelEndIcon(
-    modifier: Modifier = Modifier,
-    sharedTransitionScope: SharedTransitionScope,
-    data: GridItemData.ApplicationInfo,
-    icon: String?,
-    hasNotifications: Boolean,
-    isNotificationAccessGranted: Boolean,
-    gridItem: GridItem,
-    gridItemSettings: GridItemSettings,
-    isScrollInProgress: Boolean,
-    isVisibleFolders: Boolean,
-    isVisibleOverlay: Boolean,
-    sharedElementKey: SharedElementKey,
-    textColor: Color,
-    hasInteraction: Boolean,
-    isVisibleWhiteBox: Boolean,
-    sourceBounds: Rect,
-    animations: Boolean,
+    modifier: Modifier,
     horizontalArrangement: Arrangement.Horizontal,
     verticalAlignment: Alignment.Vertical,
-    maxLines: Int,
-    onOpenAppDrawer: () -> Unit,
-    onLongPressGridItem: (
-        gridItem: GridItem,
-        imageBitmap: ImageBitmap,
-        intOffset: IntOffset,
-        intSize: IntSize,
-        sharedElementKey: SharedElementKey,
-    ) -> Unit,
+    icon: @Composable () -> Unit,
+    label: @Composable () -> Unit,
 ) {
-    val androidLauncherAppsWrapper = LocalLauncherApps.current
-
-    val context = LocalContext.current
-
-    var intOffset by remember { mutableStateOf(IntOffset.Zero) }
-
-    var intSize by remember { mutableStateOf(IntSize.Zero) }
-
-    val graphicsLayer = rememberGraphicsLayer()
-
-    val scope = rememberCoroutineScope()
-
-    val alpha = if (hasInteraction) 0f else 1f
-
-    val scale = remember { Animatable(1f) }
-
-    val currentOnOpenAppDrawer by rememberUpdatedState(onOpenAppDrawer)
-    val currentOnLongPressGridItem by rememberUpdatedState(onLongPressGridItem)
-
     Row(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(gridItemSettings.padding.dp)
-            .background(
-                color = Color(gridItemSettings.customBackgroundColor),
-                shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
-            )
-            .whiteBox(
-                textColor = textColor,
-                visible = isVisibleWhiteBox && !isVisibleFolders,
-            )
-            .pointerInput(key1 = isVisibleOverlay) {
-                detectTapGestures(
-                    onDoubleTap = if (!isVisibleOverlay) {
-                        {
-                            onDoubleTap(
-                                context = context,
-                                doubleTap = gridItem.doubleTap,
-                                launcherApps = androidLauncherAppsWrapper,
-                                onOpenAppDrawer = currentOnOpenAppDrawer,
-                            )
-                        }
-                    } else {
-                        null
-                    },
-                    onLongPress = if (!isVisibleOverlay) {
-                        {
-                            scope.launch {
-                                currentOnLongPressGridItem(
-                                    gridItem,
-                                    graphicsLayer.toImageBitmap(),
-                                    intOffset,
-                                    intSize,
-                                    sharedElementKey,
-                                )
-                            }
-                        }
-                    } else {
-                        null
-                    },
-                    onTap = if (!isVisibleOverlay) {
-                        {
-                            androidLauncherAppsWrapper.startMainActivity(
-                                serialNumber = data.serialNumber,
-                                componentName = data.componentName,
-                                sourceBounds = sourceBounds,
-                            )
-                        }
-                    } else {
-                        null
-                    },
-                    onPress = {
-                        handleOnPress(
-                            animations = animations,
-                            scale = scale,
-                        )
-                    },
-                )
-            }
-            .swipeGestures(
-                swipeDown = gridItem.swipeDown,
-                swipeUp = gridItem.swipeUp,
-                onOpenAppDrawer = onOpenAppDrawer,
-            ),
+        modifier = modifier,
         horizontalArrangement = horizontalArrangement,
         verticalAlignment = verticalAlignment,
     ) {
-        if (gridItemSettings.showLabel) {
-            Text(
-                modifier = Modifier
-                    .padding(gridItemSettings.textPadding.dp)
-                    .alpha(alpha),
-                text = data.customLabel ?: data.label,
-                color = textColor,
-                textAlign = TextAlign.Center,
-                maxLines = maxLines,
-                fontSize = gridItemSettings.textSize.sp,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
-
-        Box(
-            modifier = Modifier
-                .size(gridItemSettings.iconSize.dp)
-                .padding(gridItemSettings.iconPadding.dp)
-                .alpha(alpha),
-        ) {
-            AsyncImage(
-                model = Builder(context).data(data.customIcon ?: icon)
-                    .addLastModifiedToFileCacheKey(true)
-                    .size(Size.ORIGINAL)
-                    .build(),
-                contentDescription = null,
-                modifier = Modifier
-                    .matchParentSize()
-                    .onGloballyPositioned {
-                        intOffset = it.positionInRoot().round()
-
-                        intSize = it.size
-                    }
-                    .gridItemScaleAnimation(
-                        enabled = animations,
-                        isVisibleOverlay = isVisibleOverlay,
-                        scale = scale,
-                    )
-                    .gridItemSharedElement(
-                        enabled = animations,
-                        sharedElementKey = sharedElementKey,
-                        sharedTransitionScope = sharedTransitionScope,
-                        visible = !isScrollInProgress && !hasInteraction,
-                    )
-                    .drawWithContent {
-                        graphicsLayer.record {
-                            this@drawWithContent.drawContent()
-                        }
-
-                        drawLayer(graphicsLayer)
-                    },
-            )
-
-            if (isNotificationAccessGranted && hasNotifications) {
-                Box(
-                    modifier = Modifier
-                        .size(gridItemSettings.iconSize.dp * 0.3f)
-                        .align(Alignment.TopEnd)
-                        .background(
-                            color = MaterialTheme.colorScheme.primary,
-                            shape = CircleShape,
-                        ),
-                )
-            }
-        }
+        label()
+        icon()
     }
 }

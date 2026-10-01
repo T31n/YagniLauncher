@@ -60,8 +60,11 @@ internal fun ShortcutInfoGridItem(
     verticalAlignment: Alignment.Vertical,
     maxLines: Int,
 ) {
+    val context = LocalContext.current
+
     val customIcon = data.customIcon ?: data.icon
     val customShortLabel = data.customShortLabel ?: data.shortLabel
+
     val alpha = if (hasShortcutHostPermission && data.isEnabled) 1f else 0.3f
 
     val itemModifier = modifier
@@ -72,61 +75,90 @@ internal fun ShortcutInfoGridItem(
             shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
         )
 
+    val iconContent: @Composable () -> Unit = {
+        Box(
+            modifier = Modifier
+                .size(gridItemSettings.iconSize.dp)
+                .padding(gridItemSettings.iconPadding.dp),
+        ) {
+            AsyncImage(
+                model = Builder(context)
+                    .data(customIcon)
+                    .addLastModifiedToFileCacheKey(true)
+                    .size(Size.ORIGINAL)
+                    .build(),
+                contentDescription = null,
+                modifier = Modifier
+                    .matchParentSize()
+                    .alpha(alpha),
+            )
+
+            AsyncImage(
+                model = Builder(context)
+                    .data(data.eblanApplicationInfoIcon)
+                    .addLastModifiedToFileCacheKey(true)
+                    .size(Size.ORIGINAL)
+                    .build(),
+                modifier = Modifier
+                    .size((gridItemSettings.iconSize * 0.25).dp)
+                    .align(Alignment.BottomEnd)
+                    .alpha(alpha),
+                contentDescription = null,
+            )
+        }
+    }
+
+    val labelContent: @Composable () -> Unit = {
+        if (gridItemSettings.showLabel) {
+            Text(
+                modifier = Modifier
+                    .padding(gridItemSettings.textPadding.dp)
+                    .alpha(alpha),
+                text = customShortLabel,
+                color = textColor,
+                textAlign = TextAlign.Center,
+                maxLines = maxLines,
+                fontSize = gridItemSettings.textSize.sp,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+    }
+
     when (gridItemSettings.layoutType) {
         LayoutType.TopIconBottomLabel ->
             TopIconBottomLabel(
                 modifier = itemModifier,
-                data = data,
-                icon = customIcon,
-                shortLabel = customShortLabel,
-                gridItemSettings = gridItemSettings,
-                textColor = textColor,
-                alpha = alpha,
                 horizontalAlignment = horizontalAlignment,
                 verticalArrangement = verticalArrangement,
-                maxLines = maxLines,
+                icon = iconContent,
+                label = labelContent,
             )
 
         LayoutType.TopLabelBottomIcon ->
             TopLabelBottomIcon(
                 modifier = itemModifier,
-                data = data,
-                icon = customIcon,
-                shortLabel = customShortLabel,
-                gridItemSettings = gridItemSettings,
-                textColor = textColor,
-                alpha = alpha,
                 horizontalAlignment = horizontalAlignment,
                 verticalArrangement = verticalArrangement,
-                maxLines = maxLines,
+                icon = iconContent,
+                label = labelContent,
             )
 
         LayoutType.StartIconEndLabel ->
             StartIconEndLabel(
                 modifier = itemModifier,
-                data = data,
-                icon = customIcon,
-                shortLabel = customShortLabel,
-                gridItemSettings = gridItemSettings,
-                textColor = textColor,
-                alpha = alpha,
                 horizontalArrangement = horizontalArrangement,
                 verticalAlignment = verticalAlignment,
-                maxLines = maxLines,
+                icon = iconContent,
+                label = labelContent,
             )
 
         LayoutType.StartLabelEndIcon ->
             StartLabelEndIcon(
                 modifier = itemModifier,
-                data = data,
-                icon = customIcon,
-                shortLabel = customShortLabel,
-                gridItemSettings = gridItemSettings,
-                textColor = textColor,
-                alpha = alpha,
                 horizontalArrangement = horizontalArrangement,
                 verticalAlignment = verticalAlignment,
-                maxLines = maxLines,
+                icon = iconContent,
+                label = labelContent,
             )
     }
 }
@@ -134,203 +166,71 @@ internal fun ShortcutInfoGridItem(
 @Composable
 private fun TopIconBottomLabel(
     modifier: Modifier = Modifier,
-    data: GridItemData.ShortcutInfo,
-    icon: String?,
-    shortLabel: String,
-    gridItemSettings: GridItemSettings,
-    textColor: Color,
-    alpha: Float,
     horizontalAlignment: Alignment.Horizontal,
     verticalArrangement: Arrangement.Vertical,
-    maxLines: Int,
+    icon: @Composable () -> Unit,
+    label: @Composable () -> Unit,
 ) {
     Column(
         modifier = modifier,
         horizontalAlignment = horizontalAlignment,
         verticalArrangement = verticalArrangement,
     ) {
-        ShortcutInfoIcon(
-            data = data,
-            icon = icon,
-            gridItemSettings = gridItemSettings,
-            alpha = alpha,
-        )
-
-        ShortcutInfoLabel(
-            shortLabel = shortLabel,
-            gridItemSettings = gridItemSettings,
-            textColor = textColor,
-            alpha = alpha,
-            maxLines = maxLines,
-        )
+        icon()
+        label()
     }
 }
 
 @Composable
 private fun TopLabelBottomIcon(
     modifier: Modifier = Modifier,
-    data: GridItemData.ShortcutInfo,
-    icon: String?,
-    shortLabel: String,
-    gridItemSettings: GridItemSettings,
-    textColor: Color,
-    alpha: Float,
     horizontalAlignment: Alignment.Horizontal,
     verticalArrangement: Arrangement.Vertical,
-    maxLines: Int,
+    icon: @Composable () -> Unit,
+    label: @Composable () -> Unit,
 ) {
     Column(
         modifier = modifier,
         horizontalAlignment = horizontalAlignment,
         verticalArrangement = verticalArrangement,
     ) {
-        ShortcutInfoLabel(
-            shortLabel = shortLabel,
-            gridItemSettings = gridItemSettings,
-            textColor = textColor,
-            alpha = alpha,
-            maxLines = maxLines,
-        )
-
-        ShortcutInfoIcon(
-            data = data,
-            icon = icon,
-            gridItemSettings = gridItemSettings,
-            alpha = alpha,
-        )
+        label()
+        icon()
     }
 }
 
 @Composable
 private fun StartIconEndLabel(
     modifier: Modifier = Modifier,
-    data: GridItemData.ShortcutInfo,
-    icon: String?,
-    shortLabel: String,
-    gridItemSettings: GridItemSettings,
-    textColor: Color,
-    alpha: Float,
     horizontalArrangement: Arrangement.Horizontal,
     verticalAlignment: Alignment.Vertical,
-    maxLines: Int,
+    icon: @Composable () -> Unit,
+    label: @Composable () -> Unit,
 ) {
     Row(
         modifier = modifier,
         horizontalArrangement = horizontalArrangement,
         verticalAlignment = verticalAlignment,
     ) {
-        ShortcutInfoIcon(
-            data = data,
-            icon = icon,
-            gridItemSettings = gridItemSettings,
-            alpha = alpha,
-        )
-
-        ShortcutInfoLabel(
-            shortLabel = shortLabel,
-            gridItemSettings = gridItemSettings,
-            textColor = textColor,
-            alpha = alpha,
-            maxLines = maxLines,
-        )
+        icon()
+        label()
     }
 }
 
 @Composable
 private fun StartLabelEndIcon(
     modifier: Modifier = Modifier,
-    data: GridItemData.ShortcutInfo,
-    icon: String?,
-    shortLabel: String,
-    gridItemSettings: GridItemSettings,
-    textColor: Color,
-    alpha: Float,
     horizontalArrangement: Arrangement.Horizontal,
     verticalAlignment: Alignment.Vertical,
-    maxLines: Int,
+    icon: @Composable () -> Unit,
+    label: @Composable () -> Unit,
 ) {
     Row(
         modifier = modifier,
         horizontalArrangement = horizontalArrangement,
         verticalAlignment = verticalAlignment,
     ) {
-        ShortcutInfoLabel(
-            shortLabel = shortLabel,
-            gridItemSettings = gridItemSettings,
-            textColor = textColor,
-            alpha = alpha,
-            maxLines = maxLines,
-        )
-
-        ShortcutInfoIcon(
-            data = data,
-            icon = icon,
-            gridItemSettings = gridItemSettings,
-            alpha = alpha,
-        )
-    }
-}
-
-@Composable
-private fun ShortcutInfoIcon(
-    data: GridItemData.ShortcutInfo,
-    icon: String?,
-    gridItemSettings: GridItemSettings,
-    alpha: Float,
-) {
-    val context = LocalContext.current
-
-    Box(
-        modifier = Modifier
-            .size(gridItemSettings.iconSize.dp)
-            .padding(gridItemSettings.iconPadding.dp),
-    ) {
-        AsyncImage(
-            model = Builder(context)
-                .data(icon)
-                .addLastModifiedToFileCacheKey(true)
-                .size(Size.ORIGINAL)
-                .build(),
-            contentDescription = null,
-            modifier = Modifier
-                .matchParentSize()
-                .alpha(alpha),
-        )
-
-        AsyncImage(
-            model = Builder(context)
-                .data(data.eblanApplicationInfoIcon)
-                .addLastModifiedToFileCacheKey(true)
-                .size(Size.ORIGINAL)
-                .build(),
-            modifier = Modifier
-                .size((gridItemSettings.iconSize * 0.25).dp)
-                .align(Alignment.BottomEnd)
-                .alpha(alpha),
-            contentDescription = null,
-        )
-    }
-}
-
-@Composable
-private fun ShortcutInfoLabel(
-    shortLabel: String,
-    gridItemSettings: GridItemSettings,
-    textColor: Color,
-    alpha: Float,
-    maxLines: Int,
-) {
-    if (gridItemSettings.showLabel) {
-        Text(
-            modifier = Modifier
-                .padding(gridItemSettings.textPadding.dp)
-                .alpha(alpha),
-            text = shortLabel,
-            color = textColor,
-            textAlign = TextAlign.Center,
-            maxLines = maxLines,
-            fontSize = gridItemSettings.textSize.sp,
-            overflow = TextOverflow.Ellipsis,
-        )
+        label()
+        icon()
     }
 }

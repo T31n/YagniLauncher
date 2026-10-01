@@ -78,6 +78,8 @@ internal fun FolderGridItem(
     systemCustomTextColor: Int,
     folderCornerRadius: Int,
 ) {
+    val context = LocalContext.current
+
     val itemModifier = modifier
         .fillMaxSize()
         .padding(gridItemSettings.padding.dp)
@@ -86,85 +88,102 @@ internal fun FolderGridItem(
             shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
         )
 
+    val iconContent: @Composable () -> Unit = {
+        val iconModifier = Modifier
+            .size(gridItemSettings.iconSize.dp)
+            .padding(gridItemSettings.iconPadding.dp)
+
+        if (data.icon != null) {
+            AsyncImage(
+                model = Builder(context)
+                    .data(data.icon)
+                    .addLastModifiedToFileCacheKey(true)
+                    .size(Size.ORIGINAL)
+                    .build(),
+                contentDescription = null,
+                modifier = iconModifier,
+            )
+        } else {
+            Surface(
+                modifier = iconModifier,
+                shape = RoundedCornerShape(folderCornerRadius.dp),
+                color = when (folderBackgroundColor) {
+                    BackgroundColor.System -> MaterialTheme.colorScheme.surface
+                    BackgroundColor.Light -> Color.White
+                    BackgroundColor.Dark -> Color.Black
+                    BackgroundColor.Custom -> Color(customFolderBackgroundColor)
+                },
+            ) {
+                PreviewFolderGridLayout(
+                    modifier = Modifier.fillMaxSize(),
+                    gridItems = previewFolderGridItems[gridItem.id]?.previewFolderGridItems,
+                    slotId = { it.id },
+                    content = {
+                        PreviewFolderGridItem(
+                            gridItem = it,
+                            hasShortcutHostPermission = hasShortcutHostPermission,
+                            iconPackInfoFilePaths = iconPackInfoFilePaths,
+                            gridItemSettings = gridItemSettings,
+                            folderBackgroundColor = folderBackgroundColor,
+                            customFolderBackgroundColor = customFolderBackgroundColor,
+                            systemTextColor = systemTextColor,
+                            systemCustomTextColor = systemCustomTextColor,
+                        )
+                    },
+                )
+            }
+        }
+    }
+
+    val labelContent: @Composable () -> Unit = {
+        if (gridItemSettings.showLabel) {
+            Text(
+                modifier = Modifier.padding(gridItemSettings.textPadding.dp),
+                text = data.label,
+                color = textColor,
+                textAlign = TextAlign.Center,
+                maxLines = maxLines,
+                fontSize = gridItemSettings.textSize.sp,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+    }
+
     when (gridItemSettings.layoutType) {
         LayoutType.TopIconBottomLabel ->
             TopIconBottomLabel(
                 modifier = itemModifier,
-                gridItem = gridItem,
-                data = data,
-                gridItemSettings = gridItemSettings,
-                textColor = textColor,
-                previewFolderGridItems = previewFolderGridItems,
-                hasShortcutHostPermission = hasShortcutHostPermission,
-                iconPackInfoFilePaths = iconPackInfoFilePaths,
                 horizontalAlignment = horizontalAlignment,
                 verticalArrangement = verticalArrangement,
-                maxLines = maxLines,
-                folderBackgroundColor = folderBackgroundColor,
-                customFolderBackgroundColor = customFolderBackgroundColor,
-                systemTextColor = systemTextColor,
-                systemCustomTextColor = systemCustomTextColor,
-                folderCornerRadius = folderCornerRadius,
+                icon = iconContent,
+                label = labelContent,
             )
 
         LayoutType.TopLabelBottomIcon ->
             TopLabelBottomIcon(
                 modifier = itemModifier,
-                gridItem = gridItem,
-                data = data,
-                gridItemSettings = gridItemSettings,
-                textColor = textColor,
-                previewFolderGridItems = previewFolderGridItems,
-                hasShortcutHostPermission = hasShortcutHostPermission,
-                iconPackInfoFilePaths = iconPackInfoFilePaths,
                 horizontalAlignment = horizontalAlignment,
                 verticalArrangement = verticalArrangement,
-                maxLines = maxLines,
-                folderBackgroundColor = folderBackgroundColor,
-                customFolderBackgroundColor = customFolderBackgroundColor,
-                systemTextColor = systemTextColor,
-                systemCustomTextColor = systemCustomTextColor,
-                folderCornerRadius = folderCornerRadius,
+                icon = iconContent,
+                label = labelContent,
             )
 
         LayoutType.StartIconEndLabel ->
             StartIconEndLabel(
                 modifier = itemModifier,
-                gridItem = gridItem,
-                data = data,
-                gridItemSettings = gridItemSettings,
-                textColor = textColor,
-                previewFolderGridItems = previewFolderGridItems,
-                hasShortcutHostPermission = hasShortcutHostPermission,
-                iconPackInfoFilePaths = iconPackInfoFilePaths,
                 horizontalArrangement = horizontalArrangement,
                 verticalAlignment = verticalAlignment,
-                maxLines = maxLines,
-                folderBackgroundColor = folderBackgroundColor,
-                customFolderBackgroundColor = customFolderBackgroundColor,
-                systemTextColor = systemTextColor,
-                systemCustomTextColor = systemCustomTextColor,
-                folderCornerRadius = folderCornerRadius,
+                icon = iconContent,
+                label = labelContent,
             )
 
         LayoutType.StartLabelEndIcon ->
             StartLabelEndIcon(
                 modifier = itemModifier,
-                gridItem = gridItem,
-                data = data,
-                gridItemSettings = gridItemSettings,
-                textColor = textColor,
-                previewFolderGridItems = previewFolderGridItems,
-                hasShortcutHostPermission = hasShortcutHostPermission,
-                iconPackInfoFilePaths = iconPackInfoFilePaths,
                 horizontalArrangement = horizontalArrangement,
                 verticalAlignment = verticalAlignment,
-                maxLines = maxLines,
-                folderBackgroundColor = folderBackgroundColor,
-                customFolderBackgroundColor = customFolderBackgroundColor,
-                systemTextColor = systemTextColor,
-                systemCustomTextColor = systemCustomTextColor,
-                folderCornerRadius = folderCornerRadius,
+                icon = iconContent,
+                label = labelContent,
             )
     }
 }
@@ -172,268 +191,72 @@ internal fun FolderGridItem(
 @Composable
 private fun TopIconBottomLabel(
     modifier: Modifier = Modifier,
-    gridItem: GridItem,
-    data: GridItemData.Folder,
-    gridItemSettings: GridItemSettings,
-    textColor: Color,
-    previewFolderGridItems: Map<String, PreviewFolder>,
-    hasShortcutHostPermission: Boolean,
-    iconPackInfoFilePaths: Map<String, String?>,
     horizontalAlignment: Alignment.Horizontal,
     verticalArrangement: Arrangement.Vertical,
-    maxLines: Int,
-    folderBackgroundColor: BackgroundColor,
-    customFolderBackgroundColor: Int,
-    systemTextColor: TextColor,
-    systemCustomTextColor: Int,
-    folderCornerRadius: Int,
+    icon: @Composable () -> Unit,
+    label: @Composable () -> Unit,
 ) {
     Column(
         modifier = modifier,
         horizontalAlignment = horizontalAlignment,
         verticalArrangement = verticalArrangement,
     ) {
-        FolderIcon(
-            gridItem = gridItem,
-            data = data,
-            gridItemSettings = gridItemSettings,
-            previewFolderGridItems = previewFolderGridItems,
-            hasShortcutHostPermission = hasShortcutHostPermission,
-            iconPackInfoFilePaths = iconPackInfoFilePaths,
-            folderBackgroundColor = folderBackgroundColor,
-            customFolderBackgroundColor = customFolderBackgroundColor,
-            systemTextColor = systemTextColor,
-            systemCustomTextColor = systemCustomTextColor,
-            folderCornerRadius = folderCornerRadius,
-        )
-
-        FolderLabel(
-            data = data,
-            gridItemSettings = gridItemSettings,
-            textColor = textColor,
-            maxLines = maxLines,
-        )
+        icon()
+        label()
     }
 }
 
 @Composable
 private fun TopLabelBottomIcon(
     modifier: Modifier = Modifier,
-    gridItem: GridItem,
-    data: GridItemData.Folder,
-    gridItemSettings: GridItemSettings,
-    textColor: Color,
-    previewFolderGridItems: Map<String, PreviewFolder>,
-    hasShortcutHostPermission: Boolean,
-    iconPackInfoFilePaths: Map<String, String?>,
     horizontalAlignment: Alignment.Horizontal,
     verticalArrangement: Arrangement.Vertical,
-    maxLines: Int,
-    folderBackgroundColor: BackgroundColor,
-    customFolderBackgroundColor: Int,
-    systemTextColor: TextColor,
-    systemCustomTextColor: Int,
-    folderCornerRadius: Int,
+    icon: @Composable () -> Unit,
+    label: @Composable () -> Unit,
 ) {
     Column(
         modifier = modifier,
         horizontalAlignment = horizontalAlignment,
         verticalArrangement = verticalArrangement,
     ) {
-        FolderLabel(
-            data = data,
-            gridItemSettings = gridItemSettings,
-            textColor = textColor,
-            maxLines = maxLines,
-        )
-
-        FolderIcon(
-            gridItem = gridItem,
-            data = data,
-            gridItemSettings = gridItemSettings,
-            previewFolderGridItems = previewFolderGridItems,
-            hasShortcutHostPermission = hasShortcutHostPermission,
-            iconPackInfoFilePaths = iconPackInfoFilePaths,
-            folderBackgroundColor = folderBackgroundColor,
-            customFolderBackgroundColor = customFolderBackgroundColor,
-            systemTextColor = systemTextColor,
-            systemCustomTextColor = systemCustomTextColor,
-            folderCornerRadius = folderCornerRadius,
-        )
+        label()
+        icon()
     }
 }
 
 @Composable
 private fun StartIconEndLabel(
     modifier: Modifier = Modifier,
-    gridItem: GridItem,
-    data: GridItemData.Folder,
-    gridItemSettings: GridItemSettings,
-    textColor: Color,
-    previewFolderGridItems: Map<String, PreviewFolder>,
-    hasShortcutHostPermission: Boolean,
-    iconPackInfoFilePaths: Map<String, String?>,
     horizontalArrangement: Arrangement.Horizontal,
     verticalAlignment: Alignment.Vertical,
-    maxLines: Int,
-    folderBackgroundColor: BackgroundColor,
-    customFolderBackgroundColor: Int,
-    systemTextColor: TextColor,
-    systemCustomTextColor: Int,
-    folderCornerRadius: Int,
+    icon: @Composable () -> Unit,
+    label: @Composable () -> Unit,
 ) {
     Row(
         modifier = modifier,
         horizontalArrangement = horizontalArrangement,
         verticalAlignment = verticalAlignment,
     ) {
-        FolderIcon(
-            gridItem = gridItem,
-            data = data,
-            gridItemSettings = gridItemSettings,
-            previewFolderGridItems = previewFolderGridItems,
-            hasShortcutHostPermission = hasShortcutHostPermission,
-            iconPackInfoFilePaths = iconPackInfoFilePaths,
-            folderBackgroundColor = folderBackgroundColor,
-            customFolderBackgroundColor = customFolderBackgroundColor,
-            systemTextColor = systemTextColor,
-            systemCustomTextColor = systemCustomTextColor,
-            folderCornerRadius = folderCornerRadius,
-        )
-
-        FolderLabel(
-            data = data,
-            gridItemSettings = gridItemSettings,
-            textColor = textColor,
-            maxLines = maxLines,
-        )
+        icon()
+        label()
     }
 }
 
 @Composable
 private fun StartLabelEndIcon(
     modifier: Modifier = Modifier,
-    gridItem: GridItem,
-    data: GridItemData.Folder,
-    gridItemSettings: GridItemSettings,
-    textColor: Color,
-    previewFolderGridItems: Map<String, PreviewFolder>,
-    hasShortcutHostPermission: Boolean,
-    iconPackInfoFilePaths: Map<String, String?>,
     horizontalArrangement: Arrangement.Horizontal,
     verticalAlignment: Alignment.Vertical,
-    maxLines: Int,
-    folderBackgroundColor: BackgroundColor,
-    customFolderBackgroundColor: Int,
-    systemTextColor: TextColor,
-    systemCustomTextColor: Int,
-    folderCornerRadius: Int,
+    icon: @Composable () -> Unit,
+    label: @Composable () -> Unit,
 ) {
     Row(
         modifier = modifier,
         horizontalArrangement = horizontalArrangement,
         verticalAlignment = verticalAlignment,
     ) {
-        FolderLabel(
-            data = data,
-            gridItemSettings = gridItemSettings,
-            textColor = textColor,
-            maxLines = maxLines,
-        )
-
-        FolderIcon(
-            gridItem = gridItem,
-            data = data,
-            gridItemSettings = gridItemSettings,
-            previewFolderGridItems = previewFolderGridItems,
-            hasShortcutHostPermission = hasShortcutHostPermission,
-            iconPackInfoFilePaths = iconPackInfoFilePaths,
-            folderBackgroundColor = folderBackgroundColor,
-            customFolderBackgroundColor = customFolderBackgroundColor,
-            systemTextColor = systemTextColor,
-            systemCustomTextColor = systemCustomTextColor,
-            folderCornerRadius = folderCornerRadius,
-        )
-    }
-}
-
-@Composable
-private fun FolderIcon(
-    gridItem: GridItem,
-    data: GridItemData.Folder,
-    gridItemSettings: GridItemSettings,
-    previewFolderGridItems: Map<String, PreviewFolder>,
-    hasShortcutHostPermission: Boolean,
-    iconPackInfoFilePaths: Map<String, String?>,
-    folderBackgroundColor: BackgroundColor,
-    customFolderBackgroundColor: Int,
-    systemTextColor: TextColor,
-    systemCustomTextColor: Int,
-    folderCornerRadius: Int,
-) {
-    val modifier = Modifier
-        .size(gridItemSettings.iconSize.dp)
-        .padding(gridItemSettings.iconPadding.dp)
-
-    if (data.icon != null) {
-        AsyncImage(
-            model = Builder(LocalContext.current)
-                .data(data.icon)
-                .addLastModifiedToFileCacheKey(true)
-                .size(Size.ORIGINAL)
-                .build(),
-            contentDescription = null,
-            modifier = modifier,
-        )
-    } else {
-        Surface(
-            modifier = modifier,
-            shape = RoundedCornerShape(folderCornerRadius.dp),
-            color = when (folderBackgroundColor) {
-                BackgroundColor.System -> MaterialTheme.colorScheme.surface
-                BackgroundColor.Light -> Color.White
-                BackgroundColor.Dark -> Color.Black
-                BackgroundColor.Custom -> Color(customFolderBackgroundColor)
-            },
-        ) {
-            PreviewFolderGridLayout(
-                modifier = Modifier.fillMaxSize(),
-                gridItems = previewFolderGridItems[gridItem.id]?.previewFolderGridItems,
-                slotId = { it.id },
-                content = {
-                    PreviewFolderGridItem(
-                        gridItem = it,
-                        hasShortcutHostPermission = hasShortcutHostPermission,
-                        iconPackInfoFilePaths = iconPackInfoFilePaths,
-                        gridItemSettings = gridItemSettings,
-                        folderBackgroundColor = folderBackgroundColor,
-                        customFolderBackgroundColor = customFolderBackgroundColor,
-                        systemTextColor = systemTextColor,
-                        systemCustomTextColor = systemCustomTextColor,
-                    )
-                },
-            )
-        }
-    }
-}
-
-@Composable
-private fun FolderLabel(
-    data: GridItemData.Folder,
-    gridItemSettings: GridItemSettings,
-    textColor: Color,
-    maxLines: Int,
-) {
-    if (gridItemSettings.showLabel) {
-        Text(
-            modifier = Modifier.padding(gridItemSettings.textPadding.dp),
-            text = data.label,
-            color = textColor,
-            textAlign = TextAlign.Center,
-            maxLines = maxLines,
-            fontSize = gridItemSettings.textSize.sp,
-            overflow = TextOverflow.Ellipsis,
-        )
+        label()
+        icon()
     }
 }
 

@@ -137,1177 +137,321 @@ internal fun InteractiveFolderGridItem(
     ) -> Unit,
     onTapFolderGridItem: (FolderEntry) -> Unit,
 ) {
+    val launcherApps = LocalLauncherApps.current
+    val context = LocalContext.current
+
+    var intOffset by remember { mutableStateOf(IntOffset.Zero) }
+    var intSize by remember { mutableStateOf(IntSize.Zero) }
+
+    val graphicsLayer = rememberGraphicsLayer()
+
+    val scope = rememberCoroutineScope()
+
+    val scale = remember { Animatable(1f) }
+
+    val currentDrag = rememberUpdatedState(drag)
+    val currentIsDragging = rememberUpdatedState(isDragging)
+    val currentIsVisibleOverlay = rememberUpdatedState(isVisibleOverlay)
+    val currentGridItem = rememberUpdatedState(gridItem)
+    val currentLockMovement = rememberUpdatedState(lockMovement)
+    val currentFolderGridItems =
+        rememberUpdatedState(previewFolderGridItems[gridItem.id]?.folderGridItems)
+    val currentOnOpenAppDrawer by rememberUpdatedState(onOpenAppDrawer)
+    val currentOnLongPressGridItem by rememberUpdatedState(onLongPressGridItem)
+    val currentOnTapFolderGridItem by rememberUpdatedState(onTapFolderGridItem)
+    val currentOnShowFolderWhenDragging by rememberUpdatedState(onShowFolderWhenDragging)
+
     val textAlpha = if (hasInteraction) 0f else 1f
     val iconAlpha = if (hasInteraction || isVisibleFolder) 0f else 1f
+
+    LaunchedEffect(key1 = moveGridItemResult) {
+        handleConflictingGridItem(
+            drag = currentDrag,
+            isDragging = currentIsDragging,
+            isVisibleOverlay = currentIsVisibleOverlay,
+            moveGridItemResult = moveGridItemResult,
+            lockMovement = currentLockMovement,
+            intOffset = intOffset,
+            intSize = intSize,
+            gridItem = currentGridItem,
+            folderGridItems = currentFolderGridItems,
+            onShowFolderWhenDragging = currentOnShowFolderWhenDragging,
+        )
+    }
+
+    val itemModifier = modifier
+        .fillMaxSize()
+        .padding(gridItemSettings.padding.dp)
+        .background(
+            color = Color(gridItemSettings.customBackgroundColor),
+            shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
+        )
+        .whiteBox(
+            textColor = textColor,
+            visible = isVisibleWhiteBox && !isVisibleFolder,
+        )
+        .pointerInput(key1 = isVisibleOverlay) {
+            detectTapGestures(
+                onDoubleTap = if (!isVisibleOverlay) {
+                    {
+                        onDoubleTap(
+                            context = context,
+                            doubleTap = gridItem.doubleTap,
+                            launcherApps = launcherApps,
+                            onOpenAppDrawer = currentOnOpenAppDrawer,
+                        )
+                    }
+                } else {
+                    null
+                },
+                onLongPress = if (!isVisibleOverlay) {
+                    {
+                        scope.launch {
+                            currentOnLongPressGridItem(
+                                gridItem,
+                                graphicsLayer.toImageBitmap(),
+                                intOffset,
+                                intSize,
+                                sharedElementKey,
+                            )
+                        }
+                    }
+                } else {
+                    null
+                },
+                onTap = if (!isVisibleOverlay) {
+                    {
+                        currentOnTapFolderGridItem(
+                            FolderEntry(
+                                id = gridItem.id,
+                                x = intOffset.x,
+                                y = intOffset.y,
+                                width = intSize.width,
+                                height = intSize.height,
+                                isCloseFolder = false,
+                            ),
+                        )
+                    }
+                } else {
+                    null
+                },
+                onPress = {
+                    handleOnPress(
+                        animations = animations,
+                        scale = scale,
+                    )
+                },
+            )
+        }
+        .swipeGestures(
+            swipeDown = gridItem.swipeDown,
+            swipeUp = gridItem.swipeUp,
+            onOpenAppDrawer = onOpenAppDrawer,
+        )
+
+    val iconContent: @Composable () -> Unit = {
+        val commonModifier = Modifier
+            .size(gridItemSettings.iconSize.dp)
+            .padding(gridItemSettings.iconPadding.dp)
+            .onGloballyPositioned(
+                onGloballyPositioned = {
+                    intOffset = it.positionInRoot().round()
+                    intSize = it.size
+                },
+            )
+            .gridItemScaleAnimation(
+                enabled = animations,
+                isVisibleOverlay = isVisibleOverlay,
+                scale = scale,
+            )
+            .gridItemSharedElement(
+                enabled = animations,
+                sharedElementKey = sharedElementKey,
+                sharedTransitionScope = sharedTransitionScope,
+                visible = !isScrollInProgress && !hasInteraction,
+            )
+            .drawWithContent {
+                graphicsLayer.record {
+                    this@drawWithContent.drawContent()
+                }
+                drawLayer(graphicsLayer = graphicsLayer)
+            }
+            .alpha(alpha = iconAlpha)
+        if (data.icon != null) {
+            AsyncImage(
+                model = data.icon,
+                contentDescription = null,
+                modifier = commonModifier,
+            )
+        } else {
+            Surface(
+                modifier = commonModifier,
+                shape = RoundedCornerShape(folderCornerRadius.dp),
+                color = when (folderBackgroundColor) {
+                    BackgroundColor.System -> MaterialTheme.colorScheme.surface
+                    BackgroundColor.Light -> Color.White
+                    BackgroundColor.Dark -> Color.Black
+                    BackgroundColor.Custom -> Color(color = customFolderBackgroundColor)
+                },
+            ) {
+                PreviewFolderGridLayout(
+                    modifier = Modifier.fillMaxSize(),
+                    gridItems = previewFolderGridItems[gridItem.id]?.previewFolderGridItems,
+                    slotId = { it.id },
+                    content = {
+                        PreviewFolderGridItem(
+                            sharedTransitionScope = sharedTransitionScope,
+                            gridItem = it,
+                            isScrollInProgress = isScrollInProgress,
+                            isVisibleOverlay = isVisibleOverlay,
+                            parent = sharedElementKey.parent,
+                            moveGridItemResult = moveGridItemResult,
+                            drag = drag,
+                            folderGridItems = previewFolderGridItems[gridItem.id]?.folderGridItems,
+                            isVisibleFolders = isVisibleFolder,
+                            hasShortcutHostPermission = hasShortcutHostPermission,
+                            iconPackInfoFilePaths = iconPackInfoFilePaths,
+                            gridItemSettings = gridItemSettings,
+                            folderBackgroundColor = folderBackgroundColor,
+                            customFolderBackgroundColor = customFolderBackgroundColor,
+                            systemTextColor = systemTextColor,
+                            systemCustomTextColor = systemCustomTextColor,
+                            onResetGrid = onResetGrid,
+                        )
+                    },
+                )
+            }
+        }
+    }
+
+    val labelContent: @Composable () -> Unit = {
+        if (gridItemSettings.showLabel) {
+            Text(
+                modifier = Modifier
+                    .padding(gridItemSettings.textPadding.dp)
+                    .alpha(alpha = textAlpha),
+                text = data.label,
+                color = textColor,
+                textAlign = TextAlign.Center,
+                maxLines = maxLines,
+                fontSize = gridItemSettings.textSize.sp,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+    }
 
     when (gridItemSettings.layoutType) {
         LayoutType.TopIconBottomLabel -> {
             TopIconBottomLabel(
-                modifier = modifier,
-                sharedTransitionScope = sharedTransitionScope,
-                data = data,
-                drag = drag,
-                gridItem = gridItem,
-                gridItemSettings = gridItemSettings,
-                isScrollInProgress = isScrollInProgress,
-                isVisibleFolder = isVisibleFolder,
-                textAlpha = textAlpha,
-                iconAlpha = iconAlpha,
-                isVisibleOverlay = isVisibleOverlay,
-                sharedElementKey = sharedElementKey,
-                textColor = textColor,
-                moveGridItemResult = moveGridItemResult,
-                lockMovement = lockMovement,
-                isDragging = isDragging,
-                hasInteraction = hasInteraction,
-                isVisibleWhiteBox = isVisibleWhiteBox,
-                previewFolderGridItems = previewFolderGridItems,
-                hasShortcutHostPermission = hasShortcutHostPermission,
-                iconPackInfoFilePaths = iconPackInfoFilePaths,
-                animations = animations,
-                folderCornerRadius = folderCornerRadius,
-                folderBackgroundColor = folderBackgroundColor,
-                customFolderBackgroundColor = customFolderBackgroundColor,
-                systemTextColor = systemTextColor,
+                modifier = itemModifier,
                 horizontalAlignment = horizontalAlignment,
                 verticalArrangement = verticalArrangement,
-                maxLines = maxLines,
-                systemCustomTextColor = systemCustomTextColor,
-                onOpenAppDrawer = onOpenAppDrawer,
-                onShowFolderWhenDragging = onShowFolderWhenDragging,
-                onResetGrid = onResetGrid,
-                onLongPressGridItem = onLongPressGridItem,
-                onTapFolderGridItem = onTapFolderGridItem,
+                icon = iconContent,
+                label = labelContent,
             )
         }
 
         LayoutType.TopLabelBottomIcon -> {
             TopLabelBottomIcon(
-                modifier = modifier,
-                sharedTransitionScope = sharedTransitionScope,
-                data = data,
-                drag = drag,
-                gridItem = gridItem,
-                gridItemSettings = gridItemSettings,
-                isScrollInProgress = isScrollInProgress,
-                isVisibleFolder = isVisibleFolder,
-                textAlpha = textAlpha,
-                iconAlpha = iconAlpha,
-                isVisibleOverlay = isVisibleOverlay,
-                sharedElementKey = sharedElementKey,
-                textColor = textColor,
-                moveGridItemResult = moveGridItemResult,
-                lockMovement = lockMovement,
-                isDragging = isDragging,
-                hasInteraction = hasInteraction,
-                isVisibleWhiteBox = isVisibleWhiteBox,
-                previewFolderGridItems = previewFolderGridItems,
-                hasShortcutHostPermission = hasShortcutHostPermission,
-                iconPackInfoFilePaths = iconPackInfoFilePaths,
-                animations = animations,
-                folderCornerRadius = folderCornerRadius,
-                folderBackgroundColor = folderBackgroundColor,
-                customFolderBackgroundColor = customFolderBackgroundColor,
-                systemTextColor = systemTextColor,
+                modifier = itemModifier,
                 horizontalAlignment = horizontalAlignment,
                 verticalArrangement = verticalArrangement,
-                maxLines = maxLines,
-                systemCustomTextColor = systemCustomTextColor,
-                onOpenAppDrawer = onOpenAppDrawer,
-                onShowFolderWhenDragging = onShowFolderWhenDragging,
-                onResetGrid = onResetGrid,
-                onLongPressGridItem = onLongPressGridItem,
-                onTapFolderGridItem = onTapFolderGridItem,
+                icon = iconContent,
+                label = labelContent,
             )
         }
 
         LayoutType.StartIconEndLabel -> {
             StartIconEndLabel(
-                modifier = modifier,
-                sharedTransitionScope = sharedTransitionScope,
-                data = data,
-                drag = drag,
-                gridItem = gridItem,
-                gridItemSettings = gridItemSettings,
-                isScrollInProgress = isScrollInProgress,
-                isVisibleFolder = isVisibleFolder,
-                textAlpha = textAlpha,
-                iconAlpha = iconAlpha,
-                isVisibleOverlay = isVisibleOverlay,
-                sharedElementKey = sharedElementKey,
-                textColor = textColor,
-                moveGridItemResult = moveGridItemResult,
-                lockMovement = lockMovement,
-                isDragging = isDragging,
-                hasInteraction = hasInteraction,
-                isVisibleWhiteBox = isVisibleWhiteBox,
-                previewFolderGridItems = previewFolderGridItems,
-                hasShortcutHostPermission = hasShortcutHostPermission,
-                iconPackInfoFilePaths = iconPackInfoFilePaths,
-                animations = animations,
-                folderCornerRadius = folderCornerRadius,
-                folderBackgroundColor = folderBackgroundColor,
-                customFolderBackgroundColor = customFolderBackgroundColor,
-                systemTextColor = systemTextColor,
+                modifier = itemModifier,
                 horizontalArrangement = horizontalArrangement,
                 verticalAlignment = verticalAlignment,
-                maxLines = maxLines,
-                systemCustomTextColor = systemCustomTextColor,
-                onOpenAppDrawer = onOpenAppDrawer,
-                onShowFolderWhenDragging = onShowFolderWhenDragging,
-                onResetGrid = onResetGrid,
-                onLongPressGridItem = onLongPressGridItem,
-                onTapFolderGridItem = onTapFolderGridItem,
+                icon = iconContent,
+                label = labelContent,
             )
         }
 
         LayoutType.StartLabelEndIcon -> {
             StartLabelEndIcon(
-                modifier = modifier,
-                sharedTransitionScope = sharedTransitionScope,
-                data = data,
-                drag = drag,
-                gridItem = gridItem,
-                gridItemSettings = gridItemSettings,
-                isScrollInProgress = isScrollInProgress,
-                isVisibleFolder = isVisibleFolder,
-                textAlpha = textAlpha,
-                iconAlpha = iconAlpha,
-                isVisibleOverlay = isVisibleOverlay,
-                sharedElementKey = sharedElementKey,
-                textColor = textColor,
-                moveGridItemResult = moveGridItemResult,
-                lockMovement = lockMovement,
-                isDragging = isDragging,
-                hasInteraction = hasInteraction,
-                isVisibleWhiteBox = isVisibleWhiteBox,
-                previewFolderGridItems = previewFolderGridItems,
-                hasShortcutHostPermission = hasShortcutHostPermission,
-                iconPackInfoFilePaths = iconPackInfoFilePaths,
-                animations = animations,
-                folderCornerRadius = folderCornerRadius,
-                folderBackgroundColor = folderBackgroundColor,
-                customFolderBackgroundColor = customFolderBackgroundColor,
-                systemTextColor = systemTextColor,
+                modifier = itemModifier,
                 horizontalArrangement = horizontalArrangement,
                 verticalAlignment = verticalAlignment,
-                maxLines = maxLines,
-                systemCustomTextColor = systemCustomTextColor,
-                onOpenAppDrawer = onOpenAppDrawer,
-                onShowFolderWhenDragging = onShowFolderWhenDragging,
-                onResetGrid = onResetGrid,
-                onLongPressGridItem = onLongPressGridItem,
-                onTapFolderGridItem = onTapFolderGridItem,
+                icon = iconContent,
+                label = labelContent,
             )
         }
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun TopIconBottomLabel(
     modifier: Modifier = Modifier,
-    sharedTransitionScope: SharedTransitionScope,
-    data: GridItemData.Folder,
-    drag: Drag,
-    gridItem: GridItem,
-    gridItemSettings: GridItemSettings,
-    isScrollInProgress: Boolean,
-    isVisibleFolder: Boolean,
-    textAlpha: Float,
-    iconAlpha: Float,
-    isVisibleOverlay: Boolean,
-    sharedElementKey: SharedElementKey,
-    textColor: Color,
-    moveGridItemResult: MoveGridItemResult?,
-    lockMovement: Boolean,
-    isDragging: Boolean,
-    hasInteraction: Boolean,
-    isVisibleWhiteBox: Boolean,
-    previewFolderGridItems: Map<String, PreviewFolder>,
-    hasShortcutHostPermission: Boolean,
-    iconPackInfoFilePaths: Map<String, String?>,
-    animations: Boolean,
-    folderCornerRadius: Int,
-    folderBackgroundColor: BackgroundColor,
-    customFolderBackgroundColor: Int,
-    systemTextColor: TextColor,
     horizontalAlignment: Alignment.Horizontal,
     verticalArrangement: Arrangement.Vertical,
-    maxLines: Int,
-    systemCustomTextColor: Int,
-    onOpenAppDrawer: () -> Unit,
-    onShowFolderWhenDragging: (
-        folderEntry: FolderEntry,
-        gridItem: GridItem,
-    ) -> Unit,
-    onResetGrid: () -> Unit,
-    onLongPressGridItem: (
-        gridItem: GridItem,
-        imageBitmap: ImageBitmap,
-        intOffset: IntOffset,
-        intSize: IntSize,
-        sharedElementKey: SharedElementKey,
-    ) -> Unit,
-    onTapFolderGridItem: (FolderEntry) -> Unit,
+    icon: @Composable () -> Unit,
+    label: @Composable () -> Unit,
 ) {
-    val launcherApps = LocalLauncherApps.current
-
-    val context = LocalContext.current
-
-    var intOffset by remember { mutableStateOf(IntOffset.Zero) }
-
-    var intSize by remember { mutableStateOf(IntSize.Zero) }
-
-    val graphicsLayer = rememberGraphicsLayer()
-
-    val scope = rememberCoroutineScope()
-
-    val currentDrag = rememberUpdatedState(drag)
-    val currentIsDragging = rememberUpdatedState(isDragging)
-    val currentIsVisibleOverlay = rememberUpdatedState(isVisibleOverlay)
-    val currentGridItem = rememberUpdatedState(gridItem)
-    val currentLockMovement = rememberUpdatedState(lockMovement)
-    val currentFolderGridItems =
-        rememberUpdatedState(previewFolderGridItems[gridItem.id]?.folderGridItems)
-    val currentOnOpenAppDrawer by rememberUpdatedState(onOpenAppDrawer)
-    val currentOnLongPressGridItem by rememberUpdatedState(onLongPressGridItem)
-    val currentOnTapFolderGridItem by rememberUpdatedState(onTapFolderGridItem)
-    val currentOnShowFolderWhenDragging by rememberUpdatedState(onShowFolderWhenDragging)
-
-    val scale = remember { Animatable(1f) }
-
-    LaunchedEffect(key1 = moveGridItemResult) {
-        handleConflictingGridItem(
-            drag = currentDrag,
-            isDragging = currentIsDragging,
-            isVisibleOverlay = currentIsVisibleOverlay,
-            moveGridItemResult = moveGridItemResult,
-            lockMovement = currentLockMovement,
-            intOffset = intOffset,
-            intSize = intSize,
-            gridItem = currentGridItem,
-            folderGridItems = currentFolderGridItems,
-            onShowFolderWhenDragging = currentOnShowFolderWhenDragging,
-        )
-    }
-
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(gridItemSettings.padding.dp)
-            .background(
-                color = Color(gridItemSettings.customBackgroundColor),
-                shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
-            )
-            .whiteBox(
-                textColor = textColor,
-                visible = isVisibleWhiteBox && !isVisibleFolder,
-            )
-            .pointerInput(key1 = isVisibleOverlay) {
-                detectTapGestures(
-                    onDoubleTap = if (!isVisibleOverlay) {
-                        {
-                            onDoubleTap(
-                                context = context,
-                                doubleTap = gridItem.doubleTap,
-                                launcherApps = launcherApps,
-                                onOpenAppDrawer = currentOnOpenAppDrawer,
-                            )
-                        }
-                    } else {
-                        null
-                    },
-                    onLongPress = if (!isVisibleOverlay) {
-                        {
-                            scope.launch {
-                                currentOnLongPressGridItem(
-                                    gridItem,
-                                    graphicsLayer.toImageBitmap(),
-                                    intOffset,
-                                    intSize,
-                                    sharedElementKey,
-                                )
-                            }
-                        }
-                    } else {
-                        null
-                    },
-                    onTap = if (!isVisibleOverlay) {
-                        {
-                            currentOnTapFolderGridItem(
-                                FolderEntry(
-                                    id = gridItem.id,
-                                    x = intOffset.x,
-                                    y = intOffset.y,
-                                    width = intSize.width,
-                                    height = intSize.height,
-                                    isCloseFolder = false,
-                                ),
-                            )
-                        }
-                    } else {
-                        null
-                    },
-                    onPress = {
-                        handleOnPress(
-                            animations = animations,
-                            scale = scale,
-                        )
-                    },
-                )
-            }
-            .swipeGestures(
-                swipeDown = gridItem.swipeDown,
-                swipeUp = gridItem.swipeUp,
-                onOpenAppDrawer = onOpenAppDrawer,
-            ),
+        modifier = modifier,
         horizontalAlignment = horizontalAlignment,
         verticalArrangement = verticalArrangement,
     ) {
-        val commonModifier = Modifier
-            .size(gridItemSettings.iconSize.dp)
-            .padding(gridItemSettings.iconPadding.dp)
-            .onGloballyPositioned {
-                intOffset = it.positionInRoot().round()
-
-                intSize = it.size
-            }
-            .gridItemScaleAnimation(
-                enabled = animations,
-                isVisibleOverlay = isVisibleOverlay,
-                scale = scale,
-            )
-            .gridItemSharedElement(
-                enabled = animations,
-                sharedElementKey = sharedElementKey,
-                sharedTransitionScope = sharedTransitionScope,
-                visible = !isScrollInProgress && !hasInteraction,
-            )
-            .drawWithContent {
-                graphicsLayer.record {
-                    this@drawWithContent.drawContent()
-                }
-
-                drawLayer(graphicsLayer)
-            }
-            .alpha(iconAlpha)
-
-        if (data.icon != null) {
-            AsyncImage(
-                model = data.icon,
-                contentDescription = null,
-                modifier = commonModifier,
-            )
-        } else {
-            Surface(
-                modifier = commonModifier,
-                shape = RoundedCornerShape(folderCornerRadius.dp),
-                color = when (folderBackgroundColor) {
-                    BackgroundColor.System -> MaterialTheme.colorScheme.surface
-                    BackgroundColor.Light -> Color.White
-                    BackgroundColor.Dark -> Color.Black
-                    BackgroundColor.Custom -> Color(customFolderBackgroundColor)
-                },
-            ) {
-                PreviewFolderGridLayout(
-                    modifier = Modifier.fillMaxSize(),
-                    gridItems = previewFolderGridItems[gridItem.id]?.previewFolderGridItems,
-                    slotId = { it.id },
-                    content = {
-                        PreviewFolderGridItem(
-                            sharedTransitionScope = sharedTransitionScope,
-                            gridItem = it,
-                            isScrollInProgress = isScrollInProgress,
-                            isVisibleOverlay = isVisibleOverlay,
-                            parent = sharedElementKey.parent,
-                            moveGridItemResult = moveGridItemResult,
-                            drag = drag,
-                            folderGridItems = previewFolderGridItems[gridItem.id]?.folderGridItems,
-                            isVisibleFolders = isVisibleFolder,
-                            hasShortcutHostPermission = hasShortcutHostPermission,
-                            iconPackInfoFilePaths = iconPackInfoFilePaths,
-                            gridItemSettings = gridItemSettings,
-                            folderBackgroundColor = folderBackgroundColor,
-                            customFolderBackgroundColor = customFolderBackgroundColor,
-                            systemTextColor = systemTextColor,
-                            systemCustomTextColor = systemCustomTextColor,
-                            onResetGrid = onResetGrid,
-                        )
-                    },
-                )
-            }
-        }
-
-        if (gridItemSettings.showLabel) {
-            Text(
-                modifier = Modifier
-                    .padding(gridItemSettings.textPadding.dp)
-                    .alpha(textAlpha),
-                text = data.label,
-                color = textColor,
-                textAlign = TextAlign.Center,
-                maxLines = maxLines,
-                fontSize = gridItemSettings.textSize.sp,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
+        icon()
+        label()
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun TopLabelBottomIcon(
     modifier: Modifier = Modifier,
-    sharedTransitionScope: SharedTransitionScope,
-    data: GridItemData.Folder,
-    drag: Drag,
-    gridItem: GridItem,
-    gridItemSettings: GridItemSettings,
-    isScrollInProgress: Boolean,
-    isVisibleFolder: Boolean,
-    textAlpha: Float,
-    iconAlpha: Float,
-    isVisibleOverlay: Boolean,
-    sharedElementKey: SharedElementKey,
-    textColor: Color,
-    moveGridItemResult: MoveGridItemResult?,
-    lockMovement: Boolean,
-    isDragging: Boolean,
-    hasInteraction: Boolean,
-    isVisibleWhiteBox: Boolean,
-    previewFolderGridItems: Map<String, PreviewFolder>,
-    hasShortcutHostPermission: Boolean,
-    iconPackInfoFilePaths: Map<String, String?>,
-    animations: Boolean,
-    folderCornerRadius: Int,
-    folderBackgroundColor: BackgroundColor,
-    customFolderBackgroundColor: Int,
-    systemTextColor: TextColor,
     horizontalAlignment: Alignment.Horizontal,
     verticalArrangement: Arrangement.Vertical,
-    maxLines: Int,
-    systemCustomTextColor: Int,
-    onOpenAppDrawer: () -> Unit,
-    onShowFolderWhenDragging: (
-        folderEntry: FolderEntry,
-        gridItem: GridItem,
-    ) -> Unit,
-    onResetGrid: () -> Unit,
-    onLongPressGridItem: (
-        gridItem: GridItem,
-        imageBitmap: ImageBitmap,
-        intOffset: IntOffset,
-        intSize: IntSize,
-        sharedElementKey: SharedElementKey,
-    ) -> Unit,
-    onTapFolderGridItem: (FolderEntry) -> Unit,
+    icon: @Composable () -> Unit,
+    label: @Composable () -> Unit,
 ) {
-    val launcherApps = LocalLauncherApps.current
-
-    val context = LocalContext.current
-
-    var intOffset by remember { mutableStateOf(IntOffset.Zero) }
-
-    var intSize by remember { mutableStateOf(IntSize.Zero) }
-
-    val graphicsLayer = rememberGraphicsLayer()
-
-    val scope = rememberCoroutineScope()
-
-    val currentDrag = rememberUpdatedState(drag)
-    val currentIsDragging = rememberUpdatedState(isDragging)
-    val currentIsVisibleOverlay = rememberUpdatedState(isVisibleOverlay)
-    val currentGridItem = rememberUpdatedState(gridItem)
-    val currentLockMovement = rememberUpdatedState(lockMovement)
-    val currentFolderGridItems =
-        rememberUpdatedState(previewFolderGridItems[gridItem.id]?.folderGridItems)
-    val currentOnOpenAppDrawer by rememberUpdatedState(onOpenAppDrawer)
-    val currentOnLongPressGridItem by rememberUpdatedState(onLongPressGridItem)
-    val currentOnTapFolderGridItem by rememberUpdatedState(onTapFolderGridItem)
-    val currentOnShowFolderWhenDragging by rememberUpdatedState(onShowFolderWhenDragging)
-
-    val scale = remember { Animatable(1f) }
-
-    LaunchedEffect(key1 = moveGridItemResult) {
-        handleConflictingGridItem(
-            drag = currentDrag,
-            isDragging = currentIsDragging,
-            isVisibleOverlay = currentIsVisibleOverlay,
-            moveGridItemResult = moveGridItemResult,
-            lockMovement = currentLockMovement,
-            intOffset = intOffset,
-            intSize = intSize,
-            gridItem = currentGridItem,
-            folderGridItems = currentFolderGridItems,
-            onShowFolderWhenDragging = currentOnShowFolderWhenDragging,
-        )
-    }
-
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(gridItemSettings.padding.dp)
-            .background(
-                color = Color(gridItemSettings.customBackgroundColor),
-                shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
-            )
-            .whiteBox(
-                textColor = textColor,
-                visible = isVisibleWhiteBox && !isVisibleFolder,
-            )
-            .pointerInput(key1 = isVisibleOverlay) {
-                detectTapGestures(
-                    onDoubleTap = if (!isVisibleOverlay) {
-                        {
-                            onDoubleTap(
-                                context = context,
-                                doubleTap = gridItem.doubleTap,
-                                launcherApps = launcherApps,
-                                onOpenAppDrawer = currentOnOpenAppDrawer,
-                            )
-                        }
-                    } else {
-                        null
-                    },
-                    onLongPress = if (!isVisibleOverlay) {
-                        {
-                            scope.launch {
-                                currentOnLongPressGridItem(
-                                    gridItem,
-                                    graphicsLayer.toImageBitmap(),
-                                    intOffset,
-                                    intSize,
-                                    sharedElementKey,
-                                )
-                            }
-                        }
-                    } else {
-                        null
-                    },
-                    onTap = if (!isVisibleOverlay) {
-                        {
-                            currentOnTapFolderGridItem(
-                                FolderEntry(
-                                    id = gridItem.id,
-                                    x = intOffset.x,
-                                    y = intOffset.y,
-                                    width = intSize.width,
-                                    height = intSize.height,
-                                    isCloseFolder = false,
-                                ),
-                            )
-                        }
-                    } else {
-                        null
-                    },
-                    onPress = {
-                        handleOnPress(
-                            animations = animations,
-                            scale = scale,
-                        )
-                    },
-                )
-            }
-            .swipeGestures(
-                swipeDown = gridItem.swipeDown,
-                swipeUp = gridItem.swipeUp,
-                onOpenAppDrawer = onOpenAppDrawer,
-            ),
+        modifier = modifier,
         horizontalAlignment = horizontalAlignment,
         verticalArrangement = verticalArrangement,
     ) {
-        if (gridItemSettings.showLabel) {
-            Text(
-                modifier = Modifier
-                    .padding(gridItemSettings.textPadding.dp)
-                    .alpha(textAlpha),
-                text = data.label,
-                color = textColor,
-                textAlign = TextAlign.Center,
-                maxLines = maxLines,
-                fontSize = gridItemSettings.textSize.sp,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
-
-        val commonModifier = Modifier
-            .size(gridItemSettings.iconSize.dp)
-            .padding(gridItemSettings.iconPadding.dp)
-            .onGloballyPositioned {
-                intOffset = it.positionInRoot().round()
-
-                intSize = it.size
-            }
-            .gridItemScaleAnimation(
-                enabled = animations,
-                isVisibleOverlay = isVisibleOverlay,
-                scale = scale,
-            )
-            .gridItemSharedElement(
-                enabled = animations,
-                sharedElementKey = sharedElementKey,
-                sharedTransitionScope = sharedTransitionScope,
-                visible = !isScrollInProgress && !hasInteraction,
-            )
-            .drawWithContent {
-                graphicsLayer.record {
-                    this@drawWithContent.drawContent()
-                }
-
-                drawLayer(graphicsLayer)
-            }
-            .alpha(iconAlpha)
-
-        if (data.icon != null) {
-            AsyncImage(
-                model = data.icon,
-                contentDescription = null,
-                modifier = commonModifier,
-            )
-        } else {
-            Surface(
-                modifier = commonModifier,
-                shape = RoundedCornerShape(folderCornerRadius.dp),
-                color = when (folderBackgroundColor) {
-                    BackgroundColor.System -> MaterialTheme.colorScheme.surface
-                    BackgroundColor.Light -> Color.White
-                    BackgroundColor.Dark -> Color.Black
-                    BackgroundColor.Custom -> Color(customFolderBackgroundColor)
-                },
-            ) {
-                PreviewFolderGridLayout(
-                    modifier = Modifier.fillMaxSize(),
-                    gridItems = previewFolderGridItems[gridItem.id]?.previewFolderGridItems,
-                    slotId = { it.id },
-                    content = {
-                        PreviewFolderGridItem(
-                            sharedTransitionScope = sharedTransitionScope,
-                            gridItem = it,
-                            isScrollInProgress = isScrollInProgress,
-                            isVisibleOverlay = isVisibleOverlay,
-                            parent = sharedElementKey.parent,
-                            moveGridItemResult = moveGridItemResult,
-                            drag = drag,
-                            folderGridItems = previewFolderGridItems[gridItem.id]?.folderGridItems,
-                            isVisibleFolders = isVisibleFolder,
-                            hasShortcutHostPermission = hasShortcutHostPermission,
-                            iconPackInfoFilePaths = iconPackInfoFilePaths,
-                            gridItemSettings = gridItemSettings,
-                            folderBackgroundColor = folderBackgroundColor,
-                            customFolderBackgroundColor = customFolderBackgroundColor,
-                            systemTextColor = systemTextColor,
-                            systemCustomTextColor = systemCustomTextColor,
-                            onResetGrid = onResetGrid,
-                        )
-                    },
-                )
-            }
-        }
+        label()
+        icon()
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun StartIconEndLabel(
     modifier: Modifier = Modifier,
-    sharedTransitionScope: SharedTransitionScope,
-    data: GridItemData.Folder,
-    drag: Drag,
-    gridItem: GridItem,
-    gridItemSettings: GridItemSettings,
-    isScrollInProgress: Boolean,
-    isVisibleFolder: Boolean,
-    textAlpha: Float,
-    iconAlpha: Float,
-    isVisibleOverlay: Boolean,
-    sharedElementKey: SharedElementKey,
-    textColor: Color,
-    moveGridItemResult: MoveGridItemResult?,
-    lockMovement: Boolean,
-    isDragging: Boolean,
-    hasInteraction: Boolean,
-    isVisibleWhiteBox: Boolean,
-    previewFolderGridItems: Map<String, PreviewFolder>,
-    hasShortcutHostPermission: Boolean,
-    iconPackInfoFilePaths: Map<String, String?>,
-    animations: Boolean,
-    folderCornerRadius: Int,
-    folderBackgroundColor: BackgroundColor,
-    customFolderBackgroundColor: Int,
-    systemTextColor: TextColor,
     horizontalArrangement: Arrangement.Horizontal,
     verticalAlignment: Alignment.Vertical,
-    maxLines: Int,
-    systemCustomTextColor: Int,
-    onOpenAppDrawer: () -> Unit,
-    onShowFolderWhenDragging: (
-        folderEntry: FolderEntry,
-        gridItem: GridItem,
-    ) -> Unit,
-    onResetGrid: () -> Unit,
-    onLongPressGridItem: (
-        gridItem: GridItem,
-        imageBitmap: ImageBitmap,
-        intOffset: IntOffset,
-        intSize: IntSize,
-        sharedElementKey: SharedElementKey,
-    ) -> Unit,
-    onTapFolderGridItem: (FolderEntry) -> Unit,
+    icon: @Composable () -> Unit,
+    label: @Composable () -> Unit,
 ) {
-    val launcherApps = LocalLauncherApps.current
-
-    val context = LocalContext.current
-
-    var intOffset by remember { mutableStateOf(IntOffset.Zero) }
-
-    var intSize by remember { mutableStateOf(IntSize.Zero) }
-
-    val graphicsLayer = rememberGraphicsLayer()
-
-    val scope = rememberCoroutineScope()
-
-    val currentDrag = rememberUpdatedState(drag)
-    val currentIsDragging = rememberUpdatedState(isDragging)
-    val currentIsVisibleOverlay = rememberUpdatedState(isVisibleOverlay)
-    val currentGridItem = rememberUpdatedState(gridItem)
-    val currentLockMovement = rememberUpdatedState(lockMovement)
-    val currentFolderGridItems =
-        rememberUpdatedState(previewFolderGridItems[gridItem.id]?.folderGridItems)
-    val currentOnOpenAppDrawer by rememberUpdatedState(onOpenAppDrawer)
-    val currentOnLongPressGridItem by rememberUpdatedState(onLongPressGridItem)
-    val currentOnTapFolderGridItem by rememberUpdatedState(onTapFolderGridItem)
-    val currentOnShowFolderWhenDragging by rememberUpdatedState(onShowFolderWhenDragging)
-
-    val scale = remember { Animatable(1f) }
-
-    LaunchedEffect(key1 = moveGridItemResult) {
-        handleConflictingGridItem(
-            drag = currentDrag,
-            isDragging = currentIsDragging,
-            isVisibleOverlay = currentIsVisibleOverlay,
-            moveGridItemResult = moveGridItemResult,
-            lockMovement = currentLockMovement,
-            intOffset = intOffset,
-            intSize = intSize,
-            gridItem = currentGridItem,
-            folderGridItems = currentFolderGridItems,
-            onShowFolderWhenDragging = currentOnShowFolderWhenDragging,
-        )
-    }
-
     Row(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(gridItemSettings.padding.dp)
-            .background(
-                color = Color(gridItemSettings.customBackgroundColor),
-                shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
-            )
-            .whiteBox(
-                textColor = textColor,
-                visible = isVisibleWhiteBox && !isVisibleFolder,
-            )
-            .pointerInput(key1 = isVisibleOverlay) {
-                detectTapGestures(
-                    onDoubleTap = if (!isVisibleOverlay) {
-                        {
-                            onDoubleTap(
-                                context = context,
-                                doubleTap = gridItem.doubleTap,
-                                launcherApps = launcherApps,
-                                onOpenAppDrawer = currentOnOpenAppDrawer,
-                            )
-                        }
-                    } else {
-                        null
-                    },
-                    onLongPress = if (!isVisibleOverlay) {
-                        {
-                            scope.launch {
-                                currentOnLongPressGridItem(
-                                    gridItem,
-                                    graphicsLayer.toImageBitmap(),
-                                    intOffset,
-                                    intSize,
-                                    sharedElementKey,
-                                )
-                            }
-                        }
-                    } else {
-                        null
-                    },
-                    onTap = if (!isVisibleOverlay) {
-                        {
-                            currentOnTapFolderGridItem(
-                                FolderEntry(
-                                    id = gridItem.id,
-                                    x = intOffset.x,
-                                    y = intOffset.y,
-                                    width = intSize.width,
-                                    height = intSize.height,
-                                    isCloseFolder = false,
-                                ),
-                            )
-                        }
-                    } else {
-                        null
-                    },
-                    onPress = {
-                        handleOnPress(
-                            animations = animations,
-                            scale = scale,
-                        )
-                    },
-                )
-            }
-            .swipeGestures(
-                swipeDown = gridItem.swipeDown,
-                swipeUp = gridItem.swipeUp,
-                onOpenAppDrawer = onOpenAppDrawer,
-            ),
+        modifier = modifier,
         horizontalArrangement = horizontalArrangement,
         verticalAlignment = verticalAlignment,
     ) {
-        val commonModifier = Modifier
-            .size(gridItemSettings.iconSize.dp)
-            .padding(gridItemSettings.iconPadding.dp)
-            .onGloballyPositioned {
-                intOffset = it.positionInRoot().round()
-
-                intSize = it.size
-            }
-            .gridItemScaleAnimation(
-                enabled = animations,
-                isVisibleOverlay = isVisibleOverlay,
-                scale = scale,
-            )
-            .gridItemSharedElement(
-                enabled = animations,
-                sharedElementKey = sharedElementKey,
-                sharedTransitionScope = sharedTransitionScope,
-                visible = !isScrollInProgress && !hasInteraction,
-            )
-            .drawWithContent {
-                graphicsLayer.record {
-                    this@drawWithContent.drawContent()
-                }
-
-                drawLayer(graphicsLayer)
-            }
-            .alpha(iconAlpha)
-
-        if (data.icon != null) {
-            AsyncImage(
-                model = data.icon,
-                contentDescription = null,
-                modifier = commonModifier,
-            )
-        } else {
-            Surface(
-                modifier = commonModifier,
-                shape = RoundedCornerShape(folderCornerRadius.dp),
-                color = when (folderBackgroundColor) {
-                    BackgroundColor.System -> MaterialTheme.colorScheme.surface
-                    BackgroundColor.Light -> Color.White
-                    BackgroundColor.Dark -> Color.Black
-                    BackgroundColor.Custom -> Color(customFolderBackgroundColor)
-                },
-            ) {
-                PreviewFolderGridLayout(
-                    modifier = Modifier.fillMaxSize(),
-                    gridItems = previewFolderGridItems[gridItem.id]?.previewFolderGridItems,
-                    slotId = { it.id },
-                    content = {
-                        PreviewFolderGridItem(
-                            sharedTransitionScope = sharedTransitionScope,
-                            gridItem = it,
-                            isScrollInProgress = isScrollInProgress,
-                            isVisibleOverlay = isVisibleOverlay,
-                            parent = sharedElementKey.parent,
-                            moveGridItemResult = moveGridItemResult,
-                            drag = drag,
-                            folderGridItems = previewFolderGridItems[gridItem.id]?.folderGridItems,
-                            isVisibleFolders = isVisibleFolder,
-                            hasShortcutHostPermission = hasShortcutHostPermission,
-                            iconPackInfoFilePaths = iconPackInfoFilePaths,
-                            gridItemSettings = gridItemSettings,
-                            folderBackgroundColor = folderBackgroundColor,
-                            customFolderBackgroundColor = customFolderBackgroundColor,
-                            systemTextColor = systemTextColor,
-                            systemCustomTextColor = systemCustomTextColor,
-                            onResetGrid = onResetGrid,
-                        )
-                    },
-                )
-            }
-        }
-
-        if (gridItemSettings.showLabel) {
-            Text(
-                modifier = Modifier
-                    .padding(gridItemSettings.textPadding.dp)
-                    .alpha(textAlpha),
-                text = data.label,
-                color = textColor,
-                textAlign = TextAlign.Center,
-                maxLines = maxLines,
-                fontSize = gridItemSettings.textSize.sp,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
+        icon()
+        label()
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun StartLabelEndIcon(
     modifier: Modifier = Modifier,
-    sharedTransitionScope: SharedTransitionScope,
-    data: GridItemData.Folder,
-    drag: Drag,
-    gridItem: GridItem,
-    gridItemSettings: GridItemSettings,
-    isScrollInProgress: Boolean,
-    isVisibleFolder: Boolean,
-    textAlpha: Float,
-    iconAlpha: Float,
-    isVisibleOverlay: Boolean,
-    sharedElementKey: SharedElementKey,
-    textColor: Color,
-    moveGridItemResult: MoveGridItemResult?,
-    lockMovement: Boolean,
-    isDragging: Boolean,
-    hasInteraction: Boolean,
-    isVisibleWhiteBox: Boolean,
-    previewFolderGridItems: Map<String, PreviewFolder>,
-    hasShortcutHostPermission: Boolean,
-    iconPackInfoFilePaths: Map<String, String?>,
-    animations: Boolean,
-    folderCornerRadius: Int,
-    folderBackgroundColor: BackgroundColor,
-    customFolderBackgroundColor: Int,
-    systemTextColor: TextColor,
     horizontalArrangement: Arrangement.Horizontal,
     verticalAlignment: Alignment.Vertical,
-    maxLines: Int,
-    systemCustomTextColor: Int,
-    onOpenAppDrawer: () -> Unit,
-    onShowFolderWhenDragging: (
-        folderEntry: FolderEntry,
-        gridItem: GridItem,
-    ) -> Unit,
-    onResetGrid: () -> Unit,
-    onLongPressGridItem: (
-        gridItem: GridItem,
-        imageBitmap: ImageBitmap,
-        intOffset: IntOffset,
-        intSize: IntSize,
-        sharedElementKey: SharedElementKey,
-    ) -> Unit,
-    onTapFolderGridItem: (FolderEntry) -> Unit,
+    icon: @Composable () -> Unit,
+    label: @Composable () -> Unit,
 ) {
-    val launcherApps = LocalLauncherApps.current
-
-    val context = LocalContext.current
-
-    var intOffset by remember { mutableStateOf(IntOffset.Zero) }
-
-    var intSize by remember { mutableStateOf(IntSize.Zero) }
-
-    val graphicsLayer = rememberGraphicsLayer()
-
-    val scope = rememberCoroutineScope()
-
-    val currentDrag = rememberUpdatedState(drag)
-    val currentIsDragging = rememberUpdatedState(isDragging)
-    val currentIsVisibleOverlay = rememberUpdatedState(isVisibleOverlay)
-    val currentGridItem = rememberUpdatedState(gridItem)
-    val currentLockMovement = rememberUpdatedState(lockMovement)
-    val currentFolderGridItems =
-        rememberUpdatedState(previewFolderGridItems[gridItem.id]?.folderGridItems)
-    val currentOnOpenAppDrawer by rememberUpdatedState(onOpenAppDrawer)
-    val currentOnLongPressGridItem by rememberUpdatedState(onLongPressGridItem)
-    val currentOnTapFolderGridItem by rememberUpdatedState(onTapFolderGridItem)
-    val currentOnShowFolderWhenDragging by rememberUpdatedState(onShowFolderWhenDragging)
-
-    val scale = remember { Animatable(1f) }
-
-    LaunchedEffect(key1 = moveGridItemResult) {
-        handleConflictingGridItem(
-            drag = currentDrag,
-            isDragging = currentIsDragging,
-            isVisibleOverlay = currentIsVisibleOverlay,
-            moveGridItemResult = moveGridItemResult,
-            lockMovement = currentLockMovement,
-            intOffset = intOffset,
-            intSize = intSize,
-            gridItem = currentGridItem,
-            folderGridItems = currentFolderGridItems,
-            onShowFolderWhenDragging = currentOnShowFolderWhenDragging,
-        )
-    }
-
     Row(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(gridItemSettings.padding.dp)
-            .background(
-                color = Color(gridItemSettings.customBackgroundColor),
-                shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
-            )
-            .whiteBox(
-                textColor = textColor,
-                visible = isVisibleWhiteBox && !isVisibleFolder,
-            )
-            .pointerInput(key1 = isVisibleOverlay) {
-                detectTapGestures(
-                    onDoubleTap = if (!isVisibleOverlay) {
-                        {
-                            onDoubleTap(
-                                context = context,
-                                doubleTap = gridItem.doubleTap,
-                                launcherApps = launcherApps,
-                                onOpenAppDrawer = currentOnOpenAppDrawer,
-                            )
-                        }
-                    } else {
-                        null
-                    },
-                    onLongPress = if (!isVisibleOverlay) {
-                        {
-                            scope.launch {
-                                currentOnLongPressGridItem(
-                                    gridItem,
-                                    graphicsLayer.toImageBitmap(),
-                                    intOffset,
-                                    intSize,
-                                    sharedElementKey,
-                                )
-                            }
-                        }
-                    } else {
-                        null
-                    },
-                    onTap = if (!isVisibleOverlay) {
-                        {
-                            currentOnTapFolderGridItem(
-                                FolderEntry(
-                                    id = gridItem.id,
-                                    x = intOffset.x,
-                                    y = intOffset.y,
-                                    width = intSize.width,
-                                    height = intSize.height,
-                                    isCloseFolder = false,
-                                ),
-                            )
-                        }
-                    } else {
-                        null
-                    },
-                    onPress = {
-                        handleOnPress(
-                            animations = animations,
-                            scale = scale,
-                        )
-                    },
-                )
-            }
-            .swipeGestures(
-                swipeDown = gridItem.swipeDown,
-                swipeUp = gridItem.swipeUp,
-                onOpenAppDrawer = onOpenAppDrawer,
-            ),
+        modifier = modifier,
         horizontalArrangement = horizontalArrangement,
         verticalAlignment = verticalAlignment,
     ) {
-        if (gridItemSettings.showLabel) {
-            Text(
-                modifier = Modifier
-                    .padding(gridItemSettings.textPadding.dp)
-                    .alpha(textAlpha),
-                text = data.label,
-                color = textColor,
-                textAlign = TextAlign.Center,
-                maxLines = maxLines,
-                fontSize = gridItemSettings.textSize.sp,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
-
-        val commonModifier = Modifier
-            .size(gridItemSettings.iconSize.dp)
-            .padding(gridItemSettings.iconPadding.dp)
-            .onGloballyPositioned {
-                intOffset = it.positionInRoot().round()
-
-                intSize = it.size
-            }
-            .gridItemScaleAnimation(
-                enabled = animations,
-                isVisibleOverlay = isVisibleOverlay,
-                scale = scale,
-            )
-            .gridItemSharedElement(
-                enabled = animations,
-                sharedElementKey = sharedElementKey,
-                sharedTransitionScope = sharedTransitionScope,
-                visible = !isScrollInProgress && !hasInteraction,
-            )
-            .drawWithContent {
-                graphicsLayer.record {
-                    this@drawWithContent.drawContent()
-                }
-
-                drawLayer(graphicsLayer)
-            }
-            .alpha(iconAlpha)
-
-        if (data.icon != null) {
-            AsyncImage(
-                model = data.icon,
-                contentDescription = null,
-                modifier = commonModifier,
-            )
-        } else {
-            Surface(
-                modifier = commonModifier,
-                shape = RoundedCornerShape(folderCornerRadius.dp),
-                color = when (folderBackgroundColor) {
-                    BackgroundColor.System -> MaterialTheme.colorScheme.surface
-                    BackgroundColor.Light -> Color.White
-                    BackgroundColor.Dark -> Color.Black
-                    BackgroundColor.Custom -> Color(customFolderBackgroundColor)
-                },
-            ) {
-                PreviewFolderGridLayout(
-                    modifier = Modifier.fillMaxSize(),
-                    gridItems = previewFolderGridItems[gridItem.id]?.previewFolderGridItems,
-                    slotId = { it.id },
-                    content = {
-                        PreviewFolderGridItem(
-                            sharedTransitionScope = sharedTransitionScope,
-                            gridItem = it,
-                            isScrollInProgress = isScrollInProgress,
-                            isVisibleOverlay = isVisibleOverlay,
-                            parent = sharedElementKey.parent,
-                            moveGridItemResult = moveGridItemResult,
-                            drag = drag,
-                            folderGridItems = previewFolderGridItems[gridItem.id]?.folderGridItems,
-                            isVisibleFolders = isVisibleFolder,
-                            hasShortcutHostPermission = hasShortcutHostPermission,
-                            iconPackInfoFilePaths = iconPackInfoFilePaths,
-                            gridItemSettings = gridItemSettings,
-                            folderBackgroundColor = folderBackgroundColor,
-                            customFolderBackgroundColor = customFolderBackgroundColor,
-                            systemTextColor = systemTextColor,
-                            systemCustomTextColor = systemCustomTextColor,
-                            onResetGrid = onResetGrid,
-                        )
-                    },
-                )
-            }
-        }
+        label()
+        icon()
     }
 }
 
