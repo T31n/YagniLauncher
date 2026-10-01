@@ -339,13 +339,11 @@ private fun VerticalArrangementProto.toVerticalArrangement(): VerticalArrangemen
 private fun AppDrawerType.toAppDrawerTypeProto(): AppDrawerTypeProto = when (this) {
     AppDrawerType.Vertical -> AppDrawerTypeProto.Vertical
     AppDrawerType.Horizontal -> AppDrawerTypeProto.Horizontal
-    AppDrawerType.List -> AppDrawerTypeProto.List
 }
 
 private fun AppDrawerTypeProto.toAppDrawerType(): AppDrawerType = when (this) {
     AppDrawerTypeProto.Vertical, AppDrawerTypeProto.UNRECOGNIZED -> AppDrawerType.Vertical
     AppDrawerTypeProto.Horizontal -> AppDrawerType.Horizontal
-    AppDrawerTypeProto.List -> AppDrawerType.List
 }
 
 private fun SearchBarPositionProto.toSearchBarPosition(): SearchBarPosition = when (this) {

@@ -91,7 +91,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
         )
 
         when (val appDrawerType = userData.appDrawerSettings.appDrawerType) {
-            AppDrawerType.Vertical, AppDrawerType.List ->
+            AppDrawerType.Vertical ->
                 getVerticalOrListEblanApplicationInfosByLabel(
                     eblanApplicationInfos = eblanApplicationInfosByLabel,
                     folderEblanApplicationInfos = folderEblanApplicationInfosByLabel,

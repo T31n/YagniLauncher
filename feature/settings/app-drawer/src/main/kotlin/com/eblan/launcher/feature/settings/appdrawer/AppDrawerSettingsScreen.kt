@@ -414,8 +414,6 @@ private fun buildAppDrawerSettingsItems(
                 onClick = onHorizontalGridClick,
             ),
         )
-
-        AppDrawerType.List -> Unit
     }
 
     add(
@@ -545,7 +543,6 @@ private fun buildAppDrawerSettingsItems(
 private fun AppDrawerType.getTitle(): String = when (this) {
     AppDrawerType.Vertical -> stringResource(R.string.vertical)
     AppDrawerType.Horizontal -> stringResource(R.string.horizontal)
-    AppDrawerType.List -> stringResource(R.string.list)
 }
 
 @Composable

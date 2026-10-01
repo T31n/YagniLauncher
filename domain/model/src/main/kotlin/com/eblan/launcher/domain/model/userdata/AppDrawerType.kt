@@ -20,5 +20,4 @@ package com.eblan.launcher.domain.model.userdata
 enum class AppDrawerType {
     Vertical,
     Horizontal,
-    List,
 }

@@ -99,7 +99,6 @@ import com.eblan.launcher.feature.home.component.HomeHandler
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.screen.application.horizontal.HorizontalApplicationScreen
-import com.eblan.launcher.feature.home.screen.application.list.ListApplicationScreen
 import com.eblan.launcher.feature.home.screen.application.vertical.VerticalApplicationScreen
 import com.eblan.launcher.feature.home.util.getApplicationScreenTextColor
 import com.eblan.launcher.ui.local.LocalUserManager
@@ -228,32 +227,6 @@ internal fun ApplicationScreen(
 
             AppDrawerType.Horizontal -> {
                 HorizontalApplicationScreen(
-                    sharedTransitionScope = sharedTransitionScope,
-                    appDrawerSettings = appDrawerSettings,
-                    drag = drag,
-                    eblanApplicationInfoTags = eblanApplicationInfoTags,
-                    getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
-                    paddingValues = paddingValues,
-                    screenHeight = screenHeight,
-                    swipeY = swipeY,
-                    isVisibleOverlay = isVisibleOverlay,
-                    systemTextColor = systemTextColor,
-                    systemCustomTextColor = systemCustomTextColor,
-                    animations = animations,
-                    onDismiss = onDismiss,
-                    onDragEnd = onDragEnd,
-                    onGetEblanApplicationInfosByLabel = onGetEblanApplicationInfosByLabel,
-                    onGetEblanApplicationInfosByTagId = onGetEblanApplicationInfosByTagId,
-                    onVerticalDrag = onVerticalDrag,
-                    onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                    onDragApplicationInfo = onDragApplicationInfo,
-                    onLongPressApplicationInfo = onLongPressApplicationInfo,
-                    onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
-                )
-            }
-
-            AppDrawerType.List -> {
-                ListApplicationScreen(
                     sharedTransitionScope = sharedTransitionScope,
                     appDrawerSettings = appDrawerSettings,
                     drag = drag,
