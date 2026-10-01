@@ -31,6 +31,9 @@ data class GridItemSettings(
     val customBackgroundColor: Int,
     val padding: Int,
     val cornerRadius: Int,
+    val layoutType: LayoutType,
+    val horizontalArrangement: HorizontalArrangement,
+    val verticalAlignment: VerticalAlignment,
 )
 
 enum class HorizontalAlignment {
@@ -43,4 +46,23 @@ enum class VerticalArrangement {
     Top,
     Center,
     Bottom,
+}
+
+enum class HorizontalArrangement {
+    Start,
+    Center,
+    End,
+}
+
+enum class VerticalAlignment {
+    Top,
+    CenterVertically,
+    Bottom,
+}
+
+enum class LayoutType {
+    TopIconBottomLabel,
+    TopLabelBottomIcon,
+    StartIconEndLabel,
+    StartLabelEndIcon,
 }

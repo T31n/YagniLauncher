@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 20,
-    "identityHash": "4e028facfdce8c87679792d3abb485f4",
+    "identityHash": "cfaebe38fb77b4cd51a8a753b7ae72ed",
     "entities": [
       {
         "tableName": "EblanApplicationInfoEntity",
@@ -305,7 +305,7 @@
       },
       {
         "tableName": "ApplicationInfoGridItemEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `page` INTEGER NOT NULL, `startColumn` INTEGER NOT NULL, `startRow` INTEGER NOT NULL, `columnSpan` INTEGER NOT NULL, `rowSpan` INTEGER NOT NULL, `associate` TEXT NOT NULL, `componentName` TEXT NOT NULL, `packageName` TEXT NOT NULL, `icon` TEXT, `label` TEXT NOT NULL, `override` INTEGER NOT NULL, `serialNumber` INTEGER NOT NULL, `customIcon` TEXT, `customLabel` TEXT, `index` INTEGER NOT NULL, `folderId` TEXT, `iconSize` INTEGER NOT NULL, `textColor` TEXT NOT NULL, `textSize` INTEGER NOT NULL, `showLabel` INTEGER NOT NULL, `singleLineLabel` INTEGER NOT NULL, `horizontalAlignment` TEXT NOT NULL, `verticalArrangement` TEXT NOT NULL, `customTextColor` INTEGER NOT NULL, `customBackgroundColor` INTEGER NOT NULL, `padding` INTEGER NOT NULL, `cornerRadius` INTEGER NOT NULL, `doubleTap_eblanActionType` TEXT NOT NULL, `doubleTap_serialNumber` INTEGER NOT NULL, `doubleTap_componentName` TEXT NOT NULL, `swipeUp_eblanActionType` TEXT NOT NULL, `swipeUp_serialNumber` INTEGER NOT NULL, `swipeUp_componentName` TEXT NOT NULL, `swipeDown_eblanActionType` TEXT NOT NULL, `swipeDown_serialNumber` INTEGER NOT NULL, `swipeDown_componentName` TEXT NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`folderId`) REFERENCES `FolderGridItemEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `page` INTEGER NOT NULL, `startColumn` INTEGER NOT NULL, `startRow` INTEGER NOT NULL, `columnSpan` INTEGER NOT NULL, `rowSpan` INTEGER NOT NULL, `associate` TEXT NOT NULL, `componentName` TEXT NOT NULL, `packageName` TEXT NOT NULL, `icon` TEXT, `label` TEXT NOT NULL, `override` INTEGER NOT NULL, `serialNumber` INTEGER NOT NULL, `customIcon` TEXT, `customLabel` TEXT, `index` INTEGER NOT NULL, `folderId` TEXT, `iconSize` INTEGER NOT NULL, `textColor` TEXT NOT NULL, `textSize` INTEGER NOT NULL, `showLabel` INTEGER NOT NULL, `singleLineLabel` INTEGER NOT NULL, `horizontalAlignment` TEXT NOT NULL, `verticalArrangement` TEXT NOT NULL, `customTextColor` INTEGER NOT NULL, `customBackgroundColor` INTEGER NOT NULL, `padding` INTEGER NOT NULL, `cornerRadius` INTEGER NOT NULL, `layoutType` TEXT NOT NULL, `horizontalArrangement` TEXT NOT NULL, `verticalAlignment` TEXT NOT NULL, `doubleTap_eblanActionType` TEXT NOT NULL, `doubleTap_serialNumber` INTEGER NOT NULL, `doubleTap_componentName` TEXT NOT NULL, `swipeUp_eblanActionType` TEXT NOT NULL, `swipeUp_serialNumber` INTEGER NOT NULL, `swipeUp_componentName` TEXT NOT NULL, `swipeDown_eblanActionType` TEXT NOT NULL, `swipeDown_serialNumber` INTEGER NOT NULL, `swipeDown_componentName` TEXT NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`folderId`) REFERENCES `FolderGridItemEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -472,6 +472,24 @@
             "notNull": true
           },
           {
+            "fieldPath": "gridItemSettings.layoutType",
+            "columnName": "layoutType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.horizontalArrangement",
+            "columnName": "horizontalArrangement",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.verticalAlignment",
+            "columnName": "verticalAlignment",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
             "fieldPath": "doubleTap.eblanActionType",
             "columnName": "doubleTap_eblanActionType",
             "affinity": "TEXT",
@@ -559,7 +577,7 @@
       },
       {
         "tableName": "WidgetGridItemEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `page` INTEGER NOT NULL, `startColumn` INTEGER NOT NULL, `startRow` INTEGER NOT NULL, `columnSpan` INTEGER NOT NULL, `rowSpan` INTEGER NOT NULL, `associate` TEXT NOT NULL, `appWidgetId` INTEGER NOT NULL, `packageName` TEXT NOT NULL, `componentName` TEXT NOT NULL, `configure` TEXT, `minWidth` INTEGER NOT NULL, `minHeight` INTEGER NOT NULL, `resizeMode` INTEGER NOT NULL, `minResizeWidth` INTEGER NOT NULL, `minResizeHeight` INTEGER NOT NULL, `maxResizeWidth` INTEGER NOT NULL, `maxResizeHeight` INTEGER NOT NULL, `targetCellHeight` INTEGER NOT NULL, `targetCellWidth` INTEGER NOT NULL, `preview` TEXT, `label` TEXT, `icon` TEXT, `override` INTEGER NOT NULL, `serialNumber` INTEGER NOT NULL, `iconSize` INTEGER NOT NULL, `textColor` TEXT NOT NULL, `textSize` INTEGER NOT NULL, `showLabel` INTEGER NOT NULL, `singleLineLabel` INTEGER NOT NULL, `horizontalAlignment` TEXT NOT NULL, `verticalArrangement` TEXT NOT NULL, `customTextColor` INTEGER NOT NULL, `customBackgroundColor` INTEGER NOT NULL, `padding` INTEGER NOT NULL, `cornerRadius` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `page` INTEGER NOT NULL, `startColumn` INTEGER NOT NULL, `startRow` INTEGER NOT NULL, `columnSpan` INTEGER NOT NULL, `rowSpan` INTEGER NOT NULL, `associate` TEXT NOT NULL, `appWidgetId` INTEGER NOT NULL, `packageName` TEXT NOT NULL, `componentName` TEXT NOT NULL, `configure` TEXT, `minWidth` INTEGER NOT NULL, `minHeight` INTEGER NOT NULL, `resizeMode` INTEGER NOT NULL, `minResizeWidth` INTEGER NOT NULL, `minResizeHeight` INTEGER NOT NULL, `maxResizeWidth` INTEGER NOT NULL, `maxResizeHeight` INTEGER NOT NULL, `targetCellHeight` INTEGER NOT NULL, `targetCellWidth` INTEGER NOT NULL, `preview` TEXT, `label` TEXT, `icon` TEXT, `override` INTEGER NOT NULL, `serialNumber` INTEGER NOT NULL, `iconSize` INTEGER NOT NULL, `textColor` TEXT NOT NULL, `textSize` INTEGER NOT NULL, `showLabel` INTEGER NOT NULL, `singleLineLabel` INTEGER NOT NULL, `horizontalAlignment` TEXT NOT NULL, `verticalArrangement` TEXT NOT NULL, `customTextColor` INTEGER NOT NULL, `customBackgroundColor` INTEGER NOT NULL, `padding` INTEGER NOT NULL, `cornerRadius` INTEGER NOT NULL, `layoutType` TEXT NOT NULL, `horizontalArrangement` TEXT NOT NULL, `verticalAlignment` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -772,6 +790,24 @@
             "columnName": "cornerRadius",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.layoutType",
+            "columnName": "layoutType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.horizontalArrangement",
+            "columnName": "horizontalArrangement",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.verticalAlignment",
+            "columnName": "verticalAlignment",
+            "affinity": "TEXT",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -783,7 +819,7 @@
       },
       {
         "tableName": "ShortcutInfoGridItemEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `page` INTEGER NOT NULL, `startColumn` INTEGER NOT NULL, `startRow` INTEGER NOT NULL, `columnSpan` INTEGER NOT NULL, `rowSpan` INTEGER NOT NULL, `associate` TEXT NOT NULL, `shortcutId` TEXT NOT NULL, `packageName` TEXT NOT NULL, `shortLabel` TEXT NOT NULL, `longLabel` TEXT NOT NULL, `icon` TEXT, `override` INTEGER NOT NULL, `serialNumber` INTEGER NOT NULL, `isEnabled` INTEGER NOT NULL, `eblanApplicationInfoIcon` TEXT, `customIcon` TEXT, `customShortLabel` TEXT, `index` INTEGER NOT NULL, `folderId` TEXT, `iconSize` INTEGER NOT NULL, `textColor` TEXT NOT NULL, `textSize` INTEGER NOT NULL, `showLabel` INTEGER NOT NULL, `singleLineLabel` INTEGER NOT NULL, `horizontalAlignment` TEXT NOT NULL, `verticalArrangement` TEXT NOT NULL, `customTextColor` INTEGER NOT NULL, `customBackgroundColor` INTEGER NOT NULL, `padding` INTEGER NOT NULL, `cornerRadius` INTEGER NOT NULL, `doubleTap_eblanActionType` TEXT NOT NULL, `doubleTap_serialNumber` INTEGER NOT NULL, `doubleTap_componentName` TEXT NOT NULL, `swipeUp_eblanActionType` TEXT NOT NULL, `swipeUp_serialNumber` INTEGER NOT NULL, `swipeUp_componentName` TEXT NOT NULL, `swipeDown_eblanActionType` TEXT NOT NULL, `swipeDown_serialNumber` INTEGER NOT NULL, `swipeDown_componentName` TEXT NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`folderId`) REFERENCES `FolderGridItemEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `page` INTEGER NOT NULL, `startColumn` INTEGER NOT NULL, `startRow` INTEGER NOT NULL, `columnSpan` INTEGER NOT NULL, `rowSpan` INTEGER NOT NULL, `associate` TEXT NOT NULL, `shortcutId` TEXT NOT NULL, `packageName` TEXT NOT NULL, `shortLabel` TEXT NOT NULL, `longLabel` TEXT NOT NULL, `icon` TEXT, `override` INTEGER NOT NULL, `serialNumber` INTEGER NOT NULL, `isEnabled` INTEGER NOT NULL, `eblanApplicationInfoIcon` TEXT, `customIcon` TEXT, `customShortLabel` TEXT, `index` INTEGER NOT NULL, `folderId` TEXT, `iconSize` INTEGER NOT NULL, `textColor` TEXT NOT NULL, `textSize` INTEGER NOT NULL, `showLabel` INTEGER NOT NULL, `singleLineLabel` INTEGER NOT NULL, `horizontalAlignment` TEXT NOT NULL, `verticalArrangement` TEXT NOT NULL, `customTextColor` INTEGER NOT NULL, `customBackgroundColor` INTEGER NOT NULL, `padding` INTEGER NOT NULL, `cornerRadius` INTEGER NOT NULL, `layoutType` TEXT NOT NULL, `horizontalArrangement` TEXT NOT NULL, `verticalAlignment` TEXT NOT NULL, `doubleTap_eblanActionType` TEXT NOT NULL, `doubleTap_serialNumber` INTEGER NOT NULL, `doubleTap_componentName` TEXT NOT NULL, `swipeUp_eblanActionType` TEXT NOT NULL, `swipeUp_serialNumber` INTEGER NOT NULL, `swipeUp_componentName` TEXT NOT NULL, `swipeDown_eblanActionType` TEXT NOT NULL, `swipeDown_serialNumber` INTEGER NOT NULL, `swipeDown_componentName` TEXT NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`folderId`) REFERENCES `FolderGridItemEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -967,6 +1003,24 @@
             "notNull": true
           },
           {
+            "fieldPath": "gridItemSettings.layoutType",
+            "columnName": "layoutType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.horizontalArrangement",
+            "columnName": "horizontalArrangement",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.verticalAlignment",
+            "columnName": "verticalAlignment",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
             "fieldPath": "doubleTap.eblanActionType",
             "columnName": "doubleTap_eblanActionType",
             "affinity": "TEXT",
@@ -1054,7 +1108,7 @@
       },
       {
         "tableName": "FolderGridItemEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `page` INTEGER NOT NULL, `startColumn` INTEGER NOT NULL, `startRow` INTEGER NOT NULL, `columnSpan` INTEGER NOT NULL, `rowSpan` INTEGER NOT NULL, `associate` TEXT NOT NULL, `label` TEXT NOT NULL, `override` INTEGER NOT NULL, `icon` TEXT, `index` INTEGER NOT NULL, `folderId` TEXT, `iconSize` INTEGER NOT NULL, `textColor` TEXT NOT NULL, `textSize` INTEGER NOT NULL, `showLabel` INTEGER NOT NULL, `singleLineLabel` INTEGER NOT NULL, `horizontalAlignment` TEXT NOT NULL, `verticalArrangement` TEXT NOT NULL, `customTextColor` INTEGER NOT NULL, `customBackgroundColor` INTEGER NOT NULL, `padding` INTEGER NOT NULL, `cornerRadius` INTEGER NOT NULL, `doubleTap_eblanActionType` TEXT NOT NULL, `doubleTap_serialNumber` INTEGER NOT NULL, `doubleTap_componentName` TEXT NOT NULL, `swipeUp_eblanActionType` TEXT NOT NULL, `swipeUp_serialNumber` INTEGER NOT NULL, `swipeUp_componentName` TEXT NOT NULL, `swipeDown_eblanActionType` TEXT NOT NULL, `swipeDown_serialNumber` INTEGER NOT NULL, `swipeDown_componentName` TEXT NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`folderId`) REFERENCES `FolderGridItemEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `page` INTEGER NOT NULL, `startColumn` INTEGER NOT NULL, `startRow` INTEGER NOT NULL, `columnSpan` INTEGER NOT NULL, `rowSpan` INTEGER NOT NULL, `associate` TEXT NOT NULL, `label` TEXT NOT NULL, `override` INTEGER NOT NULL, `icon` TEXT, `index` INTEGER NOT NULL, `folderId` TEXT, `iconSize` INTEGER NOT NULL, `textColor` TEXT NOT NULL, `textSize` INTEGER NOT NULL, `showLabel` INTEGER NOT NULL, `singleLineLabel` INTEGER NOT NULL, `horizontalAlignment` TEXT NOT NULL, `verticalArrangement` TEXT NOT NULL, `customTextColor` INTEGER NOT NULL, `customBackgroundColor` INTEGER NOT NULL, `padding` INTEGER NOT NULL, `cornerRadius` INTEGER NOT NULL, `layoutType` TEXT NOT NULL, `horizontalArrangement` TEXT NOT NULL, `verticalAlignment` TEXT NOT NULL, `doubleTap_eblanActionType` TEXT NOT NULL, `doubleTap_serialNumber` INTEGER NOT NULL, `doubleTap_componentName` TEXT NOT NULL, `swipeUp_eblanActionType` TEXT NOT NULL, `swipeUp_serialNumber` INTEGER NOT NULL, `swipeUp_componentName` TEXT NOT NULL, `swipeDown_eblanActionType` TEXT NOT NULL, `swipeDown_serialNumber` INTEGER NOT NULL, `swipeDown_componentName` TEXT NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`folderId`) REFERENCES `FolderGridItemEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -1190,6 +1244,24 @@
             "fieldPath": "gridItemSettings.cornerRadius",
             "columnName": "cornerRadius",
             "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.layoutType",
+            "columnName": "layoutType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.horizontalArrangement",
+            "columnName": "horizontalArrangement",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.verticalAlignment",
+            "columnName": "verticalAlignment",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -1359,7 +1431,7 @@
       },
       {
         "tableName": "ShortcutConfigGridItemEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `page` INTEGER NOT NULL, `startColumn` INTEGER NOT NULL, `startRow` INTEGER NOT NULL, `columnSpan` INTEGER NOT NULL, `rowSpan` INTEGER NOT NULL, `associate` TEXT NOT NULL, `componentName` TEXT NOT NULL, `packageName` TEXT NOT NULL, `activityIcon` TEXT, `activityLabel` TEXT, `applicationIcon` TEXT, `applicationLabel` TEXT, `override` INTEGER NOT NULL, `serialNumber` INTEGER NOT NULL, `shortcutIntentName` TEXT, `shortcutIntentIcon` TEXT, `shortcutIntentUri` TEXT, `customIcon` TEXT, `customLabel` TEXT, `index` INTEGER NOT NULL, `folderId` TEXT, `iconSize` INTEGER NOT NULL, `textColor` TEXT NOT NULL, `textSize` INTEGER NOT NULL, `showLabel` INTEGER NOT NULL, `singleLineLabel` INTEGER NOT NULL, `horizontalAlignment` TEXT NOT NULL, `verticalArrangement` TEXT NOT NULL, `customTextColor` INTEGER NOT NULL, `customBackgroundColor` INTEGER NOT NULL, `padding` INTEGER NOT NULL, `cornerRadius` INTEGER NOT NULL, `doubleTap_eblanActionType` TEXT NOT NULL, `doubleTap_serialNumber` INTEGER NOT NULL, `doubleTap_componentName` TEXT NOT NULL, `swipeUp_eblanActionType` TEXT NOT NULL, `swipeUp_serialNumber` INTEGER NOT NULL, `swipeUp_componentName` TEXT NOT NULL, `swipeDown_eblanActionType` TEXT NOT NULL, `swipeDown_serialNumber` INTEGER NOT NULL, `swipeDown_componentName` TEXT NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`folderId`) REFERENCES `FolderGridItemEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `page` INTEGER NOT NULL, `startColumn` INTEGER NOT NULL, `startRow` INTEGER NOT NULL, `columnSpan` INTEGER NOT NULL, `rowSpan` INTEGER NOT NULL, `associate` TEXT NOT NULL, `componentName` TEXT NOT NULL, `packageName` TEXT NOT NULL, `activityIcon` TEXT, `activityLabel` TEXT, `applicationIcon` TEXT, `applicationLabel` TEXT, `override` INTEGER NOT NULL, `serialNumber` INTEGER NOT NULL, `shortcutIntentName` TEXT, `shortcutIntentIcon` TEXT, `shortcutIntentUri` TEXT, `customIcon` TEXT, `customLabel` TEXT, `index` INTEGER NOT NULL, `folderId` TEXT, `iconSize` INTEGER NOT NULL, `textColor` TEXT NOT NULL, `textSize` INTEGER NOT NULL, `showLabel` INTEGER NOT NULL, `singleLineLabel` INTEGER NOT NULL, `horizontalAlignment` TEXT NOT NULL, `verticalArrangement` TEXT NOT NULL, `customTextColor` INTEGER NOT NULL, `customBackgroundColor` INTEGER NOT NULL, `padding` INTEGER NOT NULL, `cornerRadius` INTEGER NOT NULL, `layoutType` TEXT NOT NULL, `horizontalArrangement` TEXT NOT NULL, `verticalAlignment` TEXT NOT NULL, `doubleTap_eblanActionType` TEXT NOT NULL, `doubleTap_serialNumber` INTEGER NOT NULL, `doubleTap_componentName` TEXT NOT NULL, `swipeUp_eblanActionType` TEXT NOT NULL, `swipeUp_serialNumber` INTEGER NOT NULL, `swipeUp_componentName` TEXT NOT NULL, `swipeDown_eblanActionType` TEXT NOT NULL, `swipeDown_serialNumber` INTEGER NOT NULL, `swipeDown_componentName` TEXT NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`folderId`) REFERENCES `FolderGridItemEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -1547,6 +1619,24 @@
             "fieldPath": "gridItemSettings.cornerRadius",
             "columnName": "cornerRadius",
             "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.layoutType",
+            "columnName": "layoutType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.horizontalArrangement",
+            "columnName": "horizontalArrangement",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridItemSettings.verticalAlignment",
+            "columnName": "verticalAlignment",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -1817,7 +1907,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4e028facfdce8c87679792d3abb485f4')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'cfaebe38fb77b4cd51a8a753b7ae72ed')"
     ]
   }
 }
