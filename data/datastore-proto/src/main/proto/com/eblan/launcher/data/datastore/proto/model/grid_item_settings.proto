@@ -20,6 +20,8 @@ message GridItemSettingsProto {
   optional LayoutTypeProto layoutTypeProto = 12;
   optional HorizontalArrangementProto horizontalArrangementProto = 13;
   optional VerticalAlignmentProto verticalAlignmentProto = 14;
+  optional int32 iconPadding = 15;
+  optional int32 textPadding = 16;
 }
 
 enum HorizontalAlignmentProto {

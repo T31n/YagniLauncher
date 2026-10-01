@@ -64,26 +64,18 @@ fun GridItemSettings(
     onUpdateGridItemSettings: (GridItemSettings) -> Unit,
 ) {
     var showIconSizeDialog by remember { mutableStateOf(false) }
-
     var showTextColorDialog by remember { mutableStateOf(false) }
-
     var showTextSizeDialog by remember { mutableStateOf(false) }
-
     var showBackgroundColorDialog by remember { mutableStateOf(false) }
-
     var showPaddingDialog by remember { mutableStateOf(false) }
-
     var showCornerRadiusDialog by remember { mutableStateOf(false) }
-
     var showHorizontalAlignment by remember { mutableStateOf(false) }
-
     var showVerticalArrangement by remember { mutableStateOf(false) }
-
     var showHorizontalArrangement by remember { mutableStateOf(false) }
-
     var showVerticalAlignment by remember { mutableStateOf(false) }
-
     var showLayoutType by remember { mutableStateOf(false) }
+    var showIconPaddingDialog by remember { mutableStateOf(false) }
+    var showTextPaddingDialog by remember { mutableStateOf(false) }
 
     val items = buildGridItemSettingsItems(
         gridItemSettings = gridItemSettings,
@@ -121,6 +113,12 @@ fun GridItemSettings(
             showLayoutType = true
         },
         onUpdateGridItemSettings = onUpdateGridItemSettings,
+        onIconPaddingClick = {
+            showIconPaddingDialog = true
+        },
+        onTextPaddingClick = {
+            showTextPaddingDialog = true
+        },
     )
 
     Column(
@@ -198,6 +196,7 @@ fun GridItemSettings(
 
     if (showPaddingDialog) {
         EditPaddingDialog(
+            title = stringResource(R.string.padding),
             padding = gridItemSettings.padding,
             onDismissRequest = {
                 showPaddingDialog = false
@@ -312,6 +311,40 @@ fun GridItemSettings(
             },
         )
     }
+
+    if (showIconPaddingDialog) {
+        EditPaddingDialog(
+            title = "Icon Padding",
+            padding = gridItemSettings.iconPadding,
+            onDismissRequest = {
+                showIconPaddingDialog = false
+            },
+            onUpdatePadding = {
+                onUpdateGridItemSettings(
+                    gridItemSettings.copy(
+                        iconPadding = it,
+                    ),
+                )
+            },
+        )
+    }
+
+    if (showTextPaddingDialog) {
+        EditPaddingDialog(
+            title = "Text Padding",
+            padding = gridItemSettings.textPadding,
+            onDismissRequest = {
+                showTextPaddingDialog = false
+            },
+            onUpdatePadding = {
+                onUpdateGridItemSettings(
+                    gridItemSettings.copy(
+                        textPadding = it,
+                    ),
+                )
+            },
+        )
+    }
 }
 
 @Composable
@@ -378,6 +411,8 @@ private fun buildGridItemSettingsItems(
     onVerticalAlignmentClick: () -> Unit,
     onLayoutTypeClick: () -> Unit,
     onUpdateGridItemSettings: (GridItemSettings) -> Unit,
+    onIconPaddingClick: () -> Unit,
+    onTextPaddingClick: () -> Unit,
 ): List<SettingsItem> = buildList {
     add(
         SettingsItem.Column(
@@ -500,6 +535,22 @@ private fun buildGridItemSettingsItems(
             title = "Layout Type",
             subtitle = gridItemSettings.layoutType.getLayoutTypeTitle(),
             onClick = onLayoutTypeClick,
+        ),
+    )
+
+    add(
+        SettingsItem.Column(
+            title = "Icon Padding",
+            subtitle = "${gridItemSettings.iconPadding}",
+            onClick = onIconPaddingClick,
+        ),
+    )
+
+    add(
+        SettingsItem.Column(
+            title = "Text Padding",
+            subtitle = "${gridItemSettings.textPadding}",
+            onClick = onTextPaddingClick,
         ),
     )
 }

@@ -40,6 +40,7 @@ import com.eblan.launcher.common.R as commonR
 @Composable
 internal fun EditPaddingDialog(
     modifier: Modifier = Modifier,
+    title: String,
     padding: Int,
     onDismissRequest: () -> Unit,
     onUpdatePadding: (Int) -> Unit,
@@ -53,7 +54,7 @@ internal fun EditPaddingDialog(
         onDismissRequest = onDismissRequest,
     ) {
         Text(
-            text = stringResource(R.string.padding),
+            text = title,
             style = MaterialTheme.typography.titleLarge,
         )
 

@@ -63,6 +63,8 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
         padding = 0
         cornerRadius = 0
         layoutTypeProto = LayoutTypeProto.LayoutTypeTopIconBottomLabel
+        iconPadding = 0
+        textPadding = 0
     }.build()
 
     private val defaultHomeSettingsProto = HomeSettingsProto.newBuilder().apply {

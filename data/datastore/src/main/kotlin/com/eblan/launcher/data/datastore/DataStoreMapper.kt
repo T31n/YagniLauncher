@@ -116,6 +116,8 @@ internal fun GridItemSettingsProto.toGridItemSettings(): GridItemSettings = Grid
     layoutType = layoutTypeProto.toLayoutType(),
     horizontalArrangement = horizontalArrangementProto.toHorizontalArrangement(),
     verticalAlignment = verticalAlignmentProto.toVerticalAlignment(),
+    iconPadding = iconPadding,
+    textPadding = textPadding,
 )
 
 internal fun GeneralSettingsProto.toGeneralSettings(): GeneralSettings = GeneralSettings(
@@ -139,6 +141,8 @@ internal fun GridItemSettings.toGridItemSettingsProto(): GridItemSettingsProto =
     builder.layoutTypeProto = layoutType.toLayoutTypeProto()
     builder.horizontalArrangementProto = horizontalArrangement.toHorizontalAlignmentProto()
     builder.verticalAlignmentProto = verticalAlignment.toVerticalArrangementProto()
+    builder.iconPadding = iconPadding
+    builder.textPadding = textPadding
 }.build()
 
 internal fun HomeSettings.toHomeSettingsProto(): HomeSettingsProto = HomeSettingsProto.newBuilder().also { builder ->

@@ -15,7 +15,7 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.feature.home.screen.pager
+package com.eblan.launcher.feature.home.screen.pager.griditem
 
 import android.content.Intent.parseUri
 import android.graphics.Rect
@@ -86,7 +86,7 @@ import com.eblan.launcher.feature.home.component.swipeGestures
 import com.eblan.launcher.feature.home.component.whiteBox
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
-import com.eblan.launcher.feature.home.screen.pager.griditem.InteractiveApplicationInfoGridItem
+import com.eblan.launcher.feature.home.screen.pager.handleConflictingGridItem
 import com.eblan.launcher.feature.home.util.SCALE
 import com.eblan.launcher.feature.home.util.getGridItemTextColor
 import com.eblan.launcher.feature.home.util.getHorizontalAlignment

@@ -34,6 +34,8 @@ data class GridItemSettings(
     val layoutType: LayoutType,
     val horizontalArrangement: HorizontalArrangement,
     val verticalAlignment: VerticalAlignment,
+    val iconPadding: Int,
+    val textPadding: Int,
 )
 
 enum class HorizontalAlignment {

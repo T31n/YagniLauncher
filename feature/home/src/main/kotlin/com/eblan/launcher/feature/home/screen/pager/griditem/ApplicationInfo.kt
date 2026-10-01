@@ -347,6 +347,7 @@ private fun TopIconBottomLabel(
         Box(
             modifier = Modifier
                 .size(gridItemSettings.iconSize.dp)
+                .padding(gridItemSettings.iconPadding.dp)
                 .alpha(alpha),
         ) {
             AsyncImage(
@@ -397,7 +398,9 @@ private fun TopIconBottomLabel(
 
         if (gridItemSettings.showLabel) {
             Text(
-                modifier = Modifier.alpha(alpha),
+                modifier = Modifier
+                    .padding(gridItemSettings.textPadding.dp)
+                    .alpha(alpha),
                 text = data.customLabel ?: data.label,
                 color = textColor,
                 textAlign = TextAlign.Center,
@@ -536,7 +539,9 @@ private fun TopLabelBottomIcon(
     ) {
         if (gridItemSettings.showLabel) {
             Text(
-                modifier = Modifier.alpha(alpha),
+                modifier = Modifier
+                    .padding(gridItemSettings.textPadding.dp)
+                    .alpha(alpha),
                 text = data.customLabel ?: data.label,
                 color = textColor,
                 textAlign = TextAlign.Center,
@@ -549,6 +554,7 @@ private fun TopLabelBottomIcon(
         Box(
             modifier = Modifier
                 .size(gridItemSettings.iconSize.dp)
+                .padding(gridItemSettings.iconPadding.dp)
                 .alpha(alpha),
         ) {
             AsyncImage(
@@ -727,6 +733,7 @@ private fun StartIconEndLabel(
         Box(
             modifier = Modifier
                 .size(gridItemSettings.iconSize.dp)
+                .padding(gridItemSettings.iconPadding.dp)
                 .alpha(alpha),
         ) {
             AsyncImage(
@@ -777,7 +784,9 @@ private fun StartIconEndLabel(
 
         if (gridItemSettings.showLabel) {
             Text(
-                modifier = Modifier.alpha(alpha),
+                modifier = Modifier
+                    .padding(gridItemSettings.textPadding.dp)
+                    .alpha(alpha),
                 text = data.customLabel ?: data.label,
                 color = textColor,
                 textAlign = TextAlign.Center,
@@ -916,7 +925,9 @@ private fun StartLabelEndIcon(
     ) {
         if (gridItemSettings.showLabel) {
             Text(
-                modifier = Modifier.alpha(alpha),
+                modifier = Modifier
+                    .padding(gridItemSettings.textPadding.dp)
+                    .alpha(alpha),
                 text = data.customLabel ?: data.label,
                 color = textColor,
                 textAlign = TextAlign.Center,
@@ -929,6 +940,7 @@ private fun StartLabelEndIcon(
         Box(
             modifier = Modifier
                 .size(gridItemSettings.iconSize.dp)
+                .padding(gridItemSettings.iconPadding.dp)
                 .alpha(alpha),
         ) {
             AsyncImage(
