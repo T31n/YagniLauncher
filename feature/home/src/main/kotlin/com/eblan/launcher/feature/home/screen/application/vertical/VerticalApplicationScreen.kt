@@ -27,14 +27,12 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
@@ -64,7 +62,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.application.AlphabeticalScrollBarItem
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
@@ -78,7 +75,6 @@ import com.eblan.launcher.domain.model.launcherapps.EblanUserPageKey
 import com.eblan.launcher.domain.model.launcherapps.EblanUserType
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
-import com.eblan.launcher.domain.model.userdata.ScrollBarType
 import com.eblan.launcher.domain.model.userdata.SearchBarPosition
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.rememberNestedScrollConnectionEffect
@@ -574,13 +570,13 @@ private fun EblanApplicationInfos(
                         key = { it.serialNumber to it.componentName },
                     ) {
                         EblanApplicationInfoItem(
+                            modifier = Modifier.height(appDrawerSettings.appDrawerRowsHeight.dp),
                             sharedTransitionScope = sharedTransitionScope,
                             appDrawerSettings = appDrawerSettings,
                             drag = drag,
                             eblanApplicationInfo = it,
                             paddingValues = paddingValues,
                             isVisibleOverlay = isVisibleOverlay,
-                            appDrawerType = appDrawerSettings.appDrawerType,
                             isSwiping = swipeY > 0f,
                             isScrollInProgress = lazyGridState.isScrollInProgress,
                             systemTextColor = systemTextColor,
@@ -619,13 +615,13 @@ private fun EblanApplicationInfos(
                         },
                     ) {
                         EblanApplicationInfoItem(
+                            modifier = Modifier.height(appDrawerSettings.appDrawerRowsHeight.dp),
                             sharedTransitionScope = sharedTransitionScope,
                             appDrawerSettings = appDrawerSettings,
                             drag = drag,
                             eblanApplicationInfo = it,
                             paddingValues = paddingValues,
                             isVisibleOverlay = isVisibleOverlay,
-                            appDrawerType = appDrawerSettings.appDrawerType,
                             isScrollInProgress = lazyGridState.isScrollInProgress,
                             isSwiping = swipeY > 0f,
                             systemTextColor = systemTextColor,

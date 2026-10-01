@@ -415,13 +415,13 @@ private fun EblanApplicationInfos(
                 EblanUserType.Work,
                 -> {
                     EblanApplicationInfoItem(
+                        modifier = Modifier.fillMaxSize(),
                         sharedTransitionScope = sharedTransitionScope,
                         appDrawerSettings = appDrawerSettings,
                         drag = drag,
                         eblanApplicationInfo = it,
                         paddingValues = paddingValues,
                         isVisibleOverlay = isVisibleOverlay,
-                        appDrawerType = appDrawerSettings.appDrawerType,
                         isSwiping = swipeY > 0f,
                         isScrollInProgress = isScrollInProgress,
                         systemTextColor = systemTextColor,

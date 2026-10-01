@@ -27,7 +27,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -72,7 +71,6 @@ import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
-import com.eblan.launcher.domain.model.userdata.AppDrawerType
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.domain.model.userdata.TextColor
@@ -104,7 +102,6 @@ internal fun EblanApplicationInfoItem(
     eblanApplicationInfo: EblanApplicationInfo,
     paddingValues: PaddingValues,
     isVisibleOverlay: Boolean,
-    appDrawerType: AppDrawerType,
     isScrollInProgress: Boolean,
     isSwiping: Boolean,
     systemTextColor: TextColor,
@@ -204,13 +201,6 @@ internal fun EblanApplicationInfoItem(
 
     Column(
         modifier = modifier
-            .run {
-                if (appDrawerType == AppDrawerType.Vertical) {
-                    height(appDrawerSettings.appDrawerRowsHeight.dp)
-                } else {
-                    fillMaxSize()
-                }
-            }
             .padding(appDrawerSettings.gridItemSettings.padding.dp)
             .background(
                 color = Color(appDrawerSettings.gridItemSettings.customBackgroundColor),
