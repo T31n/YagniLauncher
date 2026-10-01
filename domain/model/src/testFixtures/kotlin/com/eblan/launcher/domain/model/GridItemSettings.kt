@@ -40,4 +40,7 @@ fun getGridItemSettings() = GridItemSettings(
     layoutType = LayoutType.TopIconBottomLabel,
     horizontalArrangement = HorizontalArrangement.Center,
     verticalAlignment = VerticalAlignment.CenterVertically,
+    iconPadding = 0,
+    textPadding = 0,
+
 )
