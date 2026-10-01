@@ -82,6 +82,7 @@ import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.GridLayout
 import com.eblan.launcher.feature.home.component.HomeHandler
 import com.eblan.launcher.feature.home.model.Screen
+import com.eblan.launcher.feature.home.screen.editpage.griditem.PageGridItem
 import com.eblan.launcher.ui.lazylist.DraggableColumnItem
 import com.eblan.launcher.ui.lazylist.dragColumnContainer
 import com.eblan.launcher.ui.lazylist.rememberLazyColumnDragDropState
@@ -215,7 +216,7 @@ internal fun EditGridPageScreen(
                         rows = rows,
                         animate = false,
                         content = {
-                            GridItemContent(
+                            PageGridItem(
                                 gridItem = it,
                                 gridItemSettings = homeSettings.gridItemSettings,
                                 hasShortcutHostPermission = hasShortcutHostPermission,
@@ -442,7 +443,7 @@ internal fun EditDockGridPageScreen(
                             rows = rows,
                             animate = false,
                             content = {
-                                GridItemContent(
+                                PageGridItem(
                                     gridItem = it,
                                     gridItemSettings = homeSettings.gridItemSettings,
                                     hasShortcutHostPermission = hasShortcutHostPermission,
