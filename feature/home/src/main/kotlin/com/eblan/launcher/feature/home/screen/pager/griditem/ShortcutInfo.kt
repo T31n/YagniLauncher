@@ -109,12 +109,27 @@ internal fun InteractiveShortcutInfoGridItem(
         sharedElementKey: SharedElementKey,
     ) -> Unit,
 ) {
+    val customIcon = data.customIcon ?: data.icon
+
+    val customShortLabel = data.customShortLabel ?: data.shortLabel
+
+    val alpha = if (hasInteraction) {
+        0f
+    } else if (hasShortcutHostPermission && data.isEnabled) {
+        1f
+    } else {
+        0.3f
+    }
+
     when (gridItemSettings.layoutType) {
         LayoutType.TopIconBottomLabel -> {
             TopIconBottomLabel(
                 modifier = modifier,
                 sharedTransitionScope = sharedTransitionScope,
                 data = data,
+                customIcon = customIcon,
+                customShortLabel = customShortLabel,
+                alpha = alpha,
                 gridItem = gridItem,
                 gridItemSettings = gridItemSettings,
                 hasShortcutHostPermission = hasShortcutHostPermission,
@@ -140,6 +155,9 @@ internal fun InteractiveShortcutInfoGridItem(
                 modifier = modifier,
                 sharedTransitionScope = sharedTransitionScope,
                 data = data,
+                customIcon = customIcon,
+                customShortLabel = customShortLabel,
+                alpha = alpha,
                 gridItem = gridItem,
                 gridItemSettings = gridItemSettings,
                 hasShortcutHostPermission = hasShortcutHostPermission,
@@ -165,6 +183,9 @@ internal fun InteractiveShortcutInfoGridItem(
                 modifier = modifier,
                 sharedTransitionScope = sharedTransitionScope,
                 data = data,
+                customIcon = customIcon,
+                customShortLabel = customShortLabel,
+                alpha = alpha,
                 gridItem = gridItem,
                 gridItemSettings = gridItemSettings,
                 hasShortcutHostPermission = hasShortcutHostPermission,
@@ -190,6 +211,9 @@ internal fun InteractiveShortcutInfoGridItem(
                 modifier = modifier,
                 sharedTransitionScope = sharedTransitionScope,
                 data = data,
+                customIcon = customIcon,
+                customShortLabel = customShortLabel,
+                alpha = alpha,
                 gridItem = gridItem,
                 gridItemSettings = gridItemSettings,
                 hasShortcutHostPermission = hasShortcutHostPermission,
@@ -218,6 +242,9 @@ private fun TopIconBottomLabel(
     modifier: Modifier = Modifier,
     sharedTransitionScope: SharedTransitionScope,
     data: GridItemData.ShortcutInfo,
+    customIcon: String?,
+    customShortLabel: String,
+    alpha: Float,
     gridItem: GridItem,
     gridItemSettings: GridItemSettings,
     hasShortcutHostPermission: Boolean,
@@ -255,14 +282,6 @@ private fun TopIconBottomLabel(
     val graphicsLayer = rememberGraphicsLayer()
 
     val scope = rememberCoroutineScope()
-
-    val customIcon = data.customIcon ?: data.icon
-
-    val customShortLabel = data.customShortLabel ?: data.shortLabel
-
-    val defaultAlpha = if (hasShortcutHostPermission && data.isEnabled) 1f else 0.3f
-
-    val alpha = if (hasInteraction) 0f else defaultAlpha
 
     val scale = remember { Animatable(1f) }
 
@@ -421,6 +440,9 @@ private fun TopLabelBottomIcon(
     modifier: Modifier = Modifier,
     sharedTransitionScope: SharedTransitionScope,
     data: GridItemData.ShortcutInfo,
+    customIcon: String?,
+    customShortLabel: String,
+    alpha: Float,
     gridItem: GridItem,
     gridItemSettings: GridItemSettings,
     hasShortcutHostPermission: Boolean,
@@ -458,14 +480,6 @@ private fun TopLabelBottomIcon(
     val graphicsLayer = rememberGraphicsLayer()
 
     val scope = rememberCoroutineScope()
-
-    val customIcon = data.customIcon ?: data.icon
-
-    val customShortLabel = data.customShortLabel ?: data.shortLabel
-
-    val defaultAlpha = if (hasShortcutHostPermission && data.isEnabled) 1f else 0.3f
-
-    val alpha = if (hasInteraction) 0f else defaultAlpha
 
     val scale = remember { Animatable(1f) }
 
@@ -624,6 +638,9 @@ private fun StartIconEndLabel(
     modifier: Modifier = Modifier,
     sharedTransitionScope: SharedTransitionScope,
     data: GridItemData.ShortcutInfo,
+    customIcon: String?,
+    customShortLabel: String,
+    alpha: Float,
     gridItem: GridItem,
     gridItemSettings: GridItemSettings,
     hasShortcutHostPermission: Boolean,
@@ -661,14 +678,6 @@ private fun StartIconEndLabel(
     val graphicsLayer = rememberGraphicsLayer()
 
     val scope = rememberCoroutineScope()
-
-    val customIcon = data.customIcon ?: data.icon
-
-    val customShortLabel = data.customShortLabel ?: data.shortLabel
-
-    val defaultAlpha = if (hasShortcutHostPermission && data.isEnabled) 1f else 0.3f
-
-    val alpha = if (hasInteraction) 0f else defaultAlpha
 
     val scale = remember { Animatable(1f) }
 
@@ -827,6 +836,9 @@ private fun StartLabelEndIcon(
     modifier: Modifier = Modifier,
     sharedTransitionScope: SharedTransitionScope,
     data: GridItemData.ShortcutInfo,
+    customIcon: String?,
+    customShortLabel: String,
+    alpha: Float,
     gridItem: GridItem,
     gridItemSettings: GridItemSettings,
     hasShortcutHostPermission: Boolean,
@@ -864,14 +876,6 @@ private fun StartLabelEndIcon(
     val graphicsLayer = rememberGraphicsLayer()
 
     val scope = rememberCoroutineScope()
-
-    val customIcon = data.customIcon ?: data.icon
-
-    val customShortLabel = data.customShortLabel ?: data.shortLabel
-
-    val defaultAlpha = if (hasShortcutHostPermission && data.isEnabled) 1f else 0.3f
-
-    val alpha = if (hasInteraction) 0f else defaultAlpha
 
     val scale = remember { Animatable(1f) }
 

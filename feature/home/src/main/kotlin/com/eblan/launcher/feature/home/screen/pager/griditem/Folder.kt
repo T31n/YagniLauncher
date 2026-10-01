@@ -137,6 +137,9 @@ internal fun InteractiveFolderGridItem(
     ) -> Unit,
     onTapFolderGridItem: (FolderEntry) -> Unit,
 ) {
+    val textAlpha = if (hasInteraction) 0f else 1f
+    val iconAlpha = if (hasInteraction || isVisibleFolder) 0f else 1f
+
     when (gridItemSettings.layoutType) {
         LayoutType.TopIconBottomLabel -> {
             TopIconBottomLabel(
@@ -148,6 +151,8 @@ internal fun InteractiveFolderGridItem(
                 gridItemSettings = gridItemSettings,
                 isScrollInProgress = isScrollInProgress,
                 isVisibleFolder = isVisibleFolder,
+                textAlpha = textAlpha,
+                iconAlpha = iconAlpha,
                 isVisibleOverlay = isVisibleOverlay,
                 sharedElementKey = sharedElementKey,
                 textColor = textColor,
@@ -186,6 +191,8 @@ internal fun InteractiveFolderGridItem(
                 gridItemSettings = gridItemSettings,
                 isScrollInProgress = isScrollInProgress,
                 isVisibleFolder = isVisibleFolder,
+                textAlpha = textAlpha,
+                iconAlpha = iconAlpha,
                 isVisibleOverlay = isVisibleOverlay,
                 sharedElementKey = sharedElementKey,
                 textColor = textColor,
@@ -224,6 +231,8 @@ internal fun InteractiveFolderGridItem(
                 gridItemSettings = gridItemSettings,
                 isScrollInProgress = isScrollInProgress,
                 isVisibleFolder = isVisibleFolder,
+                textAlpha = textAlpha,
+                iconAlpha = iconAlpha,
                 isVisibleOverlay = isVisibleOverlay,
                 sharedElementKey = sharedElementKey,
                 textColor = textColor,
@@ -262,6 +271,8 @@ internal fun InteractiveFolderGridItem(
                 gridItemSettings = gridItemSettings,
                 isScrollInProgress = isScrollInProgress,
                 isVisibleFolder = isVisibleFolder,
+                textAlpha = textAlpha,
+                iconAlpha = iconAlpha,
                 isVisibleOverlay = isVisibleOverlay,
                 sharedElementKey = sharedElementKey,
                 textColor = textColor,
@@ -303,6 +314,8 @@ private fun TopIconBottomLabel(
     gridItemSettings: GridItemSettings,
     isScrollInProgress: Boolean,
     isVisibleFolder: Boolean,
+    textAlpha: Float,
+    iconAlpha: Float,
     isVisibleOverlay: Boolean,
     sharedElementKey: SharedElementKey,
     textColor: Color,
@@ -349,9 +362,6 @@ private fun TopIconBottomLabel(
     val graphicsLayer = rememberGraphicsLayer()
 
     val scope = rememberCoroutineScope()
-
-    val textAlpha = if (hasInteraction) 0f else 1f
-    val iconAlpha = if (hasInteraction || isVisibleFolder) 0f else 1f
 
     val currentDrag = rememberUpdatedState(drag)
     val currentIsDragging = rememberUpdatedState(isDragging)
@@ -556,6 +566,8 @@ private fun TopLabelBottomIcon(
     gridItemSettings: GridItemSettings,
     isScrollInProgress: Boolean,
     isVisibleFolder: Boolean,
+    textAlpha: Float,
+    iconAlpha: Float,
     isVisibleOverlay: Boolean,
     sharedElementKey: SharedElementKey,
     textColor: Color,
@@ -602,9 +614,6 @@ private fun TopLabelBottomIcon(
     val graphicsLayer = rememberGraphicsLayer()
 
     val scope = rememberCoroutineScope()
-
-    val textAlpha = if (hasInteraction) 0f else 1f
-    val iconAlpha = if (hasInteraction || isVisibleFolder) 0f else 1f
 
     val currentDrag = rememberUpdatedState(drag)
     val currentIsDragging = rememberUpdatedState(isDragging)
@@ -809,6 +818,8 @@ private fun StartIconEndLabel(
     gridItemSettings: GridItemSettings,
     isScrollInProgress: Boolean,
     isVisibleFolder: Boolean,
+    textAlpha: Float,
+    iconAlpha: Float,
     isVisibleOverlay: Boolean,
     sharedElementKey: SharedElementKey,
     textColor: Color,
@@ -855,9 +866,6 @@ private fun StartIconEndLabel(
     val graphicsLayer = rememberGraphicsLayer()
 
     val scope = rememberCoroutineScope()
-
-    val textAlpha = if (hasInteraction) 0f else 1f
-    val iconAlpha = if (hasInteraction || isVisibleFolder) 0f else 1f
 
     val currentDrag = rememberUpdatedState(drag)
     val currentIsDragging = rememberUpdatedState(isDragging)
@@ -1062,6 +1070,8 @@ private fun StartLabelEndIcon(
     gridItemSettings: GridItemSettings,
     isScrollInProgress: Boolean,
     isVisibleFolder: Boolean,
+    textAlpha: Float,
+    iconAlpha: Float,
     isVisibleOverlay: Boolean,
     sharedElementKey: SharedElementKey,
     textColor: Color,
@@ -1108,9 +1118,6 @@ private fun StartLabelEndIcon(
     val graphicsLayer = rememberGraphicsLayer()
 
     val scope = rememberCoroutineScope()
-
-    val textAlpha = if (hasInteraction) 0f else 1f
-    val iconAlpha = if (hasInteraction || isVisibleFolder) 0f else 1f
 
     val currentDrag = rememberUpdatedState(drag)
     val currentIsDragging = rememberUpdatedState(isDragging)

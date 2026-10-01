@@ -112,24 +112,29 @@ internal fun InteractiveApplicationInfoGridItem(
         sharedElementKey: SharedElementKey,
     ) -> Unit,
 ) {
+    val icon = iconPackInfoFilePaths[data.componentName] ?: data.icon
+    val hasNotifications = (statusBarNotifications[data.packageName] ?: 0) > 0
+    val isNotificationAccessGranted by rememberIsNotificationAccessGranted()
+
     when (gridItemSettings.layoutType) {
         LayoutType.TopIconBottomLabel -> {
             TopIconBottomLabel(
                 modifier = modifier,
                 sharedTransitionScope = sharedTransitionScope,
                 data = data,
+                icon = icon,
+                hasNotifications = hasNotifications,
+                isNotificationAccessGranted = isNotificationAccessGranted,
                 gridItem = gridItem,
                 gridItemSettings = gridItemSettings,
                 isScrollInProgress = isScrollInProgress,
                 isVisibleFolders = isVisibleFolders,
                 isVisibleOverlay = isVisibleOverlay,
                 sharedElementKey = sharedElementKey,
-                statusBarNotifications = statusBarNotifications,
                 textColor = textColor,
                 hasInteraction = hasInteraction,
                 isVisibleWhiteBox = isVisibleWhiteBox,
                 sourceBounds = sourceBounds,
-                iconPackInfoFilePaths = iconPackInfoFilePaths,
                 animations = animations,
                 horizontalAlignment = horizontalAlignment,
                 verticalArrangement = verticalArrangement,
@@ -144,18 +149,19 @@ internal fun InteractiveApplicationInfoGridItem(
                 modifier = modifier,
                 sharedTransitionScope = sharedTransitionScope,
                 data = data,
+                icon = icon,
+                hasNotifications = hasNotifications,
+                isNotificationAccessGranted = isNotificationAccessGranted,
                 gridItem = gridItem,
                 gridItemSettings = gridItemSettings,
                 isScrollInProgress = isScrollInProgress,
                 isVisibleFolders = isVisibleFolders,
                 isVisibleOverlay = isVisibleOverlay,
                 sharedElementKey = sharedElementKey,
-                statusBarNotifications = statusBarNotifications,
                 textColor = textColor,
                 hasInteraction = hasInteraction,
                 isVisibleWhiteBox = isVisibleWhiteBox,
                 sourceBounds = sourceBounds,
-                iconPackInfoFilePaths = iconPackInfoFilePaths,
                 animations = animations,
                 horizontalAlignment = horizontalAlignment,
                 verticalArrangement = verticalArrangement,
@@ -170,18 +176,19 @@ internal fun InteractiveApplicationInfoGridItem(
                 modifier = modifier,
                 sharedTransitionScope = sharedTransitionScope,
                 data = data,
+                icon = icon,
+                hasNotifications = hasNotifications,
+                isNotificationAccessGranted = isNotificationAccessGranted,
                 gridItem = gridItem,
                 gridItemSettings = gridItemSettings,
                 isScrollInProgress = isScrollInProgress,
                 isVisibleFolders = isVisibleFolders,
                 isVisibleOverlay = isVisibleOverlay,
                 sharedElementKey = sharedElementKey,
-                statusBarNotifications = statusBarNotifications,
                 textColor = textColor,
                 hasInteraction = hasInteraction,
                 isVisibleWhiteBox = isVisibleWhiteBox,
                 sourceBounds = sourceBounds,
-                iconPackInfoFilePaths = iconPackInfoFilePaths,
                 animations = animations,
                 horizontalArrangement = horizontalArrangement,
                 verticalAlignment = verticalAlignment,
@@ -196,18 +203,19 @@ internal fun InteractiveApplicationInfoGridItem(
                 modifier = modifier,
                 sharedTransitionScope = sharedTransitionScope,
                 data = data,
+                icon = icon,
+                hasNotifications = hasNotifications,
+                isNotificationAccessGranted = isNotificationAccessGranted,
                 gridItem = gridItem,
                 gridItemSettings = gridItemSettings,
                 isScrollInProgress = isScrollInProgress,
                 isVisibleFolders = isVisibleFolders,
                 isVisibleOverlay = isVisibleOverlay,
                 sharedElementKey = sharedElementKey,
-                statusBarNotifications = statusBarNotifications,
                 textColor = textColor,
                 hasInteraction = hasInteraction,
                 isVisibleWhiteBox = isVisibleWhiteBox,
                 sourceBounds = sourceBounds,
-                iconPackInfoFilePaths = iconPackInfoFilePaths,
                 animations = animations,
                 horizontalArrangement = horizontalArrangement,
                 verticalAlignment = verticalAlignment,
@@ -225,18 +233,19 @@ private fun TopIconBottomLabel(
     modifier: Modifier = Modifier,
     sharedTransitionScope: SharedTransitionScope,
     data: GridItemData.ApplicationInfo,
+    icon: String?,
+    hasNotifications: Boolean,
+    isNotificationAccessGranted: Boolean,
     gridItem: GridItem,
     gridItemSettings: GridItemSettings,
     isScrollInProgress: Boolean,
     isVisibleFolders: Boolean,
     isVisibleOverlay: Boolean,
     sharedElementKey: SharedElementKey,
-    statusBarNotifications: Map<String, Int>,
     textColor: Color,
     hasInteraction: Boolean,
     isVisibleWhiteBox: Boolean,
     sourceBounds: Rect,
-    iconPackInfoFilePaths: Map<String, String?>,
     animations: Boolean,
     horizontalAlignment: Alignment.Horizontal,
     verticalArrangement: Arrangement.Vertical,
@@ -262,14 +271,7 @@ private fun TopIconBottomLabel(
 
     val scope = rememberCoroutineScope()
 
-    val icon = iconPackInfoFilePaths[data.componentName] ?: data.icon
-
-    val hasNotifications =
-        (statusBarNotifications[data.packageName] ?: 0) > 0
-
     val alpha = if (hasInteraction) 0f else 1f
-
-    val isNotificationAccessGranted by rememberIsNotificationAccessGranted()
 
     val scale = remember { Animatable(1f) }
 
@@ -418,18 +420,19 @@ private fun TopLabelBottomIcon(
     modifier: Modifier = Modifier,
     sharedTransitionScope: SharedTransitionScope,
     data: GridItemData.ApplicationInfo,
+    icon: String?,
+    hasNotifications: Boolean,
+    isNotificationAccessGranted: Boolean,
     gridItem: GridItem,
     gridItemSettings: GridItemSettings,
     isScrollInProgress: Boolean,
     isVisibleFolders: Boolean,
     isVisibleOverlay: Boolean,
     sharedElementKey: SharedElementKey,
-    statusBarNotifications: Map<String, Int>,
     textColor: Color,
     hasInteraction: Boolean,
     isVisibleWhiteBox: Boolean,
     sourceBounds: Rect,
-    iconPackInfoFilePaths: Map<String, String?>,
     animations: Boolean,
     horizontalAlignment: Alignment.Horizontal,
     verticalArrangement: Arrangement.Vertical,
@@ -455,14 +458,7 @@ private fun TopLabelBottomIcon(
 
     val scope = rememberCoroutineScope()
 
-    val icon = iconPackInfoFilePaths[data.componentName] ?: data.icon
-
-    val hasNotifications =
-        (statusBarNotifications[data.packageName] ?: 0) > 0
-
     val alpha = if (hasInteraction) 0f else 1f
-
-    val isNotificationAccessGranted by rememberIsNotificationAccessGranted()
 
     val scale = remember { Animatable(1f) }
 
@@ -611,18 +607,19 @@ private fun StartIconEndLabel(
     modifier: Modifier = Modifier,
     sharedTransitionScope: SharedTransitionScope,
     data: GridItemData.ApplicationInfo,
+    icon: String?,
+    hasNotifications: Boolean,
+    isNotificationAccessGranted: Boolean,
     gridItem: GridItem,
     gridItemSettings: GridItemSettings,
     isScrollInProgress: Boolean,
     isVisibleFolders: Boolean,
     isVisibleOverlay: Boolean,
     sharedElementKey: SharedElementKey,
-    statusBarNotifications: Map<String, Int>,
     textColor: Color,
     hasInteraction: Boolean,
     isVisibleWhiteBox: Boolean,
     sourceBounds: Rect,
-    iconPackInfoFilePaths: Map<String, String?>,
     animations: Boolean,
     horizontalArrangement: Arrangement.Horizontal,
     verticalAlignment: Alignment.Vertical,
@@ -648,14 +645,7 @@ private fun StartIconEndLabel(
 
     val scope = rememberCoroutineScope()
 
-    val icon = iconPackInfoFilePaths[data.componentName] ?: data.icon
-
-    val hasNotifications =
-        (statusBarNotifications[data.packageName] ?: 0) > 0
-
     val alpha = if (hasInteraction) 0f else 1f
-
-    val isNotificationAccessGranted by rememberIsNotificationAccessGranted()
 
     val scale = remember { Animatable(1f) }
 
@@ -804,18 +794,19 @@ private fun StartLabelEndIcon(
     modifier: Modifier = Modifier,
     sharedTransitionScope: SharedTransitionScope,
     data: GridItemData.ApplicationInfo,
+    icon: String?,
+    hasNotifications: Boolean,
+    isNotificationAccessGranted: Boolean,
     gridItem: GridItem,
     gridItemSettings: GridItemSettings,
     isScrollInProgress: Boolean,
     isVisibleFolders: Boolean,
     isVisibleOverlay: Boolean,
     sharedElementKey: SharedElementKey,
-    statusBarNotifications: Map<String, Int>,
     textColor: Color,
     hasInteraction: Boolean,
     isVisibleWhiteBox: Boolean,
     sourceBounds: Rect,
-    iconPackInfoFilePaths: Map<String, String?>,
     animations: Boolean,
     horizontalArrangement: Arrangement.Horizontal,
     verticalAlignment: Alignment.Vertical,
@@ -841,14 +832,7 @@ private fun StartLabelEndIcon(
 
     val scope = rememberCoroutineScope()
 
-    val icon = iconPackInfoFilePaths[data.componentName] ?: data.icon
-
-    val hasNotifications =
-        (statusBarNotifications[data.packageName] ?: 0) > 0
-
     val alpha = if (hasInteraction) 0f else 1f
-
-    val isNotificationAccessGranted by rememberIsNotificationAccessGranted()
 
     val scale = remember { Animatable(1f) }
 

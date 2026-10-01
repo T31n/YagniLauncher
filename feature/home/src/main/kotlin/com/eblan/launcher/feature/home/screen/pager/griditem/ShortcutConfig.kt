@@ -105,12 +105,31 @@ internal fun InteractiveShortcutConfigGridItem(
         sharedElementKey: SharedElementKey,
     ) -> Unit,
 ) {
+    val icon = when {
+        data.customIcon != null -> data.customIcon
+        data.shortcutIntentIcon != null -> data.shortcutIntentIcon
+        data.activityIcon != null -> data.activityIcon
+        else -> data.applicationIcon
+    }
+
+    val label = when {
+        data.customLabel != null -> data.customLabel
+        data.shortcutIntentName != null -> data.shortcutIntentName
+        data.activityLabel != null -> data.activityLabel
+        else -> data.applicationLabel
+    }
+
+    val alpha = if (hasInteraction) 0f else 1f
+
     when (gridItemSettings.layoutType) {
         LayoutType.TopIconBottomLabel -> {
             TopIconBottomLabel(
                 modifier = modifier,
                 sharedTransitionScope = sharedTransitionScope,
                 data = data,
+                icon = icon,
+                label = label,
+                alpha = alpha,
                 gridItem = gridItem,
                 gridItemSettings = gridItemSettings,
                 isScrollInProgress = isScrollInProgress,
@@ -134,6 +153,9 @@ internal fun InteractiveShortcutConfigGridItem(
                 modifier = modifier,
                 sharedTransitionScope = sharedTransitionScope,
                 data = data,
+                icon = icon,
+                label = label,
+                alpha = alpha,
                 gridItem = gridItem,
                 gridItemSettings = gridItemSettings,
                 isScrollInProgress = isScrollInProgress,
@@ -157,6 +179,9 @@ internal fun InteractiveShortcutConfigGridItem(
                 modifier = modifier,
                 sharedTransitionScope = sharedTransitionScope,
                 data = data,
+                icon = icon,
+                label = label,
+                alpha = alpha,
                 gridItem = gridItem,
                 gridItemSettings = gridItemSettings,
                 isScrollInProgress = isScrollInProgress,
@@ -180,6 +205,9 @@ internal fun InteractiveShortcutConfigGridItem(
                 modifier = modifier,
                 sharedTransitionScope = sharedTransitionScope,
                 data = data,
+                icon = icon,
+                label = label,
+                alpha = alpha,
                 gridItem = gridItem,
                 gridItemSettings = gridItemSettings,
                 isScrollInProgress = isScrollInProgress,
@@ -206,6 +234,9 @@ private fun TopIconBottomLabel(
     modifier: Modifier = Modifier,
     sharedTransitionScope: SharedTransitionScope,
     data: GridItemData.ShortcutConfig,
+    icon: String?,
+    label: String?,
+    alpha: Float,
     gridItem: GridItem,
     gridItemSettings: GridItemSettings,
     isScrollInProgress: Boolean,
@@ -239,22 +270,6 @@ private fun TopIconBottomLabel(
     val graphicsLayer = rememberGraphicsLayer()
 
     val scope = rememberCoroutineScope()
-
-    val icon = when {
-        data.customIcon != null -> data.customIcon
-        data.shortcutIntentIcon != null -> data.shortcutIntentIcon
-        data.activityIcon != null -> data.activityIcon
-        else -> data.applicationIcon
-    }
-
-    val label = when {
-        data.customLabel != null -> data.customLabel
-        data.shortcutIntentName != null -> data.shortcutIntentName
-        data.activityLabel != null -> data.activityLabel
-        else -> data.applicationLabel
-    }
-
-    val alpha = if (hasInteraction) 0f else 1f
 
     val scale = remember { Animatable(1f) }
 
@@ -385,6 +400,9 @@ private fun TopLabelBottomIcon(
     modifier: Modifier = Modifier,
     sharedTransitionScope: SharedTransitionScope,
     data: GridItemData.ShortcutConfig,
+    icon: String?,
+    label: String?,
+    alpha: Float,
     gridItem: GridItem,
     gridItemSettings: GridItemSettings,
     isScrollInProgress: Boolean,
@@ -418,22 +436,6 @@ private fun TopLabelBottomIcon(
     val graphicsLayer = rememberGraphicsLayer()
 
     val scope = rememberCoroutineScope()
-
-    val icon = when {
-        data.customIcon != null -> data.customIcon
-        data.shortcutIntentIcon != null -> data.shortcutIntentIcon
-        data.activityIcon != null -> data.activityIcon
-        else -> data.applicationIcon
-    }
-
-    val label = when {
-        data.customLabel != null -> data.customLabel
-        data.shortcutIntentName != null -> data.shortcutIntentName
-        data.activityLabel != null -> data.activityLabel
-        else -> data.applicationLabel
-    }
-
-    val alpha = if (hasInteraction) 0f else 1f
 
     val scale = remember { Animatable(1f) }
 
@@ -564,6 +566,9 @@ private fun StartIconEndLabel(
     modifier: Modifier = Modifier,
     sharedTransitionScope: SharedTransitionScope,
     data: GridItemData.ShortcutConfig,
+    icon: String?,
+    label: String?,
+    alpha: Float,
     gridItem: GridItem,
     gridItemSettings: GridItemSettings,
     isScrollInProgress: Boolean,
@@ -597,22 +602,6 @@ private fun StartIconEndLabel(
     val graphicsLayer = rememberGraphicsLayer()
 
     val scope = rememberCoroutineScope()
-
-    val icon = when {
-        data.customIcon != null -> data.customIcon
-        data.shortcutIntentIcon != null -> data.shortcutIntentIcon
-        data.activityIcon != null -> data.activityIcon
-        else -> data.applicationIcon
-    }
-
-    val label = when {
-        data.customLabel != null -> data.customLabel
-        data.shortcutIntentName != null -> data.shortcutIntentName
-        data.activityLabel != null -> data.activityLabel
-        else -> data.applicationLabel
-    }
-
-    val alpha = if (hasInteraction) 0f else 1f
 
     val scale = remember { Animatable(1f) }
 
@@ -743,6 +732,9 @@ private fun StartLabelEndIcon(
     modifier: Modifier = Modifier,
     sharedTransitionScope: SharedTransitionScope,
     data: GridItemData.ShortcutConfig,
+    icon: String?,
+    label: String?,
+    alpha: Float,
     gridItem: GridItem,
     gridItemSettings: GridItemSettings,
     isScrollInProgress: Boolean,
@@ -776,22 +768,6 @@ private fun StartLabelEndIcon(
     val graphicsLayer = rememberGraphicsLayer()
 
     val scope = rememberCoroutineScope()
-
-    val icon = when {
-        data.customIcon != null -> data.customIcon
-        data.shortcutIntentIcon != null -> data.shortcutIntentIcon
-        data.activityIcon != null -> data.activityIcon
-        else -> data.applicationIcon
-    }
-
-    val label = when {
-        data.customLabel != null -> data.customLabel
-        data.shortcutIntentName != null -> data.shortcutIntentName
-        data.activityLabel != null -> data.activityLabel
-        else -> data.applicationLabel
-    }
-
-    val alpha = if (hasInteraction) 0f else 1f
 
     val scale = remember { Animatable(1f) }
 
