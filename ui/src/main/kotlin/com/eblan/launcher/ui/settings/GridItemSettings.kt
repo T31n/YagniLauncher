@@ -41,6 +41,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.grid.HorizontalAlignment
+import com.eblan.launcher.domain.model.grid.HorizontalArrangement
+import com.eblan.launcher.domain.model.grid.VerticalAlignment
 import com.eblan.launcher.domain.model.grid.VerticalArrangement
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.ui.R
@@ -76,6 +78,10 @@ fun GridItemSettings(
 
     var showVerticalArrangement by remember { mutableStateOf(false) }
 
+    var showHorizontalArrangement by remember { mutableStateOf(false) }
+
+    var showVerticalAlignment by remember { mutableStateOf(false) }
+
     val items = buildGridItemSettingsItems(
         gridItemSettings = gridItemSettings,
         onIconSizeClick = {
@@ -101,6 +107,12 @@ fun GridItemSettings(
         },
         onVerticalArrangementClick = {
             showVerticalArrangement = true
+        },
+        onHorizontalArrangementClick = {
+            showHorizontalArrangement = true
+        },
+        onVerticalAlignmentClick = {
+            showVerticalAlignment = true
         },
         onUpdateGridItemSettings = onUpdateGridItemSettings,
     )
@@ -243,6 +255,40 @@ fun GridItemSettings(
             },
         )
     }
+
+    if (showHorizontalArrangement) {
+        RadioOptionsDialog(
+            title = "Horizontal Arrangement",
+            options = HorizontalArrangement.entries,
+            selected = gridItemSettings.horizontalArrangement,
+            label = {
+                it.getHorizontalArrangementTitle()
+            },
+            onDismissRequest = {
+                showHorizontalArrangement = false
+            },
+            onUpdateClick = {
+                onUpdateGridItemSettings(gridItemSettings.copy(horizontalArrangement = it))
+            },
+        )
+    }
+
+    if (showVerticalAlignment) {
+        RadioOptionsDialog(
+            title = "Vertical Alignment",
+            options = VerticalAlignment.entries,
+            selected = gridItemSettings.verticalAlignment,
+            label = {
+                it.getVerticalAlignmentTitle()
+            },
+            onDismissRequest = {
+                showVerticalAlignment = false
+            },
+            onUpdateClick = {
+                onUpdateGridItemSettings(gridItemSettings.copy(verticalAlignment = it))
+            },
+        )
+    }
 }
 
 @Composable
@@ -305,6 +351,8 @@ private fun buildGridItemSettingsItems(
     onCornerRadiusClick: () -> Unit,
     onHorizontalAlignmentClick: () -> Unit,
     onVerticalArrangementClick: () -> Unit,
+    onHorizontalArrangementClick: () -> Unit,
+    onVerticalAlignmentClick: () -> Unit,
     onUpdateGridItemSettings: (GridItemSettings) -> Unit,
 ): List<SettingsItem> = buildList {
     add(
@@ -406,6 +454,22 @@ private fun buildGridItemSettingsItems(
             onClick = onVerticalArrangementClick,
         ),
     )
+
+    add(
+        SettingsItem.Column(
+            title = "Horizontal Arrangement",
+            subtitle = gridItemSettings.horizontalArrangement.getHorizontalArrangementTitle(),
+            onClick = onHorizontalArrangementClick,
+        ),
+    )
+
+    add(
+        SettingsItem.Column(
+            title = "Vertical Alignment",
+            subtitle = gridItemSettings.verticalAlignment.getVerticalAlignmentTitle(),
+            onClick = onVerticalAlignmentClick,
+        ),
+    )
 }
 
 @Composable
@@ -420,4 +484,18 @@ private fun VerticalArrangement.getVerticalArrangementTitle(): String = when (th
     VerticalArrangement.Top -> stringResource(R.string.top)
     VerticalArrangement.Center -> stringResource(R.string.center)
     VerticalArrangement.Bottom -> stringResource(R.string.bottom)
+}
+
+@Composable
+private fun HorizontalArrangement.getHorizontalArrangementTitle(): String = when (this) {
+    HorizontalArrangement.Start -> stringResource(R.string.start)
+    HorizontalArrangement.Center -> stringResource(R.string.center)
+    HorizontalArrangement.End -> stringResource(R.string.end)
+}
+
+@Composable
+private fun VerticalAlignment.getVerticalAlignmentTitle(): String = when (this) {
+    VerticalAlignment.Top -> stringResource(R.string.top)
+    VerticalAlignment.CenterVertically -> "Center Vertically"
+    VerticalAlignment.Bottom -> stringResource(R.string.bottom)
 }

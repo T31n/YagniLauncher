@@ -19,6 +19,9 @@ package com.eblan.launcher.domain.model
 
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.grid.HorizontalAlignment
+import com.eblan.launcher.domain.model.grid.HorizontalArrangement
+import com.eblan.launcher.domain.model.grid.LayoutType
+import com.eblan.launcher.domain.model.grid.VerticalAlignment
 import com.eblan.launcher.domain.model.grid.VerticalArrangement
 import com.eblan.launcher.domain.model.userdata.TextColor
 
@@ -34,4 +37,7 @@ fun getGridItemSettings() = GridItemSettings(
     customBackgroundColor = 0,
     padding = 0,
     cornerRadius = 0,
+    layoutType = LayoutType.TopIconBottomLabel,
+    horizontalArrangement = HorizontalArrangement.Center,
+    verticalAlignment = VerticalAlignment.CenterVertically,
 )
