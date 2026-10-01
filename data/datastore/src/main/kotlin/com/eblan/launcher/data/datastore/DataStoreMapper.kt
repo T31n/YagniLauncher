@@ -375,6 +375,8 @@ private fun LayoutType.toLayoutTypeProto(): LayoutTypeProto = when (this) {
     LayoutType.TopLabelBottomIcon -> LayoutTypeProto.LayoutTypeTopLabelBottomIcon
     LayoutType.StartIconEndLabel -> LayoutTypeProto.LayoutTypeStartIconEndLabel
     LayoutType.StartLabelEndIcon -> LayoutTypeProto.LayoutTypeStartLabelEndIcon
+    LayoutType.IconOnly -> LayoutTypeProto.LayoutTypeIconOnly
+    LayoutType.LabelOnly -> LayoutTypeProto.LayoutTypeLabelOnly
 }
 
 private fun LayoutTypeProto.toLayoutType(): LayoutType = when (this) {
@@ -382,6 +384,8 @@ private fun LayoutTypeProto.toLayoutType(): LayoutType = when (this) {
     LayoutTypeProto.LayoutTypeTopLabelBottomIcon -> LayoutType.TopLabelBottomIcon
     LayoutTypeProto.LayoutTypeStartIconEndLabel -> LayoutType.StartIconEndLabel
     LayoutTypeProto.LayoutTypeStartLabelEndIcon -> LayoutType.StartLabelEndIcon
+    LayoutTypeProto.LayoutTypeIconOnly -> LayoutType.IconOnly
+    LayoutTypeProto.LayoutTypeLabelOnly -> LayoutType.LabelOnly
 }
 
 private fun HorizontalArrangement.toHorizontalAlignmentProto(): HorizontalArrangementProto = when (this) {

@@ -67,4 +67,6 @@ enum class LayoutType {
     TopLabelBottomIcon,
     StartIconEndLabel,
     StartLabelEndIcon,
+    IconOnly,
+    LabelOnly,
 }

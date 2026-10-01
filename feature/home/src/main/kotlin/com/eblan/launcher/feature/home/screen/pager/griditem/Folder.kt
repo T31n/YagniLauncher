@@ -23,6 +23,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -56,6 +57,7 @@ import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -88,6 +90,12 @@ import com.eblan.launcher.feature.home.util.handleOnPress
 import com.eblan.launcher.feature.home.util.onDoubleTap
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import kotlinx.coroutines.launch
+import com.eblan.launcher.feature.home.component.IconOnly
+import com.eblan.launcher.feature.home.component.LabelOnly
+import com.eblan.launcher.feature.home.component.StartIconEndLabel
+import com.eblan.launcher.feature.home.component.StartLabelEndIcon
+import com.eblan.launcher.feature.home.component.TopIconBottomLabel
+import com.eblan.launcher.feature.home.component.TopLabelBottomIcon
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -249,33 +257,36 @@ internal fun InteractiveFolderGridItem(
             onOpenAppDrawer = onOpenAppDrawer,
         )
 
+    val iconModifier = Modifier
+        .onGloballyPositioned(
+            onGloballyPositioned = {
+                intOffset = it.positionInRoot().round()
+                intSize = it.size
+            },
+        )
+        .gridItemScaleAnimation(
+            enabled = animations,
+            isVisibleOverlay = isVisibleOverlay,
+            scale = scale,
+        )
+        .gridItemSharedElement(
+            enabled = animations,
+            sharedElementKey = sharedElementKey,
+            sharedTransitionScope = sharedTransitionScope,
+            visible = !isScrollInProgress && !hasInteraction,
+        )
+        .drawWithContent {
+            graphicsLayer.record {
+                this@drawWithContent.drawContent()
+            }
+            drawLayer(graphicsLayer = graphicsLayer)
+        }
+
     val iconContent: @Composable () -> Unit = {
         val commonModifier = Modifier
             .size(gridItemSettings.iconSize.dp)
             .padding(gridItemSettings.iconPadding.dp)
-            .onGloballyPositioned(
-                onGloballyPositioned = {
-                    intOffset = it.positionInRoot().round()
-                    intSize = it.size
-                },
-            )
-            .gridItemScaleAnimation(
-                enabled = animations,
-                isVisibleOverlay = isVisibleOverlay,
-                scale = scale,
-            )
-            .gridItemSharedElement(
-                enabled = animations,
-                sharedElementKey = sharedElementKey,
-                sharedTransitionScope = sharedTransitionScope,
-                visible = !isScrollInProgress && !hasInteraction,
-            )
-            .drawWithContent {
-                graphicsLayer.record {
-                    this@drawWithContent.drawContent()
-                }
-                drawLayer(graphicsLayer = graphicsLayer)
-            }
+            .then(iconModifier)
             .alpha(alpha = iconAlpha)
         if (data.icon != null) {
             AsyncImage(
@@ -324,10 +335,10 @@ internal fun InteractiveFolderGridItem(
         }
     }
 
-    val labelContent: @Composable () -> Unit = {
+    val labelContent: @Composable (Modifier) -> Unit = { modifier ->
         if (gridItemSettings.showLabel) {
             Text(
-                modifier = Modifier
+                modifier = modifier
                     .padding(gridItemSettings.textPadding.dp)
                     .alpha(alpha = textAlpha),
                 text = data.label,
@@ -380,78 +391,26 @@ internal fun InteractiveFolderGridItem(
                 label = labelContent,
             )
         }
-    }
-}
 
-@Composable
-private fun TopIconBottomLabel(
-    modifier: Modifier = Modifier,
-    horizontalAlignment: Alignment.Horizontal,
-    verticalArrangement: Arrangement.Vertical,
-    icon: @Composable () -> Unit,
-    label: @Composable () -> Unit,
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = horizontalAlignment,
-        verticalArrangement = verticalArrangement,
-    ) {
-        icon()
-        label()
-    }
-}
+        LayoutType.IconOnly -> {
+            IconOnly(
+                modifier = itemModifier,
+                horizontalAlignment = horizontalAlignment,
+                verticalArrangement = verticalArrangement,
+                icon = iconContent,
+            )
+        }
 
-@Composable
-private fun TopLabelBottomIcon(
-    modifier: Modifier = Modifier,
-    horizontalAlignment: Alignment.Horizontal,
-    verticalArrangement: Arrangement.Vertical,
-    icon: @Composable () -> Unit,
-    label: @Composable () -> Unit,
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = horizontalAlignment,
-        verticalArrangement = verticalArrangement,
-    ) {
-        label()
-        icon()
-    }
-}
-
-@Composable
-private fun StartIconEndLabel(
-    modifier: Modifier = Modifier,
-    horizontalArrangement: Arrangement.Horizontal,
-    verticalAlignment: Alignment.Vertical,
-    icon: @Composable () -> Unit,
-    label: @Composable () -> Unit,
-) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = horizontalArrangement,
-        verticalAlignment = verticalAlignment,
-    ) {
-        icon()
-        label()
-    }
-}
-
-@Composable
-private fun StartLabelEndIcon(
-    modifier: Modifier = Modifier,
-    horizontalArrangement: Arrangement.Horizontal,
-    verticalAlignment: Alignment.Vertical,
-    icon: @Composable () -> Unit,
-    label: @Composable () -> Unit,
-) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = horizontalArrangement,
-        verticalAlignment = verticalAlignment,
-    ) {
-        label()
-        icon()
+        LayoutType.LabelOnly -> {
+            LabelOnly(
+                modifier = itemModifier,
+                iconSize = gridItemSettings.iconSize.dp,
+                iconPadding = gridItemSettings.iconPadding.dp,
+                iconModifier = iconModifier,
+                labelModifier = Modifier.alpha(alpha = textAlpha),
+                label = labelContent,
+            )
+        }
     }
 }
 
@@ -495,7 +454,7 @@ private fun PreviewFolderGridItem(
             is GridItemData.Folder,
             is GridItemData.ShortcutConfig,
             is GridItemData.Widget,
-            -> if (hasInteraction) 0f else 1f
+                -> if (hasInteraction) 0f else 1f
 
             is GridItemData.ShortcutInfo -> {
                 if (hasInteraction) {

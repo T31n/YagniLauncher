@@ -21,8 +21,6 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -160,77 +158,9 @@ internal fun ShortcutInfoGridItem(
                 icon = iconContent,
                 label = labelContent,
             )
-    }
-}
 
-@Composable
-private fun TopIconBottomLabel(
-    modifier: Modifier = Modifier,
-    horizontalAlignment: Alignment.Horizontal,
-    verticalArrangement: Arrangement.Vertical,
-    icon: @Composable () -> Unit,
-    label: @Composable () -> Unit,
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = horizontalAlignment,
-        verticalArrangement = verticalArrangement,
-    ) {
-        icon()
-        label()
-    }
-}
-
-@Composable
-private fun TopLabelBottomIcon(
-    modifier: Modifier = Modifier,
-    horizontalAlignment: Alignment.Horizontal,
-    verticalArrangement: Arrangement.Vertical,
-    icon: @Composable () -> Unit,
-    label: @Composable () -> Unit,
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = horizontalAlignment,
-        verticalArrangement = verticalArrangement,
-    ) {
-        label()
-        icon()
-    }
-}
-
-@Composable
-private fun StartIconEndLabel(
-    modifier: Modifier = Modifier,
-    horizontalArrangement: Arrangement.Horizontal,
-    verticalAlignment: Alignment.Vertical,
-    icon: @Composable () -> Unit,
-    label: @Composable () -> Unit,
-) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = horizontalArrangement,
-        verticalAlignment = verticalAlignment,
-    ) {
-        icon()
-        label()
-    }
-}
-
-@Composable
-private fun StartLabelEndIcon(
-    modifier: Modifier = Modifier,
-    horizontalArrangement: Arrangement.Horizontal,
-    verticalAlignment: Alignment.Vertical,
-    icon: @Composable () -> Unit,
-    label: @Composable () -> Unit,
-) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = horizontalArrangement,
-        verticalAlignment = verticalAlignment,
-    ) {
-        label()
-        icon()
+        LayoutType.IconOnly,
+        LayoutType.LabelOnly,
+        -> TODO()
     }
 }

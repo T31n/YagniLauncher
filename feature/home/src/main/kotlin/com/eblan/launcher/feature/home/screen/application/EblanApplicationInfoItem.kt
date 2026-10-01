@@ -23,10 +23,7 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,7 +36,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.drawWithContent
@@ -329,78 +325,10 @@ internal fun EblanApplicationInfoItem(
                 label = labelContent,
             )
         }
-    }
-}
 
-@Composable
-private fun TopIconBottomLabel(
-    modifier: Modifier = Modifier,
-    horizontalAlignment: Alignment.Horizontal,
-    verticalArrangement: Arrangement.Vertical,
-    icon: @Composable () -> Unit,
-    label: @Composable () -> Unit,
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = horizontalAlignment,
-        verticalArrangement = verticalArrangement,
-    ) {
-        icon()
-        label()
-    }
-}
-
-@Composable
-private fun TopLabelBottomIcon(
-    modifier: Modifier = Modifier,
-    horizontalAlignment: Alignment.Horizontal,
-    verticalArrangement: Arrangement.Vertical,
-    icon: @Composable () -> Unit,
-    label: @Composable () -> Unit,
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = horizontalAlignment,
-        verticalArrangement = verticalArrangement,
-    ) {
-        label()
-        icon()
-    }
-}
-
-@Composable
-private fun StartIconEndLabel(
-    modifier: Modifier = Modifier,
-    horizontalArrangement: Arrangement.Horizontal,
-    verticalAlignment: Alignment.Vertical,
-    icon: @Composable () -> Unit,
-    label: @Composable () -> Unit,
-) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = horizontalArrangement,
-        verticalAlignment = verticalAlignment,
-    ) {
-        icon()
-        label()
-    }
-}
-
-@Composable
-private fun StartLabelEndIcon(
-    modifier: Modifier = Modifier,
-    horizontalArrangement: Arrangement.Horizontal,
-    verticalAlignment: Alignment.Vertical,
-    icon: @Composable () -> Unit,
-    label: @Composable () -> Unit,
-) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = horizontalArrangement,
-        verticalAlignment = verticalAlignment,
-    ) {
-        label()
-        icon()
+        LayoutType.IconOnly,
+        LayoutType.LabelOnly,
+        -> TODO()
     }
 }
 

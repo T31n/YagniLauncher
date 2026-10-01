@@ -589,4 +589,6 @@ private fun LayoutType.getLayoutTypeTitle(): String = when (this) {
     LayoutType.TopLabelBottomIcon -> "Top Label Bottom Icon"
     LayoutType.StartIconEndLabel -> "Start Icon End Label"
     LayoutType.StartLabelEndIcon -> "Start Label End Icon"
+    LayoutType.IconOnly -> "Icon Only"
+    LayoutType.LabelOnly -> "Label Only"
 }

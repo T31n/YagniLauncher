@@ -24,8 +24,6 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -74,6 +72,12 @@ import com.eblan.launcher.feature.home.util.handleOnPress
 import com.eblan.launcher.feature.home.util.onDoubleTap
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import kotlinx.coroutines.launch
+import com.eblan.launcher.feature.home.component.IconOnly
+import com.eblan.launcher.feature.home.component.LabelOnly
+import com.eblan.launcher.feature.home.component.StartIconEndLabel
+import com.eblan.launcher.feature.home.component.StartLabelEndIcon
+import com.eblan.launcher.feature.home.component.TopIconBottomLabel
+import com.eblan.launcher.feature.home.component.TopLabelBottomIcon
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -192,6 +196,31 @@ internal fun InteractiveShortcutConfigGridItem(
             onOpenAppDrawer = onOpenAppDrawer,
         )
 
+    val iconModifier = Modifier
+        .onGloballyPositioned(
+            onGloballyPositioned = {
+                intOffset = it.positionInRoot().round()
+                intSize = it.size
+            },
+        )
+        .gridItemScaleAnimation(
+            enabled = animations,
+            isVisibleOverlay = isVisibleOverlay,
+            scale = scale,
+        )
+        .gridItemSharedElement(
+            enabled = animations,
+            sharedElementKey = sharedElementKey,
+            sharedTransitionScope = sharedTransitionScope,
+            visible = !isScrollInProgress && !hasInteraction,
+        )
+        .drawWithContent {
+            graphicsLayer.record {
+                this@drawWithContent.drawContent()
+            }
+            drawLayer(graphicsLayer = graphicsLayer)
+        }
+
     val iconContent: @Composable () -> Unit = {
         AsyncImage(
             model = Builder(context = context)
@@ -203,36 +232,15 @@ internal fun InteractiveShortcutConfigGridItem(
             modifier = Modifier
                 .size(gridItemSettings.iconSize.dp)
                 .padding(gridItemSettings.iconPadding.dp)
-                .onGloballyPositioned(
-                    onGloballyPositioned = {
-                        intOffset = it.positionInRoot().round()
-                        intSize = it.size
-                    },
-                )
-                .gridItemScaleAnimation(
-                    enabled = animations,
-                    isVisibleOverlay = isVisibleOverlay,
-                    scale = scale,
-                )
-                .gridItemSharedElement(
-                    enabled = animations,
-                    sharedElementKey = sharedElementKey,
-                    sharedTransitionScope = sharedTransitionScope,
-                    visible = !isScrollInProgress && !hasInteraction,
-                )
-                .drawWithContent {
-                    graphicsLayer.record {
-                        this@drawWithContent.drawContent()
-                    }
-                    drawLayer(graphicsLayer = graphicsLayer)
-                }
+                .then(iconModifier)
                 .alpha(alpha = alpha),
         )
     }
-    val labelContent: @Composable () -> Unit = {
+
+    val labelContent: @Composable (Modifier) -> Unit = { modifier ->
         if (gridItemSettings.showLabel) {
             Text(
-                modifier = Modifier
+                modifier = modifier
                     .padding(gridItemSettings.textPadding.dp)
                     .alpha(alpha = alpha),
                 text = label.toString(),
@@ -285,77 +293,24 @@ internal fun InteractiveShortcutConfigGridItem(
                 label = labelContent,
             )
         }
-    }
-}
 
-@Composable
-private fun TopIconBottomLabel(
-    modifier: Modifier,
-    horizontalAlignment: Alignment.Horizontal,
-    verticalArrangement: Arrangement.Vertical,
-    icon: @Composable () -> Unit,
-    label: @Composable () -> Unit,
-) {
-    Column(
-        modifier,
-        horizontalAlignment = horizontalAlignment,
-        verticalArrangement = verticalArrangement,
-    ) {
-        icon()
-        label()
-    }
-}
+        LayoutType.IconOnly -> {
+            IconOnly(
+                modifier = itemModifier,
+                horizontalAlignment = horizontalAlignment,
+                verticalArrangement = verticalArrangement,
+                icon = iconContent,
+            )
+        }
 
-@Composable
-private fun TopLabelBottomIcon(
-    modifier: Modifier = Modifier,
-    horizontalAlignment: Alignment.Horizontal,
-    verticalArrangement: Arrangement.Vertical,
-    icon: @Composable () -> Unit,
-    label: @Composable () -> Unit,
-) {
-    Column(
-        modifier,
-        horizontalAlignment = horizontalAlignment,
-        verticalArrangement = verticalArrangement,
-    ) {
-        label()
-        icon()
-    }
-}
-
-@Composable
-private fun StartIconEndLabel(
-    modifier: Modifier = Modifier,
-    horizontalArrangement: Arrangement.Horizontal,
-    verticalAlignment: Alignment.Vertical,
-    icon: @Composable () -> Unit,
-    label: @Composable () -> Unit,
-) {
-    Row(
-        modifier,
-        horizontalArrangement = horizontalArrangement,
-        verticalAlignment = verticalAlignment,
-    ) {
-        icon()
-        label()
-    }
-}
-
-@Composable
-private fun StartLabelEndIcon(
-    modifier: Modifier = Modifier,
-    horizontalArrangement: Arrangement.Horizontal,
-    verticalAlignment: Alignment.Vertical,
-    icon: @Composable () -> Unit,
-    label: @Composable () -> Unit,
-) {
-    Row(
-        modifier,
-        horizontalArrangement = horizontalArrangement,
-        verticalAlignment = verticalAlignment,
-    ) {
-        label()
-        icon()
+        LayoutType.LabelOnly -> {
+            LabelOnly(
+                modifier = itemModifier,
+                iconSize = gridItemSettings.iconSize.dp,
+                iconPadding = gridItemSettings.iconPadding.dp,
+                iconModifier = iconModifier,
+                label = labelContent,
+            )
+        }
     }
 }
