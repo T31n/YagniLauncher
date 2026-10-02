@@ -23,9 +23,6 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -57,7 +54,6 @@ import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -77,7 +73,13 @@ import com.eblan.launcher.domain.model.grid.LayoutType
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
+import com.eblan.launcher.feature.home.component.IconOnly
+import com.eblan.launcher.feature.home.component.LabelOnly
 import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
+import com.eblan.launcher.feature.home.component.StartIconEndLabel
+import com.eblan.launcher.feature.home.component.StartLabelEndIcon
+import com.eblan.launcher.feature.home.component.TopIconBottomLabel
+import com.eblan.launcher.feature.home.component.TopLabelBottomIcon
 import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.component.swipeGestures
@@ -90,12 +92,6 @@ import com.eblan.launcher.feature.home.util.handleOnPress
 import com.eblan.launcher.feature.home.util.onDoubleTap
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import kotlinx.coroutines.launch
-import com.eblan.launcher.feature.home.component.IconOnly
-import com.eblan.launcher.feature.home.component.LabelOnly
-import com.eblan.launcher.feature.home.component.StartIconEndLabel
-import com.eblan.launcher.feature.home.component.StartLabelEndIcon
-import com.eblan.launcher.feature.home.component.TopIconBottomLabel
-import com.eblan.launcher.feature.home.component.TopLabelBottomIcon
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -407,7 +403,6 @@ internal fun InteractiveFolderGridItem(
                 iconSize = gridItemSettings.iconSize.dp,
                 iconPadding = gridItemSettings.iconPadding.dp,
                 iconModifier = iconModifier,
-                labelModifier = Modifier.alpha(alpha = textAlpha),
                 label = labelContent,
             )
         }
@@ -454,7 +449,7 @@ private fun PreviewFolderGridItem(
             is GridItemData.Folder,
             is GridItemData.ShortcutConfig,
             is GridItemData.Widget,
-                -> if (hasInteraction) 0f else 1f
+            -> if (hasInteraction) 0f else 1f
 
             is GridItemData.ShortcutInfo -> {
                 if (hasInteraction) {

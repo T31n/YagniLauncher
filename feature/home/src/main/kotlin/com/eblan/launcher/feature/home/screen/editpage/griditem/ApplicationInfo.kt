@@ -47,6 +47,12 @@ import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.grid.LayoutType
+import com.eblan.launcher.feature.home.component.IconOnly
+import com.eblan.launcher.feature.home.component.LabelOnly
+import com.eblan.launcher.feature.home.component.StartIconEndLabel
+import com.eblan.launcher.feature.home.component.StartLabelEndIcon
+import com.eblan.launcher.feature.home.component.TopIconBottomLabel
+import com.eblan.launcher.feature.home.component.TopLabelBottomIcon
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -74,12 +80,12 @@ internal fun ApplicationInfoGridItem(
             shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
         )
 
+    val iconModifier = Modifier
+        .size(gridItemSettings.iconSize.dp)
+        .padding(gridItemSettings.iconPadding.dp)
+
     val iconContent: @Composable () -> Unit = {
-        Box(
-            modifier = Modifier
-                .size(gridItemSettings.iconSize.dp)
-                .padding(gridItemSettings.iconPadding.dp),
-        ) {
+        Box(modifier = iconModifier) {
             AsyncImage(
                 model = Builder(context)
                     .data(data.customIcon ?: icon)
@@ -106,7 +112,7 @@ internal fun ApplicationInfoGridItem(
         }
     }
 
-    val labelContent: @Composable () -> Unit = {
+    val labelContent: @Composable (Modifier) -> Unit = {
         if (gridItemSettings.showLabel) {
             Text(
                 modifier = Modifier.padding(gridItemSettings.textPadding.dp),
@@ -157,8 +163,23 @@ internal fun ApplicationInfoGridItem(
                 label = labelContent,
             )
 
-        LayoutType.IconOnly,
-        LayoutType.LabelOnly,
-        -> TODO()
+        LayoutType.IconOnly -> {
+            IconOnly(
+                modifier = itemModifier,
+                horizontalAlignment = horizontalAlignment,
+                verticalArrangement = verticalArrangement,
+                icon = iconContent,
+            )
+        }
+
+        LayoutType.LabelOnly -> {
+            LabelOnly(
+                modifier = itemModifier,
+                iconSize = gridItemSettings.iconSize.dp,
+                iconPadding = gridItemSettings.iconPadding.dp,
+                iconModifier = iconModifier,
+                label = labelContent,
+            )
+        }
     }
 }

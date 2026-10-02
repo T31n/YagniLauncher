@@ -71,6 +71,12 @@ import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.domain.model.userdata.TextColor
+import com.eblan.launcher.feature.home.component.IconOnly
+import com.eblan.launcher.feature.home.component.LabelOnly
+import com.eblan.launcher.feature.home.component.StartIconEndLabel
+import com.eblan.launcher.feature.home.component.StartLabelEndIcon
+import com.eblan.launcher.feature.home.component.TopIconBottomLabel
+import com.eblan.launcher.feature.home.component.TopLabelBottomIcon
 import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.model.Drag
@@ -228,6 +234,35 @@ internal fun EblanApplicationInfoItem(
             )
         }
 
+    val iconModifier = Modifier
+        .size(gridItemSettings.iconSize.dp)
+        .padding(gridItemSettings.iconPadding.dp)
+        .onGloballyPositioned {
+            intOffset = it.positionInRoot().round()
+            intSize = it.size
+        }
+        .gridItemScaleAnimation(
+            enabled = animations,
+            isVisibleOverlay = isVisibleOverlay,
+            scale = scale,
+        )
+        .gridItemSharedElement(
+            enabled = animations,
+            sharedElementKey = sharedElementKey,
+            sharedTransitionScope = sharedTransitionScope,
+            visible = !isSwiping &&
+                !isScrollInProgress &&
+                !isLongPress &&
+                !isVisibleOverlay,
+        )
+        .drawWithContent {
+            graphicsLayer.record {
+                this@drawWithContent.drawContent()
+            }
+            drawLayer(graphicsLayer)
+        }
+        .alpha(alpha)
+
     val iconContent: @Composable () -> Unit = {
         AsyncImage(
             model = ImageRequest.Builder(context)
@@ -237,38 +272,11 @@ internal fun EblanApplicationInfoItem(
                 .crossfade(false)
                 .build(),
             contentDescription = null,
-            modifier = Modifier
-                .size(gridItemSettings.iconSize.dp)
-                .padding(gridItemSettings.iconPadding.dp)
-                .onGloballyPositioned {
-                    intOffset = it.positionInRoot().round()
-                    intSize = it.size
-                }
-                .gridItemScaleAnimation(
-                    enabled = animations,
-                    isVisibleOverlay = isVisibleOverlay,
-                    scale = scale,
-                )
-                .gridItemSharedElement(
-                    enabled = animations,
-                    sharedElementKey = sharedElementKey,
-                    sharedTransitionScope = sharedTransitionScope,
-                    visible = !isSwiping &&
-                        !isScrollInProgress &&
-                        !isLongPress &&
-                        !isVisibleOverlay,
-                )
-                .drawWithContent {
-                    graphicsLayer.record {
-                        this@drawWithContent.drawContent()
-                    }
-                    drawLayer(graphicsLayer)
-                }
-                .alpha(alpha),
+            modifier = iconModifier,
         )
     }
 
-    val labelContent: @Composable () -> Unit = {
+    val labelContent: @Composable (Modifier) -> Unit = {
         if (gridItemSettings.showLabel) {
             Text(
                 modifier = Modifier
@@ -326,9 +334,24 @@ internal fun EblanApplicationInfoItem(
             )
         }
 
-        LayoutType.IconOnly,
-        LayoutType.LabelOnly,
-        -> TODO()
+        LayoutType.IconOnly -> {
+            IconOnly(
+                modifier = itemModifier,
+                horizontalAlignment = horizontalAlignment,
+                verticalArrangement = verticalArrangement,
+                icon = iconContent,
+            )
+        }
+
+        LayoutType.LabelOnly -> {
+            LabelOnly(
+                modifier = itemModifier,
+                iconSize = gridItemSettings.iconSize.dp,
+                iconPadding = gridItemSettings.iconPadding.dp,
+                iconModifier = iconModifier,
+                label = labelContent,
+            )
+        }
     }
 }
 

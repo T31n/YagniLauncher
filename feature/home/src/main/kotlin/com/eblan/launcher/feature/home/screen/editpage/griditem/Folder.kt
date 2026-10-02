@@ -24,12 +24,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
@@ -40,6 +43,7 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest.Builder
 import coil3.request.addLastModifiedToFileCacheKey
 import coil3.size.Size
+import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.folder.PreviewFolder
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
@@ -47,7 +51,14 @@ import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.grid.LayoutType
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
+import com.eblan.launcher.feature.home.component.IconOnly
+import com.eblan.launcher.feature.home.component.LabelOnly
 import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
+import com.eblan.launcher.feature.home.component.StartIconEndLabel
+import com.eblan.launcher.feature.home.component.StartLabelEndIcon
+import com.eblan.launcher.feature.home.component.TopIconBottomLabel
+import com.eblan.launcher.feature.home.component.TopLabelBottomIcon
+import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -81,11 +92,11 @@ internal fun FolderGridItem(
             shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
         )
 
-    val iconContent: @Composable () -> Unit = {
-        val iconModifier = Modifier
-            .size(gridItemSettings.iconSize.dp)
-            .padding(gridItemSettings.iconPadding.dp)
+    val iconModifier = Modifier
+        .size(gridItemSettings.iconSize.dp)
+        .padding(gridItemSettings.iconPadding.dp)
 
+    val iconContent: @Composable () -> Unit = {
         if (data.icon != null) {
             AsyncImage(
                 model = Builder(context)
@@ -128,7 +139,7 @@ internal fun FolderGridItem(
         }
     }
 
-    val labelContent: @Composable () -> Unit = {
+    val labelContent: @Composable (Modifier) -> Unit = {
         if (gridItemSettings.showLabel) {
             Text(
                 modifier = Modifier.padding(gridItemSettings.textPadding.dp),
@@ -179,8 +190,136 @@ internal fun FolderGridItem(
                 label = labelContent,
             )
 
-        LayoutType.IconOnly,
-        LayoutType.LabelOnly,
-        -> TODO()
+        LayoutType.IconOnly -> {
+            IconOnly(
+                modifier = itemModifier,
+                horizontalAlignment = horizontalAlignment,
+                verticalArrangement = verticalArrangement,
+                icon = iconContent,
+            )
+        }
+
+        LayoutType.LabelOnly -> {
+            LabelOnly(
+                modifier = itemModifier,
+                iconSize = gridItemSettings.iconSize.dp,
+                iconPadding = gridItemSettings.iconPadding.dp,
+                iconModifier = iconModifier,
+                label = labelContent,
+            )
+        }
+    }
+}
+
+@Composable
+private fun PreviewFolderGridItem(
+    modifier: Modifier = Modifier,
+    gridItem: GridItem,
+    hasShortcutHostPermission: Boolean,
+    iconPackInfoFilePaths: Map<String, String?>,
+    gridItemSettings: GridItemSettings,
+    folderBackgroundColor: BackgroundColor,
+    customFolderBackgroundColor: Int,
+    systemTextColor: TextColor,
+    systemCustomTextColor: Int,
+) {
+    val context = LocalContext.current
+
+    key(gridItem.id) {
+        val currentGridItemSettings = if (gridItem.override) {
+            gridItem.gridItemSettings
+        } else {
+            gridItemSettings
+        }
+
+        val alpha = when (val data = gridItem.data) {
+            is GridItemData.ApplicationInfo,
+            is GridItemData.Folder,
+            is GridItemData.ShortcutConfig,
+            is GridItemData.Widget,
+            -> 1f
+
+            is GridItemData.ShortcutInfo -> {
+                if (hasShortcutHostPermission && data.isEnabled) 1f else 0.3f
+            }
+        }
+
+        val folderIconTint = getTextColorFromBackgroundColor(
+            backgroundColor = folderBackgroundColor,
+            customBackgroundColor = customFolderBackgroundColor,
+            textColor = currentGridItemSettings.textColor,
+            customTextColor = currentGridItemSettings.customTextColor,
+            systemTextColor = systemTextColor,
+            systemCustomTextColor = systemCustomTextColor,
+            defaultColor = MaterialTheme.colorScheme.onSurface,
+        )
+
+        val commonModifier = modifier
+            .padding(1.dp)
+            .alpha(alpha)
+
+        when (val data = gridItem.data) {
+            is GridItemData.ApplicationInfo -> {
+                val icon = iconPackInfoFilePaths[data.componentName] ?: data.icon
+
+                AsyncImage(
+                    model = Builder(context)
+                        .data(data.customIcon ?: icon)
+                        .addLastModifiedToFileCacheKey(true).build(),
+                    contentDescription = null,
+                    modifier = commonModifier,
+                )
+            }
+
+            is GridItemData.ShortcutConfig -> {
+                val icon = when {
+                    data.customIcon != null -> data.customIcon
+                    data.shortcutIntentIcon != null -> data.shortcutIntentIcon
+                    data.activityIcon != null -> data.activityIcon
+                    else -> data.applicationIcon
+                }
+
+                AsyncImage(
+                    model = Builder(context)
+                        .data(icon)
+                        .addLastModifiedToFileCacheKey(true).build(),
+                    contentDescription = null,
+                    modifier = commonModifier,
+                )
+            }
+
+            is GridItemData.ShortcutInfo -> {
+                AsyncImage(
+                    model = Builder(context)
+                        .data(data.customIcon ?: data.icon)
+                        .addLastModifiedToFileCacheKey(true).build(),
+                    contentDescription = null,
+                    modifier = commonModifier,
+                )
+            }
+
+            is GridItemData.Folder -> {
+                if (data.icon != null) {
+                    AsyncImage(
+                        model = Builder(context)
+                            .data(data.icon)
+                            .addLastModifiedToFileCacheKey(true)
+                            .size(Size.ORIGINAL)
+                            .build(),
+                        contentDescription = null,
+                        modifier = commonModifier,
+                    )
+                } else {
+                    Icon(
+                        imageVector = EblanLauncherIcons.Folder,
+                        contentDescription = null,
+                        tint = folderIconTint,
+                        modifier = commonModifier,
+                    )
+                }
+            }
+
+            else -> Unit
+        }
     }
 }

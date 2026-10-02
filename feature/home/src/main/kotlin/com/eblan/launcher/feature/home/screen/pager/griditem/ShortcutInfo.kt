@@ -65,6 +65,12 @@ import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.grid.LayoutType
+import com.eblan.launcher.feature.home.component.IconOnly
+import com.eblan.launcher.feature.home.component.LabelOnly
+import com.eblan.launcher.feature.home.component.StartIconEndLabel
+import com.eblan.launcher.feature.home.component.StartLabelEndIcon
+import com.eblan.launcher.feature.home.component.TopIconBottomLabel
+import com.eblan.launcher.feature.home.component.TopLabelBottomIcon
 import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.component.swipeGestures
@@ -74,12 +80,6 @@ import com.eblan.launcher.feature.home.util.handleOnPress
 import com.eblan.launcher.feature.home.util.onDoubleTap
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import kotlinx.coroutines.launch
-import com.eblan.launcher.feature.home.component.IconOnly
-import com.eblan.launcher.feature.home.component.LabelOnly
-import com.eblan.launcher.feature.home.component.StartIconEndLabel
-import com.eblan.launcher.feature.home.component.StartLabelEndIcon
-import com.eblan.launcher.feature.home.component.TopIconBottomLabel
-import com.eblan.launcher.feature.home.component.TopLabelBottomIcon
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
