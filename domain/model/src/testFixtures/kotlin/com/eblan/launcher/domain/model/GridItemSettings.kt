@@ -29,7 +29,6 @@ fun getGridItemSettings() = GridItemSettings(
     iconSize = 48,
     textColor = TextColor.System,
     textSize = 14,
-    showLabel = true,
     singleLineLabel = true,
     horizontalAlignment = HorizontalAlignment.CenterHorizontally,
     verticalArrangement = VerticalArrangement.Center,
