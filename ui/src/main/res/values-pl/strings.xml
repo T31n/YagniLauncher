@@ -39,7 +39,6 @@
     <string name="reset_custom_icon">Zresetuj własną ikonę</string>
     <string name="grid_item">Element siatki</string>
     <string name="text_color">Kolor tekstu</string>
-    <string name="show_label">Pokaż etykietę</string>
     <string name="single_line_label">Etykieta w jednej linii</string>
     <string name="horizontal_alignment">Wyrównanie w poziomie</string>
     <string name="vertical_arrangement">Rozmieszczenie w pionie</string>
@@ -52,7 +51,6 @@
     <string name="double_tap">Dwukrotne dotknięcie</string>
     <string name="swipe_up">Przesunięcie w górę</string>
     <string name="swipe_down">Przesunięcie w dół</string>
-    <string name="display_app_names_below_icons">Wyświetlaj nazwy aplikacji pod ikonami</string>
     <string name="limit_app_names_to_one_line">Ogranicz nazwy aplikacji do jednej linii</string>
     <string name="custom">Własny</string>
 </resources>

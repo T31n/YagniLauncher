@@ -411,19 +411,17 @@ private fun InteractiveEblanApplicationInfoItem(
                 .alpha(alpha),
         )
 
-        if (appDrawerSettings.gridItemSettings.showLabel) {
-            Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
-            Text(
-                modifier = Modifier.alpha(alpha),
-                text = data.label,
-                color = textColor,
-                textAlign = TextAlign.Center,
-                maxLines = maxLines,
-                fontSize = appDrawerSettings.gridItemSettings.textSize.sp,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
+        Text(
+            modifier = Modifier.alpha(alpha),
+            text = data.label,
+            color = textColor,
+            textAlign = TextAlign.Center,
+            maxLines = maxLines,
+            fontSize = appDrawerSettings.gridItemSettings.textSize.sp,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 }
 
@@ -603,19 +601,17 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
             }
         }
 
-        if (appDrawerSettings.gridItemSettings.showLabel) {
-            Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
-            Text(
-                modifier = Modifier.alpha(textAlpha),
-                text = data.label,
-                color = textColor,
-                textAlign = TextAlign.Center,
-                maxLines = maxLines,
-                fontSize = appDrawerSettings.gridItemSettings.textSize.sp,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
+        Text(
+            modifier = Modifier.alpha(textAlpha),
+            text = data.label,
+            color = textColor,
+            textAlign = TextAlign.Center,
+            maxLines = maxLines,
+            fontSize = appDrawerSettings.gridItemSettings.textSize.sp,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 }
 

@@ -512,17 +512,15 @@ private fun InteractiveApplicationInfoGridItem(
             }
         }
 
-        if (gridItemSettings.showLabel) {
-            Text(
-                modifier = Modifier.alpha(alpha),
-                text = data.customLabel ?: data.label,
-                color = textColor,
-                textAlign = TextAlign.Center,
-                maxLines = maxLines,
-                fontSize = gridItemSettings.textSize.sp,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
+        Text(
+            modifier = Modifier.alpha(alpha),
+            text = data.customLabel ?: data.label,
+            color = textColor,
+            textAlign = TextAlign.Center,
+            maxLines = maxLines,
+            fontSize = gridItemSettings.textSize.sp,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 }
 
@@ -709,17 +707,15 @@ private fun InteractiveShortcutInfoGridItem(
             )
         }
 
-        if (gridItemSettings.showLabel) {
-            Text(
-                modifier = Modifier.alpha(alpha),
-                text = customShortLabel,
-                color = textColor,
-                textAlign = TextAlign.Center,
-                maxLines = maxLines,
-                fontSize = gridItemSettings.textSize.sp,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
+        Text(
+            modifier = Modifier.alpha(alpha),
+            text = customShortLabel,
+            color = textColor,
+            textAlign = TextAlign.Center,
+            maxLines = maxLines,
+            fontSize = gridItemSettings.textSize.sp,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 }
 
@@ -882,17 +878,15 @@ private fun InteractiveShortcutConfigGridItem(
                 .alpha(alpha),
         )
 
-        if (gridItemSettings.showLabel) {
-            Text(
-                modifier = Modifier.alpha(alpha),
-                text = label.toString(),
-                color = textColor,
-                textAlign = TextAlign.Center,
-                maxLines = maxLines,
-                fontSize = gridItemSettings.textSize.sp,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
+        Text(
+            modifier = Modifier.alpha(alpha),
+            text = label.toString(),
+            color = textColor,
+            textAlign = TextAlign.Center,
+            maxLines = maxLines,
+            fontSize = gridItemSettings.textSize.sp,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 }
 
@@ -1092,17 +1086,15 @@ private fun InteractiveNestedFolderGridItem(
             }
         }
 
-        if (gridItemSettings.showLabel) {
-            Text(
-                modifier = Modifier.alpha(textAlpha),
-                text = data.label,
-                color = textColor,
-                textAlign = TextAlign.Center,
-                maxLines = maxLines,
-                fontSize = gridItemSettings.textSize.sp,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
+        Text(
+            modifier = Modifier.alpha(textAlpha),
+            text = data.label,
+            color = textColor,
+            textAlign = TextAlign.Center,
+            maxLines = maxLines,
+            fontSize = gridItemSettings.textSize.sp,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 }
 

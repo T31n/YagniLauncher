@@ -321,19 +321,17 @@ internal fun FolderEblanApplicationInfoItem(
             }
         }
 
-        if (appDrawerSettings.gridItemSettings.showLabel) {
-            Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
-            Text(
-                modifier = Modifier.alpha(textAlpha),
-                text = folderEblanApplicationInfo.label,
-                color = textColor,
-                textAlign = TextAlign.Center,
-                maxLines = maxLines,
-                fontSize = appDrawerSettings.gridItemSettings.textSize.sp,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
+        Text(
+            modifier = Modifier.alpha(textAlpha),
+            text = folderEblanApplicationInfo.label,
+            color = textColor,
+            textAlign = TextAlign.Center,
+            maxLines = maxLines,
+            fontSize = appDrawerSettings.gridItemSettings.textSize.sp,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 }
 

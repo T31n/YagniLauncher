@@ -9,7 +9,6 @@ message GridItemSettingsProto {
   optional int32 iconSize = 1;
   optional TextColorProto textColorProto = 2;
   optional int32 textSize = 3;
-  optional bool showLabel = 4;
   optional bool singleLineLabel = 5;
   optional HorizontalAlignmentProto horizontalAlignmentProto = 6;
   optional VerticalArrangementProto verticalArrangementProto = 7;

@@ -416,6 +416,14 @@ private fun buildGridItemSettingsItems(
 ): List<SettingsItem> = buildList {
     add(
         SettingsItem.Column(
+            title = stringResource(R.string.layout_type),
+            subtitle = gridItemSettings.layoutType.getLayoutTypeTitle(),
+            onClick = onLayoutTypeClick,
+        ),
+    )
+
+    add(
+        SettingsItem.Column(
             title = stringResource(R.string.icon_size),
             subtitle = "${gridItemSettings.iconSize}",
             onClick = onIconSizeClick,
@@ -464,24 +472,6 @@ private fun buildGridItemSettingsItems(
 
     add(
         SettingsItem.Switch(
-            checked = gridItemSettings.showLabel,
-            title = stringResource(R.string.show_label),
-            subtitle = stringResource(R.string.display_app_names_below_icons),
-            onClick = {
-                onUpdateGridItemSettings(
-                    gridItemSettings.copy(showLabel = !gridItemSettings.showLabel),
-                )
-            },
-            onCheckedChange = {
-                onUpdateGridItemSettings(
-                    gridItemSettings.copy(showLabel = it),
-                )
-            },
-        ),
-    )
-
-    add(
-        SettingsItem.Switch(
             checked = gridItemSettings.singleLineLabel,
             title = stringResource(R.string.single_line_label),
             subtitle = stringResource(R.string.limit_app_names_to_one_line),
@@ -516,7 +506,7 @@ private fun buildGridItemSettingsItems(
 
     add(
         SettingsItem.Column(
-            title = "Horizontal Arrangement",
+            title = stringResource(R.string.horizontal_arrangement),
             subtitle = gridItemSettings.horizontalArrangement.getHorizontalArrangementTitle(),
             onClick = onHorizontalArrangementClick,
         ),
@@ -524,7 +514,7 @@ private fun buildGridItemSettingsItems(
 
     add(
         SettingsItem.Column(
-            title = "Vertical Alignment",
+            title = stringResource(R.string.vertical_alignment),
             subtitle = gridItemSettings.verticalAlignment.getVerticalAlignmentTitle(),
             onClick = onVerticalAlignmentClick,
         ),
@@ -532,15 +522,7 @@ private fun buildGridItemSettingsItems(
 
     add(
         SettingsItem.Column(
-            title = "Layout Type",
-            subtitle = gridItemSettings.layoutType.getLayoutTypeTitle(),
-            onClick = onLayoutTypeClick,
-        ),
-    )
-
-    add(
-        SettingsItem.Column(
-            title = "Icon Padding",
+            title = stringResource(R.string.icon_padding),
             subtitle = "${gridItemSettings.iconPadding}",
             onClick = onIconPaddingClick,
         ),
@@ -548,7 +530,7 @@ private fun buildGridItemSettingsItems(
 
     add(
         SettingsItem.Column(
-            title = "Text Padding",
+            title = stringResource(R.string.text_padding),
             subtitle = "${gridItemSettings.textPadding}",
             onClick = onTextPaddingClick,
         ),
@@ -579,16 +561,16 @@ private fun HorizontalArrangement.getHorizontalArrangementTitle(): String = when
 @Composable
 private fun VerticalAlignment.getVerticalAlignmentTitle(): String = when (this) {
     VerticalAlignment.Top -> stringResource(R.string.top)
-    VerticalAlignment.CenterVertically -> "Center Vertically"
+    VerticalAlignment.CenterVertically -> stringResource(R.string.center_vertically)
     VerticalAlignment.Bottom -> stringResource(R.string.bottom)
 }
 
 @Composable
 private fun LayoutType.getLayoutTypeTitle(): String = when (this) {
-    LayoutType.TopIconBottomLabel -> "Top Icon Bottom Label"
-    LayoutType.TopLabelBottomIcon -> "Top Label Bottom Icon"
-    LayoutType.StartIconEndLabel -> "Start Icon End Label"
-    LayoutType.StartLabelEndIcon -> "Start Label End Icon"
-    LayoutType.IconOnly -> "Icon Only"
-    LayoutType.LabelOnly -> "Label Only"
+    LayoutType.TopIconBottomLabel -> stringResource(R.string.top_icon_bottom_label)
+    LayoutType.TopLabelBottomIcon -> stringResource(R.string.top_label_bottom_icon)
+    LayoutType.StartIconEndLabel -> stringResource(R.string.start_icon_end_label)
+    LayoutType.StartLabelEndIcon -> stringResource(R.string.start_label_end_icon)
+    LayoutType.IconOnly -> stringResource(R.string.icon_only)
+    LayoutType.LabelOnly -> stringResource(R.string.label_only)
 }

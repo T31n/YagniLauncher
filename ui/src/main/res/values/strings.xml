@@ -39,7 +39,6 @@
     <string name="reset_custom_icon">Reset Custom Icon</string>
     <string name="grid_item">Grid Item</string>
     <string name="text_color">Text Color</string>
-    <string name="show_label">Show Label</string>
     <string name="single_line_label">Single Line Label</string>
     <string name="horizontal_alignment">Horizontal Alignment</string>
     <string name="vertical_arrangement">Vertical Arrangement</string>
@@ -52,9 +51,20 @@
     <string name="double_tap">Double Tap</string>
     <string name="swipe_up">Swipe Up</string>
     <string name="swipe_down">Swipe Down</string>
-    <string name="display_app_names_below_icons">Display app names below icons</string>
     <string name="limit_app_names_to_one_line">Limit app names to one line</string>
     <string name="custom">Custom</string>
     <string name="add_folder">Add Folder</string>
     <string name="folder_is_not_valid">Folder is not valid</string>
+    <string name="center_vertically">Center Vertically</string>
+    <string name="top_icon_bottom_label">Top Icon Bottom Label</string>
+    <string name="top_label_bottom_icon">Top Label Bottom Icon</string>
+    <string name="start_icon_end_label">Start Icon End Label</string>
+    <string name="start_label_end_icon">Start Label End Icon</string>
+    <string name="icon_only">Icon Only</string>
+    <string name="label_only">Label Only</string>
+    <string name="text_padding">Text Padding</string>
+    <string name="icon_padding">Icon Padding</string>
+    <string name="layout_type">Layout Type</string>
+    <string name="vertical_alignment">Vertical Alignment</string>
+    <string name="horizontal_arrangement">Horizontal Arrangement</string>
 </resources>

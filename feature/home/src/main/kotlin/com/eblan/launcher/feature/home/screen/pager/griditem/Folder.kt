@@ -332,19 +332,17 @@ internal fun InteractiveFolderGridItem(
     }
 
     val labelContent: @Composable (Modifier) -> Unit = { modifier ->
-        if (gridItemSettings.showLabel) {
-            Text(
-                modifier = modifier
-                    .padding(gridItemSettings.textPadding.dp)
-                    .alpha(alpha = textAlpha),
-                text = data.label,
-                color = textColor,
-                textAlign = TextAlign.Center,
-                maxLines = maxLines,
-                fontSize = gridItemSettings.textSize.sp,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
+        Text(
+            modifier = modifier
+                .padding(gridItemSettings.textPadding.dp)
+                .alpha(alpha = textAlpha),
+            text = data.label,
+            color = textColor,
+            textAlign = TextAlign.Center,
+            maxLines = maxLines,
+            fontSize = gridItemSettings.textSize.sp,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 
     when (gridItemSettings.layoutType) {

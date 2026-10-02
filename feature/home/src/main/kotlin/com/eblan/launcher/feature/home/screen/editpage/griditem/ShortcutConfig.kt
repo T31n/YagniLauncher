@@ -122,17 +122,15 @@ internal fun ShortcutConfigGridItem(
     }
 
     val labelContent: @Composable (Modifier) -> Unit = {
-        if (gridItemSettings.showLabel) {
-            Text(
-                modifier = Modifier.padding(gridItemSettings.textPadding.dp),
-                text = label.toString(),
-                color = textColor,
-                textAlign = TextAlign.Center,
-                maxLines = maxLines,
-                fontSize = gridItemSettings.textSize.sp,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
+        Text(
+            modifier = Modifier.padding(gridItemSettings.textPadding.dp),
+            text = label.toString(),
+            color = textColor,
+            textAlign = TextAlign.Center,
+            maxLines = maxLines,
+            fontSize = gridItemSettings.textSize.sp,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 
     when (gridItemSettings.layoutType) {

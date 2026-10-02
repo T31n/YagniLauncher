@@ -266,19 +266,17 @@ internal fun InteractiveShortcutInfoGridItem(
     }
 
     val labelContent: @Composable (Modifier) -> Unit = { modifier ->
-        if (gridItemSettings.showLabel) {
-            Text(
-                modifier = modifier
-                    .padding(gridItemSettings.textPadding.dp)
-                    .alpha(alpha = alpha),
-                text = data.customShortLabel ?: data.shortLabel,
-                color = textColor,
-                textAlign = TextAlign.Center,
-                maxLines = maxLines,
-                fontSize = gridItemSettings.textSize.sp,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
+        Text(
+            modifier = modifier
+                .padding(gridItemSettings.textPadding.dp)
+                .alpha(alpha = alpha),
+            text = data.customShortLabel ?: data.shortLabel,
+            color = textColor,
+            textAlign = TextAlign.Center,
+            maxLines = maxLines,
+            fontSize = gridItemSettings.textSize.sp,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 
     when (gridItemSettings.layoutType) {
