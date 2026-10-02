@@ -121,9 +121,9 @@ internal fun ShortcutConfigGridItem(
         }
     }
 
-    val labelContent: @Composable (Modifier) -> Unit = { modifier ->
+    val labelContent: @Composable (Modifier) -> Unit = { labelModifier ->
         Text(
-            modifier = modifier.padding(gridItemSettings.textPadding.dp),
+            modifier = labelModifier.padding(gridItemSettings.textPadding.dp),
             text = label.toString(),
             color = textColor,
             textAlign = TextAlign.Center,

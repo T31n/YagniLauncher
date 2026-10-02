@@ -237,9 +237,9 @@ internal fun InteractiveShortcutConfigGridItem(
         )
     }
 
-    val labelContent: @Composable (Modifier) -> Unit = { modifier ->
+    val labelContent: @Composable (Modifier) -> Unit = { labelModifier ->
         Text(
-            modifier = modifier
+            modifier = labelModifier
                 .padding(gridItemSettings.textPadding.dp)
                 .alpha(alpha = alpha),
             text = label.toString(),

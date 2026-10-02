@@ -111,9 +111,9 @@ internal fun ShortcutInfoGridItem(
         }
     }
 
-    val labelContent: @Composable (Modifier) -> Unit = { modifier ->
+    val labelContent: @Composable (Modifier) -> Unit = { labelModifier ->
         Text(
-            modifier = modifier
+            modifier = labelModifier
                 .padding(gridItemSettings.textPadding.dp)
                 .alpha(alpha),
             text = customShortLabel,

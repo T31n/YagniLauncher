@@ -139,9 +139,9 @@ internal fun FolderGridItem(
         }
     }
 
-    val labelContent: @Composable (Modifier) -> Unit = { modifier ->
+    val labelContent: @Composable (Modifier) -> Unit = { labelModifier ->
         Text(
-            modifier = modifier.padding(gridItemSettings.textPadding.dp),
+            modifier = labelModifier.padding(gridItemSettings.textPadding.dp),
             text = data.label,
             color = textColor,
             textAlign = TextAlign.Center,
