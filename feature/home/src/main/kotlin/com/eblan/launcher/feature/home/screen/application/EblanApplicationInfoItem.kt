@@ -276,9 +276,9 @@ internal fun EblanApplicationInfoItem(
         )
     }
 
-    val labelContent: @Composable (Modifier) -> Unit = {
+    val labelContent: @Composable (Modifier) -> Unit = { modifier ->
         Text(
-            modifier = Modifier
+            modifier = modifier
                 .padding(gridItemSettings.textPadding.dp)
                 .alpha(alpha),
             text = eblanApplicationInfo.customLabel

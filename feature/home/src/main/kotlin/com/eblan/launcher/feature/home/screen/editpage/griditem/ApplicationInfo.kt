@@ -110,9 +110,9 @@ internal fun ApplicationInfoGridItem(
         }
     }
 
-    val labelContent: @Composable (Modifier) -> Unit = {
+    val labelContent: @Composable (Modifier) -> Unit = { modifier ->
         Text(
-            modifier = Modifier.padding(gridItemSettings.textPadding.dp),
+            modifier = modifier.padding(gridItemSettings.textPadding.dp),
             text = data.customLabel ?: data.label,
             color = textColor,
             textAlign = TextAlign.Center,
