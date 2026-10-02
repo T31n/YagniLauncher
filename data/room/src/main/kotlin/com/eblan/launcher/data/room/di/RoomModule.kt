@@ -33,6 +33,7 @@ import com.eblan.launcher.data.room.migration.Migration14To15
 import com.eblan.launcher.data.room.migration.Migration15To16
 import com.eblan.launcher.data.room.migration.Migration18To19
 import com.eblan.launcher.data.room.migration.Migration19To20
+import com.eblan.launcher.data.room.migration.Migration20To21
 import com.eblan.launcher.data.room.migration.Migration3To4
 import com.eblan.launcher.data.room.migration.Migration7To8
 import com.eblan.launcher.data.room.transaction.DefaultFolderGridItemEntityTransaction
@@ -66,6 +67,7 @@ internal object RoomModule {
         Migration15To16(),
         Migration18To19(),
         Migration19To20(),
+        Migration20To21(),
     )
         .fallbackToDestructiveMigrationFrom(
             dropAllTables = true,
