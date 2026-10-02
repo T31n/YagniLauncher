@@ -54,7 +54,6 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
         iconSize = 50
         textColorProto = TextColorProto.TextColorSystem
         textSize = 10
-        showLabel = true
         singleLineLabel = true
         horizontalAlignmentProto = HorizontalAlignmentProto.HorizontalAlignmentCenterHorizontally
         verticalArrangementProto = VerticalArrangementProto.VerticalArrangementTop
