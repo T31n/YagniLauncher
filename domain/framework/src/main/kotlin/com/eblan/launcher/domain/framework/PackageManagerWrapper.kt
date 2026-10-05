@@ -23,7 +23,7 @@ import java.io.File
 interface PackageManagerWrapper {
     val hasSystemFeatureAppWidgets: Boolean
 
-    suspend fun getApplicationIcon(
+    suspend fun getApplicationIconCache(
         packageName: String,
         file: File,
     ): String?

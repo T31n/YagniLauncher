@@ -46,7 +46,7 @@ internal class DefaultPackageManagerWrapper @Inject constructor(
     override val hasSystemFeatureAppWidgets
         get() = packageManager.hasSystemFeature(PackageManager.FEATURE_APP_WIDGETS)
 
-    override suspend fun getApplicationIcon(
+    override suspend fun getApplicationIconCache(
         packageName: String,
         file: File,
     ): String? = withContext(ioDispatcher) {

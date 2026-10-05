@@ -91,13 +91,9 @@ class SyncDataUseCase @Inject constructor(
                     folderSettings = userData.folderSettings,
                     generalSettings = userData.generalSettings,
                 )
-            }
 
-            launch {
                 updateAppWidgetProviderInfos()
-            }
 
-            launch {
                 updateEblanLauncherShortcutInfos()
             }
 
