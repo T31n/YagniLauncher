@@ -680,7 +680,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
                     drawable = drawable,
                     iconTint = iconTint,
                     customIconTint = getSystemIconTintColor(),
-                    fallbackIconTint = true,
+                    fallbackIconTint = fallbackIconColor,
                     theme = theme,
                 )
 
@@ -743,6 +743,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         }
 
         val value = TypedValue()
+
         return if (context.theme.resolveAttribute(
                 android.R.attr.colorAccent,
                 value,

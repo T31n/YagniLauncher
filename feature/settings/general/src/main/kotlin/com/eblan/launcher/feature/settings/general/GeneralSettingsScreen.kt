@@ -296,18 +296,24 @@ private fun buildGeneralSettingsItems(
             ),
         )
 
-        if (generalSettings.iconTint == IconTint.Custom) {
-            add(
-                SettingsItem.Switch(
-                    checked = generalSettings.fallbackIconTint,
-                    title = stringResource(R.string.fallback_icon_tint),
-                    subtitle = stringResource(R.string.use_the_fallback_icon_tint),
-                    onClick = {
-                        onEnforceThemedIconsChanged(!generalSettings.fallbackIconTint)
-                    },
-                    onCheckedChange = onEnforceThemedIconsChanged,
-                ),
-            )
+        when (generalSettings.iconTint) {
+            IconTint.System,
+            IconTint.Custom,
+            -> {
+                add(
+                    SettingsItem.Switch(
+                        checked = generalSettings.fallbackIconTint,
+                        title = stringResource(R.string.fallback_icon_tint),
+                        subtitle = stringResource(R.string.use_the_fallback_icon_tint),
+                        onClick = {
+                            onEnforceThemedIconsChanged(!generalSettings.fallbackIconTint)
+                        },
+                        onCheckedChange = onEnforceThemedIconsChanged,
+                    ),
+                )
+            }
+
+            else -> Unit
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
