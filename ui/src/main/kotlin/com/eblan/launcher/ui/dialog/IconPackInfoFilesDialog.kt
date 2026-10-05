@@ -52,7 +52,7 @@ import coil3.compose.AsyncImage
 import com.eblan.launcher.designsystem.component.EblanDialog
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.common.FileManager
-import com.eblan.launcher.domain.model.iconpackinfo.IconPackInfoComponent
+import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
 import com.eblan.launcher.ui.local.LocalFileManager
 import com.eblan.launcher.ui.local.LocalIconKeyGenerator
 import com.eblan.launcher.ui.local.LocalIconPackManager
@@ -70,15 +70,15 @@ import com.eblan.launcher.common.R as commonR
 @Composable
 fun IconPackInfoFilesDialog(
     modifier: Modifier = Modifier,
-    iconPackInfoComponents: List<IconPackInfoComponent>,
-    iconPackInfoPackageName: String?,
+    iconPackComponents: List<IconPackComponent>,
+    iconPackPackageName: String?,
     iconPackInfoLabel: String?,
     iconName: String,
     onDismissRequest: () -> Unit,
     onUpdateIcon: (String?) -> Unit,
     onSearchIconPackInfoComponent: (String) -> Unit,
 ) {
-    requireNotNull(iconPackInfoPackageName)
+    requireNotNull(iconPackPackageName)
 
     requireNotNull(iconPackInfoLabel)
     val scope = rememberCoroutineScope()
@@ -134,7 +134,7 @@ fun IconPackInfoFilesDialog(
         )
 
         when {
-            iconPackInfoComponents.isEmpty() -> {
+            iconPackComponents.isEmpty() -> {
                 CircularProgressIndicator(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -150,13 +150,13 @@ fun IconPackInfoFilesDialog(
                     ),
                     columns = GridCells.Fixed(5),
                 ) {
-                    items(iconPackInfoComponents) { iconPackInfoComponent ->
+                    items(iconPackComponents) { iconPackInfoComponent ->
 
                         var drawable by remember { mutableStateOf<Drawable?>(null) }
 
                         LaunchedEffect(iconPackInfoComponent) {
                             drawable = iconPackManager.loadDrawableFromIconPack(
-                                packageName = iconPackInfoPackageName,
+                                packageName = iconPackPackageName,
                                 drawableName = iconPackInfoComponent.drawableName,
                             )
                         }

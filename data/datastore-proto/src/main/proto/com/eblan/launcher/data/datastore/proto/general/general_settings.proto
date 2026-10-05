@@ -9,7 +9,7 @@ option java_multiple_files = true;
 message GeneralSettingsProto {
   optional ThemeProto themeProto = 1;
   optional bool dynamicTheme = 3;
-  optional string iconPackInfoPackageName = 4;
+  optional string iconPackPackageName = 4;
   optional IconTintProto iconTintProto = 5;
   optional int32 customIconTint = 6;
   optional bool fallbackIconTint = 7;

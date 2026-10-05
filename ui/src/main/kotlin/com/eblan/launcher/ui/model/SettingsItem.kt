@@ -18,7 +18,7 @@
 package com.eblan.launcher.ui.model
 
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPackInfo
+import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPack
 
 sealed interface SettingsItem {
     data class Column(
@@ -50,8 +50,8 @@ sealed interface SettingsItem {
 
     data class CustomIcon(
         val customIcon: String?,
-        val packageManagerIconPackInfos: List<PackageManagerIconPackInfo>,
-        val onUpdateIconPackInfoPackageName: (
+        val packageManagerIconPacks: List<PackageManagerIconPack>,
+        val onUpdateIconPackPackageName: (
             packageName: String,
             label: String?,
         ) -> Unit,

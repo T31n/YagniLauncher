@@ -22,7 +22,7 @@
 
     <application>
         <service
-            android:name=".IconPackInfoService"
+            android:name=".IconPackService"
             android:exported="false"
             android:foregroundServiceType="dataSync" />
 

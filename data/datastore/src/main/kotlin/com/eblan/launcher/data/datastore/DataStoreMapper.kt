@@ -124,7 +124,7 @@ internal fun GridItemSettingsProto.toGridItemSettings(): GridItemSettings = Grid
 internal fun GeneralSettingsProto.toGeneralSettings(): GeneralSettings = GeneralSettings(
     theme = themeProto.toTheme(),
     dynamicTheme = dynamicTheme,
-    iconPackInfoPackageName = iconPackInfoPackageName,
+    iconPackPackageName = iconPackPackageName,
     iconTint = iconTintProto.toIconTint(),
     customIconTint = customIconTint,
     fallbackIconTint = fallbackIconTint,
@@ -194,7 +194,7 @@ internal fun AppDrawerSettings.toAppDrawerSettingsProto(): AppDrawerSettingsProt
 internal fun GeneralSettings.toGeneralSettingsProto(): GeneralSettingsProto = GeneralSettingsProto.newBuilder().also { builder ->
     builder.themeProto = theme.toThemeProto()
     builder.dynamicTheme = dynamicTheme
-    builder.iconPackInfoPackageName = iconPackInfoPackageName
+    builder.iconPackPackageName = iconPackPackageName
     builder.iconTintProto = iconTint.toIconTintProto()
     builder.customIconTint = customIconTint
     builder.fallbackIconTint = fallbackIconTint

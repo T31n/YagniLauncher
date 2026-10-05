@@ -34,14 +34,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.eblan.launcher.designsystem.component.EblanDialog
-import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPackInfo
+import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPack
 import com.eblan.launcher.feature.settings.general.R
 import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun ImportIconPackInfoDialog(
     modifier: Modifier = Modifier,
-    packageManagerIconPackInfos: List<PackageManagerIconPackInfo>,
+    packageManagerIconPacks: List<PackageManagerIconPack>,
     onDismissRequest: () -> Unit,
     onUpdateIconPackInfo: (
         packageName: String,
@@ -58,7 +58,7 @@ internal fun ImportIconPackInfoDialog(
         )
 
         when {
-            packageManagerIconPackInfos.isEmpty() -> {
+            packageManagerIconPacks.isEmpty() -> {
                 Text(
                     text = stringResource(R.string.no_icon_packs),
                 )
@@ -71,7 +71,7 @@ internal fun ImportIconPackInfoDialog(
                         fill = false,
                     ),
                 ) {
-                    items(packageManagerIconPackInfos) {
+                    items(packageManagerIconPacks) {
                         ListItem(
                             headlineContent = {
                                 Text(text = it.label)

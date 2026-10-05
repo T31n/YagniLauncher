@@ -46,14 +46,14 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.iconpackinfo.EblanIconPackInfo
-import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPackInfo
+import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPack
 import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.domain.model.userdata.IconTint
 import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.feature.settings.general.dialog.ImportIconPackInfoDialog
 import com.eblan.launcher.feature.settings.general.dialog.SelectIconPackInfoDialog
 import com.eblan.launcher.feature.settings.general.model.GeneralSettingsUiState
-import com.eblan.launcher.service.IconPackInfoService
+import com.eblan.launcher.service.IconPackService
 import com.eblan.launcher.ui.dialog.IconTintDialog
 import com.eblan.launcher.ui.dialog.RadioOptionsDialog
 import com.eblan.launcher.ui.model.SettingsItem
@@ -71,14 +71,14 @@ internal fun GeneralSettingsRoute(
 
     val packageManagerIconPackInfos by viewModel.packageManagerIconPackInfos.collectAsStateWithLifecycle()
 
-    val eblanIconPackInfos by viewModel.eblanIconPackInfos.collectAsStateWithLifecycle()
+    val eblanIconPackInfos by viewModel.eblanIconPacks.collectAsStateWithLifecycle()
 
     GeneralSettingsScreen(
         modifier = modifier,
         eblanIconPackInfos = eblanIconPackInfos,
         generalSettingsUiState = generalSettingsUiState,
-        packageManagerIconPackInfos = packageManagerIconPackInfos,
-        onDeleteEblanIconPackInfo = viewModel::deleteIconPackInfo,
+        packageManagerIconPacks = packageManagerIconPackInfos,
+        onDeleteEblanIconPackInfo = viewModel::deleteIconPack,
         onNavigateUp = onNavigateUp,
         onUpdateGeneralSettings = viewModel::updateGeneralSettings,
     )
@@ -90,7 +90,7 @@ internal fun GeneralSettingsScreen(
     modifier: Modifier = Modifier,
     eblanIconPackInfos: List<EblanIconPackInfo>,
     generalSettingsUiState: GeneralSettingsUiState,
-    packageManagerIconPackInfos: List<PackageManagerIconPackInfo>,
+    packageManagerIconPacks: List<PackageManagerIconPack>,
     onDeleteEblanIconPackInfo: (String) -> Unit,
     onNavigateUp: () -> Unit,
     onUpdateGeneralSettings: (GeneralSettings) -> Unit,
@@ -122,7 +122,7 @@ internal fun GeneralSettingsScreen(
                 Success(
                     eblanIconPackInfos = eblanIconPackInfos,
                     generalSettings = generalSettingsUiState.generalSettings,
-                    packageManagerIconPackInfos = packageManagerIconPackInfos,
+                    packageManagerIconPacks = packageManagerIconPacks,
                     onDeleteEblanIconPackInfo = onDeleteEblanIconPackInfo,
                     onUpdateGeneralSettings = onUpdateGeneralSettings,
                 )
@@ -136,7 +136,7 @@ private fun Success(
     modifier: Modifier = Modifier,
     eblanIconPackInfos: List<EblanIconPackInfo>,
     generalSettings: GeneralSettings,
-    packageManagerIconPackInfos: List<PackageManagerIconPackInfo>,
+    packageManagerIconPacks: List<PackageManagerIconPack>,
     onDeleteEblanIconPackInfo: (String) -> Unit,
     onUpdateGeneralSettings: (GeneralSettings) -> Unit,
 ) {
@@ -190,14 +190,14 @@ private fun Success(
 
     if (showImportIconPackDialog) {
         ImportIconPackInfoDialog(
-            packageManagerIconPackInfos = packageManagerIconPackInfos,
+            packageManagerIconPacks = packageManagerIconPacks,
             onDismissRequest = {
                 showImportIconPackDialog = false
             },
             onUpdateIconPackInfo = { packageName, label ->
-                val intent = Intent(context, IconPackInfoService::class.java).apply {
-                    putExtra(IconPackInfoService.ICON_PACK_INFO_PACKAGE_NAME, packageName)
-                    putExtra(IconPackInfoService.ICON_PACK_INFO_LABEL, label)
+                val intent = Intent(context, IconPackService::class.java).apply {
+                    putExtra(IconPackService.ICON_PACK_PACKAGE_NAME, packageName)
+                    putExtra(IconPackService.ICON_PACK_LABEL, label)
                 }
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -212,16 +212,16 @@ private fun Success(
     if (selectIconPackDialog) {
         SelectIconPackInfoDialog(
             eblanIconPackInfos = eblanIconPackInfos,
-            iconPackInfoPackageName = generalSettings.iconPackInfoPackageName,
+            iconPackPackageName = generalSettings.iconPackPackageName,
             onDeleteEblanIconPackInfo = onDeleteEblanIconPackInfo,
             onDismissRequest = {
                 selectIconPackDialog = false
             },
             onReset = {
-                onUpdateGeneralSettings(generalSettings.copy(iconPackInfoPackageName = ""))
+                onUpdateGeneralSettings(generalSettings.copy(iconPackPackageName = ""))
             },
-            onUpdateIconPackInfoPackageName = {
-                onUpdateGeneralSettings(generalSettings.copy(iconPackInfoPackageName = it))
+            onUpdateIconPackPackageName = {
+                onUpdateGeneralSettings(generalSettings.copy(iconPackPackageName = it))
             },
         )
     }
@@ -272,7 +272,7 @@ private fun buildGeneralSettingsItems(
         add(
             SettingsItem.Column(
                 title = stringResource(R.string.select_icon_pack),
-                subtitle = generalSettings.iconPackInfoPackageName.ifEmpty {
+                subtitle = generalSettings.iconPackPackageName.ifEmpty {
                     stringResource(R.string.default_icon_pack)
                 },
                 onClick = onSelectIconPackClick,

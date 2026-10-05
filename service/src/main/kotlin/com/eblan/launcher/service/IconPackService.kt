@@ -23,7 +23,7 @@ import android.content.pm.ServiceInfo
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
-import com.eblan.launcher.domain.usecase.iconpack.UpdateIconPackInfosUseCase
+import com.eblan.launcher.domain.usecase.iconpack.UpdateIconPacksUseCase
 import com.eblan.launcher.framework.notificationmanager.AndroidNotificationManagerWrapper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -35,9 +35,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class IconPackInfoService : Service() {
+class IconPackService : Service() {
     @Inject
-    lateinit var updateIconPackInfosUseCase: UpdateIconPackInfosUseCase
+    lateinit var updateIconPacksUseCase: UpdateIconPacksUseCase
 
     private val serviceScope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
 
@@ -46,18 +46,18 @@ class IconPackInfoService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val iconPackInfoPackageName =
-            intent?.getStringExtra(ICON_PACK_INFO_PACKAGE_NAME)
+        val iconPackPackageName =
+            intent?.getStringExtra(ICON_PACK_PACKAGE_NAME)
 
-        val iconPackInfoLabel = intent?.getStringExtra(ICON_PACK_INFO_LABEL)
+        val iconPackLabel = intent?.getStringExtra(ICON_PACK_LABEL)
 
-        if (iconPackInfoPackageName != null && iconPackInfoLabel != null) {
+        if (iconPackPackageName != null && iconPackLabel != null) {
             iconPackInfoJob?.cancel()
 
             val notification =
                 NotificationCompat.Builder(this, AndroidNotificationManagerWrapper.CHANNEL_ID)
                     .setSmallIcon(R.drawable.baseline_import_export_24)
-                    .setContentTitle(getString(R.string.importing_into_cache, iconPackInfoLabel))
+                    .setContentTitle(getString(R.string.importing_into_cache, iconPackLabel))
                     .setContentText(getString(R.string.loading_icons_from_cache_is_faster))
                     .setOngoing(true)
                     .setProgress(0, 0, true)
@@ -65,19 +65,19 @@ class IconPackInfoService : Service() {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 startForeground(
-                    AndroidNotificationManagerWrapper.ICON_PACK_INFO_SERVICE_NOTIFICATION_ID,
+                    AndroidNotificationManagerWrapper.ICON_PACK_SERVICE_NOTIFICATION_ID,
                     notification,
                     ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC,
                 )
             } else {
                 startForeground(
-                    AndroidNotificationManagerWrapper.ICON_PACK_INFO_SERVICE_NOTIFICATION_ID,
+                    AndroidNotificationManagerWrapper.ICON_PACK_SERVICE_NOTIFICATION_ID,
                     notification,
                 )
             }
 
             iconPackInfoJob = serviceScope.launch {
-                updateIconPackInfosUseCase(iconPackInfoPackageName = iconPackInfoPackageName)
+                updateIconPacksUseCase(iconPackPackageName = iconPackPackageName)
 
                 stopForeground(STOP_FOREGROUND_REMOVE)
 
@@ -95,8 +95,8 @@ class IconPackInfoService : Service() {
     }
 
     companion object {
-        const val ICON_PACK_INFO_PACKAGE_NAME = "iconPackInfoPackageName"
+        const val ICON_PACK_PACKAGE_NAME = "iconPackPackageName"
 
-        const val ICON_PACK_INFO_LABEL = "label"
+        const val ICON_PACK_LABEL = "label"
     }
 }

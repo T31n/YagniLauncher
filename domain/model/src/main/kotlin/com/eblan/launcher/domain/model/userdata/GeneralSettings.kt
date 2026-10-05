@@ -20,7 +20,7 @@ package com.eblan.launcher.domain.model.userdata
 data class GeneralSettings(
     val theme: Theme,
     val dynamicTheme: Boolean,
-    val iconPackInfoPackageName: String,
+    val iconPackPackageName: String,
     val iconTint: IconTint,
     val customIconTint: Int,
     val fallbackIconTint: Boolean,

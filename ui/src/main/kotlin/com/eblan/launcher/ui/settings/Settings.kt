@@ -58,7 +58,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import coil3.compose.AsyncImage
 import com.eblan.launcher.designsystem.component.VerticalSlideReveal
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPackInfo
+import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPack
 import com.eblan.launcher.ui.R
 import com.eblan.launcher.ui.local.LocalAccessibilityManager
 import com.eblan.launcher.ui.local.LocalPackageManager
@@ -214,8 +214,8 @@ fun SettingsItems(
                     index = index,
                     size = items.size,
                     customIcon = settingsItem.customIcon,
-                    packageManagerIconPackInfos = settingsItem.packageManagerIconPackInfos,
-                    onUpdateIconPackInfoPackageName = settingsItem.onUpdateIconPackInfoPackageName,
+                    packageManagerIconPacks = settingsItem.packageManagerIconPacks,
+                    onUpdateIconPackPackageName = settingsItem.onUpdateIconPackPackageName,
                     onUpdateUri = settingsItem.onUpdateUri,
                     onResetCustomIcon = settingsItem.onResetCustomIcon,
                 )
@@ -354,8 +354,8 @@ private fun CustomIcon(
     index: Int,
     size: Int,
     customIcon: String?,
-    packageManagerIconPackInfos: List<PackageManagerIconPackInfo>,
-    onUpdateIconPackInfoPackageName: (
+    packageManagerIconPacks: List<PackageManagerIconPack>,
+    onUpdateIconPackPackageName: (
         packageName: String,
         label: String?,
     ) -> Unit,
@@ -441,13 +441,13 @@ private fun CustomIcon(
                         },
                     )
 
-                    packageManagerIconPackInfos.forEach { packageManagerIconPackInfo ->
+                    packageManagerIconPacks.forEach { packageManagerIconPackInfo ->
                         IconPackItem(
                             icon = packageManagerIconPackInfo.icon,
                             label = packageManagerIconPackInfo.label,
                             packageName = packageManagerIconPackInfo.packageName,
                             onClick = {
-                                onUpdateIconPackInfoPackageName(
+                                onUpdateIconPackPackageName(
                                     packageManagerIconPackInfo.packageName,
                                     packageManagerIconPackInfo.label,
                                 )

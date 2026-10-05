@@ -31,7 +31,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class UpdateIconPackInfosUseCase @Inject constructor(
+class UpdateIconPacksUseCase @Inject constructor(
     private val launcherAppsWrapper: LauncherAppsWrapper,
     private val iconPackManager: IconPackManager,
     private val fileManager: FileManager,
@@ -40,17 +40,17 @@ class UpdateIconPackInfosUseCase @Inject constructor(
     private val iconKeyGenerator: IconKeyGenerator,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
-    suspend operator fun invoke(iconPackInfoPackageName: String) {
+    suspend operator fun invoke(iconPackPackageName: String) {
         withContext(ioDispatcher) {
             val eblanApplicationInfo =
                 eblanApplicationInfoRepository.getEblanApplicationInfosByPackageName(
                     serialNumber = 0L,
-                    packageName = iconPackInfoPackageName,
+                    packageName = iconPackPackageName,
                 ).firstOrNull()
 
             if (eblanApplicationInfo != null) {
                 updateIconPackInfos(
-                    iconPackInfoPackageName = iconPackInfoPackageName,
+                    iconPackPackageName = iconPackPackageName,
                     fileManager = fileManager,
                     iconPackManager = iconPackManager,
                     fastLauncherAppsActivityInfos = launcherAppsWrapper.getFastActivityList(),

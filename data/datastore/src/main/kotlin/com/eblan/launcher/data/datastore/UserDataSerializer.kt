@@ -48,7 +48,7 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
     private val defaultGeneralSettingsProto = GeneralSettingsProto.newBuilder().apply {
         themeProto = ThemeProto.ThemeSystem
         dynamicTheme = false
-        iconPackInfoPackageName = ""
+        iconPackPackageName = ""
         iconTintProto = IconTintProto.IconTintNone
         customIconTint = 0
         fallbackIconTint = false

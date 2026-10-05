@@ -17,7 +17,7 @@
  */
 package com.eblan.launcher.domain.model.iconpackinfo
 
-data class PackageManagerIconPackInfo(
+data class PackageManagerIconPack(
     val packageName: String,
     val icon: ByteArray?,
     val label: String,
@@ -26,7 +26,7 @@ data class PackageManagerIconPackInfo(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as PackageManagerIconPackInfo
+        other as PackageManagerIconPack
 
         if (packageName != other.packageName) return false
         if (!icon.contentEquals(other.icon)) return false

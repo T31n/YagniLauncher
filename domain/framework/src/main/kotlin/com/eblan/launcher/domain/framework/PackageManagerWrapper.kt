@@ -17,7 +17,7 @@
  */
 package com.eblan.launcher.domain.framework
 
-import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPackInfo
+import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPack
 import java.io.File
 
 interface PackageManagerWrapper {
@@ -32,7 +32,7 @@ interface PackageManagerWrapper {
 
     suspend fun getComponentName(packageName: String): String?
 
-    suspend fun getIconPackInfos(): List<PackageManagerIconPackInfo>
+    suspend fun getIconPackInfos(): List<PackageManagerIconPack>
 
     suspend fun getLastUpdateTime(packageName: String): Long
 
