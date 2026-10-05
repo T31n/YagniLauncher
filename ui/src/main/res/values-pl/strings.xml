@@ -28,7 +28,7 @@
     <string name="corner_radius_is_not_valid">Nieprawidłowy promień zaokrąglenia rogów</string>
     <string name="icon_size">Rozmiar ikon</string>
     <string name="icon_size_is_not_valid">Nieprawidłowy rozmiar ikon</string>
-    <string name="padding">Margines wewnętrzny (Padding)</string>
+    <string name="padding">Margines wewnętrzny</string>
     <string name="padding_is_not_valid">Nieprawidłowy margines wewnętrzny</string>
     <string name="text_size">Rozmiar tekstu</string>
     <string name="text_size_is_not_valid">Nieprawidłowy rozmiar tekstu</string>
@@ -42,9 +42,9 @@
     <string name="single_line_label">Etykieta w jednej linii</string>
     <string name="horizontal_alignment">Wyrównanie w poziomie</string>
     <string name="vertical_arrangement">Rozmieszczenie w pionie</string>
-    <string name="start">Do lewej (Start)</string>
+    <string name="start">Do lewej</string>
     <string name="center_horizontally">Wyśrodkuj w poziomie</string>
-    <string name="end">Do prawej (End)</string>
+    <string name="end">Do prawej</string>
     <string name="bottom">Dół</string>
     <string name="top">Góra</string>
     <string name="center">Środek</string>
@@ -53,4 +53,18 @@
     <string name="swipe_down">Przesunięcie w dół</string>
     <string name="limit_app_names_to_one_line">Ogranicz nazwy aplikacji do jednej linii</string>
     <string name="custom">Własny</string>
+    <string name="add_folder">Dodaj folder</string>
+    <string name="folder_is_not_valid">Nieprawidłowy folder</string>
+    <string name="center_vertically">Środkuj w pionie</string>
+    <string name="top_icon_bottom_label">Ikona na górze, etykieta na dole</string>
+    <string name="top_label_bottom_icon">Etykieta na górze, ikona na dole</string>
+    <string name="start_icon_end_label">Ikona na początku, etykieta na końcu</string>
+    <string name="start_label_end_icon">Etykieta na początku, ikona na końcu</string>
+    <string name="icon_only">Tylko ikona</string>
+    <string name="label_only">Tylko etykieta</string>
+    <string name="text_padding">Dopełnienie tekstu</string>
+    <string name="icon_padding">Dopełnienie ikony</string>
+    <string name="layout_type">Typ układu</string>
+    <string name="vertical_alignment">Wyrównanie w pionie</string>
+    <string name="horizontal_arrangement">Rozmieszczenie w poziomie</string>
 </resources>
