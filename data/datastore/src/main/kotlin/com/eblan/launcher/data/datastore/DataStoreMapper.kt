@@ -420,10 +420,12 @@ private fun VerticalAlignmentProto.toVerticalAlignment(): VerticalAlignment = wh
 
 private fun IconTintProto.toIconTint(): IconTint = when (this) {
     IconTintProto.IconTintNone, IconTintProto.UNRECOGNIZED -> IconTint.None
+    IconTintProto.IconTintSystem -> IconTint.System
     IconTintProto.IconTintCustom -> IconTint.Custom
 }
 
 private fun IconTint.toIconTintProto(): IconTintProto = when (this) {
     IconTint.None -> IconTintProto.IconTintNone
+    IconTint.System -> IconTintProto.IconTintSystem
     IconTint.Custom -> IconTintProto.IconTintCustom
 }

@@ -56,6 +56,7 @@ import com.eblan.launcher.feature.settings.general.model.GeneralSettingsUiState
 import com.eblan.launcher.service.IconPackService
 import com.eblan.launcher.ui.dialog.IconTintDialog
 import com.eblan.launcher.ui.dialog.RadioOptionsDialog
+import com.eblan.launcher.ui.dialog.getTitle
 import com.eblan.launcher.ui.model.SettingsItem
 import com.eblan.launcher.ui.settings.SettingsItems
 import com.eblan.launcher.ui.settings.rememberIsNotificationAccessGranted
@@ -228,7 +229,7 @@ private fun Success(
 
     if (showIconTintDialog) {
         IconTintDialog(
-            title = "Icon Tint",
+            title = stringResource(R.string.icon_tint),
             iconTint = generalSettings.iconTint,
             customIconTint = generalSettings.customIconTint,
             onDismissRequest = {
@@ -345,10 +346,4 @@ private fun Theme.getTitle() = when (this) {
     Theme.System -> stringResource(commonR.string.system)
     Theme.Light -> stringResource(commonR.string.light)
     Theme.Dark -> stringResource(commonR.string.dark)
-}
-
-@Composable
-private fun IconTint.getTitle() = when (this) {
-    IconTint.None -> stringResource(R.string.none)
-    IconTint.Custom -> stringResource(commonR.string.custom)
 }

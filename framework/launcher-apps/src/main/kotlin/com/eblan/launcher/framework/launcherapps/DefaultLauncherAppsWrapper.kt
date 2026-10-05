@@ -34,6 +34,7 @@ import android.os.Handler
 import android.os.Process.myUserHandle
 import android.os.UserHandle
 import android.os.UserManager
+import android.util.TypedValue
 import androidx.annotation.RequiresApi
 import com.eblan.launcher.common.AndroidImageSerializer
 import com.eblan.launcher.domain.common.Dispatcher
@@ -42,6 +43,7 @@ import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
+import com.eblan.launcher.domain.framework.WallpaperManagerWrapper
 import com.eblan.launcher.domain.model.launcherapps.EblanUser
 import com.eblan.launcher.domain.model.launcherapps.EblanUserType
 import com.eblan.launcher.domain.model.launcherapps.FastLauncherAppsActivityInfo
@@ -69,6 +71,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
     private val userManagerWrapper: AndroidUserManagerWrapper,
     private val fileManager: FileManager,
     private val packageManagerWrapper: PackageManagerWrapper,
+    private val wallpaperManagerWrapper: WallpaperManagerWrapper,
     private val androidPackageManager: AndroidPackageManagerWrapper,
     private val iconKeyGenerator: IconKeyGenerator,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
@@ -534,7 +537,10 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         val icon = try {
             when (iconTint) {
                 IconTint.None -> getBadgedIcon(0)
-                IconTint.Custom -> getIcon(0)
+
+                IconTint.System,
+                IconTint.Custom,
+                -> getIcon(0)
             }?.takeIf { it.intrinsicWidth > 0 && it.intrinsicHeight > 0 }
         } catch (_: IllegalArgumentException) {
             null
@@ -659,6 +665,41 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
                 file.absolutePath
             }
 
+            IconTint.System -> {
+                val directory = fileManager.getFilesDirectory(FileManager.TINTED_ICONS_DIR)
+
+                val file = File(
+                    directory,
+                    iconKeyGenerator.getActivityIconKey(
+                        serialNumber = serialNumber,
+                        componentName = componentName.flattenToString(),
+                    ),
+                )
+
+                val tintedDrawable = imageSerializer.getTintedDrawable(
+                    drawable = drawable,
+                    iconTint = iconTint,
+                    customIconTint = getSystemIconTintColor(),
+                    fallbackIconTint = true,
+                    theme = theme,
+                )
+
+                if (tintedDrawable != null) {
+                    val badgedTintedDrawable =
+                        androidPackageManager.getUserBadgedIcon(tintedDrawable, userHandle)
+                            ?: return null
+
+                    imageSerializer.createDrawablePath(
+                        drawable = badgedTintedDrawable,
+                        file = file,
+                    )
+
+                    file.absolutePath
+                } else {
+                    null
+                }
+            }
+
             IconTint.Custom -> {
                 val directory = fileManager.getFilesDirectory(FileManager.TINTED_ICONS_DIR)
 
@@ -673,8 +714,8 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
                 val tintedDrawable = imageSerializer.getTintedDrawable(
                     drawable = drawable,
                     iconTint = iconTint,
-                    customIconColor = customIconColor,
-                    fallbackIconColor = fallbackIconColor,
+                    customIconTint = customIconColor,
+                    fallbackIconTint = fallbackIconColor,
                     theme = theme,
                 )
 
@@ -695,4 +736,25 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             }
         }
     }
+
+    private fun getSystemAccentColor(): Int {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            return context.getColor(android.R.color.system_accent1_600)
+        }
+
+        val value = TypedValue()
+        return if (context.theme.resolveAttribute(
+                android.R.attr.colorAccent,
+                value,
+                true,
+            )
+        ) {
+            value.data
+        } else {
+            context.getColor(android.R.color.holo_blue_dark)
+        }
+    }
+
+    private fun getSystemIconTintColor(): Int = wallpaperManagerWrapper.getSystemWallpaperColor()
+        ?: getSystemAccentColor()
 }

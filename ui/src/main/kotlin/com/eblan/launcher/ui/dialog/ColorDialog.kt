@@ -38,7 +38,6 @@ import com.eblan.launcher.designsystem.component.EblanRadioButton
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.IconTint
 import com.eblan.launcher.domain.model.userdata.TextColor
-import com.eblan.launcher.ui.R
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -134,7 +133,8 @@ fun BackgroundColor.getTitle() = when (this) {
 
 @Composable
 fun IconTint.getTitle() = when (this) {
-    IconTint.None -> stringResource(commonR.string.system)
+    IconTint.None -> stringResource(commonR.string.none)
+    IconTint.System -> stringResource(commonR.string.system)
     IconTint.Custom -> stringResource(commonR.string.custom)
 }
 

@@ -133,8 +133,8 @@ internal class DefaultImageSerializer @Inject constructor(
     override fun getTintedDrawable(
         drawable: Drawable,
         iconTint: IconTint,
-        customIconColor: Int,
-        fallbackIconColor: Boolean,
+        customIconTint: Int,
+        fallbackIconTint: Boolean,
         theme: Theme,
     ): Drawable? {
         val copy = drawable.constantState?.newDrawable()?.mutate() ?: drawable.mutate()
@@ -146,15 +146,15 @@ internal class DefaultImageSerializer @Inject constructor(
                 return AdaptiveIconDrawable(
                     adaptiveIconBackgroundColor(
                         theme = theme,
-                        customIconColor = customIconColor,
+                        customIconColor = customIconTint,
                     ).toDrawable(),
-                    it.mutate().apply { setTint(customIconColor) },
+                    it.mutate().apply { setTint(customIconTint) },
                 )
             }
         }
 
-        return if (fallbackIconColor) {
-            copy.tintedBitmap(customIconColor = customIconColor)
+        return if (fallbackIconTint) {
+            copy.tintedBitmap(customIconColor = customIconTint)
         } else {
             copy
         }

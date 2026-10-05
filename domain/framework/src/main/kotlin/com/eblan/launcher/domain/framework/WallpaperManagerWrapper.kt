@@ -24,5 +24,7 @@ interface WallpaperManagerWrapper {
 
     val hintSupportsDarkTheme: Int
 
+    fun getSystemWallpaperColor(): Int?
+
     fun getColorsChanged(): Flow<Int?>
 }

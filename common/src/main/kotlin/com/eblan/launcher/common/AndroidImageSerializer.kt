@@ -36,8 +36,8 @@ interface AndroidImageSerializer {
     fun getTintedDrawable(
         drawable: Drawable,
         iconTint: IconTint,
-        customIconColor: Int,
-        fallbackIconColor: Boolean,
+        customIconTint: Int,
+        fallbackIconTint: Boolean,
         theme: Theme,
     ): Drawable?
 }

@@ -19,5 +19,6 @@ package com.eblan.launcher.domain.model.userdata
 
 enum class IconTint {
     None,
+    System,
     Custom,
 }
