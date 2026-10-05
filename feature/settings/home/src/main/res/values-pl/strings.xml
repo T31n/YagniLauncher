@@ -33,4 +33,19 @@
     <string name="prevent_rotation_when_device_orientation_changes">Zapobiegaj obracaniu ekranu przy zmianie orientacji urządzenia</string>
     <string name="show_page_indicator">Pokaż wskaźnik stron</string>
     <string name="show_an_indicator_for_the_current_page">Pokazuj wskaźnik bieżącej strony</string>
+    <string name="dock_background_color">Kolor tła doku</string>
+    <string name="dock_padding">Margines wewnętrzny doku</string>
+    <string name="dock_corner_radius">Promień zaokrąglenia rogów doku</string>
+    <string name="dock_padding_is_not_valid">Nieprawidłowa wartość marginesu wewnętrznego doku</string>
+    <string name="top_start">Góra-początek</string>
+    <string name="top_start_is_not_valid">Nieprawidłowa wartość dla pozycji: Góra-początek</string>
+    <string name="top_end">Góra-koniec</string>
+    <string name="top_end_is_not_valid">Nieprawidłowa wartość dla pozycji: Góra-koniec</string>
+    <string name="bottom_start">Dół-początek</string>
+    <string name="bottom_start_is_not_valid">Nieprawidłowa wartość dla pozycji: Dół-początek</string>
+    <string name="bottom_end">Dół-koniec</string>
+    <string name="bottom_end_is_not_valid">Nieprawidłowa wartość dla pozycji: Dół-koniec</string>
+    <string name="set_the_radius_for_each_dock_corner">Ustaw promień zaokrąglenia dla każdego rogu doku</string>
+    <string name="add_bottom_padding">Dodaj dolny margines wewnętrzny</string>
+    <string name="add_the_bottom_padding_of_the_dock">Dodaj dolny margines wewnętrzny paska doku</string>
 </resources>
