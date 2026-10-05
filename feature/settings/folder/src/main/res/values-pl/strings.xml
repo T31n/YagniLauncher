@@ -26,4 +26,6 @@
     <string name="folder_max_grid">Maksymalna siatka folderu</string>
     <string name="max_rows">Maksymalna liczba wierszy</string>
     <string name="max_rows_is_not_valid">Nieprawidłowa maksymalna liczba wierszy</string>
+    <string name="folder_corner_radius">Promień zaokrąglenia rogów folderu</string>
+    <string name="folder_background_color">Kolor tła folderu</string>
 </resources>
