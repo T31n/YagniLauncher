@@ -556,7 +556,10 @@ private suspend fun addPinShortcutToHomeScreen(
             ),
         )
 
-        imageSerializer.createDrawablePath(drawable = drawable, file = file)
+        imageSerializer.createDrawablePath(
+            drawable = drawable,
+            file = file,
+        )
 
         file.absolutePath
     }

@@ -24,6 +24,7 @@ import com.eblan.launcher.data.datastore.proto.appdrawer.SearchBarPositionProto
 import com.eblan.launcher.data.datastore.proto.experimental.ExperimentalSettingsProto
 import com.eblan.launcher.data.datastore.proto.folder.FolderSettingsProto
 import com.eblan.launcher.data.datastore.proto.general.GeneralSettingsProto
+import com.eblan.launcher.data.datastore.proto.general.IconColorProto
 import com.eblan.launcher.data.datastore.proto.general.ThemeProto
 import com.eblan.launcher.data.datastore.proto.gesture.EblanActionProto
 import com.eblan.launcher.data.datastore.proto.gesture.EblanActionTypeProto
@@ -53,6 +54,7 @@ import com.eblan.launcher.domain.model.userdata.FolderSettings
 import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.domain.model.userdata.GestureSettings
 import com.eblan.launcher.domain.model.userdata.HomeSettings
+import com.eblan.launcher.domain.model.userdata.IconColor
 import com.eblan.launcher.domain.model.userdata.ScrollBarType
 import com.eblan.launcher.domain.model.userdata.SearchBarPosition
 import com.eblan.launcher.domain.model.userdata.TextColor
@@ -123,6 +125,9 @@ internal fun GeneralSettingsProto.toGeneralSettings(): GeneralSettings = General
     theme = themeProto.toTheme(),
     dynamicTheme = dynamicTheme,
     iconPackInfoPackageName = iconPackInfoPackageName,
+    iconColor = iconColorProto.toIconColor(),
+    customIconColor = customIconColor,
+    fallbackIconColor = fallbackIconColor,
 )
 
 internal fun GridItemSettings.toGridItemSettingsProto(): GridItemSettingsProto = GridItemSettingsProto.newBuilder().also { builder ->
@@ -190,6 +195,9 @@ internal fun GeneralSettings.toGeneralSettingsProto(): GeneralSettingsProto = Ge
     builder.themeProto = theme.toThemeProto()
     builder.dynamicTheme = dynamicTheme
     builder.iconPackInfoPackageName = iconPackInfoPackageName
+    builder.iconColorProto = iconColor.toIconColorProto()
+    builder.customIconColor = customIconColor
+    builder.fallbackIconColor = fallbackIconColor
 }.build()
 
 internal fun GestureSettings.toGestureSettingsProto(): GestureSettingsProto = GestureSettingsProto.newBuilder().also { builder ->
@@ -408,4 +416,14 @@ private fun VerticalAlignmentProto.toVerticalAlignment(): VerticalAlignment = wh
     VerticalAlignmentProto.VerticalAlignmentTop, VerticalAlignmentProto.UNRECOGNIZED -> VerticalAlignment.Top
     VerticalAlignmentProto.VerticalAlignmentCenterVertically -> VerticalAlignment.CenterVertically
     VerticalAlignmentProto.VerticalAlignmentBottom -> VerticalAlignment.Bottom
+}
+
+private fun IconColorProto.toIconColor(): IconColor = when (this) {
+    IconColorProto.IconColorSystem, IconColorProto.UNRECOGNIZED -> IconColor.System
+    IconColorProto.IconColorCustom -> IconColor.Custom
+}
+
+private fun IconColor.toIconColorProto(): IconColorProto = when (this) {
+    IconColor.System -> IconColorProto.IconColorSystem
+    IconColor.Custom -> IconColorProto.IconColorCustom
 }

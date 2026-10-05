@@ -48,11 +48,13 @@ import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.iconpackinfo.EblanIconPackInfo
 import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPackInfo
 import com.eblan.launcher.domain.model.userdata.GeneralSettings
+import com.eblan.launcher.domain.model.userdata.IconColor
 import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.feature.settings.general.dialog.ImportIconPackInfoDialog
 import com.eblan.launcher.feature.settings.general.dialog.SelectIconPackInfoDialog
 import com.eblan.launcher.feature.settings.general.model.GeneralSettingsUiState
 import com.eblan.launcher.service.IconPackInfoService
+import com.eblan.launcher.ui.dialog.IconColorDialog
 import com.eblan.launcher.ui.dialog.RadioOptionsDialog
 import com.eblan.launcher.ui.model.SettingsItem
 import com.eblan.launcher.ui.settings.SettingsItems
@@ -141,18 +143,21 @@ private fun Success(
     val context = LocalContext.current
 
     var showThemeDialog by remember { mutableStateOf(false) }
-
     var showImportIconPackDialog by remember { mutableStateOf(false) }
-
     var selectIconPackDialog by remember { mutableStateOf(false) }
+    var showIconColorDialog by remember { mutableStateOf(false) }
 
     val items = buildGeneralSettingsItems(
         generalSettings = generalSettings,
         onImportIconPackClick = { showImportIconPackDialog = true },
         onSelectIconPackClick = { selectIconPackDialog = true },
         onThemeClick = { showThemeDialog = true },
+        onIconColorClick = { showIconColorDialog = true },
         onDynamicThemeChange = {
             onUpdateGeneralSettings(generalSettings.copy(dynamicTheme = it))
+        },
+        onEnforceThemedIconsChanged = {
+            onUpdateGeneralSettings(generalSettings.copy(fallbackIconColor = it))
         },
     )
 
@@ -220,6 +225,25 @@ private fun Success(
             },
         )
     }
+
+    if (showIconColorDialog) {
+        IconColorDialog(
+            title = "Icon Color",
+            iconColor = generalSettings.iconColor,
+            customIconColor = generalSettings.customIconColor,
+            onDismissRequest = {
+                showIconColorDialog = false
+            },
+            onUpdateClick = { iconColor, customIconColor ->
+                onUpdateGeneralSettings(
+                    generalSettings.copy(
+                        iconColor = iconColor,
+                        customIconColor = customIconColor,
+                    ),
+                )
+            },
+        )
+    }
 }
 
 @Composable
@@ -228,7 +252,9 @@ private fun buildGeneralSettingsItems(
     onImportIconPackClick: () -> Unit,
     onSelectIconPackClick: () -> Unit,
     onThemeClick: () -> Unit,
+    onIconColorClick: () -> Unit,
     onDynamicThemeChange: (Boolean) -> Unit,
+    onEnforceThemedIconsChanged: (Boolean) -> Unit,
 ): List<SettingsItem> {
     val context = LocalContext.current
 
@@ -258,6 +284,26 @@ private fun buildGeneralSettingsItems(
                 title = stringResource(R.string.theme),
                 subtitle = generalSettings.theme.getTitle(),
                 onClick = onThemeClick,
+            ),
+        )
+
+        add(
+            SettingsItem.Column(
+                title = "Icon Color",
+                subtitle = generalSettings.iconColor.getTitle(),
+                onClick = onIconColorClick,
+            ),
+        )
+
+        add(
+            SettingsItem.Switch(
+                checked = generalSettings.fallbackIconColor,
+                title = "Fallback Icon Color",
+                subtitle = "Use the fallback icon color",
+                onClick = {
+                    onEnforceThemedIconsChanged(!generalSettings.fallbackIconColor)
+                },
+                onCheckedChange = onEnforceThemedIconsChanged,
             ),
         )
 
@@ -297,4 +343,10 @@ private fun Theme.getTitle() = when (this) {
     Theme.System -> stringResource(commonR.string.system)
     Theme.Light -> stringResource(commonR.string.light)
     Theme.Dark -> stringResource(commonR.string.dark)
+}
+
+@Composable
+private fun IconColor.getTitle() = when (this) {
+    IconColor.System -> "System"
+    IconColor.Custom -> "Custom"
 }

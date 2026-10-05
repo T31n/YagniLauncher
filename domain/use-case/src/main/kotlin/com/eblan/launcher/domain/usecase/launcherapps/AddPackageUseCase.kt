@@ -80,6 +80,9 @@ class AddPackageUseCase @Inject constructor(
             val launcherAppsActivityInfosByPackageName = launcherAppsWrapper.getActivityListWithCacheIcons(
                 serialNumber = serialNumber,
                 packageName = packageName,
+                iconColor = userData.generalSettings.iconColor,
+                customIconColor = userData.generalSettings.customIconColor,
+                fallbackIconColor = userData.generalSettings.fallbackIconColor,
             ).onEach {
                 addEblanApplicationInfo(
                     homeSettings = userData.homeSettings,

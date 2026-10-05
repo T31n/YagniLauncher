@@ -19,6 +19,7 @@ package com.eblan.launcher.common
 
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import com.eblan.launcher.domain.model.userdata.IconColor
 import java.io.File
 
 interface AndroidImageSerializer {
@@ -30,4 +31,11 @@ interface AndroidImageSerializer {
         drawable: Drawable,
         file: File,
     )
+
+    fun getTintedDrawable(
+        drawable: Drawable,
+        iconColor: IconColor,
+        customIconColor: Int,
+        fallbackIconColor: Boolean,
+    ): Drawable
 }

@@ -115,7 +115,7 @@ internal suspend fun handleDropGridItem(
     val isLongPress = isVisibleOverlay && !isDragging
 
     val isMoveGridItemResultFailed = drag == Drag.Cancel ||
-        !currentMoveGridItemResult.isSuccess
+            !currentMoveGridItemResult.isSuccess
 
     when (currentGridItemSource) {
         is GridItemSource.Existing ->
@@ -481,7 +481,10 @@ internal suspend fun handleShortcutConfigIntentSenderLauncherResult(
                 ),
             )
 
-            androidImageSerializer.createDrawablePath(drawable = it, file = file)
+            androidImageSerializer.createDrawablePath(
+                drawable = it,
+                file = file,
+            )
 
             file.absolutePath
         }
@@ -924,7 +927,7 @@ private suspend fun handleNewGridItemSource(
             is GridItemData.ApplicationInfo,
             is GridItemData.Folder,
             is GridItemData.ShortcutInfo,
-            -> {
+                -> {
                 onUpdateGridItemsAfterMove(currentMoveGridItemResult)
 
                 onUpdateIsDragging(false)

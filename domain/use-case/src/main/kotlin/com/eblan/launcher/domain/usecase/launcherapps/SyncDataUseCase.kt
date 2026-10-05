@@ -34,6 +34,7 @@ import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
 import com.eblan.launcher.domain.model.userdata.FolderSettings
+import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.domain.repository.ApplicationInfoGridItemRepository
 import com.eblan.launcher.domain.repository.EblanAppWidgetProviderInfoRepository
@@ -88,6 +89,7 @@ class SyncDataUseCase @Inject constructor(
                     experimentalSettings = userData.experimentalSettings,
                     homeSettings = userData.homeSettings,
                     folderSettings = userData.folderSettings,
+                    generalSettings = userData.generalSettings,
                 )
             }
 
@@ -116,6 +118,7 @@ class SyncDataUseCase @Inject constructor(
         experimentalSettings: ExperimentalSettings,
         homeSettings: HomeSettings,
         folderSettings: FolderSettings,
+        generalSettings: GeneralSettings,
     ) {
         val newEblanShortcutConfigs = mutableSetOf<EblanShortcutConfig>()
 
@@ -127,7 +130,11 @@ class SyncDataUseCase @Inject constructor(
             }
 
         val newSyncEblanApplicationInfos = buildList {
-            launcherAppsWrapper.getActivityListWithCacheIcons()
+            launcherAppsWrapper.getActivityListWithCacheIcons(
+                iconColor = generalSettings.iconColor,
+                customIconColor = generalSettings.customIconColor,
+                fallbackIconColor = generalSettings.fallbackIconColor,
+            )
                 .forEach { launcherAppsActivityInfo ->
                     currentCoroutineContext().ensureActive()
 

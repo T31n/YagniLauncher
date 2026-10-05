@@ -47,7 +47,7 @@ import com.eblan.launcher.feature.settings.folder.dialog.EditFolderMaxGridDialog
 import com.eblan.launcher.feature.settings.folder.model.FolderSettingsUiState
 import com.eblan.launcher.ui.dialog.BackgroundColorDialog
 import com.eblan.launcher.ui.dialog.EditCornerRadiusDialog
-import com.eblan.launcher.ui.dialog.getBackgroundColorTitle
+import com.eblan.launcher.ui.dialog.getTitle
 import com.eblan.launcher.ui.model.SettingsItem
 import com.eblan.launcher.ui.settings.SettingsItems
 import com.eblan.launcher.common.R as commonR
@@ -256,7 +256,7 @@ private fun buildFolderHomeSettingsItems(
     add(
         SettingsItem.Column(
             title = stringResource(R.string.folder_background_color),
-            subtitle = folderSettings.folderBackgroundColor.getBackgroundColorTitle(),
+            subtitle = folderSettings.folderBackgroundColor.getTitle(),
             onClick = onFolderBackgroundColorClick,
         ),
     )

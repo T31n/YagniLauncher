@@ -25,6 +25,7 @@ import com.eblan.launcher.domain.framework.AppWidgetManagerWrapper
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.model.shortcutconfig.EblanShortcutConfig
+import com.eblan.launcher.domain.model.userdata.IconColor
 import com.eblan.launcher.domain.repository.ApplicationInfoGridItemRepository
 import com.eblan.launcher.domain.repository.EblanAppWidgetProviderInfoRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
@@ -32,10 +33,12 @@ import com.eblan.launcher.domain.repository.EblanShortcutConfigRepository
 import com.eblan.launcher.domain.repository.EblanShortcutInfoRepository
 import com.eblan.launcher.domain.repository.ShortcutConfigGridItemRepository
 import com.eblan.launcher.domain.repository.ShortcutInfoGridItemRepository
+import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.repository.WidgetGridItemRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -53,16 +56,22 @@ class ChangePackageUseCase @Inject constructor(
     private val fileManager: FileManager,
     private val widgetGridItemRepository: WidgetGridItemRepository,
     private val iconKeyGenerator: IconKeyGenerator,
+    private val userDataRepository: UserDataRepository,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     suspend operator fun invoke(
         serialNumber: Long,
         packageName: String,
     ) {
+        val userData = userDataRepository.userDataFlow.first()
+
         withContext(ioDispatcher) {
             updateEblanApplicationInfo(
                 packageName = packageName,
                 serialNumber = serialNumber,
+                iconColor = userData.generalSettings.iconColor,
+                customIconColor = userData.generalSettings.customIconColor,
+                fallbackIconColor = userData.generalSettings.fallbackIconColor,
             )
 
             updateEblanAppWidgetProviderInfo(
@@ -80,10 +89,16 @@ class ChangePackageUseCase @Inject constructor(
     private suspend fun updateEblanApplicationInfo(
         packageName: String,
         serialNumber: Long,
+        iconColor: IconColor,
+        customIconColor: Int,
+        fallbackIconColor: Boolean,
     ) {
         val launcherAppsActivityInfosByPackageName = launcherAppsWrapper.getActivityListWithCacheIcons(
             serialNumber = serialNumber,
             packageName = packageName,
+            iconColor = iconColor,
+            customIconColor = customIconColor,
+            fallbackIconColor = fallbackIconColor,
         )
 
         val newEblanShortcutConfigs = mutableListOf<EblanShortcutConfig>()

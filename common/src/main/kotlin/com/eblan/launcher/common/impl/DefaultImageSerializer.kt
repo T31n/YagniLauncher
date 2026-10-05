@@ -17,15 +17,25 @@
  */
 package com.eblan.launcher.common.impl
 
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.ColorFilter
+import android.graphics.ColorMatrixColorFilter
+import android.graphics.Paint
+import android.graphics.drawable.AdaptiveIconDrawable
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.os.Build
+import androidx.annotation.ColorInt
 import androidx.core.graphics.createBitmap
+import androidx.core.graphics.drawable.toDrawable
 import com.eblan.launcher.common.AndroidImageSerializer
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
+import com.eblan.launcher.domain.model.userdata.IconColor
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
@@ -37,25 +47,27 @@ internal class DefaultImageSerializer @Inject constructor(
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : AndroidImageSerializer {
-    override suspend fun createByteArray(drawable: Drawable): ByteArray? = withContext(defaultDispatcher) {
-        ByteArrayOutputStream().use { stream ->
-            drawable.toBitmap()?.compress(
-                Bitmap.CompressFormat.PNG,
-                100,
-                stream,
-            )
-
-            stream.toByteArray()
-        }
-    }
-
-    override suspend fun createByteArray(bitmap: Bitmap?): ByteArray? = ByteArrayOutputStream().use { stream ->
+    override suspend fun createByteArray(drawable: Drawable): ByteArray? =
         withContext(defaultDispatcher) {
-            bitmap?.compress(Bitmap.CompressFormat.PNG, 100, stream)
+            ByteArrayOutputStream().use { stream ->
+                drawable.toBitmap()?.compress(
+                    Bitmap.CompressFormat.PNG,
+                    100,
+                    stream,
+                )
 
-            stream.toByteArray()
+                stream.toByteArray()
+            }
         }
-    }
+
+    override suspend fun createByteArray(bitmap: Bitmap?): ByteArray? =
+        ByteArrayOutputStream().use { stream ->
+            withContext(defaultDispatcher) {
+                bitmap?.compress(Bitmap.CompressFormat.PNG, 100, stream)
+
+                stream.toByteArray()
+            }
+        }
 
     override suspend fun createDrawablePath(
         drawable: Drawable,
@@ -114,5 +126,70 @@ internal class DefaultImageSerializer @Inject constructor(
         } else {
             null
         }
+    }
+
+    override fun getTintedDrawable(
+        drawable: Drawable,
+        iconColor: IconColor,
+        customIconColor: Int,
+        fallbackIconColor: Boolean,
+    ): Drawable = when (iconColor) {
+        IconColor.System -> drawable
+        IconColor.Custom -> {
+            val copy = drawable.constantState?.newDrawable()?.mutate() ?: drawable.mutate()
+
+            // Only a true monochrome layer gets a flat tint
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                copy is AdaptiveIconDrawable
+            ) {
+                copy.monochrome?.let { mono ->
+                    return AdaptiveIconDrawable(
+                        Color.TRANSPARENT.toDrawable(),
+                        mono.mutate().apply { setTint(customIconColor) },
+                    )
+                }
+            }
+
+            if (fallbackIconColor) {
+                copy.tintedBitmap(customIconColor)
+            } else {
+                copy
+            }
+        }
+    }
+
+    private fun Drawable.tintedBitmap(@ColorInt tint: Int, fallbackSizePx: Int = 192): Drawable {
+        val width = (if (bounds.isEmpty) intrinsicWidth else bounds.width())
+            .takeIf { it > 0 } ?: fallbackSizePx
+        val height = (if (bounds.isEmpty) intrinsicHeight else bounds.height())
+            .takeIf { it > 0 } ?: fallbackSizePx
+
+        val source = createBitmap(width, height)
+        setBounds(0, 0, width, height)
+        draw(Canvas(source))
+
+        val result = createBitmap(width, height)
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            colorFilter = luminanceTintFilter(tint)
+        }
+        Canvas(result).drawBitmap(source, 0f, 0f, paint)
+        source.recycle()
+
+        return result.toDrawable(Resources.getSystem())
+    }
+
+    private fun luminanceTintFilter(@ColorInt tint: Int): ColorFilter {
+        val r = Color.red(tint) / 255f
+        val g = Color.green(tint) / 255f
+        val b = Color.blue(tint) / 255f
+        // luminance = 0.213R + 0.715G + 0.072B, then scaled per channel by the tint
+        return ColorMatrixColorFilter(
+            floatArrayOf(
+                0.213f * r, 0.715f * r, 0.072f * r, 0f, 0f,
+                0.213f * g, 0.715f * g, 0.072f * g, 0f, 0f,
+                0.213f * b, 0.715f * b, 0.072f * b, 0f, 0f,
+                0f, 0f, 0f, 1f, 0f,
+            ),
+        )
     }
 }

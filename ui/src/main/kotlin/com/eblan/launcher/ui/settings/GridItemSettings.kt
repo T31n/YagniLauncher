@@ -233,7 +233,7 @@ fun GridItemSettings(
             options = HorizontalAlignment.entries,
             selected = gridItemSettings.horizontalAlignment,
             label = {
-                it.getHorizontalAlignmentTitle()
+                it.getSubtitle()
             },
             onDismissRequest = {
                 showHorizontalAlignment = false
@@ -250,7 +250,7 @@ fun GridItemSettings(
             options = VerticalArrangement.entries,
             selected = gridItemSettings.verticalArrangement,
             label = {
-                it.getVerticalArrangementTitle()
+                it.getSubtitle()
             },
             onDismissRequest = {
                 showVerticalArrangement = false
@@ -267,7 +267,7 @@ fun GridItemSettings(
             options = HorizontalArrangement.entries,
             selected = gridItemSettings.horizontalArrangement,
             label = {
-                it.getHorizontalArrangementTitle()
+                it.getSubtitle()
             },
             onDismissRequest = {
                 showHorizontalArrangement = false
@@ -284,7 +284,7 @@ fun GridItemSettings(
             options = VerticalAlignment.entries,
             selected = gridItemSettings.verticalAlignment,
             label = {
-                it.getVerticalAlignmentTitle()
+                it.getSubtitle()
             },
             onDismissRequest = {
                 showVerticalAlignment = false
@@ -301,7 +301,7 @@ fun GridItemSettings(
             options = LayoutType.entries,
             selected = gridItemSettings.layoutType,
             label = {
-                it.getLayoutTypeTitle()
+                it.getSubtitle()
             },
             onDismissRequest = {
                 showLayoutType = false
@@ -348,7 +348,7 @@ fun GridItemSettings(
 }
 
 @Composable
-fun TextColor.getTitle(): String = when (this) {
+fun TextColor.getSubtitle(): String = when (this) {
     TextColor.System -> stringResource(commonR.string.system)
     TextColor.Light -> stringResource(commonR.string.light)
     TextColor.Dark -> stringResource(commonR.string.dark)
@@ -417,7 +417,7 @@ private fun buildGridItemSettingsItems(
     add(
         SettingsItem.Column(
             title = stringResource(R.string.layout_type),
-            subtitle = gridItemSettings.layoutType.getLayoutTypeTitle(),
+            subtitle = gridItemSettings.layoutType.getSubtitle(),
             onClick = onLayoutTypeClick,
         ),
     )
@@ -433,7 +433,7 @@ private fun buildGridItemSettingsItems(
     add(
         SettingsItem.Column(
             title = stringResource(R.string.text_color),
-            subtitle = gridItemSettings.textColor.getTitle(),
+            subtitle = gridItemSettings.textColor.getSubtitle(),
             onClick = onTextColorClick,
         ),
     )
@@ -491,7 +491,7 @@ private fun buildGridItemSettingsItems(
     add(
         SettingsItem.Column(
             title = stringResource(R.string.horizontal_alignment),
-            subtitle = gridItemSettings.horizontalAlignment.getHorizontalAlignmentTitle(),
+            subtitle = gridItemSettings.horizontalAlignment.getSubtitle(),
             onClick = onHorizontalAlignmentClick,
         ),
     )
@@ -499,7 +499,7 @@ private fun buildGridItemSettingsItems(
     add(
         SettingsItem.Column(
             title = stringResource(R.string.vertical_arrangement),
-            subtitle = gridItemSettings.verticalArrangement.getVerticalArrangementTitle(),
+            subtitle = gridItemSettings.verticalArrangement.getSubtitle(),
             onClick = onVerticalArrangementClick,
         ),
     )
@@ -507,7 +507,7 @@ private fun buildGridItemSettingsItems(
     add(
         SettingsItem.Column(
             title = stringResource(R.string.horizontal_arrangement),
-            subtitle = gridItemSettings.horizontalArrangement.getHorizontalArrangementTitle(),
+            subtitle = gridItemSettings.horizontalArrangement.getSubtitle(),
             onClick = onHorizontalArrangementClick,
         ),
     )
@@ -515,7 +515,7 @@ private fun buildGridItemSettingsItems(
     add(
         SettingsItem.Column(
             title = stringResource(R.string.vertical_alignment),
-            subtitle = gridItemSettings.verticalAlignment.getVerticalAlignmentTitle(),
+            subtitle = gridItemSettings.verticalAlignment.getSubtitle(),
             onClick = onVerticalAlignmentClick,
         ),
     )
@@ -538,35 +538,35 @@ private fun buildGridItemSettingsItems(
 }
 
 @Composable
-private fun HorizontalAlignment.getHorizontalAlignmentTitle(): String = when (this) {
+private fun HorizontalAlignment.getSubtitle(): String = when (this) {
     HorizontalAlignment.Start -> stringResource(R.string.start)
     HorizontalAlignment.CenterHorizontally -> stringResource(R.string.center_horizontally)
     HorizontalAlignment.End -> stringResource(R.string.end)
 }
 
 @Composable
-private fun VerticalArrangement.getVerticalArrangementTitle(): String = when (this) {
+private fun VerticalArrangement.getSubtitle(): String = when (this) {
     VerticalArrangement.Top -> stringResource(R.string.top)
     VerticalArrangement.Center -> stringResource(R.string.center)
     VerticalArrangement.Bottom -> stringResource(R.string.bottom)
 }
 
 @Composable
-private fun HorizontalArrangement.getHorizontalArrangementTitle(): String = when (this) {
+private fun HorizontalArrangement.getSubtitle(): String = when (this) {
     HorizontalArrangement.Start -> stringResource(R.string.start)
     HorizontalArrangement.Center -> stringResource(R.string.center)
     HorizontalArrangement.End -> stringResource(R.string.end)
 }
 
 @Composable
-private fun VerticalAlignment.getVerticalAlignmentTitle(): String = when (this) {
+private fun VerticalAlignment.getSubtitle(): String = when (this) {
     VerticalAlignment.Top -> stringResource(R.string.top)
     VerticalAlignment.CenterVertically -> stringResource(R.string.center_vertically)
     VerticalAlignment.Bottom -> stringResource(R.string.bottom)
 }
 
 @Composable
-private fun LayoutType.getLayoutTypeTitle(): String = when (this) {
+private fun LayoutType.getSubtitle(): String = when (this) {
     LayoutType.TopIconBottomLabel -> stringResource(R.string.top_icon_bottom_label)
     LayoutType.TopLabelBottomIcon -> stringResource(R.string.top_label_bottom_icon)
     LayoutType.StartIconEndLabel -> stringResource(R.string.start_icon_end_label)
