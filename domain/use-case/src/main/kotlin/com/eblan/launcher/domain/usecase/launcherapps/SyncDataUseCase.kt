@@ -134,6 +134,7 @@ class SyncDataUseCase @Inject constructor(
                 iconColor = generalSettings.iconColor,
                 customIconColor = generalSettings.customIconColor,
                 fallbackIconColor = generalSettings.fallbackIconColor,
+                theme = generalSettings.theme,
             )
                 .forEach { launcherAppsActivityInfo ->
                     currentCoroutineContext().ensureActive()

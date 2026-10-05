@@ -25,6 +25,7 @@ import com.eblan.launcher.domain.model.launcherapps.LauncherAppsShortcutInfo
 import com.eblan.launcher.domain.model.launcherapps.ShortcutConfigActivityInfo
 import com.eblan.launcher.domain.model.launcherapps.ShortcutQuery
 import com.eblan.launcher.domain.model.userdata.IconColor
+import com.eblan.launcher.domain.model.userdata.Theme
 
 interface LauncherAppsWrapper {
     val hasShortcutHostPermission: Boolean
@@ -33,6 +34,7 @@ interface LauncherAppsWrapper {
         iconColor: IconColor,
         customIconColor: Int,
         fallbackIconColor: Boolean,
+        theme: Theme,
     ): List<LauncherAppsActivityInfo>
 
     suspend fun getFastActivityList(): List<FastLauncherAppsActivityInfo>
@@ -43,6 +45,7 @@ interface LauncherAppsWrapper {
         iconColor: IconColor,
         customIconColor: Int,
         fallbackIconColor: Boolean,
+        theme: Theme,
     ): List<LauncherAppsActivityInfo>
 
     suspend fun getFastActivityList(

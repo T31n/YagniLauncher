@@ -20,6 +20,7 @@ package com.eblan.launcher.common
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import com.eblan.launcher.domain.model.userdata.IconColor
+import com.eblan.launcher.domain.model.userdata.Theme
 import java.io.File
 
 interface AndroidImageSerializer {
@@ -37,5 +38,6 @@ interface AndroidImageSerializer {
         iconColor: IconColor,
         customIconColor: Int,
         fallbackIconColor: Boolean,
+        theme: Theme,
     ): Drawable?
 }

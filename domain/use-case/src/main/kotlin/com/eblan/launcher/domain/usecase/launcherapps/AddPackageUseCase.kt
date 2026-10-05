@@ -83,6 +83,7 @@ class AddPackageUseCase @Inject constructor(
                 iconColor = userData.generalSettings.iconColor,
                 customIconColor = userData.generalSettings.customIconColor,
                 fallbackIconColor = userData.generalSettings.fallbackIconColor,
+                theme = userData.generalSettings.theme,
             ).onEach {
                 addEblanApplicationInfo(
                     homeSettings = userData.homeSettings,

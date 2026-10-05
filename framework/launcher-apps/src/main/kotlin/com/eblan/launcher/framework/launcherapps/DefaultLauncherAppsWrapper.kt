@@ -52,6 +52,7 @@ import com.eblan.launcher.domain.model.launcherapps.ShortcutConfigActivityInfo
 import com.eblan.launcher.domain.model.launcherapps.ShortcutQuery
 import com.eblan.launcher.domain.model.launcherapps.ShortcutQueryFlag
 import com.eblan.launcher.domain.model.userdata.IconColor
+import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.framework.packagemanager.AndroidPackageManagerWrapper
 import com.eblan.launcher.framework.usermanager.AndroidUserManagerWrapper
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -94,6 +95,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         iconColor: IconColor,
         customIconColor: Int,
         fallbackIconColor: Boolean,
+        theme: Theme,
     ): List<LauncherAppsActivityInfo> = withContext(ioDispatcher) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             launcherApps.profiles.filterNot {
@@ -110,6 +112,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
                         iconColor = iconColor,
                         customIconColor = customIconColor,
                         fallbackIconColor = fallbackIconColor,
+                        theme = theme,
                     )
                 }
             }
@@ -121,6 +124,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
                     iconColor = iconColor,
                     customIconColor = customIconColor,
                     fallbackIconColor = fallbackIconColor,
+                    theme = theme,
                 )
             }
         }
@@ -156,6 +160,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         iconColor: IconColor,
         customIconColor: Int,
         fallbackIconColor: Boolean,
+        theme: Theme,
     ): List<LauncherAppsActivityInfo> = withContext(ioDispatcher) {
         val userHandle = userManagerWrapper.getUserForSerialNumber(serialNumber = serialNumber)
 
@@ -166,6 +171,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
                 iconColor = iconColor,
                 customIconColor = customIconColor,
                 fallbackIconColor = fallbackIconColor,
+                theme = theme,
             )
         }
     }
@@ -315,6 +321,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
                         iconColor = IconColor.System,
                         customIconColor = 0,
                         fallbackIconColor = false,
+                        theme = Theme.System,
                     )
                 }
         } else {
@@ -520,6 +527,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         iconColor: IconColor,
         customIconColor: Int,
         fallbackIconColor: Boolean,
+        theme: Theme,
     ): LauncherAppsActivityInfo {
         val serialNumber = userManagerWrapper.getSerialNumberForUser(userHandle = user)
 
@@ -537,6 +545,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             serialNumber = serialNumber,
             customIconColor = customIconColor,
             fallbackIconColor = fallbackIconColor,
+            theme = theme,
         )
 
         return LauncherAppsActivityInfo(
@@ -622,6 +631,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         serialNumber: Long,
         customIconColor: Int,
         fallbackIconColor: Boolean,
+        theme: Theme,
     ): String? {
         if (drawable == null) return null
 
@@ -661,6 +671,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
                     iconColor = iconColor,
                     customIconColor = customIconColor,
                     fallbackIconColor = fallbackIconColor,
+                    theme = theme,
                 )
 
                 if (tintedDrawable != null) {

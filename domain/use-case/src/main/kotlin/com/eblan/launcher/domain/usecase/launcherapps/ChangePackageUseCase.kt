@@ -26,6 +26,7 @@ import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.model.shortcutconfig.EblanShortcutConfig
 import com.eblan.launcher.domain.model.userdata.IconColor
+import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.domain.repository.ApplicationInfoGridItemRepository
 import com.eblan.launcher.domain.repository.EblanAppWidgetProviderInfoRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
@@ -72,6 +73,7 @@ class ChangePackageUseCase @Inject constructor(
                 iconColor = userData.generalSettings.iconColor,
                 customIconColor = userData.generalSettings.customIconColor,
                 fallbackIconColor = userData.generalSettings.fallbackIconColor,
+                theme = userData.generalSettings.theme,
             )
 
             updateEblanAppWidgetProviderInfo(
@@ -92,6 +94,7 @@ class ChangePackageUseCase @Inject constructor(
         iconColor: IconColor,
         customIconColor: Int,
         fallbackIconColor: Boolean,
+        theme: Theme,
     ) {
         val launcherAppsActivityInfosByPackageName = launcherAppsWrapper.getActivityListWithCacheIcons(
             serialNumber = serialNumber,
@@ -99,6 +102,7 @@ class ChangePackageUseCase @Inject constructor(
             iconColor = iconColor,
             customIconColor = customIconColor,
             fallbackIconColor = fallbackIconColor,
+            theme = theme,
         )
 
         val newEblanShortcutConfigs = mutableListOf<EblanShortcutConfig>()

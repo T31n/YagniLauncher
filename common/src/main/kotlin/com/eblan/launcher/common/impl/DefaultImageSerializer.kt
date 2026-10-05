@@ -17,6 +17,8 @@
  */
 package com.eblan.launcher.common.impl
 
+import android.content.Context
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -30,12 +32,15 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
 import androidx.annotation.ColorInt
+import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.drawable.toDrawable
 import com.eblan.launcher.common.AndroidImageSerializer
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.model.userdata.IconColor
+import com.eblan.launcher.domain.model.userdata.Theme
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
@@ -44,6 +49,7 @@ import java.io.FileOutputStream
 import javax.inject.Inject
 
 internal class DefaultImageSerializer @Inject constructor(
+    @param:ApplicationContext private val context: Context,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : AndroidImageSerializer {
@@ -131,17 +137,20 @@ internal class DefaultImageSerializer @Inject constructor(
         iconColor: IconColor,
         customIconColor: Int,
         fallbackIconColor: Boolean,
+        theme: Theme,
     ): Drawable? {
         val copy = drawable.constantState?.newDrawable()?.mutate() ?: drawable.mutate()
 
-        // Only a true monochrome layer gets a flat tint
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             copy is AdaptiveIconDrawable
         ) {
-            copy.monochrome?.let { mono ->
+            copy.monochrome?.let {
                 return AdaptiveIconDrawable(
-                    Color.TRANSPARENT.toDrawable(),
-                    mono.mutate().apply { setTint(customIconColor) },
+                    adaptiveIconBackgroundColor(
+                        theme = theme,
+                        customIconColor = customIconColor,
+                    ).toDrawable(),
+                    it.mutate().apply { setTint(customIconColor) },
                 )
             }
         }
@@ -202,5 +211,30 @@ internal class DefaultImageSerializer @Inject constructor(
                 0f, 0f, 0f, 1f, 0f,
             ),
         )
+    }
+
+    private fun adaptiveIconBackgroundColor(
+        theme: Theme,
+        customIconColor: Int,
+    ): Int {
+        val isDarkTheme = when (theme) {
+            Theme.System -> (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+                Configuration.UI_MODE_NIGHT_YES
+
+            Theme.Light -> false
+
+            Theme.Dark -> true
+        }
+
+        val baseColor = if (isDarkTheme) Color.BLACK else Color.WHITE
+        val tintAmount =
+            if (isDarkTheme) DARK_BACKGROUND_TINT_AMOUNT else LIGHT_BACKGROUND_TINT_AMOUNT
+
+        return ColorUtils.blendARGB(baseColor, customIconColor, tintAmount)
+    }
+
+    private companion object {
+        const val LIGHT_BACKGROUND_TINT_AMOUNT = 0.16f
+        const val DARK_BACKGROUND_TINT_AMOUNT = 0.36f
     }
 }
