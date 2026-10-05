@@ -36,7 +36,7 @@ import androidx.compose.ui.res.stringResource
 import com.eblan.launcher.designsystem.component.EblanDialog
 import com.eblan.launcher.designsystem.component.EblanRadioButton
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
-import com.eblan.launcher.domain.model.userdata.IconColor
+import com.eblan.launcher.domain.model.userdata.IconTint
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.ui.R
 import com.eblan.launcher.common.R as commonR
@@ -95,11 +95,11 @@ fun BackgroundColorDialog(
 fun IconTintDialog(
     modifier: Modifier = Modifier,
     title: String,
-    iconTint: IconColor,
+    iconTint: IconTint,
     customIconTint: Int,
     onDismissRequest: () -> Unit,
     onUpdateClick: (
-        iconColor: IconColor,
+        iconTint: IconTint,
         customColor: Int,
     ) -> Unit,
 ) {
@@ -108,8 +108,8 @@ fun IconTintDialog(
         title = title,
         color = iconTint,
         customColor = customIconTint,
-        entries = IconColor.entries,
-        customEntry = IconColor.Custom,
+        entries = IconTint.entries,
+        customEntry = IconTint.Custom,
         getTitle = { it.getTitle() },
         onDismissRequest = onDismissRequest,
         onUpdateClick = onUpdateClick,
@@ -121,7 +121,7 @@ fun TextColor.getTitle() = when (this) {
     TextColor.System -> stringResource(commonR.string.system)
     TextColor.Light -> stringResource(commonR.string.light)
     TextColor.Dark -> stringResource(commonR.string.dark)
-    TextColor.Custom -> stringResource(R.string.custom)
+    TextColor.Custom -> stringResource(commonR.string.custom)
 }
 
 @Composable
@@ -129,13 +129,13 @@ fun BackgroundColor.getTitle() = when (this) {
     BackgroundColor.System -> stringResource(commonR.string.system)
     BackgroundColor.Light -> stringResource(commonR.string.light)
     BackgroundColor.Dark -> stringResource(commonR.string.dark)
-    BackgroundColor.Custom -> stringResource(R.string.custom)
+    BackgroundColor.Custom -> stringResource(commonR.string.custom)
 }
 
 @Composable
-fun IconColor.getTitle() = when (this) {
-    IconColor.None -> stringResource(commonR.string.system)
-    IconColor.Custom -> stringResource(R.string.custom)
+fun IconTint.getTitle() = when (this) {
+    IconTint.None -> stringResource(commonR.string.system)
+    IconTint.Custom -> stringResource(commonR.string.custom)
 }
 
 @Composable

@@ -352,7 +352,7 @@ fun TextColor.getSubtitle(): String = when (this) {
     TextColor.System -> stringResource(commonR.string.system)
     TextColor.Light -> stringResource(commonR.string.light)
     TextColor.Dark -> stringResource(commonR.string.dark)
-    TextColor.Custom -> stringResource(R.string.custom)
+    TextColor.Custom -> stringResource(commonR.string.custom)
 }
 
 @Composable

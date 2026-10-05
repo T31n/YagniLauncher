@@ -51,7 +51,7 @@ import com.eblan.launcher.domain.model.launcherapps.LauncherAppsShortcutInfo
 import com.eblan.launcher.domain.model.launcherapps.ShortcutConfigActivityInfo
 import com.eblan.launcher.domain.model.launcherapps.ShortcutQuery
 import com.eblan.launcher.domain.model.launcherapps.ShortcutQueryFlag
-import com.eblan.launcher.domain.model.userdata.IconColor
+import com.eblan.launcher.domain.model.userdata.IconTint
 import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.framework.packagemanager.AndroidPackageManagerWrapper
 import com.eblan.launcher.framework.usermanager.AndroidUserManagerWrapper
@@ -92,7 +92,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
     }
 
     override suspend fun getActivityListWithCacheIcons(
-        iconColor: IconColor,
+        iconTint: IconTint,
         customIconColor: Int,
         fallbackIconColor: Boolean,
         theme: Theme,
@@ -109,7 +109,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
                     currentCoroutineContext().ensureActive()
 
                     it.toLauncherAppsActivityInfo(
-                        iconColor = iconColor,
+                        iconTint = iconTint,
                         customIconColor = customIconColor,
                         fallbackIconColor = fallbackIconColor,
                         theme = theme,
@@ -121,7 +121,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
                 currentCoroutineContext().ensureActive()
 
                 it.toLauncherAppsActivityInfo(
-                    iconColor = iconColor,
+                    iconTint = iconTint,
                     customIconColor = customIconColor,
                     fallbackIconColor = fallbackIconColor,
                     theme = theme,
@@ -157,7 +157,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
     override suspend fun getActivityListWithCacheIcons(
         serialNumber: Long,
         packageName: String,
-        iconColor: IconColor,
+        iconTint: IconTint,
         customIconColor: Int,
         fallbackIconColor: Boolean,
         theme: Theme,
@@ -168,7 +168,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             currentCoroutineContext().ensureActive()
 
             it.toLauncherAppsActivityInfo(
-                iconColor = iconColor,
+                iconTint = iconTint,
                 customIconColor = customIconColor,
                 fallbackIconColor = fallbackIconColor,
                 theme = theme,
@@ -318,7 +318,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
                     currentCoroutineContext().ensureActive()
 
                     it.toLauncherAppsActivityInfo(
-                        iconColor = IconColor.None,
+                        iconTint = IconTint.None,
                         customIconColor = 0,
                         fallbackIconColor = false,
                         theme = Theme.System,
@@ -524,7 +524,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             ?.getBoolean(LauncherUserInfo.PRIVATE_SPACE_ENTRYPOINT_HIDDEN) == true
 
     private suspend fun LauncherActivityInfo.toLauncherAppsActivityInfo(
-        iconColor: IconColor,
+        iconTint: IconTint,
         customIconColor: Int,
         fallbackIconColor: Boolean,
         theme: Theme,
@@ -532,9 +532,9 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         val serialNumber = userManagerWrapper.getSerialNumberForUser(userHandle = user)
 
         val icon = try {
-            when (iconColor) {
-                IconColor.None -> getBadgedIcon(0)
-                IconColor.Custom -> getIcon(0)
+            when (iconTint) {
+                IconTint.None -> getBadgedIcon(0)
+                IconTint.Custom -> getIcon(0)
             }?.takeIf { it.intrinsicWidth > 0 && it.intrinsicHeight > 0 }
         } catch (_: IllegalArgumentException) {
             null
@@ -544,7 +544,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             componentName = componentName,
             drawable = icon,
             userHandle = user,
-            iconColor = iconColor,
+            iconTint = iconTint,
             serialNumber = serialNumber,
             customIconColor = customIconColor,
             fallbackIconColor = fallbackIconColor,
@@ -631,7 +631,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         componentName: ComponentName,
         drawable: Drawable?,
         userHandle: UserHandle,
-        iconColor: IconColor,
+        iconTint: IconTint,
         serialNumber: Long,
         customIconColor: Int,
         fallbackIconColor: Boolean,
@@ -639,8 +639,8 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
     ): String? {
         if (drawable == null) return null
 
-        return when (iconColor) {
-            IconColor.None -> {
+        return when (iconTint) {
+            IconTint.None -> {
                 val directory = fileManager.getFilesDirectory(FileManager.ICONS_DIR)
 
                 val file = File(
@@ -659,8 +659,8 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
                 file.absolutePath
             }
 
-            IconColor.Custom -> {
-                val directory = fileManager.getFilesDirectory(FileManager.THEMED_ICONS_DIR)
+            IconTint.Custom -> {
+                val directory = fileManager.getFilesDirectory(FileManager.TINTED_ICONS_DIR)
 
                 val file = File(
                     directory,
@@ -672,7 +672,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
 
                 val tintedDrawable = imageSerializer.getTintedDrawable(
                     drawable = drawable,
-                    iconColor = iconColor,
+                    iconTint = iconTint,
                     customIconColor = customIconColor,
                     fallbackIconColor = fallbackIconColor,
                     theme = theme,

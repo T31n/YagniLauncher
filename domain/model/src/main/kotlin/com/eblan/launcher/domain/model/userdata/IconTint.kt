@@ -17,7 +17,7 @@
  */
 package com.eblan.launcher.domain.model.userdata
 
-enum class IconColor {
+enum class IconTint {
     None,
     Custom,
 }

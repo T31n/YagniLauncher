@@ -131,7 +131,7 @@ class SyncDataUseCase @Inject constructor(
 
         val newSyncEblanApplicationInfos = buildList {
             launcherAppsWrapper.getActivityListWithCacheIcons(
-                iconColor = generalSettings.iconTint,
+                iconTint = generalSettings.iconTint,
                 customIconColor = generalSettings.customIconTint,
                 fallbackIconColor = generalSettings.fallbackIconTint,
                 theme = generalSettings.theme,

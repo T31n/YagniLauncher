@@ -17,8 +17,6 @@
  */
 package com.eblan.launcher.common.impl
 
-import android.content.Context
-import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -38,9 +36,9 @@ import androidx.core.graphics.drawable.toDrawable
 import com.eblan.launcher.common.AndroidImageSerializer
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
-import com.eblan.launcher.domain.model.userdata.IconColor
+import com.eblan.launcher.domain.framework.ResourcesWrapper
+import com.eblan.launcher.domain.model.userdata.IconTint
 import com.eblan.launcher.domain.model.userdata.Theme
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
@@ -49,7 +47,7 @@ import java.io.FileOutputStream
 import javax.inject.Inject
 
 internal class DefaultImageSerializer @Inject constructor(
-    @param:ApplicationContext private val context: Context,
+    private val resourcesWrapper: ResourcesWrapper,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : AndroidImageSerializer {
@@ -134,7 +132,7 @@ internal class DefaultImageSerializer @Inject constructor(
 
     override fun getTintedDrawable(
         drawable: Drawable,
-        iconColor: IconColor,
+        iconTint: IconTint,
         customIconColor: Int,
         fallbackIconColor: Boolean,
         theme: Theme,
@@ -218,11 +216,8 @@ internal class DefaultImageSerializer @Inject constructor(
         customIconColor: Int,
     ): Int {
         val isDarkTheme = when (theme) {
-            Theme.System -> (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
-                Configuration.UI_MODE_NIGHT_YES
-
+            Theme.System -> resourcesWrapper.isDarkTheme()
             Theme.Light -> false
-
             Theme.Dark -> true
         }
 
@@ -230,7 +225,11 @@ internal class DefaultImageSerializer @Inject constructor(
         val tintAmount =
             if (isDarkTheme) DARK_BACKGROUND_TINT_AMOUNT else LIGHT_BACKGROUND_TINT_AMOUNT
 
-        return ColorUtils.blendARGB(baseColor, customIconColor, tintAmount)
+        return ColorUtils.blendARGB(
+            baseColor,
+            customIconColor,
+            tintAmount,
+        )
     }
 
     private companion object {

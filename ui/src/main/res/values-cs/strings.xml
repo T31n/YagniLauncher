@@ -52,7 +52,6 @@
     <string name="swipe_up">Přejetí prstem nahoru</string>
     <string name="swipe_down">Přejetí prstem dolů</string>
     <string name="limit_app_names_to_one_line">Omezit názvy aplikací na jeden řádek</string>
-    <string name="custom">Vlastní</string>
     <string name="add_folder">Přidat složku</string>
     <string name="folder_is_not_valid">Složka není platná</string>
     <string name="center_vertically">Uprostřed</string>

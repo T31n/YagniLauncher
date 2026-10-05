@@ -54,7 +54,7 @@ import com.eblan.launcher.domain.model.userdata.FolderSettings
 import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.domain.model.userdata.GestureSettings
 import com.eblan.launcher.domain.model.userdata.HomeSettings
-import com.eblan.launcher.domain.model.userdata.IconColor
+import com.eblan.launcher.domain.model.userdata.IconTint
 import com.eblan.launcher.domain.model.userdata.ScrollBarType
 import com.eblan.launcher.domain.model.userdata.SearchBarPosition
 import com.eblan.launcher.domain.model.userdata.TextColor
@@ -125,7 +125,7 @@ internal fun GeneralSettingsProto.toGeneralSettings(): GeneralSettings = General
     theme = themeProto.toTheme(),
     dynamicTheme = dynamicTheme,
     iconPackInfoPackageName = iconPackInfoPackageName,
-    iconTint = iconTintProto.toIconColor(),
+    iconTint = iconTintProto.toIconTint(),
     customIconTint = customIconTint,
     fallbackIconTint = fallbackIconTint,
 )
@@ -195,7 +195,7 @@ internal fun GeneralSettings.toGeneralSettingsProto(): GeneralSettingsProto = Ge
     builder.themeProto = theme.toThemeProto()
     builder.dynamicTheme = dynamicTheme
     builder.iconPackInfoPackageName = iconPackInfoPackageName
-    builder.iconTintProto = iconTint.toIconColorProto()
+    builder.iconTintProto = iconTint.toIconTintProto()
     builder.customIconTint = customIconTint
     builder.fallbackIconTint = fallbackIconTint
 }.build()
@@ -418,12 +418,12 @@ private fun VerticalAlignmentProto.toVerticalAlignment(): VerticalAlignment = wh
     VerticalAlignmentProto.VerticalAlignmentBottom -> VerticalAlignment.Bottom
 }
 
-private fun IconTintProto.toIconColor(): IconColor = when (this) {
-    IconTintProto.IconTintNone, IconTintProto.UNRECOGNIZED -> IconColor.None
-    IconTintProto.IconTintCustom -> IconColor.Custom
+private fun IconTintProto.toIconTint(): IconTint = when (this) {
+    IconTintProto.IconTintNone, IconTintProto.UNRECOGNIZED -> IconTint.None
+    IconTintProto.IconTintCustom -> IconTint.Custom
 }
 
-private fun IconColor.toIconColorProto(): IconTintProto = when (this) {
-    IconColor.None -> IconTintProto.IconTintNone
-    IconColor.Custom -> IconTintProto.IconTintCustom
+private fun IconTint.toIconTintProto(): IconTintProto = when (this) {
+    IconTint.None -> IconTintProto.IconTintNone
+    IconTint.Custom -> IconTintProto.IconTintCustom
 }

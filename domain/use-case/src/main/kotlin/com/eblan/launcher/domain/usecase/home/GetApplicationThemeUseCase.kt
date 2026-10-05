@@ -72,7 +72,11 @@ class GetApplicationThemeUseCase @Inject constructor(
         }
     } else {
         ApplicationTheme(
-            theme = resourcesWrapper.getSystemTheme(),
+            theme = if (resourcesWrapper.isDarkTheme()) {
+                Theme.Dark
+            } else {
+                Theme.Light
+            },
             dynamicTheme = dynamicTheme,
         )
     }

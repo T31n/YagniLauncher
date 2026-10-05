@@ -48,7 +48,7 @@ import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.iconpackinfo.EblanIconPackInfo
 import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPackInfo
 import com.eblan.launcher.domain.model.userdata.GeneralSettings
-import com.eblan.launcher.domain.model.userdata.IconColor
+import com.eblan.launcher.domain.model.userdata.IconTint
 import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.feature.settings.general.dialog.ImportIconPackInfoDialog
 import com.eblan.launcher.feature.settings.general.dialog.SelectIconPackInfoDialog
@@ -289,23 +289,25 @@ private fun buildGeneralSettingsItems(
 
         add(
             SettingsItem.Column(
-                title = "Icon Tint",
+                title = stringResource(R.string.icon_tint),
                 subtitle = generalSettings.iconTint.getTitle(),
                 onClick = onIconColorClick,
             ),
         )
 
-        add(
-            SettingsItem.Switch(
-                checked = generalSettings.fallbackIconTint,
-                title = "Fallback Icon Tint",
-                subtitle = "Use the fallback icon tint",
-                onClick = {
-                    onEnforceThemedIconsChanged(!generalSettings.fallbackIconTint)
-                },
-                onCheckedChange = onEnforceThemedIconsChanged,
-            ),
-        )
+        if (generalSettings.iconTint == IconTint.Custom) {
+            add(
+                SettingsItem.Switch(
+                    checked = generalSettings.fallbackIconTint,
+                    title = stringResource(R.string.fallback_icon_tint),
+                    subtitle = stringResource(R.string.use_the_fallback_icon_tint),
+                    onClick = {
+                        onEnforceThemedIconsChanged(!generalSettings.fallbackIconTint)
+                    },
+                    onCheckedChange = onEnforceThemedIconsChanged,
+                ),
+            )
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             add(
@@ -346,7 +348,7 @@ private fun Theme.getTitle() = when (this) {
 }
 
 @Composable
-private fun IconColor.getTitle() = when (this) {
-    IconColor.None -> "None"
-    IconColor.Custom -> "Custom"
+private fun IconTint.getTitle() = when (this) {
+    IconTint.None -> stringResource(R.string.none)
+    IconTint.Custom -> stringResource(commonR.string.custom)
 }

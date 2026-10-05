@@ -28,4 +28,8 @@
     <string name="show_notification_dots">Show notification dots</string>
     <string name="apply_icons_from_supported_icon_packs">Apply icons from supported icon packs</string>
     <string name="adapt_colors_to_your_wallpaper_automatically">Adapt colors to your wallpaper automatically</string>
+    <string name="icon_tint">Icon Tint</string>
+    <string name="fallback_icon_tint">Fallback Icon Tint</string>
+    <string name="use_the_fallback_icon_tint">Use the fallback icon tint</string>
+    <string name="none">None</string>
 </resources>
