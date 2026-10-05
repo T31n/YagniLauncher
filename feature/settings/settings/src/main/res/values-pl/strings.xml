@@ -33,4 +33,5 @@
     <string name="support_on_ko_fi">Wesprzyj na Ko-Fi</string>
     <string name="star_on_github">Dodaj gwiazdkę na GitHubie</string>
     <string name="note_this_informational_card_will_be_removed_in_future_stable_releases">Uwaga: Ta karta informacyjna zostanie usunięta w przyszłych wersjach stabilnych</string>
+    <string name="corner_radius_background_color_and_more">Promień zaokrąglenia narożników, kolor tła</string>
 </resources>
