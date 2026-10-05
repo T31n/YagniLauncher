@@ -138,7 +138,6 @@ fun IconColor.getTitle() = when (this) {
     IconColor.Custom -> stringResource(R.string.custom)
 }
 
-
 @Composable
 private fun <T : Enum<T>> ColorDialog(
     modifier: Modifier = Modifier,

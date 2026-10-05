@@ -37,5 +37,5 @@ interface AndroidImageSerializer {
         iconColor: IconColor,
         customIconColor: Int,
         fallbackIconColor: Boolean,
-    ): Drawable
+    ): Drawable?
 }

@@ -47,27 +47,25 @@ internal class DefaultImageSerializer @Inject constructor(
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : AndroidImageSerializer {
-    override suspend fun createByteArray(drawable: Drawable): ByteArray? =
-        withContext(defaultDispatcher) {
-            ByteArrayOutputStream().use { stream ->
-                drawable.toBitmap()?.compress(
-                    Bitmap.CompressFormat.PNG,
-                    100,
-                    stream,
-                )
-
-                stream.toByteArray()
-            }
-        }
-
-    override suspend fun createByteArray(bitmap: Bitmap?): ByteArray? =
+    override suspend fun createByteArray(drawable: Drawable): ByteArray? = withContext(defaultDispatcher) {
         ByteArrayOutputStream().use { stream ->
-            withContext(defaultDispatcher) {
-                bitmap?.compress(Bitmap.CompressFormat.PNG, 100, stream)
+            drawable.toBitmap()?.compress(
+                Bitmap.CompressFormat.PNG,
+                100,
+                stream,
+            )
 
-                stream.toByteArray()
-            }
+            stream.toByteArray()
         }
+    }
+
+    override suspend fun createByteArray(bitmap: Bitmap?): ByteArray? = ByteArrayOutputStream().use { stream ->
+        withContext(defaultDispatcher) {
+            bitmap?.compress(Bitmap.CompressFormat.PNG, 100, stream)
+
+            stream.toByteArray()
+        }
+    }
 
     override suspend fun createDrawablePath(
         drawable: Drawable,
@@ -133,49 +131,62 @@ internal class DefaultImageSerializer @Inject constructor(
         iconColor: IconColor,
         customIconColor: Int,
         fallbackIconColor: Boolean,
-    ): Drawable = when (iconColor) {
-        IconColor.System -> drawable
-        IconColor.Custom -> {
-            val copy = drawable.constantState?.newDrawable()?.mutate() ?: drawable.mutate()
+    ): Drawable? {
+        val copy = drawable.constantState?.newDrawable()?.mutate() ?: drawable.mutate()
 
-            // Only a true monochrome layer gets a flat tint
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-                copy is AdaptiveIconDrawable
-            ) {
-                copy.monochrome?.let { mono ->
-                    return AdaptiveIconDrawable(
-                        Color.TRANSPARENT.toDrawable(),
-                        mono.mutate().apply { setTint(customIconColor) },
-                    )
-                }
+        // Only a true monochrome layer gets a flat tint
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            copy is AdaptiveIconDrawable
+        ) {
+            copy.monochrome?.let { mono ->
+                return AdaptiveIconDrawable(
+                    Color.TRANSPARENT.toDrawable(),
+                    mono.mutate().apply { setTint(customIconColor) },
+                )
             }
+        }
 
-            if (fallbackIconColor) {
-                copy.tintedBitmap(customIconColor)
-            } else {
-                copy
-            }
+        return if (fallbackIconColor) {
+            copy.tintedBitmap(customIconColor = customIconColor)
+        } else {
+            copy
         }
     }
 
-    private fun Drawable.tintedBitmap(@ColorInt tint: Int, fallbackSizePx: Int = 192): Drawable {
-        val width = (if (bounds.isEmpty) intrinsicWidth else bounds.width())
-            .takeIf { it > 0 } ?: fallbackSizePx
-        val height = (if (bounds.isEmpty) intrinsicHeight else bounds.height())
-            .takeIf { it > 0 } ?: fallbackSizePx
-
-        val source = createBitmap(width, height)
-        setBounds(0, 0, width, height)
-        draw(Canvas(source))
-
-        val result = createBitmap(width, height)
-        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            colorFilter = luminanceTintFilter(tint)
+    private fun Drawable.tintedBitmap(customIconColor: Int): Drawable? {
+        val width = if (bounds.isEmpty) {
+            intrinsicWidth
+        } else {
+            bounds.width()
         }
-        Canvas(result).drawBitmap(source, 0f, 0f, paint)
-        source.recycle()
 
-        return result.toDrawable(Resources.getSystem())
+        val height = if (bounds.isEmpty) {
+            intrinsicHeight
+        } else {
+            bounds.height()
+        }
+
+        return if (width > 0 && height > 0) {
+            val source = createBitmap(width, height)
+
+            setBounds(0, 0, width, height)
+
+            draw(Canvas(source))
+
+            val result = createBitmap(width, height)
+
+            val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                colorFilter = luminanceTintFilter(customIconColor)
+            }
+
+            Canvas(result).drawBitmap(source, 0f, 0f, paint)
+
+            source.recycle()
+
+            result.toDrawable(Resources.getSystem())
+        } else {
+            null
+        }
     }
 
     private fun luminanceTintFilter(@ColorInt tint: Int): ColorFilter {

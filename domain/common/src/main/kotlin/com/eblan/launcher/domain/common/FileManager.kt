@@ -30,6 +30,7 @@ interface FileManager {
 
     companion object {
         const val ICONS_DIR = "icons"
+        const val THEMED_ICONS_DIR = "themed_icons"
         const val WIDGETS_DIR = "widgets"
         const val SHORTCUTS_DIR = "shortcuts"
         const val ICON_PACKS_DIR = "iconpacks"

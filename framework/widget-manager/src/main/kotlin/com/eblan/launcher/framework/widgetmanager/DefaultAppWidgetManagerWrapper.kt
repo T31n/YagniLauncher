@@ -53,20 +53,17 @@ internal class DefaultAppWidgetManagerWrapper @Inject constructor(
     AndroidAppWidgetManagerWrapper {
     private val appWidgetManager = AppWidgetManager.getInstance(context)
 
-    override suspend fun getInstalledProvidersWithCacheIcons(): List<AppWidgetManagerAppWidgetProviderInfo> =
-        withContext(ioDispatcher) {
-            appWidgetManager.installedProviders.map {
-                currentCoroutineContext().ensureActive()
+    override suspend fun getInstalledProvidersWithCacheIcons(): List<AppWidgetManagerAppWidgetProviderInfo> = withContext(ioDispatcher) {
+        appWidgetManager.installedProviders.map {
+            currentCoroutineContext().ensureActive()
 
-                it.toEblanAppWidgetProviderInfo()
-            }
+            it.toEblanAppWidgetProviderInfo()
         }
+    }
 
-    override fun getAppWidgetInfo(appWidgetId: Int): AppWidgetProviderInfo? =
-        appWidgetManager.getAppWidgetInfo(appWidgetId)
+    override fun getAppWidgetInfo(appWidgetId: Int): AppWidgetProviderInfo? = appWidgetManager.getAppWidgetInfo(appWidgetId)
 
-    override fun bindAppWidgetIdIfAllowed(appWidgetId: Int, provider: ComponentName?): Boolean =
-        appWidgetManager.bindAppWidgetIdIfAllowed(appWidgetId, provider)
+    override fun bindAppWidgetIdIfAllowed(appWidgetId: Int, provider: ComponentName?): Boolean = appWidgetManager.bindAppWidgetIdIfAllowed(appWidgetId, provider)
 
     override fun bindAppWidgetIdIfAllowed(
         appWidgetId: Int,

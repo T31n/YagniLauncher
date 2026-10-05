@@ -134,16 +134,13 @@ class ChangePackageUseCase @Inject constructor(
             }
         }
 
-        val newDeleteEblanApplicationInfos =
-            newSyncEblanApplicationInfosByPackageName.map {
-                it.toDeleteEblanApplicationInfo()
-            }.toSet()
-
-        val oldDeleteEblanApplicationInfos =
-            oldSyncEblanApplicationInfosByPackageName.map {
+        val oldDeleteEblanApplicationInfos = oldSyncEblanApplicationInfosByPackageName
+            .differenceByIdentity(newSyncEblanApplicationInfosByPackageName) {
+                it.serialNumber to it.componentName
+            }
+            .map {
                 it.toDeleteEblanApplicationInfo()
             }
-                .filterNot { it in newDeleteEblanApplicationInfos }
 
         eblanApplicationInfoRepository.upsertSyncEblanApplicationInfos(
             syncEblanApplicationInfos = newSyncEblanApplicationInfosByPackageName,
@@ -302,15 +299,12 @@ class ChangePackageUseCase @Inject constructor(
                 packageName = packageName,
             )
 
-        val newDeleteEblanShortcutConfigs = newEblanShortcutConfigs.map {
-            it.toDeleteEblanShortcutConfig()
-        }.toSet()
-
-        val oldDeleteEblanShortcutConfigs =
-            oldEblanShortcutConfigsByPackageName.map {
+        val oldDeleteEblanShortcutConfigs = oldEblanShortcutConfigsByPackageName
+            .differenceByIdentity(newEblanShortcutConfigs) {
+                it.serialNumber to it.componentName
+            }
+            .map {
                 it.toDeleteEblanShortcutConfig()
-            }.filterNot {
-                it in newDeleteEblanShortcutConfigs
             }
 
         eblanShortcutConfigRepository.upsertEblanShortcutConfigs(
