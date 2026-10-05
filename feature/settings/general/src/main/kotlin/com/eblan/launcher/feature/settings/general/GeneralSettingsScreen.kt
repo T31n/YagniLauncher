@@ -54,7 +54,7 @@ import com.eblan.launcher.feature.settings.general.dialog.ImportIconPackInfoDial
 import com.eblan.launcher.feature.settings.general.dialog.SelectIconPackInfoDialog
 import com.eblan.launcher.feature.settings.general.model.GeneralSettingsUiState
 import com.eblan.launcher.service.IconPackInfoService
-import com.eblan.launcher.ui.dialog.IconColorDialog
+import com.eblan.launcher.ui.dialog.IconTintDialog
 import com.eblan.launcher.ui.dialog.RadioOptionsDialog
 import com.eblan.launcher.ui.model.SettingsItem
 import com.eblan.launcher.ui.settings.SettingsItems
@@ -145,19 +145,19 @@ private fun Success(
     var showThemeDialog by remember { mutableStateOf(false) }
     var showImportIconPackDialog by remember { mutableStateOf(false) }
     var selectIconPackDialog by remember { mutableStateOf(false) }
-    var showIconColorDialog by remember { mutableStateOf(false) }
+    var showIconTintDialog by remember { mutableStateOf(false) }
 
     val items = buildGeneralSettingsItems(
         generalSettings = generalSettings,
         onImportIconPackClick = { showImportIconPackDialog = true },
         onSelectIconPackClick = { selectIconPackDialog = true },
         onThemeClick = { showThemeDialog = true },
-        onIconColorClick = { showIconColorDialog = true },
+        onIconColorClick = { showIconTintDialog = true },
         onDynamicThemeChange = {
             onUpdateGeneralSettings(generalSettings.copy(dynamicTheme = it))
         },
         onEnforceThemedIconsChanged = {
-            onUpdateGeneralSettings(generalSettings.copy(fallbackIconColor = it))
+            onUpdateGeneralSettings(generalSettings.copy(fallbackIconTint = it))
         },
     )
 
@@ -226,19 +226,19 @@ private fun Success(
         )
     }
 
-    if (showIconColorDialog) {
-        IconColorDialog(
-            title = "Icon Color",
-            iconColor = generalSettings.iconColor,
-            customIconColor = generalSettings.customIconColor,
+    if (showIconTintDialog) {
+        IconTintDialog(
+            title = "Icon Tint",
+            iconTint = generalSettings.iconTint,
+            customIconTint = generalSettings.customIconTint,
             onDismissRequest = {
-                showIconColorDialog = false
+                showIconTintDialog = false
             },
-            onUpdateClick = { iconColor, customIconColor ->
+            onUpdateClick = { iconTint, customIconTint ->
                 onUpdateGeneralSettings(
                     generalSettings.copy(
-                        iconColor = iconColor,
-                        customIconColor = customIconColor,
+                        iconTint = iconTint,
+                        customIconTint = customIconTint,
                     ),
                 )
             },
@@ -289,19 +289,19 @@ private fun buildGeneralSettingsItems(
 
         add(
             SettingsItem.Column(
-                title = "Icon Color",
-                subtitle = generalSettings.iconColor.getTitle(),
+                title = "Icon Tint",
+                subtitle = generalSettings.iconTint.getTitle(),
                 onClick = onIconColorClick,
             ),
         )
 
         add(
             SettingsItem.Switch(
-                checked = generalSettings.fallbackIconColor,
-                title = "Fallback Icon Color",
-                subtitle = "Use the fallback icon color",
+                checked = generalSettings.fallbackIconTint,
+                title = "Fallback Icon Tint",
+                subtitle = "Use the fallback icon tint",
                 onClick = {
-                    onEnforceThemedIconsChanged(!generalSettings.fallbackIconColor)
+                    onEnforceThemedIconsChanged(!generalSettings.fallbackIconTint)
                 },
                 onCheckedChange = onEnforceThemedIconsChanged,
             ),
@@ -347,6 +347,6 @@ private fun Theme.getTitle() = when (this) {
 
 @Composable
 private fun IconColor.getTitle() = when (this) {
-    IconColor.System -> "System"
+    IconColor.None -> "None"
     IconColor.Custom -> "Custom"
 }

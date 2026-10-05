@@ -92,11 +92,11 @@ fun BackgroundColorDialog(
 }
 
 @Composable
-fun IconColorDialog(
+fun IconTintDialog(
     modifier: Modifier = Modifier,
     title: String,
-    iconColor: IconColor,
-    customIconColor: Int,
+    iconTint: IconColor,
+    customIconTint: Int,
     onDismissRequest: () -> Unit,
     onUpdateClick: (
         iconColor: IconColor,
@@ -106,8 +106,8 @@ fun IconColorDialog(
     ColorDialog(
         modifier = modifier,
         title = title,
-        color = iconColor,
-        customColor = customIconColor,
+        color = iconTint,
+        customColor = customIconTint,
         entries = IconColor.entries,
         customEntry = IconColor.Custom,
         getTitle = { it.getTitle() },
@@ -134,7 +134,7 @@ fun BackgroundColor.getTitle() = when (this) {
 
 @Composable
 fun IconColor.getTitle() = when (this) {
-    IconColor.System -> stringResource(commonR.string.system)
+    IconColor.None -> stringResource(commonR.string.system)
     IconColor.Custom -> stringResource(R.string.custom)
 }
 

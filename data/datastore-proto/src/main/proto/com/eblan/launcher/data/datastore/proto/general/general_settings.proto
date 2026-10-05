@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 import "com/eblan/launcher/data/datastore/proto/general/theme.proto";
-import "com/eblan/launcher/data/datastore/proto/general/icon_color.proto";
+import "com/eblan/launcher/data/datastore/proto/general/icon_tint.proto";
 
 option java_package = "com.eblan.launcher.data.datastore.proto.general";
 option java_multiple_files = true;
@@ -10,7 +10,7 @@ message GeneralSettingsProto {
   optional ThemeProto themeProto = 1;
   optional bool dynamicTheme = 3;
   optional string iconPackInfoPackageName = 4;
-  optional IconColorProto iconColorProto = 5;
-  optional int32 customIconColor = 6;
-  optional bool fallbackIconColor = 7;
+  optional IconTintProto iconTintProto = 5;
+  optional int32 customIconTint = 6;
+  optional bool fallbackIconTint = 7;
 }

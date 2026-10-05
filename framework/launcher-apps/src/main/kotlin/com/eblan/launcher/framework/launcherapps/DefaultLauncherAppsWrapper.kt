@@ -318,7 +318,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
                     currentCoroutineContext().ensureActive()
 
                     it.toLauncherAppsActivityInfo(
-                        iconColor = IconColor.System,
+                        iconColor = IconColor.None,
                         customIconColor = 0,
                         fallbackIconColor = false,
                         theme = Theme.System,
@@ -533,7 +533,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
 
         val icon = try {
             when (iconColor) {
-                IconColor.System -> getBadgedIcon(0)
+                IconColor.None -> getBadgedIcon(0)
                 IconColor.Custom -> getIcon(0)
             }?.takeIf { it.intrinsicWidth > 0 && it.intrinsicHeight > 0 }
         } catch (_: IllegalArgumentException) {
@@ -640,7 +640,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         if (drawable == null) return null
 
         return when (iconColor) {
-            IconColor.System -> {
+            IconColor.None -> {
                 val directory = fileManager.getFilesDirectory(FileManager.ICONS_DIR)
 
                 val file = File(

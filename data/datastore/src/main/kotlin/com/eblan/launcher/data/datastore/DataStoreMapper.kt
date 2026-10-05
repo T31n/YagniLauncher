@@ -24,7 +24,7 @@ import com.eblan.launcher.data.datastore.proto.appdrawer.SearchBarPositionProto
 import com.eblan.launcher.data.datastore.proto.experimental.ExperimentalSettingsProto
 import com.eblan.launcher.data.datastore.proto.folder.FolderSettingsProto
 import com.eblan.launcher.data.datastore.proto.general.GeneralSettingsProto
-import com.eblan.launcher.data.datastore.proto.general.IconColorProto
+import com.eblan.launcher.data.datastore.proto.general.IconTintProto
 import com.eblan.launcher.data.datastore.proto.general.ThemeProto
 import com.eblan.launcher.data.datastore.proto.gesture.EblanActionProto
 import com.eblan.launcher.data.datastore.proto.gesture.EblanActionTypeProto
@@ -125,9 +125,9 @@ internal fun GeneralSettingsProto.toGeneralSettings(): GeneralSettings = General
     theme = themeProto.toTheme(),
     dynamicTheme = dynamicTheme,
     iconPackInfoPackageName = iconPackInfoPackageName,
-    iconColor = iconColorProto.toIconColor(),
-    customIconColor = customIconColor,
-    fallbackIconColor = fallbackIconColor,
+    iconTint = iconTintProto.toIconColor(),
+    customIconTint = customIconTint,
+    fallbackIconTint = fallbackIconTint,
 )
 
 internal fun GridItemSettings.toGridItemSettingsProto(): GridItemSettingsProto = GridItemSettingsProto.newBuilder().also { builder ->
@@ -195,9 +195,9 @@ internal fun GeneralSettings.toGeneralSettingsProto(): GeneralSettingsProto = Ge
     builder.themeProto = theme.toThemeProto()
     builder.dynamicTheme = dynamicTheme
     builder.iconPackInfoPackageName = iconPackInfoPackageName
-    builder.iconColorProto = iconColor.toIconColorProto()
-    builder.customIconColor = customIconColor
-    builder.fallbackIconColor = fallbackIconColor
+    builder.iconTintProto = iconTint.toIconColorProto()
+    builder.customIconTint = customIconTint
+    builder.fallbackIconTint = fallbackIconTint
 }.build()
 
 internal fun GestureSettings.toGestureSettingsProto(): GestureSettingsProto = GestureSettingsProto.newBuilder().also { builder ->
@@ -418,12 +418,12 @@ private fun VerticalAlignmentProto.toVerticalAlignment(): VerticalAlignment = wh
     VerticalAlignmentProto.VerticalAlignmentBottom -> VerticalAlignment.Bottom
 }
 
-private fun IconColorProto.toIconColor(): IconColor = when (this) {
-    IconColorProto.IconColorSystem, IconColorProto.UNRECOGNIZED -> IconColor.System
-    IconColorProto.IconColorCustom -> IconColor.Custom
+private fun IconTintProto.toIconColor(): IconColor = when (this) {
+    IconTintProto.IconTintNone, IconTintProto.UNRECOGNIZED -> IconColor.None
+    IconTintProto.IconTintCustom -> IconColor.Custom
 }
 
-private fun IconColor.toIconColorProto(): IconColorProto = when (this) {
-    IconColor.System -> IconColorProto.IconColorSystem
-    IconColor.Custom -> IconColorProto.IconColorCustom
+private fun IconColor.toIconColorProto(): IconTintProto = when (this) {
+    IconColor.None -> IconTintProto.IconTintNone
+    IconColor.Custom -> IconTintProto.IconTintCustom
 }

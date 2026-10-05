@@ -21,7 +21,7 @@ data class GeneralSettings(
     val theme: Theme,
     val dynamicTheme: Boolean,
     val iconPackInfoPackageName: String,
-    val iconColor: IconColor,
-    val customIconColor: Int,
-    val fallbackIconColor: Boolean,
+    val iconTint: IconColor,
+    val customIconTint: Int,
+    val fallbackIconTint: Boolean,
 )

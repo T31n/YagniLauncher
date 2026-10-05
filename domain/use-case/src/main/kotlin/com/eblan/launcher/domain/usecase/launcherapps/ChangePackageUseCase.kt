@@ -70,9 +70,9 @@ class ChangePackageUseCase @Inject constructor(
             updateEblanApplicationInfo(
                 packageName = packageName,
                 serialNumber = serialNumber,
-                iconColor = userData.generalSettings.iconColor,
-                customIconColor = userData.generalSettings.customIconColor,
-                fallbackIconColor = userData.generalSettings.fallbackIconColor,
+                iconColor = userData.generalSettings.iconTint,
+                customIconColor = userData.generalSettings.customIconTint,
+                fallbackIconColor = userData.generalSettings.fallbackIconTint,
                 theme = userData.generalSettings.theme,
             )
 
