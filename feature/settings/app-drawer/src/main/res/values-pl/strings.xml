@@ -16,7 +16,7 @@
   ~
   -->
 <resources>
-        <string name="horizontal_grid">Siatka pozioma</string>
+    <string name="horizontal_grid">Siatka pozioma</string>
     <string name="vertical_grid">Siatka pionowa</string>
     <string name="rows_height">Wysokość wierszy</string>
     <string name="rows_height_is_not_valid">Nieprawidłowa wysokość wierszy</string>
@@ -28,7 +28,7 @@
     <string name="hide_apps_marked_with_selected_tags">Ukryj aplikacje oznaczone wybranymi tagami</string>
     <string name="show_keyboard">Pokazuj klawiaturę</string>
     <string name="show_keyboard_when_app_drawer_opens">Otwieraj klawiaturę po otwarciu szuflady aplikacji</string>
-    <string name="fuzzy_search">Wyszukiwanie rozmyte (Fuzzy)</string>
+    <string name="fuzzy_search">Wyszukiwanie rozmyte</string>
     <string name="find_apps_even_with_typos_or_accented_characters">Znajduj aplikacje pomimo literówek lub znaków diakrytycznych</string>
     <string name="blur_behind">Rozmycie pod spodem</string>
     <string name="blurs_the_wallpaper_when_app_drawer_opens">Rozmywaj tapetę po otwarciu szuflady aplikacji</string>
