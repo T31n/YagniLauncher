@@ -531,16 +531,19 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
     ): LauncherAppsActivityInfo {
         val serialNumber = userManagerWrapper.getSerialNumberForUser(userHandle = user)
 
-        val badgedIcon = try {
-            getBadgedIcon(0)
-                ?.takeIf { it.intrinsicWidth > 0 && it.intrinsicHeight > 0 }
+        val icon = try {
+            when (iconColor) {
+                IconColor.System -> getBadgedIcon(0)
+                IconColor.Custom -> getIcon(0)
+            }?.takeIf { it.intrinsicWidth > 0 && it.intrinsicHeight > 0 }
         } catch (_: IllegalArgumentException) {
             null
         }
 
         val activityIcon = getActivityIcon(
             componentName = componentName,
-            drawable = badgedIcon,
+            drawable = icon,
+            userHandle = user,
             iconColor = iconColor,
             serialNumber = serialNumber,
             customIconColor = customIconColor,
@@ -627,6 +630,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
     private suspend fun getActivityIcon(
         componentName: ComponentName,
         drawable: Drawable?,
+        userHandle: UserHandle,
         iconColor: IconColor,
         serialNumber: Long,
         customIconColor: Int,
@@ -675,8 +679,12 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
                 )
 
                 if (tintedDrawable != null) {
+                    val badgedTintedDrawable =
+                        androidPackageManager.getUserBadgedIcon(tintedDrawable, userHandle)
+                            ?: return null
+
                     imageSerializer.createDrawablePath(
-                        drawable = tintedDrawable,
+                        drawable = badgedTintedDrawable,
                         file = file,
                     )
 

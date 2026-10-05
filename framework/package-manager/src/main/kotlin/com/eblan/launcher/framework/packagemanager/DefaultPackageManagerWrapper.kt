@@ -22,6 +22,7 @@ import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
+import android.graphics.drawable.Drawable
 import android.os.UserHandle
 import com.eblan.launcher.common.AndroidImageSerializer
 import com.eblan.launcher.domain.common.Dispatcher
@@ -141,5 +142,16 @@ internal class DefaultPackageManagerWrapper @Inject constructor(
         userHandle: UserHandle,
     ): CharSequence = withContext(ioDispatcher) {
         packageManager.getUserBadgedLabel(label, userHandle)
+    }
+
+    override suspend fun getUserBadgedIcon(
+        drawable: Drawable,
+        userHandle: UserHandle,
+    ): Drawable? = withContext(ioDispatcher) {
+        try {
+            packageManager.getUserBadgedIcon(drawable, userHandle)
+        } catch (_: IllegalArgumentException) {
+            null
+        }
     }
 }
