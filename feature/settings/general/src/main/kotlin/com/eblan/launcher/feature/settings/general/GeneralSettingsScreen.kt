@@ -386,7 +386,7 @@ private fun Theme.getTitle() = when (this) {
 }
 
 @Composable
-private fun IconShape.getTitle() = when(this){
+private fun IconShape.getTitle() = when (this) {
     IconShape.None -> "None"
     IconShape.Circle -> "Circle"
     IconShape.Square -> "Square"

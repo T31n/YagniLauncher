@@ -25,6 +25,7 @@ import com.eblan.launcher.domain.framework.AppWidgetManagerWrapper
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.model.shortcutconfig.EblanShortcutConfig
+import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.IconTint
 import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.domain.repository.ApplicationInfoGridItemRepository
@@ -71,6 +72,7 @@ class ChangePackageUseCase @Inject constructor(
                 packageName = packageName,
                 serialNumber = serialNumber,
                 iconTint = userData.generalSettings.iconTint,
+                iconShape = userData.generalSettings.iconShape,
                 customIconColor = userData.generalSettings.customIconTint,
                 fallbackIconColor = userData.generalSettings.fallbackIconTint,
                 theme = userData.generalSettings.theme,
@@ -92,6 +94,7 @@ class ChangePackageUseCase @Inject constructor(
         packageName: String,
         serialNumber: Long,
         iconTint: IconTint,
+        iconShape: IconShape,
         customIconColor: Int,
         fallbackIconColor: Boolean,
         theme: Theme,
@@ -100,6 +103,7 @@ class ChangePackageUseCase @Inject constructor(
             serialNumber = serialNumber,
             packageName = packageName,
             iconTint = iconTint,
+            iconShape = iconShape,
             customIconColor = customIconColor,
             fallbackIconColor = fallbackIconColor,
             theme = theme,

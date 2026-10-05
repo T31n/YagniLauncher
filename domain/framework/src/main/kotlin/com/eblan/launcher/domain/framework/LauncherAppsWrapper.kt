@@ -24,6 +24,7 @@ import com.eblan.launcher.domain.model.launcherapps.LauncherAppsActivityInfo
 import com.eblan.launcher.domain.model.launcherapps.LauncherAppsShortcutInfo
 import com.eblan.launcher.domain.model.launcherapps.ShortcutConfigActivityInfo
 import com.eblan.launcher.domain.model.launcherapps.ShortcutQuery
+import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.IconTint
 import com.eblan.launcher.domain.model.userdata.Theme
 
@@ -32,6 +33,7 @@ interface LauncherAppsWrapper {
 
     suspend fun getActivityListWithCacheIcons(
         iconTint: IconTint,
+        iconShape: IconShape,
         customIconColor: Int,
         fallbackIconColor: Boolean,
         theme: Theme,
@@ -43,6 +45,7 @@ interface LauncherAppsWrapper {
         serialNumber: Long,
         packageName: String,
         iconTint: IconTint,
+        iconShape: IconShape,
         customIconColor: Int,
         fallbackIconColor: Boolean,
         theme: Theme,

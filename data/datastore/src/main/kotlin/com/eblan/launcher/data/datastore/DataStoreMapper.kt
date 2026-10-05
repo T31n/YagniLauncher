@@ -434,14 +434,14 @@ private fun IconTint.toIconTintProto(): IconTintProto = when (this) {
     IconTint.Custom -> IconTintProto.IconTintCustom
 }
 
-private fun IconShapeProto.toIconShape(): IconShape = when(this){
+private fun IconShapeProto.toIconShape(): IconShape = when (this) {
     IconShapeProto.IconShapeNone, IconShapeProto.UNRECOGNIZED -> IconShape.None
     IconShapeProto.IconShapeCircle -> IconShape.Circle
     IconShapeProto.IconShapeSquare -> IconShape.Square
     IconShapeProto.IconShapeRoundedSquare -> IconShape.RoundedSquare
 }
 
-private fun IconShape.toIconShapeProto(): IconShapeProto = when(this){
+private fun IconShape.toIconShapeProto(): IconShapeProto = when (this) {
     IconShape.None -> IconShapeProto.IconShapeNone
     IconShape.Circle -> IconShapeProto.IconShapeCircle
     IconShape.Square -> IconShapeProto.IconShapeSquare

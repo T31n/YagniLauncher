@@ -25,6 +25,8 @@ import android.graphics.Color
 import android.graphics.ColorFilter
 import android.graphics.ColorMatrixColorFilter
 import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.RectF
 import android.graphics.drawable.AdaptiveIconDrawable
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
@@ -37,6 +39,7 @@ import com.eblan.launcher.common.AndroidImageSerializer
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.framework.ResourcesWrapper
+import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.IconTint
 import com.eblan.launcher.domain.model.userdata.Theme
 import kotlinx.coroutines.CoroutineDispatcher
@@ -98,6 +101,67 @@ internal class DefaultImageSerializer @Inject constructor(
         }
     }
 
+    override fun getShapedDrawable(
+        drawable: Drawable,
+        iconShape: IconShape,
+    ): Drawable? {
+        if (iconShape == IconShape.None) return drawable
+
+        val bitmap = drawable.toBitmap() ?: return null
+        val shapedBitmap = createBitmap(bitmap.width, bitmap.height)
+        val canvas = Canvas(shapedBitmap)
+        val path = Path()
+        val bounds = RectF(0f, 0f, bitmap.width.toFloat(), bitmap.height.toFloat())
+
+        when (iconShape) {
+            IconShape.Circle -> path.addCircle(
+                bounds.centerX(),
+                bounds.centerY(),
+                minOf(bounds.width(), bounds.height()) / 2f,
+                Path.Direction.CW,
+            )
+
+            IconShape.Square -> path.addRect(bounds, Path.Direction.CW)
+
+            IconShape.RoundedSquare -> {
+                val cornerRadius =
+                    minOf(bounds.width(), bounds.height()) * ROUNDED_SQUARE_CORNER_RATIO
+                path.addRoundRect(bounds, cornerRadius, cornerRadius, Path.Direction.CW)
+            }
+        }
+
+        canvas.clipPath(path)
+        canvas.drawBitmap(bitmap, 0f, 0f, null)
+        return shapedBitmap.toDrawable(Resources.getSystem())
+    }
+
+    override fun getTintedAndShapedDrawable(
+        drawable: Drawable,
+        iconTint: IconTint,
+        customIconTint: Int,
+        fallbackIconTint: Boolean,
+        theme: Theme,
+        iconShape: IconShape,
+    ): Drawable? {
+        val tintedDrawable = when (iconTint) {
+            IconTint.None -> drawable
+
+            IconTint.System,
+            IconTint.Custom,
+            -> getTintedDrawable(
+                drawable = drawable,
+                customIconTint = customIconTint,
+                fallbackIconTint = fallbackIconTint,
+                theme = theme,
+            ) ?: return null
+        }
+
+        return getShapedDrawable(
+            drawable = tintedDrawable,
+            iconShape = iconShape,
+        )
+    }
+
     private fun Drawable.toBitmap(): Bitmap? = if (this is BitmapDrawable) {
         bitmap
     } else {
@@ -130,9 +194,8 @@ internal class DefaultImageSerializer @Inject constructor(
         }
     }
 
-    override fun getTintedDrawable(
+    private fun getTintedDrawable(
         drawable: Drawable,
-        iconTint: IconTint,
         customIconTint: Int,
         fallbackIconTint: Boolean,
         theme: Theme,
@@ -233,6 +296,7 @@ internal class DefaultImageSerializer @Inject constructor(
     }
 
     private companion object {
+        const val ROUNDED_SQUARE_CORNER_RATIO = 0.2f
         const val LIGHT_BACKGROUND_TINT_AMOUNT = 0.16f
         const val DARK_BACKGROUND_TINT_AMOUNT = 0.36f
     }
