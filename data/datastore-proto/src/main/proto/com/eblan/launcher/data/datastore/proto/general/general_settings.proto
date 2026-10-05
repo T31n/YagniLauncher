@@ -2,6 +2,7 @@ syntax = "proto3";
 
 import "com/eblan/launcher/data/datastore/proto/general/theme.proto";
 import "com/eblan/launcher/data/datastore/proto/general/icon_tint.proto";
+import "com/eblan/launcher/data/datastore/proto/general/icon_shape.proto";
 
 option java_package = "com.eblan.launcher.data.datastore.proto.general";
 option java_multiple_files = true;
@@ -13,4 +14,5 @@ message GeneralSettingsProto {
   optional IconTintProto iconTintProto = 5;
   optional int32 customIconTint = 6;
   optional bool fallbackIconTint = 7;
+  optional IconShapeProto iconShapeProto = 8;
 }

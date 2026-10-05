@@ -48,6 +48,7 @@ import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.iconpackinfo.EblanIconPackInfo
 import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPack
 import com.eblan.launcher.domain.model.userdata.GeneralSettings
+import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.IconTint
 import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.feature.settings.general.dialog.ImportIconPackInfoDialog
@@ -147,6 +148,7 @@ private fun Success(
     var showImportIconPackDialog by remember { mutableStateOf(false) }
     var selectIconPackDialog by remember { mutableStateOf(false) }
     var showIconTintDialog by remember { mutableStateOf(false) }
+    var showIconShapeDialog by remember { mutableStateOf(false) }
 
     val items = buildGeneralSettingsItems(
         generalSettings = generalSettings,
@@ -159,6 +161,9 @@ private fun Success(
         },
         onEnforceThemedIconsChanged = {
             onUpdateGeneralSettings(generalSettings.copy(fallbackIconTint = it))
+        },
+        onIconShapeClick = {
+            showIconShapeDialog = true
         },
     )
 
@@ -245,6 +250,23 @@ private fun Success(
             },
         )
     }
+
+    if (showIconShapeDialog) {
+        RadioOptionsDialog(
+            title = "Icon Shape",
+            options = IconShape.entries,
+            selected = generalSettings.iconShape,
+            label = {
+                it.getTitle()
+            },
+            onDismissRequest = {
+                showIconShapeDialog = false
+            },
+            onUpdateClick = {
+                onUpdateGeneralSettings(generalSettings.copy(iconShape = it))
+            },
+        )
+    }
 }
 
 @Composable
@@ -256,6 +278,7 @@ private fun buildGeneralSettingsItems(
     onIconColorClick: () -> Unit,
     onDynamicThemeChange: (Boolean) -> Unit,
     onEnforceThemedIconsChanged: (Boolean) -> Unit,
+    onIconShapeClick: () -> Unit,
 ): List<SettingsItem> {
     val context = LocalContext.current
 
@@ -316,6 +339,14 @@ private fun buildGeneralSettingsItems(
             else -> Unit
         }
 
+        add(
+            SettingsItem.Column(
+                title = "Icon Shape",
+                subtitle = generalSettings.iconShape.getTitle(),
+                onClick = onIconShapeClick,
+            ),
+        )
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             add(
                 SettingsItem.Switch(
@@ -352,4 +383,12 @@ private fun Theme.getTitle() = when (this) {
     Theme.System -> stringResource(commonR.string.system)
     Theme.Light -> stringResource(commonR.string.light)
     Theme.Dark -> stringResource(commonR.string.dark)
+}
+
+@Composable
+private fun IconShape.getTitle() = when(this){
+    IconShape.None -> "None"
+    IconShape.Circle -> "Circle"
+    IconShape.Square -> "Square"
+    IconShape.RoundedSquare -> "Rounded Square"
 }

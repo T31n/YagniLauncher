@@ -24,4 +24,5 @@ data class GeneralSettings(
     val iconTint: IconTint,
     val customIconTint: Int,
     val fallbackIconTint: Boolean,
+    val iconShape: IconShape,
 )
