@@ -143,9 +143,6 @@ class ChangePackageUseCase @Inject constructor(
         }
 
         val oldDeleteEblanApplicationInfos = oldSyncEblanApplicationInfosByPackageName
-            .differenceByIdentity(newSyncEblanApplicationInfosByPackageName) {
-                it.serialNumber to it.componentName
-            }
             .map {
                 it.toDeleteEblanApplicationInfo()
             }
@@ -308,9 +305,6 @@ class ChangePackageUseCase @Inject constructor(
             )
 
         val oldDeleteEblanShortcutConfigs = oldEblanShortcutConfigsByPackageName
-            .differenceByIdentity(newEblanShortcutConfigs) {
-                it.serialNumber to it.componentName
-            }
             .map {
                 it.toDeleteEblanShortcutConfig()
             }

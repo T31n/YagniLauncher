@@ -165,9 +165,6 @@ class SyncDataUseCase @Inject constructor(
         )
 
         val oldDeleteEblanApplicationInfos = oldSyncEblanApplicationInfos
-            .differenceByIdentity(newSyncEblanApplicationInfos) {
-                it.serialNumber to it.componentName
-            }
             .map {
                 it.toDeleteEblanApplicationInfo()
             }
@@ -238,9 +235,14 @@ class SyncDataUseCase @Inject constructor(
                 packageManagerWrapper.isSystem(flags = it.flags)
             }
 
-        val newAddNewEblanApplicationInfos = newNonSystemApplications
-            .differenceByIdentity(oldNonSystemApplications) {
+        val oldApplicationIdentities = oldNonSystemApplications
+            .mapTo(mutableSetOf()) {
                 it.serialNumber to it.componentName
+            }
+
+        val newAddNewEblanApplicationInfos = newNonSystemApplications
+            .filter {
+                (it.serialNumber to it.componentName) !in oldApplicationIdentities
             }
             .map {
                 it.asAddNewEblanApplicationInfo()
@@ -368,9 +370,6 @@ class SyncDataUseCase @Inject constructor(
         if (oldEblanShortcutConfigs.toSet() == newEblanShortcutConfigs) return
 
         val oldDeleteEblanShortcutConfigs = oldEblanShortcutConfigs
-            .differenceByIdentity(newEblanShortcutConfigs) {
-                it.serialNumber to it.componentName
-            }
             .map {
                 it.toDeleteEblanShortcutConfig()
             }

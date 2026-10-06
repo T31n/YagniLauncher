@@ -432,15 +432,6 @@ internal fun LauncherAppsActivityInfo.toSyncEblanApplicationInfo() = SyncEblanAp
     flags = flags,
 )
 
-internal fun <T, K> Iterable<T>.differenceByIdentity(
-    other: Iterable<T>,
-    identity: (T) -> K,
-): List<T> {
-    val otherIdentities = other.mapTo(mutableSetOf(), identity)
-
-    return filterNot { identity(it) in otherIdentities }
-}
-
 internal fun SyncEblanApplicationInfo.toDeleteEblanApplicationInfo() = DeleteEblanApplicationInfo(
     serialNumber = serialNumber,
     componentName = componentName,
