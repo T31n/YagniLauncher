@@ -644,34 +644,38 @@ private suspend fun resolveApplicationIcon(
     val directory = fileManager.getFilesDirectory(FileManager.ICONS_DIR)
 
     val componentName =
-        packageManagerWrapper.getComponentName(packageName = packageName) ?: return null
+        packageManagerWrapper.getComponentName(packageName = packageName)
 
-    val iconFile = File(
-        directory,
-        iconKeyGenerator.getActivityIconKey(
-            serialNumber = serialNumber,
-            componentName = componentName,
-        ),
-    )
-
-    return if (iconFile.exists()) {
-        packageManagerWrapper.getApplicationIconCache(
-            packageName = packageName,
-            file = iconFile,
+    suspend fun getApplicationIcon(componentName: String): String? {
+        val file = File(
+            directory,
+            iconKeyGenerator.getActivityIconKey(
+                serialNumber = serialNumber,
+                componentName = componentName,
+            ),
         )
-    } else {
-        val file =
-            File(
-                directory,
-                iconKeyGenerator.getActivityIconKey(
-                    serialNumber = serialNumber,
-                    componentName = packageName,
-                ),
-            )
 
-        packageManagerWrapper.getApplicationIconCache(
+        return packageManagerWrapper.getApplicationIconCache(
             packageName = packageName,
             file = file,
         )
+    }
+
+    return if (componentName != null) {
+        val iconFile = File(
+            directory,
+            iconKeyGenerator.getActivityIconKey(
+                serialNumber = serialNumber,
+                componentName = componentName,
+            ),
+        )
+
+        if (iconFile.exists()) {
+            getApplicationIcon(componentName = componentName)
+        } else {
+            getApplicationIcon(componentName = packageName)
+        }
+    } else {
+        getApplicationIcon(componentName = packageName)
     }
 }
