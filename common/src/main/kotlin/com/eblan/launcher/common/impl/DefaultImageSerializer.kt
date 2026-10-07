@@ -284,20 +284,36 @@ internal class DefaultImageSerializer @Inject constructor(
             Theme.Dark -> true
         }
 
-        val baseColor = if (isDarkTheme) Color.BLACK else Color.WHITE
-        val tintAmount =
+        val baseColor = if (ColorUtils.calculateLuminance(customIconColor) > DARK_COLOR_LUMINANCE_THRESHOLD) {
+            Color.BLACK
+        } else {
+            Color.WHITE
+        }
+        var tintAmount =
             if (isDarkTheme) DARK_BACKGROUND_TINT_AMOUNT else LIGHT_BACKGROUND_TINT_AMOUNT
 
-        return ColorUtils.blendARGB(
-            baseColor,
-            customIconColor,
-            tintAmount,
-        )
+        while (tintAmount > 0f) {
+            val backgroundColor = ColorUtils.blendARGB(
+                baseColor,
+                customIconColor,
+                tintAmount,
+            )
+
+            if (ColorUtils.calculateContrast(customIconColor, backgroundColor) >= MIN_ICON_CONTRAST_RATIO) {
+                return backgroundColor
+            }
+
+            tintAmount /= 2f
+        }
+
+        return baseColor
     }
 
     private companion object {
         const val ROUNDED_SQUARE_CORNER_RATIO = 0.2f
         const val LIGHT_BACKGROUND_TINT_AMOUNT = 0.16f
         const val DARK_BACKGROUND_TINT_AMOUNT = 0.36f
+        const val DARK_COLOR_LUMINANCE_THRESHOLD = 0.179
+        const val MIN_ICON_CONTRAST_RATIO = 3.0
     }
 }
