@@ -48,6 +48,8 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import javax.inject.Inject
+import kotlin.math.cos
+import kotlin.math.sin
 
 internal class DefaultImageSerializer @Inject constructor(
     private val resourcesWrapper: ResourcesWrapper,
@@ -133,10 +135,38 @@ internal class DefaultImageSerializer @Inject constructor(
                 val centerX = bounds.centerX()
                 val centerY = bounds.centerY()
                 path.moveTo(centerX, bounds.top)
-                path.cubicTo(centerX + bounds.width() * 0.03f, bounds.top + bounds.height() * 0.24f, bounds.right, centerY - bounds.height() * 0.1f, bounds.right, centerY + bounds.height() * 0.08f)
-                path.cubicTo(bounds.right, bounds.bottom - bounds.height() * 0.08f, centerX + bounds.width() * 0.25f, bounds.bottom, centerX, bounds.bottom)
-                path.cubicTo(centerX - bounds.width() * 0.25f, bounds.bottom, bounds.left, bounds.bottom - bounds.height() * 0.08f, bounds.left, centerY + bounds.height() * 0.08f)
-                path.cubicTo(bounds.left, centerY - bounds.height() * 0.1f, centerX - bounds.width() * 0.03f, bounds.top + bounds.height() * 0.24f, centerX, bounds.top)
+                path.cubicTo(
+                    centerX + bounds.width() * 0.03f,
+                    bounds.top + bounds.height() * 0.24f,
+                    bounds.right,
+                    centerY - bounds.height() * 0.1f,
+                    bounds.right,
+                    centerY + bounds.height() * 0.08f,
+                )
+                path.cubicTo(
+                    bounds.right,
+                    bounds.bottom - bounds.height() * 0.08f,
+                    centerX + bounds.width() * 0.25f,
+                    bounds.bottom,
+                    centerX,
+                    bounds.bottom,
+                )
+                path.cubicTo(
+                    centerX - bounds.width() * 0.25f,
+                    bounds.bottom,
+                    bounds.left,
+                    bounds.bottom - bounds.height() * 0.08f,
+                    bounds.left,
+                    centerY + bounds.height() * 0.08f,
+                )
+                path.cubicTo(
+                    bounds.left,
+                    centerY - bounds.height() * 0.1f,
+                    centerX - bounds.width() * 0.03f,
+                    bounds.top + bounds.height() * 0.24f,
+                    centerX,
+                    bounds.top,
+                )
                 path.close()
             }
 
@@ -178,8 +208,8 @@ internal class DefaultImageSerializer @Inject constructor(
                 val radiusY = bounds.height() / 2f
                 for (vertex in 0 until 5) {
                     val angle = Math.toRadians((vertex * 72 - 90).toDouble())
-                    val x = centerX + radiusX * kotlin.math.cos(angle).toFloat()
-                    val y = centerY + radiusY * kotlin.math.sin(angle).toFloat()
+                    val x = centerX + radiusX * cos(angle).toFloat()
+                    val y = centerY + radiusY * sin(angle).toFloat()
                     if (vertex == 0) {
                         path.moveTo(x, y)
                     } else {
@@ -195,14 +225,70 @@ internal class DefaultImageSerializer @Inject constructor(
                 val quarterWidth = bounds.width() * 0.25f
                 val quarterHeight = bounds.height() * 0.25f
                 path.moveTo(centerX, bounds.top)
-                path.cubicTo(centerX - quarterWidth * 0.08f, bounds.top + quarterHeight * 0.72f, bounds.left + quarterWidth * 0.72f, bounds.top + quarterHeight * 0.08f, bounds.left + quarterWidth * 0.72f, bounds.top + quarterHeight * 0.72f)
-                path.cubicTo(bounds.left + quarterWidth * 0.08f, bounds.top + quarterHeight * 0.72f, bounds.left + quarterWidth * 0.08f, centerY - quarterHeight * 0.08f, centerX, centerY)
-                path.cubicTo(bounds.left + quarterWidth * 0.08f, centerY + quarterHeight * 0.08f, bounds.left + quarterWidth * 0.08f, bounds.bottom - quarterHeight * 0.72f, bounds.left + quarterWidth * 0.72f, bounds.bottom - quarterHeight * 0.72f)
-                path.cubicTo(bounds.left + quarterWidth * 0.72f, bounds.bottom - quarterHeight * 0.08f, centerX - quarterWidth * 0.08f, bounds.bottom - quarterHeight * 0.08f, centerX, bounds.bottom)
-                path.cubicTo(centerX + quarterWidth * 0.08f, bounds.bottom - quarterHeight * 0.08f, bounds.right - quarterWidth * 0.72f, bounds.bottom - quarterHeight * 0.08f, bounds.right - quarterWidth * 0.72f, bounds.bottom - quarterHeight * 0.72f)
-                path.cubicTo(bounds.right - quarterWidth * 0.08f, bounds.bottom - quarterHeight * 0.72f, bounds.right - quarterWidth * 0.08f, centerY + quarterHeight * 0.08f, centerX, centerY)
-                path.cubicTo(bounds.right - quarterWidth * 0.08f, centerY - quarterHeight * 0.08f, bounds.right - quarterWidth * 0.08f, bounds.top + quarterHeight * 0.72f, bounds.right - quarterWidth * 0.72f, bounds.top + quarterHeight * 0.72f)
-                path.cubicTo(bounds.right - quarterWidth * 0.72f, bounds.top + quarterHeight * 0.08f, centerX + quarterWidth * 0.08f, bounds.top + quarterHeight * 0.72f, centerX, bounds.top)
+                path.cubicTo(
+                    centerX - quarterWidth * 0.08f,
+                    bounds.top + quarterHeight * 0.72f,
+                    bounds.left + quarterWidth * 0.72f,
+                    bounds.top + quarterHeight * 0.08f,
+                    bounds.left + quarterWidth * 0.72f,
+                    bounds.top + quarterHeight * 0.72f,
+                )
+                path.cubicTo(
+                    bounds.left + quarterWidth * 0.08f,
+                    bounds.top + quarterHeight * 0.72f,
+                    bounds.left + quarterWidth * 0.08f,
+                    centerY - quarterHeight * 0.08f,
+                    centerX,
+                    centerY,
+                )
+                path.cubicTo(
+                    bounds.left + quarterWidth * 0.08f,
+                    centerY + quarterHeight * 0.08f,
+                    bounds.left + quarterWidth * 0.08f,
+                    bounds.bottom - quarterHeight * 0.72f,
+                    bounds.left + quarterWidth * 0.72f,
+                    bounds.bottom - quarterHeight * 0.72f,
+                )
+                path.cubicTo(
+                    bounds.left + quarterWidth * 0.72f,
+                    bounds.bottom - quarterHeight * 0.08f,
+                    centerX - quarterWidth * 0.08f,
+                    bounds.bottom - quarterHeight * 0.08f,
+                    centerX,
+                    bounds.bottom,
+                )
+                path.cubicTo(
+                    centerX + quarterWidth * 0.08f,
+                    bounds.bottom - quarterHeight * 0.08f,
+                    bounds.right - quarterWidth * 0.72f,
+                    bounds.bottom - quarterHeight * 0.08f,
+                    bounds.right - quarterWidth * 0.72f,
+                    bounds.bottom - quarterHeight * 0.72f,
+                )
+                path.cubicTo(
+                    bounds.right - quarterWidth * 0.08f,
+                    bounds.bottom - quarterHeight * 0.72f,
+                    bounds.right - quarterWidth * 0.08f,
+                    centerY + quarterHeight * 0.08f,
+                    centerX,
+                    centerY,
+                )
+                path.cubicTo(
+                    bounds.right - quarterWidth * 0.08f,
+                    centerY - quarterHeight * 0.08f,
+                    bounds.right - quarterWidth * 0.08f,
+                    bounds.top + quarterHeight * 0.72f,
+                    bounds.right - quarterWidth * 0.72f,
+                    bounds.top + quarterHeight * 0.72f,
+                )
+                path.cubicTo(
+                    bounds.right - quarterWidth * 0.72f,
+                    bounds.top + quarterHeight * 0.08f,
+                    centerX + quarterWidth * 0.08f,
+                    bounds.top + quarterHeight * 0.72f,
+                    centerX,
+                    bounds.top,
+                )
                 path.close()
             }
 
@@ -210,8 +296,8 @@ internal class DefaultImageSerializer @Inject constructor(
                 path.fillType = Path.FillType.EVEN_ODD
                 path.addOval(bounds, Path.Direction.CW)
                 path.addCircle(
-                    bounds.right - bounds.width() * 0.04f,
-                    bounds.top + bounds.height() * 0.04f,
+                    bounds.right - bounds.width() * 0.12f,
+                    bounds.top + bounds.height() * 0.12f,
                     minOf(bounds.width(), bounds.height()) * 0.23f,
                     Path.Direction.CW,
                 )
@@ -224,8 +310,8 @@ internal class DefaultImageSerializer @Inject constructor(
                 val orbitRadius = minOf(bounds.width(), bounds.height()) * 0.22f
                 for (petal in 0 until 5) {
                     val angle = Math.toRadians((petal * 72 - 90).toDouble())
-                    val x = centerX + orbitRadius * kotlin.math.cos(angle).toFloat()
-                    val y = centerY + orbitRadius * kotlin.math.sin(angle).toFloat()
+                    val x = centerX + orbitRadius * cos(angle).toFloat()
+                    val y = centerY + orbitRadius * sin(angle).toFloat()
                     path.addCircle(x, y, radius, Path.Direction.CW)
                 }
             }
@@ -237,8 +323,22 @@ internal class DefaultImageSerializer @Inject constructor(
                 path.lineTo(bounds.right - shoulder, bounds.top)
                 path.quadTo(bounds.right, bounds.top, bounds.right, bounds.top + shoulder)
                 path.lineTo(bounds.right, bounds.centerY())
-                path.cubicTo(bounds.right, bounds.bottom - bounds.height() * 0.2f, bounds.centerX() + bounds.width() * 0.18f, bounds.bottom - bounds.height() * 0.04f, bounds.centerX(), bounds.bottom)
-                path.cubicTo(bounds.centerX() - bounds.width() * 0.18f, bounds.bottom - bounds.height() * 0.04f, bounds.left, bounds.bottom - bounds.height() * 0.2f, bounds.left, bounds.centerY())
+                path.cubicTo(
+                    bounds.right,
+                    bounds.bottom - bounds.height() * 0.2f,
+                    bounds.centerX() + bounds.width() * 0.18f,
+                    bounds.bottom - bounds.height() * 0.04f,
+                    bounds.centerX(),
+                    bounds.bottom,
+                )
+                path.cubicTo(
+                    bounds.centerX() - bounds.width() * 0.18f,
+                    bounds.bottom - bounds.height() * 0.04f,
+                    bounds.left,
+                    bounds.bottom - bounds.height() * 0.2f,
+                    bounds.left,
+                    bounds.centerY(),
+                )
                 path.close()
             }
         }
