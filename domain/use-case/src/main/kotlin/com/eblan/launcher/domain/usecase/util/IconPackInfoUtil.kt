@@ -22,6 +22,7 @@ import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.IconPackManager
 import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
 import com.eblan.launcher.domain.model.launcherapps.FastLauncherAppsActivityInfo
+import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import java.io.File
@@ -32,6 +33,7 @@ internal suspend fun updateIconPackInfos(
     iconPackManager: IconPackManager,
     fastLauncherAppsActivityInfos: List<FastLauncherAppsActivityInfo>,
     iconKeyGenerator: IconKeyGenerator,
+    generalSettings: GeneralSettings,
 ) {
     if (iconPackPackageName.isEmpty()) return
 
@@ -57,6 +59,7 @@ internal suspend fun updateIconPackInfos(
                 iconPackPackageName = iconPackPackageName,
                 file = file,
                 componentName = it.componentName,
+                generalSettings = generalSettings,
             )
 
             add(iconKeyGenerator.getHashedName(name = it.componentName))
@@ -82,6 +85,7 @@ internal suspend fun cacheIconPackFile(
     iconPackPackageName: String,
     file: File,
     componentName: String,
+    generalSettings: GeneralSettings,
 ) {
     appFilter.find {
         componentName == it.componentName.removePrefix("ComponentInfo{")
@@ -91,6 +95,11 @@ internal suspend fun cacheIconPackFile(
             packageName = iconPackPackageName,
             drawableName = it.drawableName,
             file = file,
+            iconTint = generalSettings.iconTint,
+            iconShape = generalSettings.iconShape,
+            customIconTint = generalSettings.customIconTint,
+            fallbackIconTint = generalSettings.fallbackIconTint,
+            theme = generalSettings.theme,
         )
     }
 }

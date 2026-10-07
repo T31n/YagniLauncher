@@ -26,8 +26,10 @@ import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.model.iconpackinfo.EblanIconPackInfo
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.EblanIconPackInfoRepository
+import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.util.updateIconPackInfos
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -37,11 +39,14 @@ class UpdateIconPacksUseCase @Inject constructor(
     private val fileManager: FileManager,
     private val eblanIconPackInfoRepository: EblanIconPackInfoRepository,
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
+    private val userDataRepository: UserDataRepository,
     private val iconKeyGenerator: IconKeyGenerator,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     suspend operator fun invoke(iconPackPackageName: String) {
         withContext(ioDispatcher) {
+            val generalSettings = userDataRepository.userDataFlow.first().generalSettings
+
             val eblanApplicationInfo =
                 eblanApplicationInfoRepository.getEblanApplicationInfosByPackageName(
                     serialNumber = 0L,
@@ -55,6 +60,7 @@ class UpdateIconPacksUseCase @Inject constructor(
                     iconPackManager = iconPackManager,
                     fastLauncherAppsActivityInfos = launcherAppsWrapper.getFastActivityList(),
                     iconKeyGenerator = iconKeyGenerator,
+                    generalSettings = generalSettings,
                 )
 
                 eblanIconPackInfoRepository.upsertEblanIconPackInfo(

@@ -30,6 +30,7 @@ import com.eblan.launcher.domain.model.grid.ApplicationInfoGridItem
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.launcherapps.LauncherAppsActivityInfo
 import com.eblan.launcher.domain.model.userdata.FolderSettings
+import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.domain.repository.ApplicationInfoGridItemRepository
 import com.eblan.launcher.domain.repository.EblanAppWidgetProviderInfoRepository
@@ -122,6 +123,7 @@ class AddPackageUseCase @Inject constructor(
             addIconPackInfos(
                 iconPackPackageName = userData.generalSettings.iconPackPackageName,
                 launcherAppsActivityInfos = launcherAppsActivityInfosByPackageName,
+                generalSettings = userData.generalSettings,
             )
         }
     }
@@ -244,6 +246,7 @@ class AddPackageUseCase @Inject constructor(
     private suspend fun addIconPackInfos(
         iconPackPackageName: String,
         launcherAppsActivityInfos: List<LauncherAppsActivityInfo>,
+        generalSettings: GeneralSettings,
     ) {
         if (iconPackPackageName.isEmpty()) return
 
@@ -269,6 +272,7 @@ class AddPackageUseCase @Inject constructor(
                 iconPackPackageName = iconPackPackageName,
                 file = file,
                 componentName = it.componentName,
+                generalSettings = generalSettings,
             )
         }
     }

@@ -104,6 +104,7 @@ class SyncDataUseCase @Inject constructor(
                     iconPackManager = iconPackManager,
                     fastLauncherAppsActivityInfos = launcherAppsWrapper.getFastActivityList(),
                     iconKeyGenerator = iconKeyGenerator,
+                    generalSettings = userData.generalSettings,
                 )
             }
         }
