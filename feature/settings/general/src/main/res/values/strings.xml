@@ -32,4 +32,8 @@
     <string name="fallback_icon_tint">Fallback Icon Tint</string>
     <string name="use_the_fallback_icon_tint">Use the fallback icon tint</string>
     <string name="none">None</string>
+    <string name="circle">Circle</string>
+    <string name="square">Square</string>
+    <string name="rounded_square">Rounded Square</string>
+    <string name="icon_shape">Icon Shape</string>
 </resources>

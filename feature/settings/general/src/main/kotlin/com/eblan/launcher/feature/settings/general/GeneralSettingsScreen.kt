@@ -253,7 +253,7 @@ private fun Success(
 
     if (showIconShapeDialog) {
         RadioOptionsDialog(
-            title = "Icon Shape",
+            title = stringResource(R.string.icon_shape),
             options = IconShape.entries,
             selected = generalSettings.iconShape,
             label = {
@@ -341,7 +341,7 @@ private fun buildGeneralSettingsItems(
 
         add(
             SettingsItem.Column(
-                title = "Icon Shape",
+                title = stringResource(R.string.icon_shape),
                 subtitle = generalSettings.iconShape.getTitle(),
                 onClick = onIconShapeClick,
             ),
@@ -387,8 +387,8 @@ private fun Theme.getTitle() = when (this) {
 
 @Composable
 private fun IconShape.getTitle() = when (this) {
-    IconShape.None -> "None"
-    IconShape.Circle -> "Circle"
-    IconShape.Square -> "Square"
-    IconShape.RoundedSquare -> "Rounded Square"
+    IconShape.None -> stringResource(commonR.string.none)
+    IconShape.Circle -> stringResource(R.string.circle)
+    IconShape.Square -> stringResource(R.string.square)
+    IconShape.RoundedSquare -> stringResource(R.string.rounded_square)
 }
