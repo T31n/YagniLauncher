@@ -98,8 +98,8 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
     override suspend fun getActivityListWithCacheIcons(
         iconTint: IconTint,
         iconShape: IconShape,
-        customIconColor: Int,
-        fallbackIconColor: Boolean,
+        customIconTint: Int,
+        fallbackIconTint: Boolean,
         theme: Theme,
     ): List<LauncherAppsActivityInfo> = withContext(ioDispatcher) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -116,8 +116,8 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
                     it.toLauncherAppsActivityInfo(
                         iconTint = iconTint,
                         iconShape = iconShape,
-                        customIconColor = customIconColor,
-                        fallbackIconColor = fallbackIconColor,
+                        customIconTint = customIconTint,
+                        fallbackIconTint = fallbackIconTint,
                         theme = theme,
                     )
                 }
@@ -129,8 +129,8 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
                 it.toLauncherAppsActivityInfo(
                     iconTint = iconTint,
                     iconShape = iconShape,
-                    customIconColor = customIconColor,
-                    fallbackIconColor = fallbackIconColor,
+                    customIconTint = customIconTint,
+                    fallbackIconTint = fallbackIconTint,
                     theme = theme,
                 )
             }
@@ -166,8 +166,8 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         packageName: String,
         iconTint: IconTint,
         iconShape: IconShape,
-        customIconColor: Int,
-        fallbackIconColor: Boolean,
+        customIconTint: Int,
+        fallbackIconTint: Boolean,
         theme: Theme,
     ): List<LauncherAppsActivityInfo> = withContext(ioDispatcher) {
         val userHandle = userManagerWrapper.getUserForSerialNumber(serialNumber = serialNumber)
@@ -178,8 +178,8 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             it.toLauncherAppsActivityInfo(
                 iconTint = iconTint,
                 iconShape = iconShape,
-                customIconColor = customIconColor,
-                fallbackIconColor = fallbackIconColor,
+                customIconTint = customIconTint,
+                fallbackIconTint = fallbackIconTint,
                 theme = theme,
             )
         }
@@ -329,8 +329,8 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
                     it.toLauncherAppsActivityInfo(
                         iconTint = IconTint.None,
                         iconShape = IconShape.None,
-                        customIconColor = 0,
-                        fallbackIconColor = false,
+                        customIconTint = 0,
+                        fallbackIconTint = false,
                         theme = Theme.System,
                     )
                 }
@@ -536,8 +536,8 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
     private suspend fun LauncherActivityInfo.toLauncherAppsActivityInfo(
         iconTint: IconTint,
         iconShape: IconShape,
-        customIconColor: Int,
-        fallbackIconColor: Boolean,
+        customIconTint: Int,
+        fallbackIconTint: Boolean,
         theme: Theme,
     ): LauncherAppsActivityInfo {
         val serialNumber = userManagerWrapper.getSerialNumberForUser(userHandle = user)
@@ -555,8 +555,8 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             iconTint = iconTint,
             iconShape = iconShape,
             serialNumber = serialNumber,
-            customIconColor = customIconColor,
-            fallbackIconColor = fallbackIconColor,
+            customIconColor = customIconTint,
+            fallbackIconColor = fallbackIconTint,
             theme = theme,
         )
 

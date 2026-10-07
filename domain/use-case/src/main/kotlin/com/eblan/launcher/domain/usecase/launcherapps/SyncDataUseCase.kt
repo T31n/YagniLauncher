@@ -129,8 +129,8 @@ class SyncDataUseCase @Inject constructor(
             launcherAppsWrapper.getActivityListWithCacheIcons(
                 iconTint = generalSettings.iconTint,
                 iconShape = generalSettings.iconShape,
-                customIconColor = generalSettings.customIconTint,
-                fallbackIconColor = generalSettings.fallbackIconTint,
+                customIconTint = generalSettings.customIconTint,
+                fallbackIconTint = generalSettings.fallbackIconTint,
                 theme = generalSettings.theme,
             )
                 .forEach { launcherAppsActivityInfo ->

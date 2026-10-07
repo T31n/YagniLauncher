@@ -34,8 +34,8 @@ interface LauncherAppsWrapper {
     suspend fun getActivityListWithCacheIcons(
         iconTint: IconTint,
         iconShape: IconShape,
-        customIconColor: Int,
-        fallbackIconColor: Boolean,
+        customIconTint: Int,
+        fallbackIconTint: Boolean,
         theme: Theme,
     ): List<LauncherAppsActivityInfo>
 
@@ -46,8 +46,8 @@ interface LauncherAppsWrapper {
         packageName: String,
         iconTint: IconTint,
         iconShape: IconShape,
-        customIconColor: Int,
-        fallbackIconColor: Boolean,
+        customIconTint: Int,
+        fallbackIconTint: Boolean,
         theme: Theme,
     ): List<LauncherAppsActivityInfo>
 

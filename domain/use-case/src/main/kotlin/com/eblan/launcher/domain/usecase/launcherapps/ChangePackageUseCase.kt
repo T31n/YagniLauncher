@@ -104,8 +104,8 @@ class ChangePackageUseCase @Inject constructor(
             packageName = packageName,
             iconTint = iconTint,
             iconShape = iconShape,
-            customIconColor = customIconColor,
-            fallbackIconColor = fallbackIconColor,
+            customIconTint = customIconColor,
+            fallbackIconTint = fallbackIconColor,
             theme = theme,
         )
 
