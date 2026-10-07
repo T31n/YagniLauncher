@@ -28,4 +28,13 @@
     <string name="show_notification_dots">Pokazuj kropki powiadomień</string>
     <string name="apply_icons_from_supported_icon_packs">Zastosuj ikony ze wspieranych paczek ikon</string>
     <string name="adapt_colors_to_your_wallpaper_automatically">Automatycznie dopasuj kolory do tapety</string>
+    <string name="tear_drop">Łezka</string>
+    <string name="hexagon">Sześciokąt</string>
+    <string name="octagon">Ośmiokąt</string>
+    <string name="diamond">Romb</string>
+    <string name="pentagon">Pięciokąt</string>
+    <string name="clover">Koniczyna</string>
+    <string name="cookie">Ciastko</string>
+    <string name="flower">Kwiat</string>
+    <string name="shield">Tarcza</string>
 </resources>
