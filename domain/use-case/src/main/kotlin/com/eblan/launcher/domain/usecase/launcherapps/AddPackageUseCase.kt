@@ -80,6 +80,11 @@ class AddPackageUseCase @Inject constructor(
             val launcherAppsActivityInfosByPackageName = launcherAppsWrapper.getActivityListWithCacheIcons(
                 serialNumber = serialNumber,
                 packageName = packageName,
+                iconTint = userData.generalSettings.iconTint,
+                iconShape = userData.generalSettings.iconShape,
+                customIconColor = userData.generalSettings.customIconTint,
+                fallbackIconColor = userData.generalSettings.fallbackIconTint,
+                theme = userData.generalSettings.theme,
             ).onEach {
                 addEblanApplicationInfo(
                     homeSettings = userData.homeSettings,
@@ -115,7 +120,7 @@ class AddPackageUseCase @Inject constructor(
             )
 
             addIconPackInfos(
-                iconPackInfoPackageName = userData.generalSettings.iconPackInfoPackageName,
+                iconPackPackageName = userData.generalSettings.iconPackPackageName,
                 launcherAppsActivityInfos = launcherAppsActivityInfosByPackageName,
             )
         }
@@ -237,18 +242,18 @@ class AddPackageUseCase @Inject constructor(
     }
 
     private suspend fun addIconPackInfos(
-        iconPackInfoPackageName: String,
+        iconPackPackageName: String,
         launcherAppsActivityInfos: List<LauncherAppsActivityInfo>,
     ) {
-        if (iconPackInfoPackageName.isEmpty()) return
+        if (iconPackPackageName.isEmpty()) return
 
         val iconPackInfoDirectory = File(
             fileManager.getFilesDirectory(name = FileManager.ICON_PACKS_DIR),
-            iconPackInfoPackageName,
+            iconPackPackageName,
         ).apply { if (!exists()) mkdirs() }
 
         val appFilter =
-            iconPackManager.getIconPackInfoComponents(packageName = iconPackInfoPackageName)
+            iconPackManager.getIconPackComponents(packageName = iconPackPackageName)
 
         launcherAppsActivityInfos.forEach {
             currentCoroutineContext().ensureActive()
@@ -261,7 +266,7 @@ class AddPackageUseCase @Inject constructor(
             cacheIconPackFile(
                 iconPackManager = iconPackManager,
                 appFilter = appFilter,
-                iconPackInfoPackageName = iconPackInfoPackageName,
+                iconPackPackageName = iconPackPackageName,
                 file = file,
                 componentName = it.componentName,
             )

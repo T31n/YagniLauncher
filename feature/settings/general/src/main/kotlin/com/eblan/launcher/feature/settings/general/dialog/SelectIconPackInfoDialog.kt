@@ -45,11 +45,11 @@ import com.eblan.launcher.common.R as commonR
 internal fun SelectIconPackInfoDialog(
     modifier: Modifier = Modifier,
     eblanIconPackInfos: List<EblanIconPackInfo>,
-    iconPackInfoPackageName: String,
+    iconPackPackageName: String,
     onDeleteEblanIconPackInfo: (String) -> Unit,
     onDismissRequest: () -> Unit,
     onReset: () -> Unit,
-    onUpdateIconPackInfoPackageName: (String) -> Unit,
+    onUpdateIconPackPackageName: (String) -> Unit,
 ) {
     EblanDialog(
         modifier = modifier,
@@ -93,7 +93,7 @@ internal fun SelectIconPackInfoDialog(
                                             eblanIconPackInfo.packageName,
                                         )
                                     },
-                                    enabled = iconPackInfoPackageName != eblanIconPackInfo.packageName,
+                                    enabled = iconPackPackageName != eblanIconPackInfo.packageName,
                                 ) {
                                     Icon(
                                         imageVector = EblanLauncherIcons.Delete,
@@ -103,7 +103,7 @@ internal fun SelectIconPackInfoDialog(
                             },
                             modifier = Modifier
                                 .clickable {
-                                    onUpdateIconPackInfoPackageName(
+                                    onUpdateIconPackPackageName(
                                         eblanIconPackInfo.packageName,
                                     )
 

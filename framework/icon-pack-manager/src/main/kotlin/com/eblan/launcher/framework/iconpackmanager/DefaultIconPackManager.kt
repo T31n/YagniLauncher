@@ -25,7 +25,7 @@ import com.eblan.launcher.common.AndroidImageSerializer
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.framework.IconPackManager
-import com.eblan.launcher.domain.model.iconpackinfo.IconPackInfoComponent
+import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.currentCoroutineContext
@@ -44,7 +44,7 @@ internal class DefaultIconPackManager @Inject constructor(
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : IconPackManager,
     AndroidIconPackManager {
-    override suspend fun getIconPackInfoComponents(packageName: String): List<IconPackInfoComponent> = withContext(ioDispatcher) {
+    override suspend fun getIconPackComponents(packageName: String): List<IconPackComponent> = withContext(ioDispatcher) {
         try {
             val packageContext = context.createPackageContext(
                 packageName,
@@ -91,7 +91,7 @@ internal class DefaultIconPackManager @Inject constructor(
         }
     }
 
-    override suspend fun createIconPackInfoPath(
+    override suspend fun createIconPackPath(
         packageName: String,
         drawableName: String,
         file: File,
@@ -139,7 +139,7 @@ internal class DefaultIconPackManager @Inject constructor(
         }
     }
 
-    private suspend fun parseXml(xmlPullParser: XmlPullParser): List<IconPackInfoComponent> {
+    private suspend fun parseXml(xmlPullParser: XmlPullParser): List<IconPackComponent> {
         var eventType = xmlPullParser.eventType
 
         return buildList {
@@ -151,7 +151,7 @@ internal class DefaultIconPackManager @Inject constructor(
 
                     if (component != null && drawable != null) {
                         add(
-                            IconPackInfoComponent(
+                            IconPackComponent(
                                 componentName = component,
                                 drawableName = drawable,
                             ),

@@ -26,8 +26,8 @@ import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.framework.IconPackManager
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
-import com.eblan.launcher.domain.model.iconpackinfo.IconPackInfoComponent
-import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPackInfo
+import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
+import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPack
 import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
 import com.eblan.launcher.domain.usecase.folder.DeleteFolderEblanApplicationInfoCustomIconUseCase
 import com.eblan.launcher.domain.usecase.folder.GetFolderEblanApplicationInfosByIdUseCase
@@ -73,7 +73,7 @@ internal class EditFolderApplicationInfoViewModel @Inject constructor(
     )
 
     private val _packageManagerIconPackInfos =
-        MutableStateFlow(emptyList<PackageManagerIconPackInfo>())
+        MutableStateFlow(emptyList<PackageManagerIconPack>())
     val packageManagerIconPackInfos = _packageManagerIconPackInfos.onStart {
         _packageManagerIconPackInfos.update {
             packageManagerWrapper.getIconPackInfos()
@@ -84,12 +84,12 @@ internal class EditFolderApplicationInfoViewModel @Inject constructor(
         initialValue = emptyList(),
     )
 
-    private val _iconPackInfoComponents = MutableStateFlow(emptyList<IconPackInfoComponent>())
-    val iconPackInfoComponents = _iconPackInfoComponents.asStateFlow()
+    private val _iconPackComponents = MutableStateFlow(emptyList<IconPackComponent>())
+    val iconPackInfoComponents = _iconPackComponents.asStateFlow()
 
-    private var iconPackInfoComponentsJob: Job? = null
+    private var iconPackComponentsJob: Job? = null
 
-    private var lastIconPackInfoComponents = emptyList<IconPackInfoComponent>()
+    private var lastIconPackComponents = emptyList<IconPackComponent>()
 
     val folderEblanApplicationInfos =
         getFolderEblanApplicationInfosByIdUseCase(id = editFolderApplicationInfoRouteData.id).stateIn(
@@ -105,27 +105,27 @@ internal class EditFolderApplicationInfoViewModel @Inject constructor(
             initialValue = emptyMap(),
         )
 
-    fun updateIconPackInfoPackageName(packageName: String) {
-        iconPackInfoComponentsJob = viewModelScope.launch(defaultDispatcher) {
-            _iconPackInfoComponents.update {
-                iconPackManager.getIconPackInfoComponents(packageName = packageName)
+    fun updateIconPackPackageName(packageName: String) {
+        iconPackComponentsJob = viewModelScope.launch(defaultDispatcher) {
+            _iconPackComponents.update {
+                iconPackManager.getIconPackComponents(packageName = packageName)
                     .distinctBy { iconPackInfoComponent ->
                         iconPackInfoComponent.drawableName
                     }.also { iconPackInfoComponents ->
-                        lastIconPackInfoComponents = iconPackInfoComponents
+                        lastIconPackComponents = iconPackInfoComponents
                     }
             }
         }
     }
 
-    fun resetIconPackInfoPackageName() {
-        iconPackInfoComponentsJob?.cancel()
+    fun resetIconPackPackageName() {
+        iconPackComponentsJob?.cancel()
 
-        _iconPackInfoComponents.update {
+        _iconPackComponents.update {
             emptyList()
         }
 
-        lastIconPackInfoComponents = emptyList()
+        lastIconPackComponents = emptyList()
     }
 
     fun resetFolderEblanApplicationInfoCustomIcon(folderEblanApplicationInfo: FolderEblanApplicationInfo) {
@@ -138,8 +138,8 @@ internal class EditFolderApplicationInfoViewModel @Inject constructor(
 
     fun searchIconPackInfoComponent(component: String) {
         viewModelScope.launch(defaultDispatcher) {
-            _iconPackInfoComponents.update {
-                lastIconPackInfoComponents.filter { iconPackInfoComponent ->
+            _iconPackComponents.update {
+                lastIconPackComponents.filter { iconPackInfoComponent ->
                     iconPackInfoComponent.componentName.contains(
                         other = component,
                         ignoreCase = true,

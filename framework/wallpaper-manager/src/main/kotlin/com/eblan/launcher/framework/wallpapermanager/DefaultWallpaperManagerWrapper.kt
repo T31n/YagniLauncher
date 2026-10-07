@@ -47,6 +47,14 @@ internal class DefaultWallpaperManagerWrapper @Inject constructor(@param:Applica
         0
     }
 
+    override fun getSystemWallpaperColor(): Int? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+        wallpaperManager.getWallpaperColors(WallpaperManager.FLAG_SYSTEM)
+            ?.primaryColor
+            ?.toArgb()
+    } else {
+        null
+    }
+
     override fun getColorsChanged(): Flow<Int?> = callbackFlow {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             send(wallpaperManager.getWallpaperColors(WallpaperManager.FLAG_SYSTEM)?.colorHints)

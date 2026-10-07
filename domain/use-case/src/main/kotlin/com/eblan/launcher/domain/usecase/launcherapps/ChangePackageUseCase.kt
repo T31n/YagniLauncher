@@ -25,6 +25,9 @@ import com.eblan.launcher.domain.framework.AppWidgetManagerWrapper
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.model.shortcutconfig.EblanShortcutConfig
+import com.eblan.launcher.domain.model.userdata.IconShape
+import com.eblan.launcher.domain.model.userdata.IconTint
+import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.domain.repository.ApplicationInfoGridItemRepository
 import com.eblan.launcher.domain.repository.EblanAppWidgetProviderInfoRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
@@ -32,10 +35,12 @@ import com.eblan.launcher.domain.repository.EblanShortcutConfigRepository
 import com.eblan.launcher.domain.repository.EblanShortcutInfoRepository
 import com.eblan.launcher.domain.repository.ShortcutConfigGridItemRepository
 import com.eblan.launcher.domain.repository.ShortcutInfoGridItemRepository
+import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.repository.WidgetGridItemRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -53,16 +58,24 @@ class ChangePackageUseCase @Inject constructor(
     private val fileManager: FileManager,
     private val widgetGridItemRepository: WidgetGridItemRepository,
     private val iconKeyGenerator: IconKeyGenerator,
+    private val userDataRepository: UserDataRepository,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     suspend operator fun invoke(
         serialNumber: Long,
         packageName: String,
     ) {
+        val userData = userDataRepository.userDataFlow.first()
+
         withContext(ioDispatcher) {
             updateEblanApplicationInfo(
                 packageName = packageName,
                 serialNumber = serialNumber,
+                iconTint = userData.generalSettings.iconTint,
+                iconShape = userData.generalSettings.iconShape,
+                customIconColor = userData.generalSettings.customIconTint,
+                fallbackIconColor = userData.generalSettings.fallbackIconTint,
+                theme = userData.generalSettings.theme,
             )
 
             updateEblanAppWidgetProviderInfo(
@@ -80,10 +93,20 @@ class ChangePackageUseCase @Inject constructor(
     private suspend fun updateEblanApplicationInfo(
         packageName: String,
         serialNumber: Long,
+        iconTint: IconTint,
+        iconShape: IconShape,
+        customIconColor: Int,
+        fallbackIconColor: Boolean,
+        theme: Theme,
     ) {
         val launcherAppsActivityInfosByPackageName = launcherAppsWrapper.getActivityListWithCacheIcons(
             serialNumber = serialNumber,
             packageName = packageName,
+            iconTint = iconTint,
+            iconShape = iconShape,
+            customIconColor = customIconColor,
+            fallbackIconColor = fallbackIconColor,
+            theme = theme,
         )
 
         val newEblanShortcutConfigs = mutableListOf<EblanShortcutConfig>()
@@ -119,16 +142,13 @@ class ChangePackageUseCase @Inject constructor(
             }
         }
 
-        val newDeleteEblanApplicationInfos =
-            newSyncEblanApplicationInfosByPackageName.map {
-                it.toDeleteEblanApplicationInfo()
-            }.toSet()
-
-        val oldDeleteEblanApplicationInfos =
-            oldSyncEblanApplicationInfosByPackageName.map {
+        val oldDeleteEblanApplicationInfos = oldSyncEblanApplicationInfosByPackageName
+            .differenceByIdentity(newSyncEblanApplicationInfosByPackageName) {
+                it.serialNumber to it.componentName
+            }
+            .map {
                 it.toDeleteEblanApplicationInfo()
             }
-                .filterNot { it in newDeleteEblanApplicationInfos }
 
         eblanApplicationInfoRepository.upsertSyncEblanApplicationInfos(
             syncEblanApplicationInfos = newSyncEblanApplicationInfosByPackageName,
@@ -287,15 +307,12 @@ class ChangePackageUseCase @Inject constructor(
                 packageName = packageName,
             )
 
-        val newDeleteEblanShortcutConfigs = newEblanShortcutConfigs.map {
-            it.toDeleteEblanShortcutConfig()
-        }.toSet()
-
-        val oldDeleteEblanShortcutConfigs =
-            oldEblanShortcutConfigsByPackageName.map {
+        val oldDeleteEblanShortcutConfigs = oldEblanShortcutConfigsByPackageName
+            .differenceByIdentity(newEblanShortcutConfigs) {
+                it.serialNumber to it.componentName
+            }
+            .map {
                 it.toDeleteEblanShortcutConfig()
-            }.filterNot {
-                it in newDeleteEblanShortcutConfigs
             }
 
         eblanShortcutConfigRepository.upsertEblanShortcutConfigs(

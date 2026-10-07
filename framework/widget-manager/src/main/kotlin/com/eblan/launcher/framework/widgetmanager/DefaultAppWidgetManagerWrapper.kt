@@ -91,7 +91,10 @@ internal class DefaultAppWidgetManagerWrapper @Inject constructor(
                 iconKeyGenerator.getHashedName(name = provider.flattenToString()),
             )
 
-            imageSerializer.createDrawablePath(drawable = drawable, file = file)
+            imageSerializer.createDrawablePath(
+                drawable = drawable,
+                file = file,
+            )
 
             file.absolutePath
         }

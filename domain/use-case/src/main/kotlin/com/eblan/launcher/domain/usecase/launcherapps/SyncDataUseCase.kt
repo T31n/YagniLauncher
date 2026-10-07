@@ -34,6 +34,7 @@ import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
 import com.eblan.launcher.domain.model.userdata.FolderSettings
+import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.domain.repository.ApplicationInfoGridItemRepository
 import com.eblan.launcher.domain.repository.EblanAppWidgetProviderInfoRepository
@@ -88,20 +89,17 @@ class SyncDataUseCase @Inject constructor(
                     experimentalSettings = userData.experimentalSettings,
                     homeSettings = userData.homeSettings,
                     folderSettings = userData.folderSettings,
+                    generalSettings = userData.generalSettings,
                 )
-            }
 
-            launch {
                 updateAppWidgetProviderInfos()
-            }
 
-            launch {
                 updateEblanLauncherShortcutInfos()
             }
 
             launch {
                 updateIconPackInfos(
-                    iconPackInfoPackageName = userData.generalSettings.iconPackInfoPackageName,
+                    iconPackPackageName = userData.generalSettings.iconPackPackageName,
                     fileManager = fileManager,
                     iconPackManager = iconPackManager,
                     fastLauncherAppsActivityInfos = launcherAppsWrapper.getFastActivityList(),
@@ -116,6 +114,7 @@ class SyncDataUseCase @Inject constructor(
         experimentalSettings: ExperimentalSettings,
         homeSettings: HomeSettings,
         folderSettings: FolderSettings,
+        generalSettings: GeneralSettings,
     ) {
         val newEblanShortcutConfigs = mutableSetOf<EblanShortcutConfig>()
 
@@ -127,7 +126,13 @@ class SyncDataUseCase @Inject constructor(
             }
 
         val newSyncEblanApplicationInfos = buildList {
-            launcherAppsWrapper.getActivityListWithCacheIcons()
+            launcherAppsWrapper.getActivityListWithCacheIcons(
+                iconTint = generalSettings.iconTint,
+                iconShape = generalSettings.iconShape,
+                customIconColor = generalSettings.customIconTint,
+                fallbackIconColor = generalSettings.fallbackIconTint,
+                theme = generalSettings.theme,
+            )
                 .forEach { launcherAppsActivityInfo ->
                     currentCoroutineContext().ensureActive()
 
@@ -159,16 +164,12 @@ class SyncDataUseCase @Inject constructor(
             folderSettings = folderSettings,
         )
 
-        val newDeleteEblanApplicationInfos =
-            newSyncEblanApplicationInfos.map {
+        val oldDeleteEblanApplicationInfos = oldSyncEblanApplicationInfos
+            .differenceByIdentity(newSyncEblanApplicationInfos) {
+                it.serialNumber to it.componentName
+            }
+            .map {
                 it.toDeleteEblanApplicationInfo()
-            }.toSet()
-
-        val oldDeleteEblanApplicationInfos =
-            oldSyncEblanApplicationInfos.map {
-                it.toDeleteEblanApplicationInfo()
-            }.filterNot {
-                it in newDeleteEblanApplicationInfos
             }
 
         eblanApplicationInfoRepository.upsertSyncEblanApplicationInfos(
@@ -223,28 +224,29 @@ class SyncDataUseCase @Inject constructor(
             }
             .toMutableList()
 
-        val oldAddNewEblanApplicationInfos =
+        val oldNonSystemApplications =
             oldSyncEblanApplicationInfos.filterNot {
                 currentCoroutineContext().ensureActive()
 
                 packageManagerWrapper.isSystem(flags = it.flags)
-            }.map {
-                it.asAddNewEblanApplicationInfo()
             }
 
-        val newAddNewEblanApplicationInfos =
+        val newNonSystemApplications =
             newSyncEblanApplicationInfos.filterNot {
                 currentCoroutineContext().ensureActive()
 
                 packageManagerWrapper.isSystem(flags = it.flags)
-            }.map {
+            }
+
+        val newAddNewEblanApplicationInfos = newNonSystemApplications
+            .differenceByIdentity(oldNonSystemApplications) {
+                it.serialNumber to it.componentName
+            }
+            .map {
                 it.asAddNewEblanApplicationInfo()
             }
 
-        val addNewEblanApplicationInfos =
-            newAddNewEblanApplicationInfos - oldAddNewEblanApplicationInfos.toSet()
-
-        addNewEblanApplicationInfos.forEach {
+        newAddNewEblanApplicationInfos.forEach {
             currentCoroutineContext().ensureActive()
 
             addNewApplicationToHomeScreen(
@@ -365,15 +367,13 @@ class SyncDataUseCase @Inject constructor(
 
         if (oldEblanShortcutConfigs.toSet() == newEblanShortcutConfigs) return
 
-        val newDeleteEblanShortcutConfigs = newEblanShortcutConfigs.map {
-            it.toDeleteEblanShortcutConfig()
-        }.toSet()
-
-        val oldDeleteEblanShortcutConfigs = oldEblanShortcutConfigs.map {
-            it.toDeleteEblanShortcutConfig()
-        }.filterNot {
-            it in newDeleteEblanShortcutConfigs
-        }
+        val oldDeleteEblanShortcutConfigs = oldEblanShortcutConfigs
+            .differenceByIdentity(newEblanShortcutConfigs) {
+                it.serialNumber to it.componentName
+            }
+            .map {
+                it.toDeleteEblanShortcutConfig()
+            }
 
         eblanShortcutConfigRepository.upsertEblanShortcutConfigs(
             eblanShortcutConfigs = newEblanShortcutConfigs.toList(),

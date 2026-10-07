@@ -36,8 +36,8 @@ import androidx.compose.ui.res.stringResource
 import com.eblan.launcher.designsystem.component.EblanDialog
 import com.eblan.launcher.designsystem.component.EblanRadioButton
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
+import com.eblan.launcher.domain.model.userdata.IconTint
 import com.eblan.launcher.domain.model.userdata.TextColor
-import com.eblan.launcher.ui.R
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -59,7 +59,7 @@ fun TextColorDialog(
         customColor = customTextColor,
         entries = TextColor.entries,
         customEntry = TextColor.Custom,
-        getTitle = { it.getTextColorTitle() },
+        getTitle = { it.getTitle() },
         onDismissRequest = onDismissRequest,
         onUpdateClick = onUpdateClick,
     )
@@ -84,26 +84,58 @@ fun BackgroundColorDialog(
         customColor = customBackgroundColor,
         entries = BackgroundColor.entries,
         customEntry = BackgroundColor.Custom,
-        getTitle = { it.getBackgroundColorTitle() },
+        getTitle = { it.getTitle() },
         onDismissRequest = onDismissRequest,
         onUpdateClick = onUpdateClick,
     )
 }
 
 @Composable
-fun TextColor.getTextColorTitle() = when (this) {
-    TextColor.System -> stringResource(commonR.string.system)
-    TextColor.Light -> stringResource(commonR.string.light)
-    TextColor.Dark -> stringResource(commonR.string.dark)
-    TextColor.Custom -> stringResource(R.string.custom)
+fun IconTintDialog(
+    modifier: Modifier = Modifier,
+    title: String,
+    iconTint: IconTint,
+    customIconTint: Int,
+    onDismissRequest: () -> Unit,
+    onUpdateClick: (
+        iconTint: IconTint,
+        customColor: Int,
+    ) -> Unit,
+) {
+    ColorDialog(
+        modifier = modifier,
+        title = title,
+        color = iconTint,
+        customColor = customIconTint,
+        entries = IconTint.entries,
+        customEntry = IconTint.Custom,
+        getTitle = { it.getTitle() },
+        onDismissRequest = onDismissRequest,
+        onUpdateClick = onUpdateClick,
+    )
 }
 
 @Composable
-fun BackgroundColor.getBackgroundColorTitle() = when (this) {
+fun TextColor.getTitle() = when (this) {
+    TextColor.System -> stringResource(commonR.string.system)
+    TextColor.Light -> stringResource(commonR.string.light)
+    TextColor.Dark -> stringResource(commonR.string.dark)
+    TextColor.Custom -> stringResource(commonR.string.custom)
+}
+
+@Composable
+fun BackgroundColor.getTitle() = when (this) {
     BackgroundColor.System -> stringResource(commonR.string.system)
     BackgroundColor.Light -> stringResource(commonR.string.light)
     BackgroundColor.Dark -> stringResource(commonR.string.dark)
-    BackgroundColor.Custom -> stringResource(R.string.custom)
+    BackgroundColor.Custom -> stringResource(commonR.string.custom)
+}
+
+@Composable
+fun IconTint.getTitle() = when (this) {
+    IconTint.None -> stringResource(commonR.string.none)
+    IconTint.System -> stringResource(commonR.string.system)
+    IconTint.Custom -> stringResource(commonR.string.custom)
 }
 
 @Composable

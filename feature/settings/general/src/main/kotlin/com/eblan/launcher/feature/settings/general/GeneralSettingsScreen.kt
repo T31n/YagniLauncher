@@ -46,14 +46,18 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.iconpackinfo.EblanIconPackInfo
-import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPackInfo
+import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPack
 import com.eblan.launcher.domain.model.userdata.GeneralSettings
+import com.eblan.launcher.domain.model.userdata.IconShape
+import com.eblan.launcher.domain.model.userdata.IconTint
 import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.feature.settings.general.dialog.ImportIconPackInfoDialog
 import com.eblan.launcher.feature.settings.general.dialog.SelectIconPackInfoDialog
 import com.eblan.launcher.feature.settings.general.model.GeneralSettingsUiState
-import com.eblan.launcher.service.IconPackInfoService
+import com.eblan.launcher.service.IconPackService
+import com.eblan.launcher.ui.dialog.IconTintDialog
 import com.eblan.launcher.ui.dialog.RadioOptionsDialog
+import com.eblan.launcher.ui.dialog.getTitle
 import com.eblan.launcher.ui.model.SettingsItem
 import com.eblan.launcher.ui.settings.SettingsItems
 import com.eblan.launcher.ui.settings.rememberIsNotificationAccessGranted
@@ -69,14 +73,14 @@ internal fun GeneralSettingsRoute(
 
     val packageManagerIconPackInfos by viewModel.packageManagerIconPackInfos.collectAsStateWithLifecycle()
 
-    val eblanIconPackInfos by viewModel.eblanIconPackInfos.collectAsStateWithLifecycle()
+    val eblanIconPackInfos by viewModel.eblanIconPacks.collectAsStateWithLifecycle()
 
     GeneralSettingsScreen(
         modifier = modifier,
         eblanIconPackInfos = eblanIconPackInfos,
         generalSettingsUiState = generalSettingsUiState,
-        packageManagerIconPackInfos = packageManagerIconPackInfos,
-        onDeleteEblanIconPackInfo = viewModel::deleteIconPackInfo,
+        packageManagerIconPacks = packageManagerIconPackInfos,
+        onDeleteEblanIconPackInfo = viewModel::deleteIconPack,
         onNavigateUp = onNavigateUp,
         onUpdateGeneralSettings = viewModel::updateGeneralSettings,
     )
@@ -88,7 +92,7 @@ internal fun GeneralSettingsScreen(
     modifier: Modifier = Modifier,
     eblanIconPackInfos: List<EblanIconPackInfo>,
     generalSettingsUiState: GeneralSettingsUiState,
-    packageManagerIconPackInfos: List<PackageManagerIconPackInfo>,
+    packageManagerIconPacks: List<PackageManagerIconPack>,
     onDeleteEblanIconPackInfo: (String) -> Unit,
     onNavigateUp: () -> Unit,
     onUpdateGeneralSettings: (GeneralSettings) -> Unit,
@@ -120,7 +124,7 @@ internal fun GeneralSettingsScreen(
                 Success(
                     eblanIconPackInfos = eblanIconPackInfos,
                     generalSettings = generalSettingsUiState.generalSettings,
-                    packageManagerIconPackInfos = packageManagerIconPackInfos,
+                    packageManagerIconPacks = packageManagerIconPacks,
                     onDeleteEblanIconPackInfo = onDeleteEblanIconPackInfo,
                     onUpdateGeneralSettings = onUpdateGeneralSettings,
                 )
@@ -134,25 +138,32 @@ private fun Success(
     modifier: Modifier = Modifier,
     eblanIconPackInfos: List<EblanIconPackInfo>,
     generalSettings: GeneralSettings,
-    packageManagerIconPackInfos: List<PackageManagerIconPackInfo>,
+    packageManagerIconPacks: List<PackageManagerIconPack>,
     onDeleteEblanIconPackInfo: (String) -> Unit,
     onUpdateGeneralSettings: (GeneralSettings) -> Unit,
 ) {
     val context = LocalContext.current
 
     var showThemeDialog by remember { mutableStateOf(false) }
-
     var showImportIconPackDialog by remember { mutableStateOf(false) }
-
     var selectIconPackDialog by remember { mutableStateOf(false) }
+    var showIconTintDialog by remember { mutableStateOf(false) }
+    var showIconShapeDialog by remember { mutableStateOf(false) }
 
     val items = buildGeneralSettingsItems(
         generalSettings = generalSettings,
         onImportIconPackClick = { showImportIconPackDialog = true },
         onSelectIconPackClick = { selectIconPackDialog = true },
         onThemeClick = { showThemeDialog = true },
+        onIconColorClick = { showIconTintDialog = true },
         onDynamicThemeChange = {
             onUpdateGeneralSettings(generalSettings.copy(dynamicTheme = it))
+        },
+        onEnforceThemedIconsChanged = {
+            onUpdateGeneralSettings(generalSettings.copy(fallbackIconTint = it))
+        },
+        onIconShapeClick = {
+            showIconShapeDialog = true
         },
     )
 
@@ -185,14 +196,14 @@ private fun Success(
 
     if (showImportIconPackDialog) {
         ImportIconPackInfoDialog(
-            packageManagerIconPackInfos = packageManagerIconPackInfos,
+            packageManagerIconPacks = packageManagerIconPacks,
             onDismissRequest = {
                 showImportIconPackDialog = false
             },
             onUpdateIconPackInfo = { packageName, label ->
-                val intent = Intent(context, IconPackInfoService::class.java).apply {
-                    putExtra(IconPackInfoService.ICON_PACK_INFO_PACKAGE_NAME, packageName)
-                    putExtra(IconPackInfoService.ICON_PACK_INFO_LABEL, label)
+                val intent = Intent(context, IconPackService::class.java).apply {
+                    putExtra(IconPackService.ICON_PACK_PACKAGE_NAME, packageName)
+                    putExtra(IconPackService.ICON_PACK_LABEL, label)
                 }
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -207,16 +218,52 @@ private fun Success(
     if (selectIconPackDialog) {
         SelectIconPackInfoDialog(
             eblanIconPackInfos = eblanIconPackInfos,
-            iconPackInfoPackageName = generalSettings.iconPackInfoPackageName,
+            iconPackPackageName = generalSettings.iconPackPackageName,
             onDeleteEblanIconPackInfo = onDeleteEblanIconPackInfo,
             onDismissRequest = {
                 selectIconPackDialog = false
             },
             onReset = {
-                onUpdateGeneralSettings(generalSettings.copy(iconPackInfoPackageName = ""))
+                onUpdateGeneralSettings(generalSettings.copy(iconPackPackageName = ""))
             },
-            onUpdateIconPackInfoPackageName = {
-                onUpdateGeneralSettings(generalSettings.copy(iconPackInfoPackageName = it))
+            onUpdateIconPackPackageName = {
+                onUpdateGeneralSettings(generalSettings.copy(iconPackPackageName = it))
+            },
+        )
+    }
+
+    if (showIconTintDialog) {
+        IconTintDialog(
+            title = stringResource(R.string.icon_tint),
+            iconTint = generalSettings.iconTint,
+            customIconTint = generalSettings.customIconTint,
+            onDismissRequest = {
+                showIconTintDialog = false
+            },
+            onUpdateClick = { iconTint, customIconTint ->
+                onUpdateGeneralSettings(
+                    generalSettings.copy(
+                        iconTint = iconTint,
+                        customIconTint = customIconTint,
+                    ),
+                )
+            },
+        )
+    }
+
+    if (showIconShapeDialog) {
+        RadioOptionsDialog(
+            title = stringResource(R.string.icon_shape),
+            options = IconShape.entries,
+            selected = generalSettings.iconShape,
+            label = {
+                it.getTitle()
+            },
+            onDismissRequest = {
+                showIconShapeDialog = false
+            },
+            onUpdateClick = {
+                onUpdateGeneralSettings(generalSettings.copy(iconShape = it))
             },
         )
     }
@@ -228,7 +275,10 @@ private fun buildGeneralSettingsItems(
     onImportIconPackClick: () -> Unit,
     onSelectIconPackClick: () -> Unit,
     onThemeClick: () -> Unit,
+    onIconColorClick: () -> Unit,
     onDynamicThemeChange: (Boolean) -> Unit,
+    onEnforceThemedIconsChanged: (Boolean) -> Unit,
+    onIconShapeClick: () -> Unit,
 ): List<SettingsItem> {
     val context = LocalContext.current
 
@@ -246,7 +296,7 @@ private fun buildGeneralSettingsItems(
         add(
             SettingsItem.Column(
                 title = stringResource(R.string.select_icon_pack),
-                subtitle = generalSettings.iconPackInfoPackageName.ifEmpty {
+                subtitle = generalSettings.iconPackPackageName.ifEmpty {
                     stringResource(R.string.default_icon_pack)
                 },
                 onClick = onSelectIconPackClick,
@@ -258,6 +308,42 @@ private fun buildGeneralSettingsItems(
                 title = stringResource(R.string.theme),
                 subtitle = generalSettings.theme.getTitle(),
                 onClick = onThemeClick,
+            ),
+        )
+
+        add(
+            SettingsItem.Column(
+                title = stringResource(R.string.icon_tint),
+                subtitle = generalSettings.iconTint.getTitle(),
+                onClick = onIconColorClick,
+            ),
+        )
+
+        when (generalSettings.iconTint) {
+            IconTint.System,
+            IconTint.Custom,
+            -> {
+                add(
+                    SettingsItem.Switch(
+                        checked = generalSettings.fallbackIconTint,
+                        title = stringResource(R.string.fallback_icon_tint),
+                        subtitle = stringResource(R.string.use_the_fallback_icon_tint),
+                        onClick = {
+                            onEnforceThemedIconsChanged(!generalSettings.fallbackIconTint)
+                        },
+                        onCheckedChange = onEnforceThemedIconsChanged,
+                    ),
+                )
+            }
+
+            else -> Unit
+        }
+
+        add(
+            SettingsItem.Column(
+                title = stringResource(R.string.icon_shape),
+                subtitle = generalSettings.iconShape.getTitle(),
+                onClick = onIconShapeClick,
             ),
         )
 
@@ -297,4 +383,12 @@ private fun Theme.getTitle() = when (this) {
     Theme.System -> stringResource(commonR.string.system)
     Theme.Light -> stringResource(commonR.string.light)
     Theme.Dark -> stringResource(commonR.string.dark)
+}
+
+@Composable
+private fun IconShape.getTitle() = when (this) {
+    IconShape.None -> stringResource(commonR.string.none)
+    IconShape.Circle -> stringResource(R.string.circle)
+    IconShape.Square -> stringResource(R.string.square)
+    IconShape.RoundedSquare -> stringResource(R.string.rounded_square)
 }

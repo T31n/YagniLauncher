@@ -53,8 +53,8 @@ import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
 import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
-import com.eblan.launcher.domain.model.iconpackinfo.IconPackInfoComponent
-import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPackInfo
+import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
+import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPack
 import com.eblan.launcher.feature.editfolderapplicationinfo.dialog.EditFolderLabelDialog
 import com.eblan.launcher.feature.editfolderapplicationinfo.model.EditFolderApplicationInfoUiState
 import com.eblan.launcher.ui.dialog.AddFolderDialog
@@ -83,15 +83,15 @@ internal fun EditFolderApplicationInfoRoute(
     EditFolderApplicationInfoScreen(
         modifier = modifier,
         editFolderApplicationInfoUiState = editFolderApplicationInfoUiState,
-        iconPackInfoComponents = iconPackInfoComponents,
-        packageManagerIconPackInfos = packageManagerIconPackInfos,
+        iconPackComponents = iconPackInfoComponents,
+        packageManagerIconPacks = packageManagerIconPackInfos,
         folderEblanApplicationInfos = folderEblanApplicationInfos,
         previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
         onNavigateUp = onNavigateUp,
-        onUpdateIconPackInfoPackageName = viewModel::updateIconPackInfoPackageName,
+        onUpdateIconPackPackageName = viewModel::updateIconPackPackageName,
         onResetFolderEblanApplicationInfoCustomIcon = viewModel::resetFolderEblanApplicationInfoCustomIcon,
         onUpdateFolderEblanApplicationInfoCustomIcon = viewModel::updateFolderEblanApplicationInfoCustomIcon,
-        onResetIconPackInfoPackageName = viewModel::resetIconPackInfoPackageName,
+        onResetIconPackPackageName = viewModel::resetIconPackPackageName,
         onSearchIconPackInfoComponent = viewModel::searchIconPackInfoComponent,
         onUpdateFolderEblanApplicationInfo = viewModel::updateFolderEblanApplicationInfo,
         onAddFolderEblanApplicationInfo = viewModel::addFolderEblanApplicationInfo,
@@ -103,18 +103,18 @@ internal fun EditFolderApplicationInfoRoute(
 internal fun EditFolderApplicationInfoScreen(
     modifier: Modifier = Modifier,
     editFolderApplicationInfoUiState: EditFolderApplicationInfoUiState,
-    iconPackInfoComponents: List<IconPackInfoComponent>,
-    packageManagerIconPackInfos: List<PackageManagerIconPackInfo>,
+    iconPackComponents: List<IconPackComponent>,
+    packageManagerIconPacks: List<PackageManagerIconPack>,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
     onNavigateUp: () -> Unit,
-    onUpdateIconPackInfoPackageName: (String) -> Unit,
+    onUpdateIconPackPackageName: (String) -> Unit,
     onResetFolderEblanApplicationInfoCustomIcon: (FolderEblanApplicationInfo) -> Unit,
     onUpdateFolderEblanApplicationInfoCustomIcon: (
         folderEblanApplicationInfo: FolderEblanApplicationInfo,
         uri: String,
     ) -> Unit,
-    onResetIconPackInfoPackageName: () -> Unit,
+    onResetIconPackPackageName: () -> Unit,
     onSearchIconPackInfoComponent: (String) -> Unit,
     onUpdateFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
     onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
@@ -149,15 +149,15 @@ internal fun EditFolderApplicationInfoScreen(
             ) {
                 Success(
                     folderEblanApplicationInfo = editFolderApplicationInfoUiState.folderEblanApplicationInfo,
-                    iconPackInfoComponents = iconPackInfoComponents,
-                    packageManagerIconPackInfos = packageManagerIconPackInfos,
+                    iconPackComponents = iconPackComponents,
+                    packageManagerIconPacks = packageManagerIconPacks,
                     folderEblanApplicationInfos = folderEblanApplicationInfos,
                     previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
                     topLevelFolderEblanApplicationInfos = folderEblanApplicationInfos,
-                    onUpdateIconPackInfoPackageName = onUpdateIconPackInfoPackageName,
+                    onUpdateIconPackPackageName = onUpdateIconPackPackageName,
                     onResetFolderEblanApplicationInfoCustomIcon = onResetFolderEblanApplicationInfoCustomIcon,
                     onUpdateFolderEblanApplicationInfoCustomIcon = onUpdateFolderEblanApplicationInfoCustomIcon,
-                    onResetIconPackInfoPackageName = onResetIconPackInfoPackageName,
+                    onResetIconPackPackageName = onResetIconPackPackageName,
                     onSearchIconPackInfoComponent = onSearchIconPackInfoComponent,
                     onUpdateFolderEblanApplicationInfo = onUpdateFolderEblanApplicationInfo,
                     onAddFolderEblanApplicationInfo = onAddFolderEblanApplicationInfo,
@@ -172,18 +172,18 @@ internal fun EditFolderApplicationInfoScreen(
 internal fun Success(
     modifier: Modifier = Modifier,
     folderEblanApplicationInfo: FolderEblanApplicationInfo,
-    iconPackInfoComponents: List<IconPackInfoComponent>,
-    packageManagerIconPackInfos: List<PackageManagerIconPackInfo>,
+    iconPackComponents: List<IconPackComponent>,
+    packageManagerIconPacks: List<PackageManagerIconPack>,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
     topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
-    onUpdateIconPackInfoPackageName: (String) -> Unit,
+    onUpdateIconPackPackageName: (String) -> Unit,
     onResetFolderEblanApplicationInfoCustomIcon: (FolderEblanApplicationInfo) -> Unit,
     onUpdateFolderEblanApplicationInfoCustomIcon: (
         folderEblanApplicationInfo: FolderEblanApplicationInfo,
         uri: String,
     ) -> Unit,
-    onResetIconPackInfoPackageName: () -> Unit,
+    onResetIconPackPackageName: () -> Unit,
     onSearchIconPackInfoComponent: (String) -> Unit,
     onUpdateFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
     onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
@@ -192,7 +192,7 @@ internal fun Success(
 
     var showEditLabelDialog by remember { mutableStateOf(false) }
 
-    var iconPackInfoPackageName by remember { mutableStateOf<String?>(null) }
+    var iconPackPackageName by remember { mutableStateOf<String?>(null) }
 
     var iconPackInfoLabel by remember { mutableStateOf<String?>(null) }
 
@@ -200,13 +200,13 @@ internal fun Success(
         add(
             SettingsItem.CustomIcon(
                 customIcon = folderEblanApplicationInfo.icon,
-                packageManagerIconPackInfos = packageManagerIconPackInfos,
-                onUpdateIconPackInfoPackageName = { packageName, label ->
-                    iconPackInfoPackageName = packageName
+                packageManagerIconPacks = packageManagerIconPacks,
+                onUpdateIconPackPackageName = { packageName, label ->
+                    iconPackPackageName = packageName
                     iconPackInfoLabel = label
                     showCustomIconDialog = true
 
-                    onUpdateIconPackInfoPackageName(packageName)
+                    onUpdateIconPackPackageName(packageName)
                 },
                 onUpdateUri = {
                     onUpdateFolderEblanApplicationInfoCustomIcon(
@@ -255,12 +255,12 @@ internal fun Success(
 
         if (showCustomIconDialog) {
             IconPackInfoFilesDialog(
-                iconPackInfoComponents = iconPackInfoComponents,
-                iconPackInfoPackageName = iconPackInfoPackageName,
+                iconPackComponents = iconPackComponents,
+                iconPackPackageName = iconPackPackageName,
                 iconPackInfoLabel = iconPackInfoLabel,
                 iconName = folderEblanApplicationInfo.id,
                 onDismissRequest = {
-                    onResetIconPackInfoPackageName()
+                    onResetIconPackPackageName()
 
                     showCustomIconDialog = false
                 },

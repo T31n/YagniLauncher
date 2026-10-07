@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 internal class DefaultEblanIconPackInfoRepository @Inject constructor(private val eblanIconPackInfoDao: EblanIconPackInfoDao) : EblanIconPackInfoRepository {
-    override val eblanIconPackInfosFlow =
+    override val eblanIconPacksFlow =
         eblanIconPackInfoDao.getEblanIconPackInfoEntitiesFlow().map { entities ->
             entities.map {
                 it.asModel()

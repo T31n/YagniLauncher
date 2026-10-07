@@ -34,7 +34,7 @@ import com.eblan.launcher.domain.model.userdata.ScrollBarType
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
-import com.eblan.launcher.domain.usecase.util.getIconPackInfoFilePaths
+import com.eblan.launcher.domain.usecase.util.getIconPackFilePaths
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -66,7 +66,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
         eblanApplicationInfoRepository.eblanApplicationInfosFlow,
         folderEblanApplicationInfoRepository.folderEblanApplicationInfosFlow,
     ) { tagId, label, userData, eblanApplicationInfos, folderEblanApplicationInfos ->
-        val iconPackInfoPackageName = userData.generalSettings.iconPackInfoPackageName
+        val iconPackPackageName = userData.generalSettings.iconPackPackageName
 
         val eblanApplicationInfosByLabel = getEblanApplicationInfos(
             eblanApplicationInfos = eblanApplicationInfos,
@@ -83,8 +83,8 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
             tagId = tagId,
         )
 
-        val iconPackInfoFilePaths = getIconPackInfoFilePaths(
-            iconPackInfoPackageName = iconPackInfoPackageName,
+        val iconPackFilePaths = getIconPackFilePaths(
+            iconPackPackageName = iconPackPackageName,
             componentNames = eblanApplicationInfos.map { it.componentName },
             fileManager = fileManager,
             iconKeyGenerator = iconKeyGenerator,
@@ -95,7 +95,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
                 getVerticalOrListEblanApplicationInfosByLabel(
                     eblanApplicationInfos = eblanApplicationInfosByLabel,
                     folderEblanApplicationInfos = folderEblanApplicationInfosByLabel,
-                    iconPackInfoFilePaths = iconPackInfoFilePaths,
+                    iconPackInfoFilePaths = iconPackFilePaths,
                     appDrawerType = appDrawerType,
                     scrollBarType = userData.appDrawerSettings.scrollBarType,
                 )
@@ -105,7 +105,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
                     horizontalAppDrawerColumns = userData.appDrawerSettings.horizontalAppDrawerColumns,
                     horizontalAppDrawerRows = userData.appDrawerSettings.horizontalAppDrawerRows,
                     eblanApplicationInfos = eblanApplicationInfosByLabel,
-                    iconPackInfoFilePaths = iconPackInfoFilePaths,
+                    iconPackInfoFilePaths = iconPackFilePaths,
                 )
         }
     }.flowOn(defaultDispatcher)

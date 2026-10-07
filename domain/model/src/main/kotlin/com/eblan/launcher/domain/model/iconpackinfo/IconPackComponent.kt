@@ -17,7 +17,7 @@
  */
 package com.eblan.launcher.domain.model.iconpackinfo
 
-data class IconPackInfoComponent(
+data class IconPackComponent(
     val componentName: String,
     val drawableName: String,
 )

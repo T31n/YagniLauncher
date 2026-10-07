@@ -20,5 +20,5 @@ package com.eblan.launcher.domain.framework
 import com.eblan.launcher.domain.model.userdata.Theme
 
 interface ResourcesWrapper {
-    fun getSystemTheme(): Theme
+    fun isDarkTheme(): Boolean
 }

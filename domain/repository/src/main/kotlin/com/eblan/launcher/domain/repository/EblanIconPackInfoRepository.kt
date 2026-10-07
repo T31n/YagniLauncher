@@ -21,7 +21,7 @@ import com.eblan.launcher.domain.model.iconpackinfo.EblanIconPackInfo
 import kotlinx.coroutines.flow.Flow
 
 interface EblanIconPackInfoRepository {
-    val eblanIconPackInfosFlow: Flow<List<EblanIconPackInfo>>
+    val eblanIconPacksFlow: Flow<List<EblanIconPackInfo>>
 
     suspend fun upsertEblanIconPackInfo(eblanIconPackInfo: EblanIconPackInfo): Long
 

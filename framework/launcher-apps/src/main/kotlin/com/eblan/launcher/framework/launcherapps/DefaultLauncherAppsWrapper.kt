@@ -34,6 +34,7 @@ import android.os.Handler
 import android.os.Process.myUserHandle
 import android.os.UserHandle
 import android.os.UserManager
+import android.util.TypedValue
 import androidx.annotation.RequiresApi
 import com.eblan.launcher.common.AndroidImageSerializer
 import com.eblan.launcher.domain.common.Dispatcher
@@ -42,6 +43,7 @@ import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
+import com.eblan.launcher.domain.framework.WallpaperManagerWrapper
 import com.eblan.launcher.domain.model.launcherapps.EblanUser
 import com.eblan.launcher.domain.model.launcherapps.EblanUserType
 import com.eblan.launcher.domain.model.launcherapps.FastLauncherAppsActivityInfo
@@ -51,6 +53,9 @@ import com.eblan.launcher.domain.model.launcherapps.LauncherAppsShortcutInfo
 import com.eblan.launcher.domain.model.launcherapps.ShortcutConfigActivityInfo
 import com.eblan.launcher.domain.model.launcherapps.ShortcutQuery
 import com.eblan.launcher.domain.model.launcherapps.ShortcutQueryFlag
+import com.eblan.launcher.domain.model.userdata.IconShape
+import com.eblan.launcher.domain.model.userdata.IconTint
+import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.framework.packagemanager.AndroidPackageManagerWrapper
 import com.eblan.launcher.framework.usermanager.AndroidUserManagerWrapper
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -67,6 +72,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
     private val userManagerWrapper: AndroidUserManagerWrapper,
     private val fileManager: FileManager,
     private val packageManagerWrapper: PackageManagerWrapper,
+    private val wallpaperManagerWrapper: WallpaperManagerWrapper,
     private val androidPackageManager: AndroidPackageManagerWrapper,
     private val iconKeyGenerator: IconKeyGenerator,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
@@ -89,7 +95,13 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         launcherApps.unregisterCallback(callback)
     }
 
-    override suspend fun getActivityListWithCacheIcons(): List<LauncherAppsActivityInfo> = withContext(ioDispatcher) {
+    override suspend fun getActivityListWithCacheIcons(
+        iconTint: IconTint,
+        iconShape: IconShape,
+        customIconColor: Int,
+        fallbackIconColor: Boolean,
+        theme: Theme,
+    ): List<LauncherAppsActivityInfo> = withContext(ioDispatcher) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             launcherApps.profiles.filterNot {
                 currentCoroutineContext().ensureActive()
@@ -101,14 +113,26 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
                 launcherApps.getActivityList(null, userHandle).map {
                     currentCoroutineContext().ensureActive()
 
-                    it.toLauncherAppsActivityInfo()
+                    it.toLauncherAppsActivityInfo(
+                        iconTint = iconTint,
+                        iconShape = iconShape,
+                        customIconColor = customIconColor,
+                        fallbackIconColor = fallbackIconColor,
+                        theme = theme,
+                    )
                 }
             }
         } else {
             launcherApps.getActivityList(null, myUserHandle()).map {
                 currentCoroutineContext().ensureActive()
 
-                it.toLauncherAppsActivityInfo()
+                it.toLauncherAppsActivityInfo(
+                    iconTint = iconTint,
+                    iconShape = iconShape,
+                    customIconColor = customIconColor,
+                    fallbackIconColor = fallbackIconColor,
+                    theme = theme,
+                )
             }
         }
     }
@@ -140,13 +164,24 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
     override suspend fun getActivityListWithCacheIcons(
         serialNumber: Long,
         packageName: String,
+        iconTint: IconTint,
+        iconShape: IconShape,
+        customIconColor: Int,
+        fallbackIconColor: Boolean,
+        theme: Theme,
     ): List<LauncherAppsActivityInfo> = withContext(ioDispatcher) {
         val userHandle = userManagerWrapper.getUserForSerialNumber(serialNumber = serialNumber)
 
         launcherApps.getActivityList(packageName, userHandle).map {
             currentCoroutineContext().ensureActive()
 
-            it.toLauncherAppsActivityInfo()
+            it.toLauncherAppsActivityInfo(
+                iconTint = iconTint,
+                iconShape = iconShape,
+                customIconColor = customIconColor,
+                fallbackIconColor = fallbackIconColor,
+                theme = theme,
+            )
         }
     }
 
@@ -291,7 +326,13 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
                 .map {
                     currentCoroutineContext().ensureActive()
 
-                    it.toLauncherAppsActivityInfo()
+                    it.toLauncherAppsActivityInfo(
+                        iconTint = IconTint.None,
+                        iconShape = IconShape.None,
+                        customIconColor = 0,
+                        fallbackIconColor = false,
+                        theme = Theme.System,
+                    )
                 }
         } else {
             emptyList()
@@ -492,31 +533,32 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             ?.userConfig
             ?.getBoolean(LauncherUserInfo.PRIVATE_SPACE_ENTRYPOINT_HIDDEN) == true
 
-    private suspend fun LauncherActivityInfo.toLauncherAppsActivityInfo(): LauncherAppsActivityInfo {
+    private suspend fun LauncherActivityInfo.toLauncherAppsActivityInfo(
+        iconTint: IconTint,
+        iconShape: IconShape,
+        customIconColor: Int,
+        fallbackIconColor: Boolean,
+        theme: Theme,
+    ): LauncherAppsActivityInfo {
         val serialNumber = userManagerWrapper.getSerialNumberForUser(userHandle = user)
 
-        val badgedIcon = try {
-            getBadgedIcon(0)
-                ?.takeIf { it.intrinsicWidth > 0 && it.intrinsicHeight > 0 }
+        val icon = try {
+            getIcon(0)?.takeIf { it.intrinsicWidth > 0 && it.intrinsicHeight > 0 }
         } catch (_: IllegalArgumentException) {
             null
         }
 
-        val activityIcon = badgedIcon?.let { drawable ->
-            val directory = fileManager.getFilesDirectory(FileManager.ICONS_DIR)
-
-            val file = File(
-                directory,
-                iconKeyGenerator.getActivityIconKey(
-                    serialNumber = serialNumber,
-                    componentName = componentName.flattenToString(),
-                ),
-            )
-
-            imageSerializer.createDrawablePath(drawable = drawable, file = file)
-
-            file.absolutePath
-        }
+        val activityIcon = getActivityIcon(
+            componentName = componentName,
+            drawable = icon,
+            userHandle = user,
+            iconTint = iconTint,
+            iconShape = iconShape,
+            serialNumber = serialNumber,
+            customIconColor = customIconColor,
+            fallbackIconColor = fallbackIconColor,
+            theme = theme,
+        )
 
         return LauncherAppsActivityInfo(
             serialNumber = serialNumber,
@@ -559,7 +601,10 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
                 ),
             )
 
-            imageSerializer.createDrawablePath(drawable = drawable, file = file)
+            imageSerializer.createDrawablePath(
+                drawable = drawable,
+                file = file,
+            )
 
             file.absolutePath
         }
@@ -590,4 +635,89 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         serialNumber = userManagerWrapper.getSerialNumberForUser(userHandle = userHandle),
         lastChangedTimestamp = packageManagerWrapper.getLastUpdateTime(packageName = `package`),
     )
+
+    private suspend fun getActivityIcon(
+        componentName: ComponentName,
+        drawable: Drawable?,
+        userHandle: UserHandle,
+        iconTint: IconTint,
+        iconShape: IconShape,
+        serialNumber: Long,
+        customIconColor: Int,
+        fallbackIconColor: Boolean,
+        theme: Theme,
+    ): String? {
+        if (drawable == null) return null
+
+        val directoryName = when {
+            iconTint == IconTint.None && iconShape == IconShape.None -> FileManager.ICONS_DIR
+            iconTint == IconTint.None -> FileManager.SHAPED_ICONS_DIR
+            iconShape == IconShape.None -> FileManager.TINTED_ICONS_DIR
+            else -> FileManager.TINTED_SHAPED_ICONS_DIR
+        }
+
+        val directory = fileManager.getFilesDirectory(directoryName)
+
+        val file = File(
+            directory,
+            iconKeyGenerator.getActivityIconKey(
+                serialNumber = serialNumber,
+                componentName = componentName.flattenToString(),
+            ),
+        )
+
+        val transformedDrawable = when (iconTint) {
+            IconTint.None -> imageSerializer.getShapedDrawable(drawable, iconShape)
+
+            IconTint.System -> imageSerializer.getTintedAndShapedDrawable(
+                drawable = drawable,
+                iconTint = iconTint,
+                customIconTint = getSystemIconTintColor(),
+                fallbackIconTint = fallbackIconColor,
+                theme = theme,
+                iconShape = iconShape,
+            )
+
+            IconTint.Custom -> imageSerializer.getTintedAndShapedDrawable(
+                drawable = drawable,
+                iconTint = iconTint,
+                customIconTint = customIconColor,
+                fallbackIconTint = fallbackIconColor,
+                theme = theme,
+                iconShape = iconShape,
+            )
+        } ?: return null
+
+        val badgedDrawable = androidPackageManager.getUserBadgedIcon(transformedDrawable, userHandle)
+            ?: return null
+
+        imageSerializer.createDrawablePath(
+            drawable = badgedDrawable,
+            file = file,
+        )
+
+        return file.absolutePath
+    }
+
+    private fun getSystemAccentColor(): Int {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            return context.getColor(android.R.color.system_accent1_600)
+        }
+
+        val value = TypedValue()
+
+        return if (context.theme.resolveAttribute(
+                android.R.attr.colorAccent,
+                value,
+                true,
+            )
+        ) {
+            value.data
+        } else {
+            context.getColor(android.R.color.holo_blue_dark)
+        }
+    }
+
+    private fun getSystemIconTintColor(): Int = wallpaperManagerWrapper.getSystemWallpaperColor()
+        ?: getSystemAccentColor()
 }

@@ -121,8 +121,8 @@ class RemovePackageUseCase @Inject constructor(
         packageName: String,
         serialNumber: Long,
     ) {
-        val iconPackInfoPackageName =
-            userDataRepository.userDataFlow.first().generalSettings.iconPackInfoPackageName
+        val iconPackPackageName =
+            userDataRepository.userDataFlow.first().generalSettings.iconPackPackageName
 
         val componentName = packageManagerWrapper.getComponentName(packageName = packageName)
 
@@ -149,7 +149,7 @@ class RemovePackageUseCase @Inject constructor(
 
                 deleteIconPackFile(
                     componentName = componentName,
-                    iconPackInfoPackageName = iconPackInfoPackageName,
+                    iconPackPackageName = iconPackPackageName,
                 )
             }
         }
@@ -172,7 +172,7 @@ class RemovePackageUseCase @Inject constructor(
 
     private suspend fun deleteIconPackFile(
         componentName: String?,
-        iconPackInfoPackageName: String,
+        iconPackPackageName: String,
     ) {
         if (componentName == null) return
 
@@ -184,7 +184,7 @@ class RemovePackageUseCase @Inject constructor(
         if (hasNoIconPackInfoReference) {
             val iconPacksDirectory = File(
                 fileManager.getFilesDirectory(FileManager.ICON_PACKS_DIR),
-                iconPackInfoPackageName,
+                iconPackPackageName,
             )
 
             val iconPackFile = File(

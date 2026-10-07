@@ -481,7 +481,10 @@ internal suspend fun handleShortcutConfigIntentSenderLauncherResult(
                 ),
             )
 
-            androidImageSerializer.createDrawablePath(drawable = it, file = file)
+            androidImageSerializer.createDrawablePath(
+                drawable = it,
+                file = file,
+            )
 
             file.absolutePath
         }

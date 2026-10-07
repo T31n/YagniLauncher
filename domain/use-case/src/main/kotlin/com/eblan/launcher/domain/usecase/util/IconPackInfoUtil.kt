@@ -20,27 +20,27 @@ package com.eblan.launcher.domain.usecase.util
 import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.IconPackManager
-import com.eblan.launcher.domain.model.iconpackinfo.IconPackInfoComponent
+import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
 import com.eblan.launcher.domain.model.launcherapps.FastLauncherAppsActivityInfo
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import java.io.File
 
 internal suspend fun updateIconPackInfos(
-    iconPackInfoPackageName: String,
+    iconPackPackageName: String,
     fileManager: FileManager,
     iconPackManager: IconPackManager,
     fastLauncherAppsActivityInfos: List<FastLauncherAppsActivityInfo>,
     iconKeyGenerator: IconKeyGenerator,
 ) {
-    if (iconPackInfoPackageName.isEmpty()) return
+    if (iconPackPackageName.isEmpty()) return
 
     val iconPackInfoDirectory = File(
         fileManager.getFilesDirectory(name = FileManager.ICON_PACKS_DIR),
-        iconPackInfoPackageName,
+        iconPackPackageName,
     ).apply { if (!exists()) mkdirs() }
 
-    val appFilter = iconPackManager.getIconPackInfoComponents(packageName = iconPackInfoPackageName)
+    val appFilter = iconPackManager.getIconPackComponents(packageName = iconPackPackageName)
 
     val installedComponentHashedNames = buildSet {
         fastLauncherAppsActivityInfos.forEach {
@@ -54,7 +54,7 @@ internal suspend fun updateIconPackInfos(
             cacheIconPackFile(
                 iconPackManager = iconPackManager,
                 appFilter = appFilter,
-                iconPackInfoPackageName = iconPackInfoPackageName,
+                iconPackPackageName = iconPackPackageName,
                 file = file,
                 componentName = it.componentName,
             )
@@ -78,8 +78,8 @@ internal suspend fun updateIconPackInfos(
 
 internal suspend fun cacheIconPackFile(
     iconPackManager: IconPackManager,
-    appFilter: List<IconPackInfoComponent>,
-    iconPackInfoPackageName: String,
+    appFilter: List<IconPackComponent>,
+    iconPackPackageName: String,
     file: File,
     componentName: String,
 ) {
@@ -87,21 +87,21 @@ internal suspend fun cacheIconPackFile(
         componentName == it.componentName.removePrefix("ComponentInfo{")
             .removeSuffix("}")
     }?.let {
-        iconPackManager.createIconPackInfoPath(
-            packageName = iconPackInfoPackageName,
+        iconPackManager.createIconPackPath(
+            packageName = iconPackPackageName,
             drawableName = it.drawableName,
             file = file,
         )
     }
 }
 
-internal suspend fun getIconPackInfoFilePaths(
-    iconPackInfoPackageName: String,
+internal suspend fun getIconPackFilePaths(
+    iconPackPackageName: String,
     componentNames: List<String>,
     fileManager: FileManager,
     iconKeyGenerator: IconKeyGenerator,
 ): Map<String, String?> {
-    if (iconPackInfoPackageName.isEmpty()) {
+    if (iconPackPackageName.isEmpty()) {
         return emptyMap()
     }
 
@@ -111,7 +111,7 @@ internal suspend fun getIconPackInfoFilePaths(
 
     val iconPackDirectory = File(
         iconPacksDirectory,
-        iconPackInfoPackageName,
+        iconPackPackageName,
     )
 
     return componentNames.associateWith {

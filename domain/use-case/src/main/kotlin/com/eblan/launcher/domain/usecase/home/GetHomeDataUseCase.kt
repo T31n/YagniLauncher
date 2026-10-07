@@ -28,7 +28,7 @@ import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.userdata.HomeData
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
-import com.eblan.launcher.domain.usecase.util.getIconPackInfoFilePaths
+import com.eblan.launcher.domain.usecase.util.getIconPackFilePaths
 import com.eblan.launcher.domain.usecase.util.isTopLevel
 import com.eblan.launcher.domain.usecase.util.toGridItems
 import kotlinx.coroutines.CoroutineDispatcher
@@ -68,8 +68,8 @@ class GetHomeDataUseCase @Inject constructor(
             ) && it.associate == Associate.Dock
         }.groupBy { it.page }
 
-        val iconPackInfoFilePaths = getIconPackInfoFilePaths(
-            iconPackInfoPackageName = userData.generalSettings.iconPackInfoPackageName,
+        val iconPackInfoFilePaths = getIconPackFilePaths(
+            iconPackPackageName = userData.generalSettings.iconPackPackageName,
             componentNames = gridItems.applicationInfoGridItems.map { it.componentName },
             fileManager = fileManager,
             iconKeyGenerator = iconKeyGenerator,

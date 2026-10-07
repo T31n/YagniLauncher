@@ -432,6 +432,15 @@ internal fun LauncherAppsActivityInfo.toSyncEblanApplicationInfo() = SyncEblanAp
     flags = flags,
 )
 
+internal inline fun <T, K> Iterable<T>.differenceByIdentity(
+    other: Iterable<T>,
+    identity: (T) -> K,
+): List<T> {
+    val otherIdentities = other.mapTo(mutableSetOf(), identity)
+
+    return filterNot { identity(it) in otherIdentities }
+}
+
 internal fun SyncEblanApplicationInfo.toDeleteEblanApplicationInfo() = DeleteEblanApplicationInfo(
     serialNumber = serialNumber,
     componentName = componentName,
@@ -634,26 +643,39 @@ private suspend fun resolveApplicationIcon(
 ): String? {
     val directory = fileManager.getFilesDirectory(FileManager.ICONS_DIR)
 
-    val componentName = packageManagerWrapper.getComponentName(packageName = packageName)
+    val componentName =
+        packageManagerWrapper.getComponentName(packageName = packageName)
 
-    return if (componentName != null) {
-        File(
+    suspend fun getApplicationIcon(componentName: String): String? {
+        val file = File(
             directory,
             iconKeyGenerator.getActivityIconKey(
                 serialNumber = serialNumber,
                 componentName = componentName,
             ),
-        ).absolutePath
-    } else {
-        val file =
-            File(
-                directory,
-                iconKeyGenerator.getActivityIconKey(
-                    serialNumber = serialNumber,
-                    componentName = packageName,
-                ),
-            )
+        )
 
-        packageManagerWrapper.getApplicationIcon(packageName = packageName, file = file)
+        return packageManagerWrapper.getApplicationIconCache(
+            packageName = packageName,
+            file = file,
+        )
+    }
+
+    return if (componentName != null) {
+        val iconFile = File(
+            directory,
+            iconKeyGenerator.getActivityIconKey(
+                serialNumber = serialNumber,
+                componentName = componentName,
+            ),
+        )
+
+        if (iconFile.exists()) {
+            getApplicationIcon(componentName = componentName)
+        } else {
+            getApplicationIcon(componentName = packageName)
+        }
+    } else {
+        getApplicationIcon(componentName = packageName)
     }
 }

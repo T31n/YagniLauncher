@@ -57,7 +57,7 @@ import com.eblan.launcher.feature.settings.appdrawer.dialog.ManageTagsDialog
 import com.eblan.launcher.feature.settings.appdrawer.model.AppDrawerSettingsUiState
 import com.eblan.launcher.ui.dialog.BackgroundColorDialog
 import com.eblan.launcher.ui.dialog.RadioOptionsDialog
-import com.eblan.launcher.ui.dialog.getBackgroundColorTitle
+import com.eblan.launcher.ui.dialog.getTitle
 import com.eblan.launcher.ui.model.SettingsItem
 import com.eblan.launcher.ui.settings.GridItemSettings
 import com.eblan.launcher.ui.settings.SettingsItems
@@ -419,7 +419,7 @@ private fun buildAppDrawerSettingsItems(
     add(
         SettingsItem.Column(
             title = stringResource(commonR.string.background_color),
-            subtitle = appDrawerSettings.backgroundColor.getBackgroundColorTitle(),
+            subtitle = appDrawerSettings.backgroundColor.getTitle(),
             onClick = onBackgroundColorClick,
         ),
     )

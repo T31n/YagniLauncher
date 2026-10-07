@@ -24,6 +24,8 @@ import com.eblan.launcher.data.datastore.proto.appdrawer.SearchBarPositionProto
 import com.eblan.launcher.data.datastore.proto.experimental.ExperimentalSettingsProto
 import com.eblan.launcher.data.datastore.proto.folder.FolderSettingsProto
 import com.eblan.launcher.data.datastore.proto.general.GeneralSettingsProto
+import com.eblan.launcher.data.datastore.proto.general.IconShapeProto
+import com.eblan.launcher.data.datastore.proto.general.IconTintProto
 import com.eblan.launcher.data.datastore.proto.general.ThemeProto
 import com.eblan.launcher.data.datastore.proto.gesture.EblanActionProto
 import com.eblan.launcher.data.datastore.proto.gesture.EblanActionTypeProto
@@ -53,6 +55,8 @@ import com.eblan.launcher.domain.model.userdata.FolderSettings
 import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.domain.model.userdata.GestureSettings
 import com.eblan.launcher.domain.model.userdata.HomeSettings
+import com.eblan.launcher.domain.model.userdata.IconShape
+import com.eblan.launcher.domain.model.userdata.IconTint
 import com.eblan.launcher.domain.model.userdata.ScrollBarType
 import com.eblan.launcher.domain.model.userdata.SearchBarPosition
 import com.eblan.launcher.domain.model.userdata.TextColor
@@ -122,7 +126,11 @@ internal fun GridItemSettingsProto.toGridItemSettings(): GridItemSettings = Grid
 internal fun GeneralSettingsProto.toGeneralSettings(): GeneralSettings = GeneralSettings(
     theme = themeProto.toTheme(),
     dynamicTheme = dynamicTheme,
-    iconPackInfoPackageName = iconPackInfoPackageName,
+    iconPackPackageName = iconPackPackageName,
+    iconTint = iconTintProto.toIconTint(),
+    customIconTint = customIconTint,
+    fallbackIconTint = fallbackIconTint,
+    iconShape = iconShapeProto.toIconShape(),
 )
 
 internal fun GridItemSettings.toGridItemSettingsProto(): GridItemSettingsProto = GridItemSettingsProto.newBuilder().also { builder ->
@@ -189,7 +197,11 @@ internal fun AppDrawerSettings.toAppDrawerSettingsProto(): AppDrawerSettingsProt
 internal fun GeneralSettings.toGeneralSettingsProto(): GeneralSettingsProto = GeneralSettingsProto.newBuilder().also { builder ->
     builder.themeProto = theme.toThemeProto()
     builder.dynamicTheme = dynamicTheme
-    builder.iconPackInfoPackageName = iconPackInfoPackageName
+    builder.iconPackPackageName = iconPackPackageName
+    builder.iconTintProto = iconTint.toIconTintProto()
+    builder.customIconTint = customIconTint
+    builder.fallbackIconTint = fallbackIconTint
+    builder.iconShapeProto = iconShape.toIconShapeProto()
 }.build()
 
 internal fun GestureSettings.toGestureSettingsProto(): GestureSettingsProto = GestureSettingsProto.newBuilder().also { builder ->
@@ -408,4 +420,30 @@ private fun VerticalAlignmentProto.toVerticalAlignment(): VerticalAlignment = wh
     VerticalAlignmentProto.VerticalAlignmentTop, VerticalAlignmentProto.UNRECOGNIZED -> VerticalAlignment.Top
     VerticalAlignmentProto.VerticalAlignmentCenterVertically -> VerticalAlignment.CenterVertically
     VerticalAlignmentProto.VerticalAlignmentBottom -> VerticalAlignment.Bottom
+}
+
+private fun IconTintProto.toIconTint(): IconTint = when (this) {
+    IconTintProto.IconTintNone, IconTintProto.UNRECOGNIZED -> IconTint.None
+    IconTintProto.IconTintSystem -> IconTint.System
+    IconTintProto.IconTintCustom -> IconTint.Custom
+}
+
+private fun IconTint.toIconTintProto(): IconTintProto = when (this) {
+    IconTint.None -> IconTintProto.IconTintNone
+    IconTint.System -> IconTintProto.IconTintSystem
+    IconTint.Custom -> IconTintProto.IconTintCustom
+}
+
+private fun IconShapeProto.toIconShape(): IconShape = when (this) {
+    IconShapeProto.IconShapeNone, IconShapeProto.UNRECOGNIZED -> IconShape.None
+    IconShapeProto.IconShapeCircle -> IconShape.Circle
+    IconShapeProto.IconShapeSquare -> IconShape.Square
+    IconShapeProto.IconShapeRoundedSquare -> IconShape.RoundedSquare
+}
+
+private fun IconShape.toIconShapeProto(): IconShapeProto = when (this) {
+    IconShape.None -> IconShapeProto.IconShapeNone
+    IconShape.Circle -> IconShapeProto.IconShapeCircle
+    IconShape.Square -> IconShapeProto.IconShapeSquare
+    IconShape.RoundedSquare -> IconShapeProto.IconShapeRoundedSquare
 }

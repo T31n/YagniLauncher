@@ -31,17 +31,17 @@ class DeleteIconPackInfoUseCase @Inject constructor(
     private val eblanIconPackInfoRepository: EblanIconPackInfoRepository,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
-    suspend operator fun invoke(iconPackInfoPackageName: String) {
+    suspend operator fun invoke(iconPackPackageName: String) {
         withContext(ioDispatcher) {
             val eblanIconPackInfo =
-                eblanIconPackInfoRepository.getEblanIconPackInfo(packageName = iconPackInfoPackageName)
+                eblanIconPackInfoRepository.getEblanIconPackInfo(packageName = iconPackPackageName)
 
             if (eblanIconPackInfo != null) {
                 eblanIconPackInfoRepository.deleteEblanIconPackInfo(eblanIconPackInfo = eblanIconPackInfo)
 
                 val iconPacksDirectory = File(
                     fileManager.getFilesDirectory(name = FileManager.ICON_PACKS_DIR),
-                    iconPackInfoPackageName,
+                    iconPackPackageName,
                 )
 
                 if (iconPacksDirectory.isDirectory && iconPacksDirectory.exists()) {
