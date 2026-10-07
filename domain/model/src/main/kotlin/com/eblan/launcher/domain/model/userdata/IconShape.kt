@@ -22,4 +22,13 @@ enum class IconShape {
     Circle,
     Square,
     RoundedSquare,
+    TearDrop,
+    Hexagon,
+    Octagon,
+    Diamond,
+    Pentagon,
+    Clover,
+    Cookie,
+    Flower,
+    Shield,
 }

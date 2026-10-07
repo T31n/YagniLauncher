@@ -439,6 +439,15 @@ private fun IconShapeProto.toIconShape(): IconShape = when (this) {
     IconShapeProto.IconShapeCircle -> IconShape.Circle
     IconShapeProto.IconShapeSquare -> IconShape.Square
     IconShapeProto.IconShapeRoundedSquare -> IconShape.RoundedSquare
+    IconShapeProto.IconShapeTearDrop -> IconShape.TearDrop
+    IconShapeProto.IconShapeHexagon -> IconShape.Hexagon
+    IconShapeProto.IconShapeOctagon -> IconShape.Octagon
+    IconShapeProto.IconShapeDiamond -> IconShape.Diamond
+    IconShapeProto.IconShapePentagon -> IconShape.Pentagon
+    IconShapeProto.IconShapeClover -> IconShape.Clover
+    IconShapeProto.IconShapeCookie -> IconShape.Cookie
+    IconShapeProto.IconShapeFlower -> IconShape.Flower
+    IconShapeProto.IconShapeShield -> IconShape.Shield
 }
 
 private fun IconShape.toIconShapeProto(): IconShapeProto = when (this) {
@@ -446,4 +455,13 @@ private fun IconShape.toIconShapeProto(): IconShapeProto = when (this) {
     IconShape.Circle -> IconShapeProto.IconShapeCircle
     IconShape.Square -> IconShapeProto.IconShapeSquare
     IconShape.RoundedSquare -> IconShapeProto.IconShapeRoundedSquare
+    IconShape.TearDrop -> IconShapeProto.IconShapeTearDrop
+    IconShape.Hexagon -> IconShapeProto.IconShapeHexagon
+    IconShape.Octagon -> IconShapeProto.IconShapeOctagon
+    IconShape.Diamond -> IconShapeProto.IconShapeDiamond
+    IconShape.Pentagon -> IconShapeProto.IconShapePentagon
+    IconShape.Clover -> IconShapeProto.IconShapeClover
+    IconShape.Cookie -> IconShapeProto.IconShapeCookie
+    IconShape.Flower -> IconShapeProto.IconShapeFlower
+    IconShape.Shield -> IconShapeProto.IconShapeShield
 }
