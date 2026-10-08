@@ -28,6 +28,13 @@
     <string name="show_notification_dots">Zobrazovat tečky oznámení</string>
     <string name="apply_icons_from_supported_icon_packs">Použít ikony z podporovaných balíčků ikon</string>
     <string name="adapt_colors_to_your_wallpaper_automatically">Automaticky přizpůsobit barvy tapetě</string>
+    <string name="icon_tint">Odstín ikon</string>
+    <string name="fallback_icon_tint">Záložní odstín ikon</string>
+    <string name="use_the_fallback_icon_tint">Použít záložní odstín ikon</string>
+    <string name="none">Žádný</string>
+    <string name="circle">Kruh</string>
+    <string name="square">Čtverec</string>
+    <string name="rounded_square">Zaoblený čtverec</string>
     <string name="tear_drop">Slza</string>
     <string name="hexagon">Šestiúhelník</string>
     <string name="octagon">Osmiúhelník</string>
@@ -37,4 +44,5 @@
     <string name="cookie">Sušenka</string>
     <string name="flower">Květina</string>
     <string name="shield">Štít</string>
+    <string name="icon_shape">Tvar ikony</string>
 </resources>
