@@ -21,7 +21,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -59,8 +61,12 @@ fun <T> RadioOptionsDialog(
 
         Column(
             modifier = Modifier
+                .verticalScroll(rememberScrollState())
                 .selectableGroup()
-                .fillMaxWidth(),
+                .weight(
+                    weight = 1f,
+                    fill = false,
+                ),
         ) {
             options.forEach { option ->
                 EblanRadioButton(

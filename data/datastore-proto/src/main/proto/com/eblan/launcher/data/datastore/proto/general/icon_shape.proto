@@ -8,4 +8,13 @@ enum IconShapeProto {
   IconShapeCircle = 1;
   IconShapeSquare = 2;
   IconShapeRoundedSquare = 3;
+  IconShapeTearDrop = 4;
+  IconShapeHexagon = 5;
+  IconShapeOctagon = 6;
+  IconShapeDiamond = 7;
+  IconShapePentagon = 8;
+  IconShapeClover = 9;
+  IconShapeCookie = 10;
+  IconShapeFlower = 11;
+  IconShapeShield = 12;
 }

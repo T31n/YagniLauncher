@@ -391,4 +391,13 @@ private fun IconShape.getTitle() = when (this) {
     IconShape.Circle -> stringResource(R.string.circle)
     IconShape.Square -> stringResource(R.string.square)
     IconShape.RoundedSquare -> stringResource(R.string.rounded_square)
+    IconShape.TearDrop -> stringResource(R.string.tear_drop)
+    IconShape.Hexagon -> stringResource(R.string.hexagon)
+    IconShape.Octagon -> stringResource(R.string.octagon)
+    IconShape.Diamond -> stringResource(R.string.diamond)
+    IconShape.Pentagon -> stringResource(R.string.pentagon)
+    IconShape.Clover -> stringResource(R.string.clover)
+    IconShape.Cookie -> stringResource(R.string.cookie)
+    IconShape.Flower -> stringResource(R.string.flower)
+    IconShape.Shield -> stringResource(R.string.shield)
 }

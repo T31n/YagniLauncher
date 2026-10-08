@@ -48,6 +48,8 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import javax.inject.Inject
+import kotlin.math.cos
+import kotlin.math.sin
 
 internal class DefaultImageSerializer @Inject constructor(
     private val resourcesWrapper: ResourcesWrapper,
@@ -110,29 +112,256 @@ internal class DefaultImageSerializer @Inject constructor(
         val bitmap = drawable.toBitmap() ?: return null
         val shapedBitmap = createBitmap(bitmap.width, bitmap.height)
         val canvas = Canvas(shapedBitmap)
-        val path = Path()
         val bounds = RectF(0f, 0f, bitmap.width.toFloat(), bitmap.height.toFloat())
-
-        when (iconShape) {
-            IconShape.Circle -> path.addCircle(
-                bounds.centerX(),
-                bounds.centerY(),
-                minOf(bounds.width(), bounds.height()) / 2f,
-                Path.Direction.CW,
-            )
-
-            IconShape.Square -> path.addRect(bounds, Path.Direction.CW)
-
-            IconShape.RoundedSquare -> {
-                val cornerRadius =
-                    minOf(bounds.width(), bounds.height()) * ROUNDED_SQUARE_CORNER_RATIO
-                path.addRoundRect(bounds, cornerRadius, cornerRadius, Path.Direction.CW)
-            }
+        val path = when (iconShape) {
+            IconShape.Circle -> circlePath(bounds)
+            IconShape.Square -> squarePath(bounds)
+            IconShape.RoundedSquare -> roundedSquarePath(bounds)
+            IconShape.TearDrop -> tearDropPath(bounds)
+            IconShape.Hexagon -> hexagonPath(bounds)
+            IconShape.Octagon -> octagonPath(bounds)
+            IconShape.Diamond -> diamondPath(bounds)
+            IconShape.Pentagon -> pentagonPath(bounds)
+            IconShape.Clover -> cloverPath(bounds)
+            IconShape.Cookie -> cookiePath(bounds)
+            IconShape.Flower -> flowerPath(bounds)
+            IconShape.Shield -> shieldPath(bounds)
+            IconShape.None -> return drawable
         }
 
         canvas.clipPath(path)
         canvas.drawBitmap(bitmap, 0f, 0f, null)
         return shapedBitmap.toDrawable(Resources.getSystem())
+    }
+
+    private fun circlePath(bounds: RectF) = Path().apply {
+        addCircle(
+            bounds.centerX(),
+            bounds.centerY(),
+            minOf(bounds.width(), bounds.height()) / 2f,
+            Path.Direction.CW,
+        )
+    }
+
+    private fun squarePath(bounds: RectF) = Path().apply {
+        addRect(bounds, Path.Direction.CW)
+    }
+
+    private fun roundedSquarePath(bounds: RectF) = Path().apply {
+        val cornerRadius =
+            minOf(bounds.width(), bounds.height()) * ROUNDED_SQUARE_CORNER_RATIO
+        addRoundRect(bounds, cornerRadius, cornerRadius, Path.Direction.CW)
+    }
+
+    private fun tearDropPath(bounds: RectF) = Path().apply {
+        val centerX = bounds.centerX()
+        val centerY = bounds.centerY()
+        moveTo(centerX, bounds.top)
+        cubicTo(
+            centerX + bounds.width() * 0.03f,
+            bounds.top + bounds.height() * 0.24f,
+            bounds.right,
+            centerY - bounds.height() * 0.1f,
+            bounds.right,
+            centerY + bounds.height() * 0.08f,
+        )
+        cubicTo(
+            bounds.right,
+            bounds.bottom - bounds.height() * 0.08f,
+            centerX + bounds.width() * 0.25f,
+            bounds.bottom,
+            centerX,
+            bounds.bottom,
+        )
+        cubicTo(
+            centerX - bounds.width() * 0.25f,
+            bounds.bottom,
+            bounds.left,
+            bounds.bottom - bounds.height() * 0.08f,
+            bounds.left,
+            centerY + bounds.height() * 0.08f,
+        )
+        cubicTo(
+            bounds.left,
+            centerY - bounds.height() * 0.1f,
+            centerX - bounds.width() * 0.03f,
+            bounds.top + bounds.height() * 0.24f,
+            centerX,
+            bounds.top,
+        )
+        close()
+    }
+
+    private fun hexagonPath(bounds: RectF) = Path().apply {
+        moveTo(bounds.left + bounds.width() * 0.25f, bounds.top)
+        lineTo(bounds.right - bounds.width() * 0.25f, bounds.top)
+        lineTo(bounds.right, bounds.centerY())
+        lineTo(bounds.right - bounds.width() * 0.25f, bounds.bottom)
+        lineTo(bounds.left + bounds.width() * 0.25f, bounds.bottom)
+        lineTo(bounds.left, bounds.centerY())
+        close()
+    }
+
+    private fun octagonPath(bounds: RectF) = Path().apply {
+        val corner = minOf(bounds.width(), bounds.height()) * 0.29f
+        moveTo(bounds.left + corner, bounds.top)
+        lineTo(bounds.right - corner, bounds.top)
+        lineTo(bounds.right, bounds.top + corner)
+        lineTo(bounds.right, bounds.bottom - corner)
+        lineTo(bounds.right - corner, bounds.bottom)
+        lineTo(bounds.left + corner, bounds.bottom)
+        lineTo(bounds.left, bounds.bottom - corner)
+        lineTo(bounds.left, bounds.top + corner)
+        close()
+    }
+
+    private fun diamondPath(bounds: RectF) = Path().apply {
+        moveTo(bounds.centerX(), bounds.top)
+        lineTo(bounds.right, bounds.centerY())
+        lineTo(bounds.centerX(), bounds.bottom)
+        lineTo(bounds.left, bounds.centerY())
+        close()
+    }
+
+    private fun pentagonPath(bounds: RectF) = Path().apply {
+        val centerX = bounds.centerX()
+        val centerY = bounds.centerY()
+        val radiusX = bounds.width() / 2f
+        val radiusY = bounds.height() / 2f
+        for (vertex in 0 until 5) {
+            val angle = Math.toRadians((vertex * 72 - 90).toDouble())
+            val x = centerX + radiusX * cos(angle).toFloat()
+            val y = centerY + radiusY * sin(angle).toFloat()
+            if (vertex == 0) {
+                moveTo(x, y)
+            } else {
+                lineTo(x, y)
+            }
+        }
+        close()
+    }
+
+    private fun cloverPath(bounds: RectF) = Path().apply {
+        val centerX = bounds.centerX()
+        val centerY = bounds.centerY()
+        val quarterWidth = bounds.width() * 0.25f
+        val quarterHeight = bounds.height() * 0.25f
+        moveTo(centerX, bounds.top)
+        cubicTo(
+            centerX - quarterWidth * 0.08f,
+            bounds.top + quarterHeight * 0.72f,
+            bounds.left + quarterWidth * 0.72f,
+            bounds.top + quarterHeight * 0.08f,
+            bounds.left + quarterWidth * 0.72f,
+            bounds.top + quarterHeight * 0.72f,
+        )
+        cubicTo(
+            bounds.left + quarterWidth * 0.08f,
+            bounds.top + quarterHeight * 0.72f,
+            bounds.left + quarterWidth * 0.08f,
+            centerY - quarterHeight * 0.08f,
+            centerX,
+            centerY,
+        )
+        cubicTo(
+            bounds.left + quarterWidth * 0.08f,
+            centerY + quarterHeight * 0.08f,
+            bounds.left + quarterWidth * 0.08f,
+            bounds.bottom - quarterHeight * 0.72f,
+            bounds.left + quarterWidth * 0.72f,
+            bounds.bottom - quarterHeight * 0.72f,
+        )
+        cubicTo(
+            bounds.left + quarterWidth * 0.72f,
+            bounds.bottom - quarterHeight * 0.08f,
+            centerX - quarterWidth * 0.08f,
+            bounds.bottom - quarterHeight * 0.08f,
+            centerX,
+            bounds.bottom,
+        )
+        cubicTo(
+            centerX + quarterWidth * 0.08f,
+            bounds.bottom - quarterHeight * 0.08f,
+            bounds.right - quarterWidth * 0.72f,
+            bounds.bottom - quarterHeight * 0.08f,
+            bounds.right - quarterWidth * 0.72f,
+            bounds.bottom - quarterHeight * 0.72f,
+        )
+        cubicTo(
+            bounds.right - quarterWidth * 0.08f,
+            bounds.bottom - quarterHeight * 0.72f,
+            bounds.right - quarterWidth * 0.08f,
+            centerY + quarterHeight * 0.08f,
+            centerX,
+            centerY,
+        )
+        cubicTo(
+            bounds.right - quarterWidth * 0.08f,
+            centerY - quarterHeight * 0.08f,
+            bounds.right - quarterWidth * 0.08f,
+            bounds.top + quarterHeight * 0.72f,
+            bounds.right - quarterWidth * 0.72f,
+            bounds.top + quarterHeight * 0.72f,
+        )
+        cubicTo(
+            bounds.right - quarterWidth * 0.72f,
+            bounds.top + quarterHeight * 0.08f,
+            centerX + quarterWidth * 0.08f,
+            bounds.top + quarterHeight * 0.72f,
+            centerX,
+            bounds.top,
+        )
+        close()
+    }
+
+    private fun cookiePath(bounds: RectF) = Path().apply {
+        fillType = Path.FillType.EVEN_ODD
+        addOval(bounds, Path.Direction.CW)
+        addCircle(
+            bounds.right - bounds.width() * 0.12f,
+            bounds.top + bounds.height() * 0.12f,
+            minOf(bounds.width(), bounds.height()) * 0.23f,
+            Path.Direction.CW,
+        )
+    }
+
+    private fun flowerPath(bounds: RectF) = Path().apply {
+        val centerX = bounds.centerX()
+        val centerY = bounds.centerY()
+        val radius = minOf(bounds.width(), bounds.height()) * 0.28f
+        val orbitRadius = minOf(bounds.width(), bounds.height()) * 0.22f
+        for (petal in 0 until 5) {
+            val angle = Math.toRadians((petal * 72 - 90).toDouble())
+            val x = centerX + orbitRadius * cos(angle).toFloat()
+            val y = centerY + orbitRadius * sin(angle).toFloat()
+            addCircle(x, y, radius, Path.Direction.CW)
+        }
+    }
+
+    private fun shieldPath(bounds: RectF) = Path().apply {
+        val shoulder = bounds.height() * 0.12f
+        moveTo(bounds.left, bounds.top + shoulder)
+        quadTo(bounds.left, bounds.top, bounds.left + shoulder, bounds.top)
+        lineTo(bounds.right - shoulder, bounds.top)
+        quadTo(bounds.right, bounds.top, bounds.right, bounds.top + shoulder)
+        lineTo(bounds.right, bounds.centerY())
+        cubicTo(
+            bounds.right,
+            bounds.bottom - bounds.height() * 0.2f,
+            bounds.centerX() + bounds.width() * 0.18f,
+            bounds.bottom - bounds.height() * 0.04f,
+            bounds.centerX(),
+            bounds.bottom,
+        )
+        cubicTo(
+            bounds.centerX() - bounds.width() * 0.18f,
+            bounds.bottom - bounds.height() * 0.04f,
+            bounds.left,
+            bounds.bottom - bounds.height() * 0.2f,
+            bounds.left,
+            bounds.centerY(),
+        )
+        close()
     }
 
     override fun getTintedAndShapedDrawable(

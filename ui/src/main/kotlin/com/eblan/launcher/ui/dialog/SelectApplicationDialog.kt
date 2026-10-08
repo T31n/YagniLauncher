@@ -56,9 +56,7 @@ fun SelectApplicationDialog(
         )
 
         EblanApplicationInfosPage(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
+            modifier = Modifier.weight(1f),
             eblanApplicationInfos = eblanApplicationInfos,
             onClick = onClick,
         )

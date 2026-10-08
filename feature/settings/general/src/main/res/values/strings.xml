@@ -35,5 +35,14 @@
     <string name="circle">Circle</string>
     <string name="square">Square</string>
     <string name="rounded_square">Rounded Square</string>
+    <string name="tear_drop">Tear Drop</string>
+    <string name="hexagon">Hexagon</string>
+    <string name="octagon">Octagon</string>
+    <string name="diamond">Diamond</string>
+    <string name="pentagon">Pentagon</string>
+    <string name="clover">Clover</string>
+    <string name="cookie">Cookie</string>
+    <string name="flower">Flower</string>
+    <string name="shield">Shield</string>
     <string name="icon_shape">Icon Shape</string>
 </resources>
