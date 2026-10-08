@@ -62,6 +62,11 @@ If it's not something you need, it's not in the app. That's the whole philosophy
 ## Documentation
 If you're interested in contributing to the project, I recommend reading the [Yagni Launcher Architecture](docs/ARCHITECTURE.md) first.
 
+## Translation
+Translations are managed with [Weblate](https://hosted.weblate.org/engage/yagni-launcher/).
+
+[![Translation status](https://hosted.weblate.org/widget/yagni-launcher/multi-auto.svg)](https://hosted.weblate.org/engage/yagni-launcher/)
+
 ## License
 **Yagni Launcher** is licensed under the GNU General Public License v3.0. See the [license](LICENSE)
 for more
