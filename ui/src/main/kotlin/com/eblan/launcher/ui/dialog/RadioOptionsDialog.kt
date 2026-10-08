@@ -63,7 +63,10 @@ fun <T> RadioOptionsDialog(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
                 .selectableGroup()
-                .weight(1f),
+                .weight(
+                    weight = 1f,
+                    fill = false,
+                ),
         ) {
             options.forEach { option ->
                 EblanRadioButton(
