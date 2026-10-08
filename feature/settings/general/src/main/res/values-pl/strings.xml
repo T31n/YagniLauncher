@@ -28,4 +28,12 @@
     <string name="show_notification_dots">Pokazuj kropki powiadomień</string>
     <string name="apply_icons_from_supported_icon_packs">Zastosuj ikony ze wspieranych paczek ikon</string>
     <string name="adapt_colors_to_your_wallpaper_automatically">Automatycznie dopasuj kolory do tapety</string>
+    <string name="icon_tint">Zabarwienie ikon</string>
+    <string name="fallback_icon_tint">Domyślne zabarwienie ikon</string>
+    <string name="use_the_fallback_icon_tint">Użyj domyślnego zabarwienia ikon</string>
+    <string name="none">Brak</string>
+    <string name="circle">Koło</string>
+    <string name="square">Kwadrat</string>
+    <string name="rounded_square">Zaokrąglony kwadrat</string>
+    <string name="icon_shape">Kształt ikon</string>
 </resources>
