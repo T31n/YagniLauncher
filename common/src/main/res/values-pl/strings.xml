@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~
   ~   Copyright 2023 Einstein Blanco
   ~
@@ -14,8 +15,7 @@
   ~   See the License for the specific language governing permissions and
   ~   limitations under the License.
   ~
-  -->
-<resources>
+  --><resources>
     <string name="save">Zapisz</string>
     <string name="settings">Ustawienia</string>
     <string name="experimental">Eksperymentalne</string>
@@ -46,4 +46,5 @@
     <string name="label_is_not_valid">Nieprawidłowa etykieta</string>
     <string name="folders">Foldery</string>
     <string name="folder">Folder</string>
+    <string name="custom">Niestandardowe</string>
 </resources>
