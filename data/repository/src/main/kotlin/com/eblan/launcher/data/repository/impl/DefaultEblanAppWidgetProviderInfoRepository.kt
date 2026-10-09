@@ -47,8 +47,8 @@ class DefaultEblanAppWidgetProviderInfoRepository @Inject constructor(private va
     }
 
     override suspend fun deleteEblanAppWidgetProviderInfos(deleteEblanAppWidgetProviderInfos: List<DeleteEblanAppWidgetProviderInfo>) {
-        eblanAppWidgetProviderInfoDao.deleteEblanAppWidgetProviderInfoEntities(
-            deleteEblanAppWidgetProviderInfos = deleteEblanAppWidgetProviderInfos,
+        eblanAppWidgetProviderInfoDao.deleteEblanAppWidgetProviderInfoEntitiesByComponentNames(
+            componentNames = deleteEblanAppWidgetProviderInfos.map { it.componentName },
         )
     }
 

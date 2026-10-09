@@ -173,12 +173,12 @@ class SyncDataUseCase @Inject constructor(
                 it.toDeleteEblanApplicationInfo()
             }
 
-        eblanApplicationInfoRepository.upsertSyncEblanApplicationInfos(
-            syncEblanApplicationInfos = newSyncEblanApplicationInfos,
-        )
-
         eblanApplicationInfoRepository.deleteSyncEblanApplicationInfos(
             deleteEblanApplicationInfos = oldDeleteEblanApplicationInfos,
+        )
+
+        eblanApplicationInfoRepository.upsertSyncEblanApplicationInfos(
+            syncEblanApplicationInfos = newSyncEblanApplicationInfos,
         )
 
         deleteEblanApplicationInfoIcons(
@@ -282,24 +282,21 @@ class SyncDataUseCase @Inject constructor(
                 )
             }
 
-        val newDeleteEblanAppWidgetProviderInfos =
-            newEblanAppWidgetProviderInfos.map {
-                it.toDeleteEblanAppWidgetProviderInfo()
-            }.toSet()
-
         val oldDeleteEblanAppWidgetProviderInfos =
-            oldEblanAppWidgetProviderInfos.map {
-                it.toDeleteEblanAppWidgetProviderInfo()
-            }.filterNot {
-                it in newDeleteEblanAppWidgetProviderInfos
-            }
-
-        eblanAppWidgetProviderInfoRepository.upsertEblanAppWidgetProviderInfos(
-            eblanAppWidgetProviderInfos = newEblanAppWidgetProviderInfos,
-        )
+            oldEblanAppWidgetProviderInfos
+                .differenceByIdentity(newEblanAppWidgetProviderInfos) {
+                    it.serialNumber to it.componentName
+                }
+                .map {
+                    it.toDeleteEblanAppWidgetProviderInfo()
+                }
 
         eblanAppWidgetProviderInfoRepository.deleteEblanAppWidgetProviderInfos(
             deleteEblanAppWidgetProviderInfos = oldDeleteEblanAppWidgetProviderInfos,
+        )
+
+        eblanAppWidgetProviderInfoRepository.upsertEblanAppWidgetProviderInfos(
+            eblanAppWidgetProviderInfos = newEblanAppWidgetProviderInfos,
         )
 
         deleteEblanAppWidgetProviderInfoIcons(
@@ -329,22 +326,20 @@ class SyncDataUseCase @Inject constructor(
             it.toEblanShortcutInfo()
         }
 
-        val newDeleteEblanShortcutInfos = newEblanShortcutInfos.map {
-            it.toDeleteEblanShortcutInfo()
-        }.toSet()
-
-        val oldDeleteEblanShortcutInfos = oldEblanShortcutInfos.map {
-            it.toDeleteEblanShortcutInfo()
-        }.filterNot {
-            it in newDeleteEblanShortcutInfos
-        }
-
-        eblanShortcutInfoRepository.upsertEblanShortcutInfos(
-            eblanShortcutInfos = newEblanShortcutInfos,
-        )
+        val oldDeleteEblanShortcutInfos = oldEblanShortcutInfos
+            .differenceByIdentity(newEblanShortcutInfos) {
+                Triple(it.serialNumber, it.shortcutId, it.packageName)
+            }
+            .map {
+                it.toDeleteEblanShortcutInfo()
+            }
 
         eblanShortcutInfoRepository.deleteEblanShortcutInfos(
             deleteEblanShortcutInfos = oldDeleteEblanShortcutInfos,
+        )
+
+        eblanShortcutInfoRepository.upsertEblanShortcutInfos(
+            eblanShortcutInfos = newEblanShortcutInfos,
         )
 
         deleteEblanShortInfoIcons(
@@ -376,12 +371,12 @@ class SyncDataUseCase @Inject constructor(
                 it.toDeleteEblanShortcutConfig()
             }
 
-        eblanShortcutConfigRepository.upsertEblanShortcutConfigs(
-            eblanShortcutConfigs = newEblanShortcutConfigs.toList(),
-        )
-
         eblanShortcutConfigRepository.deleteEblanShortcutConfigs(
             deleteEblanShortcutConfigs = oldDeleteEblanShortcutConfigs,
+        )
+
+        eblanShortcutConfigRepository.upsertEblanShortcutConfigs(
+            eblanShortcutConfigs = newEblanShortcutConfigs.toList(),
         )
 
         deleteEblanShortcutConfigIcons(oldDeleteEblanShortcutConfigs = oldDeleteEblanShortcutConfigs)

@@ -205,24 +205,21 @@ class ChangePackageUseCase @Inject constructor(
                 )
             }
 
-        val newDeleteEblanAppWidgetProviderInfos =
-            newEblanAppWidgetProviderInfosByPackageName.map {
-                it.toDeleteEblanAppWidgetProviderInfo()
-            }.toSet()
-
         val oldDeleteEblanAppWidgetProviderInfos =
-            oldEblanAppWidgetProviderInfosByPackageName.map {
-                it.toDeleteEblanAppWidgetProviderInfo()
-            }.filterNot {
-                it in newDeleteEblanAppWidgetProviderInfos
-            }
-
-        eblanAppWidgetProviderInfoRepository.upsertEblanAppWidgetProviderInfos(
-            eblanAppWidgetProviderInfos = newEblanAppWidgetProviderInfosByPackageName,
-        )
+            oldEblanAppWidgetProviderInfosByPackageName
+                .differenceByIdentity(newEblanAppWidgetProviderInfosByPackageName) {
+                    it.serialNumber to it.componentName
+                }
+                .map {
+                    it.toDeleteEblanAppWidgetProviderInfo()
+                }
 
         eblanAppWidgetProviderInfoRepository.deleteEblanAppWidgetProviderInfos(
             deleteEblanAppWidgetProviderInfos = oldDeleteEblanAppWidgetProviderInfos,
+        )
+
+        eblanAppWidgetProviderInfoRepository.upsertEblanAppWidgetProviderInfos(
+            eblanAppWidgetProviderInfos = newEblanAppWidgetProviderInfosByPackageName,
         )
 
         deleteEblanAppWidgetProviderInfoIcons(
@@ -262,17 +259,14 @@ class ChangePackageUseCase @Inject constructor(
                 it.toEblanShortcutInfo()
             }
 
-        val newDeleteEblanShortcutInfos =
-            newEblanShortcutInfosByPackageName.map {
-                it.toDeleteEblanShortcutInfo()
-            }.toSet()
-
         val oldDeleteEblanShortcutInfos =
-            oldEblanShortcutInfosByPackageName.map {
-                it.toDeleteEblanShortcutInfo()
-            }.filterNot {
-                it in newDeleteEblanShortcutInfos
-            }
+            oldEblanShortcutInfosByPackageName
+                .differenceByIdentity(newEblanShortcutInfosByPackageName) {
+                    Triple(it.serialNumber, it.shortcutId, it.packageName)
+                }
+                .map {
+                    it.toDeleteEblanShortcutInfo()
+                }
 
         eblanShortcutInfoRepository.upsertEblanShortcutInfos(
             eblanShortcutInfos = newEblanShortcutInfosByPackageName,
