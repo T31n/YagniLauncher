@@ -63,6 +63,7 @@
             <option value="$PROJECT_DIR$/framework/package-manager" />
             <option value="$PROJECT_DIR$/framework/resources" />
             <option value="$PROJECT_DIR$/framework/settings" />
+            <option value="$PROJECT_DIR$/framework/statusbar-manager" />
             <option value="$PROJECT_DIR$/framework/user-manager" />
             <option value="$PROJECT_DIR$/framework/wallpaper-manager" />
             <option value="$PROJECT_DIR$/framework/widget-manager" />

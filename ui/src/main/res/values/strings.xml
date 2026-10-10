@@ -55,10 +55,10 @@
     <string name="add_folder">Add Folder</string>
     <string name="folder_is_not_valid">Folder is not valid</string>
     <string name="center_vertically">Center Vertically</string>
-    <string name="top_icon_bottom_label">Top Icon Bottom Label</string>
-    <string name="top_label_bottom_icon">Top Label Bottom Icon</string>
-    <string name="start_icon_end_label">Start Icon End Label</string>
-    <string name="start_label_end_icon">Start Label End Icon</string>
+    <string name="top_icon_bottom_label">Top Icon, Bottom Label</string>
+    <string name="top_label_bottom_icon">Top Label, Bottom Icon</string>
+    <string name="start_icon_end_label">Start Icon, End Label</string>
+    <string name="start_label_end_icon">Start Label, End Icon</string>
     <string name="icon_only">Icon Only</string>
     <string name="label_only">Label Only</string>
     <string name="text_padding">Text Padding</string>
@@ -66,4 +66,5 @@
     <string name="layout_type">Layout Type</string>
     <string name="vertical_alignment">Vertical Alignment</string>
     <string name="horizontal_arrangement">Horizontal Arrangement</string>
+    <string name="open_notification_panel_by_reflection">Open Notification Panel By Reflection</string>
 </resources>

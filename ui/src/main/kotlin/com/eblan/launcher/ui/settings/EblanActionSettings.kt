@@ -197,4 +197,6 @@ fun EblanActionType.getEblanActionTypeSubtitle(
     EblanActionType.OpenQuickSettings -> context.getString(R.string.open_quick_settings)
 
     EblanActionType.OpenRecents -> context.getString(R.string.open_recents)
+
+    EblanActionType.OpenNotificationPanelByReflection -> context.getString(R.string.open_notification_panel_by_reflection)
 }

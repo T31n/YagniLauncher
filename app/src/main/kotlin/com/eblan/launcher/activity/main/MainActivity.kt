@@ -41,6 +41,7 @@ import com.eblan.launcher.framework.launcherapps.AndroidLauncherAppsWrapper
 import com.eblan.launcher.framework.launcherapps.PinItemRequestWrapper
 import com.eblan.launcher.framework.packagemanager.AndroidPackageManagerWrapper
 import com.eblan.launcher.framework.settings.AndroidSettingsWrapper
+import com.eblan.launcher.framework.statusbarmanager.AndroidStatusBarManagerWrapper
 import com.eblan.launcher.framework.usermanager.AndroidUserManagerWrapper
 import com.eblan.launcher.framework.wallpapermanager.AndroidWallpaperManagerWrapper
 import com.eblan.launcher.framework.widgetmanager.AndroidAppWidgetHostWrapper
@@ -58,6 +59,7 @@ import com.eblan.launcher.ui.local.LocalLauncherApps
 import com.eblan.launcher.ui.local.LocalPackageManager
 import com.eblan.launcher.ui.local.LocalPinItemRequest
 import com.eblan.launcher.ui.local.LocalSettings
+import com.eblan.launcher.ui.local.LocalStatusBarManager
 import com.eblan.launcher.ui.local.LocalUserManager
 import com.eblan.launcher.ui.local.LocalWallpaperManager
 import com.eblan.launcher.util.handleEdgeToEdge
@@ -105,6 +107,9 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var iconKeyGenerator: IconKeyGenerator
 
+    @Inject
+    lateinit var androidStatusBarManagerWrapper: AndroidStatusBarManagerWrapper
+
     private val viewModel: MainActivityViewModel by viewModels()
 
     private var configureResultCode by mutableStateOf<Int?>(null)
@@ -127,6 +132,7 @@ class MainActivity : ComponentActivity() {
                 LocalFileManager provides fileManager,
                 LocalAccessibilityManager provides androidAccessibilityManagerWrapper,
                 LocalIconKeyGenerator provides iconKeyGenerator,
+                LocalStatusBarManager provides androidStatusBarManagerWrapper,
             ) {
                 val navController = rememberNavController()
 

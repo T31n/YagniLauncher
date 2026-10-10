@@ -79,6 +79,7 @@ import com.eblan.launcher.feature.home.util.calculatePage
 import com.eblan.launcher.feature.home.util.handleEblanAction
 import com.eblan.launcher.framework.launcherapps.AndroidLauncherAppsWrapper
 import com.eblan.launcher.framework.launcherapps.PinItemRequestWrapper
+import com.eblan.launcher.framework.statusbarmanager.AndroidStatusBarManagerWrapper
 import com.eblan.launcher.framework.usermanager.AndroidUserManagerWrapper
 import com.eblan.launcher.framework.wallpapermanager.AndroidWallpaperManagerWrapper
 import com.eblan.launcher.ui.local.LocalFileManager
@@ -86,6 +87,7 @@ import com.eblan.launcher.ui.local.LocalIconKeyGenerator
 import com.eblan.launcher.ui.local.LocalImageSerializer
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import com.eblan.launcher.ui.local.LocalPinItemRequest
+import com.eblan.launcher.ui.local.LocalStatusBarManager
 import com.eblan.launcher.ui.local.LocalUserManager
 import com.eblan.launcher.ui.local.LocalWallpaperManager
 import kotlinx.coroutines.CoroutineScope
@@ -107,6 +109,7 @@ internal class PagerScreenState(
     private val fileManager: FileManager,
     private val androidImageSerializer: AndroidImageSerializer,
     private val androidLauncherAppsWrapper: AndroidLauncherAppsWrapper,
+    private val androidStatusBarManagerWrapper: AndroidStatusBarManagerWrapper,
     private val scope: CoroutineScope,
     private val context: Context,
     private val androidUserManagerWrapper: AndroidUserManagerWrapper,
@@ -400,6 +403,7 @@ internal class PagerScreenState(
             context = context,
             eblanAction = gestureSettings.doubleTap,
             launcherApps = androidLauncherAppsWrapper,
+            statusBarManagerWrapper = androidStatusBarManagerWrapper,
             onOpenAppDrawer = ::openApplicationScreen,
         )
 
@@ -572,6 +576,7 @@ internal class PagerScreenState(
                 context = context,
                 eblanAction = gestureSettings.swipeUp,
                 launcherApps = androidLauncherAppsWrapper,
+                statusBarManagerWrapper = androidStatusBarManagerWrapper,
                 onOpenAppDrawer = {},
             )
         }
@@ -581,6 +586,7 @@ internal class PagerScreenState(
                 context = context,
                 eblanAction = gestureSettings.swipeDown,
                 launcherApps = androidLauncherAppsWrapper,
+                statusBarManagerWrapper = androidStatusBarManagerWrapper,
                 onOpenAppDrawer = {},
             )
         }
@@ -1129,6 +1135,7 @@ internal class PagerScreenState(
             context = context,
             eblanAction = eblanAction,
             launcherApps = androidLauncherAppsWrapper,
+            statusBarManagerWrapper = androidStatusBarManagerWrapper,
             onOpenAppDrawer = ::openApplicationScreen,
         )
     }
@@ -1784,6 +1791,8 @@ internal fun rememberPagerScreenState(
 
     val iconKeyGenerator = LocalIconKeyGenerator.current
 
+    val androidStatusBarManagerWrapper = LocalStatusBarManager.current
+
     return remember(
         screenHeight,
         gestureSettings,
@@ -1796,6 +1805,7 @@ internal fun rememberPagerScreenState(
             fileManager = fileManager,
             androidImageSerializer = androidImageSerializer,
             androidLauncherAppsWrapper = androidLauncherAppsWrapper,
+            androidStatusBarManagerWrapper = androidStatusBarManagerWrapper,
             scope = scope,
             context = context,
             androidUserManagerWrapper = androidUserManagerWrapper,

@@ -71,6 +71,7 @@ import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.handleOnPress
 import com.eblan.launcher.feature.home.util.onDoubleTap
 import com.eblan.launcher.ui.local.LocalLauncherApps
+import com.eblan.launcher.ui.local.LocalStatusBarManager
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -104,6 +105,7 @@ internal fun InteractiveShortcutConfigGridItem(
     ) -> Unit,
 ) {
     val launcherApps = LocalLauncherApps.current
+    val androidStatusBarManagerWrapper = LocalStatusBarManager.current
 
     val context = LocalContext.current
 
@@ -153,6 +155,7 @@ internal fun InteractiveShortcutConfigGridItem(
                             context = context,
                             doubleTap = gridItem.doubleTap,
                             launcherApps = launcherApps,
+                            statusBarManagerWrapper = androidStatusBarManagerWrapper,
                             onOpenAppDrawer = currentOnOpenAppDrawer,
                         )
                     }

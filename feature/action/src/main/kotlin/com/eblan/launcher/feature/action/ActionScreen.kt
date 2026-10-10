@@ -210,4 +210,5 @@ private fun EblanActionType.getResId() = when (this) {
     EblanActionType.LockScreen -> R.drawable.lock_24px
     EblanActionType.OpenQuickSettings -> R.drawable.settings_24px
     EblanActionType.OpenRecents -> R.drawable.preview_24px
+    EblanActionType.OpenNotificationPanelByReflection -> R.drawable.notification_settings_24px
 }

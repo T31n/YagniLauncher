@@ -46,6 +46,7 @@ import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.handleEblanAction
 import com.eblan.launcher.ui.local.LocalLauncherApps
+import com.eblan.launcher.ui.local.LocalStatusBarManager
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -63,6 +64,8 @@ internal fun Modifier.swipeGestures(
     val scope = rememberCoroutineScope()
 
     val launcherApps = LocalLauncherApps.current
+
+    val androidStatusBarManagerWrapper = LocalStatusBarManager.current
 
     val currentOnOpenAppDrawer by rememberUpdatedState(onOpenAppDrawer)
 
@@ -106,6 +109,7 @@ internal fun Modifier.swipeGestures(
                                     context = context,
                                     eblanAction = swipeUp,
                                     launcherApps = launcherApps,
+                                    statusBarManagerWrapper = androidStatusBarManagerWrapper,
                                     onOpenAppDrawer = currentOnOpenAppDrawer,
                                 )
                             }
@@ -115,6 +119,7 @@ internal fun Modifier.swipeGestures(
                                     context = context,
                                     eblanAction = swipeDown,
                                     launcherApps = launcherApps,
+                                    statusBarManagerWrapper = androidStatusBarManagerWrapper,
                                     onOpenAppDrawer = currentOnOpenAppDrawer,
                                 )
                             }

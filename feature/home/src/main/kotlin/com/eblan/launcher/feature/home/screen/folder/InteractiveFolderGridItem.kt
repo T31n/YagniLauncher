@@ -99,6 +99,7 @@ import com.eblan.launcher.feature.home.util.getVerticalArrangement
 import com.eblan.launcher.feature.home.util.handleOnPress
 import com.eblan.launcher.feature.home.util.onDoubleTap
 import com.eblan.launcher.ui.local.LocalLauncherApps
+import com.eblan.launcher.ui.local.LocalStatusBarManager
 import com.eblan.launcher.ui.settings.rememberIsNotificationAccessGranted
 import kotlinx.coroutines.launch
 
@@ -394,6 +395,8 @@ private fun InteractiveApplicationInfoGridItem(
 
     val androidLauncherAppsWrapper = LocalLauncherApps.current
 
+    val androidStatusBarManagerWrapper = LocalStatusBarManager.current
+
     val context = LocalContext.current
 
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
@@ -436,6 +439,7 @@ private fun InteractiveApplicationInfoGridItem(
                                 context = context,
                                 doubleTap = gridItem.doubleTap,
                                 launcherApps = launcherApps,
+                                statusBarManagerWrapper = androidStatusBarManagerWrapper,
                                 onOpenAppDrawer = onOpenAppDrawer,
                             )
                         }
@@ -586,6 +590,8 @@ private fun InteractiveShortcutInfoGridItem(
 
     val launcherApps = LocalLauncherApps.current
 
+    val androidStatusBarManagerWrapper = LocalStatusBarManager.current
+
     val context = LocalContext.current
 
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
@@ -628,6 +634,7 @@ private fun InteractiveShortcutInfoGridItem(
                                     context = context,
                                     doubleTap = gridItem.doubleTap,
                                     launcherApps = launcherApps,
+                                    statusBarManagerWrapper = androidStatusBarManagerWrapper,
                                     onOpenAppDrawer = onOpenAppDrawer,
                                 )
                             }
@@ -782,6 +789,8 @@ private fun InteractiveShortcutConfigGridItem(
 ) {
     val launcherApps = LocalLauncherApps.current
 
+    val androidStatusBarManagerWrapper = LocalStatusBarManager.current
+
     val context = LocalContext.current
 
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
@@ -831,6 +840,7 @@ private fun InteractiveShortcutConfigGridItem(
                                 context = context,
                                 doubleTap = gridItem.doubleTap,
                                 launcherApps = launcherApps,
+                                statusBarManagerWrapper = androidStatusBarManagerWrapper,
                                 onOpenAppDrawer = onOpenAppDrawer,
                             )
                         }
@@ -968,6 +978,8 @@ private fun InteractiveNestedFolderGridItem(
 ) {
     val launcherApps = LocalLauncherApps.current
 
+    val androidStatusBarManagerWrapper = LocalStatusBarManager.current
+
     val context = LocalContext.current
 
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
@@ -1004,6 +1016,7 @@ private fun InteractiveNestedFolderGridItem(
                                 context = context,
                                 doubleTap = gridItem.doubleTap,
                                 launcherApps = launcherApps,
+                                statusBarManagerWrapper = androidStatusBarManagerWrapper,
                                 onOpenAppDrawer = onOpenAppDrawer,
                             )
                         }

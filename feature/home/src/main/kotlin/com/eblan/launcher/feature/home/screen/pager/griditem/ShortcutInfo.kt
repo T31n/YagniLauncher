@@ -73,6 +73,7 @@ import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.handleOnPress
 import com.eblan.launcher.feature.home.util.onDoubleTap
 import com.eblan.launcher.ui.local.LocalLauncherApps
+import com.eblan.launcher.ui.local.LocalStatusBarManager
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -108,6 +109,7 @@ internal fun InteractiveShortcutInfoGridItem(
     ) -> Unit,
 ) {
     val androidLauncherAppsWrapper = LocalLauncherApps.current
+    val androidStatusBarManagerWrapper = LocalStatusBarManager.current
     val context = LocalContext.current
 
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
@@ -146,6 +148,7 @@ internal fun InteractiveShortcutInfoGridItem(
                             context = context,
                             doubleTap = gridItem.doubleTap,
                             launcherApps = androidLauncherAppsWrapper,
+                            statusBarManagerWrapper = androidStatusBarManagerWrapper,
                             onOpenAppDrawer = currentOnOpenAppDrawer,
                         )
                     }
