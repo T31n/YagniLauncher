@@ -66,4 +66,5 @@
     <string name="layout_type">Typ rozvržení</string>
     <string name="vertical_alignment">Svislé zarovnání</string>
     <string name="horizontal_arrangement">Vodorovné uspořádání</string>
+    <string name="open_notification_panel_by_reflection">Otevřít panel oznámení pomocí reflexe</string>
 </resources>

@@ -67,4 +67,5 @@
     <string name="layout_type">Typ układu</string>
     <string name="vertical_alignment">Wyrównanie w pionie</string>
     <string name="horizontal_arrangement">Rozmieszczenie w poziomie</string>
+    <string name="open_notification_panel_by_reflection">Otwórz panel powiadomień za pomocą refleksji</string>
 </resources>
