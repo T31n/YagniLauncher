@@ -323,16 +323,13 @@ class SyncDataUseCase @Inject constructor(
             it.toEblanShortcutInfo()
         }
 
-        val oldDeleteEblanShortcutInfos = oldEblanShortcutInfos
+        val deleteEblanShortcutInfos = oldEblanShortcutInfos
             .differenceByIdentity(newEblanShortcutInfos) {
                 Triple(it.serialNumber, it.shortcutId, it.packageName)
             }
-            .map {
-                it.toDeleteEblanShortcutInfo()
-            }
 
         eblanShortcutInfoRepository.deleteEblanShortcutInfos(
-            deleteEblanShortcutInfos = oldDeleteEblanShortcutInfos,
+            eblanShortcutInfos = deleteEblanShortcutInfos,
         )
 
         eblanShortcutInfoRepository.upsertEblanShortcutInfos(
@@ -341,7 +338,7 @@ class SyncDataUseCase @Inject constructor(
 
         deleteEblanShortInfoIcons(
             eblanShortcutInfos = eblanShortcutInfoRepository.getEblanShortcutInfos(),
-            oldDeleteEblanShortcutInfos = oldDeleteEblanShortcutInfos,
+            deleteEblanShortcutInfos = deleteEblanShortcutInfos,
         )
 
         updateShortcutInfoGridItems(
@@ -360,23 +357,20 @@ class SyncDataUseCase @Inject constructor(
 
         if (oldEblanShortcutConfigs.toSet() == newEblanShortcutConfigs) return
 
-        val oldDeleteEblanShortcutConfigs = oldEblanShortcutConfigs
+        val deleteEblanShortcutConfigs = oldEblanShortcutConfigs
             .differenceByIdentity(newEblanShortcutConfigs) {
                 it.serialNumber to it.componentName
             }
-            .map {
-                it.toDeleteEblanShortcutConfig()
-            }
 
         eblanShortcutConfigRepository.deleteEblanShortcutConfigs(
-            deleteEblanShortcutConfigs = oldDeleteEblanShortcutConfigs,
+            eblanShortcutConfigs = deleteEblanShortcutConfigs,
         )
 
         eblanShortcutConfigRepository.upsertEblanShortcutConfigs(
             eblanShortcutConfigs = newEblanShortcutConfigs.toList(),
         )
 
-        deleteEblanShortcutConfigIcons(oldDeleteEblanShortcutConfigs = oldDeleteEblanShortcutConfigs)
+        deleteEblanShortcutConfigIcons(eblanShortcutConfigs = deleteEblanShortcutConfigs)
 
         updateShortcutConfigGridItems(
             eblanShortcutConfigs = eblanShortcutConfigRepository.getEblanShortcutConfigs(),

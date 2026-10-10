@@ -19,7 +19,6 @@ package com.eblan.launcher.data.repository.impl
 
 import com.eblan.launcher.data.room.dao.EblanShortcutConfigDao
 import com.eblan.launcher.data.room.entity.EblanShortcutConfigEntity
-import com.eblan.launcher.domain.model.shortcutconfig.DeleteEblanShortcutConfig
 import com.eblan.launcher.domain.model.shortcutconfig.EblanShortcutConfig
 import com.eblan.launcher.domain.repository.EblanShortcutConfigRepository
 import kotlinx.coroutines.flow.map
@@ -56,8 +55,12 @@ internal class DefaultEblanShortcutConfigRepository @Inject constructor(private 
         )
     }
 
-    override suspend fun deleteEblanShortcutConfigs(deleteEblanShortcutConfigs: List<DeleteEblanShortcutConfig>) {
-        eblanShortcutConfigDao.deleteEblanShortcutConfigEntities(deleteEblanShortcutConfigs = deleteEblanShortcutConfigs)
+    override suspend fun deleteEblanShortcutConfigs(eblanShortcutConfigs: List<EblanShortcutConfig>) {
+        val entities = eblanShortcutConfigs.map {
+            it.asEntity()
+        }
+
+        eblanShortcutConfigDao.deleteEblanShortcutConfigEntities(entities = entities)
     }
 
     override suspend fun getEblanShortcutConfigsByPackageName(

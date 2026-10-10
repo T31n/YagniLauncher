@@ -38,9 +38,7 @@ import com.eblan.launcher.domain.model.grid.WidgetGridItem
 import com.eblan.launcher.domain.model.launcherapps.LauncherAppsActivityInfo
 import com.eblan.launcher.domain.model.launcherapps.LauncherAppsShortcutInfo
 import com.eblan.launcher.domain.model.launcherapps.ShortcutConfigActivityInfo
-import com.eblan.launcher.domain.model.shortcutconfig.DeleteEblanShortcutConfig
 import com.eblan.launcher.domain.model.shortcutconfig.EblanShortcutConfig
-import com.eblan.launcher.domain.model.shortcutinfo.DeleteEblanShortcutInfo
 import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfo
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
@@ -126,9 +124,9 @@ internal suspend fun deleteEblanAppWidgetProviderInfoIcons(
 
 internal suspend fun deleteEblanShortInfoIcons(
     eblanShortcutInfos: List<EblanShortcutInfo>,
-    oldDeleteEblanShortcutInfos: List<DeleteEblanShortcutInfo>,
+    deleteEblanShortcutInfos: List<EblanShortcutInfo>,
 ) {
-    oldDeleteEblanShortcutInfos.forEach { deleteEblanShortcutInfo ->
+    deleteEblanShortcutInfos.forEach { deleteEblanShortcutInfo ->
         currentCoroutineContext().ensureActive()
 
         val icon = deleteEblanShortcutInfo.icon
@@ -148,8 +146,8 @@ internal suspend fun deleteEblanShortInfoIcons(
     }
 }
 
-internal suspend fun deleteEblanShortcutConfigIcons(oldDeleteEblanShortcutConfigs: List<DeleteEblanShortcutConfig>) {
-    oldDeleteEblanShortcutConfigs.forEach { deleteEblanShortcutConfig ->
+internal suspend fun deleteEblanShortcutConfigIcons(eblanShortcutConfigs: List<EblanShortcutConfig>) {
+    eblanShortcutConfigs.forEach { deleteEblanShortcutConfig ->
         currentCoroutineContext().ensureActive()
 
         val activityIcon = deleteEblanShortcutConfig.activityIcon
@@ -479,20 +477,6 @@ internal fun LauncherAppsShortcutInfo.toEblanShortcutInfo(): EblanShortcutInfo =
     shortcutQueryFlag = shortcutQueryFlag,
     isEnabled = isEnabled,
     lastChangedTimestamp = lastChangedTimestamp,
-)
-
-internal fun EblanShortcutInfo.toDeleteEblanShortcutInfo(): DeleteEblanShortcutInfo = DeleteEblanShortcutInfo(
-    serialNumber = serialNumber,
-    shortcutId = shortcutId,
-    packageName = packageName,
-    icon = icon,
-)
-
-internal fun EblanShortcutConfig.toDeleteEblanShortcutConfig(): DeleteEblanShortcutConfig = DeleteEblanShortcutConfig(
-    componentName = componentName,
-    packageName = packageName,
-    serialNumber = serialNumber,
-    activityIcon = activityIcon,
 )
 
 @OptIn(ExperimentalUuidApi::class)

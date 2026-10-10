@@ -61,12 +61,9 @@ class ChangeShortcutsUseCase @Inject constructor(
                 it.toEblanShortcutInfo()
             }
 
-            val oldDeleteEblanShortcutInfos = oldEblanShortcutInfos
+            val deleteEblanShortcutInfos = oldEblanShortcutInfos
                 .differenceByIdentity(newEblanShortcutInfos) {
                     Triple(it.serialNumber, it.shortcutId, it.packageName)
-                }
-                .map {
-                    it.toDeleteEblanShortcutInfo()
                 }
 
             eblanShortcutInfoRepository.upsertEblanShortcutInfos(
@@ -74,12 +71,12 @@ class ChangeShortcutsUseCase @Inject constructor(
             )
 
             eblanShortcutInfoRepository.deleteEblanShortcutInfos(
-                deleteEblanShortcutInfos = oldDeleteEblanShortcutInfos,
+                eblanShortcutInfos = deleteEblanShortcutInfos,
             )
 
             deleteEblanShortInfoIcons(
                 eblanShortcutInfos = eblanShortcutInfoRepository.getEblanShortcutInfos(),
-                oldDeleteEblanShortcutInfos = oldDeleteEblanShortcutInfos,
+                deleteEblanShortcutInfos = deleteEblanShortcutInfos,
             )
 
             updateShortcutInfoGridItems(
