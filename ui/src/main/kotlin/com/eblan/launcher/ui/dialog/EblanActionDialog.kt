@@ -89,9 +89,8 @@ internal fun EblanActionDialog(
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
-                .weight(1f, fill = false)
                 .selectableGroup()
-                .fillMaxWidth(),
+                .weight(1f, fill = false),
         ) {
             EblanActionType.entries.forEach { eblanActionType ->
                 EblanRadioButton(
