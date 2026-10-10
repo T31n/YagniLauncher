@@ -21,6 +21,7 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
+import android.os.Build
 import android.os.Bundle
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
@@ -38,6 +39,7 @@ import com.eblan.launcher.domain.model.home.GlobalAction
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.framework.launcherapps.AndroidLauncherAppsWrapper
+import com.eblan.launcher.framework.statusbarmanager.AndroidStatusBarManagerWrapper
 import com.eblan.launcher.framework.widgetmanager.AndroidAppWidgetManagerWrapper
 import kotlin.math.roundToInt
 
@@ -45,6 +47,7 @@ internal fun handleEblanAction(
     context: Context,
     eblanAction: EblanAction,
     launcherApps: AndroidLauncherAppsWrapper,
+    statusBarManagerWrapper: AndroidStatusBarManagerWrapper,
     onOpenAppDrawer: () -> Unit,
 ) {
     when (eblanAction.eblanActionType) {
@@ -92,6 +95,12 @@ internal fun handleEblanAction(
 
         EblanActionType.OpenAppDrawer -> onOpenAppDrawer()
 
+        EblanActionType.OpenNotificationPanelByReflection -> {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                statusBarManagerWrapper.expandNotificationsPanel()
+            }
+        }
+
         EblanActionType.None -> Unit
     }
 }
@@ -124,6 +133,7 @@ internal fun onDoubleTap(
     context: Context,
     doubleTap: EblanAction,
     launcherApps: AndroidLauncherAppsWrapper,
+    statusBarManagerWrapper: AndroidStatusBarManagerWrapper,
     onOpenAppDrawer: () -> Unit,
 ) {
     if (doubleTap.eblanActionType == EblanActionType.None) return
@@ -132,6 +142,7 @@ internal fun onDoubleTap(
         context = context,
         eblanAction = doubleTap,
         launcherApps = launcherApps,
+        statusBarManagerWrapper = statusBarManagerWrapper,
         onOpenAppDrawer = onOpenAppDrawer,
     )
 }

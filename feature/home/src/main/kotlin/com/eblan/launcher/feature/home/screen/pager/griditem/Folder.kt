@@ -85,6 +85,7 @@ import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
 import com.eblan.launcher.feature.home.util.handleOnPress
 import com.eblan.launcher.feature.home.util.onDoubleTap
 import com.eblan.launcher.ui.local.LocalLauncherApps
+import com.eblan.launcher.ui.local.LocalStatusBarManager
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -136,6 +137,7 @@ internal fun InteractiveFolderGridItem(
     onTapFolderGridItem: (FolderEntry) -> Unit,
 ) {
     val launcherApps = LocalLauncherApps.current
+    val androidStatusBarManagerWrapper = LocalStatusBarManager.current
     val context = LocalContext.current
 
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
@@ -196,6 +198,7 @@ internal fun InteractiveFolderGridItem(
                             context = context,
                             doubleTap = gridItem.doubleTap,
                             launcherApps = launcherApps,
+                            statusBarManagerWrapper = androidStatusBarManagerWrapper,
                             onOpenAppDrawer = currentOnOpenAppDrawer,
                         )
                     }

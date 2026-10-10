@@ -15,31 +15,19 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.domain.model.userdata
+package com.eblan.launcher.framework.statusbarmanager
 
-import kotlinx.serialization.Serializable
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
-@Serializable
-data class EblanAction(
-    val eblanActionType: EblanActionType,
-    val serialNumber: Long,
-    val componentName: String,
-) {
-    companion object {
-        const val ACTION = "com.eblan.launcher.EBLAN_ACTION"
+@Module
+@InstallIn(SingletonComponent::class)
+internal interface StatusBarManagerModule {
 
-        const val NAME = "EblanAction"
-    }
-}
-
-@Serializable
-enum class EblanActionType {
-    None,
-    OpenAppDrawer,
-    OpenNotificationPanel,
-    OpenApp,
-    LockScreen,
-    OpenQuickSettings,
-    OpenRecents,
-    OpenNotificationPanelByReflection,
+    @Binds
+    @Singleton
+    fun androidStatusBarManagerWrapper(impl: DefaultStatusBarManagerWrapper): AndroidStatusBarManagerWrapper
 }

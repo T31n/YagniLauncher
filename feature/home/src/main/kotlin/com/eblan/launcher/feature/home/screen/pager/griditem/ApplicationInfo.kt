@@ -74,6 +74,7 @@ import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.handleOnPress
 import com.eblan.launcher.feature.home.util.onDoubleTap
 import com.eblan.launcher.ui.local.LocalLauncherApps
+import com.eblan.launcher.ui.local.LocalStatusBarManager
 import com.eblan.launcher.ui.settings.rememberIsNotificationAccessGranted
 import kotlinx.coroutines.launch
 
@@ -111,6 +112,8 @@ internal fun InteractiveApplicationInfoGridItem(
     ) -> Unit,
 ) {
     val androidLauncherAppsWrapper = LocalLauncherApps.current
+
+    val androidStatusBarManagerWrapper = LocalStatusBarManager.current
 
     val context = LocalContext.current
 
@@ -153,6 +156,7 @@ internal fun InteractiveApplicationInfoGridItem(
                             context = context,
                             doubleTap = gridItem.doubleTap,
                             launcherApps = androidLauncherAppsWrapper,
+                            statusBarManagerWrapper = androidStatusBarManagerWrapper,
                             onOpenAppDrawer = currentOnOpenAppDrawer,
                         )
                     }

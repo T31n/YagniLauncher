@@ -15,31 +15,11 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.domain.model.userdata
+package com.eblan.launcher.framework.statusbarmanager
 
-import kotlinx.serialization.Serializable
+import androidx.annotation.RequiresApi
 
-@Serializable
-data class EblanAction(
-    val eblanActionType: EblanActionType,
-    val serialNumber: Long,
-    val componentName: String,
-) {
-    companion object {
-        const val ACTION = "com.eblan.launcher.EBLAN_ACTION"
-
-        const val NAME = "EblanAction"
-    }
-}
-
-@Serializable
-enum class EblanActionType {
-    None,
-    OpenAppDrawer,
-    OpenNotificationPanel,
-    OpenApp,
-    LockScreen,
-    OpenQuickSettings,
-    OpenRecents,
-    OpenNotificationPanelByReflection,
+interface AndroidStatusBarManagerWrapper {
+    @RequiresApi(29)
+    fun expandNotificationsPanel(): Any?
 }

@@ -17,25 +17,14 @@
  */
 
 plugins {
-    alias(libs.plugins.com.eblan.launcher.feature)
-    alias(libs.plugins.com.eblan.launcher.libraryCompose)
+    alias(libs.plugins.com.eblan.launcher.library)
+    alias(libs.plugins.com.eblan.launcher.hilt)
 }
 
 android {
-    namespace = "com.eblan.launcher.feature.home"
+    namespace = "com.eblan.launcher.framework.statusbarmanager"
 }
 
 dependencies {
-    implementation(projects.common)
-    implementation(projects.domain.framework)
-    implementation(projects.domain.grid)
-    implementation(projects.domain.repository)
-    implementation(projects.domain.useCase)
-    implementation(projects.framework.settings)
-    implementation(projects.framework.statusbarManager)
-    implementation(projects.framework.userManager)
-    implementation(projects.service)
-
-    implementation(libs.accompanist.permissions)
-    implementation(libs.androidx.core.core)
+    implementation(projects.domain.common)
 }

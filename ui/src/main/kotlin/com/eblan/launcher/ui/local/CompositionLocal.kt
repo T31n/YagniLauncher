@@ -27,6 +27,7 @@ import com.eblan.launcher.framework.launcherapps.AndroidLauncherAppsWrapper
 import com.eblan.launcher.framework.launcherapps.PinItemRequestWrapper
 import com.eblan.launcher.framework.packagemanager.AndroidPackageManagerWrapper
 import com.eblan.launcher.framework.settings.AndroidSettingsWrapper
+import com.eblan.launcher.framework.statusbarmanager.AndroidStatusBarManagerWrapper
 import com.eblan.launcher.framework.usermanager.AndroidUserManagerWrapper
 import com.eblan.launcher.framework.wallpapermanager.AndroidWallpaperManagerWrapper
 import com.eblan.launcher.framework.widgetmanager.AndroidAppWidgetHostWrapper
@@ -82,4 +83,8 @@ val LocalAccessibilityManager = staticCompositionLocalOf<AndroidAccessibilityMan
 
 val LocalIconKeyGenerator = staticCompositionLocalOf<IconKeyGenerator> {
     error("No IconKeyGenerator provided")
+}
+
+val LocalStatusBarManager = staticCompositionLocalOf<AndroidStatusBarManagerWrapper> {
+    error("No AndroidStatusBarManagerWrapper provided")
 }

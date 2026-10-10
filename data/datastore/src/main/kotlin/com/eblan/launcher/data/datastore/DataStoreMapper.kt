@@ -276,6 +276,7 @@ private fun EblanActionType.toEblanActionTypeProto(): EblanActionTypeProto = whe
     EblanActionType.LockScreen -> EblanActionTypeProto.LockScreen
     EblanActionType.OpenQuickSettings -> EblanActionTypeProto.OpenQuickSettings
     EblanActionType.OpenRecents -> EblanActionTypeProto.OpenRecents
+    EblanActionType.OpenNotificationPanelByReflection -> EblanActionTypeProto.OpenNotificationPanelByReflection
 }
 
 private fun EblanActionTypeProto.toEblanActionType(): EblanActionType = when (this) {
@@ -286,6 +287,7 @@ private fun EblanActionTypeProto.toEblanActionType(): EblanActionType = when (th
     EblanActionTypeProto.LockScreen -> EblanActionType.LockScreen
     EblanActionTypeProto.OpenQuickSettings -> EblanActionType.OpenQuickSettings
     EblanActionTypeProto.OpenRecents -> EblanActionType.OpenRecents
+    EblanActionTypeProto.OpenNotificationPanelByReflection -> EblanActionType.OpenNotificationPanelByReflection
 }
 
 private fun ThemeProto.toTheme(): Theme = when (this) {

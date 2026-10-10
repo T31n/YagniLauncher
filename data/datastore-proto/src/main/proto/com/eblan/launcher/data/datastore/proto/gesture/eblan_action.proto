@@ -17,4 +17,5 @@ enum EblanActionTypeProto {
   LockScreen = 4;
   OpenQuickSettings = 5;
   OpenRecents = 6;
+  OpenNotificationPanelByReflection = 7;
 }
