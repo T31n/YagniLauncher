@@ -18,6 +18,7 @@
 package com.eblan.launcher.ui.dialog
 
 import android.content.Intent
+import android.os.Build
 import android.provider.Settings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -100,6 +101,9 @@ internal fun EblanActionDialog(
                         EblanActionType.OpenQuickSettings,
                         EblanActionType.OpenRecents,
                         -> isAccessibilityServiceEnabled
+
+                        EblanActionType.OpenNotificationPanelByReflection ->
+                            Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
 
                         else -> true
                     },
