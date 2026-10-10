@@ -205,17 +205,14 @@ class ChangePackageUseCase @Inject constructor(
                 )
             }
 
-        val oldDeleteEblanAppWidgetProviderInfos =
+        val deleteEblanAppWidgetProviderInfos =
             oldEblanAppWidgetProviderInfosByPackageName
                 .differenceByIdentity(newEblanAppWidgetProviderInfosByPackageName) {
                     it.serialNumber to it.componentName
                 }
-                .map {
-                    it.toDeleteEblanAppWidgetProviderInfo()
-                }
 
         eblanAppWidgetProviderInfoRepository.deleteEblanAppWidgetProviderInfos(
-            deleteEblanAppWidgetProviderInfos = oldDeleteEblanAppWidgetProviderInfos,
+            eblanAppWidgetProviderInfos = deleteEblanAppWidgetProviderInfos,
         )
 
         eblanAppWidgetProviderInfoRepository.upsertEblanAppWidgetProviderInfos(
@@ -225,7 +222,7 @@ class ChangePackageUseCase @Inject constructor(
         deleteEblanAppWidgetProviderInfoIcons(
             eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos(),
             eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos(),
-            oldDeleteEblanAppWidgetProviderInfos = oldDeleteEblanAppWidgetProviderInfos,
+            deleteEblanAppWidgetProviderInfos = deleteEblanAppWidgetProviderInfos,
         )
 
         updateWidgetGridItems(

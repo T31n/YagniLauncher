@@ -282,17 +282,14 @@ class SyncDataUseCase @Inject constructor(
                 )
             }
 
-        val oldDeleteEblanAppWidgetProviderInfos =
+        val deleteEblanAppWidgetProviderInfos =
             oldEblanAppWidgetProviderInfos
                 .differenceByIdentity(newEblanAppWidgetProviderInfos) {
                     it.serialNumber to it.componentName
                 }
-                .map {
-                    it.toDeleteEblanAppWidgetProviderInfo()
-                }
 
         eblanAppWidgetProviderInfoRepository.deleteEblanAppWidgetProviderInfos(
-            deleteEblanAppWidgetProviderInfos = oldDeleteEblanAppWidgetProviderInfos,
+            eblanAppWidgetProviderInfos = deleteEblanAppWidgetProviderInfos,
         )
 
         eblanAppWidgetProviderInfoRepository.upsertEblanAppWidgetProviderInfos(
@@ -302,7 +299,7 @@ class SyncDataUseCase @Inject constructor(
         deleteEblanAppWidgetProviderInfoIcons(
             eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos(),
             eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos(),
-            oldDeleteEblanAppWidgetProviderInfos = oldDeleteEblanAppWidgetProviderInfos,
+            deleteEblanAppWidgetProviderInfos = deleteEblanAppWidgetProviderInfos,
         )
 
         updateWidgetGridItems(

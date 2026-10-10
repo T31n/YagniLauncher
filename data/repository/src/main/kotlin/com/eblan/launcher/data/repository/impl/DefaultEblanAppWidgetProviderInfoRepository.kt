@@ -19,7 +19,6 @@ package com.eblan.launcher.data.repository.impl
 
 import com.eblan.launcher.data.room.dao.EblanAppWidgetProviderInfoDao
 import com.eblan.launcher.data.room.entity.EblanAppWidgetProviderInfoEntity
-import com.eblan.launcher.domain.model.widget.DeleteEblanAppWidgetProviderInfo
 import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
 import com.eblan.launcher.domain.repository.EblanAppWidgetProviderInfoRepository
 import kotlinx.coroutines.flow.map
@@ -46,9 +45,13 @@ class DefaultEblanAppWidgetProviderInfoRepository @Inject constructor(private va
         eblanAppWidgetProviderInfoDao.upsertEblanAppWidgetProviderInfoEntities(entities = entities)
     }
 
-    override suspend fun deleteEblanAppWidgetProviderInfos(deleteEblanAppWidgetProviderInfos: List<DeleteEblanAppWidgetProviderInfo>) {
-        eblanAppWidgetProviderInfoDao.deleteEblanAppWidgetProviderInfoEntitiesByComponentNames(
-            componentNames = deleteEblanAppWidgetProviderInfos.map { it.componentName },
+    override suspend fun deleteEblanAppWidgetProviderInfos(eblanAppWidgetProviderInfos: List<EblanAppWidgetProviderInfo>) {
+        val entities = eblanAppWidgetProviderInfos.map {
+            it.asEntity()
+        }
+
+        eblanAppWidgetProviderInfoDao.deleteEblanAppWidgetProviderInfoEntities(
+            entities = entities,
         )
     }
 

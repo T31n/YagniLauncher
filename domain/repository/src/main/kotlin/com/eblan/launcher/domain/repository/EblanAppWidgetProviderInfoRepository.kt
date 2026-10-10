@@ -17,7 +17,6 @@
  */
 package com.eblan.launcher.domain.repository
 
-import com.eblan.launcher.domain.model.widget.DeleteEblanAppWidgetProviderInfo
 import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
 import kotlinx.coroutines.flow.Flow
 
@@ -28,7 +27,7 @@ interface EblanAppWidgetProviderInfoRepository {
 
     suspend fun upsertEblanAppWidgetProviderInfos(eblanAppWidgetProviderInfos: List<EblanAppWidgetProviderInfo>)
 
-    suspend fun deleteEblanAppWidgetProviderInfos(deleteEblanAppWidgetProviderInfos: List<DeleteEblanAppWidgetProviderInfo>)
+    suspend fun deleteEblanAppWidgetProviderInfos(eblanAppWidgetProviderInfos: List<EblanAppWidgetProviderInfo>)
 
     suspend fun getEblanAppWidgetProviderInfosByPackageName(packageName: String): List<EblanAppWidgetProviderInfo>
 

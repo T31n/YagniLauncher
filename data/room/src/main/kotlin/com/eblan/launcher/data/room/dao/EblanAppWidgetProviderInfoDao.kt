@@ -18,6 +18,7 @@
 package com.eblan.launcher.data.room.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
 import com.eblan.launcher.data.room.entity.EblanAppWidgetProviderInfoEntity
@@ -35,8 +36,8 @@ interface EblanAppWidgetProviderInfoDao {
     @Upsert
     suspend fun upsertEblanAppWidgetProviderInfoEntities(entities: List<EblanAppWidgetProviderInfoEntity>)
 
-    @Query("DELETE FROM EblanAppWidgetProviderInfoEntity WHERE componentName IN (:componentNames)")
-    suspend fun deleteEblanAppWidgetProviderInfoEntitiesByComponentNames(componentNames: List<String>)
+    @Delete
+    suspend fun deleteEblanAppWidgetProviderInfoEntities(entities: List<EblanAppWidgetProviderInfoEntity>)
 
     @Query("SELECT * FROM EblanAppWidgetProviderInfoEntity WHERE packageName = :packageName")
     suspend fun getEblanAppWidgetProviderInfoEntitiesByPackageName(packageName: String): List<EblanAppWidgetProviderInfoEntity>

@@ -47,7 +47,6 @@ import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.domain.model.userdata.FolderSettings
 import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.domain.model.widget.AppWidgetManagerAppWidgetProviderInfo
-import com.eblan.launcher.domain.model.widget.DeleteEblanAppWidgetProviderInfo
 import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
 import com.eblan.launcher.domain.model.widget.PartialUpdateWidgetGridItem
 import com.eblan.launcher.domain.repository.ApplicationInfoGridItemRepository
@@ -93,9 +92,9 @@ internal suspend fun deleteEblanApplicationInfoIcons(
 internal suspend fun deleteEblanAppWidgetProviderInfoIcons(
     eblanApplicationInfos: List<EblanApplicationInfo>,
     eblanAppWidgetProviderInfos: List<EblanAppWidgetProviderInfo>,
-    oldDeleteEblanAppWidgetProviderInfos: List<DeleteEblanAppWidgetProviderInfo>,
+    deleteEblanAppWidgetProviderInfos: List<EblanAppWidgetProviderInfo>,
 ) {
-    oldDeleteEblanAppWidgetProviderInfos.forEach { deleteEblanAppWidgetProviderInfo ->
+    deleteEblanAppWidgetProviderInfos.forEach { deleteEblanAppWidgetProviderInfo ->
         currentCoroutineContext().ensureActive()
 
         val applicationIcon = deleteEblanAppWidgetProviderInfo.applicationIcon
@@ -468,14 +467,6 @@ internal suspend fun ShortcutConfigActivityInfo.toEblanShortcutConfig(
     applicationLabel = packageManagerWrapper.getApplicationLabel(
         packageName = packageName,
     ),
-)
-
-internal fun EblanAppWidgetProviderInfo.toDeleteEblanAppWidgetProviderInfo(): DeleteEblanAppWidgetProviderInfo = DeleteEblanAppWidgetProviderInfo(
-    componentName = componentName,
-    serialNumber = serialNumber,
-    packageName = packageName,
-    preview = preview,
-    applicationIcon = applicationIcon,
 )
 
 internal fun LauncherAppsShortcutInfo.toEblanShortcutInfo(): EblanShortcutInfo = EblanShortcutInfo(
