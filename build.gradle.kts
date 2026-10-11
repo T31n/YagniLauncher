@@ -26,3 +26,13 @@ plugins {
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.room) apply false
 }
+
+subprojects {
+    plugins.withId("com.android.application") {
+        dependencies.add("compileOnly", libs.packageprivate.annotations)
+    }
+
+    plugins.withId("com.android.library") {
+        dependencies.add("compileOnly", libs.packageprivate.annotations)
+    }
+}
