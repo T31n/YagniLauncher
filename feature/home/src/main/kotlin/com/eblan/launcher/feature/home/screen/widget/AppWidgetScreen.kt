@@ -38,6 +38,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.BottomSheetDefaults.DragHandle
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -79,7 +81,7 @@ import kotlin.math.roundToInt
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
-@OptIn(ExperimentalSharedTransitionApi::class)
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
 internal fun AppWidgetScreen(
     modifier: Modifier = Modifier,
@@ -166,6 +168,12 @@ internal fun AppWidgetScreen(
                     },
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
+                DragHandle(
+                    width = 50.dp,
+                    height = 8.dp,
+                    shape = RoundedCornerShape(10.dp),
+                )
+
                 AsyncImage(
                     model = eblanApplicationInfoGroup.icon,
                     contentDescription = null,

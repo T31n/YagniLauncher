@@ -1229,7 +1229,6 @@ internal fun PagerScreen(
                 sharedTransitionScope = this@SharedTransitionLayout,
                 alpha = pagerScreenState.applicationScreenAlpha,
                 appDrawerSettings = appDrawerSettings,
-                cornerSize = pagerScreenState.applicationScreenCornerSize,
                 drag = pagerScreenState.drag,
                 eblanApplicationInfoTags = eblanApplicationInfoTags,
                 getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,

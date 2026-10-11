@@ -253,12 +253,6 @@ internal class PagerScreenState(
         ((screenHeight - applicationScreenSwipeY.value) / (screenHeight / 2)).coerceIn(0f, 1f)
     }
 
-    val applicationScreenCornerSize by derivedStateOf {
-        val progress = (applicationScreenSwipeY.value / screenHeight).coerceIn(0f, 1f)
-
-        (20 * progress).dp
-    }
-
     val pagerScreenAlpha by derivedStateOf {
         val threshold = screenHeight / 2
 

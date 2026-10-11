@@ -40,6 +40,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.material3.BottomSheetDefaults.DragHandle
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -161,6 +162,7 @@ internal fun ShortcutConfigScreen(
     Surface(
         modifier = modifier
             .fillMaxSize()
+            .padding(top = paddingValues.calculateTopPadding())
             .graphicsLayer {
                 translationY = swipeY
                 this.alpha = alpha
@@ -172,11 +174,17 @@ internal fun ShortcutConfigScreen(
             modifier = modifier
                 .fillMaxSize()
                 .padding(
-                    top = paddingValues.calculateTopPadding(),
                     start = paddingValues.calculateLeftPadding(layoutDirection),
                     end = paddingValues.calculateEndPadding(layoutDirection),
                 ),
         ) {
+            DragHandle(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                width = 50.dp,
+                height = 8.dp,
+                shape = RoundedCornerShape(10.dp),
+            )
+
             SearchBar(
                 state = searchBarState,
                 modifier = Modifier

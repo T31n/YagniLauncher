@@ -39,10 +39,13 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.material3.BottomSheetDefaults.DragHandle
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -91,6 +94,7 @@ import com.eblan.launcher.feature.home.screen.application.TagElevatedFilterChip
 import com.eblan.launcher.feature.home.screen.application.privateSpace
 import com.eblan.launcher.feature.home.screen.application.rememberIsPrivateQuietModeEnabled
 import com.eblan.launcher.feature.home.screen.application.rememberIsQuietModeEnabled
+import com.eblan.launcher.feature.home.util.getApplicationScreenTextColor
 import com.eblan.launcher.ui.local.LocalUserManager
 import com.eblan.launcher.ui.settings.rememberIsDefaultLauncher
 import kotlinx.coroutines.FlowPreview
@@ -189,7 +193,6 @@ internal fun VerticalApplicationScreen(
         modifier = modifier
             .fillMaxSize()
             .padding(
-                top = paddingValues.calculateTopPadding(),
                 start = paddingValues.calculateStartPadding(layoutDirection),
                 end = paddingValues.calculateEndPadding(layoutDirection),
                 bottom = if (appDrawerSettings.searchBarPosition == SearchBarPosition.Bottom) {
@@ -199,6 +202,20 @@ internal fun VerticalApplicationScreen(
                 },
             ),
     ) {
+        DragHandle(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            width = 50.dp,
+            height = 8.dp,
+            shape = RoundedCornerShape(10.dp),
+            color = getApplicationScreenTextColor(
+                backgroundColor = appDrawerSettings.backgroundColor,
+                customBackgroundColor = appDrawerSettings.customBackgroundColor,
+                systemTextColor = systemTextColor,
+                systemCustomTextColor = systemCustomTextColor,
+                defaultColor = MaterialTheme.colorScheme.onSurface,
+            ),
+        )
+
         if (appDrawerSettings.searchBarPosition == SearchBarPosition.Top) {
             ApplicationSearchBar(
                 focusRequester = focusRequester,
