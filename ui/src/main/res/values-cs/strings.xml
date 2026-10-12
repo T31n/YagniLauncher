@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~
   ~   Copyright 2023 Einstein Blanco
   ~
@@ -14,8 +15,7 @@
   ~   See the License for the specific language governing permissions and
   ~   limitations under the License.
   ~
-  -->
-<resources>
+  --><resources>
     <string name="open">Otevřít %1$s</string>
     <string name="app">Aplikace</string>
     <string name="open_app_drawer">Otevřít nabídku aplikací</string>
@@ -66,5 +66,5 @@
     <string name="layout_type">Typ rozvržení</string>
     <string name="vertical_alignment">Svislé zarovnání</string>
     <string name="horizontal_arrangement">Vodorovné uspořádání</string>
-    <string name="open_notification_panel_by_reflection">Otevřít panel oznámení pomocí reflexe</string>
+    <string name="open_notification_panel_by_reflection">Otevřít panel oznámení odrazem</string>
 </resources>
