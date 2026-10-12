@@ -21,6 +21,7 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,6 +41,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.material3.BottomSheetDefaults.DragHandle
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -116,7 +118,6 @@ internal fun ShortcutConfigScreen(
     screenHeight: Int,
     swipeY: Float,
     alpha: Float,
-    cornerSize: Dp,
     isVisibleOverlay: Boolean,
     animations: Boolean,
     drag: Drag,
@@ -161,22 +162,39 @@ internal fun ShortcutConfigScreen(
     Surface(
         modifier = modifier
             .fillMaxSize()
+            .padding(top = paddingValues.calculateTopPadding())
             .graphicsLayer {
                 translationY = swipeY
                 this.alpha = alpha
                 clip = true
-                shape = RoundedCornerShape(cornerSize)
+                shape = RoundedCornerShape(20.dp)
             },
     ) {
         Column(
             modifier = modifier
                 .fillMaxSize()
                 .padding(
-                    top = paddingValues.calculateTopPadding(),
                     start = paddingValues.calculateLeftPadding(layoutDirection),
                     end = paddingValues.calculateEndPadding(layoutDirection),
                 ),
         ) {
+            DragHandle(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .pointerInput(Unit) {
+                        detectVerticalDragGestures(
+                            onVerticalDrag = { _, dragAmount ->
+                                onVerticalDrag(dragAmount)
+                            },
+                            onDragEnd = onDragEnd,
+                            onDragCancel = onDragEnd,
+                        )
+                    },
+                width = 50.dp,
+                height = 8.dp,
+                shape = RoundedCornerShape(10.dp),
+            )
+
             SearchBar(
                 state = searchBarState,
                 modifier = Modifier

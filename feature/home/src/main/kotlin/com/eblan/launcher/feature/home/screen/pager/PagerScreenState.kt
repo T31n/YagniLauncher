@@ -253,12 +253,6 @@ internal class PagerScreenState(
         ((screenHeight - applicationScreenSwipeY.value) / (screenHeight / 2)).coerceIn(0f, 1f)
     }
 
-    val applicationScreenCornerSize by derivedStateOf {
-        val progress = (applicationScreenSwipeY.value / screenHeight).coerceIn(0f, 1f)
-
-        (20 * progress).dp
-    }
-
     val pagerScreenAlpha by derivedStateOf {
         val threshold = screenHeight / 2
 
@@ -271,22 +265,10 @@ internal class PagerScreenState(
         ((screenHeight - widgetScreenSwipeY.value) / (screenHeight / 2)).coerceIn(0f, 1f)
     }
 
-    val widgetScreenCornerSize by derivedStateOf {
-        val progress = (widgetScreenSwipeY.value / screenHeight).coerceIn(0f, 1f)
-
-        (20 * progress).dp
-    }
-
     val shortcutConfigScreenSwipeY = Animatable(screenHeight.toFloat())
 
     val shortcutConfigScreenAlpha by derivedStateOf {
         ((screenHeight - shortcutConfigScreenSwipeY.value) / (screenHeight / 2)).coerceIn(0f, 1f)
-    }
-
-    val shortcutConfigScreenCornerSize by derivedStateOf {
-        val progress = (shortcutConfigScreenSwipeY.value / screenHeight).coerceIn(0f, 1f)
-
-        (20 * progress).dp
     }
 
     val appWidgetScreenSwipeY = Animatable(screenHeight.toFloat())

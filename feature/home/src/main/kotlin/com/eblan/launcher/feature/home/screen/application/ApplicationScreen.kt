@@ -73,7 +73,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -118,7 +117,6 @@ internal fun ApplicationScreen(
     sharedTransitionScope: SharedTransitionScope,
     alpha: Float,
     appDrawerSettings: AppDrawerSettings,
-    cornerSize: Dp,
     drag: Drag,
     eblanApplicationInfoTags: List<EblanApplicationInfoTag>,
     getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
@@ -176,11 +174,12 @@ internal fun ApplicationScreen(
     Surface(
         modifier = modifier
             .fillMaxSize()
+            .padding(top = paddingValues.calculateTopPadding())
             .graphicsLayer {
                 translationY = swipeY
                 this.alpha = alpha
                 clip = true
-                shape = RoundedCornerShape(cornerSize)
+                shape = RoundedCornerShape(20.dp)
             },
         color = when (appDrawerSettings.backgroundColor) {
             BackgroundColor.System -> MaterialTheme.colorScheme.surface

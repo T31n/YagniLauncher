@@ -25,6 +25,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -32,10 +34,13 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.material3.BottomSheetDefaults.DragHandle
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -48,6 +53,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -73,6 +79,7 @@ import com.eblan.launcher.feature.home.screen.application.PrivateSpaceEblanAppli
 import com.eblan.launcher.feature.home.screen.application.QuiteModeScreen
 import com.eblan.launcher.feature.home.screen.application.TagElevatedFilterChip
 import com.eblan.launcher.feature.home.screen.application.rememberIsQuietModeEnabled
+import com.eblan.launcher.feature.home.util.getApplicationScreenTextColor
 import com.eblan.launcher.ui.local.LocalUserManager
 import com.eblan.launcher.ui.settings.rememberIsDefaultLauncher
 import kotlinx.coroutines.FlowPreview
@@ -114,6 +121,8 @@ internal fun HorizontalApplicationScreen(
         intSize: IntSize,
     ) -> Unit,
 ) {
+    val layoutDirection = LocalLayoutDirection.current
+
     val horizontalPagerState = rememberPagerState(
         pageCount = {
             getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos.keys.size
@@ -150,8 +159,42 @@ internal fun HorizontalApplicationScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(paddingValues),
+            .padding(
+                start = paddingValues.calculateStartPadding(layoutDirection),
+                end = paddingValues.calculateEndPadding(layoutDirection),
+                bottom = if (appDrawerSettings.searchBarPosition == SearchBarPosition.Bottom) {
+                    paddingValues.calculateBottomPadding()
+                } else {
+                    0.dp
+                },
+            )
+            .pointerInput(
+                key1 = onVerticalDrag,
+                key2 = onDragEnd,
+            ) {
+                detectVerticalDragGestures(
+                    onVerticalDrag = { _, dragAmount ->
+                        onVerticalDrag(dragAmount)
+                    },
+                    onDragEnd = onDragEnd,
+                    onDragCancel = onDragEnd,
+                )
+            },
     ) {
+        DragHandle(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            width = 50.dp,
+            height = 8.dp,
+            shape = RoundedCornerShape(10.dp),
+            color = getApplicationScreenTextColor(
+                backgroundColor = appDrawerSettings.backgroundColor,
+                customBackgroundColor = appDrawerSettings.customBackgroundColor,
+                systemTextColor = systemTextColor,
+                systemCustomTextColor = systemCustomTextColor,
+                defaultColor = MaterialTheme.colorScheme.onSurface,
+            ),
+        )
+
         if (appDrawerSettings.searchBarPosition == SearchBarPosition.Top) {
             ApplicationSearchBar(
                 focusRequester = focusRequester,
@@ -321,8 +364,6 @@ private fun EblanApplicationInfosPage(
                 systemTextColor = systemTextColor,
                 systemCustomTextColor = systemCustomTextColor,
                 animations = animations,
-                onDragEnd = onDragEnd,
-                onVerticalDrag = onVerticalDrag,
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                 onDragApplicationInfo = onDragApplicationInfo,
                 onLongPressApplicationInfo = onLongPressApplicationInfo,
@@ -374,8 +415,6 @@ private fun EblanApplicationInfos(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     animations: Boolean,
-    onDragEnd: () -> Unit,
-    onVerticalDrag: (Float) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onDragApplicationInfo: (GridItem) -> Unit,
     onLongPressApplicationInfo: (
@@ -392,19 +431,7 @@ private fun EblanApplicationInfos(
     ) -> Unit,
 ) {
     HorizontalAppDrawerGridLayout(
-        modifier = modifier
-            .fillMaxSize()
-            .pointerInput(
-                key1 = onVerticalDrag,
-                key2 = onDragEnd,
-            ) {
-                detectVerticalDragGestures(
-                    onVerticalDrag = { _, dragAmount ->
-                        onVerticalDrag(dragAmount)
-                    },
-                    onDragEnd = onDragEnd,
-                )
-            },
+        modifier = modifier.fillMaxSize(),
         columns = appDrawerSettings.horizontalAppDrawerColumns,
         eblanApplicationInfos = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos[eblanUserPageKey],
         rows = appDrawerSettings.horizontalAppDrawerRows,
