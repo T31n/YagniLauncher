@@ -167,12 +167,24 @@ internal fun HorizontalApplicationScreen(
                 } else {
                     0.dp
                 },
-            ),
+            )
+            .pointerInput(
+                key1 = onVerticalDrag,
+                key2 = onDragEnd,
+            ) {
+                detectVerticalDragGestures(
+                    onVerticalDrag = { _, dragAmount ->
+                        onVerticalDrag(dragAmount)
+                    },
+                    onDragEnd = onDragEnd,
+                    onDragCancel = onDragEnd,
+                )
+            },
     ) {
         DragHandle(
             modifier = Modifier.align(Alignment.CenterHorizontally),
             width = 50.dp,
-            height = 20.dp,
+            height = 8.dp,
             shape = RoundedCornerShape(10.dp),
             color = getApplicationScreenTextColor(
                 backgroundColor = appDrawerSettings.backgroundColor,
@@ -352,8 +364,6 @@ private fun EblanApplicationInfosPage(
                 systemTextColor = systemTextColor,
                 systemCustomTextColor = systemCustomTextColor,
                 animations = animations,
-                onDragEnd = onDragEnd,
-                onVerticalDrag = onVerticalDrag,
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                 onDragApplicationInfo = onDragApplicationInfo,
                 onLongPressApplicationInfo = onLongPressApplicationInfo,
@@ -405,8 +415,6 @@ private fun EblanApplicationInfos(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     animations: Boolean,
-    onDragEnd: () -> Unit,
-    onVerticalDrag: (Float) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onDragApplicationInfo: (GridItem) -> Unit,
     onLongPressApplicationInfo: (
@@ -423,19 +431,7 @@ private fun EblanApplicationInfos(
     ) -> Unit,
 ) {
     HorizontalAppDrawerGridLayout(
-        modifier = modifier
-            .fillMaxSize()
-            .pointerInput(
-                key1 = onVerticalDrag,
-                key2 = onDragEnd,
-            ) {
-                detectVerticalDragGestures(
-                    onVerticalDrag = { _, dragAmount ->
-                        onVerticalDrag(dragAmount)
-                    },
-                    onDragEnd = onDragEnd,
-                )
-            },
+        modifier = modifier.fillMaxSize(),
         columns = appDrawerSettings.horizontalAppDrawerColumns,
         eblanApplicationInfos = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos[eblanUserPageKey],
         rows = appDrawerSettings.horizontalAppDrawerRows,

@@ -21,6 +21,7 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -178,7 +179,17 @@ internal fun ShortcutConfigScreen(
                 ),
         ) {
             DragHandle(
-                modifier = Modifier.align(Alignment.CenterHorizontally),
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .pointerInput(Unit) {
+                        detectVerticalDragGestures(
+                            onVerticalDrag = { _, dragAmount ->
+                                onVerticalDrag(dragAmount)
+                            },
+                            onDragEnd = onDragEnd,
+                            onDragCancel = onDragEnd,
+                        )
+                    },
                 width = 50.dp,
                 height = 8.dp,
                 shape = RoundedCornerShape(10.dp),
