@@ -1,0 +1,3 @@
+- Open Notification Panel by reflection
+- Revamped Drawer UI
+- Bug fixes
