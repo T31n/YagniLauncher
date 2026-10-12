@@ -104,7 +104,6 @@ internal fun WidgetScreen(
     alpha: Float,
     animations: Boolean,
     columns: Int,
-    cornerSize: Dp,
     drag: Drag,
     eblanAppWidgetProviderInfos: Map<EblanApplicationInfoGroup, List<EblanAppWidgetProviderInfo>>,
     gridItemSettings: GridItemSettings,
@@ -163,7 +162,7 @@ internal fun WidgetScreen(
                 translationY = swipeY
                 this.alpha = alpha
                 clip = true
-                shape = RoundedCornerShape(cornerSize)
+                shape = RoundedCornerShape(20.dp)
             },
     ) {
         Column(

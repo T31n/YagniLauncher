@@ -117,7 +117,6 @@ internal fun ShortcutConfigScreen(
     screenHeight: Int,
     swipeY: Float,
     alpha: Float,
-    cornerSize: Dp,
     isVisibleOverlay: Boolean,
     animations: Boolean,
     drag: Drag,
@@ -167,7 +166,7 @@ internal fun ShortcutConfigScreen(
                 translationY = swipeY
                 this.alpha = alpha
                 clip = true
-                shape = RoundedCornerShape(cornerSize)
+                shape = RoundedCornerShape(20.dp)
             },
     ) {
         Column(
