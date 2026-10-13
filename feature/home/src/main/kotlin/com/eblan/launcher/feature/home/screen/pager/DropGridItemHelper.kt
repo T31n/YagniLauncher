@@ -736,11 +736,9 @@ private fun calculateGridSize(
     }
 
     val horizontalPadding = leftPadding + rightPadding
-
     val verticalPadding = topPadding + bottomPadding
 
     val safeDrawingWidth = screenWidth - horizontalPadding
-
     val safeDrawingHeight = screenHeight - verticalPadding
 
     val gridHeight = when (associate) {

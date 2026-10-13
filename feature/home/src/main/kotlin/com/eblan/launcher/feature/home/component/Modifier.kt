@@ -58,13 +58,9 @@ internal fun Modifier.swipeGestures(
     onOpenAppDrawer: () -> Unit,
 ): Modifier {
     val context = LocalContext.current
-
     val density = LocalDensity.current
-
     val scope = rememberCoroutineScope()
-
     val launcherApps = LocalLauncherApps.current
-
     val androidStatusBarManagerWrapper = LocalStatusBarManager.current
 
     val currentOnOpenAppDrawer by rememberUpdatedState(onOpenAppDrawer)

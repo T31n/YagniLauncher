@@ -88,43 +88,24 @@ internal fun HomeRoute(
     onEditFolderApplicationInfo: (String) -> Unit,
 ) {
     val homeUiState by viewModel.homeUiState.collectAsStateWithLifecycle()
-
     val screen by viewModel.screen.collectAsStateWithLifecycle()
-
     val movedGridItemResult by viewModel.movedGridItemResult.collectAsStateWithLifecycle()
-
     val pageItems by viewModel.pageItems.collectAsStateWithLifecycle()
-
     val pinGridItem by viewModel.pinGridItem.collectAsStateWithLifecycle()
-
     val getEblanApplicationInfos by viewModel.getEblanApplicationInfosByLabelAndTag.collectAsStateWithLifecycle()
-
     val eblanShortcutConfigs by viewModel.eblanShortcutConfigs.collectAsStateWithLifecycle()
-
     val eblanAppWidgetProviderInfos by viewModel.eblanAppWidgetProviderInfos.collectAsStateWithLifecycle()
-
     val eblanShortcutInfosGroup by viewModel.eblanShortcutInfosGroup.collectAsStateWithLifecycle()
-
     val eblanAppWidgetProviderInfosGroup by viewModel.eblanAppWidgetProviderInfosGroup.collectAsStateWithLifecycle()
-
     val eblanApplicationInfoTags by viewModel.eblanApplicationInfoTags.collectAsStateWithLifecycle()
-
     val folderGridItemPopups by viewModel.folderGridItemPopups.collectAsStateWithLifecycle()
-
     val resizeGridItem by viewModel.resizeGridItem.collectAsStateWithLifecycle()
-
     val gridItemSource by viewModel.gridItemSource.collectAsStateWithLifecycle()
-
     val isVisibleOverlay by viewModel.isVisibleOverlay.collectAsStateWithLifecycle()
-
     val textColor by viewModel.textColor.collectAsStateWithLifecycle()
-
     val previewFolderGridItems by viewModel.previewFolderGridItems.collectAsStateWithLifecycle()
-
     val previewFolderEblanApplicationInfos by viewModel.previewFolderEblanApplicationInfos.collectAsStateWithLifecycle()
-
     val folderEblanApplicationInfoPopups by viewModel.folderEblanApplicationInfoPopups.collectAsStateWithLifecycle()
-
     val moveFolderEblanApplicationInfoGridItemResult by viewModel.moveFolderEblanApplicationInfoGridItemResult.collectAsStateWithLifecycle()
 
     HomeScreen(

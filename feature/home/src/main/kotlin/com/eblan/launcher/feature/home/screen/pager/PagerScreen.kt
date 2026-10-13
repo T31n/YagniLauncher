@@ -316,27 +316,16 @@ internal fun PagerScreen(
     ) -> Unit,
 ) {
     val layoutDirection = LocalLayoutDirection.current
-
     val androidLauncherAppsWrapper = LocalLauncherApps.current
-
     val view = LocalView.current
-
     val activity = LocalActivity.current as ComponentActivity
-
     val density = LocalDensity.current
-
     val context = LocalContext.current
-
     val androidUserManagerWrapper = LocalUserManager.current
-
     val androidImageSerializer = LocalImageSerializer.current
-
     val androidAppWidgetManagerWrapper = LocalAppWidgetManager.current
-
     val fileManager = LocalFileManager.current
-
     val androidAppWidgetHostWrapper = LocalAppWidgetHost.current
-
     val iconKeyGenerator = LocalIconKeyGenerator.current
 
     val scope = rememberCoroutineScope()
@@ -1635,7 +1624,6 @@ private fun SharedTransitionScope.OverlayImage(
     }
 
     val density = LocalDensity.current
-
     val layoutDirection = LocalLayoutDirection.current
 
     val size = with(density) {
@@ -1718,13 +1706,9 @@ private fun SyncDataEffect(
     ) -> Unit,
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
-
     val appWidgetHost = LocalAppWidgetHost.current
-
     val pinItemRequestWrapper = LocalPinItemRequest.current
-
     val launcherAppsWrapper = LocalLauncherApps.current
-
     val userManagerWrapper = LocalUserManager.current
 
     DisposableEffect(
@@ -1841,7 +1825,6 @@ private fun GridPagerIndicator(
 @Composable
 private fun rememberStatusBarNotifications(): State<Map<String, Int>> {
     val context = LocalContext.current
-
     val lifecycleOwner = LocalLifecycleOwner.current
 
     return produceState(

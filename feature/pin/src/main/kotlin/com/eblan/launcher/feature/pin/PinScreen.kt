@@ -100,9 +100,7 @@ fun PinScreen(
     onFinish: () -> Unit,
 ) {
     val gridItem by viewModel.gridItem.collectAsStateWithLifecycle()
-
     val isBoundWidget by viewModel.isBoundWidget.collectAsStateWithLifecycle()
-
     val isFinished by viewModel.isFinished.collectAsStateWithLifecycle()
 
     when (pinItemRequest.requestType) {
@@ -162,17 +160,11 @@ private fun PinShortcutScreen(
     val shortcutInfo = pinItemRequest.shortcutInfo ?: return
 
     val pinItemRequestWrapper = LocalPinItemRequest.current
-
     val androidLauncherAppsWrapper = LocalLauncherApps.current
-
     val imageSerializer = LocalImageSerializer.current
-
     val androidUserManagerWrapper = LocalUserManager.current
-
     val fileManager = LocalFileManager.current
-
     val context = LocalContext.current
-
     val iconKeyGenerator = LocalIconKeyGenerator.current
 
     val scope = rememberCoroutineScope()
@@ -274,15 +266,10 @@ private fun PinWidgetScreen(
     val appWidgetProviderInfo = pinItemRequest.getAppWidgetProviderInfo(context) ?: return
 
     val pinItemRequestWrapper = LocalPinItemRequest.current
-
     val appWidgetHostWrapper = LocalAppWidgetHost.current
-
     val appWidgetManager = LocalAppWidgetManager.current
-
     val userManager = LocalUserManager.current
-
     val fileManager = LocalFileManager.current
-
     val iconKeyGenerator = LocalIconKeyGenerator.current
 
     val paddingValues = WindowInsets.safeDrawing.asPaddingValues()

@@ -41,14 +41,6 @@ import com.eblan.launcher.feature.home.util.PAGE_INDICATOR_HEIGHT
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
-private data class GridDragPosition(
-    val x: Int,
-    val y: Int,
-    val safeDrawingWidth: Int,
-    val safeDrawingHeight: Int,
-    val isOnDock: Boolean,
-)
-
 internal suspend fun handlePageDirection(
     folderGridItemPopups: State<List<FolderGridItemPopup>>,
     pageDirection: PageDirection?,
@@ -150,19 +142,42 @@ internal fun handleDragGridItem(
     ) {
         return
     }
+
+    val leftPadding = with(density) {
+        paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
+    }
+
+    val rightPadding = with(density) {
+        paddingValues.calculateRightPadding(layoutDirection).roundToPx()
+    }
+
+    val topPadding = with(density) {
+        paddingValues.calculateTopPadding().roundToPx()
+    }
+
+    val bottomPadding = with(density) {
+        paddingValues.calculateBottomPadding().roundToPx()
+    }
+
+    val horizontalPadding = leftPadding + rightPadding
+    val verticalPadding = topPadding + bottomPadding
+
+    val safeDrawingWidth = screenWidth - horizontalPadding
+    val safeDrawingHeight = screenHeight - verticalPadding
+
+    val localDragX = dragIntOffset.x - leftPadding
+    val localDragY = dragIntOffset.y - topPadding
+
+    val layoutDirectionX = when (layoutDirection) {
+        LayoutDirection.Rtl -> safeDrawingWidth - localDragX
+        LayoutDirection.Ltr -> localDragX
+    }
+
     val dockHeightPx = with(density) {
         dockHeight.dp.roundToPx()
     }
 
-    val gridDragPosition = calculateGridDragPosition(
-        density = density,
-        dragIntOffset = dragIntOffset,
-        paddingValues = paddingValues,
-        screenWidth = screenWidth,
-        screenHeight = screenHeight,
-        dockHeightPx = dockHeightPx,
-        layoutDirection = layoutDirection,
-    )
+    val isOnDock = dockHeightPx > 0 && localDragY > safeDrawingHeight - dockHeightPx
 
     when (val currentGridItemSource = gridItemSource ?: return) {
         is GridItemSource.Existing,
@@ -171,17 +186,17 @@ internal fun handleDragGridItem(
         is GridItemSource.NewFolder,
         is GridItemSource.Pin,
         -> {
-            if (gridDragPosition.isOnDock) {
+            if (isOnDock) {
                 dragDockGridItem(
                     currentPage = dockGridCurrentPage,
                     dockColumns = dockColumns,
                     dockHeightPx = dockHeightPx,
                     dockRows = dockRows,
-                    dragX = gridDragPosition.x,
-                    dragY = gridDragPosition.y,
+                    dragX = layoutDirectionX,
+                    dragY = localDragY,
                     gridItemSource = currentGridItemSource,
-                    safeDrawingHeight = gridDragPosition.safeDrawingHeight,
-                    safeDrawingWidth = gridDragPosition.safeDrawingWidth,
+                    safeDrawingHeight = safeDrawingHeight,
+                    safeDrawingWidth = safeDrawingWidth,
                     moveGridItemResult = moveGridItemResult,
                     onMoveGridItem = onMoveGridItem,
                     onUpdateAssociate = onUpdateAssociate,
@@ -193,12 +208,12 @@ internal fun handleDragGridItem(
                     columns = columns,
                     currentPage = gridCurrentPage,
                     dockHeightPx = dockHeightPx,
-                    dragX = gridDragPosition.x,
-                    dragY = gridDragPosition.y,
+                    dragX = layoutDirectionX,
+                    dragY = localDragY,
                     gridItemSource = currentGridItemSource,
                     rows = rows,
-                    safeDrawingHeight = gridDragPosition.safeDrawingHeight,
-                    safeDrawingWidth = gridDragPosition.safeDrawingWidth,
+                    safeDrawingHeight = safeDrawingHeight,
+                    safeDrawingWidth = safeDrawingWidth,
                     moveGridItemResult = moveGridItemResult,
                     onMoveGridItem = onMoveGridItem,
                     onUpdateAssociate = onUpdateAssociate,
@@ -447,56 +462,6 @@ private fun getStartPosition(
     val startRow = targetRow.coerceIn(0, maxStartRow)
 
     return startColumn to startRow
-}
-
-private fun calculateGridDragPosition(
-    density: Density,
-    dragIntOffset: IntOffset,
-    paddingValues: PaddingValues,
-    screenWidth: Int,
-    screenHeight: Int,
-    dockHeightPx: Int,
-    layoutDirection: LayoutDirection,
-): GridDragPosition {
-    val leftPadding = with(density) {
-        paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
-    }
-
-    val rightPadding = with(density) {
-        paddingValues.calculateRightPadding(layoutDirection).roundToPx()
-    }
-
-    val topPadding = with(density) {
-        paddingValues.calculateTopPadding().roundToPx()
-    }
-
-    val bottomPadding = with(density) {
-        paddingValues.calculateBottomPadding().roundToPx()
-    }
-
-    val horizontalPadding = leftPadding + rightPadding
-    val verticalPadding = topPadding + bottomPadding
-
-    val safeDrawingWidth = screenWidth - horizontalPadding
-    val safeDrawingHeight = screenHeight - verticalPadding
-
-    val localDragX = dragIntOffset.x - leftPadding
-    val localDragY = dragIntOffset.y - topPadding
-
-    val layoutDirectionX = when (layoutDirection) {
-        LayoutDirection.Rtl -> safeDrawingWidth - localDragX
-        LayoutDirection.Ltr -> localDragX
-    }
-
-    val isOnDock = dockHeightPx > 0 && localDragY > safeDrawingHeight - dockHeightPx
-
-    return GridDragPosition(
-        x = layoutDirectionX,
-        y = localDragY,
-        safeDrawingWidth = safeDrawingWidth,
-        safeDrawingHeight = safeDrawingHeight,
-        isOnDock = isOnDock,
-    )
 }
 
 private fun calculateMovingFolderGridItem(

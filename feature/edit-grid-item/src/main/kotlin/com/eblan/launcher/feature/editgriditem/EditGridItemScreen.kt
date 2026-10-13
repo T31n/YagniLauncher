@@ -65,11 +65,8 @@ internal fun EditGridItemRoute(
     onNavigateUp: () -> Unit,
 ) {
     val editUiState by viewModel.editGridItemUiState.collectAsStateWithLifecycle()
-
     val packageManagerIconPackInfos by viewModel.packageManagerIconPackInfos.collectAsStateWithLifecycle()
-
     val iconPackInfoComponents by viewModel.iconPackInfoComponents.collectAsStateWithLifecycle()
-
     val eblanApplicationInfos by viewModel.eblanApplicationInfos.collectAsStateWithLifecycle()
 
     EditGridItemScreen(
@@ -294,11 +291,9 @@ private fun EditApplicationInfo(
     ) -> Unit,
 ) {
     var showCustomIconDialog by remember { mutableStateOf(false) }
-
     var showCustomLabelDialog by remember { mutableStateOf(false) }
 
     var iconPackPackageName by remember { mutableStateOf<String?>(null) }
-
     var iconPackLabel by remember { mutableStateOf<String?>(null) }
 
     val items = buildList {
@@ -416,11 +411,9 @@ private fun EditFolder(
     ) -> Unit,
 ) {
     var showCustomIconDialog by remember { mutableStateOf(false) }
-
     var showEditLabelDialog by remember { mutableStateOf(false) }
 
     var iconPackPackageName by remember { mutableStateOf<String?>(null) }
-
     var iconPackLabel by remember { mutableStateOf<String?>(null) }
 
     val items = buildList {
@@ -535,11 +528,9 @@ private fun EditShortcutInfo(
     ) -> Unit,
 ) {
     var showCustomIconDialog by remember { mutableStateOf(false) }
-
     var showCustomShortLabelDialog by remember { mutableStateOf(false) }
 
     var iconPackPackageName by remember { mutableStateOf<String?>(null) }
-
     var iconPackLabel by remember { mutableStateOf<String?>(null) }
 
     val items = buildList {
@@ -657,11 +648,9 @@ private fun EditShortcutConfig(
     ) -> Unit,
 ) {
     var showCustomIconDialog by remember { mutableStateOf(false) }
-
     var showCustomLabelDialog by remember { mutableStateOf(false) }
 
     var iconPackPackageName by remember { mutableStateOf<String?>(null) }
-
     var iconPackLabel by remember { mutableStateOf<String?>(null) }
 
     val items = buildList {

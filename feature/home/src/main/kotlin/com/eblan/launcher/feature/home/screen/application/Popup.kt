@@ -100,9 +100,7 @@ internal fun ApplicationInfoPopup(
     requireNotNull(popupIntSize)
 
     val launcherApps = LocalLauncherApps.current
-
     val density = LocalDensity.current
-
     val layoutDirection = LocalLayoutDirection.current
 
     val transitionState = remember {
@@ -120,7 +118,6 @@ internal fun ApplicationInfoPopup(
     }
 
     val x = popupIntOffset.x - leftPadding
-
     val y = popupIntOffset.y - topPadding
 
     LaunchedEffect(
@@ -270,9 +267,7 @@ internal fun PrivateApplicationInfoPopup(
     requireNotNull(popupIntSize)
 
     val launcherApps = LocalLauncherApps.current
-
     val density = LocalDensity.current
-
     val layoutDirection = LocalLayoutDirection.current
 
     val leftPadding = with(density) {
@@ -284,7 +279,6 @@ internal fun PrivateApplicationInfoPopup(
     }
 
     val x = popupIntOffset.x - leftPadding
-
     val y = popupIntOffset.y - topPadding
 
     val transitionState = remember {

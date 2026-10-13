@@ -119,15 +119,10 @@ private fun Success(
     onUpdateHomeSettings: (HomeSettings) -> Unit,
 ) {
     var showGridDialog by remember { mutableStateOf(false) }
-
     var showDockGridDialog by remember { mutableStateOf(false) }
-
     var showDockHeightDialog by remember { mutableStateOf(false) }
-
     var showDockCustomBackgroundColorDialog by remember { mutableStateOf(false) }
-
     var showDockPaddingDialog by remember { mutableStateOf(false) }
-
     var showDockCornerRadiusDialog by remember { mutableStateOf(false) }
 
     val homeSettingsItems = buildHomeSettingsItems(

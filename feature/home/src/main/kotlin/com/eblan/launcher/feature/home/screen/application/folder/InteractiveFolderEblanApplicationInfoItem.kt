@@ -183,7 +183,6 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
 
     val horizontalAlignment =
         getHorizontalAlignment(horizontalAlignment = appDrawerSettings.gridItemSettings.horizontalAlignment)
-
     val verticalArrangement =
         getVerticalArrangement(verticalArrangement = appDrawerSettings.gridItemSettings.verticalArrangement)
 
@@ -299,13 +298,9 @@ private fun InteractiveEblanApplicationInfoItem(
     ) -> Unit,
 ) {
     val context = LocalContext.current
-
     val density = LocalDensity.current
-
     val launcherApps = LocalLauncherApps.current
-
     val layoutDirection = LocalLayoutDirection.current
-
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val scope = rememberCoroutineScope()
@@ -323,11 +318,9 @@ private fun InteractiveEblanApplicationInfoItem(
     val alpha = if (hasInteraction) 0f else 1f
 
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
-
     var intSize by remember { mutableStateOf(IntSize.Zero) }
 
     val left = intOffset.x + leftPadding
-
     val top = intOffset.y + topPadding
 
     val sourceBounds = Rect(
@@ -493,7 +486,6 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
     val graphicsLayer = rememberGraphicsLayer()
 
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
-
     var intSize by remember { mutableStateOf(IntSize.Zero) }
 
     Column(

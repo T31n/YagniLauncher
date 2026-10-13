@@ -157,13 +157,10 @@ internal fun InteractiveGridItem(
 
     val horizontalAlignment =
         getHorizontalAlignment(horizontalAlignment = currentGridItemSettings.horizontalAlignment)
-
     val verticalArrangement =
         getVerticalArrangement(verticalArrangement = currentGridItemSettings.verticalArrangement)
-
     val horizontalArrangement =
         getHorizontalArrangement(horizontalArrangement = currentGridItemSettings.horizontalArrangement)
-
     val verticalAlignment =
         getVerticalAlignment(verticalAlignment = currentGridItemSettings.verticalAlignment)
 
@@ -345,7 +342,6 @@ private fun InteractiveWidgetGridItem(
     ) -> Unit,
 ) {
     val appWidgetHost = LocalAppWidgetHost.current
-
     val appWidgetManager = LocalAppWidgetManager.current
 
     val appWidgetInfo = appWidgetManager.getAppWidgetInfo(appWidgetId = data.appWidgetId)
@@ -357,7 +353,6 @@ private fun InteractiveWidgetGridItem(
     val alpha = if (hasInteraction) 0f else 1f
 
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
-
     var intSize by remember { mutableStateOf(IntSize.Zero) }
 
     val scale = remember { Animatable(1f) }

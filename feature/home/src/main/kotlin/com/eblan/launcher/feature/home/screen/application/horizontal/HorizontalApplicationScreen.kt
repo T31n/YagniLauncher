@@ -34,7 +34,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.BottomSheetDefaults.DragHandle
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -183,9 +182,6 @@ internal fun HorizontalApplicationScreen(
     ) {
         DragHandle(
             modifier = Modifier.align(Alignment.CenterHorizontally),
-            width = 50.dp,
-            height = 8.dp,
-            shape = RoundedCornerShape(10.dp),
             color = getApplicationScreenTextColor(
                 backgroundColor = appDrawerSettings.backgroundColor,
                 customBackgroundColor = appDrawerSettings.customBackgroundColor,

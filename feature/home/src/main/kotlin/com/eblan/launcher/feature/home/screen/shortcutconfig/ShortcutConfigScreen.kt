@@ -79,7 +79,6 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -143,7 +142,6 @@ internal fun ShortcutConfigScreen(
     )
 
     val searchBarState = rememberSearchBarState()
-
     val textFieldState = rememberTextFieldState()
 
     val scope = rememberCoroutineScope()
@@ -190,9 +188,6 @@ internal fun ShortcutConfigScreen(
                             onDragCancel = onDragEnd,
                         )
                     },
-                width = 50.dp,
-                height = 8.dp,
-                shape = RoundedCornerShape(10.dp),
             )
 
             SearchBar(
@@ -452,7 +447,6 @@ private fun EblanShortcutConfigItem(
     val scope = rememberCoroutineScope()
 
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
-
     var intSize by remember { mutableStateOf(IntSize.Zero) }
 
     val graphicsLayer = rememberGraphicsLayer()

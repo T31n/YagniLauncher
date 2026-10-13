@@ -82,17 +82,11 @@ internal fun EditApplicationInfoRoute(
     onNavigateUp: () -> Unit,
 ) {
     val editApplicationInfoUiState by viewModel.editApplicationInfoUiState.collectAsStateWithLifecycle()
-
     val packageManagerIconPackInfos by viewModel.packageManagerIconPackInfos.collectAsStateWithLifecycle()
-
     val iconPackInfoComponents by viewModel.iconPackInfoComponents.collectAsStateWithLifecycle()
-
     val eblanApplicationInfoTagsUi by viewModel.eblanApplicationInfoTagsUi.collectAsStateWithLifecycle()
-
     val folderEblanApplicationInfos by viewModel.folderEblanApplicationInfos.collectAsStateWithLifecycle()
-
     val previewFolderEblanApplicationInfos by viewModel.previewFolderEblanApplicationInfos.collectAsStateWithLifecycle()
-
     val topLevelFolderEblanApplicationInfos by viewModel.topLevelFolderEblanApplicationInfos.collectAsStateWithLifecycle()
 
     EditApplicationInfoScreen(
@@ -229,11 +223,9 @@ private fun Success(
     onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
 ) {
     var showCustomIconDialog by remember { mutableStateOf(false) }
-
     var showCustomLabelDialog by remember { mutableStateOf(false) }
 
     var iconPackPackageName by remember { mutableStateOf<String?>(null) }
-
     var iconPackInfoLabel by remember { mutableStateOf<String?>(null) }
 
     val items = buildList {
@@ -364,7 +356,6 @@ private fun Tags(
     onUpdateEblanApplicationInfoTag: (EblanApplicationInfoTag) -> Unit,
 ) {
     var showAddTagDialog by remember { mutableStateOf(false) }
-
     var showUpdateTagDialog by remember { mutableStateOf(false) }
 
     var selectedEblanApplicationInfoTagUi by remember {

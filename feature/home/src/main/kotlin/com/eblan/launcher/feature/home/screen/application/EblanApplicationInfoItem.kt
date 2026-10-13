@@ -114,13 +114,9 @@ internal fun EblanApplicationInfoItem(
     ) -> Unit,
 ) {
     val density = LocalDensity.current
-
     val layoutDirection = LocalLayoutDirection.current
-
     val context = LocalContext.current
-
     val launcherApps = LocalLauncherApps.current
-
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val graphicsLayer = rememberGraphicsLayer()
@@ -156,13 +152,10 @@ internal fun EblanApplicationInfoItem(
 
     val horizontalAlignment =
         getHorizontalAlignment(horizontalAlignment = gridItemSettings.horizontalAlignment)
-
     val verticalArrangement =
         getVerticalArrangement(verticalArrangement = gridItemSettings.verticalArrangement)
-
     val horizontalArrangement =
         getHorizontalArrangement(horizontalArrangement = gridItemSettings.horizontalArrangement)
-
     val verticalAlignment =
         getVerticalAlignment(verticalAlignment = gridItemSettings.verticalAlignment)
 

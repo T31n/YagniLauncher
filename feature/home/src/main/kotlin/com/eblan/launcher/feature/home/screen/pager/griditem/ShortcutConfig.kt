@@ -106,7 +106,6 @@ internal fun InteractiveShortcutConfigGridItem(
 ) {
     val launcherApps = LocalLauncherApps.current
     val androidStatusBarManagerWrapper = LocalStatusBarManager.current
-
     val context = LocalContext.current
 
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }

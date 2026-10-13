@@ -102,9 +102,7 @@ internal fun GridItemPopup(
     requireNotNull(popupIntSize)
 
     val density = LocalDensity.current
-
     val layoutDirection = LocalLayoutDirection.current
-
     val launcherApps = LocalLauncherApps.current
 
     val transitionState = remember {
@@ -121,7 +119,6 @@ internal fun GridItemPopup(
     }
 
     val x = popupIntOffset.x - leftPadding
-
     val y = popupIntOffset.y - topPadding
 
     LaunchedEffect(

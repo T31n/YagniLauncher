@@ -168,11 +168,7 @@ internal fun AppWidgetScreen(
                     },
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                DragHandle(
-                    width = 50.dp,
-                    height = 8.dp,
-                    shape = RoundedCornerShape(10.dp),
-                )
+                DragHandle()
 
                 AsyncImage(
                     model = eblanApplicationInfoGroup.icon,
@@ -232,7 +228,6 @@ private fun EblanAppWidgetScreenItem(
     val scope = rememberCoroutineScope()
 
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
-
     var intSize by remember { mutableStateOf(IntSize.Zero) }
 
     val preview = eblanAppWidgetProviderInfo.preview ?: eblanAppWidgetProviderInfo.applicationIcon

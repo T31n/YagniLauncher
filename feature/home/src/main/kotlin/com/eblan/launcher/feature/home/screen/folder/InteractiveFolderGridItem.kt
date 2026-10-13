@@ -144,7 +144,6 @@ internal fun InteractiveFolderGridItem(
     onDragFolderGridItem: () -> Unit,
 ) {
     val density = LocalDensity.current
-
     val layoutDirection = LocalLayoutDirection.current
 
     val isSelected =
@@ -217,7 +216,6 @@ internal fun InteractiveFolderGridItem(
 
     val horizontalAlignment =
         getHorizontalAlignment(horizontalAlignment = currentGridItemSettings.horizontalAlignment)
-
     val verticalArrangement =
         getVerticalArrangement(verticalArrangement = currentGridItemSettings.verticalArrangement)
 
@@ -392,15 +390,11 @@ private fun InteractiveApplicationInfoGridItem(
     ) -> Unit,
 ) {
     val launcherApps = LocalLauncherApps.current
-
     val androidLauncherAppsWrapper = LocalLauncherApps.current
-
     val androidStatusBarManagerWrapper = LocalStatusBarManager.current
-
     val context = LocalContext.current
 
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
-
     var intSize by remember { mutableStateOf(IntSize.Zero) }
 
     val graphicsLayer = rememberGraphicsLayer()
@@ -587,15 +581,11 @@ private fun InteractiveShortcutInfoGridItem(
     ) -> Unit,
 ) {
     val androidLauncherAppsWrapper = LocalLauncherApps.current
-
     val launcherApps = LocalLauncherApps.current
-
     val androidStatusBarManagerWrapper = LocalStatusBarManager.current
-
     val context = LocalContext.current
 
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
-
     var intSize by remember { mutableStateOf(IntSize.Zero) }
 
     val graphicsLayer = rememberGraphicsLayer()
@@ -609,7 +599,6 @@ private fun InteractiveShortcutInfoGridItem(
     val hasInteraction = isSelected && isVisibleOverlay
 
     val defaultAlpha = if (hasShortcutHostPermission && data.isEnabled) 1f else 0.3f
-
     val alpha = if (hasInteraction) 0f else defaultAlpha
 
     val scale = remember { Animatable(1f) }
@@ -788,13 +777,10 @@ private fun InteractiveShortcutConfigGridItem(
     ) -> Unit,
 ) {
     val launcherApps = LocalLauncherApps.current
-
     val androidStatusBarManagerWrapper = LocalStatusBarManager.current
-
     val context = LocalContext.current
 
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
-
     var intSize by remember { mutableStateOf(IntSize.Zero) }
 
     val graphicsLayer = rememberGraphicsLayer()
@@ -977,13 +963,10 @@ private fun InteractiveNestedFolderGridItem(
     ) -> Unit,
 ) {
     val launcherApps = LocalLauncherApps.current
-
     val androidStatusBarManagerWrapper = LocalStatusBarManager.current
-
     val context = LocalContext.current
 
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
-
     var intSize by remember { mutableStateOf(IntSize.Zero) }
 
     val graphicsLayer = rememberGraphicsLayer()

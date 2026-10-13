@@ -86,7 +86,6 @@ internal fun FolderApplicationInfoPopup(
     requireNotNull(folderEblanApplicationInfo)
 
     val density = LocalDensity.current
-
     val layoutDirection = LocalLayoutDirection.current
 
     val transitionState = remember {
@@ -104,7 +103,6 @@ internal fun FolderApplicationInfoPopup(
     }
 
     val x = popupIntOffset.x - leftPadding
-
     val y = popupIntOffset.y - topPadding
 
     LaunchedEffect(
@@ -221,7 +219,6 @@ internal fun FolderApplicationInfoGridItemPopup(
     requireNotNull(folderEblanApplicationInfoGridItem)
 
     val density = LocalDensity.current
-
     val layoutDirection = LocalLayoutDirection.current
 
     val transitionState = remember {
@@ -239,7 +236,6 @@ internal fun FolderApplicationInfoGridItemPopup(
     }
 
     val x = popupIntOffset.x - leftPadding
-
     val y = popupIntOffset.y - topPadding
 
     LaunchedEffect(

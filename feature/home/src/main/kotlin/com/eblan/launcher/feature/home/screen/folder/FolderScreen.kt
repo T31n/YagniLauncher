@@ -144,14 +144,12 @@ internal fun FolderScreen(
         x = folderGridItemPopup.folderEntry.x,
         y = folderGridItemPopup.folderEntry.y,
     )
-
     val folderPopupIntSize = IntSize(
         width = folderGridItemPopup.folderEntry.width,
         height = folderGridItemPopup.folderEntry.height,
     )
 
     val density = LocalDensity.current
-
     val layoutDirection = LocalLayoutDirection.current
 
     val folderPopupLayoutInfo = getFolderPopupLayoutInfo(

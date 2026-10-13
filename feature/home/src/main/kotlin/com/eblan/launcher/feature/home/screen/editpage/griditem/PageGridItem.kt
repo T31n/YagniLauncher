@@ -65,13 +65,10 @@ internal fun PageGridItem(
 
     val horizontalAlignment =
         getHorizontalAlignment(horizontalAlignment = currentGridItemSettings.horizontalAlignment)
-
     val verticalArrangement =
         getVerticalArrangement(verticalArrangement = currentGridItemSettings.verticalArrangement)
-
     val horizontalArrangement =
         getHorizontalArrangement(horizontalArrangement = currentGridItemSettings.horizontalArrangement)
-
     val verticalAlignment =
         getVerticalAlignment(verticalAlignment = currentGridItemSettings.verticalAlignment)
 

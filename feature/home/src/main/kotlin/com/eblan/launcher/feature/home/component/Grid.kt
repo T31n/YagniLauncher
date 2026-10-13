@@ -45,7 +45,6 @@ internal fun GridLayout(
 ) {
     SubcomposeLayout(modifier = modifier) { constraints ->
         val cellWidth = constraints.maxWidth / columns
-
         val cellHeight = constraints.maxHeight / rows
 
         layout(width = constraints.maxWidth, height = constraints.maxHeight) {
@@ -86,13 +85,11 @@ internal fun HorizontalAppDrawerGridLayout(
 ) {
     SubcomposeLayout(modifier = modifier) { constraints ->
         val cellWidth = constraints.maxWidth / columns
-
         val cellHeight = constraints.maxHeight / rows
 
         layout(constraints.maxWidth, constraints.maxHeight) {
             eblanApplicationInfos?.forEachIndexed { index, eblanApplicationInfo ->
                 val row = index / columns
-
                 val column = index % columns
 
                 subcompose(

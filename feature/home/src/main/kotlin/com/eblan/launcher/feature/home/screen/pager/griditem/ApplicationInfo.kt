@@ -112,9 +112,7 @@ internal fun InteractiveApplicationInfoGridItem(
     ) -> Unit,
 ) {
     val androidLauncherAppsWrapper = LocalLauncherApps.current
-
     val androidStatusBarManagerWrapper = LocalStatusBarManager.current
-
     val context = LocalContext.current
 
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
@@ -134,7 +132,6 @@ internal fun InteractiveApplicationInfoGridItem(
     val icon = iconPackInfoFilePaths[data.componentName] ?: data.icon
 
     val hasNotifications = (statusBarNotifications[data.packageName] ?: 0) > 0
-
     val isNotificationAccessGranted by rememberIsNotificationAccessGranted()
 
     val itemModifier = modifier

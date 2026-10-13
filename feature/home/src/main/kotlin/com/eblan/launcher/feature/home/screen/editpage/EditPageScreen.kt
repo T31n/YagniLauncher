@@ -375,7 +375,6 @@ internal fun EditDockGridPageScreen(
     val scope = rememberCoroutineScope()
 
     val columns = homeSettings.dockColumns
-
     val rows = homeSettings.dockRows
 
     val cardHeight = homeSettings.dockHeight.dp

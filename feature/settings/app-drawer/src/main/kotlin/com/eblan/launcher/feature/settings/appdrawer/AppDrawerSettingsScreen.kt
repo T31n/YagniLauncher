@@ -70,9 +70,7 @@ internal fun AppDrawerSettingsRoute(
     onNavigateUp: () -> Unit,
 ) {
     val appDrawerSettingsUiState by viewModel.appDrawerSettingsUiState.collectAsStateWithLifecycle()
-
     val eblanApplicationInfoTags by viewModel.eblanApplicationInfoTags.collectAsStateWithLifecycle()
-
     val folderEblanApplicationInfos by viewModel.folderEblanApplicationInfos.collectAsStateWithLifecycle()
 
     AppDrawerSettingsScreen(
@@ -153,21 +151,13 @@ private fun Success(
     onUpdateFolderEblanApplicationInfos: (List<FolderEblanApplicationInfo>) -> Unit,
 ) {
     var showAppDrawerTypeDialog by remember { mutableStateOf(false) }
-
     var showVerticalGridDialog by remember { mutableStateOf(false) }
-
     var showHorizontalGridDialog by remember { mutableStateOf(false) }
-
     var showHiddenEblanApplicationInfosDialog by remember { mutableStateOf(false) }
-
     var showBackgroundColorDialog by remember { mutableStateOf(false) }
-
     var showManageTagsDialog by remember { mutableStateOf(false) }
-
     var showManageFoldersDialog by remember { mutableStateOf(false) }
-
     var showSearchBarPositionDialog by remember { mutableStateOf(false) }
-
     var showScrollBarTypeDialog by remember { mutableStateOf(false) }
 
     val items = buildAppDrawerSettingsItems(

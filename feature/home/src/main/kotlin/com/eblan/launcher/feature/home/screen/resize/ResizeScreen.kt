@@ -93,15 +93,12 @@ internal fun ResizeScreen(
                 val gridHeight = constraints.maxHeight - pageIndicatorHeightPx - dockHeightPx
 
                 val cellWidth = constraints.maxWidth / homeSettings.columns
-
                 val cellHeight = gridHeight / homeSettings.rows
 
                 val x = resizeGridItem.startColumn * cellWidth
-
                 val y = resizeGridItem.startRow * cellHeight
 
                 val width = resizeGridItem.columnSpan * cellWidth
-
                 val height = resizeGridItem.rowSpan * cellHeight
 
                 ResizeOverlay(
@@ -125,17 +122,14 @@ internal fun ResizeScreen(
 
             Associate.Dock -> {
                 val cellWidth = constraints.maxWidth / homeSettings.dockColumns
-
                 val cellHeight = dockHeightPx / homeSettings.dockRows
 
                 val x = resizeGridItem.startColumn * cellWidth
-
                 val y = resizeGridItem.startRow * cellHeight
 
                 val dockY = y + constraints.maxHeight - dockHeightPx
 
                 val width = resizeGridItem.columnSpan * cellWidth
-
                 val height = resizeGridItem.rowSpan * cellHeight
 
                 ResizeOverlay(

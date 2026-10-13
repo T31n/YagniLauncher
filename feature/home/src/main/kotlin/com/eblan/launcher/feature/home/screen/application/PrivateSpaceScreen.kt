@@ -152,7 +152,6 @@ internal fun PrivateSpaceStickyHeader(
     val scope = rememberCoroutineScope()
 
     val userManager = LocalUserManager.current
-
     val launcherApps = LocalLauncherApps.current
 
     val userHandle =
@@ -243,16 +242,13 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
     ) -> Unit,
 ) {
     val context = LocalContext.current
-
     val density = LocalDensity.current
-
     val layoutDirection = LocalLayoutDirection.current
-
     val launcherApps = LocalLauncherApps.current
-
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val scope = rememberCoroutineScope()
+
     val gridItemSettings = appDrawerSettings.gridItemSettings
 
     val textColor = getTextColorFromBackgroundColor(
@@ -273,13 +269,10 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
 
     val horizontalAlignment =
         getHorizontalAlignment(horizontalAlignment = gridItemSettings.horizontalAlignment)
-
     val verticalArrangement =
         getVerticalArrangement(verticalArrangement = gridItemSettings.verticalArrangement)
-
     val horizontalArrangement =
         getHorizontalArrangement(horizontalArrangement = gridItemSettings.horizontalArrangement)
-
     val verticalAlignment =
         getVerticalAlignment(verticalAlignment = gridItemSettings.verticalAlignment)
 
@@ -292,7 +285,6 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
     }
 
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
-
     var intSize by remember { mutableStateOf(IntSize.Zero) }
 
     val iconSizePx = with(density) {

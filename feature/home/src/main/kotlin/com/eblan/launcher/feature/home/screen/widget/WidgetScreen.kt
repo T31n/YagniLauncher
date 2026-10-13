@@ -140,7 +140,6 @@ internal fun WidgetScreen(
     )
 
     val searchBarState = rememberSearchBarState()
-
     val textFieldState = rememberTextFieldState()
 
     ScreenEffect(
@@ -186,9 +185,6 @@ internal fun WidgetScreen(
                             onDragCancel = onDragEnd,
                         )
                     },
-                width = 50.dp,
-                height = 8.dp,
-                shape = RoundedCornerShape(10.dp),
             )
 
             SearchBar(
@@ -349,7 +345,6 @@ private fun EblanAppWidgetProviderInfoItem(
     val scope = rememberCoroutineScope()
 
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
-
     var intSize by remember { mutableStateOf(IntSize.Zero) }
 
     val preview = eblanAppWidgetProviderInfo.preview ?: eblanAppWidgetProviderInfo.applicationIcon

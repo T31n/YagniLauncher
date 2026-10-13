@@ -26,7 +26,6 @@ import com.eblan.launcher.domain.model.grid.FolderGridItemPopup
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.feature.home.model.Drag
-import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.calculateFolderGridDragPosition
 
 internal fun handleDragFolderGridItem(

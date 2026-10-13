@@ -40,7 +40,6 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.BottomSheetDefaults.DragHandle
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -84,7 +83,6 @@ import com.eblan.launcher.domain.model.userdata.SearchBarPosition
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.rememberNestedScrollConnectionEffect
 import com.eblan.launcher.feature.home.model.Drag
-import com.eblan.launcher.feature.home.model.ScrollBarItemLayout
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.screen.application.ApplicationScreenEffect
 import com.eblan.launcher.feature.home.screen.application.ApplicationSearchBar
@@ -165,7 +163,6 @@ internal fun VerticalApplicationScreen(
     )
 
     val searchBarState = rememberSearchBarState()
-
     val textFieldState = rememberTextFieldState()
 
     var selectedEblanApplicationInfoTagId by remember { mutableStateOf<Long?>(null) }
@@ -216,9 +213,6 @@ internal fun VerticalApplicationScreen(
                         onDragCancel = onDragEnd,
                     )
                 },
-            width = 50.dp,
-            height = 8.dp,
-            shape = RoundedCornerShape(10.dp),
             color = getApplicationScreenTextColor(
                 backgroundColor = appDrawerSettings.backgroundColor,
                 customBackgroundColor = appDrawerSettings.customBackgroundColor,
@@ -545,6 +539,8 @@ private fun EblanApplicationInfos(
     val alphabeticalScrollBarItems =
         getEblanApplicationInfosByLabelAndTag.alphabeticalScrollBarItems[eblanUserPageKey].orEmpty()
 
+    val isDefaultLauncher by rememberIsDefaultLauncher()
+
     LaunchedEffect(key1 = swipeY) {
         if (swipeY.toInt() == screenHeight) {
             lazyGridState.scrollToItem(0)
@@ -672,15 +668,10 @@ private fun EblanApplicationInfos(
             canScroll = canScroll,
             lazyGridState = lazyGridState,
             paddingValues = paddingValues,
-            itemLayout = if (
+            isPrivateSpaceEntryPointHidden = isDefaultLauncher &&
                 eblanUserPageKey.eblanUser.eblanUserType == EblanUserType.Personal &&
                 getEblanApplicationInfosByLabelAndTag.privateEblanUser
-                    ?.isPrivateSpaceEntryPointHidden == false
-            ) {
-                ScrollBarItemLayout.StickyHeader
-            } else {
-                ScrollBarItemLayout.Regular
-            },
+                    ?.isPrivateSpaceEntryPointHidden == false,
         )
     }
 }

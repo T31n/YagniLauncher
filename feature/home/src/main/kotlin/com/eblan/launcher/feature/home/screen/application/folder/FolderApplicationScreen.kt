@@ -149,14 +149,12 @@ internal fun FolderApplicationScreen(
         x = folderEblanApplicationInfoPopup.folderEntry.x,
         y = folderEblanApplicationInfoPopup.folderEntry.y,
     )
-
     val folderPopupIntSize = IntSize(
         width = folderEblanApplicationInfoPopup.folderEntry.width,
         height = folderEblanApplicationInfoPopup.folderEntry.height,
     )
 
     val density = LocalDensity.current
-
     val layoutDirection = LocalLayoutDirection.current
 
     val folderPopupLayoutInfo = getFolderPopupLayoutInfo(

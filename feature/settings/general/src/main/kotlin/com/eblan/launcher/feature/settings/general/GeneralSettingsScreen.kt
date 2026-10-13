@@ -70,9 +70,7 @@ internal fun GeneralSettingsRoute(
     onNavigateUp: () -> Unit,
 ) {
     val generalSettingsUiState by viewModel.generalSettingsUiState.collectAsStateWithLifecycle()
-
     val packageManagerIconPackInfos by viewModel.packageManagerIconPackInfos.collectAsStateWithLifecycle()
-
     val eblanIconPackInfos by viewModel.eblanIconPacks.collectAsStateWithLifecycle()
 
     GeneralSettingsScreen(
