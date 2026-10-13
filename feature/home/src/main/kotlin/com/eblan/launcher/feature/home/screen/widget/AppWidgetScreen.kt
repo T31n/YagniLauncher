@@ -151,6 +151,9 @@ internal fun AppWidgetScreen(
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(
+                    top = paddingValues.calculateTopPadding(),
+                )
                 .clip(RoundedCornerShape(20.dp)),
         ) {
             Column(
@@ -167,12 +170,8 @@ internal fun AppWidgetScreen(
                             onVerticalDrag = { _, dragAmount ->
                                 onVerticalDrag(dragAmount)
                             },
-                            onDragEnd = {
-                                onDragEnd()
-                            },
-                            onDragCancel = {
-                                onDragEnd()
-                            },
+                            onDragEnd = onDragEnd,
+                            onDragCancel = onDragEnd,
                         )
                     },
                 horizontalAlignment = Alignment.CenterHorizontally,
