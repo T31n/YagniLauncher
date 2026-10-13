@@ -1,3 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="touch_and_hold_the_widget_to_move_it_around_the_home_screen">Toca e mantén premido o widget para movelo na pantalla de inicio</string>
 </resources>
