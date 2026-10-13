@@ -1,3 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="warning">Aviso</string>
+    <string name="disable_background_sync_description">Ao desactivar a sincronización en segundo plano aforras un pouco de memoria e o sistema é máis lixeiro, pero significa que Yagni Launcher non vai poder actualizar automaticamente as túas apps, widgets ou atallos.\n\nA caixa de aplicacións podería mostrar iconas desactualizadas, faltar widgets ou atallo que xa non funcionan.</string>
+    <string name="sync_data">Sincr datos</string>
+    <string name="keep_data_up_to_date">Manter os datos ao día</string>
+    <string name="enable_or_disable_sync_data">Activar ou desactivar a sincronización</string>
+    <string name="lock_movement">Evitar o movemento</string>
+    <string name="prevent_other_grid_items_from_moving">Evita que outros elementos da grella se movan</string>
+    <string name="grid_item_animation">Animación do elemento da grella</string>
+    <string name="enable_or_disable_animations">Activar ou desactivar a animación do elemento na grella</string>
 </resources>
