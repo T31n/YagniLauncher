@@ -1,3 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="custom_short_label">Etiqueta curta persoal</string>
+    <string name="grid_item_actions">Accións do elemento na grella</string>
+    <string name="override">Sobrescribir</string>
+    <string name="override_the_grid_item_settings">Sobrescribir os axustes do elemento da grella</string>
 </resources>
