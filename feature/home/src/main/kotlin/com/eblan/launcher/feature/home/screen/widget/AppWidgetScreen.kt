@@ -29,6 +29,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -61,6 +63,7 @@ import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
@@ -111,6 +114,8 @@ internal fun AppWidgetScreen(
 ) {
     requireNotNull(eblanApplicationInfoGroup)
 
+    val layoutDirection = LocalLayoutDirection.current
+
     LaunchedEffect(
         key1 = isVisibleOverlay,
         key2 = drag,
@@ -151,7 +156,11 @@ internal fun AppWidgetScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(paddingValues)
+                    .padding(
+                        start = paddingValues.calculateStartPadding(layoutDirection),
+                        end = paddingValues.calculateEndPadding(layoutDirection),
+                        bottom = paddingValues.calculateBottomPadding(),
+                    )
                     .animateContentSize()
                     .pointerInput(key1 = Unit) {
                         detectVerticalDragGestures(
