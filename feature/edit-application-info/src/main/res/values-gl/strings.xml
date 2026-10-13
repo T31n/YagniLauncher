@@ -1,3 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="add_tag">Engadir etiqueta</string>
+    <string name="tag_is_not_valid">A etiqueta non é válida</string>
+    <string name="update_tag">Actualizar etiqueta</string>
+    <string name="hide_from_drawer">Ocultar na caixa</string>
+    <string name="view_hidden_apps_in_app_drawer_settings">Ver as apps ocultas nos axustes da caixa de apps</string>
+    <string name="tags">Etiquetas</string>
 </resources>
