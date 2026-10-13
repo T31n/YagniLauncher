@@ -1,4 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="none">Ningún</string>
+    <string name="import_icon_pack">Importar paquete de iconas</string>
+    <string name="no_icon_packs">Sen paquetes de iconas</string>
+    <string name="select_icon_pack">Seleccionar paquete de iconas</string>
+    <string name="please_import_an_icon_pack_first">Primeiro tes que importar un paquete de iconas</string>
+    <string name="reset">Restablecer</string>
+    <string name="default_icon_pack">Predeterminado</string>
+    <string name="theme">Decorado</string>
+    <string name="dynamic_theme">Aparencia dinámica</string>
+    <string name="notification_dots">Puntos de notificación</string>
+    <string name="show_notification_dots">Mostra os puntos de notificación</string>
+    <string name="apply_icons_from_supported_icon_packs">Aplicar as iconas desde os paquetes de iconas compatibles</string>
+    <string name="adapt_colors_to_your_wallpaper_automatically">Adapta automaticamente as cores ás do fondo de pantalla</string>
+    <string name="icon_tint">Tinte da icona</string>
+    <string name="fallback_icon_tint">Tinte de apoio para a icona</string>
+    <string name="use_the_fallback_icon_tint">Usar o tinte de apoio para a icona</string>
+    <string name="circle">Círculo</string>
+    <string name="square">Cadrado</string>
+    <string name="rounded_square">Cadrado redondeado</string>
+    <string name="tear_drop">Bágoa</string>
+    <string name="hexagon">Hexágono</string>
+    <string name="octagon">Octágono</string>
+    <string name="diamond">Diamante</string>
+    <string name="pentagon">Pentágono</string>
+    <string name="clover">Trevo</string>
+    <string name="cookie">Galleta</string>
+    <string name="flower">Flor</string>
+    <string name="shield">Brasón</string>
+    <string name="icon_shape">Forma da icona</string>
 </resources>
