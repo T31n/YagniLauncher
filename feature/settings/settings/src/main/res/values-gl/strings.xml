@@ -1,3 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="choose_yagni_launcher">Elixir Yagni Launcher</string>
+    <string name="default_launcher">Lanzador predeterminado</string>
+    <string name="themes_icon_packs">Decorado, paquetes de iconas</string>
+    <string name="grid_icon_dock_and_more">Grella, icona, molle</string>
+    <string name="columns_and_rows_count">Número de columnas e filas</string>
+    <string name="swipe_gesture_actions">Accións dos xestos de desprazar</string>
+    <string name="advanced_options_for_power_users">Opcións para usuarias con experiencia</string>
+    <string name="thank_you_for_using_yagni_launcher_alpha">Grazas por usar Yagni Launcher Alpha!</string>
+    <string name="about_development_description">O desenvolvemento comezou en xaneiro de 2025, con actualizacións semanais regulares. É o meu proxecto máis completo ata a data, e dedico moito esforzo en melloralo.</string>
+    <string name="support_message">Se esta aplicación resulta proveitosa para ti, a túa axuda sería de agradecer, tanto cunha doazón en Ko-fi ou poñéndolle unha estrela ao repositorio en GitHub.</string>
+    <string name="support_on_ko_fi">Apoiar en Ko-Fi</string>
+    <string name="star_on_github">Pór estrela en GitHub</string>
+    <string name="note_this_informational_card_will_be_removed_in_future_stable_releases">Nota: esta tarxeta con información será retirada das futuras versións estables</string>
+    <string name="corner_radius_background_color_and_more">Radio do canto, cor de fondo</string>
 </resources>
