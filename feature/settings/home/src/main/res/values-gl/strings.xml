@@ -21,4 +21,7 @@
     <string name="dock_padding">Espazo arredor do molle</string>
     <string name="dock_corner_radius">Radio do canto do molle</string>
     <string name="dock_padding_is_not_valid">O valor para o espazo non é válido</string>
+    <string name="set_the_radius_for_each_dock_corner">Establecer o radio para cada canto do molle</string>
+    <string name="add_bottom_padding">Engadir espazo inferior</string>
+    <string name="add_the_bottom_padding_of_the_dock">Engadir espazo na parte inferior do molle</string>
 </resources>
