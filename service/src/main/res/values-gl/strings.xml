@@ -1,3 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="accessibility_service_label">Yagni Launcher</string>
+    <string name="accessibility_service_description">Accións con xestos para Yagni Launcher</string>
+    <string name="notification_listener_service">Servizo de escoita de notificacións Yagni</string>
+    <string name="importing_into_cache">Importando %1$s na memoria tobo</string>
+    <string name="loading_icons_from_cache_is_faster">É máis rápido cargar as iconas desde a memoria tobo</string>
 </resources>
