@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+option java_package = "com.eblan.launcher.data.datastore.proto.home";
+option java_multiple_files = true;
+
+enum PagerTransitionEffectProto {
+  PagerTransitionEffectNone = 0;
+  PagerTransitionEffectFade = 1;
+  PagerTransitionEffectZoomOut = 2;
+  PagerTransitionEffectDepth = 3;
+  PagerTransitionEffectCube = 4;
+  PagerTransitionEffectFlip = 5;
+  PagerTransitionEffectParallax = 6;
+  PagerTransitionEffectStack = 7;
+}

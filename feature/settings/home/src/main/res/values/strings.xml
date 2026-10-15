@@ -48,4 +48,13 @@
     <string name="set_the_radius_for_each_dock_corner">Set the radius for each dock corner</string>
     <string name="add_bottom_padding">Add Bottom Padding</string>
     <string name="add_the_bottom_padding_of_the_dock">Add the bottom padding of the dock</string>
+    <string name="pager_transition_effect">Pager Transition Effect</string>
+    <string name="transition_effect_none">None</string>
+    <string name="transition_effect_fade">Fade</string>
+    <string name="transition_effect_zoom_out">Zoom Out</string>
+    <string name="transition_effect_depth">Depth</string>
+    <string name="transition_effect_cube">Cube</string>
+    <string name="transition_effect_flip">Flip</string>
+    <string name="transition_effect_parallax">Parallax</string>
+    <string name="transition_effect_stack">Stack</string>
 </resources>

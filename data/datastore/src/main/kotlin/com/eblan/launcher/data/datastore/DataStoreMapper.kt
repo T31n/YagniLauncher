@@ -35,6 +35,7 @@ import com.eblan.launcher.data.datastore.proto.home.HomeSettingsProto
 import com.eblan.launcher.data.datastore.proto.home.HorizontalAlignmentProto
 import com.eblan.launcher.data.datastore.proto.home.HorizontalArrangementProto
 import com.eblan.launcher.data.datastore.proto.home.LayoutTypeProto
+import com.eblan.launcher.data.datastore.proto.home.PagerTransitionEffectProto
 import com.eblan.launcher.data.datastore.proto.home.TextColorProto
 import com.eblan.launcher.data.datastore.proto.home.VerticalAlignmentProto
 import com.eblan.launcher.data.datastore.proto.home.VerticalArrangementProto
@@ -57,6 +58,7 @@ import com.eblan.launcher.domain.model.userdata.GestureSettings
 import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.IconTint
+import com.eblan.launcher.domain.model.userdata.PagerTransitionEffect
 import com.eblan.launcher.domain.model.userdata.ScrollBarType
 import com.eblan.launcher.domain.model.userdata.SearchBarPosition
 import com.eblan.launcher.domain.model.userdata.TextColor
@@ -86,6 +88,7 @@ internal fun HomeSettingsProto.toHomeSettings(): HomeSettings = HomeSettings(
     dockBottomStartCornerRadius = dockBottomStartCornerRadius,
     dockBottomEndCornerRadius = dockBottomEndCornerRadius,
     addDockBottomPadding = addDockBottomPadding,
+    pagerTransitionEffect = pagerTransitionEffectProto.toPagerTransitionEffect(),
 )
 
 internal fun AppDrawerSettingsProto.toAppDrawerSettings(): AppDrawerSettings = AppDrawerSettings(
@@ -175,6 +178,7 @@ internal fun HomeSettings.toHomeSettingsProto(): HomeSettingsProto = HomeSetting
     builder.dockBottomStartCornerRadius = dockBottomStartCornerRadius
     builder.dockBottomEndCornerRadius = dockBottomEndCornerRadius
     builder.addDockBottomPadding = addDockBottomPadding
+    builder.pagerTransitionEffectProto = pagerTransitionEffect.toPagerTransitionEffectProto()
 }.build()
 
 internal fun AppDrawerSettings.toAppDrawerSettingsProto(): AppDrawerSettingsProto = AppDrawerSettingsProto.newBuilder().also { builder ->
@@ -266,6 +270,37 @@ internal fun Theme.toThemeProto(): ThemeProto = when (this) {
     Theme.System -> ThemeProto.ThemeSystem
     Theme.Light -> ThemeProto.ThemeLight
     Theme.Dark -> ThemeProto.ThemeDark
+}
+
+private fun PagerTransitionEffect.toPagerTransitionEffectProto(): PagerTransitionEffectProto = when (this) {
+    PagerTransitionEffect.None -> PagerTransitionEffectProto.PagerTransitionEffectNone
+    PagerTransitionEffect.Fade -> PagerTransitionEffectProto.PagerTransitionEffectFade
+    PagerTransitionEffect.ZoomOut -> PagerTransitionEffectProto.PagerTransitionEffectZoomOut
+    PagerTransitionEffect.Depth -> PagerTransitionEffectProto.PagerTransitionEffectDepth
+    PagerTransitionEffect.Cube -> PagerTransitionEffectProto.PagerTransitionEffectCube
+    PagerTransitionEffect.Flip -> PagerTransitionEffectProto.PagerTransitionEffectFlip
+    PagerTransitionEffect.Parallax -> PagerTransitionEffectProto.PagerTransitionEffectParallax
+    PagerTransitionEffect.Stack -> PagerTransitionEffectProto.PagerTransitionEffectStack
+}
+
+private fun PagerTransitionEffectProto.toPagerTransitionEffect(): PagerTransitionEffect = when (this) {
+    PagerTransitionEffectProto.PagerTransitionEffectNone,
+    PagerTransitionEffectProto.UNRECOGNIZED,
+    -> PagerTransitionEffect.None
+
+    PagerTransitionEffectProto.PagerTransitionEffectFade -> PagerTransitionEffect.Fade
+
+    PagerTransitionEffectProto.PagerTransitionEffectZoomOut -> PagerTransitionEffect.ZoomOut
+
+    PagerTransitionEffectProto.PagerTransitionEffectDepth -> PagerTransitionEffect.Depth
+
+    PagerTransitionEffectProto.PagerTransitionEffectCube -> PagerTransitionEffect.Cube
+
+    PagerTransitionEffectProto.PagerTransitionEffectFlip -> PagerTransitionEffect.Flip
+
+    PagerTransitionEffectProto.PagerTransitionEffectParallax -> PagerTransitionEffect.Parallax
+
+    PagerTransitionEffectProto.PagerTransitionEffectStack -> PagerTransitionEffect.Stack
 }
 
 private fun EblanActionType.toEblanActionTypeProto(): EblanActionTypeProto = when (this) {
