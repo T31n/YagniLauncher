@@ -24,4 +24,13 @@
     <string name="set_the_radius_for_each_dock_corner">Establecer o radio para cada canto do molle</string>
     <string name="add_bottom_padding">Engadir espazo inferior</string>
     <string name="add_the_bottom_padding_of_the_dock">Engadir espazo na parte inferior do molle</string>
+    <string name="pager_transition_effect">Efecto de virapáxinas</string>
+    <string name="transition_effect_none">Ningún</string>
+    <string name="transition_effect_fade">Esvaecer</string>
+    <string name="transition_effect_zoom_out">Alonxar</string>
+    <string name="transition_effect_depth">Profundidade</string>
+    <string name="transition_effect_cube">Cubo</string>
+    <string name="transition_effect_flip">Voltear</string>
+    <string name="transition_effect_stack">Amorear</string>
+    <string name="transition_effect_parallax">Parelelas</string>
 </resources>
