@@ -21,8 +21,14 @@ import android.graphics.Paint
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,9 +37,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
@@ -47,6 +57,7 @@ import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.domain.model.userdata.PagerTransitionEffect
 import com.eblan.launcher.feature.home.model.SharedElementKey
+import com.eblan.launcher.feature.home.util.DRAG_HANDLE_SIZE
 import com.eblan.launcher.feature.home.util.handleEblanAction
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import com.eblan.launcher.ui.local.LocalStatusBarManager
@@ -297,6 +308,54 @@ internal fun Modifier.pagerTransitionEffect(
             scaleY = scale
             translationX = -pageOffset * pageWidth * 0.2f
             alpha = 1f - (0.25f * absoluteOffset)
+        }
+    }
+}
+
+@Composable
+internal fun Modifier.resizeHandleModifier(color: Color): Modifier = size(DRAG_HANDLE_SIZE)
+    .drawBehind {
+        drawCircle(
+            color = color,
+            radius = 5.dp.toPx(),
+        )
+    }
+
+@Composable
+internal fun Modifier.dashedResizeOutline(color: Color): Modifier {
+    val density = LocalDensity.current
+
+    val dashLength = with(density) { 8.dp.toPx() }
+    val gapLength = with(density) { 5.dp.toPx() }
+
+    val dashPhase = rememberInfiniteTransition(label = "resizeOutline")
+        .animateFloat(
+            initialValue = 0f,
+            targetValue = dashLength + gapLength,
+            animationSpec = infiniteRepeatable(
+                animation = tween(
+                    durationMillis = 5000,
+                    easing = LinearEasing,
+                ),
+            ),
+            label = "resizeOutlinePhase",
+        )
+
+    return drawWithCache {
+        val stroke = Stroke(
+            width = 2.dp.toPx(),
+            pathEffect = PathEffect.dashPathEffect(
+                intervals = floatArrayOf(dashLength, gapLength),
+                phase = dashPhase.value,
+            ),
+        )
+
+        onDrawBehind {
+            drawRoundRect(
+                color = color,
+                cornerRadius = CornerRadius(12.dp.toPx()),
+                style = stroke,
+            )
         }
     }
 }

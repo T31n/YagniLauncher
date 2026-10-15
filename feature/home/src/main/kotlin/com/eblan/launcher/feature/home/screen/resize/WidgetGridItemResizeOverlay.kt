@@ -21,12 +21,11 @@ import android.appwidget.AppWidgetProviderInfo
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.VectorConverter
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -48,6 +47,8 @@ import com.eblan.launcher.domain.grid.resizeWidgetGridItemWithPixels
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.SideAnchor
+import com.eblan.launcher.feature.home.component.dashedResizeOutline
+import com.eblan.launcher.feature.home.component.resizeHandleModifier
 import com.eblan.launcher.feature.home.util.DRAG_HANDLE_SIZE
 import com.eblan.launcher.feature.home.util.updateAppWidgetOptions
 import com.eblan.launcher.framework.widgetmanager.AndroidAppWidgetManagerWrapper
@@ -163,11 +164,6 @@ internal fun WidgetGridItemResizeOverlay(
         }
     }
 
-    val circleModifier =
-        Modifier
-            .size(DRAG_HANDLE_SIZE)
-            .background(color = color, shape = CircleShape)
-
     LaunchedEffect(
         key1 = currentWidth.value,
         key2 = currentHeight.value,
@@ -210,14 +206,18 @@ internal fun WidgetGridItemResizeOverlay(
                 )
             }
             .size(width = borderWidth, height = borderHeight)
-            .border(width = 2.dp, color = color),
+            .background(
+                color = color.copy(alpha = 0.08f),
+                shape = RoundedCornerShape(12.dp),
+            )
+            .dashedResizeOutline(color),
     ) {
         Box(
             modifier = Modifier.run {
                 if (data.resizeMode == AppWidgetProviderInfo.RESIZE_VERTICAL || data.resizeMode == AppWidgetProviderInfo.RESIZE_BOTH) {
                     align(Alignment.TopCenter)
                         .offset(y = (-15).dp)
-                        .then(circleModifier)
+                        .resizeHandleModifier(color = color)
                         .pointerInput(Unit) {
                             detectDragGestures(
                                 onDragStart = {
@@ -247,7 +247,7 @@ internal fun WidgetGridItemResizeOverlay(
                 if (data.resizeMode == AppWidgetProviderInfo.RESIZE_HORIZONTAL || data.resizeMode == AppWidgetProviderInfo.RESIZE_BOTH) {
                     align(Alignment.CenterEnd)
                         .offset(15.dp)
-                        .then(circleModifier)
+                        .resizeHandleModifier(color = color)
                         .pointerInput(Unit) {
                             detectDragGestures(
                                 onDragStart = {
@@ -276,7 +276,7 @@ internal fun WidgetGridItemResizeOverlay(
                 if (data.resizeMode == AppWidgetProviderInfo.RESIZE_VERTICAL || data.resizeMode == AppWidgetProviderInfo.RESIZE_BOTH) {
                     align(Alignment.BottomCenter)
                         .offset(y = 15.dp)
-                        .then(circleModifier)
+                        .resizeHandleModifier(color = color)
                         .pointerInput(Unit) {
                             detectDragGestures(
                                 onDragStart = {
@@ -305,7 +305,7 @@ internal fun WidgetGridItemResizeOverlay(
                 if (data.resizeMode == AppWidgetProviderInfo.RESIZE_HORIZONTAL || data.resizeMode == AppWidgetProviderInfo.RESIZE_BOTH) {
                     align(Alignment.CenterStart)
                         .offset((-15).dp)
-                        .then(circleModifier)
+                        .resizeHandleModifier(color = color)
                         .pointerInput(Unit) {
                             detectDragGestures(
                                 onDragStart = {
