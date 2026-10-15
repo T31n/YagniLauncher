@@ -180,6 +180,15 @@ internal fun ApplicationScreen(
                 this.alpha = alpha
                 clip = true
                 shape = RoundedCornerShape(20.dp)
+            }
+            .pointerInput(Unit) {
+                detectVerticalDragGestures(
+                    onVerticalDrag = { _, dragAmount ->
+                        onVerticalDrag(dragAmount)
+                    },
+                    onDragEnd = onDragEnd,
+                    onDragCancel = onDragEnd,
+                )
             },
         color = when (appDrawerSettings.backgroundColor) {
             BackgroundColor.System -> MaterialTheme.colorScheme.surface

@@ -166,6 +166,15 @@ internal fun ShortcutConfigScreen(
                 this.alpha = alpha
                 clip = true
                 shape = RoundedCornerShape(20.dp)
+            }
+            .pointerInput(Unit) {
+                detectVerticalDragGestures(
+                    onVerticalDrag = { _, dragAmount ->
+                        onVerticalDrag(dragAmount)
+                    },
+                    onDragEnd = onDragEnd,
+                    onDragCancel = onDragEnd,
+                )
             },
     ) {
         Column(
@@ -176,19 +185,7 @@ internal fun ShortcutConfigScreen(
                     end = paddingValues.calculateEndPadding(layoutDirection),
                 ),
         ) {
-            DragHandle(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .pointerInput(Unit) {
-                        detectVerticalDragGestures(
-                            onVerticalDrag = { _, dragAmount ->
-                                onVerticalDrag(dragAmount)
-                            },
-                            onDragEnd = onDragEnd,
-                            onDragCancel = onDragEnd,
-                        )
-                    },
-            )
+            DragHandle(modifier = Modifier.align(Alignment.CenterHorizontally))
 
             SearchBar(
                 state = searchBarState,
