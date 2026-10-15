@@ -1,0 +1,2 @@
+- Pager transition effect
+- Revamped UI
