@@ -48,4 +48,13 @@
     <string name="set_the_radius_for_each_dock_corner">Nastavit zaoblení každého rohu dokovací oblasti</string>
     <string name="add_bottom_padding">Přidat dolní odsazení</string>
     <string name="add_the_bottom_padding_of_the_dock">Přidat dolní odsazení dokovací oblasti</string>
+    <string name="pager_transition_effect">Efekt přechodu stránek</string>
+    <string name="transition_effect_none">Žádný</string>
+    <string name="transition_effect_fade">Prolnutí</string>
+    <string name="transition_effect_zoom_out">Oddálení</string>
+    <string name="transition_effect_depth">Hloubka</string>
+    <string name="transition_effect_cube">Krychle</string>
+    <string name="transition_effect_flip">Překlopení</string>
+    <string name="transition_effect_parallax">Paralaxa</string>
+    <string name="transition_effect_stack">Stoh</string>
 </resources>

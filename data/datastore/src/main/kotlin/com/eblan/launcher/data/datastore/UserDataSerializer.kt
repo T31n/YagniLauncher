@@ -35,6 +35,7 @@ import com.eblan.launcher.data.datastore.proto.home.GridItemSettingsProto
 import com.eblan.launcher.data.datastore.proto.home.HomeSettingsProto
 import com.eblan.launcher.data.datastore.proto.home.HorizontalAlignmentProto
 import com.eblan.launcher.data.datastore.proto.home.LayoutTypeProto
+import com.eblan.launcher.data.datastore.proto.home.PagerTransitionEffectProto
 import com.eblan.launcher.data.datastore.proto.home.TextColorProto
 import com.eblan.launcher.data.datastore.proto.home.VerticalArrangementProto
 import com.eblan.launcher.data.datastore.proto.model.BackgroundColorProto
@@ -95,6 +96,7 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
         dockBottomStartCornerRadius = 0
         dockBottomEndCornerRadius = 0
         addDockBottomPadding = true
+        pagerTransitionEffectProto = PagerTransitionEffectProto.PagerTransitionEffectNone
     }.build()
 
     private val defaultAppDrawerSettingsProto = AppDrawerSettingsProto.newBuilder().apply {

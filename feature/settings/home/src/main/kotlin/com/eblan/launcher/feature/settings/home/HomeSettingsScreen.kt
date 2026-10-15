@@ -42,6 +42,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.userdata.HomeSettings
+import com.eblan.launcher.domain.model.userdata.PagerTransitionEffect
 import com.eblan.launcher.feature.settings.home.dialog.EditDockCornerRadiusDialog
 import com.eblan.launcher.feature.settings.home.dialog.EditDockGridDialog
 import com.eblan.launcher.feature.settings.home.dialog.EditDockHeightDialog
@@ -49,6 +50,7 @@ import com.eblan.launcher.feature.settings.home.dialog.EditDockPaddingDialog
 import com.eblan.launcher.feature.settings.home.dialog.EditGridDialog
 import com.eblan.launcher.feature.settings.home.model.HomeSettingsUiState
 import com.eblan.launcher.ui.dialog.ColorPickerDialog
+import com.eblan.launcher.ui.dialog.RadioOptionsDialog
 import com.eblan.launcher.ui.model.SettingsItem
 import com.eblan.launcher.ui.settings.GridItemSettings
 import com.eblan.launcher.ui.settings.SettingsCategoryText
@@ -124,11 +126,15 @@ private fun Success(
     var showDockCustomBackgroundColorDialog by remember { mutableStateOf(false) }
     var showDockPaddingDialog by remember { mutableStateOf(false) }
     var showDockCornerRadiusDialog by remember { mutableStateOf(false) }
+    var showPagerTransitionEffectDialog by remember { mutableStateOf(false) }
 
     val homeSettingsItems = buildHomeSettingsItems(
         homeSettings = homeSettings,
         onGridClick = {
             showGridDialog = true
+        },
+        onPagerTransitionEffectClick = {
+            showPagerTransitionEffectDialog = true
         },
         onUpdateHomeSettings = onUpdateHomeSettings,
     )
@@ -190,6 +196,21 @@ private fun Success(
                         rows = rows,
                     ),
                 )
+            },
+        )
+    }
+
+    if (showPagerTransitionEffectDialog) {
+        RadioOptionsDialog(
+            title = stringResource(R.string.pager_transition_effect),
+            options = PagerTransitionEffect.entries,
+            selected = homeSettings.pagerTransitionEffect,
+            label = { it.getTitle() },
+            onDismissRequest = {
+                showPagerTransitionEffectDialog = false
+            },
+            onUpdateClick = {
+                onUpdateHomeSettings(homeSettings.copy(pagerTransitionEffect = it))
             },
         )
     }
@@ -287,6 +308,7 @@ private fun Success(
 private fun buildHomeSettingsItems(
     homeSettings: HomeSettings,
     onGridClick: () -> Unit,
+    onPagerTransitionEffectClick: () -> Unit,
     onUpdateHomeSettings: (HomeSettings) -> Unit,
 ): List<SettingsItem> = buildList {
     add(
@@ -294,6 +316,14 @@ private fun buildHomeSettingsItems(
             title = stringResource(commonR.string.grid),
             subtitle = "${homeSettings.columns}x${homeSettings.rows}",
             onClick = onGridClick,
+        ),
+    )
+
+    add(
+        SettingsItem.Column(
+            title = stringResource(R.string.pager_transition_effect),
+            subtitle = homeSettings.pagerTransitionEffect.getTitle(),
+            onClick = onPagerTransitionEffectClick,
         ),
     )
 
@@ -473,4 +503,16 @@ private fun buildDockHomeSettingsItems(
             },
         ),
     )
+}
+
+@Composable
+private fun PagerTransitionEffect.getTitle(): String = when (this) {
+    PagerTransitionEffect.None -> stringResource(R.string.transition_effect_none)
+    PagerTransitionEffect.Fade -> stringResource(R.string.transition_effect_fade)
+    PagerTransitionEffect.ZoomOut -> stringResource(R.string.transition_effect_zoom_out)
+    PagerTransitionEffect.Depth -> stringResource(R.string.transition_effect_depth)
+    PagerTransitionEffect.Cube -> stringResource(R.string.transition_effect_cube)
+    PagerTransitionEffect.Flip -> stringResource(R.string.transition_effect_flip)
+    PagerTransitionEffect.Parallax -> stringResource(R.string.transition_effect_parallax)
+    PagerTransitionEffect.Stack -> stringResource(R.string.transition_effect_stack)
 }

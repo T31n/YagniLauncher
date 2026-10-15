@@ -48,4 +48,13 @@
     <string name="set_the_radius_for_each_dock_corner">Ustaw promień zaokrąglenia dla każdego rogu doku</string>
     <string name="add_bottom_padding">Dodaj dolny margines wewnętrzny</string>
     <string name="add_the_bottom_padding_of_the_dock">Dodaj dolny margines wewnętrzny paska doku</string>
+    <string name="pager_transition_effect">Efekt przejścia stron</string>
+    <string name="transition_effect_none">Brak</string>
+    <string name="transition_effect_fade">Zanikanie</string>
+    <string name="transition_effect_zoom_out">Pomniejszenie</string>
+    <string name="transition_effect_depth">Głębia</string>
+    <string name="transition_effect_cube">Sześcian</string>
+    <string name="transition_effect_flip">Obrót</string>
+    <string name="transition_effect_parallax">Paralaksa</string>
+    <string name="transition_effect_stack">Stos</string>
 </resources>

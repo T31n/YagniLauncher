@@ -43,4 +43,5 @@ data class HomeSettings(
     val dockBottomStartCornerRadius: Int,
     val dockBottomEndCornerRadius: Int,
     val addDockBottomPadding: Boolean,
+    val pagerTransitionEffect: PagerTransitionEffect,
 )

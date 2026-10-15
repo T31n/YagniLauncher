@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 import "com/eblan/launcher/data/datastore/proto/model/grid_item_settings.proto";
+import "com/eblan/launcher/data/datastore/proto/home/pager_transition_effect.proto";
 
 option java_package = "com.eblan.launcher.data.datastore.proto.home";
 option java_multiple_files = true;
@@ -29,4 +30,5 @@ message HomeSettingsProto {
   optional int32 dockBottomStartCornerRadius = 27;
   optional int32 dockBottomEndCornerRadius = 28;
   optional bool addDockBottomPadding = 29;
+  optional PagerTransitionEffectProto pagerTransitionEffectProto = 30;
 }

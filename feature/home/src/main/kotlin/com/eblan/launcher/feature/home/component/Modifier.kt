@@ -23,6 +23,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -32,6 +33,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
@@ -43,11 +45,13 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
+import com.eblan.launcher.domain.model.userdata.PagerTransitionEffect
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.handleEblanAction
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import com.eblan.launcher.ui.local.LocalStatusBarManager
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 import kotlin.math.roundToInt
 
 @Composable
@@ -235,4 +239,64 @@ internal fun Modifier.whiteBox(
     }
 } else {
     this
+}
+
+internal fun Modifier.pagerTransitionEffect(
+    pagerState: PagerState,
+    page: Int,
+    effect: PagerTransitionEffect,
+): Modifier = graphicsLayer {
+    val pageOffset = (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
+    val absoluteOffset = abs(pageOffset).coerceIn(0f, 1f)
+    val pageWidth = size.width
+
+    when (effect) {
+        PagerTransitionEffect.None -> Unit
+
+        PagerTransitionEffect.Fade -> {
+            alpha = 1f - absoluteOffset
+        }
+
+        PagerTransitionEffect.ZoomOut -> {
+            val scale = 1f - (0.25f * absoluteOffset)
+            scaleX = scale
+            scaleY = scale
+            alpha = 1f - (0.5f * absoluteOffset)
+        }
+
+        PagerTransitionEffect.Depth -> {
+            val scale = 1f - (0.2f * absoluteOffset)
+            scaleX = scale
+            scaleY = scale
+            alpha = 1f - (0.5f * absoluteOffset)
+            translationX = -pageOffset * pageWidth * 0.25f
+        }
+
+        PagerTransitionEffect.Cube -> {
+            rotationY = -90f * pageOffset
+            transformOrigin = TransformOrigin(
+                pivotFractionX = if (pageOffset > 0f) 0f else 1f,
+                pivotFractionY = 0.5f,
+            )
+            cameraDistance = 12f * density
+        }
+
+        PagerTransitionEffect.Flip -> {
+            rotationY = -180f * pageOffset
+            alpha = 1f - (0.2f * absoluteOffset)
+            cameraDistance = 12f * density
+        }
+
+        PagerTransitionEffect.Parallax -> {
+            translationX = -pageOffset * pageWidth * 0.35f
+        }
+
+        PagerTransitionEffect.Stack -> {
+            val scale = 1f - (0.12f * absoluteOffset)
+            scaleX = scale
+            scaleY = scale
+            translationX = -pageOffset * pageWidth * 0.2f
+            alpha = 1f - (0.25f * absoluteOffset)
+        }
+    }
 }

@@ -129,6 +129,7 @@ import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
 import com.eblan.launcher.feature.home.component.GridLayout
 import com.eblan.launcher.feature.home.component.HomeHandler
 import com.eblan.launcher.feature.home.component.PageIndicator
+import com.eblan.launcher.feature.home.component.pagerTransitionEffect
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.GridItemSource
 import com.eblan.launcher.feature.home.model.SharedElementKey
@@ -843,6 +844,11 @@ internal fun PagerScreen(
                         .padding(
                             start = paddingValues.calculateStartPadding(layoutDirection),
                             end = paddingValues.calculateEndPadding(layoutDirection),
+                        )
+                        .pagerTransitionEffect(
+                            pagerState = gridHorizontalPagerState,
+                            page = index,
+                            effect = homeSettings.pagerTransitionEffect,
                         ),
                     columns = homeSettings.columns,
                     gridItems = gridItemsByPage[page],
@@ -979,6 +985,11 @@ internal fun PagerScreen(
                             .padding(
                                 start = paddingValues.calculateStartPadding(layoutDirection),
                                 end = paddingValues.calculateEndPadding(layoutDirection),
+                            )
+                            .pagerTransitionEffect(
+                                pagerState = dockGridHorizontalPagerState,
+                                page = index,
+                                effect = homeSettings.pagerTransitionEffect,
                             ),
                         columns = homeSettings.dockColumns,
                         gridItems = dockGridItemsByPage[page],
