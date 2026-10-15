@@ -278,13 +278,13 @@ internal fun Modifier.pagerTransitionEffect(
                 pivotFractionX = if (pageOffset > 0f) 0f else 1f,
                 pivotFractionY = 0.5f,
             )
-            cameraDistance = 12f * density
+            cameraDistance = maxOf(size.width * 1.1f, 12f * density)
         }
 
         PagerTransitionEffect.Flip -> {
             rotationY = -180f * pageOffset
             alpha = 1f - (0.2f * absoluteOffset)
-            cameraDistance = 12f * density
+            cameraDistance = maxOf(size.width * 1.1f, 12f * density)
         }
 
         PagerTransitionEffect.Parallax -> {
