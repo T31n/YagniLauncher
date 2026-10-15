@@ -21,18 +21,31 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.ParentDataModifier
 import androidx.compose.ui.layout.SubcomposeLayout
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.GridItemSettings
+import com.eblan.launcher.domain.model.userdata.TextColor
+import com.eblan.launcher.feature.home.util.getGridItemTextColor
+import kotlin.math.hypot
 
 @Composable
 internal fun GridLayout(
@@ -70,6 +83,108 @@ internal fun GridLayout(
                         y = parentData.y,
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+internal fun DotsGridLayout(
+    modifier: Modifier = Modifier,
+    columns: Int,
+    rows: Int,
+    dragIntOffset: IntOffset,
+    textColor: TextColor,
+    gridItem: GridItem,
+    gridItemSettings: GridItemSettings,
+) {
+    var gridPositionInRoot by remember { mutableStateOf(Offset.Zero) }
+
+    val currentGridItemSettings = if (gridItem.override) {
+        gridItem.gridItemSettings
+    } else {
+        gridItemSettings
+    }
+
+    val currentTextColor = getGridItemTextColor(
+        gridItemCustomTextColor = currentGridItemSettings.customTextColor,
+        gridItemTextColor = currentGridItemSettings.textColor,
+        systemCustomTextColor = gridItemSettings.customTextColor,
+        systemTextColor = textColor,
+    )
+
+    Canvas(
+        modifier = modifier.onGloballyPositioned {
+            gridPositionInRoot = it.positionInRoot()
+        },
+    ) {
+        val cellWidth = size.width / columns
+        val cellHeight = size.height / rows
+        val dragPosition = Offset(
+            x = dragIntOffset.x - gridPositionInRoot.x,
+            y = dragIntOffset.y - gridPositionInRoot.y,
+        )
+        val fadeRadius = maxOf(cellWidth, cellHeight) * 2.5f
+
+        fun drawDot(center: Offset, radius: Float) {
+            val distance = hypot(
+                x = (center.x - dragPosition.x).toDouble(),
+                y = (center.y - dragPosition.y).toDouble(),
+            ).toFloat()
+            val alpha = (1f - distance / fadeRadius).coerceIn(0f, 1f) * 0.85f
+
+            if (alpha == 0f) return
+
+            drawCircle(
+                color = currentTextColor,
+                radius = radius,
+                center = center,
+                alpha = alpha,
+            )
+            drawCircle(
+                color = currentTextColor,
+                radius = radius * 0.55f,
+                center = center,
+                alpha = alpha,
+            )
+        }
+
+        val cornerRadius = 4.dp.toPx()
+        val midpointRadius = 2.5.dp.toPx()
+
+        for (row in 0..rows) {
+            for (column in 0..columns) {
+                drawDot(
+                    center = Offset(
+                        x = column * cellWidth,
+                        y = row * cellHeight,
+                    ),
+                    radius = cornerRadius,
+                )
+            }
+        }
+
+        for (row in 0..rows) {
+            for (column in 0 until columns) {
+                drawDot(
+                    center = Offset(
+                        x = (column + 0.5f) * cellWidth,
+                        y = row * cellHeight,
+                    ),
+                    radius = midpointRadius,
+                )
+            }
+        }
+
+        for (row in 0 until rows) {
+            for (column in 0..columns) {
+                drawDot(
+                    center = Offset(
+                        x = column * cellWidth,
+                        y = (row + 0.5f) * cellHeight,
+                    ),
+                    radius = midpointRadius,
+                )
             }
         }
     }
