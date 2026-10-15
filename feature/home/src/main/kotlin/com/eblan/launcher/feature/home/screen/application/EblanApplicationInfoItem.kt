@@ -198,48 +198,46 @@ internal fun EblanApplicationInfoItem(
             color = Color(gridItemSettings.customBackgroundColor),
             shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
         )
-        .pointerInput(key1 = isVisibleOverlay) {
-            detectTapGestures(
-                onTap = if (!isVisibleOverlay) {
-                    {
-                        handleOnTapEblanApplicationInfoItem(
-                            componentName = eblanApplicationInfo.componentName,
-                            serialNumber = eblanApplicationInfo.serialNumber,
-                            intOffset = intOffset,
-                            intSize = intSize,
-                            keyboardController = keyboardController,
-                            launcherApps = launcherApps,
-                            leftPadding = leftPadding,
-                            topPadding = topPadding,
-                        )
-                    }
-                } else {
-                    null
-                },
-                onLongPress = if (!isVisibleOverlay) {
-                    {
-                        scope.launch {
-                            isLongPress = true
-                            keyboardController?.hide()
-                            currentOnLongPressApplicationInfo(
-                                eblanApplicationInfo,
-                                graphicsLayer.toImageBitmap(),
-                                intOffset,
-                                intSize,
-                                sharedElementKey,
+        .run {
+            if (!isVisibleOverlay) {
+                pointerInput(key1 = Unit) {
+                    detectTapGestures(
+                        onTap = {
+                            handleOnTapEblanApplicationInfoItem(
+                                componentName = eblanApplicationInfo.componentName,
+                                serialNumber = eblanApplicationInfo.serialNumber,
+                                intOffset = intOffset,
+                                intSize = intSize,
+                                keyboardController = keyboardController,
+                                launcherApps = launcherApps,
+                                leftPadding = leftPadding,
+                                topPadding = topPadding,
                             )
-                        }
-                    }
-                } else {
-                    null
-                },
-                onPress = {
-                    handleOnPress(
-                        animations = animations,
-                        scale = scale,
+                        },
+                        onLongPress = {
+                            scope.launch {
+                                isLongPress = true
+                                keyboardController?.hide()
+                                currentOnLongPressApplicationInfo(
+                                    eblanApplicationInfo,
+                                    graphicsLayer.toImageBitmap(),
+                                    intOffset,
+                                    intSize,
+                                    sharedElementKey,
+                                )
+                            }
+                        },
+                        onPress = {
+                            handleOnPress(
+                                animations = animations,
+                                scale = scale,
+                            )
+                        },
                     )
-                },
-            )
+                }
+            } else {
+                this
+            }
         }
 
     val iconModifier = Modifier

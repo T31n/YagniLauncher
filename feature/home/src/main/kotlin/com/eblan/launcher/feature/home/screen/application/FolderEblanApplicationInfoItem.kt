@@ -211,50 +211,48 @@ internal fun FolderEblanApplicationInfoItem(
                 size = appDrawerSettings.gridItemSettings.cornerRadius.dp,
             ),
         )
-        .pointerInput(key1 = isVisibleOverlay) {
-            detectTapGestures(
-                onTap = if (!isVisibleOverlay) {
-                    {
-                        currentOnTapFolderApplicationInfo(
-                            FolderEntry(
-                                id = folderEblanApplicationInfo.id,
-                                x = intOffset.x,
-                                y = intOffset.y,
-                                width = intSize.width,
-                                height = intSize.height,
-                                isCloseFolder = false,
-                            ),
-                        )
-                    }
-                } else {
-                    null
-                },
-                onLongPress = if (!isVisibleOverlay) {
-                    {
-                        scope.launch {
-                            isLongPress = true
-
-                            keyboardController?.hide()
-
-                            currentOnLongPressFolderApplicationInfo(
-                                folderEblanApplicationInfo,
-                                graphicsLayer.toImageBitmap(),
-                                intOffset,
-                                intSize,
-                                sharedElementKey,
+        .run {
+            if (!isVisibleOverlay) {
+                pointerInput(key1 = Unit) {
+                    detectTapGestures(
+                        onTap = {
+                            currentOnTapFolderApplicationInfo(
+                                FolderEntry(
+                                    id = folderEblanApplicationInfo.id,
+                                    x = intOffset.x,
+                                    y = intOffset.y,
+                                    width = intSize.width,
+                                    height = intSize.height,
+                                    isCloseFolder = false,
+                                ),
                             )
-                        }
-                    }
-                } else {
-                    null
-                },
-                onPress = {
-                    handleOnPress(
-                        animations = animations,
-                        scale = scale,
+                        },
+                        onLongPress = {
+                            scope.launch {
+                                isLongPress = true
+
+                                keyboardController?.hide()
+
+                                currentOnLongPressFolderApplicationInfo(
+                                    folderEblanApplicationInfo,
+                                    graphicsLayer.toImageBitmap(),
+                                    intOffset,
+                                    intSize,
+                                    sharedElementKey,
+                                )
+                            }
+                        },
+                        onPress = {
+                            handleOnPress(
+                                animations = animations,
+                                scale = scale,
+                            )
+                        },
                     )
-                },
-            )
+                }
+            } else {
+                this
+            }
         }
 
     val iconModifier = Modifier

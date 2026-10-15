@@ -146,52 +146,46 @@ internal fun InteractiveShortcutConfigGridItem(
             textColor = textColor,
             visible = isVisibleWhiteBox && !isVisibleFolders,
         )
-        .pointerInput(key1 = isVisibleOverlay) {
-            detectTapGestures(
-                onDoubleTap = if (!isVisibleOverlay) {
-                    {
-                        onDoubleTap(
-                            context = context,
-                            doubleTap = gridItem.doubleTap,
-                            launcherApps = launcherApps,
-                            statusBarManagerWrapper = androidStatusBarManagerWrapper,
-                            onOpenAppDrawer = currentOnOpenAppDrawer,
-                        )
-                    }
-                } else {
-                    null
-                },
-                onLongPress = if (!isVisibleOverlay) {
-                    {
-                        scope.launch {
-                            currentOnLongPressGridItem(
-                                gridItem,
-                                graphicsLayer.toImageBitmap(),
-                                intOffset,
-                                intSize,
-                                sharedElementKey,
+        .run {
+            if (!isVisibleOverlay) {
+                pointerInput(key1 = Unit) {
+                    detectTapGestures(
+                        onDoubleTap = {
+                            onDoubleTap(
+                                context = context,
+                                doubleTap = gridItem.doubleTap,
+                                launcherApps = launcherApps,
+                                statusBarManagerWrapper = androidStatusBarManagerWrapper,
+                                onOpenAppDrawer = currentOnOpenAppDrawer,
                             )
-                        }
-                    }
-                } else {
-                    null
-                },
-                onTap = if (!isVisibleOverlay) {
-                    {
-                        data.shortcutIntentUri?.let {
-                            context.startActivity(parseUri(it, 0))
-                        }
-                    }
-                } else {
-                    null
-                },
-                onPress = {
-                    handleOnPress(
-                        animations = animations,
-                        scale = scale,
+                        },
+                        onLongPress = {
+                            scope.launch {
+                                currentOnLongPressGridItem(
+                                    gridItem,
+                                    graphicsLayer.toImageBitmap(),
+                                    intOffset,
+                                    intSize,
+                                    sharedElementKey,
+                                )
+                            }
+                        },
+                        onTap = {
+                            data.shortcutIntentUri?.let {
+                                context.startActivity(parseUri(it, 0))
+                            }
+                        },
+                        onPress = {
+                            handleOnPress(
+                                animations = animations,
+                                scale = scale,
+                            )
+                        },
                     )
-                },
-            )
+                }
+            } else {
+                this
+            }
         }
         .swipeGestures(
             swipeDown = gridItem.swipeDown,

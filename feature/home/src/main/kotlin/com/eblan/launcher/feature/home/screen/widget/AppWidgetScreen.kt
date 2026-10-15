@@ -165,14 +165,20 @@ internal fun AppWidgetScreen(
                         bottom = paddingValues.calculateBottomPadding(),
                     )
                     .animateContentSize()
-                    .pointerInput(key1 = Unit) {
-                        detectVerticalDragGestures(
-                            onVerticalDrag = { _, dragAmount ->
-                                onVerticalDrag(dragAmount)
-                            },
-                            onDragEnd = onDragEnd,
-                            onDragCancel = onDragEnd,
-                        )
+                    .run {
+                        if (!isVisibleOverlay) {
+                            pointerInput(key1 = Unit) {
+                                detectVerticalDragGestures(
+                                    onVerticalDrag = { _, dragAmount ->
+                                        onVerticalDrag(dragAmount)
+                                    },
+                                    onDragEnd = onDragEnd,
+                                    onDragCancel = onDragEnd,
+                                )
+                            }
+                        } else {
+                            this
+                        }
                     },
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {

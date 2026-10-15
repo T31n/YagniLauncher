@@ -181,14 +181,20 @@ internal fun ApplicationScreen(
                 clip = true
                 shape = RoundedCornerShape(20.dp)
             }
-            .pointerInput(Unit) {
-                detectVerticalDragGestures(
-                    onVerticalDrag = { _, dragAmount ->
-                        onVerticalDrag(dragAmount)
-                    },
-                    onDragEnd = onDragEnd,
-                    onDragCancel = onDragEnd,
-                )
+            .run {
+                if (!isVisibleOverlay) {
+                    pointerInput(key1 = Unit) {
+                        detectVerticalDragGestures(
+                            onVerticalDrag = { _, dragAmount ->
+                                onVerticalDrag(dragAmount)
+                            },
+                            onDragEnd = onDragEnd,
+                            onDragCancel = onDragEnd,
+                        )
+                    }
+                } else {
+                    this
+                }
             },
         color = when (appDrawerSettings.backgroundColor) {
             BackgroundColor.System -> MaterialTheme.colorScheme.surface

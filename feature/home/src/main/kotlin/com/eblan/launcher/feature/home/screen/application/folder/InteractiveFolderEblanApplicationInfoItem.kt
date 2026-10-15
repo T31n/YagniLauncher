@@ -344,46 +344,41 @@ private fun InteractiveEblanApplicationInfoItem(
                     size = appDrawerSettings.gridItemSettings.cornerRadius.dp,
                 ),
             )
-            .pointerInput(
-                key1 = isVisibleOverlay,
-                key2 = isInProgress,
-            ) {
-                detectTapGestures(
-                    onTap = if (!isVisibleOverlay && !isInProgress) {
-                        {
-                            launcherApps.startMainActivity(
-                                serialNumber = data.serialNumber,
-                                componentName = data.componentName,
-                                sourceBounds = sourceBounds,
-                            )
-                        }
-                    } else {
-                        null
-                    },
-                    onLongPress = if (!isVisibleOverlay && !isInProgress) {
-                        {
-                            scope.launch {
-                                keyboardController?.hide()
-
-                                onLongPressFolderEblanApplicationInfoGridItem(
-                                    folderEblanApplicationInfoGridItem,
-                                    graphicsLayer.toImageBitmap(),
-                                    intOffset,
-                                    intSize,
-                                    sharedElementKey,
+            .run {
+                if (!isVisibleOverlay && !isInProgress) {
+                    pointerInput(key1 = Unit) {
+                        detectTapGestures(
+                            onTap = {
+                                launcherApps.startMainActivity(
+                                    serialNumber = data.serialNumber,
+                                    componentName = data.componentName,
+                                    sourceBounds = sourceBounds,
                                 )
-                            }
-                        }
-                    } else {
-                        null
-                    },
-                    onPress = {
-                        handleOnPress(
-                            animations = animations,
-                            scale = scale,
+                            },
+                            onLongPress = {
+                                scope.launch {
+                                    keyboardController?.hide()
+
+                                    onLongPressFolderEblanApplicationInfoGridItem(
+                                        folderEblanApplicationInfoGridItem,
+                                        graphicsLayer.toImageBitmap(),
+                                        intOffset,
+                                        intSize,
+                                        sharedElementKey,
+                                    )
+                                }
+                            },
+                            onPress = {
+                                handleOnPress(
+                                    animations = animations,
+                                    scale = scale,
+                                )
+                            },
                         )
-                    },
-                )
+                    }
+                } else {
+                    this
+                }
             },
         horizontalAlignment = horizontalAlignment,
         verticalArrangement = verticalArrangement,
@@ -498,51 +493,46 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
                     size = appDrawerSettings.gridItemSettings.cornerRadius.dp,
                 ),
             )
-            .pointerInput(
-                key1 = isVisibleOverlay,
-                key2 = isInProgress,
-            ) {
-                detectTapGestures(
-                    onTap = if (!isVisibleOverlay && !isInProgress) {
-                        {
-                            onTapFolderEblanApplicationInfoItem(
-                                FolderEntry(
-                                    id = folderEblanApplicationInfoGridItem.id,
-                                    x = intOffset.x,
-                                    y = intOffset.y,
-                                    width = intSize.width,
-                                    height = intSize.height,
-                                    isCloseFolder = false,
-                                ),
-                            )
-                        }
-                    } else {
-                        null
-                    },
-                    onLongPress = if (!isVisibleOverlay && !isInProgress) {
-                        {
-                            scope.launch {
-                                keyboardController?.hide()
-
-                                onLongPressFolderEblanApplicationInfoGridItem(
-                                    folderEblanApplicationInfoGridItem,
-                                    graphicsLayer.toImageBitmap(),
-                                    intOffset,
-                                    intSize,
-                                    sharedElementKey,
+            .run {
+                if (!isVisibleOverlay && !isInProgress) {
+                    pointerInput(key1 = Unit) {
+                        detectTapGestures(
+                            onTap = {
+                                onTapFolderEblanApplicationInfoItem(
+                                    FolderEntry(
+                                        id = folderEblanApplicationInfoGridItem.id,
+                                        x = intOffset.x,
+                                        y = intOffset.y,
+                                        width = intSize.width,
+                                        height = intSize.height,
+                                        isCloseFolder = false,
+                                    ),
                                 )
-                            }
-                        }
-                    } else {
-                        null
-                    },
-                    onPress = {
-                        handleOnPress(
-                            animations = animations,
-                            scale = scale,
+                            },
+                            onLongPress = {
+                                scope.launch {
+                                    keyboardController?.hide()
+
+                                    onLongPressFolderEblanApplicationInfoGridItem(
+                                        folderEblanApplicationInfoGridItem,
+                                        graphicsLayer.toImageBitmap(),
+                                        intOffset,
+                                        intSize,
+                                        sharedElementKey,
+                                    )
+                                }
+                            },
+                            onPress = {
+                                handleOnPress(
+                                    animations = animations,
+                                    scale = scale,
+                                )
+                            },
                         )
-                    },
-                )
+                    }
+                } else {
+                    this
+                }
             },
         horizontalAlignment = horizontalAlignment,
         verticalArrangement = verticalArrangement,

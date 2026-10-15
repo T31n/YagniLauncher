@@ -190,59 +190,53 @@ internal fun InteractiveFolderGridItem(
             textColor = textColor,
             visible = isVisibleWhiteBox && !isVisibleFolder,
         )
-        .pointerInput(key1 = isVisibleOverlay) {
-            detectTapGestures(
-                onDoubleTap = if (!isVisibleOverlay) {
-                    {
-                        onDoubleTap(
-                            context = context,
-                            doubleTap = gridItem.doubleTap,
-                            launcherApps = launcherApps,
-                            statusBarManagerWrapper = androidStatusBarManagerWrapper,
-                            onOpenAppDrawer = currentOnOpenAppDrawer,
-                        )
-                    }
-                } else {
-                    null
-                },
-                onLongPress = if (!isVisibleOverlay) {
-                    {
-                        scope.launch {
-                            currentOnLongPressGridItem(
-                                gridItem,
-                                graphicsLayer.toImageBitmap(),
-                                intOffset,
-                                intSize,
-                                sharedElementKey,
+        .run {
+            if (!isVisibleOverlay) {
+                pointerInput(key1 = Unit) {
+                    detectTapGestures(
+                        onDoubleTap = {
+                            onDoubleTap(
+                                context = context,
+                                doubleTap = gridItem.doubleTap,
+                                launcherApps = launcherApps,
+                                statusBarManagerWrapper = androidStatusBarManagerWrapper,
+                                onOpenAppDrawer = currentOnOpenAppDrawer,
                             )
-                        }
-                    }
-                } else {
-                    null
-                },
-                onTap = if (!isVisibleOverlay) {
-                    {
-                        currentOnTapFolderGridItem(
-                            FolderEntry(
-                                id = gridItem.id,
-                                x = intOffset.x,
-                                y = intOffset.y,
-                                width = intSize.width,
-                                height = intSize.height,
-                                isCloseFolder = false,
-                            ),
-                        )
-                    }
-                } else {
-                    null
-                },
-                onPress = {
-                    handleOnPress(
-                        animations = animations,
-                        scale = scale,
+                        },
+                        onLongPress = {
+                            scope.launch {
+                                currentOnLongPressGridItem(
+                                    gridItem,
+                                    graphicsLayer.toImageBitmap(),
+                                    intOffset,
+                                    intSize,
+                                    sharedElementKey,
+                                )
+                            }
+                        },
+                        onTap = {
+                            currentOnTapFolderGridItem(
+                                FolderEntry(
+                                    id = gridItem.id,
+                                    x = intOffset.x,
+                                    y = intOffset.y,
+                                    width = intSize.width,
+                                    height = intSize.height,
+                                    isCloseFolder = false,
+                                ),
+                            )
+                        },
+                        onPress = {
+                            handleOnPress(
+                                animations = animations,
+                                scale = scale,
+                            )
+                        },
                     )
-                },
-            )
+                }
+            } else {
+                this
+            }
         }
         .swipeGestures(
             swipeDown = gridItem.swipeDown,

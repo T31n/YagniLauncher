@@ -140,61 +140,55 @@ internal fun InteractiveShortcutInfoGridItem(
             textColor = textColor,
             visible = isVisibleWhiteBox && !isVisibleFolders,
         )
-        .pointerInput(key1 = isVisibleOverlay) {
-            detectTapGestures(
-                onDoubleTap = if (!isVisibleOverlay) {
-                    {
-                        onDoubleTap(
-                            context = context,
-                            doubleTap = gridItem.doubleTap,
-                            launcherApps = androidLauncherAppsWrapper,
-                            statusBarManagerWrapper = androidStatusBarManagerWrapper,
-                            onOpenAppDrawer = currentOnOpenAppDrawer,
-                        )
-                    }
-                } else {
-                    null
-                },
-                onLongPress = if (!isVisibleOverlay) {
-                    {
-                        scope.launch {
-                            currentOnLongPressGridItem(
-                                gridItem,
-                                graphicsLayer.toImageBitmap(),
-                                intOffset,
-                                intSize,
-                                sharedElementKey,
+        .run {
+            if (!isVisibleOverlay) {
+                pointerInput(key1 = Unit) {
+                    detectTapGestures(
+                        onDoubleTap = {
+                            onDoubleTap(
+                                context = context,
+                                doubleTap = gridItem.doubleTap,
+                                launcherApps = androidLauncherAppsWrapper,
+                                statusBarManagerWrapper = androidStatusBarManagerWrapper,
+                                onOpenAppDrawer = currentOnOpenAppDrawer,
                             )
-                        }
-                    }
-                } else {
-                    null
-                },
-                onTap = if (!isVisibleOverlay) {
-                    {
-                        if (
-                            hasShortcutHostPermission &&
-                            data.isEnabled &&
-                            Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1
-                        ) {
-                            androidLauncherAppsWrapper.startShortcut(
-                                serialNumber = data.serialNumber,
-                                packageName = data.packageName,
-                                id = data.shortcutId,
-                                sourceBounds = sourceBounds,
+                        },
+                        onLongPress = {
+                            scope.launch {
+                                currentOnLongPressGridItem(
+                                    gridItem,
+                                    graphicsLayer.toImageBitmap(),
+                                    intOffset,
+                                    intSize,
+                                    sharedElementKey,
+                                )
+                            }
+                        },
+                        onTap = {
+                            if (
+                                hasShortcutHostPermission &&
+                                data.isEnabled &&
+                                Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1
+                            ) {
+                                androidLauncherAppsWrapper.startShortcut(
+                                    serialNumber = data.serialNumber,
+                                    packageName = data.packageName,
+                                    id = data.shortcutId,
+                                    sourceBounds = sourceBounds,
+                                )
+                            }
+                        },
+                        onPress = {
+                            handleOnPress(
+                                animations = animations,
+                                scale = scale,
                             )
-                        }
-                    }
-                } else {
-                    null
-                },
-                onPress = {
-                    handleOnPress(
-                        animations = animations,
-                        scale = scale,
+                        },
                     )
-                },
-            )
+                }
+            } else {
+                this
+            }
         }
         .swipeGestures(
             swipeDown = gridItem.swipeDown,

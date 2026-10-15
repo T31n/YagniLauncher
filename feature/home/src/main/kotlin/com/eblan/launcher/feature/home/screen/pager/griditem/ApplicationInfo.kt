@@ -145,54 +145,48 @@ internal fun InteractiveApplicationInfoGridItem(
             textColor = textColor,
             visible = isVisibleWhiteBox && !isVisibleFolders,
         )
-        .pointerInput(key1 = isVisibleOverlay) {
-            detectTapGestures(
-                onDoubleTap = if (!isVisibleOverlay) {
-                    {
-                        onDoubleTap(
-                            context = context,
-                            doubleTap = gridItem.doubleTap,
-                            launcherApps = androidLauncherAppsWrapper,
-                            statusBarManagerWrapper = androidStatusBarManagerWrapper,
-                            onOpenAppDrawer = currentOnOpenAppDrawer,
-                        )
-                    }
-                } else {
-                    null
-                },
-                onLongPress = if (!isVisibleOverlay) {
-                    {
-                        scope.launch {
-                            currentOnLongPressGridItem(
-                                gridItem,
-                                graphicsLayer.toImageBitmap(),
-                                intOffset,
-                                intSize,
-                                sharedElementKey,
+        .run {
+            if (!isVisibleOverlay) {
+                pointerInput(key1 = Unit) {
+                    detectTapGestures(
+                        onDoubleTap = {
+                            onDoubleTap(
+                                context = context,
+                                doubleTap = gridItem.doubleTap,
+                                launcherApps = androidLauncherAppsWrapper,
+                                statusBarManagerWrapper = androidStatusBarManagerWrapper,
+                                onOpenAppDrawer = currentOnOpenAppDrawer,
                             )
-                        }
-                    }
-                } else {
-                    null
-                },
-                onTap = if (!isVisibleOverlay) {
-                    {
-                        androidLauncherAppsWrapper.startMainActivity(
-                            serialNumber = data.serialNumber,
-                            componentName = data.componentName,
-                            sourceBounds = sourceBounds,
-                        )
-                    }
-                } else {
-                    null
-                },
-                onPress = {
-                    handleOnPress(
-                        animations = animations,
-                        scale = scale,
+                        },
+                        onLongPress = {
+                            scope.launch {
+                                currentOnLongPressGridItem(
+                                    gridItem,
+                                    graphicsLayer.toImageBitmap(),
+                                    intOffset,
+                                    intSize,
+                                    sharedElementKey,
+                                )
+                            }
+                        },
+                        onTap = {
+                            androidLauncherAppsWrapper.startMainActivity(
+                                serialNumber = data.serialNumber,
+                                componentName = data.componentName,
+                                sourceBounds = sourceBounds,
+                            )
+                        },
+                        onPress = {
+                            handleOnPress(
+                                animations = animations,
+                                scale = scale,
+                            )
+                        },
                     )
-                },
-            )
+                }
+            } else {
+                this
+            }
         }
         .swipeGestures(
             swipeDown = gridItem.swipeDown,

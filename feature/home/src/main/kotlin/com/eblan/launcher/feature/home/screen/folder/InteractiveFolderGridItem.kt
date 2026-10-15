@@ -422,57 +422,48 @@ private fun InteractiveApplicationInfoGridItem(
                 color = Color(gridItemSettings.customBackgroundColor),
                 shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
             )
-            .pointerInput(
-                key1 = isVisibleOverlay,
-                key2 = isInProgress,
-            ) {
-                detectTapGestures(
-                    onDoubleTap = if (!isVisibleOverlay && !isInProgress) {
-                        {
-                            onDoubleTap(
-                                context = context,
-                                doubleTap = gridItem.doubleTap,
-                                launcherApps = launcherApps,
-                                statusBarManagerWrapper = androidStatusBarManagerWrapper,
-                                onOpenAppDrawer = onOpenAppDrawer,
-                            )
-                        }
-                    } else {
-                        null
-                    },
-                    onLongPress = if (!isVisibleOverlay && !isInProgress) {
-                        {
-                            scope.launch {
-                                onLongPressFolderGridItem(
-                                    gridItem,
-                                    graphicsLayer.toImageBitmap(),
-                                    intOffset,
-                                    intSize,
-                                    sharedElementKey,
+            .run {
+                if (!isVisibleOverlay && !isInProgress) {
+                    pointerInput(key1 = Unit) {
+                        detectTapGestures(
+                            onDoubleTap = {
+                                onDoubleTap(
+                                    context = context,
+                                    doubleTap = gridItem.doubleTap,
+                                    launcherApps = launcherApps,
+                                    statusBarManagerWrapper = androidStatusBarManagerWrapper,
+                                    onOpenAppDrawer = onOpenAppDrawer,
                                 )
-                            }
-                        }
-                    } else {
-                        null
-                    },
-                    onTap = if (!isVisibleOverlay && !isInProgress) {
-                        {
-                            androidLauncherAppsWrapper.startMainActivity(
-                                serialNumber = data.serialNumber,
-                                componentName = data.componentName,
-                                sourceBounds = sourceBounds,
-                            )
-                        }
-                    } else {
-                        null
-                    },
-                    onPress = {
-                        handleOnPress(
-                            animations = animations,
-                            scale = scale,
+                            },
+                            onLongPress = {
+                                scope.launch {
+                                    onLongPressFolderGridItem(
+                                        gridItem,
+                                        graphicsLayer.toImageBitmap(),
+                                        intOffset,
+                                        intSize,
+                                        sharedElementKey,
+                                    )
+                                }
+                            },
+                            onTap = {
+                                androidLauncherAppsWrapper.startMainActivity(
+                                    serialNumber = data.serialNumber,
+                                    componentName = data.componentName,
+                                    sourceBounds = sourceBounds,
+                                )
+                            },
+                            onPress = {
+                                handleOnPress(
+                                    animations = animations,
+                                    scale = scale,
+                                )
+                            },
                         )
-                    },
-                )
+                    }
+                } else {
+                    this
+                }
             }
             .swipeGestures(
                 swipeDown = gridItem.swipeDown,
@@ -611,66 +602,57 @@ private fun InteractiveShortcutInfoGridItem(
                 color = Color(gridItemSettings.customBackgroundColor),
                 shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
             )
-            .pointerInput(
-                key1 = isVisibleOverlay,
-                key2 = isInProgress,
-            ) {
-                detectTapGestures(
-                    onDoubleTap = if (!isVisibleOverlay && !isInProgress) {
-                        {
-                            scope.launch {
-                                onDoubleTap(
-                                    context = context,
-                                    doubleTap = gridItem.doubleTap,
-                                    launcherApps = launcherApps,
-                                    statusBarManagerWrapper = androidStatusBarManagerWrapper,
-                                    onOpenAppDrawer = onOpenAppDrawer,
+            .run {
+                if (!isVisibleOverlay && !isInProgress) {
+                    pointerInput(key1 = Unit) {
+                        detectTapGestures(
+                            onDoubleTap = {
+                                scope.launch {
+                                    onDoubleTap(
+                                        context = context,
+                                        doubleTap = gridItem.doubleTap,
+                                        launcherApps = launcherApps,
+                                        statusBarManagerWrapper = androidStatusBarManagerWrapper,
+                                        onOpenAppDrawer = onOpenAppDrawer,
+                                    )
+                                }
+                            },
+                            onLongPress = {
+                                scope.launch {
+                                    onLongPressFolderGridItem(
+                                        gridItem,
+                                        graphicsLayer.toImageBitmap(),
+                                        intOffset,
+                                        intSize,
+                                        sharedElementKey,
+                                    )
+                                }
+                            },
+                            onTap = {
+                                if (
+                                    hasShortcutHostPermission &&
+                                    data.isEnabled &&
+                                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1
+                                ) {
+                                    androidLauncherAppsWrapper.startShortcut(
+                                        serialNumber = data.serialNumber,
+                                        packageName = data.packageName,
+                                        id = data.shortcutId,
+                                        sourceBounds = sourceBounds,
+                                    )
+                                }
+                            },
+                            onPress = {
+                                handleOnPress(
+                                    animations = animations,
+                                    scale = scale,
                                 )
-                            }
-                        }
-                    } else {
-                        null
-                    },
-                    onLongPress = if (!isVisibleOverlay && !isInProgress) {
-                        {
-                            scope.launch {
-                                onLongPressFolderGridItem(
-                                    gridItem,
-                                    graphicsLayer.toImageBitmap(),
-                                    intOffset,
-                                    intSize,
-                                    sharedElementKey,
-                                )
-                            }
-                        }
-                    } else {
-                        null
-                    },
-                    onTap = if (!isVisibleOverlay && !isInProgress) {
-                        {
-                            if (
-                                hasShortcutHostPermission &&
-                                data.isEnabled &&
-                                Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1
-                            ) {
-                                androidLauncherAppsWrapper.startShortcut(
-                                    serialNumber = data.serialNumber,
-                                    packageName = data.packageName,
-                                    id = data.shortcutId,
-                                    sourceBounds = sourceBounds,
-                                )
-                            }
-                        }
-                    } else {
-                        null
-                    },
-                    onPress = {
-                        handleOnPress(
-                            animations = animations,
-                            scale = scale,
+                            },
                         )
-                    },
-                )
+                    }
+                } else {
+                    this
+                }
             }
             .swipeGestures(
                 swipeDown = gridItem.swipeDown,
@@ -815,55 +797,46 @@ private fun InteractiveShortcutConfigGridItem(
                 color = Color(gridItemSettings.customBackgroundColor),
                 shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
             )
-            .pointerInput(
-                key1 = isVisibleOverlay,
-                key2 = isInProgress,
-            ) {
-                detectTapGestures(
-                    onDoubleTap = if (!isVisibleOverlay && !isInProgress) {
-                        {
-                            onDoubleTap(
-                                context = context,
-                                doubleTap = gridItem.doubleTap,
-                                launcherApps = launcherApps,
-                                statusBarManagerWrapper = androidStatusBarManagerWrapper,
-                                onOpenAppDrawer = onOpenAppDrawer,
-                            )
-                        }
-                    } else {
-                        null
-                    },
-                    onLongPress = if (!isVisibleOverlay && !isInProgress) {
-                        {
-                            scope.launch {
-                                onLongPressFolderGridItem(
-                                    gridItem,
-                                    graphicsLayer.toImageBitmap(),
-                                    intOffset,
-                                    intSize,
-                                    sharedElementKey,
+            .run {
+                if (!isVisibleOverlay && !isInProgress) {
+                    pointerInput(key1 = Unit) {
+                        detectTapGestures(
+                            onDoubleTap = {
+                                onDoubleTap(
+                                    context = context,
+                                    doubleTap = gridItem.doubleTap,
+                                    launcherApps = launcherApps,
+                                    statusBarManagerWrapper = androidStatusBarManagerWrapper,
+                                    onOpenAppDrawer = onOpenAppDrawer,
                                 )
-                            }
-                        }
-                    } else {
-                        null
-                    },
-                    onTap = if (!isVisibleOverlay && !isInProgress) {
-                        {
-                            data.shortcutIntentUri?.let {
-                                context.startActivity(parseUri(it, 0))
-                            }
-                        }
-                    } else {
-                        null
-                    },
-                    onPress = {
-                        handleOnPress(
-                            animations = animations,
-                            scale = scale,
+                            },
+                            onLongPress = {
+                                scope.launch {
+                                    onLongPressFolderGridItem(
+                                        gridItem,
+                                        graphicsLayer.toImageBitmap(),
+                                        intOffset,
+                                        intSize,
+                                        sharedElementKey,
+                                    )
+                                }
+                            },
+                            onTap = {
+                                data.shortcutIntentUri?.let {
+                                    context.startActivity(parseUri(it, 0))
+                                }
+                            },
+                            onPress = {
+                                handleOnPress(
+                                    animations = animations,
+                                    scale = scale,
+                                )
+                            },
                         )
-                    },
-                )
+                    }
+                } else {
+                    this
+                }
             }
             .swipeGestures(
                 swipeDown = gridItem.swipeDown,
@@ -988,62 +961,53 @@ private fun InteractiveNestedFolderGridItem(
                 color = Color(gridItemSettings.customBackgroundColor),
                 shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
             )
-            .pointerInput(
-                key1 = isVisibleOverlay,
-                key2 = isInProgress,
-            ) {
-                detectTapGestures(
-                    onDoubleTap = if (!isVisibleOverlay && !isInProgress) {
-                        {
-                            onDoubleTap(
-                                context = context,
-                                doubleTap = gridItem.doubleTap,
-                                launcherApps = launcherApps,
-                                statusBarManagerWrapper = androidStatusBarManagerWrapper,
-                                onOpenAppDrawer = onOpenAppDrawer,
-                            )
-                        }
-                    } else {
-                        null
-                    },
-                    onLongPress = if (!isVisibleOverlay && !isInProgress) {
-                        {
-                            scope.launch {
-                                onLongPressFolderGridItem(
-                                    gridItem,
-                                    graphicsLayer.toImageBitmap(),
-                                    intOffset,
-                                    intSize,
-                                    sharedElementKey,
+            .run {
+                if (!isVisibleOverlay && !isInProgress) {
+                    pointerInput(key1 = Unit) {
+                        detectTapGestures(
+                            onDoubleTap = {
+                                onDoubleTap(
+                                    context = context,
+                                    doubleTap = gridItem.doubleTap,
+                                    launcherApps = launcherApps,
+                                    statusBarManagerWrapper = androidStatusBarManagerWrapper,
+                                    onOpenAppDrawer = onOpenAppDrawer,
                                 )
-                            }
-                        }
-                    } else {
-                        null
-                    },
-                    onTap = if (!isVisibleOverlay && !isInProgress) {
-                        {
-                            onUpsertFolderGridItemPopupEntry(
-                                FolderEntry(
-                                    id = gridItem.id,
-                                    x = intOffset.x,
-                                    y = intOffset.y,
-                                    width = intSize.width,
-                                    height = intSize.height,
-                                    isCloseFolder = false,
-                                ),
-                            )
-                        }
-                    } else {
-                        null
-                    },
-                    onPress = {
-                        handleOnPress(
-                            animations = animations,
-                            scale = scale,
+                            },
+                            onLongPress = {
+                                scope.launch {
+                                    onLongPressFolderGridItem(
+                                        gridItem,
+                                        graphicsLayer.toImageBitmap(),
+                                        intOffset,
+                                        intSize,
+                                        sharedElementKey,
+                                    )
+                                }
+                            },
+                            onTap = {
+                                onUpsertFolderGridItemPopupEntry(
+                                    FolderEntry(
+                                        id = gridItem.id,
+                                        x = intOffset.x,
+                                        y = intOffset.y,
+                                        width = intSize.width,
+                                        height = intSize.height,
+                                        isCloseFolder = false,
+                                    ),
+                                )
+                            },
+                            onPress = {
+                                handleOnPress(
+                                    animations = animations,
+                                    scale = scale,
+                                )
+                            },
                         )
-                    },
-                )
+                    }
+                } else {
+                    this
+                }
             }
             .swipeGestures(
                 swipeDown = gridItem.swipeDown,
