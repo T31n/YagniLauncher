@@ -24,8 +24,7 @@ import com.eblan.launcher.common.AndroidColor
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-internal class DefaultAndroidColor @Inject constructor(@param:ApplicationContext private val context: Context) :
-    AndroidColor {
+internal class DefaultAndroidColor @Inject constructor(@param:ApplicationContext private val context: Context) : AndroidColor {
     override fun getColor(): Int {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             return context.getColor(android.R.color.system_accent1_600)

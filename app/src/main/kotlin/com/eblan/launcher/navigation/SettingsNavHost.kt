@@ -17,6 +17,9 @@
  */
 package com.eblan.launcher.navigation
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -43,6 +46,10 @@ fun SettingsNavHost(
     NavHost(
         navController = navController,
         startDestination = SettingsRouteData::class,
+        enterTransition = { slideInHorizontally(initialOffsetX = { it }, animationSpec = tween()) },
+        exitTransition = { slideOutHorizontally(targetOffsetX = { -it }, animationSpec = tween()) },
+        popEnterTransition = { slideInHorizontally(initialOffsetX = { -it }, animationSpec = tween()) },
+        popExitTransition = { slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween()) },
     ) {
         settingsScreen(
             onAppDrawer = navController::navigateToAppDrawerSettings,

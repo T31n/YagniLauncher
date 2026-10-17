@@ -51,53 +51,52 @@ internal class DefaultIconPackManager @Inject constructor(
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : IconPackManager,
     AndroidIconPackManager {
-    override suspend fun getIconPackComponents(packageName: String): List<IconPackComponent> =
-        withContext(ioDispatcher) {
-            try {
-                val packageContext = context.createPackageContext(
-                    packageName,
-                    Context.CONTEXT_IGNORE_SECURITY,
-                )
+    override suspend fun getIconPackComponents(packageName: String): List<IconPackComponent> = withContext(ioDispatcher) {
+        try {
+            val packageContext = context.createPackageContext(
+                packageName,
+                Context.CONTEXT_IGNORE_SECURITY,
+            )
 
-                val resources = packageContext.resources
+            val resources = packageContext.resources
 
-                val xmlId = resources.getIdentifier(
-                    "appfilter",
-                    "xml",
-                    packageName,
-                )
+            val xmlId = resources.getIdentifier(
+                "appfilter",
+                "xml",
+                packageName,
+            )
 
-                val rawId = resources.getIdentifier(
-                    "appfilter",
-                    "raw",
-                    packageName,
-                )
+            val rawId = resources.getIdentifier(
+                "appfilter",
+                "raw",
+                packageName,
+            )
 
-                val autoCloseable = when {
-                    xmlId != 0 -> resources.getXml(xmlId)
-                    rawId != 0 -> resources.openRawResource(rawId)
-                    else -> packageContext.assets.open("appfilter.xml")
-                }
-
-                autoCloseable.use {
-                    when (it) {
-                        is XmlResourceParser -> parseXml(xmlPullParser = it)
-
-                        is InputStream -> {
-                            val xmlPullParser = XmlPullParserFactory.newInstance().newPullParser()
-
-                            xmlPullParser.setInput(it.reader())
-
-                            parseXml(xmlPullParser = xmlPullParser)
-                        }
-
-                        else -> emptyList()
-                    }
-                }
-            } catch (_: Exception) {
-                emptyList()
+            val autoCloseable = when {
+                xmlId != 0 -> resources.getXml(xmlId)
+                rawId != 0 -> resources.openRawResource(rawId)
+                else -> packageContext.assets.open("appfilter.xml")
             }
+
+            autoCloseable.use {
+                when (it) {
+                    is XmlResourceParser -> parseXml(xmlPullParser = it)
+
+                    is InputStream -> {
+                        val xmlPullParser = XmlPullParserFactory.newInstance().newPullParser()
+
+                        xmlPullParser.setInput(it.reader())
+
+                        parseXml(xmlPullParser = xmlPullParser)
+                    }
+
+                    else -> emptyList()
+                }
+            }
+        } catch (_: Exception) {
+            emptyList()
         }
+    }
 
     override suspend fun createIconPackPath(
         packageName: String,
