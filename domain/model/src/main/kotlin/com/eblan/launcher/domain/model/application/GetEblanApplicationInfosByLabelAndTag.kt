@@ -25,7 +25,7 @@ data class GetEblanApplicationInfosByLabelAndTag(
     val eblanApplicationInfos: Map<EblanUserPageKey, List<EblanApplicationInfo>>,
     val privateEblanUser: EblanUser?,
     val privateEblanApplicationInfos: List<EblanApplicationInfo>,
-    val iconPackInfoFilePaths: Map<String, String?>,
+    val iconPackFilePaths: Map<String, String?>,
     val folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     val alphabeticalScrollBarItems: Map<EblanUserPageKey, List<AlphabeticalScrollBarItem>>,
 )

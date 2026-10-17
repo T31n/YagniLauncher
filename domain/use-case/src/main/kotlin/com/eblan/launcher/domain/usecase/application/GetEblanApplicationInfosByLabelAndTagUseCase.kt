@@ -95,7 +95,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
                 getVerticalOrListEblanApplicationInfosByLabel(
                     eblanApplicationInfos = eblanApplicationInfosByLabel,
                     folderEblanApplicationInfos = folderEblanApplicationInfosByLabel,
-                    iconPackInfoFilePaths = iconPackFilePaths,
+                    iconPackFilePaths = iconPackFilePaths,
                     appDrawerType = appDrawerType,
                     scrollBarType = userData.appDrawerSettings.scrollBarType,
                 )
@@ -105,7 +105,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
                     horizontalAppDrawerColumns = userData.appDrawerSettings.horizontalAppDrawerColumns,
                     horizontalAppDrawerRows = userData.appDrawerSettings.horizontalAppDrawerRows,
                     eblanApplicationInfos = eblanApplicationInfosByLabel,
-                    iconPackInfoFilePaths = iconPackFilePaths,
+                    iconPackFilePaths = iconPackFilePaths,
                 )
         }
     }.flowOn(defaultDispatcher)
@@ -113,7 +113,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
     private suspend fun getVerticalOrListEblanApplicationInfosByLabel(
         eblanApplicationInfos: List<EblanApplicationInfo>,
         folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
-        iconPackInfoFilePaths: Map<String, String?>,
+        iconPackFilePaths: Map<String, String?>,
         appDrawerType: AppDrawerType,
         scrollBarType: ScrollBarType,
     ): GetEblanApplicationInfosByLabelAndTag {
@@ -153,7 +153,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
                 .filterKeys { it != privateEblanUserPageKey },
             privateEblanUser = privateEblanUserPageKey?.eblanUser,
             privateEblanApplicationInfos = groupedEblanApplicationInfos[privateEblanUserPageKey].orEmpty(),
-            iconPackInfoFilePaths = iconPackInfoFilePaths,
+            iconPackFilePaths = iconPackFilePaths,
             folderEblanApplicationInfos = folderEblanApplicationInfos,
             alphabeticalScrollBarItems = getAlphabeticalScrollBarItems(
                 eblanApplicationInfos = groupedEblanApplicationInfosWithFolders,
@@ -168,7 +168,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
         horizontalAppDrawerColumns: Int,
         horizontalAppDrawerRows: Int,
         eblanApplicationInfos: List<EblanApplicationInfo>,
-        iconPackInfoFilePaths: Map<String, String?>,
+        iconPackFilePaths: Map<String, String?>,
     ): GetEblanApplicationInfosByLabelAndTag {
         val groupedEblanApplicationInfos = eblanApplicationInfos.groupBy {
             launcherAppsWrapper.getUser(serialNumber = it.serialNumber)
@@ -187,7 +187,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
             eblanApplicationInfos = groupedEblanApplicationInfos,
             privateEblanUser = null,
             privateEblanApplicationInfos = emptyList(),
-            iconPackInfoFilePaths = iconPackInfoFilePaths,
+            iconPackFilePaths = iconPackFilePaths,
             folderEblanApplicationInfos = emptyList(),
             alphabeticalScrollBarItems = emptyMap(),
         )

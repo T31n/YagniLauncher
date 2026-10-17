@@ -111,7 +111,7 @@ internal fun FolderApplicationScreen(
     lockMovement: Boolean,
     dragIntOffset: IntOffset,
     showFolderEblanApplicationInfoGridItemMenu: Boolean,
-    iconPackInfoFilePaths: Map<String, String?>,
+    iconPackFilePaths: Map<String, String?>,
     onUpsertFolderEblanApplicationInfoPopupEntry: (FolderEntry) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onMoveFolderEblanApplicationInfoGridItem: (
@@ -471,7 +471,7 @@ internal fun FolderApplicationScreen(
                                 folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                                 drag = drag,
                                 showFolderEblanApplicationInfoGridItemMenu = showFolderEblanApplicationInfoGridItemMenu,
-                                iconPackInfoFilePaths = iconPackInfoFilePaths,
+                                iconPackFilePaths = iconPackFilePaths,
                                 onLongPressFolderEblanApplicationInfoGridItem = onLongPressFolderEblanApplicationInfoGridItem,
                                 onDragFolderEblanApplicationInfoGridItem = onDragFolderEblanApplicationInfoGridItem,
                                 onTapFolderEblanApplicationInfoItem = onTapFolderEblanApplicationInfoItem,

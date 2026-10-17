@@ -64,7 +64,7 @@ internal fun FolderGridItem(
     textColor: Color,
     previewFolderGridItems: Map<String, PreviewFolder>,
     hasShortcutHostPermission: Boolean,
-    iconPackInfoFilePaths: Map<String, String?>,
+    iconPackFilePaths: Map<String, String?>,
     horizontalAlignment: Alignment.Horizontal,
     verticalArrangement: Arrangement.Vertical,
     horizontalArrangement: Arrangement.Horizontal,
@@ -120,7 +120,7 @@ internal fun FolderGridItem(
                         PreviewFolderGridItem(
                             gridItem = it,
                             hasShortcutHostPermission = hasShortcutHostPermission,
-                            iconPackInfoFilePaths = iconPackInfoFilePaths,
+                            iconPackFilePaths = iconPackFilePaths,
                             gridItemSettings = gridItemSettings,
                             folderBackgroundColor = folderBackgroundColor,
                             customFolderBackgroundColor = customFolderBackgroundColor,
@@ -163,7 +163,7 @@ private fun PreviewFolderGridItem(
     modifier: Modifier = Modifier,
     gridItem: GridItem,
     hasShortcutHostPermission: Boolean,
-    iconPackInfoFilePaths: Map<String, String?>,
+    iconPackFilePaths: Map<String, String?>,
     gridItemSettings: GridItemSettings,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
@@ -207,7 +207,7 @@ private fun PreviewFolderGridItem(
 
         when (val data = gridItem.data) {
             is GridItemData.ApplicationInfo -> {
-                val icon = iconPackInfoFilePaths[data.componentName] ?: data.icon
+                val icon = iconPackFilePaths[data.componentName] ?: data.icon
 
                 AsyncImage(
                     model = Builder(context)

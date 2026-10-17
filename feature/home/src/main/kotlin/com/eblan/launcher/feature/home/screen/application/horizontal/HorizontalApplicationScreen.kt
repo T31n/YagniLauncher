@@ -449,7 +449,7 @@ private fun EblanApplicationInfos(
                         isScrollInProgress = isScrollInProgress,
                         systemTextColor = systemTextColor,
                         systemCustomTextColor = systemCustomTextColor,
-                        iconPackInfoFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackInfoFilePaths,
+                        iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
                         animations = animations,
                         onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                         onDragApplicationInfo = onDragApplicationInfo,
@@ -465,7 +465,7 @@ private fun EblanApplicationInfos(
                         isVisibleOverlay = isVisibleOverlay,
                         systemTextColor = systemTextColor,
                         systemCustomTextColor = systemCustomTextColor,
-                        iconPackInfoFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackInfoFilePaths,
+                        iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
                         animations = animations,
                         onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
                     )

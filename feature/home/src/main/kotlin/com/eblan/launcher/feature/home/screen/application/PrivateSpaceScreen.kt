@@ -100,7 +100,7 @@ internal fun LazyGridScope.privateSpace(
     customBackgroundColor: Int,
     systemCustomTextColor: Int,
     systemTextColor: TextColor,
-    iconPackInfoFilePaths: Map<String, String?>,
+    iconPackFilePaths: Map<String, String?>,
     animations: Boolean,
     onLongPressPrivateSpaceApplicationInfoItem: (
         eblanApplicationInfo: EblanApplicationInfo,
@@ -131,7 +131,7 @@ internal fun LazyGridScope.privateSpace(
                 isVisibleOverlay = isVisibleOverlay,
                 systemTextColor = systemTextColor,
                 systemCustomTextColor = systemCustomTextColor,
-                iconPackInfoFilePaths = iconPackInfoFilePaths,
+                iconPackFilePaths = iconPackFilePaths,
                 animations = animations,
                 onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
             )
@@ -233,7 +233,7 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
     isVisibleOverlay: Boolean,
     systemCustomTextColor: Int,
     systemTextColor: TextColor,
-    iconPackInfoFilePaths: Map<String, String?>,
+    iconPackFilePaths: Map<String, String?>,
     animations: Boolean,
     onLongPressPrivateSpaceApplicationInfoItem: (
         eblanApplicationInfo: EblanApplicationInfo,
@@ -264,7 +264,7 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
 
     val maxLines = if (gridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
 
-    val icon = iconPackInfoFilePaths[eblanApplicationInfo.componentName]
+    val icon = iconPackFilePaths[eblanApplicationInfo.componentName]
         ?: eblanApplicationInfo.icon
 
     val horizontalAlignment =

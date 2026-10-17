@@ -124,7 +124,7 @@ internal fun InteractiveFolderGridItem(
     paddingValues: PaddingValues,
     sharedElementKey: SharedElementKey,
     isInProgress: Boolean,
-    iconPackInfoFilePaths: Map<String, String?>,
+    iconPackFilePaths: Map<String, String?>,
     animations: Boolean,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
@@ -248,7 +248,7 @@ internal fun InteractiveFolderGridItem(
                 iconSize = iconSize,
                 sourceBounds = sourceBounds,
                 isInProgress = isInProgress,
-                iconPackInfoFilePaths = iconPackInfoFilePaths,
+                iconPackFilePaths = iconPackFilePaths,
                 animations = animations,
                 textColor = currentTextColor,
                 horizontalAlignment = horizontalAlignment,
@@ -331,7 +331,7 @@ internal fun InteractiveFolderGridItem(
                 padding = padding,
                 iconSize = iconSize,
                 isInProgress = isInProgress,
-                iconPackInfoFilePaths = iconPackInfoFilePaths,
+                iconPackFilePaths = iconPackFilePaths,
                 animations = animations,
                 textColor = currentTextColor,
                 folderCornerRadius = folderCornerRadius,
@@ -372,7 +372,7 @@ private fun InteractiveApplicationInfoGridItem(
     iconSize: Dp,
     sourceBounds: Rect,
     isInProgress: Boolean,
-    iconPackInfoFilePaths: Map<String, String?>,
+    iconPackFilePaths: Map<String, String?>,
     animations: Boolean,
     textColor: Color,
     horizontalAlignment: Alignment.Horizontal,
@@ -401,7 +401,7 @@ private fun InteractiveApplicationInfoGridItem(
 
     val scope = rememberCoroutineScope()
 
-    val icon = iconPackInfoFilePaths[data.componentName] ?: data.icon
+    val icon = iconPackFilePaths[data.componentName] ?: data.icon
 
     val hasNotifications =
         (statusBarNotifications[data.packageName] ?: 0) > 0
@@ -911,7 +911,7 @@ private fun InteractiveNestedFolderGridItem(
     padding: Dp,
     iconSize: Dp,
     isInProgress: Boolean,
-    iconPackInfoFilePaths: Map<String, String?>,
+    iconPackFilePaths: Map<String, String?>,
     animations: Boolean,
     textColor: Color,
     folderCornerRadius: Int,
@@ -1072,7 +1072,7 @@ private fun InteractiveNestedFolderGridItem(
                             alpha = iconAlpha,
                             gridItem = it,
                             hasShortcutHostPermission = hasShortcutHostPermission,
-                            iconPackInfoFilePaths = iconPackInfoFilePaths,
+                            iconPackFilePaths = iconPackFilePaths,
                             gridItemSettings = gridItemSettings,
                             folderBackgroundColor = folderBackgroundColor,
                             customFolderBackgroundColor = customFolderBackgroundColor,
@@ -1104,7 +1104,7 @@ private fun PreviewNestedFolderGridItem(
     alpha: Float,
     gridItem: GridItem,
     hasShortcutHostPermission: Boolean,
-    iconPackInfoFilePaths: Map<String, String?>,
+    iconPackFilePaths: Map<String, String?>,
     gridItemSettings: GridItemSettings,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
@@ -1149,7 +1149,7 @@ private fun PreviewNestedFolderGridItem(
 
         when (val data = gridItem.data) {
             is GridItemData.ApplicationInfo -> {
-                val icon = iconPackInfoFilePaths[data.componentName] ?: data.icon
+                val icon = iconPackFilePaths[data.componentName] ?: data.icon
 
                 AsyncImage(
                     model = Builder(context).data(data.customIcon ?: icon)

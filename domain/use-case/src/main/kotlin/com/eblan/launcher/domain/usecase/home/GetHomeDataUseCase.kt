@@ -68,7 +68,7 @@ class GetHomeDataUseCase @Inject constructor(
             ) && it.associate == Associate.Dock
         }.groupBy { it.page }
 
-        val iconPackInfoFilePaths = getIconPackFilePaths(
+        val iconPackFilePaths = getIconPackFilePaths(
             iconPackPackageName = userData.generalSettings.iconPackPackageName,
             componentNames = gridItems.applicationInfoGridItems.map { it.componentName },
             fileManager = fileManager,
@@ -82,7 +82,7 @@ class GetHomeDataUseCase @Inject constructor(
             dockGridItemsByPage = dockGridItemsByPage,
             hasShortcutHostPermission = launcherAppsWrapper.hasShortcutHostPermission,
             hasSystemFeatureAppWidgets = packageManagerWrapper.hasSystemFeatureAppWidgets,
-            iconPackInfoFilePaths = iconPackInfoFilePaths,
+            iconPackFilePaths = iconPackFilePaths,
         )
     }.flowOn(ioDispatcher)
 }

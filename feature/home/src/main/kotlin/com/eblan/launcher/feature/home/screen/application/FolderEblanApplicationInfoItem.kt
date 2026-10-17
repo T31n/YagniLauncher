@@ -113,7 +113,7 @@ internal fun FolderEblanApplicationInfoItem(
     previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
     isVisibleFolderEblanApplicationInfos: Boolean,
     folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
-    iconPackInfoFilePaths: Map<String, String?>,
+    iconPackFilePaths: Map<String, String?>,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onDragFolderEblanApplicationInfo: (
         folderEblanApplicationInfo: FolderEblanApplicationInfo,
@@ -320,7 +320,7 @@ internal fun FolderEblanApplicationInfoItem(
                             customFolderBackgroundColor = customFolderBackgroundColor,
                             systemTextColor = systemTextColor,
                             systemCustomTextColor = systemCustomTextColor,
-                            iconPackInfoFilePaths = iconPackInfoFilePaths,
+                            iconPackFilePaths = iconPackFilePaths,
                         )
                     },
                 )
@@ -379,7 +379,7 @@ private fun PreviewFolderEblanApplicationInfoItem(
     customFolderBackgroundColor: Int,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
-    iconPackInfoFilePaths: Map<String, String?>,
+    iconPackFilePaths: Map<String, String?>,
 ) {
     key(folderEblanApplicationInfoGridItem.id) {
         val context = LocalContext.current
@@ -398,7 +398,7 @@ private fun PreviewFolderEblanApplicationInfoItem(
 
         when (val data = folderEblanApplicationInfoGridItem.data) {
             is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
-                val icon = iconPackInfoFilePaths[data.componentName] ?: data.icon
+                val icon = iconPackFilePaths[data.componentName] ?: data.icon
 
                 AsyncImage(
                     model = Builder(context)

@@ -101,7 +101,7 @@ internal fun EblanApplicationInfoItem(
     isSwiping: Boolean,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
-    iconPackInfoFilePaths: Map<String, String?>,
+    iconPackFilePaths: Map<String, String?>,
     animations: Boolean,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onDragApplicationInfo: (GridItem) -> Unit,
@@ -147,7 +147,7 @@ internal fun EblanApplicationInfoItem(
 
     val maxLines = if (gridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
 
-    val icon = iconPackInfoFilePaths[eblanApplicationInfo.componentName]
+    val icon = iconPackFilePaths[eblanApplicationInfo.componentName]
         ?: eblanApplicationInfo.icon
 
     val horizontalAlignment =

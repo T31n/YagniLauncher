@@ -95,7 +95,7 @@ internal fun InteractiveApplicationInfoGridItem(
     hasInteraction: Boolean,
     isVisibleWhiteBox: Boolean,
     sourceBounds: Rect,
-    iconPackInfoFilePaths: Map<String, String?>,
+    iconPackFilePaths: Map<String, String?>,
     animations: Boolean,
     horizontalAlignment: Alignment.Horizontal,
     verticalArrangement: Arrangement.Vertical,
@@ -129,7 +129,7 @@ internal fun InteractiveApplicationInfoGridItem(
     val currentOnOpenAppDrawer by rememberUpdatedState(onOpenAppDrawer)
     val currentOnLongPressGridItem by rememberUpdatedState(onLongPressGridItem)
 
-    val icon = iconPackInfoFilePaths[data.componentName] ?: data.icon
+    val icon = iconPackFilePaths[data.componentName] ?: data.icon
 
     val hasNotifications = (statusBarNotifications[data.packageName] ?: 0) > 0
     val isNotificationAccessGranted by rememberIsNotificationAccessGranted()

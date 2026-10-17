@@ -53,7 +53,7 @@ internal fun ApplicationInfoGridItem(
     data: GridItemData.ApplicationInfo,
     gridItemSettings: GridItemSettings,
     textColor: Color,
-    iconPackInfoFilePaths: Map<String, String?>,
+    iconPackFilePaths: Map<String, String?>,
     horizontalAlignment: Alignment.Horizontal,
     verticalArrangement: Arrangement.Vertical,
     horizontalArrangement: Arrangement.Horizontal,
@@ -62,7 +62,7 @@ internal fun ApplicationInfoGridItem(
 ) {
     val context = LocalContext.current
 
-    val icon = iconPackInfoFilePaths[data.componentName] ?: data.icon
+    val icon = iconPackFilePaths[data.componentName] ?: data.icon
 
     val itemModifier = modifier
         .fillMaxSize()
