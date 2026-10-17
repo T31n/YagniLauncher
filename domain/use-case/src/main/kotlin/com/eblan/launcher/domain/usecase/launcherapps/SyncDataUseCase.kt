@@ -22,7 +22,6 @@ import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.AppWidgetManagerWrapper
-import com.eblan.launcher.domain.framework.IconPackManager
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
@@ -47,9 +46,9 @@ import com.eblan.launcher.domain.repository.ShortcutConfigGridItemRepository
 import com.eblan.launcher.domain.repository.ShortcutInfoGridItemRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.repository.WidgetGridItemRepository
+import com.eblan.launcher.domain.usecase.iconpack.UpdateIconPacksUseCase
 import com.eblan.launcher.domain.usecase.util.isTopLevel
 import com.eblan.launcher.domain.usecase.util.toGridItems
-import com.eblan.launcher.domain.usecase.util.updateIconPackInfos
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
@@ -73,11 +72,11 @@ class SyncDataUseCase @Inject constructor(
     private val widgetGridItemRepository: WidgetGridItemRepository,
     private val shortcutInfoGridItemRepository: ShortcutInfoGridItemRepository,
     private val eblanShortcutConfigRepository: EblanShortcutConfigRepository,
-    private val iconPackManager: IconPackManager,
     private val shortcutConfigGridItemRepository: ShortcutConfigGridItemRepository,
     private val iconKeyGenerator: IconKeyGenerator,
     private val folderGridItemRepository: FolderGridItemRepository,
     private val gridRepository: GridRepository,
+    private val updateIconPacksUseCase: UpdateIconPacksUseCase,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     suspend operator fun invoke() {
@@ -98,13 +97,8 @@ class SyncDataUseCase @Inject constructor(
             }
 
             launch {
-                updateIconPackInfos(
+                updateIconPacksUseCase(
                     iconPackPackageName = userData.generalSettings.iconPackPackageName,
-                    fileManager = fileManager,
-                    iconPackManager = iconPackManager,
-                    fastLauncherAppsActivityInfos = launcherAppsWrapper.getFastActivityList(),
-                    iconKeyGenerator = iconKeyGenerator,
-                    generalSettings = userData.generalSettings,
                 )
             }
         }

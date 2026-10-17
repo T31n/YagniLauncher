@@ -24,13 +24,18 @@ import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.IconPackManager
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.model.iconpackinfo.EblanIconPackInfo
+import com.eblan.launcher.domain.model.launcherapps.FastLauncherAppsActivityInfo
+import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.EblanIconPackInfoRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
-import com.eblan.launcher.domain.usecase.util.updateIconPackInfos
+import com.eblan.launcher.domain.usecase.util.cacheIconPackFile
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
+import java.io.File
 import javax.inject.Inject
 
 class UpdateIconPacksUseCase @Inject constructor(
@@ -72,5 +77,57 @@ class UpdateIconPacksUseCase @Inject constructor(
                 )
             }
         }
+    }
+
+    private suspend fun updateIconPackInfos(
+        iconPackPackageName: String,
+        fileManager: FileManager,
+        iconPackManager: IconPackManager,
+        fastLauncherAppsActivityInfos: List<FastLauncherAppsActivityInfo>,
+        iconKeyGenerator: IconKeyGenerator,
+        generalSettings: GeneralSettings,
+    ) {
+        if (iconPackPackageName.isEmpty()) return
+
+        val iconPackInfoDirectory = File(
+            fileManager.getFilesDirectory(name = FileManager.ICON_PACKS_DIR),
+            iconPackPackageName,
+        ).apply { if (!exists()) mkdirs() }
+
+        val appFilter = iconPackManager.getIconPackComponents(packageName = iconPackPackageName)
+
+        val installedComponentHashedNames = buildSet {
+            fastLauncherAppsActivityInfos.forEach {
+                currentCoroutineContext().ensureActive()
+
+                val file = File(
+                    iconPackInfoDirectory,
+                    iconKeyGenerator.getHashedName(name = it.componentName),
+                )
+
+                cacheIconPackFile(
+                    iconPackManager = iconPackManager,
+                    appFilter = appFilter,
+                    iconPackPackageName = iconPackPackageName,
+                    file = file,
+                    componentName = it.componentName,
+                    generalSettings = generalSettings,
+                )
+
+                add(iconKeyGenerator.getHashedName(name = it.componentName))
+            }
+        }
+
+        iconPackInfoDirectory.listFiles()
+            ?.filter {
+                currentCoroutineContext().ensureActive()
+
+                it.isFile && it.name !in installedComponentHashedNames
+            }
+            ?.forEach {
+                currentCoroutineContext().ensureActive()
+
+                it.delete()
+            }
     }
 }
