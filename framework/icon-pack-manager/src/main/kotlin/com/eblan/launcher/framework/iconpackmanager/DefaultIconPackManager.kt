@@ -21,8 +21,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.XmlResourceParser
 import android.graphics.drawable.Drawable
-import android.os.Build
-import android.util.TypedValue
+import com.eblan.launcher.common.AndroidColor
 import com.eblan.launcher.common.AndroidImageSerializer
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
@@ -48,55 +47,57 @@ internal class DefaultIconPackManager @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val imageSerializer: AndroidImageSerializer,
     private val wallpaperManagerWrapper: WallpaperManagerWrapper,
+    private val androidColor: AndroidColor,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : IconPackManager,
     AndroidIconPackManager {
-    override suspend fun getIconPackComponents(packageName: String): List<IconPackComponent> = withContext(ioDispatcher) {
-        try {
-            val packageContext = context.createPackageContext(
-                packageName,
-                Context.CONTEXT_IGNORE_SECURITY,
-            )
+    override suspend fun getIconPackComponents(packageName: String): List<IconPackComponent> =
+        withContext(ioDispatcher) {
+            try {
+                val packageContext = context.createPackageContext(
+                    packageName,
+                    Context.CONTEXT_IGNORE_SECURITY,
+                )
 
-            val resources = packageContext.resources
+                val resources = packageContext.resources
 
-            val xmlId = resources.getIdentifier(
-                "appfilter",
-                "xml",
-                packageName,
-            )
+                val xmlId = resources.getIdentifier(
+                    "appfilter",
+                    "xml",
+                    packageName,
+                )
 
-            val rawId = resources.getIdentifier(
-                "appfilter",
-                "raw",
-                packageName,
-            )
+                val rawId = resources.getIdentifier(
+                    "appfilter",
+                    "raw",
+                    packageName,
+                )
 
-            val autoCloseable = when {
-                xmlId != 0 -> resources.getXml(xmlId)
-                rawId != 0 -> resources.openRawResource(rawId)
-                else -> packageContext.assets.open("appfilter.xml")
-            }
-
-            autoCloseable.use {
-                when (it) {
-                    is XmlResourceParser -> parseXml(xmlPullParser = it)
-
-                    is InputStream -> {
-                        val xmlPullParser = XmlPullParserFactory.newInstance().newPullParser()
-
-                        xmlPullParser.setInput(it.reader())
-
-                        parseXml(xmlPullParser = xmlPullParser)
-                    }
-
-                    else -> emptyList()
+                val autoCloseable = when {
+                    xmlId != 0 -> resources.getXml(xmlId)
+                    rawId != 0 -> resources.openRawResource(rawId)
+                    else -> packageContext.assets.open("appfilter.xml")
                 }
+
+                autoCloseable.use {
+                    when (it) {
+                        is XmlResourceParser -> parseXml(xmlPullParser = it)
+
+                        is InputStream -> {
+                            val xmlPullParser = XmlPullParserFactory.newInstance().newPullParser()
+
+                            xmlPullParser.setInput(it.reader())
+
+                            parseXml(xmlPullParser = xmlPullParser)
+                        }
+
+                        else -> emptyList()
+                    }
+                }
+            } catch (_: Exception) {
+                emptyList()
             }
-        } catch (_: Exception) {
-            emptyList()
         }
-    }
 
     override suspend fun createIconPackPath(
         packageName: String,
@@ -125,7 +126,9 @@ internal class DefaultIconPackManager @Inject constructor(
                 drawable = drawable,
                 iconTint = iconTint,
                 customIconTint = when (iconTint) {
-                    IconTint.System -> getSystemIconTintColor()
+                    IconTint.System -> wallpaperManagerWrapper.getSystemWallpaperColor()
+                        ?: androidColor.getColor()
+
                     else -> customIconTint
                 },
                 fallbackIconTint = fallbackIconTint,
@@ -143,27 +146,6 @@ internal class DefaultIconPackManager @Inject constructor(
             null
         }
     }
-
-    private fun getSystemAccentColor(): Int {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            return context.getColor(android.R.color.system_accent1_600)
-        }
-
-        val value = TypedValue()
-
-        return if (context.theme.resolveAttribute(
-                android.R.attr.colorAccent,
-                value,
-                true,
-            )
-        ) {
-            value.data
-        } else {
-            context.getColor(android.R.color.holo_blue_dark)
-        }
-    }
-
-    private fun getSystemIconTintColor(): Int = wallpaperManagerWrapper.getSystemWallpaperColor() ?: getSystemAccentColor()
 
     override suspend fun loadDrawableFromIconPack(
         packageName: String,

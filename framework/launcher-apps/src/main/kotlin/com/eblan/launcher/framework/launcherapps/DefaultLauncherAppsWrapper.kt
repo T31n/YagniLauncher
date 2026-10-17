@@ -34,8 +34,8 @@ import android.os.Handler
 import android.os.Process.myUserHandle
 import android.os.UserHandle
 import android.os.UserManager
-import android.util.TypedValue
 import androidx.annotation.RequiresApi
+import com.eblan.launcher.common.AndroidColor
 import com.eblan.launcher.common.AndroidImageSerializer
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
@@ -75,6 +75,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
     private val wallpaperManagerWrapper: WallpaperManagerWrapper,
     private val androidPackageManager: AndroidPackageManagerWrapper,
     private val iconKeyGenerator: IconKeyGenerator,
+    private val androidColor: AndroidColor,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : LauncherAppsWrapper,
     AndroidLauncherAppsWrapper {
@@ -672,7 +673,8 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             IconTint.System -> imageSerializer.getTintedAndShapedDrawable(
                 drawable = drawable,
                 iconTint = iconTint,
-                customIconTint = getSystemIconTintColor(),
+                customIconTint = wallpaperManagerWrapper.getSystemWallpaperColor()
+                    ?: androidColor.getColor(),
                 fallbackIconTint = fallbackIconColor,
                 theme = theme,
                 iconShape = iconShape,
@@ -698,26 +700,4 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
 
         return file.absolutePath
     }
-
-    private fun getSystemAccentColor(): Int {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            return context.getColor(android.R.color.system_accent1_600)
-        }
-
-        val value = TypedValue()
-
-        return if (context.theme.resolveAttribute(
-                android.R.attr.colorAccent,
-                value,
-                true,
-            )
-        ) {
-            value.data
-        } else {
-            context.getColor(android.R.color.holo_blue_dark)
-        }
-    }
-
-    private fun getSystemIconTintColor(): Int = wallpaperManagerWrapper.getSystemWallpaperColor()
-        ?: getSystemAccentColor()
 }
