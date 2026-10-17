@@ -64,6 +64,13 @@ interface AndroidLauncherAppsWrapper {
         sourceBounds: Rect,
     )
 
+    fun startAppUninstallActivity(
+        serialNumber: Long,
+        packageName: String,
+        componentName: String,
+        sourceBounds: Rect,
+    )
+
     suspend fun getShortcutConfigIntent(
         serialNumber: Long,
         packageName: String,

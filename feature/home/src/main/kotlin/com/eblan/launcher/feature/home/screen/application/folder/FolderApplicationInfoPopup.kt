@@ -63,6 +63,7 @@ import com.eblan.launcher.feature.home.component.popup
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.screen.application.ApplicationInfoMenu
 import com.eblan.launcher.ui.local.LocalLauncherApps
+import com.eblan.launcher.ui.local.LocalPackageManager
 
 @Composable
 internal fun FolderApplicationInfoPopup(
@@ -346,6 +347,7 @@ private fun FolderApplicationInfoGridItemPopupContent(
     ) -> Unit,
 ) {
     val launcherApps = LocalLauncherApps.current
+    val packageManager = LocalPackageManager.current
 
     when (val data = folderEblanApplicationInfoGridItem.data) {
         is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
@@ -362,9 +364,25 @@ private fun FolderApplicationInfoGridItemPopupContent(
                 ],
                 gridItemSettings = gridItemSettings,
                 hasShortcutHostPermission = hasShortcutHostPermission,
+                isUserInstalled = !packageManager.isSystem(data.flags),
                 icon = data.icon,
                 isVisibleOverlay = isVisibleOverlay,
                 animations = animations,
+                onUninstall = {
+                    launcherApps.startAppUninstallActivity(
+                        serialNumber = data.serialNumber,
+                        packageName = data.packageName,
+                        componentName = data.componentName,
+                        sourceBounds = Rect(
+                            popupIntOffset.x,
+                            popupIntOffset.y,
+                            popupIntOffset.x + popupIntSize.width,
+                            popupIntOffset.y + popupIntSize.height,
+                        ),
+                    )
+
+                    onDismiss()
+                },
                 onApplicationInfo = {
                     launcherApps.startAppDetailsActivity(
                         serialNumber = data.serialNumber,

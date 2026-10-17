@@ -66,6 +66,7 @@ import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.screen.shortcutinfo.PrivateShortcutInfoMenu
 import com.eblan.launcher.feature.home.screen.shortcutinfo.ShortcutInfoScreen
 import com.eblan.launcher.ui.local.LocalLauncherApps
+import com.eblan.launcher.ui.local.LocalPackageManager
 
 @Composable
 internal fun ApplicationInfoPopup(
@@ -100,6 +101,7 @@ internal fun ApplicationInfoPopup(
     requireNotNull(popupIntSize)
 
     val launcherApps = LocalLauncherApps.current
+    val packageManager = LocalPackageManager.current
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
 
@@ -186,9 +188,25 @@ internal fun ApplicationInfoPopup(
                 ],
                 gridItemSettings = gridItemSettings,
                 hasShortcutHostPermission = hasShortcutHostPermission,
+                isUserInstalled = !packageManager.isSystem(eblanApplicationInfo.flags),
                 icon = eblanApplicationInfo.icon,
                 isVisibleOverlay = isVisibleOverlay,
                 animations = animations,
+                onUninstall = {
+                    launcherApps.startAppUninstallActivity(
+                        serialNumber = eblanApplicationInfo.serialNumber,
+                        packageName = eblanApplicationInfo.packageName,
+                        componentName = eblanApplicationInfo.componentName,
+                        sourceBounds = Rect(
+                            popupIntOffset.x,
+                            popupIntOffset.y,
+                            popupIntOffset.x + popupIntSize.width,
+                            popupIntOffset.y + popupIntSize.height,
+                        ),
+                    )
+
+                    transitionState.targetState = false
+                },
                 onApplicationInfo = {
                     launcherApps.startAppDetailsActivity(
                         serialNumber = eblanApplicationInfo.serialNumber,
@@ -267,6 +285,7 @@ internal fun PrivateApplicationInfoPopup(
     requireNotNull(popupIntSize)
 
     val launcherApps = LocalLauncherApps.current
+    val packageManager = LocalPackageManager.current
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
 
@@ -349,6 +368,22 @@ internal fun PrivateApplicationInfoPopup(
                     ),
                 ],
                 hasShortcutHostPermission = hasShortcutHostPermission,
+                isUserInstalled = !packageManager.isSystem(flags = eblanApplicationInfo.flags),
+                onUninstall = {
+                    launcherApps.startAppUninstallActivity(
+                        serialNumber = eblanApplicationInfo.serialNumber,
+                        packageName = eblanApplicationInfo.packageName,
+                        componentName = eblanApplicationInfo.componentName,
+                        sourceBounds = Rect(
+                            popupIntOffset.x,
+                            popupIntOffset.y,
+                            popupIntOffset.x + popupIntSize.width,
+                            popupIntOffset.y + popupIntSize.height,
+                        ),
+                    )
+
+                    transitionState.targetState = false
+                },
                 onApplicationInfo = {
                     launcherApps.startAppDetailsActivity(
                         serialNumber = eblanApplicationInfo.serialNumber,
@@ -400,9 +435,11 @@ internal fun ApplicationInfoMenu(
     eblanShortcutInfosGroup: List<EblanShortcutInfo>?,
     gridItemSettings: GridItemSettings,
     hasShortcutHostPermission: Boolean,
+    isUserInstalled: Boolean,
     icon: String?,
     isVisibleOverlay: Boolean,
     animations: Boolean,
+    onUninstall: () -> Unit,
     onApplicationInfo: () -> Unit,
     onEdit: () -> Unit,
     onTapShortcutInfo: (
@@ -460,6 +497,17 @@ internal fun ApplicationInfoMenu(
                         )
                     }
 
+                    if (isUserInstalled) {
+                        IconButton(
+                            onClick = onUninstall,
+                        ) {
+                            Icon(
+                                imageVector = EblanLauncherIcons.Delete,
+                                contentDescription = null,
+                            )
+                        }
+                    }
+
                     if (!eblanAppWidgetProviderInfosByPackageName.isNullOrEmpty()) {
                         IconButton(
                             onClick = onWidgets,
@@ -481,6 +529,8 @@ private fun PrivateApplicationInfoMenu(
     modifier: Modifier = Modifier,
     eblanShortcutInfosGroup: List<EblanShortcutInfo>?,
     hasShortcutHostPermission: Boolean,
+    isUserInstalled: Boolean,
+    onUninstall: () -> Unit,
     onApplicationInfo: () -> Unit,
     onEdit: () -> Unit,
     onTapShortcutInfo: (
@@ -523,6 +573,17 @@ private fun PrivateApplicationInfoMenu(
                             imageVector = EblanLauncherIcons.Edit,
                             contentDescription = null,
                         )
+                    }
+
+                    if (isUserInstalled) {
+                        IconButton(
+                            onClick = onUninstall,
+                        ) {
+                            Icon(
+                                imageVector = EblanLauncherIcons.Delete,
+                                contentDescription = null,
+                            )
+                        }
                     }
                 }
             }
