@@ -355,4 +355,4 @@ internal fun Modifier.gridItemScaleAnimation(
     return scale(scale.value)
 }
 
-internal const val OVERLAY_SCALE = 1.25f
+internal const val OVERLAY_SCALE = 1.1f
