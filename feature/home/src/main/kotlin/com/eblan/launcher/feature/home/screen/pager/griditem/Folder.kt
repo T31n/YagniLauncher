@@ -19,7 +19,6 @@ package com.eblan.launcher.feature.home.screen.pager.griditem
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -74,7 +73,6 @@ import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.GridItemLayoutType
 import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
-import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.component.swipeGestures
 import com.eblan.launcher.feature.home.component.whiteBox
@@ -82,7 +80,6 @@ import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.screen.pager.handleConflictingGridItem
 import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
-import com.eblan.launcher.feature.home.util.handleOnPress
 import com.eblan.launcher.feature.home.util.onDoubleTap
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import com.eblan.launcher.ui.local.LocalStatusBarManager
@@ -146,8 +143,6 @@ internal fun InteractiveFolderGridItem(
     val graphicsLayer = rememberGraphicsLayer()
 
     val scope = rememberCoroutineScope()
-
-    val scale = remember { Animatable(1f) }
 
     val currentDrag = rememberUpdatedState(drag)
     val currentIsDragging = rememberUpdatedState(isDragging)
@@ -226,12 +221,6 @@ internal fun InteractiveFolderGridItem(
                                 ),
                             )
                         },
-                        onPress = {
-                            handleOnPress(
-                                animations = animations,
-                                scale = scale,
-                            )
-                        },
                     )
                 }
             } else {
@@ -250,11 +239,6 @@ internal fun InteractiveFolderGridItem(
                 intOffset = it.positionInRoot().round()
                 intSize = it.size
             },
-        )
-        .gridItemScaleAnimation(
-            enabled = animations,
-            isVisibleOverlay = isVisibleOverlay,
-            scale = scale,
         )
         .gridItemSharedElement(
             enabled = animations,

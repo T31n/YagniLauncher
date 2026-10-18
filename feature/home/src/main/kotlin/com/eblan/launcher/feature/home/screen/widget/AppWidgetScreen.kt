@@ -20,8 +20,6 @@ package com.eblan.launcher.feature.home.screen.widget
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -75,10 +73,8 @@ import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
 import com.eblan.launcher.feature.home.component.HomeHandler
-import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
-import com.eblan.launcher.feature.home.util.SCALE
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 import kotlin.uuid.ExperimentalUuidApi
@@ -97,7 +93,6 @@ internal fun AppWidgetScreen(
     screenHeight: Int,
     screenWidth: Int,
     swipeY: Float,
-    animations: Boolean,
     isVisibleOverlay: Boolean,
     drag: Drag,
     onDismiss: () -> Unit,
@@ -209,7 +204,6 @@ internal fun AppWidgetScreen(
                             screenHeight = screenHeight,
                             screenWidth = screenWidth,
                             isVisibleOverlay = isVisibleOverlay,
-                            animations = animations,
                             onDragAppWidget = onDragAppWidget,
                         )
                     }
@@ -230,7 +224,6 @@ private fun EblanAppWidgetScreenItem(
     screenHeight: Int,
     screenWidth: Int,
     isVisibleOverlay: Boolean,
-    animations: Boolean,
     onDragAppWidget: (
         gridItem: GridItem,
         imageBitmap: ImageBitmap,
@@ -250,16 +243,13 @@ private fun EblanAppWidgetScreenItem(
 
     val id = remember { Uuid.random().toHexString() }
 
-    val scale = remember { Animatable(1f) }
-
     Column(
         modifier = modifier
             .size(200.dp)
             .padding(20.dp)
             .pointerInput(
-                isVisibleOverlay,
-                gridItemSettings,
-                animations,
+                key1 = isVisibleOverlay,
+                key2 = gridItemSettings,
             ) {
                 detectTapGestures(
                     onLongPress = {
@@ -271,8 +261,6 @@ private fun EblanAppWidgetScreenItem(
                                 id = id,
                                 intOffset = intOffset,
                                 intSize = intSize,
-                                scale = scale,
-                                animations = animations,
                                 onDragAppWidget = onDragAppWidget,
                             )
                         }
@@ -336,11 +324,6 @@ private fun EblanAppWidgetScreenItem(
 
                     intSize = it.size
                 }
-                .gridItemScaleAnimation(
-                    enabled = animations,
-                    isVisibleOverlay = isVisibleOverlay,
-                    scale = scale,
-                )
                 .drawWithContent {
                     graphicsLayer.record {
                         this@drawWithContent.drawContent()
@@ -361,8 +344,6 @@ private suspend fun handleOnLongPressEblanAppWidgetScreenItem(
     id: String,
     intOffset: IntOffset,
     intSize: IntSize,
-    scale: Animatable<Float, AnimationVector1D>,
-    animations: Boolean,
     onDragAppWidget: (
         gridItem: GridItem,
         imageBitmap: ImageBitmap,
@@ -392,10 +373,6 @@ private suspend fun handleOnLongPressEblanAppWidgetScreenItem(
         targetCellHeight = eblanAppWidgetProviderInfo.targetCellHeight,
         targetCellWidth = eblanAppWidgetProviderInfo.targetCellWidth,
     )
-
-    if (animations) {
-        scale.animateTo(SCALE)
-    }
 
     onDragAppWidget(
         gridItem,

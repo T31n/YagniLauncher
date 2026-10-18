@@ -20,7 +20,6 @@ package com.eblan.launcher.feature.home.screen.pager.griditem
 import android.graphics.Rect
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -66,12 +65,10 @@ import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.feature.home.component.GridItemLayoutType
-import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.component.swipeGestures
 import com.eblan.launcher.feature.home.component.whiteBox
 import com.eblan.launcher.feature.home.model.SharedElementKey
-import com.eblan.launcher.feature.home.util.handleOnPress
 import com.eblan.launcher.feature.home.util.onDoubleTap
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import com.eblan.launcher.ui.local.LocalStatusBarManager
@@ -124,8 +121,6 @@ internal fun InteractiveApplicationInfoGridItem(
 
     val alpha = if (hasInteraction) 0f else 1f
 
-    val scale = remember { Animatable(1f) }
-
     val currentOnOpenAppDrawer by rememberUpdatedState(onOpenAppDrawer)
     val currentOnLongPressGridItem by rememberUpdatedState(onLongPressGridItem)
 
@@ -176,12 +171,6 @@ internal fun InteractiveApplicationInfoGridItem(
                                 sourceBounds = sourceBounds,
                             )
                         },
-                        onPress = {
-                            handleOnPress(
-                                animations = animations,
-                                scale = scale,
-                            )
-                        },
                     )
                 }
             } else {
@@ -200,11 +189,6 @@ internal fun InteractiveApplicationInfoGridItem(
                 intOffset = it.positionInRoot().round()
                 intSize = it.size
             },
-        )
-        .gridItemScaleAnimation(
-            enabled = animations,
-            isVisibleOverlay = isVisibleOverlay,
-            scale = scale,
         )
         .gridItemSharedElement(
             enabled = animations,

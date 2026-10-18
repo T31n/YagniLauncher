@@ -18,7 +18,6 @@
 package com.eblan.launcher.feature.home.screen.application
 
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.fillMaxSize
@@ -80,7 +79,6 @@ import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.GridItemLayoutType
 import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
-import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
@@ -89,7 +87,6 @@ import com.eblan.launcher.feature.home.util.getHorizontalArrangement
 import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
 import com.eblan.launcher.feature.home.util.getVerticalAlignment
 import com.eblan.launcher.feature.home.util.getVerticalArrangement
-import com.eblan.launcher.feature.home.util.handleOnPress
 import kotlinx.coroutines.launch
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
@@ -177,8 +174,6 @@ internal fun FolderEblanApplicationInfoItem(
         parent = SharedElementKey.Parent.SwipeY,
     )
 
-    val scale = remember { Animatable(1f) }
-
     val currentOnTapFolderApplicationInfo by rememberUpdatedState(onTapFolderApplicationInfo)
     val currentOnLongPressFolderApplicationInfo by rememberUpdatedState(
         onLongPressFolderApplicationInfo,
@@ -242,12 +237,6 @@ internal fun FolderEblanApplicationInfoItem(
                                 )
                             }
                         },
-                        onPress = {
-                            handleOnPress(
-                                animations = animations,
-                                scale = scale,
-                            )
-                        },
                     )
                 }
             } else {
@@ -261,11 +250,6 @@ internal fun FolderEblanApplicationInfoItem(
                 intOffset = it.positionInRoot().round()
                 intSize = it.size
             },
-        )
-        .gridItemScaleAnimation(
-            enabled = animations,
-            isVisibleOverlay = isVisibleOverlay,
-            scale = scale,
         )
         .gridItemSharedElement(
             enabled = animations,

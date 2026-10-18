@@ -25,9 +25,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Process.myUserHandle
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.AnimationVector1D
-import androidx.compose.foundation.gestures.PressGestureScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.Density
@@ -224,21 +221,6 @@ internal fun updateAppWidgetOptions(
     )
 }
 
-internal suspend fun PressGestureScope.handleOnPress(
-    animations: Boolean,
-    scale: Animatable<Float, AnimationVector1D>,
-) {
-    if (!animations) return
-
-    scale.animateTo(targetValue = SCALE)
-
-    try {
-        awaitRelease()
-    } finally {
-        scale.animateTo(targetValue = 1f)
-    }
-}
-
 internal fun handleOnUninstall(
     context: Context,
     serialNumber: Long,
@@ -285,4 +267,3 @@ internal fun handleOnUninstall(
 
 internal val PAGE_INDICATOR_HEIGHT = 30.dp
 internal val DRAG_HANDLE_SIZE = 30.dp
-internal const val SCALE = 0.85f

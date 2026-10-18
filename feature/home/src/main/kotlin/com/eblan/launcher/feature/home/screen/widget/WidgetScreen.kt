@@ -18,8 +18,6 @@
 package com.eblan.launcher.feature.home.screen.widget
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -87,11 +85,9 @@ import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
 import com.eblan.launcher.feature.home.R
 import com.eblan.launcher.feature.home.component.ScreenEffect
-import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.component.rememberNestedScrollConnectionEffect
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
-import com.eblan.launcher.feature.home.util.SCALE
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.launch
 import kotlin.uuid.ExperimentalUuidApi
@@ -102,7 +98,6 @@ import kotlin.uuid.Uuid
 internal fun WidgetScreen(
     modifier: Modifier = Modifier,
     alpha: Float,
-    animations: Boolean,
     columns: Int,
     drag: Drag,
     eblanAppWidgetProviderInfos: Map<EblanApplicationInfoGroup, List<EblanAppWidgetProviderInfo>>,
@@ -231,7 +226,6 @@ internal fun WidgetScreen(
                             screenHeight = screenHeight,
                             screenWidth = screenWidth,
                             isVisibleOverlay = isVisibleOverlay,
-                            animations = animations,
                             onDragWidget = onDragWidget,
                         )
                     }
@@ -253,7 +247,6 @@ private fun EblanApplicationInfoItem(
     screenHeight: Int,
     screenWidth: Int,
     isVisibleOverlay: Boolean,
-    animations: Boolean,
     onDragWidget: (
         gridItem: GridItem,
         imageBitmap: ImageBitmap,
@@ -314,7 +307,6 @@ private fun EblanApplicationInfoItem(
                         screenHeight = screenHeight,
                         screenWidth = screenWidth,
                         isVisibleOverlay = isVisibleOverlay,
-                        animations = animations,
                         onDragWidget = onDragWidget,
                     )
                 }
@@ -334,7 +326,6 @@ private fun EblanAppWidgetProviderInfoItem(
     screenHeight: Int,
     screenWidth: Int,
     isVisibleOverlay: Boolean,
-    animations: Boolean,
     onDragWidget: (
         gridItem: GridItem,
         imageBitmap: ImageBitmap,
@@ -354,8 +345,6 @@ private fun EblanAppWidgetProviderInfoItem(
 
     val graphicsLayer = rememberGraphicsLayer()
 
-    val scale = remember { Animatable(1f) }
-
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -363,7 +352,6 @@ private fun EblanAppWidgetProviderInfoItem(
             .pointerInput(
                 isVisibleOverlay,
                 gridItemSettings,
-                animations,
             ) {
                 detectTapGestures(
                     onLongPress = {
@@ -375,8 +363,6 @@ private fun EblanAppWidgetProviderInfoItem(
                                 intOffset = intOffset,
                                 intSize = intSize,
                                 keyboardController = keyboardController,
-                                scale = scale,
-                                animations = animations,
                                 onDragWidget = onDragWidget,
                             )
                         }
@@ -395,11 +381,6 @@ private fun EblanAppWidgetProviderInfoItem(
 
                     intSize = it.size
                 }
-                .gridItemScaleAnimation(
-                    enabled = animations,
-                    isVisibleOverlay = isVisibleOverlay,
-                    scale = scale,
-                )
                 .drawWithContent {
                     graphicsLayer.record {
                         this@drawWithContent.drawContent()
@@ -468,8 +449,6 @@ private suspend fun handleOnLongPress(
     intOffset: IntOffset,
     intSize: IntSize,
     keyboardController: SoftwareKeyboardController?,
-    scale: Animatable<Float, AnimationVector1D>,
-    animations: Boolean,
     onDragWidget: (
         gridItem: GridItem,
         imageBitmap: ImageBitmap,
@@ -501,10 +480,6 @@ private suspend fun handleOnLongPress(
         targetCellHeight = eblanAppWidgetProviderInfo.targetCellHeight,
         targetCellWidth = eblanAppWidgetProviderInfo.targetCellWidth,
     )
-
-    if (animations) {
-        scale.animateTo(SCALE)
-    }
 
     keyboardController?.hide()
 

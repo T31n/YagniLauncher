@@ -20,7 +20,6 @@ package com.eblan.launcher.feature.home.screen.pager.griditem
 import android.graphics.Rect
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -56,18 +55,15 @@ import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
-import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.component.whiteBox
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
-import com.eblan.launcher.feature.home.util.SCALE
 import com.eblan.launcher.feature.home.util.getGridItemTextColor
 import com.eblan.launcher.feature.home.util.getHorizontalAlignment
 import com.eblan.launcher.feature.home.util.getHorizontalArrangement
 import com.eblan.launcher.feature.home.util.getVerticalAlignment
 import com.eblan.launcher.feature.home.util.getVerticalArrangement
-import com.eblan.launcher.feature.home.util.handleOnPress
 import com.eblan.launcher.ui.local.LocalAppWidgetHost
 import com.eblan.launcher.ui.local.LocalAppWidgetManager
 import kotlinx.coroutines.launch
@@ -355,8 +351,6 @@ private fun InteractiveWidgetGridItem(
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
     var intSize by remember { mutableStateOf(IntSize.Zero) }
 
-    val scale = remember { Animatable(1f) }
-
     val currentOnLongPressGridItem by rememberUpdatedState(onLongPressGridItem)
 
     Box(
@@ -371,11 +365,6 @@ private fun InteractiveWidgetGridItem(
 
                 intSize = it.size
             }
-            .gridItemScaleAnimation(
-                enabled = animations,
-                isVisibleOverlay = isVisibleOverlay,
-                scale = scale,
-            )
             .gridItemSharedElement(
                 enabled = animations,
                 sharedElementKey = sharedElementKey,
@@ -404,10 +393,6 @@ private fun InteractiveWidgetGridItem(
                     if (!isVisibleOverlay) {
                         it.setOnLongClickListener {
                             scope.launch {
-                                if (animations) {
-                                    scale.animateTo(targetValue = SCALE)
-                                }
-
                                 currentOnLongPressGridItem(
                                     gridItem,
                                     graphicsLayer.toImageBitmap(),
@@ -442,12 +427,6 @@ private fun InteractiveWidgetGridItem(
                             }
                         } else {
                             null
-                        },
-                        onPress = {
-                            handleOnPress(
-                                animations = animations,
-                                scale = scale,
-                            )
                         },
                     )
                 },

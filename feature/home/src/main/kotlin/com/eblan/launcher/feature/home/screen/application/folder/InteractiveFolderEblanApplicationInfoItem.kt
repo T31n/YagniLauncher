@@ -20,7 +20,6 @@ package com.eblan.launcher.feature.home.screen.application.folder
 import android.graphics.Rect
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -84,14 +83,12 @@ import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_COLUMNS
 import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_ROWS
 import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
-import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.getHorizontalAlignment
 import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
 import com.eblan.launcher.feature.home.util.getVerticalArrangement
-import com.eblan.launcher.feature.home.util.handleOnPress
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import kotlinx.coroutines.launch
 
@@ -330,8 +327,6 @@ private fun InteractiveEblanApplicationInfoItem(
         top + intSize.height,
     )
 
-    val scale = remember { Animatable(1f) }
-
     val graphicsLayer = rememberGraphicsLayer()
 
     Column(
@@ -368,12 +363,6 @@ private fun InteractiveEblanApplicationInfoItem(
                                     )
                                 }
                             },
-                            onPress = {
-                                handleOnPress(
-                                    animations = animations,
-                                    scale = scale,
-                                )
-                            },
                         )
                     }
                 } else {
@@ -395,11 +384,6 @@ private fun InteractiveEblanApplicationInfoItem(
 
                     intSize = it.size
                 }
-                .gridItemScaleAnimation(
-                    enabled = animations && !isInProgress,
-                    isVisibleOverlay = isVisibleOverlay,
-                    scale = scale,
-                )
                 .gridItemSharedElement(
                     enabled = animations && !isInProgress,
                     sharedElementKey = sharedElementKey,
@@ -476,8 +460,6 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
     val textAlpha = if (hasInteraction) 0f else 1f
     val iconAlpha = if (hasInteraction || isVisibleFolder) 0f else 1f
 
-    val scale = remember { Animatable(1f) }
-
     val graphicsLayer = rememberGraphicsLayer()
 
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
@@ -522,12 +504,6 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
                                     )
                                 }
                             },
-                            onPress = {
-                                handleOnPress(
-                                    animations = animations,
-                                    scale = scale,
-                                )
-                            },
                         )
                     }
                 } else {
@@ -546,11 +522,6 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
 
                     intSize = it.size
                 }
-                .gridItemScaleAnimation(
-                    enabled = animations && !isInProgress,
-                    isVisibleOverlay = isVisibleOverlay,
-                    scale = scale,
-                )
                 .gridItemSharedElement(
                     enabled = animations && !isInProgress,
                     sharedElementKey = sharedElementKey,

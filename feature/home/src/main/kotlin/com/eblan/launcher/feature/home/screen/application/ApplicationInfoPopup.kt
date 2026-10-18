@@ -83,7 +83,6 @@ internal fun ApplicationInfoPopup(
     popupIntSize: IntSize?,
     isVisibleOverlay: Boolean,
     paddingValues: PaddingValues,
-    animations: Boolean,
     isCloseEblanApplicationInfoMenu: Boolean,
     onDismissRequest: () -> Unit,
     onEditApplicationInfo: (
@@ -196,7 +195,6 @@ internal fun ApplicationInfoPopup(
                 isUserInstalled = packageManager.isUserInstalled(eblanApplicationInfo.flags),
                 icon = eblanApplicationInfo.icon,
                 isVisibleOverlay = isVisibleOverlay,
-                animations = animations,
                 onUninstall = {
                     handleOnUninstall(
                         context = context,
@@ -443,7 +441,6 @@ internal fun ApplicationInfoMenu(
     isUserInstalled: Boolean,
     icon: String?,
     isVisibleOverlay: Boolean,
-    animations: Boolean,
     onUninstall: () -> Unit,
     onApplicationInfo: () -> Unit,
     onEdit: () -> Unit,
@@ -475,7 +472,6 @@ internal fun ApplicationInfoMenu(
                         gridItemSettings = gridItemSettings,
                         icon = icon,
                         isVisibleOverlay = isVisibleOverlay,
-                        animations = animations,
                         onTapShortcutInfo = onTapShortcutInfo,
                         onDragShortcutInfo = onDragShortcutInfo,
                     )

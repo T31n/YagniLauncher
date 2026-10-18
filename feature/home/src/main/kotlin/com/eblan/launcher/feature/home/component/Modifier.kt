@@ -20,7 +20,6 @@ package com.eblan.launcher.feature.home.component
 import android.graphics.Paint
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -31,7 +30,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -190,31 +188,6 @@ internal fun Modifier.gridItemSharedElement(
     }
 } else {
     this
-}
-
-@Composable
-internal fun Modifier.gridItemScaleAnimation(
-    enabled: Boolean,
-    isVisibleOverlay: Boolean,
-    scale: Animatable<Float, AnimationVector1D>,
-): Modifier {
-    LaunchedEffect(
-        key1 = isVisibleOverlay,
-        key2 = enabled,
-    ) {
-        if (isVisibleOverlay && enabled) {
-            scale.snapTo(1f)
-        }
-    }
-
-    return if (enabled) {
-        graphicsLayer {
-            scaleX = scale.value
-            scaleY = scale.value
-        }
-    } else {
-        this
-    }
 }
 
 internal fun Modifier.whiteBox(
