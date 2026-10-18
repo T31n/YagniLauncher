@@ -43,6 +43,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.IntOffset
@@ -62,7 +63,10 @@ import com.eblan.launcher.feature.home.component.HomeHandler
 import com.eblan.launcher.feature.home.component.popup
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.screen.application.ApplicationInfoMenu
+import com.eblan.launcher.feature.home.util.handleOnUninstall
 import com.eblan.launcher.ui.local.LocalLauncherApps
+import com.eblan.launcher.ui.local.LocalPackageManager
+import com.eblan.launcher.ui.local.LocalUserManager
 
 @Composable
 internal fun FolderApplicationInfoPopup(
@@ -346,6 +350,9 @@ private fun FolderApplicationInfoGridItemPopupContent(
     ) -> Unit,
 ) {
     val launcherApps = LocalLauncherApps.current
+    val packageManager = LocalPackageManager.current
+    val userManager = LocalUserManager.current
+    val context = LocalContext.current
 
     when (val data = folderEblanApplicationInfoGridItem.data) {
         is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
@@ -362,9 +369,24 @@ private fun FolderApplicationInfoGridItemPopupContent(
                 ],
                 gridItemSettings = gridItemSettings,
                 hasShortcutHostPermission = hasShortcutHostPermission,
+                isUserInstalled = packageManager.isUserInstalled(data.flags),
                 icon = data.icon,
                 isVisibleOverlay = isVisibleOverlay,
                 animations = animations,
+                onUninstall = {
+                    handleOnUninstall(
+                        context = context,
+                        serialNumber = data.serialNumber,
+                        componentName = data.componentName,
+                        packageName = data.packageName,
+                        launcherApps = launcherApps,
+                        popupIntOffset = popupIntOffset,
+                        popupIntSize = popupIntSize,
+                        userManager = userManager,
+                    )
+
+                    onDismiss()
+                },
                 onApplicationInfo = {
                     launcherApps.startAppDetailsActivity(
                         serialNumber = data.serialNumber,

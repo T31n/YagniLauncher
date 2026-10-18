@@ -26,4 +26,6 @@ interface AndroidPackageManagerWrapper {
     suspend fun getUserBadgedLabel(label: CharSequence, userHandle: UserHandle): CharSequence
 
     suspend fun getUserBadgedIcon(drawable: Drawable, userHandle: UserHandle): Drawable?
+
+    fun isUserInstalled(flags: Int): Boolean
 }

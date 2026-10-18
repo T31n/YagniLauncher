@@ -22,6 +22,7 @@
         android:name="android.hardware.telephony"
         android:required="false" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
 
     <uses-permission android:name="android.permission.ACCESS_HIDDEN_PROFILES" />
 
