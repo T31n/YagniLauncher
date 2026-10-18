@@ -88,7 +88,10 @@ internal fun ManageFoldersDialog(
                 LazyColumn(
                     modifier = Modifier
                         .dragColumnContainer(lazyColumnDragDropState = lazyColumnDragDropState)
-                        .fillMaxWidth(),
+                        .weight(
+                            weight = 1f,
+                            fill = false,
+                        ),
                     state = lazyListState,
                 ) {
                     itemsIndexed(
