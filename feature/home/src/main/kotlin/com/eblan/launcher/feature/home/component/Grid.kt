@@ -249,10 +249,7 @@ internal fun animateGridIntAsState(
         )
     }
 
-    LaunchedEffect(
-        key1 = targetValue,
-        key2 = animate,
-    ) {
+    LaunchedEffect(key1 = targetValue, key2 = animate) {
         if (animate) {
             animatable.animateTo(
                 targetValue = targetValue,
@@ -263,7 +260,7 @@ internal fun animateGridIntAsState(
         }
     }
 
-    return animatable.value
+    return if (animate) animatable.value else targetValue
 }
 
 @Composable
