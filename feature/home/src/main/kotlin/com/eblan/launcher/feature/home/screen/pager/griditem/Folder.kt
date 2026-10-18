@@ -304,6 +304,7 @@ internal fun InteractiveFolderGridItem(
                             customFolderBackgroundColor = customFolderBackgroundColor,
                             systemTextColor = systemTextColor,
                             systemCustomTextColor = systemCustomTextColor,
+                            animations = animations,
                             onResetGrid = onResetGrid,
                         )
                     },
@@ -373,6 +374,7 @@ private fun PreviewFolderGridItem(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     iconPackFilePaths: Map<String, String?>,
+    animations: Boolean,
     onResetGrid: () -> Unit,
 ) {
     key(gridItem.id) {
@@ -420,23 +422,19 @@ private fun PreviewFolderGridItem(
         val commonModifier = modifier
             .fillMaxSize()
             .padding(1.dp)
-            .run {
-                if (!isScrollInProgress && !hasInteraction) {
-                    with(sharedTransitionScope) {
-                        sharedElementWithCallerManagedVisibility(
-                            rememberSharedContentState(
-                                key = SharedElementKey(
-                                    id = gridItem.id,
-                                    parent = parent,
-                                ),
-                            ),
-                            visible = true,
-                        )
-                    }
-                } else {
-                    this
-                }
-            }
+            .gridItemSharedElement(
+                enabled = animations,
+                sharedElementKey = SharedElementKey(
+                    id = gridItem.id,
+                    parent = parent,
+                ),
+                sharedTransitionScope = sharedTransitionScope,
+                visible = !isScrollInProgress && !hasInteraction,
+            )
+            .gridItemScaleAnimation(
+                animations = animations,
+                hasInteraction = hasInteraction,
+            )
             .alpha(alpha)
 
         LaunchedEffect(
