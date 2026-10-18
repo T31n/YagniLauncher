@@ -174,39 +174,48 @@ internal fun updateAppWidgetOptions(
     val maxWidthByGridPx = (maxSpanColumns * cellWidthPx).roundToInt()
     val maxHeightByGridPx = (maxSpanRows * cellHeightPx).roundToInt()
 
-    val maxWidthPx = if (data.maxResizeWidth > 0) {
+    val maxWidthByGridDp = with(density) { maxWidthByGridPx.toDp().value.roundToInt() }
+    val maxHeightByGridDp = with(density) { maxHeightByGridPx.toDp().value.roundToInt() }
+
+    val maxWidthDp = if (data.maxResizeWidth > 0) {
         minOf(
             data.maxResizeWidth,
-            maxWidthByGridPx,
+            maxWidthByGridDp,
         )
     } else {
-        maxWidthByGridPx
+        maxWidthByGridDp
     }
-    val maxHeightPx = if (data.maxResizeHeight > 0) {
+    val maxHeightDp = if (data.maxResizeHeight > 0) {
         minOf(
             data.maxResizeHeight,
-            maxHeightByGridPx,
+            maxHeightByGridDp,
         )
     } else {
-        maxHeightByGridPx
+        maxHeightByGridDp
     }
 
-    val minWidthPx = if (data.minResizeWidth > 0) data.minResizeWidth else width
-    val minHeightPx = if (data.minResizeHeight > 0) data.minResizeHeight else height
+    val minWidthDp = if (data.minResizeWidth > 0) {
+        data.minResizeWidth
+    } else {
+        with(density) { width.toDp().value.roundToInt() }
+    }
+    val minHeightDp = if (data.minResizeHeight > 0) {
+        data.minResizeHeight
+    } else {
+        with(density) { height.toDp().value.roundToInt() }
+    }
 
-    val minWidthDp = with(density) { minWidthPx.toDp().value.roundToInt().coerceAtLeast(1) }
-    val minHeightDp =
-        with(density) { minHeightPx.toDp().value.roundToInt().coerceAtLeast(1) }
-    val maxWidthDp =
-        with(density) { maxWidthPx.toDp().value.roundToInt().coerceAtLeast(minWidthDp) }
-    val maxHeightDp =
-        with(density) { maxHeightPx.toDp().value.roundToInt().coerceAtLeast(minHeightDp) }
+    val boundedMinWidthDp = minWidthDp.coerceAtLeast(1)
+    val boundedMinHeightDp = minHeightDp.coerceAtLeast(1)
+
+    val boundedMaxWidthDp = maxWidthDp.coerceAtLeast(boundedMinWidthDp)
+    val boundedMaxHeightDp = maxHeightDp.coerceAtLeast(boundedMinHeightDp)
 
     val options = Bundle().apply {
-        putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, minWidthDp)
-        putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, minHeightDp)
-        putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH, maxWidthDp)
-        putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, maxHeightDp)
+        putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, boundedMinWidthDp)
+        putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, boundedMinHeightDp)
+        putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH, boundedMaxWidthDp)
+        putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, boundedMaxHeightDp)
     }
 
     androidAppWidgetManagerWrapper.updateAppWidgetOptions(

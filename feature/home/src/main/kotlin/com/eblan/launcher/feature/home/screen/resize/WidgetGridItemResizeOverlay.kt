@@ -384,20 +384,25 @@ private fun resizeWidgetGridItem(
     density: Density,
     onResizeWidgetGridItem: (GridItem, Int, Int) -> Unit,
 ) {
+    val minResizeWidthPx = with(density) { data.minResizeWidth.dp.roundToPx() }
+    val minResizeHeightPx = with(density) { data.minResizeHeight.dp.roundToPx() }
+    val maxResizeWidthPx = with(density) { data.maxResizeWidth.dp.roundToPx() }
+    val maxResizeHeightPx = with(density) { data.maxResizeHeight.dp.roundToPx() }
+
     val allowedWidth =
-        if (data.minResizeWidth > 0 && currentWidth <= data.minResizeWidth) {
-            data.minResizeWidth
-        } else if (data.maxResizeWidth in 1..<currentWidth) {
-            data.maxResizeWidth
+        if (minResizeWidthPx > 0 && currentWidth <= minResizeWidthPx) {
+            minResizeWidthPx
+        } else if (maxResizeWidthPx in 1..<currentWidth) {
+            maxResizeWidthPx
         } else {
             currentWidth
         }
 
     val allowedHeight =
-        if (data.minResizeHeight > 0 && currentHeight <= data.minResizeHeight) {
-            data.minResizeHeight
-        } else if (data.maxResizeHeight in 1..<currentHeight) {
-            data.maxResizeHeight
+        if (minResizeHeightPx > 0 && currentHeight <= minResizeHeightPx) {
+            minResizeHeightPx
+        } else if (maxResizeHeightPx in 1..<currentHeight) {
+            maxResizeHeightPx
         } else {
             currentHeight
         }

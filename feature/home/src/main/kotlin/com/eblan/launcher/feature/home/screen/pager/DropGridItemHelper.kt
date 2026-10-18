@@ -251,8 +251,8 @@ internal fun handleAppWidgetLauncherResult(
         val newData = data.copy(appWidgetId = appWidgetId)
 
         updateAppWidgetOptions(
-            height = data.minHeight,
-            width = data.minWidth,
+            height = with(density) { data.minHeight.dp.roundToPx() },
+            width = with(density) { data.minWidth.dp.roundToPx() },
             androidAppWidgetManagerWrapper = androidAppWidgetManagerWrapper,
             columns = columns,
             data = newData,
@@ -539,9 +539,12 @@ private fun onDragEndWidget(
     if (bindAppWidgetIdIfAllowed) {
         val newData = data.copy(appWidgetId = appWidgetId)
 
+        val minWidthPx = with(density) { data.minWidth.dp.roundToPx() }
+        val minHeightPx = with(density) { data.minHeight.dp.roundToPx() }
+
         updateAppWidgetOptions(
-            height = data.minWidth,
-            width = data.minHeight,
+            height = minHeightPx,
+            width = minWidthPx,
             androidAppWidgetManagerWrapper = androidAppWidgetManagerWrapper,
             columns = columns,
             data = newData,
