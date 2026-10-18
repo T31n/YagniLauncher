@@ -80,7 +80,6 @@ internal fun GridItemPopup(
     isVisibleOverlay: Boolean,
     paddingValues: PaddingValues,
     isCloseGridItemPopup: Boolean,
-    animations: Boolean,
     onDeleteGridItem: (GridItem) -> Unit,
     onDismissRequest: () -> Unit,
     onEdit: (String) -> Unit,
@@ -188,7 +187,6 @@ internal fun GridItemPopup(
                 gridItemSettings = gridItemSettings,
                 hasShortcutHostPermission = hasShortcutHostPermission,
                 isVisibleOverlay = isVisibleOverlay,
-                animations = animations,
                 onDeleteGridItem = onDeleteGridItem,
                 onDismiss = {
                     transitionState.targetState = false
@@ -229,7 +227,6 @@ private fun GridItemPopupContent(
     gridItemSettings: GridItemSettings,
     hasShortcutHostPermission: Boolean,
     isVisibleOverlay: Boolean,
-    animations: Boolean,
     onDeleteGridItem: (GridItem) -> Unit,
     onDismiss: () -> Unit,
     onEdit: (String) -> Unit,
@@ -272,7 +269,6 @@ private fun GridItemPopupContent(
                         hasShortcutHostPermission = hasShortcutHostPermission,
                         icon = data.icon,
                         isVisibleOverlay = isVisibleOverlay,
-                        animations = animations,
                         onDelete = {
                             onDeleteGridItem(gridItem)
 
@@ -378,7 +374,6 @@ private fun ApplicationInfoGridItemMenu(
     hasShortcutHostPermission: Boolean,
     icon: String?,
     isVisibleOverlay: Boolean,
-    animations: Boolean,
     onDelete: () -> Unit,
     onEdit: () -> Unit,
     onInfo: () -> Unit,
@@ -410,7 +405,6 @@ private fun ApplicationInfoGridItemMenu(
                 gridItemSettings = gridItemSettings,
                 icon = icon,
                 isVisibleOverlay = isVisibleOverlay,
-                animations = animations,
                 onTapShortcutInfo = onTapShortcutInfo,
                 onDragShortcutInfo = onDragShortcutInfo,
             )

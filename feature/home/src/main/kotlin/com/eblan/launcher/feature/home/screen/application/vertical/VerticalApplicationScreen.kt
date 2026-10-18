@@ -614,7 +614,6 @@ private fun EblanApplicationInfos(
                         systemCustomTextColor = systemCustomTextColor,
                         systemTextColor = systemTextColor,
                         iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
-                        animations = animations,
                         onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
                     )
                 }

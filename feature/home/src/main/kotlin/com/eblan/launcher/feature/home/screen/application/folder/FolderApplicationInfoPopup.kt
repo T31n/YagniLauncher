@@ -194,7 +194,6 @@ internal fun FolderApplicationInfoGridItemPopup(
     gridItemSettings: GridItemSettings,
     hasShortcutHostPermission: Boolean,
     isVisibleOverlay: Boolean,
-    animations: Boolean,
     isCloseFolderEblanApplicationInfoGridItemMenu: Boolean,
     onDismissRequest: () -> Unit,
     onEditFolderApplicationInfo: (String) -> Unit,
@@ -297,7 +296,6 @@ internal fun FolderApplicationInfoGridItemPopup(
             ),
         ) {
             FolderApplicationInfoGridItemPopupContent(
-                animations = animations,
                 eblanAppWidgetProviderInfosGroup = eblanAppWidgetProviderInfosGroup,
                 eblanShortcutInfosGroup = eblanShortcutInfosGroup,
                 folderEblanApplicationInfoGridItem = folderEblanApplicationInfoGridItem,
@@ -323,7 +321,6 @@ internal fun FolderApplicationInfoGridItemPopup(
 @Composable
 private fun FolderApplicationInfoGridItemPopupContent(
     modifier: Modifier = Modifier,
-    animations: Boolean,
     eblanAppWidgetProviderInfosGroup: Map<String, List<EblanAppWidgetProviderInfo>>,
     eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
     folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
@@ -372,7 +369,6 @@ private fun FolderApplicationInfoGridItemPopupContent(
                 isUserInstalled = packageManager.isUserInstalled(data.flags),
                 icon = data.icon,
                 isVisibleOverlay = isVisibleOverlay,
-                animations = animations,
                 onUninstall = {
                     handleOnUninstall(
                         context = context,

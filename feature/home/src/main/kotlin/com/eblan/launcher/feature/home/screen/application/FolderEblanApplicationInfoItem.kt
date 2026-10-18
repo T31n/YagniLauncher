@@ -18,7 +18,6 @@
 package com.eblan.launcher.feature.home.screen.application
 
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.fillMaxSize
@@ -89,7 +88,6 @@ import com.eblan.launcher.feature.home.util.getHorizontalArrangement
 import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
 import com.eblan.launcher.feature.home.util.getVerticalAlignment
 import com.eblan.launcher.feature.home.util.getVerticalArrangement
-import com.eblan.launcher.feature.home.util.handleOnPress
 import kotlinx.coroutines.launch
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
@@ -177,8 +175,6 @@ internal fun FolderEblanApplicationInfoItem(
         parent = SharedElementKey.Parent.SwipeY,
     )
 
-    val scale = remember { Animatable(1f) }
-
     val currentOnTapFolderApplicationInfo by rememberUpdatedState(onTapFolderApplicationInfo)
     val currentOnLongPressFolderApplicationInfo by rememberUpdatedState(
         onLongPressFolderApplicationInfo,
@@ -242,12 +238,6 @@ internal fun FolderEblanApplicationInfoItem(
                                 )
                             }
                         },
-                        onPress = {
-                            handleOnPress(
-                                animations = animations,
-                                scale = scale,
-                            )
-                        },
                     )
                 }
             } else {
@@ -262,11 +252,6 @@ internal fun FolderEblanApplicationInfoItem(
                 intSize = it.size
             },
         )
-        .gridItemScaleAnimation(
-            enabled = animations,
-            isVisibleOverlay = isVisibleOverlay,
-            scale = scale,
-        )
         .gridItemSharedElement(
             enabled = animations,
             sharedElementKey = sharedElementKey,
@@ -275,6 +260,10 @@ internal fun FolderEblanApplicationInfoItem(
                 !isScrollInProgress &&
                 !isLongPress &&
                 !isVisibleOverlay,
+        )
+        .gridItemScaleAnimation(
+            animations = animations,
+            hasInteraction = isLongPress,
         )
         .drawWithContent {
             graphicsLayer.record {

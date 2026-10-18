@@ -81,7 +81,6 @@ internal fun FolderGridItemPopup(
     isVisibleOverlay: Boolean,
     paddingValues: PaddingValues,
     isCloseFolderGridItemPopup: Boolean,
-    animations: Boolean,
     onDeleteGridItem: (GridItem) -> Unit,
     onDismissRequest: () -> Unit,
     onEdit: (String) -> Unit,
@@ -194,7 +193,6 @@ internal fun FolderGridItemPopup(
                 folderGridItem = folderGridItem,
                 hasShortcutHostPermission = hasShortcutHostPermission,
                 isVisibleOverlay = isVisibleOverlay,
-                animations = animations,
                 onDeleteGridItem = onDeleteGridItem,
                 onDismiss = {
                     transitionState.targetState = false
@@ -234,7 +232,6 @@ private fun FolderGridItemPopupContent(
     folderGridItem: GridItem,
     hasShortcutHostPermission: Boolean,
     isVisibleOverlay: Boolean,
-    animations: Boolean,
     onDeleteGridItem: (GridItem) -> Unit,
     onDismiss: () -> Unit,
     onEdit: (String) -> Unit,
@@ -274,7 +271,6 @@ private fun FolderGridItemPopupContent(
                         hasShortcutHostPermission = hasShortcutHostPermission,
                         icon = data.icon,
                         isVisibleOverlay = isVisibleOverlay,
-                        animations = animations,
                         onDelete = {
                             onDeleteGridItem(folderGridItem)
 
@@ -355,7 +351,6 @@ private fun ApplicationInfoFolderGridItemPopupContent(
     hasShortcutHostPermission: Boolean,
     icon: String?,
     isVisibleOverlay: Boolean,
-    animations: Boolean,
     onDelete: () -> Unit,
     onEdit: () -> Unit,
     onTapShortcutInfo: (
@@ -389,7 +384,6 @@ private fun ApplicationInfoFolderGridItemPopupContent(
                         gridItemSettings = gridItemSettings,
                         icon = icon,
                         isVisibleOverlay = isVisibleOverlay,
-                        animations = animations,
                         onTapShortcutInfo = onTapShortcutInfo,
                         onDragShortcutInfo = onDragShortcutInfo,
                     )

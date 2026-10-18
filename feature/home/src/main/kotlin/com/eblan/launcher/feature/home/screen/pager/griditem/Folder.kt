@@ -19,7 +19,6 @@ package com.eblan.launcher.feature.home.screen.pager.griditem
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -82,7 +81,6 @@ import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.screen.pager.handleConflictingGridItem
 import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
-import com.eblan.launcher.feature.home.util.handleOnPress
 import com.eblan.launcher.feature.home.util.onDoubleTap
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import com.eblan.launcher.ui.local.LocalStatusBarManager
@@ -146,8 +144,6 @@ internal fun InteractiveFolderGridItem(
     val graphicsLayer = rememberGraphicsLayer()
 
     val scope = rememberCoroutineScope()
-
-    val scale = remember { Animatable(1f) }
 
     val currentDrag = rememberUpdatedState(drag)
     val currentIsDragging = rememberUpdatedState(isDragging)
@@ -226,12 +222,6 @@ internal fun InteractiveFolderGridItem(
                                 ),
                             )
                         },
-                        onPress = {
-                            handleOnPress(
-                                animations = animations,
-                                scale = scale,
-                            )
-                        },
                     )
                 }
             } else {
@@ -251,16 +241,15 @@ internal fun InteractiveFolderGridItem(
                 intSize = it.size
             },
         )
-        .gridItemScaleAnimation(
-            enabled = animations,
-            isVisibleOverlay = isVisibleOverlay,
-            scale = scale,
-        )
         .gridItemSharedElement(
             enabled = animations,
             sharedElementKey = sharedElementKey,
             sharedTransitionScope = sharedTransitionScope,
             visible = !isScrollInProgress && !hasInteraction,
+        )
+        .gridItemScaleAnimation(
+            animations = animations,
+            hasInteraction = hasInteraction,
         )
         .drawWithContent {
             graphicsLayer.record {
@@ -315,6 +304,7 @@ internal fun InteractiveFolderGridItem(
                             customFolderBackgroundColor = customFolderBackgroundColor,
                             systemTextColor = systemTextColor,
                             systemCustomTextColor = systemCustomTextColor,
+                            animations = animations,
                             onResetGrid = onResetGrid,
                         )
                     },
@@ -384,6 +374,7 @@ private fun PreviewFolderGridItem(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     iconPackFilePaths: Map<String, String?>,
+    animations: Boolean,
     onResetGrid: () -> Unit,
 ) {
     key(gridItem.id) {
@@ -431,23 +422,19 @@ private fun PreviewFolderGridItem(
         val commonModifier = modifier
             .fillMaxSize()
             .padding(1.dp)
-            .run {
-                if (!isScrollInProgress && !hasInteraction) {
-                    with(sharedTransitionScope) {
-                        sharedElementWithCallerManagedVisibility(
-                            rememberSharedContentState(
-                                key = SharedElementKey(
-                                    id = gridItem.id,
-                                    parent = parent,
-                                ),
-                            ),
-                            visible = true,
-                        )
-                    }
-                } else {
-                    this
-                }
-            }
+            .gridItemSharedElement(
+                enabled = animations,
+                sharedElementKey = SharedElementKey(
+                    id = gridItem.id,
+                    parent = parent,
+                ),
+                sharedTransitionScope = sharedTransitionScope,
+                visible = !isScrollInProgress && !hasInteraction,
+            )
+            .gridItemScaleAnimation(
+                animations = animations,
+                hasInteraction = hasInteraction,
+            )
             .alpha(alpha)
 
         LaunchedEffect(

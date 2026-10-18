@@ -17,8 +17,6 @@
  */
 package com.eblan.launcher.feature.home.screen.shortcutinfo
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
@@ -55,9 +53,7 @@ import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfo
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
-import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.model.SharedElementKey
-import com.eblan.launcher.feature.home.util.SCALE
 import kotlinx.coroutines.launch
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
@@ -69,7 +65,6 @@ internal fun ShortcutInfoScreen(
     gridItemSettings: GridItemSettings,
     icon: String?,
     isVisibleOverlay: Boolean,
-    animations: Boolean,
     onTapShortcutInfo: (
         serialNumber: Long,
         packageName: String,
@@ -97,7 +92,6 @@ internal fun ShortcutInfoScreen(
                 gridItemSettings = gridItemSettings,
                 icon = icon,
                 isVisibleOverlay = isVisibleOverlay,
-                animations = animations,
                 onTapShortcutInfo = onTapShortcutInfo,
                 onDragShortcutInfo = onDragShortcutInfo,
             )
@@ -140,7 +134,6 @@ private fun ShortcutInfoMenuItem(
     gridItemSettings: GridItemSettings,
     icon: String?,
     isVisibleOverlay: Boolean,
-    animations: Boolean,
     onTapShortcutInfo: (Long, String, String) -> Unit,
     onDragShortcutInfo: (
         gridItem: GridItem,
@@ -157,8 +150,6 @@ private fun ShortcutInfoMenuItem(
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
 
     var intSize by remember { mutableStateOf(IntSize.Zero) }
-
-    val scale = remember { Animatable(1f) }
 
     ListItem(
         modifier = modifier
@@ -183,11 +174,6 @@ private fun ShortcutInfoMenuItem(
 
                         intSize = it.size
                     }
-                    .gridItemScaleAnimation(
-                        enabled = animations,
-                        isVisibleOverlay = isVisibleOverlay,
-                        scale = scale,
-                    )
                     .drawWithContent {
                         graphicsLayer.record {
                             this@drawWithContent.drawContent()
@@ -196,9 +182,8 @@ private fun ShortcutInfoMenuItem(
                         drawLayer(graphicsLayer)
                     }
                     .pointerInput(
-                        isVisibleOverlay,
-                        gridItemSettings,
-                        animations,
+                        key1 = isVisibleOverlay,
+                        key2 = gridItemSettings,
                     ) {
                         detectTapGestures(
                             onLongPress = {
@@ -210,8 +195,6 @@ private fun ShortcutInfoMenuItem(
                                         icon = icon,
                                         intOffset = intOffset,
                                         intSize = intSize,
-                                        scale = scale,
-                                        animations = animations,
                                         onDragShortcutInfo = onDragShortcutInfo,
                                     )
                                 }
@@ -260,8 +243,6 @@ private suspend fun handleOnLongPress(
     icon: String?,
     intOffset: IntOffset,
     intSize: IntSize,
-    scale: Animatable<Float, AnimationVector1D>,
-    animations: Boolean,
     onDragShortcutInfo: (
         gridItem: GridItem,
         imageBitmap: ImageBitmap,
@@ -278,10 +259,6 @@ private suspend fun handleOnLongPress(
         icon = icon,
         id = id,
     )
-
-    if (animations) {
-        scale.animateTo(SCALE)
-    }
 
     onDragShortcutInfo(
         gridItem,

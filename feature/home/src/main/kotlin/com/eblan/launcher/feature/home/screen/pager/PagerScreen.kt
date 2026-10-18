@@ -77,10 +77,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draganddrop.mimeTypes
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -129,6 +129,7 @@ import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
 import com.eblan.launcher.feature.home.component.DotsGridLayout
 import com.eblan.launcher.feature.home.component.GridLayout
 import com.eblan.launcher.feature.home.component.HomeHandler
+import com.eblan.launcher.feature.home.component.OVERLAY_SCALE
 import com.eblan.launcher.feature.home.component.PageIndicator
 import com.eblan.launcher.feature.home.component.pagerTransitionEffect
 import com.eblan.launcher.feature.home.model.Drag
@@ -148,7 +149,6 @@ import com.eblan.launcher.feature.home.screen.shortcutconfig.ShortcutConfigScree
 import com.eblan.launcher.feature.home.screen.widget.AppWidgetScreen
 import com.eblan.launcher.feature.home.screen.widget.WidgetScreen
 import com.eblan.launcher.feature.home.util.PAGE_INDICATOR_HEIGHT
-import com.eblan.launcher.feature.home.util.SCALE
 import com.eblan.launcher.feature.home.util.calculatePage
 import com.eblan.launcher.feature.home.util.getTextColor
 import com.eblan.launcher.framework.usermanager.AndroidUserManagerWrapper
@@ -1125,7 +1125,6 @@ internal fun PagerScreen(
                 isVisibleOverlay = isVisibleOverlay,
                 paddingValues = paddingValues,
                 isCloseGridItemPopup = pagerScreenState.isCloseGridItemMenu,
-                animations = experimentalSettings.gridItemAnimation,
                 onDeleteGridItem = onDeleteGridItem,
                 onDismissRequest = pagerScreenState::dismissGridItemMenu,
                 onEdit = onEditGridItem,
@@ -1247,7 +1246,6 @@ internal fun PagerScreen(
                 isVisibleOverlay = isVisibleOverlay,
                 paddingValues = paddingValues,
                 isCloseFolderGridItemPopup = pagerScreenState.isCloseFolderGridItemMenu,
-                animations = experimentalSettings.gridItemAnimation,
                 onDeleteGridItem = onDeleteGridItem,
                 onDismissRequest = pagerScreenState::dismissFolderGridItemMenu,
                 onEdit = onEditGridItem,
@@ -1369,7 +1367,6 @@ internal fun PagerScreen(
                 popupIntSize = pagerScreenState.menuIntSize,
                 isVisibleOverlay = isVisibleOverlay,
                 paddingValues = paddingValues,
-                animations = experimentalSettings.gridItemAnimation,
                 isCloseEblanApplicationInfoMenu = pagerScreenState.isCloseEblanApplicationInfoMenu,
                 onDismissRequest = pagerScreenState::dismissEblanApplicationInfoMenu,
                 onEditApplicationInfo = onEditApplicationInfo,
@@ -1416,7 +1413,6 @@ internal fun PagerScreen(
         if (pagerScreenState.showWidgetScreen) {
             WidgetScreen(
                 alpha = pagerScreenState.widgetScreenAlpha,
-                animations = experimentalSettings.gridItemAnimation,
                 columns = homeSettings.columns,
                 drag = pagerScreenState.drag,
                 eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfos,
@@ -1456,7 +1452,6 @@ internal fun PagerScreen(
                 swipeY = pagerScreenState.shortcutConfigScreenSwipeY.value,
                 alpha = pagerScreenState.shortcutConfigScreenAlpha,
                 isVisibleOverlay = isVisibleOverlay,
-                animations = experimentalSettings.gridItemAnimation,
                 drag = pagerScreenState.drag,
                 onDismiss = pagerScreenState::dismissShortcutConfigScreen,
                 onGetEblanShortcutConfigsByLabel = onGetEblanShortcutConfigsByLabel,
@@ -1490,7 +1485,6 @@ internal fun PagerScreen(
                 screenWidth = screenWidth,
                 swipeY = pagerScreenState.appWidgetScreenSwipeY.value,
                 isVisibleOverlay = isVisibleOverlay,
-                animations = experimentalSettings.gridItemAnimation,
                 drag = pagerScreenState.drag,
                 onDismiss = pagerScreenState::dismissAppWidgetScreen,
                 onVerticalDrag = pagerScreenState::verticalDragAppWidgetScreen,
@@ -1525,7 +1519,7 @@ internal fun PagerScreen(
             )
         }
 
-        if (pagerScreenState.isVisibleFolderEblanApplicationInfos) {
+        if (isVisibleFolderEblanApplicationInfos) {
             folderEblanApplicationInfoPopups.forEach { folderEblanApplicationInfoPopup ->
                 FolderApplicationScreen(
                     sharedTransitionScope = this,
@@ -1621,7 +1615,6 @@ internal fun PagerScreen(
                 gridItemSettings = appDrawerSettings.gridItemSettings,
                 hasShortcutHostPermission = hasShortcutHostPermission,
                 isVisibleOverlay = isVisibleOverlay,
-                animations = experimentalSettings.gridItemAnimation,
                 isCloseFolderEblanApplicationInfoGridItemMenu = pagerScreenState.isCloseFolderEblanApplicationInfoGridItemMenu,
                 onDismissRequest = pagerScreenState::dismissFolderEblanApplicationInfoGridItemMenu,
                 onEditFolderApplicationInfo = onEditFolderApplicationInfo,
@@ -1668,7 +1661,7 @@ internal fun PagerScreen(
 @Composable
 private fun SharedTransitionScope.OverlayImage(
     modifier: Modifier = Modifier,
-    animations: Boolean = true,
+    animations: Boolean,
     overlayImageBitmap: ImageBitmap?,
     overlayIntOffset: IntOffset?,
     overlayIntSize: IntSize?,
@@ -1692,17 +1685,14 @@ private fun SharedTransitionScope.OverlayImage(
         DpSize(width = overlayIntSize.width.toDp(), height = overlayIntSize.height.toDp())
     }
 
-    val scale = remember { Animatable(SCALE) }
+    val scale = remember { Animatable(1f) }
 
-    LaunchedEffect(
-        key1 = isVisibleOverlay,
-        key2 = animations,
-    ) {
+    LaunchedEffect(key1 = isVisibleOverlay) {
         if (isVisibleOverlay && animations) {
-            scale.animateTo(targetValue = 1f)
-        }
-
-        if (!isVisibleOverlay) {
+            scale.animateTo(OVERLAY_SCALE)
+        } else if (isVisibleOverlay) {
+            scale.snapTo(OVERLAY_SCALE)
+        } else {
             onResetOverlay()
         }
     }
@@ -1730,16 +1720,7 @@ private fun SharedTransitionScope.OverlayImage(
                     this
                 }
             }
-            .run {
-                if (animations) {
-                    graphicsLayer {
-                        scaleX = scale.value
-                        scaleY = scale.value
-                    }
-                } else {
-                    this
-                }
-            },
+            .scale(scale.value),
         bitmap = overlayImageBitmap,
         contentDescription = null,
     )

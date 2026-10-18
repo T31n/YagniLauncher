@@ -21,7 +21,6 @@ import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -76,14 +75,12 @@ import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.R
 import com.eblan.launcher.feature.home.component.GridItemLayoutType
-import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.util.getApplicationScreenTextColor
 import com.eblan.launcher.feature.home.util.getHorizontalAlignment
 import com.eblan.launcher.feature.home.util.getHorizontalArrangement
 import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
 import com.eblan.launcher.feature.home.util.getVerticalAlignment
 import com.eblan.launcher.feature.home.util.getVerticalArrangement
-import com.eblan.launcher.feature.home.util.handleOnPress
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import com.eblan.launcher.ui.local.LocalUserManager
 import com.eblan.launcher.ui.settings.rememberIsDefaultLauncher
@@ -101,7 +98,6 @@ internal fun LazyGridScope.privateSpace(
     systemCustomTextColor: Int,
     systemTextColor: TextColor,
     iconPackFilePaths: Map<String, String?>,
-    animations: Boolean,
     onLongPressPrivateSpaceApplicationInfoItem: (
         eblanApplicationInfo: EblanApplicationInfo,
         intOffset: IntOffset,
@@ -132,7 +128,6 @@ internal fun LazyGridScope.privateSpace(
                 systemTextColor = systemTextColor,
                 systemCustomTextColor = systemCustomTextColor,
                 iconPackFilePaths = iconPackFilePaths,
-                animations = animations,
                 onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
             )
         }
@@ -234,7 +229,6 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
     systemCustomTextColor: Int,
     systemTextColor: TextColor,
     iconPackFilePaths: Map<String, String?>,
-    animations: Boolean,
     onLongPressPrivateSpaceApplicationInfoItem: (
         eblanApplicationInfo: EblanApplicationInfo,
         intOffset: IntOffset,
@@ -291,8 +285,6 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
         gridItemSettings.iconSize.dp.roundToPx()
     }
 
-    val scale = remember { Animatable(1f) }
-
     val itemModifier = modifier
         .height(appDrawerRowsHeight)
         .padding(gridItemSettings.padding.dp)
@@ -335,12 +327,6 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
                 } else {
                     null
                 },
-                onPress = {
-                    handleOnPress(
-                        animations = animations,
-                        scale = scale,
-                    )
-                },
             )
         }
 
@@ -351,11 +337,6 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
             intOffset = it.positionInRoot().round()
             intSize = it.size
         }
-        .gridItemScaleAnimation(
-            enabled = animations,
-            isVisibleOverlay = isVisibleOverlay,
-            scale = scale,
-        )
 
     val iconContent: @Composable () -> Unit = {
         AsyncImage(
