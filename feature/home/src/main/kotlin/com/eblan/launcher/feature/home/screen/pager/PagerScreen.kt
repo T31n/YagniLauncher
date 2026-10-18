@@ -129,6 +129,7 @@ import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
 import com.eblan.launcher.feature.home.component.DotsGridLayout
 import com.eblan.launcher.feature.home.component.GridLayout
 import com.eblan.launcher.feature.home.component.HomeHandler
+import com.eblan.launcher.feature.home.component.OVERLAY_SCALE
 import com.eblan.launcher.feature.home.component.PageIndicator
 import com.eblan.launcher.feature.home.component.pagerTransitionEffect
 import com.eblan.launcher.feature.home.model.Drag
@@ -1660,7 +1661,7 @@ internal fun PagerScreen(
 @Composable
 private fun SharedTransitionScope.OverlayImage(
     modifier: Modifier = Modifier,
-    animations: Boolean = true,
+    animations: Boolean,
     overlayImageBitmap: ImageBitmap?,
     overlayIntOffset: IntOffset?,
     overlayIntSize: IntSize?,
@@ -1687,8 +1688,10 @@ private fun SharedTransitionScope.OverlayImage(
     val scale = remember { Animatable(1f) }
 
     LaunchedEffect(key1 = isVisibleOverlay) {
-        if (isVisibleOverlay) {
-            scale.animateTo(targetValue = 1.25f)
+        if (isVisibleOverlay && animations) {
+            scale.animateTo(OVERLAY_SCALE)
+        } else if (isVisibleOverlay) {
+            scale.snapTo(OVERLAY_SCALE)
         } else {
             onResetOverlay()
         }

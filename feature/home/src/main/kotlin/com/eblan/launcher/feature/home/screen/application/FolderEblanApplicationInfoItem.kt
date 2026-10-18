@@ -261,7 +261,10 @@ internal fun FolderEblanApplicationInfoItem(
                 !isLongPress &&
                 !isVisibleOverlay,
         )
-        .gridItemScaleAnimation(hasInteraction = isLongPress)
+        .gridItemScaleAnimation(
+            animations = animations,
+            hasInteraction = isLongPress,
+        )
         .drawWithContent {
             graphicsLayer.record {
                 this@drawWithContent.drawContent()

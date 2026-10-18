@@ -372,7 +372,10 @@ private fun InteractiveWidgetGridItem(
                 sharedTransitionScope = sharedTransitionScope,
                 visible = !isScrollInProgress && !hasInteraction,
             )
-            .gridItemScaleAnimation(hasInteraction = hasInteraction)
+            .gridItemScaleAnimation(
+                animations = animations,
+                hasInteraction = hasInteraction,
+            )
             .drawWithContent {
                 graphicsLayer.record {
                     this@drawWithContent.drawContent()

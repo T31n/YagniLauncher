@@ -336,16 +336,23 @@ internal fun Modifier.dashedResizeOutline(color: Color): Modifier {
 }
 
 @Composable
-internal fun Modifier.gridItemScaleAnimation(hasInteraction: Boolean): Modifier {
+internal fun Modifier.gridItemScaleAnimation(
+    animations: Boolean,
+    hasInteraction: Boolean,
+): Modifier {
     val scale = remember { Animatable(1f) }
 
     LaunchedEffect(key1 = hasInteraction) {
         if (hasInteraction) {
-            scale.snapTo(1.25f)
-        } else {
+            scale.snapTo(OVERLAY_SCALE)
+        } else if (animations) {
             scale.animateTo(1f)
+        } else {
+            scale.snapTo(1f)
         }
     }
 
     return scale(scale.value)
 }
+
+internal const val OVERLAY_SCALE = 1.25f
