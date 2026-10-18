@@ -154,4 +154,6 @@ internal class DefaultPackageManagerWrapper @Inject constructor(
             null
         }
     }
+
+    override fun isUserInstalled(flags: Int): Boolean = (flags and ApplicationInfo.FLAG_INSTALLED) != 0
 }

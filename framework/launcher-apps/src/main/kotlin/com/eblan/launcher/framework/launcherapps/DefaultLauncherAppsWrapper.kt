@@ -28,7 +28,6 @@ import android.content.pm.LauncherUserInfo
 import android.content.pm.ShortcutInfo
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -430,36 +429,6 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             userManagerWrapper.getUserForSerialNumber(serialNumber = serialNumber),
             sourceBounds,
             Bundle.EMPTY,
-        )
-    }
-
-    override fun startAppUninstallActivity(
-        serialNumber: Long,
-        packageName: String,
-        componentName: String,
-        sourceBounds: Rect,
-    ) {
-        val userHandle = checkNotNull(userManagerWrapper.getUserForSerialNumber(serialNumber)) {
-            "No user found for serial number $serialNumber"
-        }
-
-        if (userHandle != myUserHandle()) {
-            launcherApps.startAppDetailsActivity(
-                ComponentName.unflattenFromString(componentName),
-                userHandle,
-                sourceBounds,
-                Bundle.EMPTY,
-            )
-
-            return
-        }
-
-        context.startActivity(
-            Intent(Intent.ACTION_DELETE).apply {
-                data = Uri.fromParts("package", packageName, null)
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                setSourceBounds(sourceBounds)
-            },
         )
     }
 

@@ -21,15 +21,20 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Process.myUserHandle
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.foundation.gestures.PressGestureScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.HorizontalAlignment
 import com.eblan.launcher.domain.model.grid.HorizontalArrangement
@@ -40,6 +45,7 @@ import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.framework.launcherapps.AndroidLauncherAppsWrapper
 import com.eblan.launcher.framework.statusbarmanager.AndroidStatusBarManagerWrapper
+import com.eblan.launcher.framework.usermanager.AndroidUserManagerWrapper
 import com.eblan.launcher.framework.widgetmanager.AndroidAppWidgetManagerWrapper
 import kotlin.math.roundToInt
 
@@ -210,7 +216,7 @@ internal fun updateAppWidgetOptions(
     )
 }
 
-suspend fun PressGestureScope.handleOnPress(
+internal suspend fun PressGestureScope.handleOnPress(
     animations: Boolean,
     scale: Animatable<Float, AnimationVector1D>,
 ) {
@@ -222,6 +228,50 @@ suspend fun PressGestureScope.handleOnPress(
         awaitRelease()
     } finally {
         scale.animateTo(targetValue = 1f)
+    }
+}
+
+internal fun handleOnUninstall(
+    context: Context,
+    serialNumber: Long,
+    componentName: String,
+    packageName: String,
+    launcherApps: AndroidLauncherAppsWrapper,
+    popupIntOffset: IntOffset,
+    popupIntSize: IntSize,
+    userManager: AndroidUserManagerWrapper,
+) {
+    val userHandle =
+        userManager.getUserForSerialNumber(serialNumber = serialNumber)
+
+    if (userHandle != null && userHandle != myUserHandle()) {
+        launcherApps.startAppDetailsActivity(
+            serialNumber = serialNumber,
+            componentName = componentName,
+            sourceBounds = Rect(
+                popupIntOffset.x,
+                popupIntOffset.y,
+                popupIntOffset.x + popupIntSize.width,
+                popupIntOffset.y + popupIntSize.height,
+            ),
+        )
+    } else {
+        context.startActivity(
+            Intent(Intent.ACTION_DELETE).apply {
+                data = Uri.fromParts(
+                    "package",
+                    packageName,
+                    null,
+                )
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                sourceBounds = Rect(
+                    popupIntOffset.x,
+                    popupIntOffset.y,
+                    popupIntOffset.x + popupIntSize.width,
+                    popupIntOffset.y + popupIntSize.height,
+                )
+            },
+        )
     }
 }
 

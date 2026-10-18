@@ -47,6 +47,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.IntOffset
@@ -65,8 +66,10 @@ import com.eblan.launcher.feature.home.component.popup
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.screen.shortcutinfo.PrivateShortcutInfoMenu
 import com.eblan.launcher.feature.home.screen.shortcutinfo.ShortcutInfoScreen
+import com.eblan.launcher.feature.home.util.handleOnUninstall
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import com.eblan.launcher.ui.local.LocalPackageManager
+import com.eblan.launcher.ui.local.LocalUserManager
 
 @Composable
 internal fun ApplicationInfoPopup(
@@ -104,6 +107,8 @@ internal fun ApplicationInfoPopup(
     val packageManager = LocalPackageManager.current
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
+    val userManager = LocalUserManager.current
+    val context = LocalContext.current
 
     val transitionState = remember {
         MutableTransitionState(false).apply {
@@ -188,21 +193,20 @@ internal fun ApplicationInfoPopup(
                 ],
                 gridItemSettings = gridItemSettings,
                 hasShortcutHostPermission = hasShortcutHostPermission,
-                isUserInstalled = !packageManager.isSystem(eblanApplicationInfo.flags),
+                isUserInstalled = packageManager.isUserInstalled(eblanApplicationInfo.flags),
                 icon = eblanApplicationInfo.icon,
                 isVisibleOverlay = isVisibleOverlay,
                 animations = animations,
                 onUninstall = {
-                    launcherApps.startAppUninstallActivity(
+                    handleOnUninstall(
+                        context = context,
                         serialNumber = eblanApplicationInfo.serialNumber,
-                        packageName = eblanApplicationInfo.packageName,
                         componentName = eblanApplicationInfo.componentName,
-                        sourceBounds = Rect(
-                            popupIntOffset.x,
-                            popupIntOffset.y,
-                            popupIntOffset.x + popupIntSize.width,
-                            popupIntOffset.y + popupIntSize.height,
-                        ),
+                        packageName = eblanApplicationInfo.packageName,
+                        launcherApps = launcherApps,
+                        popupIntOffset = popupIntOffset,
+                        popupIntSize = popupIntSize,
+                        userManager = userManager,
                     )
 
                     transitionState.targetState = false
@@ -288,6 +292,8 @@ internal fun PrivateApplicationInfoPopup(
     val packageManager = LocalPackageManager.current
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
+    val userManager = LocalUserManager.current
+    val context = LocalContext.current
 
     val leftPadding = with(density) {
         paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
@@ -368,18 +374,17 @@ internal fun PrivateApplicationInfoPopup(
                     ),
                 ],
                 hasShortcutHostPermission = hasShortcutHostPermission,
-                isUserInstalled = !packageManager.isSystem(flags = eblanApplicationInfo.flags),
+                isUserInstalled = packageManager.isUserInstalled(flags = eblanApplicationInfo.flags),
                 onUninstall = {
-                    launcherApps.startAppUninstallActivity(
+                    handleOnUninstall(
+                        context = context,
                         serialNumber = eblanApplicationInfo.serialNumber,
-                        packageName = eblanApplicationInfo.packageName,
                         componentName = eblanApplicationInfo.componentName,
-                        sourceBounds = Rect(
-                            popupIntOffset.x,
-                            popupIntOffset.y,
-                            popupIntOffset.x + popupIntSize.width,
-                            popupIntOffset.y + popupIntSize.height,
-                        ),
+                        packageName = eblanApplicationInfo.packageName,
+                        launcherApps = launcherApps,
+                        popupIntOffset = popupIntOffset,
+                        popupIntSize = popupIntSize,
+                        userManager = userManager,
                     )
 
                     transitionState.targetState = false

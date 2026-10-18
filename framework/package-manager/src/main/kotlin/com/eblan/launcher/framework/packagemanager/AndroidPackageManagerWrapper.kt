@@ -21,11 +21,11 @@ import android.graphics.drawable.Drawable
 import android.os.UserHandle
 
 interface AndroidPackageManagerWrapper {
-    fun isSystem(flags: Int): Boolean
-
     suspend fun isDefaultLauncher(): Boolean
 
     suspend fun getUserBadgedLabel(label: CharSequence, userHandle: UserHandle): CharSequence
 
     suspend fun getUserBadgedIcon(drawable: Drawable, userHandle: UserHandle): Drawable?
+
+    fun isUserInstalled(flags: Int): Boolean
 }
