@@ -55,6 +55,7 @@ import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
+import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.component.whiteBox
 import com.eblan.launcher.feature.home.model.Drag
@@ -371,6 +372,7 @@ private fun InteractiveWidgetGridItem(
                 sharedTransitionScope = sharedTransitionScope,
                 visible = !isScrollInProgress && !hasInteraction,
             )
+            .gridItemScaleAnimation(hasInteraction = hasInteraction)
             .drawWithContent {
                 graphicsLayer.record {
                     this@drawWithContent.drawContent()

@@ -87,6 +87,7 @@ import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_COLUMNS
 import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_ROWS
 import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
+import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.component.swipeGestures
 import com.eblan.launcher.feature.home.model.Drag
@@ -486,6 +487,7 @@ private fun InteractiveApplicationInfoGridItem(
                         sharedTransitionScope = sharedTransitionScope,
                         visible = !isScrollInProgress && !hasInteraction,
                     )
+                    .gridItemScaleAnimation(hasInteraction = hasInteraction)
                     .drawWithContent {
                         graphicsLayer.record {
                             this@drawWithContent.drawContent()
@@ -659,6 +661,7 @@ private fun InteractiveShortcutInfoGridItem(
                         sharedTransitionScope = sharedTransitionScope,
                         visible = !isScrollInProgress && !hasInteraction,
                     )
+                    .gridItemScaleAnimation(hasInteraction = hasInteraction)
                     .drawWithContent {
                         graphicsLayer.apply {
                             this.alpha = alpha
@@ -828,6 +831,7 @@ private fun InteractiveShortcutConfigGridItem(
                     sharedTransitionScope = sharedTransitionScope,
                     visible = !isScrollInProgress && !hasInteraction,
                 )
+                .gridItemScaleAnimation(hasInteraction = hasInteraction)
                 .drawWithContent {
                     graphicsLayer.record {
                         this@drawWithContent.drawContent()
@@ -982,6 +986,7 @@ private fun InteractiveNestedFolderGridItem(
                 sharedTransitionScope = sharedTransitionScope,
                 visible = !isScrollInProgress && !hasInteraction,
             )
+            .gridItemScaleAnimation(hasInteraction = hasInteraction)
             .drawWithContent {
                 graphicsLayer.record {
                     this@drawWithContent.drawContent()

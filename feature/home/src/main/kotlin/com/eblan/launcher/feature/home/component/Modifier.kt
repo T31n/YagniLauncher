@@ -30,6 +30,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -37,6 +38,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
@@ -331,4 +333,19 @@ internal fun Modifier.dashedResizeOutline(color: Color): Modifier {
             )
         }
     }
+}
+
+@Composable
+internal fun Modifier.gridItemScaleAnimation(hasInteraction: Boolean): Modifier {
+    val scale = remember { Animatable(1f) }
+
+    LaunchedEffect(key1 = hasInteraction) {
+        if (hasInteraction) {
+            scale.snapTo(1.25f)
+        } else {
+            scale.animateTo(1f)
+        }
+    }
+
+    return scale(scale.value)
 }

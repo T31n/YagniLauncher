@@ -77,10 +77,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draganddrop.mimeTypes
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -500,8 +500,8 @@ internal fun PagerScreen(
 
     val isVisibleGridItemMenu =
         pagerScreenState.selectedGridItem != null &&
-                pagerScreenState.showGridItemMenu &&
-                hasMenuGeometry
+            pagerScreenState.showGridItemMenu &&
+            hasMenuGeometry
 
     val isVisibleSettingsMenu =
         pagerScreenState.showSettingsMenu && pagerScreenState.settingsMenuIntOffset != null
@@ -511,46 +511,46 @@ internal fun PagerScreen(
 
     val isVisibleFolderEblanApplicationInfos =
         pagerScreenState.isVisibleFolderEblanApplicationInfos &&
-                folderEblanApplicationInfoPopups.isNotEmpty()
+            folderEblanApplicationInfoPopups.isNotEmpty()
 
     val isVisibleFolderGridItemMenu =
         pagerScreenState.selectedGridItem != null &&
-                pagerScreenState.showFolderGridItemMenu &&
-                hasMenuGeometry
+            pagerScreenState.showFolderGridItemMenu &&
+            hasMenuGeometry
 
     val isResizing = pagerScreenState.isResizing && resizeGridItem != null
 
     val shouldLockScreenOrientation =
         homeSettings.lockScreenOrientation ||
-                isVisibleGridItemMenu ||
-                isVisibleSettingsMenu ||
-                isVisibleFolderGridItems ||
-                isVisibleFolderGridItemMenu ||
-                isResizing ||
-                pagerScreenState.showApplicationScreen ||
-                pagerScreenState.showWidgetScreen ||
-                pagerScreenState.showShortcutConfigScreen ||
-                pagerScreenState.eblanApplicationInfoGroup != null
+            isVisibleGridItemMenu ||
+            isVisibleSettingsMenu ||
+            isVisibleFolderGridItems ||
+            isVisibleFolderGridItemMenu ||
+            isResizing ||
+            pagerScreenState.showApplicationScreen ||
+            pagerScreenState.showWidgetScreen ||
+            pagerScreenState.showShortcutConfigScreen ||
+            pagerScreenState.eblanApplicationInfoGroup != null
 
     val statusBarNotifications by rememberStatusBarNotifications()
 
     val isVisibleFolderEblanApplicationInfoGridItemMenu =
         pagerScreenState.showFolderEblanApplicationInfoGridItemMenu &&
-                hasMenuGeometry &&
-                moveFolderEblanApplicationInfoGridItemResult != null
+            hasMenuGeometry &&
+            moveFolderEblanApplicationInfoGridItemResult != null
 
     val isVisibleDotsGrid =
         moveGridItemResult != null &&
-                (
-                        pagerScreenState.drag == Drag.Dragging ||
-                                (
-                                        isVisibleOverlay &&
-                                                pagerScreenState.isDragging &&
-                                                !experimentalSettings.lockMovement
-                                        )
-                        ) &&
-                !isVisibleFolderGridItems &&
-                !isVisibleFolderEblanApplicationInfos
+            (
+                pagerScreenState.drag == Drag.Dragging ||
+                    (
+                        isVisibleOverlay &&
+                            pagerScreenState.isDragging &&
+                            !experimentalSettings.lockMovement
+                        )
+                ) &&
+            !isVisibleFolderGridItems &&
+            !isVisibleFolderEblanApplicationInfos
 
     LaunchedEffect(
         key1 = pinGridItem,
@@ -1686,19 +1686,10 @@ private fun SharedTransitionScope.OverlayImage(
 
     val scale = remember { Animatable(1f) }
 
-    LaunchedEffect(
-        key1 = isVisibleOverlay,
-        key2 = animations,
-    ) {
+    LaunchedEffect(key1 = isVisibleOverlay) {
         if (isVisibleOverlay) {
-            if (animations) {
-                scale.animateTo(targetValue = 1.25f)
-            } else {
-                scale.snapTo(1.25f)
-            }
-        }
-
-        if (!isVisibleOverlay) {
+            scale.animateTo(targetValue = 1.25f)
+        } else {
             onResetOverlay()
         }
     }
@@ -1726,16 +1717,7 @@ private fun SharedTransitionScope.OverlayImage(
                     this
                 }
             }
-            .run {
-                if (animations) {
-                    graphicsLayer {
-                        scaleX = scale.value
-                        scaleY = scale.value
-                    }
-                } else {
-                    this
-                }
-            },
+            .scale(scale.value),
         bitmap = overlayImageBitmap,
         contentDescription = null,
     )

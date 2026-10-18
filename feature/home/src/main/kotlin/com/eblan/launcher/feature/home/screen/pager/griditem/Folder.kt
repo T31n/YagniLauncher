@@ -73,6 +73,7 @@ import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.GridItemLayoutType
 import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
+import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.component.swipeGestures
 import com.eblan.launcher.feature.home.component.whiteBox
@@ -246,6 +247,7 @@ internal fun InteractiveFolderGridItem(
             sharedTransitionScope = sharedTransitionScope,
             visible = !isScrollInProgress && !hasInteraction,
         )
+        .gridItemScaleAnimation(hasInteraction = hasInteraction)
         .drawWithContent {
             graphicsLayer.record {
                 this@drawWithContent.drawContent()

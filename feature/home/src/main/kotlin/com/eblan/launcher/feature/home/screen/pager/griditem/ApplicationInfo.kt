@@ -65,6 +65,7 @@ import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.feature.home.component.GridItemLayoutType
+import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.component.swipeGestures
 import com.eblan.launcher.feature.home.component.whiteBox
@@ -196,6 +197,7 @@ internal fun InteractiveApplicationInfoGridItem(
             sharedTransitionScope = sharedTransitionScope,
             visible = !isScrollInProgress && !hasInteraction,
         )
+        .gridItemScaleAnimation(hasInteraction = hasInteraction)
         .drawWithContent {
             graphicsLayer.record {
                 this@drawWithContent.drawContent()
