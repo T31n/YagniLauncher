@@ -34,7 +34,6 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.HorizontalAlignment
 import com.eblan.launcher.domain.model.grid.HorizontalArrangement
@@ -242,9 +241,9 @@ internal fun handleOnUninstall(
     userManager: AndroidUserManagerWrapper,
 ) {
     val userHandle =
-        userManager.getUserForSerialNumber(serialNumber = serialNumber)
+        userManager.getUserForSerialNumber(serialNumber = serialNumber) ?: return
 
-    if (userHandle != null && userHandle != myUserHandle()) {
+    if (userHandle != myUserHandle()) {
         launcherApps.startAppDetailsActivity(
             serialNumber = serialNumber,
             componentName = componentName,
