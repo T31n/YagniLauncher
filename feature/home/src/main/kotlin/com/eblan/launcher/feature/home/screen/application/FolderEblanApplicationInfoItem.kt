@@ -180,6 +180,8 @@ internal fun FolderEblanApplicationInfoItem(
         onLongPressFolderApplicationInfo,
     )
 
+    val icon = folderEblanApplicationInfo.icon
+
     LaunchedEffect(
         key1 = drag,
         key2 = isLongPress,
@@ -280,9 +282,9 @@ internal fun FolderEblanApplicationInfoItem(
             .then(iconModifier)
             .alpha(alpha = iconAlpha)
 
-        if (folderEblanApplicationInfo.icon != null) {
+        if (icon != null) {
             AsyncImage(
-                model = folderEblanApplicationInfo.icon,
+                model = icon,
                 contentDescription = null,
                 modifier = commonModifier,
             )
@@ -387,11 +389,20 @@ private fun PreviewFolderEblanApplicationInfoItem(
 
         when (val data = folderEblanApplicationInfoGridItem.data) {
             is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
-                val icon = iconPackFilePaths[data.componentName] ?: data.icon
+                val iconPackFilePath = iconPackFilePaths[data.componentName]
+                val icon = data.icon
+                val customIcon = data.customIcon
+
+                val iconPath = when {
+                    iconPackFilePath != null -> iconPackFilePath
+                    customIcon != null -> customIcon
+                    icon != null -> icon
+                    else -> null
+                }
 
                 AsyncImage(
                     model = Builder(context)
-                        .data(data.customIcon ?: icon)
+                        .data(iconPath)
                         .addLastModifiedToFileCacheKey(true)
                         .size(Size.ORIGINAL)
                         .build(),
@@ -401,10 +412,12 @@ private fun PreviewFolderEblanApplicationInfoItem(
             }
 
             is FolderEblanApplicationInfoGridItemData.Folder -> {
-                if (data.icon != null) {
+                val icon = data.icon
+
+                if (icon != null) {
                     AsyncImage(
                         model = Builder(context)
-                            .data(data.icon)
+                            .data(icon)
                             .addLastModifiedToFileCacheKey(true)
                             .size(Size.ORIGINAL)
                             .build(),

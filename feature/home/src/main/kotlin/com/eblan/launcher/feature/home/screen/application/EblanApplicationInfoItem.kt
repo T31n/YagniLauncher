@@ -143,8 +143,16 @@ internal fun EblanApplicationInfoItem(
 
     val maxLines = if (gridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
 
-    val icon = iconPackFilePaths[eblanApplicationInfo.componentName]
-        ?: eblanApplicationInfo.icon
+    val iconPackFilePath = iconPackFilePaths[eblanApplicationInfo.componentName]
+    val icon = eblanApplicationInfo.icon
+    val customIcon = eblanApplicationInfo.customIcon
+
+    val iconPath = when {
+        iconPackFilePath != null -> iconPackFilePath
+        customIcon != null -> customIcon
+        icon != null -> icon
+        else -> null
+    }
 
     val horizontalAlignment =
         getHorizontalAlignment(horizontalAlignment = gridItemSettings.horizontalAlignment)
@@ -213,7 +221,9 @@ internal fun EblanApplicationInfoItem(
                         onLongPress = {
                             scope.launch {
                                 isLongPress = true
+
                                 keyboardController?.hide()
+
                                 currentOnLongPressApplicationInfo(
                                     eblanApplicationInfo,
                                     graphicsLayer.toImageBitmap(),
@@ -258,7 +268,7 @@ internal fun EblanApplicationInfoItem(
     val iconContent: @Composable () -> Unit = {
         AsyncImage(
             model = ImageRequest.Builder(context)
-                .data(eblanApplicationInfo.customIcon ?: icon)
+                .data(iconPath)
                 .addLastModifiedToFileCacheKey(true)
                 .size(iconSizePx)
                 .crossfade(false)

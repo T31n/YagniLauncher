@@ -160,6 +160,8 @@ internal fun InteractiveFolderGridItem(
     val textAlpha = if (hasInteraction) 0f else 1f
     val iconAlpha = if (hasInteraction || isVisibleFolder) 0f else 1f
 
+    val icon = data.icon
+
     LaunchedEffect(key1 = moveGridItemResult) {
         handleConflictingGridItem(
             drag = currentDrag,
@@ -265,9 +267,9 @@ internal fun InteractiveFolderGridItem(
             .then(iconModifier)
             .alpha(alpha = iconAlpha)
 
-        if (data.icon != null) {
+        if (icon != null) {
             AsyncImage(
-                model = data.icon,
+                model = icon,
                 contentDescription = null,
                 modifier = commonModifier,
             )
@@ -457,11 +459,20 @@ private fun PreviewFolderGridItem(
 
         when (val data = gridItem.data) {
             is GridItemData.ApplicationInfo -> {
-                val icon = iconPackFilePaths[data.componentName] ?: data.icon
+                val iconPackFilePath = iconPackFilePaths[data.componentName] ?: data.icon
+                val icon = data.icon
+                val customIcon = data.customIcon
+
+                val iconPath = when {
+                    iconPackFilePath != null -> iconPackFilePath
+                    customIcon != null -> customIcon
+                    icon != null -> icon
+                    else -> null
+                }
 
                 AsyncImage(
                     model = Builder(context)
-                        .data(data.customIcon ?: icon)
+                        .data(iconPath)
                         .addLastModifiedToFileCacheKey(true)
                         .size(Size.ORIGINAL)
                         .build(),
@@ -471,16 +482,22 @@ private fun PreviewFolderGridItem(
             }
 
             is GridItemData.ShortcutConfig -> {
-                val icon = when {
-                    data.customIcon != null -> data.customIcon
-                    data.shortcutIntentIcon != null -> data.shortcutIntentIcon
-                    data.activityIcon != null -> data.activityIcon
-                    else -> data.applicationIcon
+                val customIcon = data.customIcon
+                val shortcutIntentIcon = data.shortcutIntentIcon
+                val activityIcon = data.activityIcon
+                val applicationIcon = data.applicationIcon
+
+                val iconPath = when {
+                    customIcon != null -> customIcon
+                    shortcutIntentIcon != null -> shortcutIntentIcon
+                    activityIcon != null -> activityIcon
+                    applicationIcon != null -> applicationIcon
+                    else -> null
                 }
 
                 AsyncImage(
                     model = Builder(context)
-                        .data(icon)
+                        .data(iconPath)
                         .addLastModifiedToFileCacheKey(true)
                         .size(Size.ORIGINAL)
                         .build(),
@@ -490,9 +507,18 @@ private fun PreviewFolderGridItem(
             }
 
             is GridItemData.ShortcutInfo -> {
+                val icon = data.icon
+                val customIcon = data.customIcon
+
+                val iconPath = when {
+                    customIcon != null -> customIcon
+                    icon != null -> icon
+                    else -> null
+                }
+
                 AsyncImage(
                     model = Builder(context)
-                        .data(data.customIcon ?: data.icon)
+                        .data(iconPath)
                         .addLastModifiedToFileCacheKey(true)
                         .size(Size.ORIGINAL)
                         .build(),
@@ -502,10 +528,12 @@ private fun PreviewFolderGridItem(
             }
 
             is GridItemData.Folder -> {
-                if (data.icon != null) {
+                val icon = data.icon
+
+                if (icon != null) {
                     AsyncImage(
                         model = Builder(context)
-                            .data(data.icon)
+                            .data(icon)
                             .addLastModifiedToFileCacheKey(true)
                             .size(Size.ORIGINAL)
                             .build(),
@@ -522,7 +550,9 @@ private fun PreviewFolderGridItem(
                 }
             }
 
-            else -> Unit
+            else -> {
+                Unit
+            }
         }
     }
 }

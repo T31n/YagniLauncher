@@ -53,6 +53,7 @@ import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.GridItemLayoutType
 import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
 import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
+import java.io.File
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -78,6 +79,8 @@ internal fun FolderGridItem(
 ) {
     val context = LocalContext.current
 
+    val icon = data.icon
+
     val itemModifier = modifier
         .fillMaxSize()
         .padding(gridItemSettings.padding.dp)
@@ -91,10 +94,10 @@ internal fun FolderGridItem(
         .padding(gridItemSettings.iconPadding.dp)
 
     val iconContent: @Composable () -> Unit = {
-        if (data.icon != null) {
+        if (icon != null) {
             AsyncImage(
                 model = Builder(context)
-                    .data(data.icon)
+                    .data(icon)
                     .addLastModifiedToFileCacheKey(true)
                     .size(Size.ORIGINAL)
                     .build(),
@@ -207,11 +210,20 @@ private fun PreviewFolderGridItem(
 
         when (val data = gridItem.data) {
             is GridItemData.ApplicationInfo -> {
-                val icon = iconPackFilePaths[data.componentName] ?: data.icon
+                val iconPackFilePath = iconPackFilePaths[data.componentName] ?: data.icon
+                val icon = data.icon
+                val customIcon = data.customIcon
+
+                val iconPath = when {
+                    iconPackFilePath != null -> iconPackFilePath
+                    customIcon != null -> customIcon
+                    icon != null -> icon
+                    else -> null
+                }
 
                 AsyncImage(
                     model = Builder(context)
-                        .data(data.customIcon ?: icon)
+                        .data(iconPath)
                         .addLastModifiedToFileCacheKey(true).build(),
                     contentDescription = null,
                     modifier = commonModifier,
@@ -219,16 +231,22 @@ private fun PreviewFolderGridItem(
             }
 
             is GridItemData.ShortcutConfig -> {
-                val icon = when {
-                    data.customIcon != null -> data.customIcon
-                    data.shortcutIntentIcon != null -> data.shortcutIntentIcon
-                    data.activityIcon != null -> data.activityIcon
-                    else -> data.applicationIcon
+                val customIcon = data.customIcon
+                val shortcutIntentIcon = data.shortcutIntentIcon
+                val activityIcon = data.activityIcon
+                val applicationIcon = data.applicationIcon
+
+                val iconPath = when {
+                    customIcon != null -> customIcon
+                    shortcutIntentIcon != null -> shortcutIntentIcon
+                    activityIcon != null -> activityIcon
+                    applicationIcon != null -> File(applicationIcon)
+                    else -> null
                 }
 
                 AsyncImage(
                     model = Builder(context)
-                        .data(icon)
+                        .data(iconPath)
                         .addLastModifiedToFileCacheKey(true).build(),
                     contentDescription = null,
                     modifier = commonModifier,
@@ -236,9 +254,12 @@ private fun PreviewFolderGridItem(
             }
 
             is GridItemData.ShortcutInfo -> {
+                val icon = data.icon
+                val customIcon = data.customIcon
+
                 AsyncImage(
                     model = Builder(context)
-                        .data(data.customIcon ?: data.icon)
+                        .data(customIcon ?: icon)
                         .addLastModifiedToFileCacheKey(true).build(),
                     contentDescription = null,
                     modifier = commonModifier,
@@ -246,10 +267,12 @@ private fun PreviewFolderGridItem(
             }
 
             is GridItemData.Folder -> {
-                if (data.icon != null) {
+                val icon = data.icon
+
+                if (icon != null) {
                     AsyncImage(
                         model = Builder(context)
-                            .data(data.icon)
+                            .data(icon)
                             .addLastModifiedToFileCacheKey(true)
                             .size(Size.ORIGINAL)
                             .build(),

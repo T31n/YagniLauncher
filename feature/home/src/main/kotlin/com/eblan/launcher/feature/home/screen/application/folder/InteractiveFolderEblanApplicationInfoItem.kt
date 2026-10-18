@@ -303,7 +303,16 @@ private fun InteractiveEblanApplicationInfoItem(
 
     val scope = rememberCoroutineScope()
 
-    val icon = iconPackFilePaths[data.componentName] ?: data.icon
+    val iconPackFilePath = iconPackFilePaths[data.componentName]
+    val icon = data.icon
+    val customIcon = data.customIcon
+
+    val iconPath = when {
+        iconPackFilePath != null -> iconPackFilePath
+        customIcon != null -> customIcon
+        icon != null -> icon
+        else -> null
+    }
 
     val leftPadding = with(density) {
         paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
@@ -374,7 +383,9 @@ private fun InteractiveEblanApplicationInfoItem(
         verticalArrangement = verticalArrangement,
     ) {
         AsyncImage(
-            model = Builder(context).data(icon).addLastModifiedToFileCacheKey(true)
+            model = Builder(context)
+                .data(iconPath)
+                .addLastModifiedToFileCacheKey(true)
                 .size(Size.ORIGINAL).build(),
             contentDescription = null,
             modifier = Modifier
@@ -629,10 +640,19 @@ private fun PreviewFolderEblanApplicationInfoItem(
 
         when (val data = folderEblanApplicationInfoGridItem.data) {
             is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
-                val icon = iconPackFilePaths[data.componentName] ?: data.icon
+                val iconPackFilePath = iconPackFilePaths[data.componentName]
+                val icon = data.icon
+                val customIcon = data.customIcon
+
+                val iconPath = when {
+                    iconPackFilePath != null -> iconPackFilePath
+                    customIcon != null -> customIcon
+                    icon != null -> icon
+                    else -> null
+                }
 
                 AsyncImage(
-                    model = Builder(context).data(data.customIcon ?: icon)
+                    model = Builder(context).data(iconPath)
                         .addLastModifiedToFileCacheKey(true).size(Size.ORIGINAL).build(),
                     contentDescription = null,
                     modifier = commonModifier,
@@ -640,9 +660,11 @@ private fun PreviewFolderEblanApplicationInfoItem(
             }
 
             is FolderEblanApplicationInfoGridItemData.Folder -> {
-                if (data.icon != null) {
+                val icon = data.icon
+
+                if (icon != null) {
                     AsyncImage(
-                        model = Builder(context).data(data.icon).addLastModifiedToFileCacheKey(true)
+                        model = Builder(context).data(icon).addLastModifiedToFileCacheKey(true)
                             .size(Size.ORIGINAL).build(),
                         contentDescription = null,
                         modifier = commonModifier,

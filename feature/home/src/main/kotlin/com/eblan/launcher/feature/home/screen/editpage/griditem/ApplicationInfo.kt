@@ -62,7 +62,16 @@ internal fun ApplicationInfoGridItem(
 ) {
     val context = LocalContext.current
 
-    val icon = iconPackFilePaths[data.componentName] ?: data.icon
+    val iconPackFilePath = iconPackFilePaths[data.componentName]
+    val icon = data.icon
+    val customIcon = data.customIcon
+
+    val iconPath = when {
+        iconPackFilePath != null -> iconPackFilePath
+        customIcon != null -> customIcon
+        icon != null -> icon
+        else -> null
+    }
 
     val itemModifier = modifier
         .fillMaxSize()
@@ -80,7 +89,7 @@ internal fun ApplicationInfoGridItem(
         Box(modifier = commonModifier) {
             AsyncImage(
                 model = Builder(context)
-                    .data(data.customIcon ?: icon)
+                    .data(iconPath)
                     .addLastModifiedToFileCacheKey(true)
                     .size(Size.ORIGINAL)
                     .build(),

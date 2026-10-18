@@ -61,18 +61,27 @@ internal fun ShortcutConfigGridItem(
 ) {
     val context = LocalContext.current
 
-    val icon = when {
-        data.customIcon != null -> data.customIcon
-        data.shortcutIntentIcon != null -> data.shortcutIntentIcon
-        data.activityIcon != null -> data.activityIcon
-        else -> data.applicationIcon
+    val customIcon = data.customIcon
+    val shortcutIntentIcon = data.shortcutIntentIcon
+    val activityIcon = data.activityIcon
+    val applicationIcon = data.applicationIcon
+
+    val iconPath = when {
+        customIcon != null -> customIcon
+        shortcutIntentIcon != null -> shortcutIntentIcon
+        activityIcon != null -> activityIcon
+        applicationIcon != null -> applicationIcon
+        else -> null
     }
 
-    val label = when {
-        data.customLabel != null -> data.customLabel
-        data.shortcutIntentName != null -> data.shortcutIntentName
-        data.activityLabel != null -> data.activityLabel
-        else -> data.applicationLabel
+    val label = if (data.customLabel != null) {
+        data.customLabel
+    } else if (data.shortcutIntentName != null) {
+        data.shortcutIntentName
+    } else if (data.activityLabel != null) {
+        data.activityLabel
+    } else {
+        data.applicationLabel
     }
 
     val itemModifier = modifier
@@ -91,7 +100,7 @@ internal fun ShortcutConfigGridItem(
         Box(modifier = commonModifier) {
             AsyncImage(
                 model = Builder(context)
-                    .data(icon)
+                    .data(iconPath)
                     .addLastModifiedToFileCacheKey(true)
                     .size(Size.ORIGINAL)
                     .build(),

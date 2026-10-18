@@ -115,12 +115,22 @@ internal fun InteractiveShortcutInfoGridItem(
 
     val graphicsLayer = rememberGraphicsLayer()
     val scope = rememberCoroutineScope()
+
     val alpha = if (hasInteraction) {
         0f
     } else if (hasShortcutHostPermission && data.isEnabled) {
         1f
     } else {
         0.3f
+    }
+
+    val icon = data.icon
+    val customIcon = data.customIcon
+
+    val iconPath = when {
+        customIcon != null -> customIcon
+        icon != null -> icon
+        else -> null
     }
 
     val currentOnOpenAppDrawer by rememberUpdatedState(onOpenAppDrawer)
@@ -222,7 +232,7 @@ internal fun InteractiveShortcutInfoGridItem(
         ) {
             AsyncImage(
                 model = Builder(context = context)
-                    .data(data = data.customIcon ?: data.icon)
+                    .data(iconPath)
                     .addLastModifiedToFileCacheKey(true)
                     .size(Size.ORIGINAL)
                     .build(),

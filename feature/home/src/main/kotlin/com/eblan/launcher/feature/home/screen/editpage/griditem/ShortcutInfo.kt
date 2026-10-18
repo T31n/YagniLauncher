@@ -62,6 +62,15 @@ internal fun ShortcutInfoGridItem(
 
     val alpha = if (hasShortcutHostPermission && data.isEnabled) 1f else 0.3f
 
+    val icon = data.icon
+    val customIcon = data.customIcon
+
+    val iconPath = when {
+        customIcon != null -> customIcon
+        icon != null -> icon
+        else -> null
+    }
+
     val itemModifier = modifier
         .fillMaxSize()
         .padding(gridItemSettings.padding.dp)
@@ -78,7 +87,7 @@ internal fun ShortcutInfoGridItem(
         Box(modifier = commonModifier) {
             AsyncImage(
                 model = Builder(context)
-                    .data(data.customIcon ?: data.icon)
+                    .data(iconPath)
                     .addLastModifiedToFileCacheKey(true)
                     .size(Size.ORIGINAL)
                     .build(),
