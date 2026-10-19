@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import com.eblan.launcher.domain.model.folder.FolderEntry
-import com.eblan.launcher.domain.model.grid.FolderGridItemPopup
+import com.eblan.launcher.domain.model.folder.PreviewFolder
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.feature.home.model.Drag
@@ -33,7 +33,8 @@ internal fun handleDragFolderGridItem(
     drag: Drag,
     dragIntOffset: IntOffset,
     currentPage: Int,
-    folderGridItemPopup: FolderGridItemPopup,
+    folderEntry: FolderEntry,
+    previewFolder: PreviewFolder,
     folderPopupIntOffset: IntOffset,
     isDragging: Boolean,
     isVisibleOverlay: Boolean,
@@ -49,7 +50,7 @@ internal fun handleDragFolderGridItem(
     isLastFolderGridItem: Boolean,
     isInProgress: Boolean,
     onMoveFolderGridItem: (
-        folderGridItemPopup: FolderGridItemPopup,
+        previewFolder: PreviewFolder,
         movingFolderGridItem: GridItem,
         dragX: Int,
         dragY: Int,
@@ -74,8 +75,8 @@ internal fun handleDragFolderGridItem(
     val folderGridDragPosition = calculateFolderGridDragPosition(
         density = density,
         dragIntOffset = dragIntOffset,
-        columns = folderGridItemPopup.columns,
-        rows = folderGridItemPopup.rows,
+        columns = previewFolder.columns,
+        rows = previewFolder.rows,
         folderPopupIntOffset = folderPopupIntOffset,
         paddingValues = paddingValues,
         screenHeight = screenHeight,
@@ -89,7 +90,7 @@ internal fun handleDragFolderGridItem(
         folderGridDragPosition.y in 0 until folderGridDragPosition.height
     ) {
         onMoveFolderGridItem(
-            folderGridItemPopup,
+            previewFolder,
             moveGridItemResult.movingGridItem,
             folderGridDragPosition.x,
             folderGridDragPosition.y,
@@ -97,7 +98,7 @@ internal fun handleDragFolderGridItem(
             folderGridDragPosition.height,
             currentPage,
         )
-    } else if (!folderGridItemPopup.folderEntry.isCloseFolder) {
-        onUpsertFolderGridItemPopupEntry(folderGridItemPopup.folderEntry.copy(isCloseFolder = true))
+    } else if (!folderEntry.isCloseFolder) {
+        onUpsertFolderGridItemPopupEntry(folderEntry.copy(isCloseFolder = true))
     }
 }

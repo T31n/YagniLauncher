@@ -17,9 +17,14 @@
  */
 package com.eblan.launcher.domain.model.folder
 
+import com.eblan.launcher.domain.model.grid.FolderGridItem
 import com.eblan.launcher.domain.model.grid.GridItem
 
 data class PreviewFolder(
     val previewFolderGridItems: List<GridItem>,
     val folderGridItems: List<GridItem>,
+    val gridItemsByPage: Map<Int, List<GridItem>>,
+    val columns: Int,
+    val rows: Int,
+    val folderGridItem: FolderGridItem,
 )

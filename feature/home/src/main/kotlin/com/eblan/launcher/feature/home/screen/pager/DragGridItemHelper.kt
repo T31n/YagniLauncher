@@ -29,7 +29,6 @@ import com.eblan.launcher.domain.grid.getWidgetGridItemSpan
 import com.eblan.launcher.domain.grid.isGridItemSpanWithinBounds
 import com.eblan.launcher.domain.model.folder.FolderEntry
 import com.eblan.launcher.domain.model.grid.Associate
-import com.eblan.launcher.domain.model.grid.FolderGridItemPopup
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
@@ -42,14 +41,14 @@ import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
 internal suspend fun handlePageDirection(
-    folderGridItemPopups: State<List<FolderGridItemPopup>>,
+    folderGridItemEntries: State<List<FolderEntry>>,
     pageDirection: PageDirection?,
     currentPage: Int,
     onAnimateScrollToPage: suspend (Int) -> Unit,
 ) {
     delay(500L.milliseconds)
 
-    if (pageDirection == null || folderGridItemPopups.value.isNotEmpty()) return
+    if (pageDirection == null || folderGridItemEntries.value.isNotEmpty()) return
 
     when (pageDirection) {
         PageDirection.Left -> onAnimateScrollToPage(currentPage - 1)

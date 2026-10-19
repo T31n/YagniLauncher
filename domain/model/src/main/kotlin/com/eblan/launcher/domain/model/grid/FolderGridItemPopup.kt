@@ -21,11 +21,4 @@ import com.eblan.launcher.domain.model.folder.FolderEntry
 
 data class FolderGridItemPopup(
     val folderEntry: FolderEntry,
-    val gridItem: GridItem,
-    val gridItems: List<GridItem>,
-    val gridItemsByPage: Map<Int, List<GridItem>>,
-    val label: String,
-    val columns: Int,
-    val rows: Int,
-    val maxIndex: Int,
 )

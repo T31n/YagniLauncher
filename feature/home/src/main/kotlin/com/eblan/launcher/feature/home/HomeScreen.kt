@@ -20,7 +20,6 @@ package com.eblan.launcher.feature.home
 import android.Manifest
 import android.os.Build
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -49,7 +48,6 @@ import com.eblan.launcher.domain.model.folder.FolderEntry
 import com.eblan.launcher.domain.model.folder.PreviewFolder
 import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.Associate
-import com.eblan.launcher.domain.model.grid.FolderGridItemPopup
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.MoveFolderEblanApplicationInfoGridItemResult
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
@@ -98,7 +96,7 @@ internal fun HomeRoute(
     val eblanShortcutInfosGroup by viewModel.eblanShortcutInfosGroup.collectAsStateWithLifecycle()
     val eblanAppWidgetProviderInfosGroup by viewModel.eblanAppWidgetProviderInfosGroup.collectAsStateWithLifecycle()
     val eblanApplicationInfoTags by viewModel.eblanApplicationInfoTags.collectAsStateWithLifecycle()
-    val folderGridItemPopups by viewModel.folderGridItemPopups.collectAsStateWithLifecycle()
+    val folderGridItemEntries by viewModel.folderGridItemEntries.collectAsStateWithLifecycle()
     val resizeGridItem by viewModel.resizeGridItem.collectAsStateWithLifecycle()
     val gridItemSource by viewModel.gridItemSource.collectAsStateWithLifecycle()
     val isVisibleOverlay by viewModel.isVisibleOverlay.collectAsStateWithLifecycle()
@@ -117,7 +115,7 @@ internal fun HomeRoute(
         eblanShortcutConfigs = eblanShortcutConfigs,
         eblanShortcutInfosGroup = eblanShortcutInfosGroup,
         pageItems = pageItems,
-        folderGridItemPopups = folderGridItemPopups,
+        folderGridItemEntries = folderGridItemEntries,
         getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfos,
         homeUiState = homeUiState,
         movedGridItemResult = movedGridItemResult,
@@ -183,7 +181,6 @@ internal fun HomeRoute(
     )
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 internal fun HomeScreen(
     modifier: Modifier = Modifier,
@@ -194,7 +191,7 @@ internal fun HomeScreen(
     eblanShortcutConfigs: Map<EblanUser, Map<EblanApplicationInfoGroup, List<EblanShortcutConfig>>>,
     eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
     pageItems: List<PageItem>?,
-    folderGridItemPopups: List<FolderGridItemPopup>,
+    folderGridItemEntries: List<FolderEntry>,
     getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
     homeUiState: HomeUiState,
     movedGridItemResult: MoveGridItemResult?,
@@ -226,7 +223,7 @@ internal fun HomeScreen(
     onGetEblanShortcutConfigsByLabel: (String) -> Unit,
     onGetPinGridItem: (PinItemRequestType) -> Unit,
     onMoveFolderGridItem: (
-        folderGridItemPopup: FolderGridItemPopup,
+        previewFolder: PreviewFolder,
         movingGridItem: GridItem,
         dragX: Int,
         dragY: Int,
@@ -347,7 +344,7 @@ internal fun HomeScreen(
                 eblanShortcutConfigs = eblanShortcutConfigs,
                 eblanShortcutInfosGroup = eblanShortcutInfosGroup,
                 pageItems = pageItems,
-                folderGridItemPopups = folderGridItemPopups,
+                folderGridItemEntries = folderGridItemEntries,
                 getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
                 homeData = homeUiState.homeData,
                 movedGridItemResult = movedGridItemResult,
@@ -418,7 +415,6 @@ internal fun HomeScreen(
     }
 }
 
-@OptIn(ExperimentalPermissionsApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
 private fun Success(
     modifier: Modifier = Modifier,
@@ -429,7 +425,7 @@ private fun Success(
     eblanShortcutConfigs: Map<EblanUser, Map<EblanApplicationInfoGroup, List<EblanShortcutConfig>>>,
     eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
     pageItems: List<PageItem>?,
-    folderGridItemPopups: List<FolderGridItemPopup>,
+    folderGridItemEntries: List<FolderEntry>,
     getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
     homeData: HomeData,
     movedGridItemResult: MoveGridItemResult?,
@@ -464,7 +460,7 @@ private fun Success(
     onGetEblanShortcutConfigsByLabel: (String) -> Unit,
     onGetPinGridItem: (PinItemRequestType) -> Unit,
     onMoveFolderGridItem: (
-        folderGridItemPopup: FolderGridItemPopup,
+        previewFolder: PreviewFolder,
         movingGridItem: GridItem,
         dragX: Int,
         dragY: Int,
@@ -581,7 +577,7 @@ private fun Success(
                     eblanShortcutConfigs = eblanShortcutConfigs,
                     eblanShortcutInfosGroup = eblanShortcutInfosGroup,
                     experimentalSettings = homeData.userData.experimentalSettings,
-                    folderGridItemPopups = folderGridItemPopups,
+                    folderGridItemEntries = folderGridItemEntries,
                     gestureSettings = homeData.userData.gestureSettings,
                     getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
                     gridItems = homeData.gridItems,

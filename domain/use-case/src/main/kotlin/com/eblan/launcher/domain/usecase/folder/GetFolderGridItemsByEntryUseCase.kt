@@ -44,74 +44,11 @@ class GetFolderGridItemsByEntryUseCase @Inject constructor(
     ): Flow<List<FolderGridItemPopup>> = combine(
         userDataRepository.userDataFlow,
         folderEntriesFlow,
-        folderGridItemRepository.folderGridItemWrappersFlow,
-    ) { userData, folderEntries, folderGridItemWrappers ->
-        folderEntries.mapNotNull { folderPopupEntry ->
-            folderGridItemWrappers.firstOrNull {
-                it.folderGridItem.id == folderPopupEntry.id
-            }?.asFolderGridItemPopup(
+    ) { userData, folderEntries ->
+        folderEntries.map { folderPopupEntry ->
+            FolderGridItemPopup(
                 folderEntry = folderPopupEntry,
-                maxFolderColumns = userData.folderSettings.maxFolderColumns,
-                maxFolderRows = userData.folderSettings.maxFolderRows,
             )
         }
     }.flowOn(defaultDispatcher)
-
-    private suspend fun FolderGridItemWrapper.asFolderGridItemPopup(
-        folderEntry: FolderEntry,
-        maxFolderColumns: Int,
-        maxFolderRows: Int,
-    ): FolderGridItemPopup {
-        val gridItems = (
-            applicationInfoGridItems.map {
-                it.asGridItem()
-            } + shortcutInfoGridItems.map {
-                it.asGridItem()
-            } + shortcutConfigGridItems.map {
-                it.asGridItem()
-            } + folderGridItems.map { it.asGridItem() }
-            ).sortedBy {
-            when (val data = it.data) {
-                is GridItemData.ApplicationInfo -> data.index
-                is GridItemData.ShortcutInfo -> data.index
-                is GridItemData.ShortcutConfig -> data.index
-                is GridItemData.Folder -> data.index
-                else -> error("Unsupported folder grid item")
-            }
-        }
-
-        val gridItemsByPage = gridItems.getGridItemsByPage(
-            maxFolderColumns = maxFolderColumns,
-            maxFolderRows = maxFolderRows,
-        )
-
-        val firstPageGridItems = gridItemsByPage.values.firstOrNull().orEmpty()
-
-        val (columns, rows) = getGridDimension(
-            count = firstPageGridItems.size,
-            maxFolderColumns = maxFolderColumns,
-            maxFolderRows = maxFolderRows,
-        )
-
-        val maxIndex = gridItems.maxOfOrNull {
-            when (val data = it.data) {
-                is GridItemData.ApplicationInfo -> data.index + 1
-                is GridItemData.ShortcutInfo -> data.index + 1
-                is GridItemData.ShortcutConfig -> data.index + 1
-                is GridItemData.Folder -> data.index + 1
-                else -> error("Unsupported folder grid item")
-            }
-        } ?: 0
-
-        return FolderGridItemPopup(
-            folderEntry = folderEntry,
-            gridItem = folderGridItem.asGridItem(),
-            gridItems = gridItems,
-            gridItemsByPage = gridItemsByPage,
-            label = folderGridItem.label,
-            columns = columns,
-            rows = rows,
-            maxIndex = maxIndex,
-        )
-    }
 }

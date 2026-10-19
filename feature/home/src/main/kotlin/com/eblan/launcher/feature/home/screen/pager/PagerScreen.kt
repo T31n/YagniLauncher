@@ -34,7 +34,6 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.Animatable
@@ -46,7 +45,6 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -108,7 +106,6 @@ import com.eblan.launcher.domain.model.folder.FolderEntry
 import com.eblan.launcher.domain.model.folder.PreviewFolder
 import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.Associate
-import com.eblan.launcher.domain.model.grid.FolderGridItemPopup
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.MoveFolderEblanApplicationInfoGridItemResult
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
@@ -168,7 +165,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
-@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalLayoutApi::class)
 @Composable
 internal fun PagerScreen(
     modifier: Modifier = Modifier,
@@ -181,7 +177,7 @@ internal fun PagerScreen(
     eblanShortcutConfigs: Map<EblanUser, Map<EblanApplicationInfoGroup, List<EblanShortcutConfig>>>,
     eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
     experimentalSettings: ExperimentalSettings,
-    folderGridItemPopups: List<FolderGridItemPopup>,
+    folderGridItemEntries: List<FolderEntry>,
     gestureSettings: GestureSettings,
     getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
     gridItems: List<GridItem>,
@@ -223,7 +219,7 @@ internal fun PagerScreen(
     onGetEblanShortcutConfigsByLabel: (String) -> Unit,
     onGetPinGridItem: (PinItemRequestType) -> Unit,
     onMoveFolderGridItem: (
-        folderGridItemPopup: FolderGridItemPopup,
+        previewFolder: PreviewFolder,
         movingGridItem: GridItem,
         dragX: Int,
         dragY: Int,
@@ -382,7 +378,7 @@ internal fun PagerScreen(
     val currentGridItemSource = rememberUpdatedState(gridItemSource)
     val currentIsVisibleOverlay = rememberUpdatedState(isVisibleOverlay)
     val currentMoveGridItemResult = rememberUpdatedState(moveGridItemResult)
-    val currentFolderPopups = rememberUpdatedState(folderGridItemPopups)
+    val currentFolderGridItemEntries = rememberUpdatedState(folderGridItemEntries)
 
     val appWidgetLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
@@ -508,7 +504,7 @@ internal fun PagerScreen(
         pagerScreenState.showSettingsMenu && pagerScreenState.settingsMenuIntOffset != null
 
     val isVisibleFolderGridItems =
-        pagerScreenState.isVisibleFolderGridItems && folderGridItemPopups.isNotEmpty()
+        pagerScreenState.isVisibleFolderGridItems && folderGridItemEntries.isNotEmpty()
 
     val isVisibleFolderEblanApplicationInfos =
         pagerScreenState.isVisibleFolderEblanApplicationInfos &&
@@ -702,7 +698,7 @@ internal fun PagerScreen(
 
     LaunchedEffect(key1 = pagerScreenState.gridPageDirection) {
         handlePageDirection(
-            folderGridItemPopups = currentFolderPopups,
+            folderGridItemEntries = currentFolderGridItemEntries,
             pageDirection = pagerScreenState.gridPageDirection,
             currentPage = gridHorizontalPagerState.currentPage,
             onAnimateScrollToPage = gridHorizontalPagerState::animateScrollToPage,
@@ -711,7 +707,7 @@ internal fun PagerScreen(
 
     LaunchedEffect(key1 = pagerScreenState.dockPageDirection) {
         handlePageDirection(
-            folderGridItemPopups = currentFolderPopups,
+            folderGridItemEntries = currentFolderGridItemEntries,
             pageDirection = pagerScreenState.dockPageDirection,
             currentPage = dockGridHorizontalPagerState.currentPage,
             onAnimateScrollToPage = dockGridHorizontalPagerState::animateScrollToPage,
@@ -918,7 +914,7 @@ internal fun PagerScreen(
                                 folderBackgroundColor = folderSettings.folderBackgroundColor,
                                 customFolderBackgroundColor = folderSettings.customFolderBackgroundColor,
                                 systemCustomTextColor = homeSettings.gridItemSettings.customTextColor,
-                                folderGridItemPopups = folderGridItemPopups,
+                                folderGridItemEntries = folderGridItemEntries,
                                 onOpenAppDrawer = pagerScreenState::openApplicationScreen,
                                 onShowFolderWhenDragging = { folderPopupEntry, gridItem ->
                                     pagerScreenState.showFolderWhenDragging(
@@ -1077,7 +1073,7 @@ internal fun PagerScreen(
                                 folderBackgroundColor = folderSettings.folderBackgroundColor,
                                 customFolderBackgroundColor = folderSettings.customFolderBackgroundColor,
                                 systemCustomTextColor = homeSettings.gridItemSettings.customTextColor,
-                                folderGridItemPopups = folderGridItemPopups,
+                                folderGridItemEntries = folderGridItemEntries,
                                 onOpenAppDrawer = pagerScreenState::openApplicationScreen,
                                 onShowFolderWhenDragging = { folderPopupEntry, gridItem ->
                                     pagerScreenState.showFolderWhenDragging(
@@ -1166,11 +1162,11 @@ internal fun PagerScreen(
         }
 
         if (isVisibleFolderGridItems) {
-            folderGridItemPopups.forEach {
+            folderGridItemEntries.forEach {
                 FolderScreen(
                     sharedTransitionScope = this@SharedTransitionLayout,
                     drag = pagerScreenState.drag,
-                    folderGridItemPopup = it,
+                    folderGridItemEntry = it,
                     gridItemSettings = homeSettings.gridItemSettings,
                     paddingValues = paddingValues,
                     safeDrawingHeight = safeDrawingHeight,
@@ -1186,7 +1182,7 @@ internal fun PagerScreen(
                     folderCellHeight = folderSettings.folderCellHeight,
                     screenWidth = screenWidth,
                     screenHeight = screenHeight,
-                    folderGridItemPopups = folderGridItemPopups,
+                    folderGridItemEntries = folderGridItemEntries,
                     showFolderGridItemMenu = pagerScreenState.showFolderGridItemMenu,
                     previewFolderGridItems = previewFolderGridItems,
                     iconPackFilePaths = iconPackFilePaths,
@@ -1657,7 +1653,6 @@ internal fun PagerScreen(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun SharedTransitionScope.OverlayImage(
     modifier: Modifier = Modifier,

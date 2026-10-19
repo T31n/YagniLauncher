@@ -18,7 +18,6 @@
 package com.eblan.launcher.feature.home.screen.pager.griditem
 
 import android.graphics.Rect
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -48,7 +47,6 @@ import androidx.compose.ui.viewinterop.AndroidView
 import coil3.compose.AsyncImage
 import com.eblan.launcher.domain.model.folder.FolderEntry
 import com.eblan.launcher.domain.model.folder.PreviewFolder
-import com.eblan.launcher.domain.model.grid.FolderGridItemPopup
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
@@ -69,7 +67,6 @@ import com.eblan.launcher.ui.local.LocalAppWidgetHost
 import com.eblan.launcher.ui.local.LocalAppWidgetManager
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 internal fun InteractiveGridItem(
     modifier: Modifier = Modifier,
@@ -99,7 +96,7 @@ internal fun InteractiveGridItem(
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
     systemCustomTextColor: Int,
-    folderGridItemPopups: List<FolderGridItemPopup>,
+    folderGridItemEntries: List<FolderEntry>,
     onOpenAppDrawer: () -> Unit,
     onShowFolderWhenDragging: (
         folderEntry: FolderEntry,
@@ -146,10 +143,10 @@ internal fun InteractiveGridItem(
 
     val isVisibleFolder = remember(
         key1 = gridItem,
-        key2 = folderGridItemPopups,
+        key2 = folderGridItemEntries,
         key3 = isVisibleFolderGridItems,
     ) {
-        isVisibleFolderGridItems && folderGridItemPopups.any { it.folderEntry.id == gridItem.id }
+        isVisibleFolderGridItems && folderGridItemEntries.any { it.id == gridItem.id }
     }
 
     val horizontalAlignment =
@@ -316,7 +313,6 @@ internal fun InteractiveGridItem(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun InteractiveWidgetGridItem(
     modifier: Modifier = Modifier,

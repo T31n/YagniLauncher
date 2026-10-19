@@ -28,8 +28,8 @@ import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderEntry
+import com.eblan.launcher.domain.model.folder.PreviewFolder
 import com.eblan.launcher.domain.model.grid.Associate
-import com.eblan.launcher.domain.model.grid.FolderGridItemPopup
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData.ShortcutInfo
 import com.eblan.launcher.domain.model.grid.MoveFolderEblanApplicationInfoGridItemResult
@@ -106,7 +106,6 @@ internal class HomeViewModel @Inject constructor(
     private val removePackageUseCase: RemovePackageUseCase,
     private val changePackageUseCase: ChangePackageUseCase,
     private val changeShortcutsUseCase: ChangeShortcutsUseCase,
-    getFolderGridItemsByEntryUseCase: GetFolderGridItemsByEntryUseCase,
     private val moveFolderGridItemUseCase: MoveFolderGridItemUseCase,
     private val iconKeyGenerator: IconKeyGenerator,
     private val deleteGridItemUseCase: DeleteGridItemUseCase,
@@ -206,13 +205,7 @@ internal class HomeViewModel @Inject constructor(
     private var shortcutsChangedJob: Job? = null
 
     private val _folderGridItemEntries = MutableStateFlow<List<FolderEntry>>(emptyList())
-    val folderGridItemPopups = getFolderGridItemsByEntryUseCase(
-        folderEntriesFlow = _folderGridItemEntries,
-    ).stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = emptyList(),
-    )
+    val folderGridItemEntries = _folderGridItemEntries.asStateFlow()
 
     private val _resizeGridItem = MutableStateFlow<GridItem?>(null)
     val resizeGridItem = _resizeGridItem.asStateFlow()
@@ -553,7 +546,7 @@ internal class HomeViewModel @Inject constructor(
     }
 
     fun moveFolderGridItem(
-        folderGridItemPopup: FolderGridItemPopup,
+        previewFolder: PreviewFolder,
         movingGridItem: GridItem,
         dragX: Int,
         dragY: Int,
@@ -568,7 +561,7 @@ internal class HomeViewModel @Inject constructor(
 
             _moveGridItemResult.update {
                 moveFolderGridItemUseCase(
-                    folderGridItemPopup = folderGridItemPopup,
+                    previewFolder = previewFolder,
                     movingGridItem = movingGridItem,
                     dragX = dragX,
                     dragY = dragY,

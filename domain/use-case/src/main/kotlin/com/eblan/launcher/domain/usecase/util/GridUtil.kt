@@ -149,13 +149,17 @@ internal fun GridItem.isTopLevel() = when (val itemData = data) {
     is GridItemData.Widget -> true
 }
 
-internal fun <T> getPreviewFolderGridItems(
+internal suspend fun <T> getPreviewFolderGridItems(
     columns: Int,
     rows: Int,
     folderGridItems: List<T>,
 ): List<T> = buildList {
     for (row in 0 until minOf(rows, FOLDER_PREVIEW_ROWS)) {
+        currentCoroutineContext().ensureActive()
+
         for (column in 0 until minOf(columns, FOLDER_PREVIEW_COLUMNS)) {
+            currentCoroutineContext().ensureActive()
+
             val index = row * columns + column
 
             folderGridItems.getOrNull(index)?.let(::add)
