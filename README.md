@@ -38,8 +38,6 @@ Yagni matches and extends stock functionality without the bloat, built from scra
 - 🪶 Small — ~2 MB, 80–90% smaller than typical stock launchers
 - 🔋 Efficient — Minimal resource and battery use
 
-YAGNI means adding features only when needed—keeping the launcher focused and fast.
-
 ## Screenshots
 
 <div style="width:100%; display:flex; justify-content:space-between;">
