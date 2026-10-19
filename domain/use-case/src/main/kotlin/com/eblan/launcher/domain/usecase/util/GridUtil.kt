@@ -19,7 +19,7 @@ package com.eblan.launcher.domain.usecase.util
 
 import com.eblan.launcher.domain.framework.AppWidgetHostWrapper
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
-import com.eblan.launcher.domain.model.folder.PreviewFolder
+import com.eblan.launcher.domain.model.folder.FolderPopup
 import com.eblan.launcher.domain.model.grid.ApplicationInfoGridItem
 import com.eblan.launcher.domain.model.grid.FolderGridItem
 import com.eblan.launcher.domain.model.grid.GridItem
@@ -43,7 +43,7 @@ const val FOLDER_PREVIEW_ROWS = 2
 
 internal suspend fun deleteGridItemData(
     gridItem: GridItem,
-    previewFolderGridItems: Map<String, PreviewFolder>,
+    folderPopupGridItems: Map<String, FolderPopup>,
     appWidgetHostWrapper: AppWidgetHostWrapper,
     launcherAppsWrapper: LauncherAppsWrapper,
 ) {
@@ -76,7 +76,7 @@ internal suspend fun deleteGridItemData(
         )
 
         is GridItemData.Folder -> getRecursiveFolderGridItems(
-            previewFolderGridItems = previewFolderGridItems,
+            folderPopupGridItems = folderPopupGridItems,
             folderId = gridItem.id,
         ).forEach {
             delete(
@@ -92,15 +92,15 @@ internal suspend fun deleteGridItemData(
  * Recursively retrieves the grid items from a preview folder and its nested folders.
  *
  * @param gridItem The current grid item representing the folder.
- * @param previewFolderGridItems A map of preview folder grid items by their IDs.
+ * @param folderPopupGridItems A map of preview folder grid items by their IDs.
  * @return A list of grid items contained within the specified folder and its nested folders.
  */
 internal fun getRecursiveFolderGridItems(
     gridItem: GridItem? = null,
-    previewFolderGridItems: Map<String, PreviewFolder>,
+    folderPopupGridItems: Map<String, FolderPopup>,
     folderId: String,
 ): List<GridItem> = buildList {
-    val previewFolder = previewFolderGridItems[folderId] ?: return@buildList
+    val previewFolder = folderPopupGridItems[folderId] ?: return@buildList
 
     if (gridItem != null) {
         add(gridItem)
@@ -120,7 +120,7 @@ internal fun getRecursiveFolderGridItems(
                 addAll(
                     getRecursiveFolderGridItems(
                         gridItem = folderGridItem,
-                        previewFolderGridItems = previewFolderGridItems,
+                        folderPopupGridItems = folderPopupGridItems,
                         folderId = folderGridItem.id,
                     ),
                 )
@@ -149,16 +149,20 @@ internal fun GridItem.isTopLevel() = when (val itemData = data) {
     is GridItemData.Widget -> true
 }
 
-internal fun <T> getPreviewFolderGridItems(
+internal suspend fun <T> getPreviewFolderGridItems(
     columns: Int,
     rows: Int,
-    folderGridItems: List<T>,
+    gridItems: List<T>,
 ): List<T> = buildList {
     for (row in 0 until minOf(rows, FOLDER_PREVIEW_ROWS)) {
+        currentCoroutineContext().ensureActive()
+
         for (column in 0 until minOf(columns, FOLDER_PREVIEW_COLUMNS)) {
+            currentCoroutineContext().ensureActive()
+
             val index = row * columns + column
 
-            folderGridItems.getOrNull(index)?.let(::add)
+            gridItems.getOrNull(index)?.let(::add)
         }
     }
 }
@@ -177,13 +181,17 @@ internal fun getGridDimension(
 }
 
 internal suspend fun <T> List<T>.getGridItemsByPage(
-    maxFolderColumns: Int,
-    maxFolderRows: Int,
-): Map<Int, List<T>> = chunked(maxFolderColumns * maxFolderRows).mapIndexed { index, gridItems ->
-    currentCoroutineContext().ensureActive()
+    columns: Int,
+    rows: Int,
+): Map<Int, List<T>> {
+    if (isEmpty()) return emptyMap()
 
-    index to gridItems
-}.toMap()
+    return chunked(columns * rows).mapIndexed { index, gridItems ->
+        currentCoroutineContext().ensureActive()
+
+        index to gridItems
+    }.toMap()
+}
 
 internal fun ApplicationInfoGridItem.asGridItem(): GridItem = GridItem(
     id = id,

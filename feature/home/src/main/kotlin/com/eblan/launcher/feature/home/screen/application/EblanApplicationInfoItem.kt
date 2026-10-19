@@ -18,7 +18,6 @@
 package com.eblan.launcher.feature.home.screen.application
 
 import android.graphics.Rect
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -85,7 +84,6 @@ import kotlinx.coroutines.launch
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
-@OptIn(ExperimentalUuidApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
 internal fun EblanApplicationInfoItem(
     modifier: Modifier = Modifier,

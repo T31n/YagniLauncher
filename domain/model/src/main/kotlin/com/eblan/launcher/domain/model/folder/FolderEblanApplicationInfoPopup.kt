@@ -18,12 +18,10 @@
 package com.eblan.launcher.domain.model.folder
 
 data class FolderEblanApplicationInfoPopup(
-    val folderEntry: FolderEntry,
     val folderEblanApplicationInfo: FolderEblanApplicationInfo,
-    val folderEblanApplicationInfos: List<FolderEblanApplicationInfoGridItem>,
-    val folderEblanApplicationInfosByPage: Map<Int, List<FolderEblanApplicationInfoGridItem>>,
-    val label: String,
+    val previewFolderEblanApplicationInfoGridItems: List<FolderEblanApplicationInfoGridItem>,
+    val folderEblanApplicationInfoGridItems: List<FolderEblanApplicationInfoGridItem>,
+    val folderEblanApplicationInfoGridItemsByPage: Map<Int, List<FolderEblanApplicationInfoGridItem>>,
     val columns: Int,
     val rows: Int,
-    val maxIndex: Int,
 )

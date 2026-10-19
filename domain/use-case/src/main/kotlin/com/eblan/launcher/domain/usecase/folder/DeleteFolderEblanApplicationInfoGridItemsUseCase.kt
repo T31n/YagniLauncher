@@ -21,7 +21,7 @@ import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
-import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
@@ -30,7 +30,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
-import kotlin.uuid.ExperimentalUuidApi
 
 class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
     private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
@@ -38,14 +37,13 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
-    @OptIn(ExperimentalUuidApi::class)
     suspend operator fun invoke(
         icon: String?,
         folderId: String,
     ) = withContext(defaultDispatcher) {
         val userData = userDataRepository.userDataFlow.first()
 
-        val previewFolderEblanApplicationInfos =
+        val folderEblanApplicationInfoPopups =
             folderEblanApplicationInfoRepository.getFolderEblanApplicationInfoWrappers()
                 .asPreviewFolderEblanApplicationInfos(
                     maxFolderColumns = userData.folderSettings.maxFolderColumns,
@@ -53,7 +51,7 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
                 )
 
         getRecursiveFolderGridItems(
-            previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+            folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
             folderId = folderId,
         ).forEach { folderGridItem ->
             when (val data = folderGridItem.data) {
@@ -84,20 +82,19 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
         folderEblanApplicationInfoRepository.deleteFolderEblanApplicationInfoById(id = folderId)
     }
 
-    @OptIn(ExperimentalUuidApi::class)
     private fun getRecursiveFolderGridItems(
         folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem? = null,
-        previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
+        folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
         folderId: String,
     ): List<FolderEblanApplicationInfoGridItem> = buildList {
         val previewFolderEblanApplicationInfo =
-            previewFolderEblanApplicationInfos[folderId] ?: return@buildList
+            folderEblanApplicationInfoPopups[folderId] ?: return@buildList
 
         if (folderEblanApplicationInfoGridItem != null) {
             add(folderEblanApplicationInfoGridItem)
         }
 
-        previewFolderEblanApplicationInfo.folderGridItems.forEach {
+        previewFolderEblanApplicationInfo.folderEblanApplicationInfoGridItems.forEach {
             when (it.data) {
                 is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
                     add(it)
@@ -107,7 +104,7 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
                     addAll(
                         getRecursiveFolderGridItems(
                             folderEblanApplicationInfoGridItem = it,
-                            previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+                            folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                             folderId = it.id,
                         ),
                     )

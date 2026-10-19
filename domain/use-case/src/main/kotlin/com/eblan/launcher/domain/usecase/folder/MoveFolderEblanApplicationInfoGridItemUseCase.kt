@@ -52,26 +52,26 @@ class MoveFolderEblanApplicationInfoGridItemUseCase @Inject constructor(
         val targetIndex =
             currentPage * gridItemsPerPage + targetRow * folderGridItemPopup.columns + targetColumn
 
-        val folderEblanApplicationInfos =
-            folderGridItemPopup.folderEblanApplicationInfos.toMutableList()
+        val folderEblanApplicationInfoGridItems =
+            folderGridItemPopup.folderEblanApplicationInfoGridItems.toMutableList()
 
         val movingIndex =
-            folderEblanApplicationInfos.indexOfFirst {
+            folderEblanApplicationInfoGridItems.indexOfFirst {
                 it.id == folderEblanApplicationInfoGridItem.id
             }
 
         if (movingIndex != -1) {
-            folderEblanApplicationInfos.add(
+            folderEblanApplicationInfoGridItems.add(
                 targetIndex.coerceIn(
                     0,
-                    folderEblanApplicationInfos.size - 1,
+                    folderEblanApplicationInfoGridItems.size - 1,
                 ),
-                folderEblanApplicationInfos.removeAt(movingIndex),
+                folderEblanApplicationInfoGridItems.removeAt(movingIndex),
             )
         }
 
         val indexedGridItems =
-            folderEblanApplicationInfos.mapIndexed { index, eblanApplicationInfoGridItem ->
+            folderEblanApplicationInfoGridItems.mapIndexed { index, eblanApplicationInfoGridItem ->
                 when (val data = eblanApplicationInfoGridItem.data) {
                     is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
                         eblanApplicationInfoGridItem.copy(data = data.copy(folderIndex = index))

@@ -34,6 +34,7 @@ internal fun handleDragFolderEblanApplicationInfoGridItem(
     dragIntOffset: IntOffset,
     currentPage: Int,
     folderEblanApplicationInfoPopup: FolderEblanApplicationInfoPopup,
+    folderEntry: FolderEntry,
     folderPopupIntOffset: IntOffset,
     isDragging: Boolean,
     isVisibleOverlay: Boolean,
@@ -97,11 +98,9 @@ internal fun handleDragFolderEblanApplicationInfoGridItem(
             folderGridDragPosition.height,
             currentPage,
         )
-    } else if (!folderEblanApplicationInfoPopup.folderEntry.isCloseFolder) {
+    } else if (!folderEntry.isCloseFolder) {
         onUpsertFolderEblanApplicationInfoPopupEntry(
-            folderEblanApplicationInfoPopup.folderEntry.copy(
-                isCloseFolder = true,
-            ),
+            folderEntry.copy(isCloseFolder = true),
         )
     }
 }

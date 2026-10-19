@@ -22,7 +22,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
@@ -72,7 +71,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.core.util.Consumer
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.folder.PreviewFolder
+import com.eblan.launcher.domain.model.folder.FolderPopup
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.home.PageItem
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
@@ -89,7 +88,6 @@ import com.eblan.launcher.ui.lazylist.rememberLazyColumnDragDropState
 import kotlinx.coroutines.launch
 import com.eblan.launcher.common.R as commonR
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 internal fun EditGridPageScreen(
     modifier: Modifier = Modifier,
@@ -100,7 +98,7 @@ internal fun EditGridPageScreen(
     screenWidth: Int,
     screenHeight: Int,
     textColor: TextColor,
-    previewFolderGridItems: Map<String, PreviewFolder>,
+    folderPopupGridItems: Map<String, FolderPopup>,
     iconPackFilePaths: Map<String, String?>,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
@@ -221,7 +219,7 @@ internal fun EditGridPageScreen(
                                 gridItemSettings = homeSettings.gridItemSettings,
                                 hasShortcutHostPermission = hasShortcutHostPermission,
                                 textColor = textColor,
-                                previewFolderGridItems = previewFolderGridItems,
+                                folderPopupGridItems = folderPopupGridItems,
                                 iconPackFilePaths = iconPackFilePaths,
                                 folderBackgroundColor = folderBackgroundColor,
                                 customFolderBackgroundColor = customFolderBackgroundColor,
@@ -324,7 +322,6 @@ private fun getGridSize(
     return gridWidthDp to gridHeightDp
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 internal fun EditDockGridPageScreen(
     modifier: Modifier = Modifier,
@@ -333,7 +330,7 @@ internal fun EditDockGridPageScreen(
     homeSettings: HomeSettings,
     paddingValues: PaddingValues,
     textColor: TextColor,
-    previewFolderGridItems: Map<String, PreviewFolder>,
+    folderPopupGridItems: Map<String, FolderPopup>,
     iconPackFilePaths: Map<String, String?>,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
@@ -447,7 +444,7 @@ internal fun EditDockGridPageScreen(
                                     gridItemSettings = homeSettings.gridItemSettings,
                                     hasShortcutHostPermission = hasShortcutHostPermission,
                                     textColor = textColor,
-                                    previewFolderGridItems = previewFolderGridItems,
+                                    folderPopupGridItems = folderPopupGridItems,
                                     iconPackFilePaths = iconPackFilePaths,
                                     folderBackgroundColor = folderBackgroundColor,
                                     customFolderBackgroundColor = customFolderBackgroundColor,

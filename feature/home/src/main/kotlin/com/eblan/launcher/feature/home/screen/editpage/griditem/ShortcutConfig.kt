@@ -17,7 +17,6 @@
  */
 package com.eblan.launcher.feature.home.screen.editpage.griditem
 
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -46,7 +45,6 @@ import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.feature.home.component.GridItemLayoutType
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 internal fun ShortcutConfigGridItem(
     modifier: Modifier = Modifier,

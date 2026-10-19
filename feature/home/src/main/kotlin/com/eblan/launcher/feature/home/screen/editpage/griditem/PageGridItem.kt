@@ -17,12 +17,11 @@
  */
 package com.eblan.launcher.feature.home.screen.editpage.griditem
 
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import coil3.compose.AsyncImage
-import com.eblan.launcher.domain.model.folder.PreviewFolder
+import com.eblan.launcher.domain.model.folder.FolderPopup
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
@@ -34,7 +33,6 @@ import com.eblan.launcher.feature.home.util.getHorizontalArrangement
 import com.eblan.launcher.feature.home.util.getVerticalAlignment
 import com.eblan.launcher.feature.home.util.getVerticalArrangement
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 internal fun PageGridItem(
     modifier: Modifier = Modifier,
@@ -42,7 +40,7 @@ internal fun PageGridItem(
     gridItemSettings: GridItemSettings,
     hasShortcutHostPermission: Boolean,
     textColor: TextColor,
-    previewFolderGridItems: Map<String, PreviewFolder>,
+    folderPopupGridItems: Map<String, FolderPopup>,
     iconPackFilePaths: Map<String, String?>,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
@@ -115,7 +113,7 @@ internal fun PageGridItem(
                 data = data,
                 gridItemSettings = currentGridItemSettings,
                 textColor = currentTextColor,
-                previewFolderGridItems = previewFolderGridItems,
+                folderPopupGridItems = folderPopupGridItems,
                 hasShortcutHostPermission = hasShortcutHostPermission,
                 iconPackFilePaths = iconPackFilePaths,
                 horizontalAlignment = horizontalAlignment,
@@ -145,7 +143,6 @@ internal fun PageGridItem(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun WidgetGridItem(modifier: Modifier = Modifier, data: GridItemData.Widget) {
     AsyncImage(

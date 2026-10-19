@@ -52,7 +52,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
-import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
 import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPack
 import com.eblan.launcher.feature.editfolderapplicationinfo.dialog.EditFolderLabelDialog
@@ -74,7 +74,7 @@ internal fun EditFolderApplicationInfoRoute(
     val packageManagerIconPackInfos by viewModel.packageManagerIconPackInfos.collectAsStateWithLifecycle()
     val iconPackInfoComponents by viewModel.iconPackInfoComponents.collectAsStateWithLifecycle()
     val folderEblanApplicationInfos by viewModel.folderEblanApplicationInfos.collectAsStateWithLifecycle()
-    val previewFolderEblanApplicationInfos by viewModel.previewFolderEblanApplicationInfos.collectAsStateWithLifecycle()
+    val folderEblanApplicationInfoPopups by viewModel.folderEblanApplicationInfoPopups.collectAsStateWithLifecycle()
 
     EditFolderApplicationInfoScreen(
         modifier = modifier,
@@ -82,7 +82,7 @@ internal fun EditFolderApplicationInfoRoute(
         iconPackComponents = iconPackInfoComponents,
         packageManagerIconPacks = packageManagerIconPackInfos,
         folderEblanApplicationInfos = folderEblanApplicationInfos,
-        previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+        folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
         onNavigateUp = onNavigateUp,
         onUpdateIconPackPackageName = viewModel::updateIconPackPackageName,
         onResetFolderEblanApplicationInfoCustomIcon = viewModel::resetFolderEblanApplicationInfoCustomIcon,
@@ -102,7 +102,7 @@ internal fun EditFolderApplicationInfoScreen(
     iconPackComponents: List<IconPackComponent>,
     packageManagerIconPacks: List<PackageManagerIconPack>,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
-    previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
+    folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     onNavigateUp: () -> Unit,
     onUpdateIconPackPackageName: (String) -> Unit,
     onResetFolderEblanApplicationInfoCustomIcon: (FolderEblanApplicationInfo) -> Unit,
@@ -148,7 +148,7 @@ internal fun EditFolderApplicationInfoScreen(
                     iconPackComponents = iconPackComponents,
                     packageManagerIconPacks = packageManagerIconPacks,
                     folderEblanApplicationInfos = folderEblanApplicationInfos,
-                    previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+                    folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                     topLevelFolderEblanApplicationInfos = folderEblanApplicationInfos,
                     onUpdateIconPackPackageName = onUpdateIconPackPackageName,
                     onResetFolderEblanApplicationInfoCustomIcon = onResetFolderEblanApplicationInfoCustomIcon,
@@ -163,7 +163,6 @@ internal fun EditFolderApplicationInfoScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun Success(
     modifier: Modifier = Modifier,
@@ -171,7 +170,7 @@ internal fun Success(
     iconPackComponents: List<IconPackComponent>,
     packageManagerIconPacks: List<PackageManagerIconPack>,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
-    previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
+    folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     onUpdateIconPackPackageName: (String) -> Unit,
     onResetFolderEblanApplicationInfoCustomIcon: (FolderEblanApplicationInfo) -> Unit,
@@ -239,7 +238,7 @@ internal fun Success(
         Folders(
             folderEblanApplicationInfo = folderEblanApplicationInfo,
             folderEblanApplicationInfos = folderEblanApplicationInfos,
-            previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+            folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
             topLevelFolderEblanApplicationInfos = topLevelFolderEblanApplicationInfos,
             onUpdateFolderEblanApplicationInfo = onUpdateFolderEblanApplicationInfo,
             onAddFolderEblanApplicationInfo = onAddFolderEblanApplicationInfo,
@@ -286,7 +285,7 @@ private fun Folders(
     modifier: Modifier = Modifier,
     folderEblanApplicationInfo: FolderEblanApplicationInfo,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
-    previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
+    folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     onUpdateFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
     onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
@@ -305,7 +304,7 @@ private fun Folders(
                 folderEblanApplicationInfo = folderEblanApplicationInfo,
                 id = it.id,
                 label = it.label,
-                previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+                folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                 onUpdateFolderEblanApplicationInfo = onUpdateFolderEblanApplicationInfo,
             )
         }
@@ -334,14 +333,14 @@ private fun FolderEblanApplicationInfoItem(
     folderEblanApplicationInfo: FolderEblanApplicationInfo,
     id: String,
     label: String,
-    previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
+    folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     onUpdateFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
 ) {
     val folderIndex = remember(
-        key1 = previewFolderEblanApplicationInfos,
+        key1 = folderEblanApplicationInfoPopups,
         key2 = id,
     ) {
-        previewFolderEblanApplicationInfos[id]?.folderGridItems?.maxOfOrNull {
+        folderEblanApplicationInfoPopups[id]?.folderEblanApplicationInfoGridItems?.maxOfOrNull {
             when (val data = it.data) {
                 is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> data.folderIndex + 1
                 is FolderEblanApplicationInfoGridItemData.Folder -> data.folderIndex + 1

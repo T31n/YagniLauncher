@@ -15,17 +15,16 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.domain.model.grid
+package com.eblan.launcher.domain.model.folder
 
-import com.eblan.launcher.domain.model.folder.FolderEntry
+import com.eblan.launcher.domain.model.grid.FolderGridItem
+import com.eblan.launcher.domain.model.grid.GridItem
 
-data class FolderGridItemPopup(
-    val folderEntry: FolderEntry,
-    val gridItem: GridItem,
-    val gridItems: List<GridItem>,
-    val gridItemsByPage: Map<Int, List<GridItem>>,
-    val label: String,
+data class FolderPopup(
+    val folderGridItem: FolderGridItem,
+    val previewFolderGridItems: List<GridItem>,
+    val folderGridItems: List<GridItem>,
+    val folderGridItemsByPage: Map<Int, List<GridItem>>,
     val columns: Int,
     val rows: Int,
-    val maxIndex: Int,
 )

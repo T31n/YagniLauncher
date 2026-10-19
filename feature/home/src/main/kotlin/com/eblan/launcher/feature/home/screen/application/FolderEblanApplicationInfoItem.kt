@@ -67,7 +67,6 @@ import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderEntry
-import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
@@ -108,9 +107,9 @@ internal fun FolderEblanApplicationInfoItem(
     isScrollInProgress: Boolean,
     isSwiping: Boolean,
     drag: Drag,
-    previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
+    folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     isVisibleFolderEblanApplicationInfos: Boolean,
-    folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
+    folderEblanApplicationInfoEntries: List<FolderEntry>,
     iconPackFilePaths: Map<String, String?>,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onDragFolderEblanApplicationInfo: (
@@ -161,10 +160,10 @@ internal fun FolderEblanApplicationInfoItem(
 
     val isVisibleFolder = remember(
         key1 = folderEblanApplicationInfo,
-        key2 = folderEblanApplicationInfoPopups,
+        key2 = folderEblanApplicationInfoEntries,
         key3 = isVisibleFolderEblanApplicationInfos,
     ) {
-        isVisibleFolderEblanApplicationInfos && folderEblanApplicationInfoPopups.any { it.folderEntry.id == folderEblanApplicationInfo.id }
+        isVisibleFolderEblanApplicationInfos && folderEblanApplicationInfoEntries.any { it.id == folderEblanApplicationInfo.id }
     }
 
     val textAlpha = if (isLongPress) 0f else 1f
@@ -301,7 +300,7 @@ internal fun FolderEblanApplicationInfoItem(
             ) {
                 PreviewFolderGridLayout(
                     modifier = Modifier.fillMaxSize(),
-                    gridItems = previewFolderEblanApplicationInfos[folderEblanApplicationInfo.id]?.previewFolderGridItems,
+                    gridItems = folderEblanApplicationInfoPopups[folderEblanApplicationInfo.id]?.previewFolderEblanApplicationInfoGridItems,
                     slotId = { it.id },
                     content = {
                         PreviewFolderEblanApplicationInfoItem(

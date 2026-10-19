@@ -17,7 +17,6 @@
  */
 package com.eblan.launcher.feature.home.screen.editpage.griditem
 
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
@@ -44,7 +43,7 @@ import coil3.request.ImageRequest.Builder
 import coil3.request.addLastModifiedToFileCacheKey
 import coil3.size.Size
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.folder.PreviewFolder
+import com.eblan.launcher.domain.model.folder.FolderPopup
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
@@ -55,7 +54,6 @@ import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
 import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
 import java.io.File
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 internal fun FolderGridItem(
     modifier: Modifier = Modifier,
@@ -63,7 +61,7 @@ internal fun FolderGridItem(
     data: GridItemData.Folder,
     gridItemSettings: GridItemSettings,
     textColor: Color,
-    previewFolderGridItems: Map<String, PreviewFolder>,
+    folderPopupGridItems: Map<String, FolderPopup>,
     hasShortcutHostPermission: Boolean,
     iconPackFilePaths: Map<String, String?>,
     horizontalAlignment: Alignment.Horizontal,
@@ -117,7 +115,7 @@ internal fun FolderGridItem(
             ) {
                 PreviewFolderGridLayout(
                     modifier = Modifier.fillMaxSize(),
-                    gridItems = previewFolderGridItems[gridItem.id]?.previewFolderGridItems,
+                    gridItems = folderPopupGridItems[gridItem.id]?.previewFolderGridItems,
                     slotId = { it.id },
                     content = {
                         PreviewFolderGridItem(

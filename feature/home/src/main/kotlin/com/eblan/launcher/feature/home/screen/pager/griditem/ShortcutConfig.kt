@@ -18,7 +18,6 @@
 package com.eblan.launcher.feature.home.screen.pager.griditem
 
 import android.content.Intent.parseUri
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -61,18 +60,18 @@ import coil3.size.Size
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
+import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.feature.home.component.GridItemLayoutType
 import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.component.swipeGestures
 import com.eblan.launcher.feature.home.component.whiteBox
 import com.eblan.launcher.feature.home.model.SharedElementKey
-import com.eblan.launcher.feature.home.util.onDoubleTap
+import com.eblan.launcher.feature.home.util.handleEblanAction
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import com.eblan.launcher.ui.local.LocalStatusBarManager
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 internal fun InteractiveShortcutConfigGridItem(
     modifier: Modifier = Modifier,
@@ -156,14 +155,18 @@ internal fun InteractiveShortcutConfigGridItem(
             if (!isVisibleOverlay) {
                 pointerInput(key1 = Unit) {
                     detectTapGestures(
-                        onDoubleTap = {
-                            onDoubleTap(
-                                context = context,
-                                doubleTap = gridItem.doubleTap,
-                                launcherApps = launcherApps,
-                                statusBarManagerWrapper = androidStatusBarManagerWrapper,
-                                onOpenAppDrawer = currentOnOpenAppDrawer,
-                            )
+                        onDoubleTap = if (gridItem.doubleTap.eblanActionType != EblanActionType.None) {
+                            {
+                                handleEblanAction(
+                                    context = context,
+                                    eblanAction = gridItem.doubleTap,
+                                    launcherApps = launcherApps,
+                                    statusBarManagerWrapper = androidStatusBarManagerWrapper,
+                                    onOpenAppDrawer = currentOnOpenAppDrawer,
+                                )
+                            }
+                        } else {
+                            null
                         },
                         onLongPress = {
                             scope.launch {

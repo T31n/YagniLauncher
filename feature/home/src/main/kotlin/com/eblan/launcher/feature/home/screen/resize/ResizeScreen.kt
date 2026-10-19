@@ -18,7 +18,6 @@
 package com.eblan.launcher.feature.home.screen.resize
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
@@ -36,7 +35,6 @@ import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.HomeHandler
 import com.eblan.launcher.feature.home.util.PAGE_INDICATOR_HEIGHT
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 internal fun ResizeScreen(
     modifier: Modifier = Modifier,

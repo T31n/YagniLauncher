@@ -20,7 +20,6 @@ package com.eblan.launcher.feature.home.screen.folder
 import android.content.Intent.parseUri
 import android.graphics.Rect
 import android.os.Build
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -76,13 +75,13 @@ import coil3.request.addLastModifiedToFileCacheKey
 import coil3.size.Size
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.folder.FolderEntry
-import com.eblan.launcher.domain.model.folder.PreviewFolder
-import com.eblan.launcher.domain.model.grid.FolderGridItemPopup
+import com.eblan.launcher.domain.model.folder.FolderPopup
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
+import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_COLUMNS
 import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_ROWS
@@ -95,13 +94,12 @@ import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.getHorizontalAlignment
 import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
 import com.eblan.launcher.feature.home.util.getVerticalArrangement
-import com.eblan.launcher.feature.home.util.onDoubleTap
+import com.eblan.launcher.feature.home.util.handleEblanAction
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import com.eblan.launcher.ui.local.LocalStatusBarManager
 import com.eblan.launcher.ui.settings.rememberIsNotificationAccessGranted
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 internal fun InteractiveFolderGridItem(
     modifier: Modifier = Modifier,
@@ -116,7 +114,7 @@ internal fun InteractiveFolderGridItem(
     moveGridItemResult: MoveGridItemResult?,
     progress: Float,
     showFolderGridItemMenu: Boolean,
-    previewFolderGridItems: Map<String, PreviewFolder>,
+    folderPopups: Map<String, FolderPopup>,
     minCellWidthPx: Int,
     minCellHeightPx: Int,
     paddingValues: PaddingValues,
@@ -129,7 +127,7 @@ internal fun InteractiveFolderGridItem(
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
-    folderGridItemPopups: List<FolderGridItemPopup>,
+    folderGridItemEntries: List<FolderEntry>,
     onOpenAppDrawer: () -> Unit,
     onUpsertFolderGridItemPopupEntry: (FolderEntry) -> Unit,
     onLongPressFolderGridItem: (
@@ -207,9 +205,9 @@ internal fun InteractiveFolderGridItem(
 
     val isVisibleFolder = remember(
         key1 = gridItem,
-        key2 = folderGridItemPopups,
+        key2 = folderGridItemEntries,
     ) {
-        folderGridItemPopups.any { it.folderEntry.id == gridItem.id }
+        folderGridItemEntries.any { it.id == gridItem.id }
     }
 
     val horizontalAlignment =
@@ -324,7 +322,7 @@ internal fun InteractiveFolderGridItem(
                 isSelected = isSelected,
                 isVisibleOverlay = isVisibleOverlay,
                 sharedElementKey = sharedElementKey,
-                previewFolderGridItems = previewFolderGridItems,
+                folderPopups = folderPopups,
                 hasShortcutHostPermission = hasShortcutHostPermission,
                 padding = padding,
                 iconSize = iconSize,
@@ -353,7 +351,6 @@ internal fun InteractiveFolderGridItem(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun InteractiveApplicationInfoGridItem(
     modifier: Modifier = Modifier,
@@ -422,14 +419,18 @@ private fun InteractiveApplicationInfoGridItem(
                 if (!isVisibleOverlay && !isInProgress) {
                     pointerInput(key1 = Unit) {
                         detectTapGestures(
-                            onDoubleTap = {
-                                onDoubleTap(
-                                    context = context,
-                                    doubleTap = gridItem.doubleTap,
-                                    launcherApps = launcherApps,
-                                    statusBarManagerWrapper = androidStatusBarManagerWrapper,
-                                    onOpenAppDrawer = onOpenAppDrawer,
-                                )
+                            onDoubleTap = if (gridItem.doubleTap.eblanActionType != EblanActionType.None) {
+                                {
+                                    handleEblanAction(
+                                        context = context,
+                                        eblanAction = gridItem.doubleTap,
+                                        launcherApps = launcherApps,
+                                        statusBarManagerWrapper = androidStatusBarManagerWrapper,
+                                        onOpenAppDrawer = onOpenAppDrawer,
+                                    )
+                                }
+                            } else {
+                                null
                             },
                             onLongPress = {
                                 scope.launch {
@@ -527,7 +528,6 @@ private fun InteractiveApplicationInfoGridItem(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun InteractiveShortcutInfoGridItem(
     modifier: Modifier = Modifier,
@@ -593,16 +593,18 @@ private fun InteractiveShortcutInfoGridItem(
                 if (!isVisibleOverlay && !isInProgress) {
                     pointerInput(key1 = Unit) {
                         detectTapGestures(
-                            onDoubleTap = {
-                                scope.launch {
-                                    onDoubleTap(
+                            onDoubleTap = if (gridItem.doubleTap.eblanActionType != EblanActionType.None) {
+                                {
+                                    handleEblanAction(
                                         context = context,
-                                        doubleTap = gridItem.doubleTap,
+                                        eblanAction = gridItem.doubleTap,
                                         launcherApps = launcherApps,
                                         statusBarManagerWrapper = androidStatusBarManagerWrapper,
                                         onOpenAppDrawer = onOpenAppDrawer,
                                     )
                                 }
+                            } else {
+                                null
                             },
                             onLongPress = {
                                 scope.launch {
@@ -707,7 +709,6 @@ private fun InteractiveShortcutInfoGridItem(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun InteractiveShortcutConfigGridItem(
     modifier: Modifier = Modifier,
@@ -779,14 +780,18 @@ private fun InteractiveShortcutConfigGridItem(
                 if (!isVisibleOverlay && !isInProgress) {
                     pointerInput(key1 = Unit) {
                         detectTapGestures(
-                            onDoubleTap = {
-                                onDoubleTap(
-                                    context = context,
-                                    doubleTap = gridItem.doubleTap,
-                                    launcherApps = launcherApps,
-                                    statusBarManagerWrapper = androidStatusBarManagerWrapper,
-                                    onOpenAppDrawer = onOpenAppDrawer,
-                                )
+                            onDoubleTap = if (gridItem.doubleTap.eblanActionType != EblanActionType.None) {
+                                {
+                                    handleEblanAction(
+                                        context = context,
+                                        eblanAction = gridItem.doubleTap,
+                                        launcherApps = launcherApps,
+                                        statusBarManagerWrapper = androidStatusBarManagerWrapper,
+                                        onOpenAppDrawer = onOpenAppDrawer,
+                                    )
+                                }
+                            } else {
+                                null
                             },
                             onLongPress = {
                                 scope.launch {
@@ -865,7 +870,6 @@ private fun InteractiveShortcutConfigGridItem(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun InteractiveNestedFolderGridItem(
     modifier: Modifier = Modifier,
@@ -877,7 +881,7 @@ private fun InteractiveNestedFolderGridItem(
     isSelected: Boolean,
     isVisibleOverlay: Boolean,
     sharedElementKey: SharedElementKey,
-    previewFolderGridItems: Map<String, PreviewFolder>,
+    folderPopups: Map<String, FolderPopup>,
     hasShortcutHostPermission: Boolean,
     padding: Dp,
     iconSize: Dp,
@@ -934,14 +938,18 @@ private fun InteractiveNestedFolderGridItem(
                 if (!isVisibleOverlay && !isInProgress) {
                     pointerInput(key1 = Unit) {
                         detectTapGestures(
-                            onDoubleTap = {
-                                onDoubleTap(
-                                    context = context,
-                                    doubleTap = gridItem.doubleTap,
-                                    launcherApps = launcherApps,
-                                    statusBarManagerWrapper = androidStatusBarManagerWrapper,
-                                    onOpenAppDrawer = onOpenAppDrawer,
-                                )
+                            onDoubleTap = if (gridItem.doubleTap.eblanActionType != EblanActionType.None) {
+                                {
+                                    handleEblanAction(
+                                        context = context,
+                                        eblanAction = gridItem.doubleTap,
+                                        launcherApps = launcherApps,
+                                        statusBarManagerWrapper = androidStatusBarManagerWrapper,
+                                        onOpenAppDrawer = onOpenAppDrawer,
+                                    )
+                                }
+                            } else {
+                                null
                             },
                             onLongPress = {
                                 scope.launch {
@@ -1027,7 +1035,7 @@ private fun InteractiveNestedFolderGridItem(
             ) {
                 PreviewFolderGridLayout(
                     modifier = Modifier.fillMaxSize(),
-                    gridItems = previewFolderGridItems[gridItem.id]?.previewFolderGridItems,
+                    gridItems = folderPopups[gridItem.id]?.previewFolderGridItems,
                     slotId = { it.id },
                     content = {
                         PreviewNestedFolderGridItem(

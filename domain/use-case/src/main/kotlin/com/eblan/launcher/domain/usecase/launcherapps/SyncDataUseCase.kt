@@ -104,7 +104,6 @@ class SyncDataUseCase @Inject constructor(
         }
     }
 
-    @OptIn(ExperimentalUuidApi::class)
     private suspend fun updateEblanApplicationInfos(
         experimentalSettings: ExperimentalSettings,
         homeSettings: HomeSettings,
@@ -197,7 +196,6 @@ class SyncDataUseCase @Inject constructor(
         applicationInfoGridItemRepository.insertApplicationInfoGridItems(applicationInfoGridItems = newApplicationInfoGridItems)
     }
 
-    @OptIn(ExperimentalUuidApi::class)
     private suspend fun addNewApplicationsToHomeScreen(
         homeSettings: HomeSettings,
         experimentalSettings: ExperimentalSettings,

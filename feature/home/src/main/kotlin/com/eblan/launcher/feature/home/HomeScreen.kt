@@ -20,7 +20,6 @@ package com.eblan.launcher.feature.home
 import android.Manifest
 import android.os.Build
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -46,10 +45,8 @@ import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderEntry
-import com.eblan.launcher.domain.model.folder.PreviewFolder
-import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
+import com.eblan.launcher.domain.model.folder.FolderPopup
 import com.eblan.launcher.domain.model.grid.Associate
-import com.eblan.launcher.domain.model.grid.FolderGridItemPopup
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.MoveFolderEblanApplicationInfoGridItemResult
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
@@ -98,14 +95,14 @@ internal fun HomeRoute(
     val eblanShortcutInfosGroup by viewModel.eblanShortcutInfosGroup.collectAsStateWithLifecycle()
     val eblanAppWidgetProviderInfosGroup by viewModel.eblanAppWidgetProviderInfosGroup.collectAsStateWithLifecycle()
     val eblanApplicationInfoTags by viewModel.eblanApplicationInfoTags.collectAsStateWithLifecycle()
-    val folderGridItemPopups by viewModel.folderGridItemPopups.collectAsStateWithLifecycle()
+    val folderGridItemEntries by viewModel.folderGridItemEntries.collectAsStateWithLifecycle()
     val resizeGridItem by viewModel.resizeGridItem.collectAsStateWithLifecycle()
     val gridItemSource by viewModel.gridItemSource.collectAsStateWithLifecycle()
     val isVisibleOverlay by viewModel.isVisibleOverlay.collectAsStateWithLifecycle()
     val textColor by viewModel.textColor.collectAsStateWithLifecycle()
-    val previewFolderGridItems by viewModel.previewFolderGridItems.collectAsStateWithLifecycle()
-    val previewFolderEblanApplicationInfos by viewModel.previewFolderEblanApplicationInfos.collectAsStateWithLifecycle()
+    val folderPopups by viewModel.previewFolderGridItems.collectAsStateWithLifecycle()
     val folderEblanApplicationInfoPopups by viewModel.folderEblanApplicationInfoPopups.collectAsStateWithLifecycle()
+    val folderEblanApplicationInfoEntries by viewModel.folderEblanApplicationInfoEntries.collectAsStateWithLifecycle()
     val moveFolderEblanApplicationInfoGridItemResult by viewModel.moveFolderEblanApplicationInfoGridItemResult.collectAsStateWithLifecycle()
 
     HomeScreen(
@@ -117,7 +114,8 @@ internal fun HomeRoute(
         eblanShortcutConfigs = eblanShortcutConfigs,
         eblanShortcutInfosGroup = eblanShortcutInfosGroup,
         pageItems = pageItems,
-        folderGridItemPopups = folderGridItemPopups,
+        folderGridItemEntries = folderGridItemEntries,
+        folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
         getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfos,
         homeUiState = homeUiState,
         movedGridItemResult = movedGridItemResult,
@@ -127,8 +125,7 @@ internal fun HomeRoute(
         gridItemSource = gridItemSource,
         isVisibleOverlay = isVisibleOverlay,
         textColor = textColor,
-        previewFolderGridItems = previewFolderGridItems,
-        previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+        folderPopups = folderPopups,
         folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
         moveFolderEblanApplicationInfoGridItemResult = moveFolderEblanApplicationInfoGridItemResult,
         onResetGrid = viewModel::resetGrid,
@@ -183,7 +180,6 @@ internal fun HomeRoute(
     )
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 internal fun HomeScreen(
     modifier: Modifier = Modifier,
@@ -194,7 +190,8 @@ internal fun HomeScreen(
     eblanShortcutConfigs: Map<EblanUser, Map<EblanApplicationInfoGroup, List<EblanShortcutConfig>>>,
     eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
     pageItems: List<PageItem>?,
-    folderGridItemPopups: List<FolderGridItemPopup>,
+    folderGridItemEntries: List<FolderEntry>,
+    folderEblanApplicationInfoEntries: List<FolderEntry>,
     getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
     homeUiState: HomeUiState,
     movedGridItemResult: MoveGridItemResult?,
@@ -204,9 +201,8 @@ internal fun HomeScreen(
     gridItemSource: GridItemSource?,
     isVisibleOverlay: Boolean,
     textColor: TextColor,
-    previewFolderGridItems: Map<String, PreviewFolder>,
-    previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
-    folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
+    folderPopups: Map<String, FolderPopup>,
+    folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     moveFolderEblanApplicationInfoGridItemResult: MoveFolderEblanApplicationInfoGridItemResult?,
     onResetGrid: () -> Unit,
     onDeleteGridItem: (GridItem) -> Unit,
@@ -226,7 +222,7 @@ internal fun HomeScreen(
     onGetEblanShortcutConfigsByLabel: (String) -> Unit,
     onGetPinGridItem: (PinItemRequestType) -> Unit,
     onMoveFolderGridItem: (
-        folderGridItemPopup: FolderGridItemPopup,
+        folderPopup: FolderPopup,
         movingGridItem: GridItem,
         dragX: Int,
         dragY: Int,
@@ -347,7 +343,8 @@ internal fun HomeScreen(
                 eblanShortcutConfigs = eblanShortcutConfigs,
                 eblanShortcutInfosGroup = eblanShortcutInfosGroup,
                 pageItems = pageItems,
-                folderGridItemPopups = folderGridItemPopups,
+                folderGridItemEntries = folderGridItemEntries,
+                folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
                 getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
                 homeData = homeUiState.homeData,
                 movedGridItemResult = movedGridItemResult,
@@ -360,8 +357,7 @@ internal fun HomeScreen(
                 gridItemSource = gridItemSource,
                 isVisibleOverlay = isVisibleOverlay,
                 textColor = textColor,
-                previewFolderGridItems = previewFolderGridItems,
-                previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+                folderPopups = folderPopups,
                 folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                 moveFolderEblanApplicationInfoGridItemResult = moveFolderEblanApplicationInfoGridItemResult,
                 onResetGrid = onResetGrid,
@@ -418,7 +414,6 @@ internal fun HomeScreen(
     }
 }
 
-@OptIn(ExperimentalPermissionsApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
 private fun Success(
     modifier: Modifier = Modifier,
@@ -429,7 +424,8 @@ private fun Success(
     eblanShortcutConfigs: Map<EblanUser, Map<EblanApplicationInfoGroup, List<EblanShortcutConfig>>>,
     eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
     pageItems: List<PageItem>?,
-    folderGridItemPopups: List<FolderGridItemPopup>,
+    folderGridItemEntries: List<FolderEntry>,
+    folderEblanApplicationInfoEntries: List<FolderEntry>,
     getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
     homeData: HomeData,
     movedGridItemResult: MoveGridItemResult?,
@@ -442,9 +438,8 @@ private fun Success(
     gridItemSource: GridItemSource?,
     isVisibleOverlay: Boolean,
     textColor: TextColor,
-    previewFolderGridItems: Map<String, PreviewFolder>,
-    previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
-    folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
+    folderPopups: Map<String, FolderPopup>,
+    folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     moveFolderEblanApplicationInfoGridItemResult: MoveFolderEblanApplicationInfoGridItemResult?,
     onResetGrid: () -> Unit,
     onDeleteGridItem: (GridItem) -> Unit,
@@ -464,7 +459,7 @@ private fun Success(
     onGetEblanShortcutConfigsByLabel: (String) -> Unit,
     onGetPinGridItem: (PinItemRequestType) -> Unit,
     onMoveFolderGridItem: (
-        folderGridItemPopup: FolderGridItemPopup,
+        folderPopup: FolderPopup,
         movingGridItem: GridItem,
         dragX: Int,
         dragY: Int,
@@ -581,7 +576,8 @@ private fun Success(
                     eblanShortcutConfigs = eblanShortcutConfigs,
                     eblanShortcutInfosGroup = eblanShortcutInfosGroup,
                     experimentalSettings = homeData.userData.experimentalSettings,
-                    folderGridItemPopups = folderGridItemPopups,
+                    folderGridItemEntries = folderGridItemEntries,
+                    folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
                     gestureSettings = homeData.userData.gestureSettings,
                     getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
                     gridItems = homeData.gridItems,
@@ -599,9 +595,8 @@ private fun Success(
                     resizeGridItem = resizeGridItem,
                     gridItemSource = gridItemSource,
                     isVisibleOverlay = isVisibleOverlay,
-                    previewFolderGridItems = previewFolderGridItems,
+                    folderPopups = folderPopups,
                     iconPackFilePaths = homeData.iconPackFilePaths,
-                    previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
                     folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                     moveFolderEblanApplicationInfoGridItemResult = moveFolderEblanApplicationInfoGridItemResult,
                     onDeleteGridItem = onDeleteGridItem,
@@ -666,7 +661,7 @@ private fun Success(
                     screenWidth = screenWidth,
                     screenHeight = screenHeight,
                     textColor = textColor,
-                    previewFolderGridItems = previewFolderGridItems,
+                    folderPopupGridItems = folderPopups,
                     iconPackFilePaths = homeData.iconPackFilePaths,
                     folderBackgroundColor = homeData.userData.folderSettings.folderBackgroundColor,
                     customFolderBackgroundColor = homeData.userData.folderSettings.customFolderBackgroundColor,
@@ -685,7 +680,7 @@ private fun Success(
                     homeSettings = homeData.userData.homeSettings,
                     paddingValues = paddingValues,
                     textColor = textColor,
-                    previewFolderGridItems = previewFolderGridItems,
+                    folderPopupGridItems = folderPopups,
                     iconPackFilePaths = homeData.iconPackFilePaths,
                     folderBackgroundColor = homeData.userData.folderSettings.folderBackgroundColor,
                     customFolderBackgroundColor = homeData.userData.folderSettings.customFolderBackgroundColor,

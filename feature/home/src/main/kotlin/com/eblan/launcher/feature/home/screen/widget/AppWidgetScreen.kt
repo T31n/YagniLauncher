@@ -18,7 +18,6 @@
 package com.eblan.launcher.feature.home.screen.widget
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
@@ -80,7 +79,7 @@ import kotlin.math.roundToInt
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
-@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun AppWidgetScreen(
     modifier: Modifier = Modifier,
@@ -213,7 +212,7 @@ internal fun AppWidgetScreen(
     }
 }
 
-@OptIn(ExperimentalUuidApi::class, ExperimentalSharedTransitionApi::class)
+@OptIn(ExperimentalUuidApi::class)
 @Composable
 private fun EblanAppWidgetScreenItem(
     modifier: Modifier = Modifier,

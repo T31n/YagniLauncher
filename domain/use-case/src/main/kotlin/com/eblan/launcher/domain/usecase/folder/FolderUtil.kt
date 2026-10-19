@@ -21,14 +21,16 @@ import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoWrapper
-import com.eblan.launcher.domain.model.folder.PreviewFolder
-import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
+import com.eblan.launcher.domain.model.folder.FolderPopup
 import com.eblan.launcher.domain.model.grid.FolderGridItemWrapper
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.usecase.util.asGridItem
 import com.eblan.launcher.domain.usecase.util.getGridDimension
+import com.eblan.launcher.domain.usecase.util.getGridItemsByPage
 import com.eblan.launcher.domain.usecase.util.getPreviewFolderGridItems
+import kotlin.collections.orEmpty
 
 internal fun FolderEblanApplicationInfo.asFolderEblanApplicationInfoGridItem(): FolderEblanApplicationInfoGridItem = FolderEblanApplicationInfoGridItem(
     id = id,
@@ -59,30 +61,30 @@ internal fun EblanApplicationInfo.asFolderEblanApplicationInfoGridItem(): Folder
     ),
 )
 
-internal fun List<FolderEblanApplicationInfoWrapper>.asPreviewFolderEblanApplicationInfos(
+internal suspend fun List<FolderEblanApplicationInfoWrapper>.asPreviewFolderEblanApplicationInfos(
     maxFolderColumns: Int,
     maxFolderRows: Int,
-): Map<String, PreviewFolderEblanApplicationInfo> = associate {
+): Map<String, FolderEblanApplicationInfoPopup> = associate {
     it.folderEblanApplicationInfo.id to it.asPreviewFolderEblanApplicationInfo(
         maxFolderColumns = maxFolderColumns,
         maxFolderRows = maxFolderRows,
     )
 }
 
-internal fun List<FolderGridItemWrapper>.asPreviewFolders(
+internal suspend fun List<FolderGridItemWrapper>.asPreviewFolders(
     maxFolderColumns: Int,
     maxFolderRows: Int,
-): Map<String, PreviewFolder> = associate {
+): Map<String, FolderPopup> = associate {
     it.folderGridItem.id to it.asPreviewFolder(
         maxFolderColumns = maxFolderColumns,
         maxFolderRows = maxFolderRows,
     )
 }
 
-internal fun FolderGridItemWrapper.asPreviewFolder(
+internal suspend fun FolderGridItemWrapper.asPreviewFolder(
     maxFolderColumns: Int,
     maxFolderRows: Int,
-): PreviewFolder {
+): FolderPopup {
     val folderGridItems = (
         applicationInfoGridItems.map {
             it.asGridItem()
@@ -105,22 +107,33 @@ internal fun FolderGridItemWrapper.asPreviewFolder(
         maxFolderRows = maxFolderRows,
     )
 
+    val folderGridItemsByPage = folderGridItems.getGridItemsByPage(
+        columns = columns,
+        rows = rows,
+    )
+
+    val firstPageFolderGridItems = folderGridItemsByPage.values.firstOrNull().orEmpty()
+
     val previewFolderGridItems = getPreviewFolderGridItems(
         columns = columns,
         rows = rows,
-        folderGridItems = folderGridItems,
+        gridItems = firstPageFolderGridItems,
     )
 
-    return PreviewFolder(
+    return FolderPopup(
+        folderGridItem = folderGridItem,
         previewFolderGridItems = previewFolderGridItems,
         folderGridItems = folderGridItems,
+        folderGridItemsByPage = folderGridItemsByPage,
+        columns = columns,
+        rows = rows,
     )
 }
 
-private fun FolderEblanApplicationInfoWrapper.asPreviewFolderEblanApplicationInfo(
+private suspend fun FolderEblanApplicationInfoWrapper.asPreviewFolderEblanApplicationInfo(
     maxFolderColumns: Int,
     maxFolderRows: Int,
-): PreviewFolderEblanApplicationInfo {
+): FolderEblanApplicationInfoPopup {
     val folderEblanApplicationInfoGridItems = (
         folderEblanApplicationInfos.map {
             it.asFolderEblanApplicationInfoGridItem()
@@ -140,15 +153,24 @@ private fun FolderEblanApplicationInfoWrapper.asPreviewFolderEblanApplicationInf
         maxFolderRows = maxFolderRows,
     )
 
+    val folderEblanApplicationInfoGridItemsByPage =
+        folderEblanApplicationInfoGridItems.getGridItemsByPage(
+            columns = columns,
+            rows = rows,
+        )
+
     val previewFolderGridItems = getPreviewFolderGridItems(
         columns = columns,
         rows = rows,
-        folderGridItems = folderEblanApplicationInfoGridItems,
+        gridItems = folderEblanApplicationInfoGridItems,
     )
 
-    return PreviewFolderEblanApplicationInfo(
+    return FolderEblanApplicationInfoPopup(
         folderEblanApplicationInfo = folderEblanApplicationInfo,
-        previewFolderGridItems = previewFolderGridItems,
-        folderGridItems = folderEblanApplicationInfoGridItems,
+        previewFolderEblanApplicationInfoGridItems = previewFolderGridItems,
+        folderEblanApplicationInfoGridItems = folderEblanApplicationInfoGridItems,
+        folderEblanApplicationInfoGridItemsByPage = folderEblanApplicationInfoGridItemsByPage,
+        columns = columns,
+        rows = rows,
     )
 }

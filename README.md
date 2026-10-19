@@ -32,18 +32,11 @@ Closed-source launchers are locking features behind paywalls and adding trackers
 
 ## Why Choose Yagni Launcher?
 
-The launcher is the first thing you see every time you unlock your phone. It shouldn't be slow, heavy, or draining your battery in the background.
+Yagni matches and extends stock functionality without the bloat, built from scratch to stay fast, lightweight, and battery-efficient.
 
-There are a lot of launchers out there. What sets Yagni Launcher apart is a relentless focus on performance and user experience over feature bloat.
-
-Yagni Launcher matches stock launcher functionality and goes beyond it, rebuilt from scratch with modern Android tooling.
-
-- ⚡ Fast — Built with Kotlin & Jetpack Compose, no legacy overhead
-- 🪶 Small — ~2MB total size, 80–90% smaller than typical stock launchers (which often run 10–60MB+)
-- 🔋 Efficient — Minimal resource and battery footprint
-- 🛠️ Modern — 100% Kotlin, 100% Jetpack Compose, written from the ground up (no forked codebase)
-
-If it's not something you need, it's not in the app. That's the whole philosophy behind the name and it's why Yagni Launcher stays fast where others get slower with every update.
+- ⚡ Modern — Kotlin and Jetpack Compose, with no legacy overhead
+- 🪶 Small — ~2 MB, 80–90% smaller than typical stock launchers
+- 🔋 Efficient — Minimal resource and battery use
 
 ## Screenshots
 
