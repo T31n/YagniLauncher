@@ -118,7 +118,6 @@ internal fun ActionScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun Success(
     modifier: Modifier = Modifier,

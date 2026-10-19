@@ -36,14 +36,12 @@ import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.util.getIconPackFilePaths
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import java.text.Normalizer
 import javax.inject.Inject
-import kotlin.collections.mapIndexedNotNull
 
 class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
@@ -55,7 +53,6 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
     private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
-    @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke(
         labelFlow: Flow<String>,
         eblanApplicationInfoTagIdFlow: Flow<Long?>,

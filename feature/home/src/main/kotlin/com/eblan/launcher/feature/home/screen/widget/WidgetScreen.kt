@@ -17,7 +17,6 @@
  */
 package com.eblan.launcher.feature.home.screen.widget
 
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -88,12 +87,11 @@ import com.eblan.launcher.feature.home.component.ScreenEffect
 import com.eblan.launcher.feature.home.component.rememberNestedScrollConnectionEffect
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.launch
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
-@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class, FlowPreview::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun WidgetScreen(
     modifier: Modifier = Modifier,
@@ -235,7 +233,6 @@ internal fun WidgetScreen(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun EblanApplicationInfoItem(
     modifier: Modifier = Modifier,
@@ -315,7 +312,6 @@ private fun EblanApplicationInfoItem(
     }
 }
 
-@OptIn(ExperimentalUuidApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
 private fun EblanAppWidgetProviderInfoItem(
     modifier: Modifier = Modifier,

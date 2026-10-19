@@ -18,12 +18,10 @@
 package com.eblan.launcher.feature.home.screen.application.horizontal
 
 import android.os.Build
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -81,10 +79,9 @@ import com.eblan.launcher.feature.home.screen.application.rememberIsQuietModeEna
 import com.eblan.launcher.feature.home.util.getApplicationScreenTextColor
 import com.eblan.launcher.ui.local.LocalUserManager
 import com.eblan.launcher.ui.settings.rememberIsDefaultLauncher
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class, FlowPreview::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun HorizontalApplicationScreen(
     modifier: Modifier = Modifier,
@@ -275,7 +272,6 @@ internal fun HorizontalApplicationScreen(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
 private fun EblanApplicationInfosPage(
     modifier: Modifier = Modifier,
@@ -395,7 +391,6 @@ private fun EblanApplicationInfosPage(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
 private fun EblanApplicationInfos(
     modifier: Modifier = Modifier,

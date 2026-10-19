@@ -22,7 +22,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
@@ -89,7 +88,6 @@ import com.eblan.launcher.ui.lazylist.rememberLazyColumnDragDropState
 import kotlinx.coroutines.launch
 import com.eblan.launcher.common.R as commonR
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 internal fun EditGridPageScreen(
     modifier: Modifier = Modifier,
@@ -324,7 +322,6 @@ private fun getGridSize(
     return gridWidthDp to gridHeightDp
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 internal fun EditDockGridPageScreen(
     modifier: Modifier = Modifier,

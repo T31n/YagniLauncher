@@ -17,13 +17,11 @@
  */
 package com.eblan.launcher.feature.home.screen.shortcutconfig
 
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -97,13 +95,12 @@ import com.eblan.launcher.feature.home.component.ScreenEffect
 import com.eblan.launcher.feature.home.component.rememberNestedScrollConnectionEffect
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.launch
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 import com.eblan.launcher.common.R as commonR
 
-@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class, FlowPreview::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ShortcutConfigScreen(
     modifier: Modifier = Modifier,
@@ -254,7 +251,6 @@ internal fun ShortcutConfigScreen(
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 private fun EblanShortcutConfigTabRow(
     currentPage: Int,
     eblanShortcutConfigs: Map<EblanUser, Map<EblanApplicationInfoGroup, List<EblanShortcutConfig>>>,
@@ -282,7 +278,6 @@ private fun EblanShortcutConfigTabRow(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
 private fun EblanShortcutConfigsPage(
     modifier: Modifier = Modifier,
@@ -346,7 +341,6 @@ private fun EblanShortcutConfigsPage(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun EblanApplicationInfoItem(
     modifier: Modifier = Modifier,
@@ -418,7 +412,6 @@ private fun EblanApplicationInfoItem(
     }
 }
 
-@OptIn(ExperimentalUuidApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
 private fun EblanShortcutConfigItem(
     modifier: Modifier = Modifier,

@@ -31,7 +31,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -57,7 +56,6 @@ import com.eblan.launcher.ui.settings.getEblanActionTypeSubtitle
 import com.eblan.launcher.ui.settings.rememberIsAccessibilityServiceEnabled
 import com.eblan.launcher.common.R as commonR
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun EblanActionDialog(
     modifier: Modifier = Modifier,

@@ -30,7 +30,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
-import kotlin.uuid.ExperimentalUuidApi
 
 class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
     private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
@@ -38,7 +37,6 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
-    @OptIn(ExperimentalUuidApi::class)
     suspend operator fun invoke(
         icon: String?,
         folderId: String,
@@ -84,7 +82,6 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
         folderEblanApplicationInfoRepository.deleteFolderEblanApplicationInfoById(id = folderId)
     }
 
-    @OptIn(ExperimentalUuidApi::class)
     private fun getRecursiveFolderGridItems(
         folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem? = null,
         folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,

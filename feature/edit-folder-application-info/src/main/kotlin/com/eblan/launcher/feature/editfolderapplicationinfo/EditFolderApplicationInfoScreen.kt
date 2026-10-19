@@ -163,7 +163,6 @@ internal fun EditFolderApplicationInfoScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun Success(
     modifier: Modifier = Modifier,

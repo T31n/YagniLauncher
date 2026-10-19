@@ -41,7 +41,6 @@ class GetRecursiveFolderEblanApplicationInfosUseCase @Inject constructor(
     private val userDataRepository: UserDataRepository,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
-    @OptIn(ExperimentalUuidApi::class)
     suspend operator fun invoke(
         id: String,
         folderId: String,

@@ -17,7 +17,6 @@
  */
 package com.eblan.launcher.feature.home.screen.editpage.griditem
 
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -34,7 +33,6 @@ import com.eblan.launcher.feature.home.util.getHorizontalArrangement
 import com.eblan.launcher.feature.home.util.getVerticalAlignment
 import com.eblan.launcher.feature.home.util.getVerticalArrangement
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 internal fun PageGridItem(
     modifier: Modifier = Modifier,
@@ -145,7 +143,6 @@ internal fun PageGridItem(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun WidgetGridItem(modifier: Modifier = Modifier, data: GridItemData.Widget) {
     AsyncImage(

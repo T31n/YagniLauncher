@@ -18,7 +18,6 @@
 package com.eblan.launcher.feature.home.screen.pager.griditem
 
 import android.graphics.Rect
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -77,7 +76,6 @@ import com.eblan.launcher.ui.local.LocalStatusBarManager
 import com.eblan.launcher.ui.settings.rememberIsNotificationAccessGranted
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 internal fun InteractiveApplicationInfoGridItem(
     modifier: Modifier = Modifier,

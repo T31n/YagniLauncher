@@ -126,7 +126,6 @@ internal fun PrivateShortcutInfoMenu(
     }
 }
 
-@OptIn(ExperimentalUuidApi::class)
 @Composable
 private fun ShortcutInfoMenuItem(
     modifier: Modifier = Modifier,
@@ -206,7 +205,6 @@ private fun ShortcutInfoMenuItem(
     )
 }
 
-@OptIn(ExperimentalUuidApi::class)
 @Composable
 private fun PrivateShortcutInfoMenuItem(
     modifier: Modifier = Modifier,

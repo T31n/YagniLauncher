@@ -17,7 +17,6 @@
  */
 package com.eblan.launcher.feature.home.screen.editpage.griditem
 
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
@@ -55,7 +54,6 @@ import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
 import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
 import java.io.File
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 internal fun FolderGridItem(
     modifier: Modifier = Modifier,

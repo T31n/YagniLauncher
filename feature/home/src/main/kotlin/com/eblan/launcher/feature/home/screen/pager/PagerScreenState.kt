@@ -30,7 +30,6 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -102,7 +101,6 @@ import kotlin.math.roundToInt
  * The [PagerScreen] is so huge that we have to do this
  * 2k LOC is unacceptable and this is only what we've got
  */
-@OptIn(ExperimentalFoundationApi::class)
 internal class PagerScreenState(
     density: Density,
     private val screenHeight: Int,

@@ -42,7 +42,7 @@ class JvmLibraryConventionPlugin : Plugin<Project> {
 
             extensions.configure<KotlinJvmProjectExtension> {
                 compilerOptions {
-                    jvmTarget = JvmTarget.JVM_11
+                    jvmTarget.assign(JvmTarget.JVM_11)
                 }
             }
 

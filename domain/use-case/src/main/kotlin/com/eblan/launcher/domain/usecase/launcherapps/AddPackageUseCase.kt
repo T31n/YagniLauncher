@@ -50,7 +50,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
-import kotlin.uuid.ExperimentalUuidApi
 
 class AddPackageUseCase @Inject constructor(
     private val userDataRepository: UserDataRepository,
@@ -128,7 +127,6 @@ class AddPackageUseCase @Inject constructor(
         }
     }
 
-    @OptIn(ExperimentalUuidApi::class)
     private suspend fun addEblanApplicationInfo(
         homeSettings: HomeSettings,
         serialNumber: Long,
