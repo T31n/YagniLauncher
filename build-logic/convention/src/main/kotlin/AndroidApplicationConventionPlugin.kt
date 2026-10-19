@@ -50,7 +50,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
 
             extensions.configure<KotlinAndroidProjectExtension> {
                 compilerOptions {
-                    jvmTarget = JvmTarget.JVM_11
+                    jvmTarget.assign(JvmTarget.JVM_11)
                 }
             }
         }
