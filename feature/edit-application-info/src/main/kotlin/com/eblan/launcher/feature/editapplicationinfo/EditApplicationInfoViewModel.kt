@@ -38,7 +38,7 @@ import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
 import com.eblan.launcher.domain.usecase.application.DeleteEblanApplicationInfoCustomIconUseCase
 import com.eblan.launcher.domain.usecase.application.GetEblanApplicationInfosTagsUiUseCase
 import com.eblan.launcher.domain.usecase.application.UpdateEblanApplicationInfoCustomIconUseCase
-import com.eblan.launcher.domain.usecase.folder.GetPreviewFolderEblanApplicationInfosUseCase
+import com.eblan.launcher.domain.usecase.folder.GetFolderEblanApplicationInfoPopupsUseCase
 import com.eblan.launcher.domain.usecase.folder.GetTopLevelFolderEblanApplicationInfosUseCase
 import com.eblan.launcher.feature.editapplicationinfo.model.EditApplicationInfoUiState
 import com.eblan.launcher.feature.editapplicationinfo.navigation.EditApplicationInfoRouteData
@@ -66,7 +66,7 @@ internal class EditApplicationInfoViewModel @Inject constructor(
     private val updateEblanApplicationInfoCustomIconUseCase: UpdateEblanApplicationInfoCustomIconUseCase,
     private val deleteEblanApplicationInfoCustomIconUseCase: DeleteEblanApplicationInfoCustomIconUseCase,
     private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
-    getPreviewFolderEblanApplicationInfosUseCase: GetPreviewFolderEblanApplicationInfosUseCase,
+    getFolderEblanApplicationInfoPopupsUseCase: GetFolderEblanApplicationInfoPopupsUseCase,
     getTopLevelFolderEblanApplicationInfosUseCase: GetTopLevelFolderEblanApplicationInfosUseCase,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
@@ -118,8 +118,8 @@ internal class EditApplicationInfoViewModel @Inject constructor(
             initialValue = emptyList(),
         )
 
-    val previewFolderEblanApplicationInfos =
-        getPreviewFolderEblanApplicationInfosUseCase().stateIn(
+    val folderEblanApplicationInfoPopups =
+        getFolderEblanApplicationInfoPopupsUseCase().stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = emptyMap(),

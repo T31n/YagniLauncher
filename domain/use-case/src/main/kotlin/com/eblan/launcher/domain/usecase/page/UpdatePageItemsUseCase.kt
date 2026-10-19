@@ -61,7 +61,7 @@ class UpdatePageItemsUseCase @Inject constructor(
 
                     deleteGridItemData(
                         gridItem = gridItem,
-                        previewFolderGridItems = previewFolderGridItems,
+                        folderPopupGridItems = previewFolderGridItems,
                         appWidgetHostWrapper = appWidgetHostWrapper,
                         launcherAppsWrapper = launcherAppsWrapper,
                     )

@@ -506,7 +506,7 @@ internal suspend fun addNewApplicationToHomeScreen(
                         )
 
                 val folderGridItems = getRecursiveFolderGridItems(
-                    previewFolderGridItems = previewFolderGridItems,
+                    folderPopupGridItems = previewFolderGridItems,
                     folderId = it.id,
                 )
 

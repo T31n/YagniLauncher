@@ -17,6 +17,7 @@
  */
 package com.eblan.launcher.feature.home.screen.application
 
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -26,7 +27,6 @@ import android.os.UserHandle
 import android.view.WindowManager
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Column
@@ -41,7 +41,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.material3.ElevatedFilterChip
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -84,7 +83,6 @@ import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLab
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderEntry
-import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.launcherapps.EblanUser
 import com.eblan.launcher.domain.model.launcherapps.EblanUserPageKey
@@ -110,7 +108,6 @@ import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.milliseconds
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 internal fun ApplicationScreen(
     modifier: Modifier = Modifier,
@@ -127,12 +124,12 @@ internal fun ApplicationScreen(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     animations: Boolean,
-    previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
+    folderEblanApplicationInfosPopups: Map<String, FolderEblanApplicationInfoPopup>,
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
     isVisibleFolderEblanApplicationInfos: Boolean,
-    folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
+    folderEblanApplicationInfoEntries: List<FolderEntry>,
     onDismiss: () -> Unit,
     onDragEnd: () -> Unit,
     onGetEblanApplicationInfosByLabel: (String) -> Unit,
@@ -218,12 +215,12 @@ internal fun ApplicationScreen(
                     systemTextColor = systemTextColor,
                     systemCustomTextColor = systemCustomTextColor,
                     animations = animations,
-                    previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+                    folderEblanApplicationInfoPopups = folderEblanApplicationInfosPopups,
                     folderCornerRadius = folderCornerRadius,
                     folderBackgroundColor = folderBackgroundColor,
                     customFolderBackgroundColor = customFolderBackgroundColor,
                     isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
-                    folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+                    folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
                     onDismiss = onDismiss,
                     onDragEnd = onDragEnd,
                     onGetEblanApplicationInfosByLabel = onGetEblanApplicationInfosByLabel,
@@ -375,7 +372,6 @@ internal fun TagElevatedFilterChip(
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 internal fun EblanApplicationInfoTabRow(
     modifier: Modifier = Modifier,
     currentPage: Int,
@@ -452,7 +448,7 @@ internal fun EblanApplicationInfoTabRow(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, FlowPreview::class)
+@OptIn(FlowPreview::class)
 @Composable
 internal fun ApplicationScreenEffect(
     horizontalPagerState: PagerState,
@@ -509,6 +505,7 @@ internal fun ApplicationScreenEffect(
     }
 }
 
+@SuppressLint("WrongConstant")
 @Composable
 internal fun rememberIsQuietModeEnabled(userHandle: UserHandle?): State<Boolean> {
     val context = LocalContext.current
@@ -565,6 +562,7 @@ internal fun rememberIsQuietModeEnabled(userHandle: UserHandle?): State<Boolean>
     }
 }
 
+@SuppressLint("WrongConstant")
 @Composable
 internal fun rememberIsPrivateQuietModeEnabled(eblanUser: EblanUser?): State<Boolean> {
     val context = LocalContext.current

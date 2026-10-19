@@ -46,7 +46,7 @@ import androidx.compose.ui.unit.round
 import androidx.compose.ui.viewinterop.AndroidView
 import coil3.compose.AsyncImage
 import com.eblan.launcher.domain.model.folder.FolderEntry
-import com.eblan.launcher.domain.model.folder.PreviewFolder
+import com.eblan.launcher.domain.model.folder.FolderPopup
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
@@ -84,7 +84,7 @@ internal fun InteractiveGridItem(
     lockMovement: Boolean,
     isDragging: Boolean,
     showGridItemMenu: Boolean,
-    previewFolderGridItems: Map<String, PreviewFolder>,
+    folderPopups: Map<String, FolderPopup>,
     cellWidth: Int,
     cellHeight: Int,
     leftPadding: Int,
@@ -264,7 +264,7 @@ internal fun InteractiveGridItem(
                 isDragging = isDragging,
                 hasInteraction = hasInteraction,
                 isVisibleWhiteBox = isVisibleWhiteBox,
-                previewFolderGridItems = previewFolderGridItems,
+                folderPopups = folderPopups,
                 hasShortcutHostPermission = hasShortcutHostPermission,
                 iconPackFilePaths = iconPackFilePaths,
                 animations = animations,

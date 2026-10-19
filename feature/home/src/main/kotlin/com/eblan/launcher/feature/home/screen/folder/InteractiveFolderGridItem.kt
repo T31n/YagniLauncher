@@ -20,7 +20,6 @@ package com.eblan.launcher.feature.home.screen.folder
 import android.content.Intent.parseUri
 import android.graphics.Rect
 import android.os.Build
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -76,7 +75,7 @@ import coil3.request.addLastModifiedToFileCacheKey
 import coil3.size.Size
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.folder.FolderEntry
-import com.eblan.launcher.domain.model.folder.PreviewFolder
+import com.eblan.launcher.domain.model.folder.FolderPopup
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
@@ -100,7 +99,6 @@ import com.eblan.launcher.ui.local.LocalStatusBarManager
 import com.eblan.launcher.ui.settings.rememberIsNotificationAccessGranted
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 internal fun InteractiveFolderGridItem(
     modifier: Modifier = Modifier,
@@ -115,7 +113,7 @@ internal fun InteractiveFolderGridItem(
     moveGridItemResult: MoveGridItemResult?,
     progress: Float,
     showFolderGridItemMenu: Boolean,
-    previewFolderGridItems: Map<String, PreviewFolder>,
+    folderPopups: Map<String, FolderPopup>,
     minCellWidthPx: Int,
     minCellHeightPx: Int,
     paddingValues: PaddingValues,
@@ -323,7 +321,7 @@ internal fun InteractiveFolderGridItem(
                 isSelected = isSelected,
                 isVisibleOverlay = isVisibleOverlay,
                 sharedElementKey = sharedElementKey,
-                previewFolderGridItems = previewFolderGridItems,
+                folderPopups = folderPopups,
                 hasShortcutHostPermission = hasShortcutHostPermission,
                 padding = padding,
                 iconSize = iconSize,
@@ -352,7 +350,6 @@ internal fun InteractiveFolderGridItem(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun InteractiveApplicationInfoGridItem(
     modifier: Modifier = Modifier,
@@ -526,7 +523,6 @@ private fun InteractiveApplicationInfoGridItem(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun InteractiveShortcutInfoGridItem(
     modifier: Modifier = Modifier,
@@ -706,7 +702,6 @@ private fun InteractiveShortcutInfoGridItem(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun InteractiveShortcutConfigGridItem(
     modifier: Modifier = Modifier,
@@ -864,7 +859,6 @@ private fun InteractiveShortcutConfigGridItem(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun InteractiveNestedFolderGridItem(
     modifier: Modifier = Modifier,
@@ -876,7 +870,7 @@ private fun InteractiveNestedFolderGridItem(
     isSelected: Boolean,
     isVisibleOverlay: Boolean,
     sharedElementKey: SharedElementKey,
-    previewFolderGridItems: Map<String, PreviewFolder>,
+    folderPopups: Map<String, FolderPopup>,
     hasShortcutHostPermission: Boolean,
     padding: Dp,
     iconSize: Dp,
@@ -1026,7 +1020,7 @@ private fun InteractiveNestedFolderGridItem(
             ) {
                 PreviewFolderGridLayout(
                     modifier = Modifier.fillMaxSize(),
-                    gridItems = previewFolderGridItems[gridItem.id]?.previewFolderGridItems,
+                    gridItems = folderPopups[gridItem.id]?.previewFolderGridItems,
                     slotId = { it.id },
                     content = {
                         PreviewNestedFolderGridItem(

@@ -22,7 +22,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import coil3.compose.AsyncImage
-import com.eblan.launcher.domain.model.folder.PreviewFolder
+import com.eblan.launcher.domain.model.folder.FolderPopup
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
@@ -42,7 +42,7 @@ internal fun PageGridItem(
     gridItemSettings: GridItemSettings,
     hasShortcutHostPermission: Boolean,
     textColor: TextColor,
-    previewFolderGridItems: Map<String, PreviewFolder>,
+    folderPopupGridItems: Map<String, FolderPopup>,
     iconPackFilePaths: Map<String, String?>,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
@@ -115,7 +115,7 @@ internal fun PageGridItem(
                 data = data,
                 gridItemSettings = currentGridItemSettings,
                 textColor = currentTextColor,
-                previewFolderGridItems = previewFolderGridItems,
+                folderPopupGridItems = folderPopupGridItems,
                 hasShortcutHostPermission = hasShortcutHostPermission,
                 iconPackFilePaths = iconPackFilePaths,
                 horizontalAlignment = horizontalAlignment,

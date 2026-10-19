@@ -18,11 +18,9 @@
 package com.eblan.launcher.feature.home.screen.application.vertical
 
 import android.os.Build
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -70,7 +68,6 @@ import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLab
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderEntry
-import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.launcherapps.EblanUser
 import com.eblan.launcher.domain.model.launcherapps.EblanUserPageKey
@@ -95,10 +92,9 @@ import com.eblan.launcher.feature.home.screen.application.rememberIsQuietModeEna
 import com.eblan.launcher.feature.home.util.getApplicationScreenTextColor
 import com.eblan.launcher.ui.local.LocalUserManager
 import com.eblan.launcher.ui.settings.rememberIsDefaultLauncher
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class, FlowPreview::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun VerticalApplicationScreen(
     modifier: Modifier = Modifier,
@@ -114,12 +110,12 @@ internal fun VerticalApplicationScreen(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     animations: Boolean,
-    previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
+    folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
     isVisibleFolderEblanApplicationInfos: Boolean,
-    folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
+    folderEblanApplicationInfoEntries: List<FolderEntry>,
     onDismiss: () -> Unit,
     onDragEnd: () -> Unit,
     onGetEblanApplicationInfosByLabel: (String) -> Unit,
@@ -268,12 +264,12 @@ internal fun VerticalApplicationScreen(
                     systemTextColor = systemTextColor,
                     systemCustomTextColor = systemCustomTextColor,
                     animations = animations,
-                    previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+                    folderEblanApplicationInfosPopup = folderEblanApplicationInfoPopups,
                     folderCornerRadius = folderCornerRadius,
                     folderBackgroundColor = folderBackgroundColor,
                     customFolderBackgroundColor = customFolderBackgroundColor,
                     isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
-                    folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+                    folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
                     onDragEnd = onDragEnd,
                     onVerticalDrag = onVerticalDrag,
                     onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
@@ -301,7 +297,6 @@ internal fun VerticalApplicationScreen(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
 private fun EblanApplicationInfosPage(
     modifier: Modifier = Modifier,
@@ -317,12 +312,12 @@ private fun EblanApplicationInfosPage(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     animations: Boolean,
-    previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
+    folderEblanApplicationInfosPopup: Map<String, FolderEblanApplicationInfoPopup>,
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
     isVisibleFolderEblanApplicationInfos: Boolean,
-    folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
+    folderEblanApplicationInfoEntries: List<FolderEntry>,
     onDragEnd: () -> Unit,
     onVerticalDrag: (Float) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
@@ -404,12 +399,12 @@ private fun EblanApplicationInfosPage(
                 systemTextColor = systemTextColor,
                 systemCustomTextColor = systemCustomTextColor,
                 animations = animations,
-                previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+                folderEblanApplicationInfosPopup = folderEblanApplicationInfosPopup,
                 folderCornerRadius = folderCornerRadius,
                 folderBackgroundColor = folderBackgroundColor,
                 customFolderBackgroundColor = customFolderBackgroundColor,
                 isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
-                folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+                folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
                 onDragEnd = onDragEnd,
                 onVerticalDrag = onVerticalDrag,
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
@@ -450,7 +445,6 @@ private fun EblanApplicationInfosPage(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
 private fun EblanApplicationInfos(
     modifier: Modifier = Modifier,
@@ -466,12 +460,12 @@ private fun EblanApplicationInfos(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     animations: Boolean,
-    previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
+    folderEblanApplicationInfosPopup: Map<String, FolderEblanApplicationInfoPopup>,
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
     isVisibleFolderEblanApplicationInfos: Boolean,
-    folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
+    folderEblanApplicationInfoEntries: List<FolderEntry>,
     onDragEnd: () -> Unit,
     onVerticalDrag: (Float) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
@@ -568,10 +562,10 @@ private fun EblanApplicationInfos(
                             isSwiping = swipeY > 0f,
                             drag = drag,
                             isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
-                            folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+                            folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
                             iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
                             onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                            previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+                            folderEblanApplicationInfosPopup = folderEblanApplicationInfosPopup,
                             onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
                             onLongPressFolderApplicationInfo = onLongPressFolderApplicationInfo,
                             onTapFolderApplicationInfo = onTapFolderApplicationInfo,

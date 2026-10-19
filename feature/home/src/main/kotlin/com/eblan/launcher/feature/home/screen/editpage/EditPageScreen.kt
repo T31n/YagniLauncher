@@ -72,7 +72,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.core.util.Consumer
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.folder.PreviewFolder
+import com.eblan.launcher.domain.model.folder.FolderPopup
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.home.PageItem
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
@@ -100,7 +100,7 @@ internal fun EditGridPageScreen(
     screenWidth: Int,
     screenHeight: Int,
     textColor: TextColor,
-    previewFolderGridItems: Map<String, PreviewFolder>,
+    folderPopupGridItems: Map<String, FolderPopup>,
     iconPackFilePaths: Map<String, String?>,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
@@ -221,7 +221,7 @@ internal fun EditGridPageScreen(
                                 gridItemSettings = homeSettings.gridItemSettings,
                                 hasShortcutHostPermission = hasShortcutHostPermission,
                                 textColor = textColor,
-                                previewFolderGridItems = previewFolderGridItems,
+                                folderPopupGridItems = folderPopupGridItems,
                                 iconPackFilePaths = iconPackFilePaths,
                                 folderBackgroundColor = folderBackgroundColor,
                                 customFolderBackgroundColor = customFolderBackgroundColor,
@@ -333,7 +333,7 @@ internal fun EditDockGridPageScreen(
     homeSettings: HomeSettings,
     paddingValues: PaddingValues,
     textColor: TextColor,
-    previewFolderGridItems: Map<String, PreviewFolder>,
+    folderPopupGridItems: Map<String, FolderPopup>,
     iconPackFilePaths: Map<String, String?>,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
@@ -447,7 +447,7 @@ internal fun EditDockGridPageScreen(
                                     gridItemSettings = homeSettings.gridItemSettings,
                                     hasShortcutHostPermission = hasShortcutHostPermission,
                                     textColor = textColor,
-                                    previewFolderGridItems = previewFolderGridItems,
+                                    folderPopupGridItems = folderPopupGridItems,
                                     iconPackFilePaths = iconPackFilePaths,
                                     folderBackgroundColor = folderBackgroundColor,
                                     customFolderBackgroundColor = customFolderBackgroundColor,

@@ -17,7 +17,6 @@
  */
 package com.eblan.launcher.feature.home.screen.pager.griditem
 
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -64,7 +63,7 @@ import coil3.request.addLastModifiedToFileCacheKey
 import coil3.size.Size
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.folder.FolderEntry
-import com.eblan.launcher.domain.model.folder.PreviewFolder
+import com.eblan.launcher.domain.model.folder.FolderPopup
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
@@ -86,7 +85,6 @@ import com.eblan.launcher.ui.local.LocalLauncherApps
 import com.eblan.launcher.ui.local.LocalStatusBarManager
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 internal fun InteractiveFolderGridItem(
     modifier: Modifier = Modifier,
@@ -105,7 +103,7 @@ internal fun InteractiveFolderGridItem(
     isDragging: Boolean,
     hasInteraction: Boolean,
     isVisibleWhiteBox: Boolean,
-    previewFolderGridItems: Map<String, PreviewFolder>,
+    folderPopups: Map<String, FolderPopup>,
     hasShortcutHostPermission: Boolean,
     iconPackFilePaths: Map<String, String?>,
     animations: Boolean,
@@ -151,7 +149,7 @@ internal fun InteractiveFolderGridItem(
     val currentGridItem = rememberUpdatedState(gridItem)
     val currentLockMovement = rememberUpdatedState(lockMovement)
     val currentFolderGridItems =
-        rememberUpdatedState(previewFolderGridItems[gridItem.id]?.folderGridItems)
+        rememberUpdatedState(folderPopups[gridItem.id]?.folderGridItems)
     val currentOnOpenAppDrawer by rememberUpdatedState(onOpenAppDrawer)
     val currentOnLongPressGridItem by rememberUpdatedState(onLongPressGridItem)
     val currentOnTapFolderGridItem by rememberUpdatedState(onTapFolderGridItem)
@@ -286,7 +284,7 @@ internal fun InteractiveFolderGridItem(
             ) {
                 PreviewFolderGridLayout(
                     modifier = Modifier.fillMaxSize(),
-                    gridItems = previewFolderGridItems[gridItem.id]?.previewFolderGridItems,
+                    gridItems = folderPopups[gridItem.id]?.previewFolderGridItems,
                     slotId = { it.id },
                     content = {
                         PreviewFolderGridItem(
@@ -297,7 +295,7 @@ internal fun InteractiveFolderGridItem(
                             parent = sharedElementKey.parent,
                             moveGridItemResult = moveGridItemResult,
                             drag = drag,
-                            folderGridItems = previewFolderGridItems[gridItem.id]?.folderGridItems,
+                            folderGridItems = folderPopups[gridItem.id]?.folderGridItems,
                             isVisibleFolders = isVisibleFolder,
                             hasShortcutHostPermission = hasShortcutHostPermission,
                             iconPackFilePaths = iconPackFilePaths,

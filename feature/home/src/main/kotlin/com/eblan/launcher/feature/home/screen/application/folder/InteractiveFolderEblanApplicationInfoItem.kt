@@ -18,7 +18,6 @@
 package com.eblan.launcher.feature.home.screen.application.folder
 
 import android.graphics.Rect
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -74,7 +73,6 @@ import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderEntry
-import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.grid.MoveFolderEblanApplicationInfoGridItemResult
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
@@ -93,7 +91,6 @@ import com.eblan.launcher.feature.home.util.getVerticalArrangement
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 internal fun InteractiveFolderEblanApplicationInfoItem(
     modifier: Modifier = Modifier,
@@ -103,7 +100,7 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
     customFolderBackgroundColor: Int,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
-    previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
+    folderEblanApplicationInfosPopup: Map<String, FolderEblanApplicationInfoPopup>,
     appDrawerSettings: AppDrawerSettings,
     folderCornerRadius: Int,
     isVisibleOverlay: Boolean,
@@ -113,7 +110,7 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
     animations: Boolean,
     progress: Float,
     moveFolderEblanApplicationInfoGridItemResult: MoveFolderEblanApplicationInfoGridItemResult?,
-    folderEblanApplicationInfoPopups: List<FolderEblanApplicationInfoPopup>,
+    folderEblanApplicationInfoEntries: List<FolderEntry>,
     drag: Drag,
     showFolderEblanApplicationInfoGridItemMenu: Boolean,
     iconPackFilePaths: Map<String, String?>,
@@ -174,9 +171,9 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
 
     val isVisibleFolder = remember(
         key1 = folderEblanApplicationInfoGridItem,
-        key2 = folderEblanApplicationInfoPopups,
+        key2 = folderEblanApplicationInfoEntries,
     ) {
-        folderEblanApplicationInfoPopups.any { it.folderEntry.id == folderEblanApplicationInfoGridItem.id }
+        folderEblanApplicationInfoEntries.any { it.id == folderEblanApplicationInfoGridItem.id }
     }
 
     val horizontalAlignment =
@@ -243,7 +240,7 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
                 isScrollInProgress = isScrollInProgress,
                 isInProgress = isInProgress,
                 animations = animations,
-                previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+                folderEblanApplicationInfosPopup = folderEblanApplicationInfosPopup,
                 systemCustomTextColor = systemCustomTextColor,
                 systemTextColor = systemTextColor,
                 textColor = textColor,
@@ -444,7 +441,7 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
     isScrollInProgress: Boolean,
     isInProgress: Boolean,
     animations: Boolean,
-    previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
+    folderEblanApplicationInfosPopup: Map<String, FolderEblanApplicationInfoPopup>,
     systemCustomTextColor: Int,
     systemTextColor: TextColor,
     textColor: Color,
@@ -576,7 +573,7 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
             ) {
                 PreviewFolderGridLayout(
                     modifier = Modifier.fillMaxSize(),
-                    gridItems = previewFolderEblanApplicationInfos[folderEblanApplicationInfoGridItem.id]?.previewFolderGridItems,
+                    gridItems = folderEblanApplicationInfosPopup[folderEblanApplicationInfoGridItem.id]?.previewFolderEblanApplicationInfoGridItems,
                     slotId = { it.id },
                     content = {
                         PreviewFolderEblanApplicationInfoItem(

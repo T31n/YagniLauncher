@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import com.eblan.launcher.domain.model.folder.FolderEntry
-import com.eblan.launcher.domain.model.folder.PreviewFolder
+import com.eblan.launcher.domain.model.folder.FolderPopup
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.feature.home.model.Drag
@@ -34,7 +34,7 @@ internal fun handleDragFolderGridItem(
     dragIntOffset: IntOffset,
     currentPage: Int,
     folderEntry: FolderEntry,
-    previewFolder: PreviewFolder,
+    folderPopup: FolderPopup,
     folderPopupIntOffset: IntOffset,
     isDragging: Boolean,
     isVisibleOverlay: Boolean,
@@ -50,7 +50,7 @@ internal fun handleDragFolderGridItem(
     isLastFolderGridItem: Boolean,
     isInProgress: Boolean,
     onMoveFolderGridItem: (
-        previewFolder: PreviewFolder,
+        folderPopup: FolderPopup,
         movingFolderGridItem: GridItem,
         dragX: Int,
         dragY: Int,
@@ -75,8 +75,8 @@ internal fun handleDragFolderGridItem(
     val folderGridDragPosition = calculateFolderGridDragPosition(
         density = density,
         dragIntOffset = dragIntOffset,
-        columns = previewFolder.columns,
-        rows = previewFolder.rows,
+        columns = folderPopup.columns,
+        rows = folderPopup.rows,
         folderPopupIntOffset = folderPopupIntOffset,
         paddingValues = paddingValues,
         screenHeight = screenHeight,
@@ -90,7 +90,7 @@ internal fun handleDragFolderGridItem(
         folderGridDragPosition.y in 0 until folderGridDragPosition.height
     ) {
         onMoveFolderGridItem(
-            previewFolder,
+            folderPopup,
             moveGridItemResult.movingGridItem,
             folderGridDragPosition.x,
             folderGridDragPosition.y,

@@ -17,8 +17,14 @@
  */
 package com.eblan.launcher.domain.model.folder
 
-data class PreviewFolderEblanApplicationInfo(
-    val folderEblanApplicationInfo: FolderEblanApplicationInfo,
-    val previewFolderGridItems: List<FolderEblanApplicationInfoGridItem>,
-    val folderGridItems: List<FolderEblanApplicationInfoGridItem>,
+import com.eblan.launcher.domain.model.grid.FolderGridItem
+import com.eblan.launcher.domain.model.grid.GridItem
+
+data class FolderPopup(
+    val folderGridItem: FolderGridItem,
+    val previewFolderGridItems: List<GridItem>,
+    val folderGridItems: List<GridItem>,
+    val gridItemsByPage: Map<Int, List<GridItem>>,
+    val columns: Int,
+    val rows: Int,
 )

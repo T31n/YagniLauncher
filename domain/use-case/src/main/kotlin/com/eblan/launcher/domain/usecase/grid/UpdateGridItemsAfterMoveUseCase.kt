@@ -59,7 +59,7 @@ class UpdateGridItemsAfterMoveUseCase @Inject constructor(
                                 )
 
                         val folderGridItems = getRecursiveFolderGridItems(
-                            previewFolderGridItems = previewFolderGridItems,
+                            folderPopupGridItems = previewFolderGridItems,
                             folderId = conflictingGridItem.id,
                         )
 

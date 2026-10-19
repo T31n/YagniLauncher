@@ -21,7 +21,7 @@ import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
-import com.eblan.launcher.domain.model.folder.PreviewFolderEblanApplicationInfo
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
@@ -53,7 +53,7 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
                 )
 
         getRecursiveFolderGridItems(
-            previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+            folderEblanApplicationInfosPopup = previewFolderEblanApplicationInfos,
             folderId = folderId,
         ).forEach { folderGridItem ->
             when (val data = folderGridItem.data) {
@@ -87,17 +87,17 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
     @OptIn(ExperimentalUuidApi::class)
     private fun getRecursiveFolderGridItems(
         folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem? = null,
-        previewFolderEblanApplicationInfos: Map<String, PreviewFolderEblanApplicationInfo>,
+        folderEblanApplicationInfosPopup: Map<String, FolderEblanApplicationInfoPopup>,
         folderId: String,
     ): List<FolderEblanApplicationInfoGridItem> = buildList {
         val previewFolderEblanApplicationInfo =
-            previewFolderEblanApplicationInfos[folderId] ?: return@buildList
+            folderEblanApplicationInfosPopup[folderId] ?: return@buildList
 
         if (folderEblanApplicationInfoGridItem != null) {
             add(folderEblanApplicationInfoGridItem)
         }
 
-        previewFolderEblanApplicationInfo.folderGridItems.forEach {
+        previewFolderEblanApplicationInfo.folderEblanApplicationInfoGridItems.forEach {
             when (it.data) {
                 is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
                     add(it)
@@ -107,7 +107,7 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
                     addAll(
                         getRecursiveFolderGridItems(
                             folderEblanApplicationInfoGridItem = it,
-                            previewFolderEblanApplicationInfos = previewFolderEblanApplicationInfos,
+                            folderEblanApplicationInfosPopup = folderEblanApplicationInfosPopup,
                             folderId = it.id,
                         ),
                     )

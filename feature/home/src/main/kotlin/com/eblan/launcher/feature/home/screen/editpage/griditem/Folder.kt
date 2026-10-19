@@ -44,7 +44,7 @@ import coil3.request.ImageRequest.Builder
 import coil3.request.addLastModifiedToFileCacheKey
 import coil3.size.Size
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.folder.PreviewFolder
+import com.eblan.launcher.domain.model.folder.FolderPopup
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
@@ -63,7 +63,7 @@ internal fun FolderGridItem(
     data: GridItemData.Folder,
     gridItemSettings: GridItemSettings,
     textColor: Color,
-    previewFolderGridItems: Map<String, PreviewFolder>,
+    folderPopupGridItems: Map<String, FolderPopup>,
     hasShortcutHostPermission: Boolean,
     iconPackFilePaths: Map<String, String?>,
     horizontalAlignment: Alignment.Horizontal,
@@ -117,7 +117,7 @@ internal fun FolderGridItem(
             ) {
                 PreviewFolderGridLayout(
                     modifier = Modifier.fillMaxSize(),
-                    gridItems = previewFolderGridItems[gridItem.id]?.previewFolderGridItems,
+                    gridItems = folderPopupGridItems[gridItem.id]?.previewFolderGridItems,
                     slotId = { it.id },
                     content = {
                         PreviewFolderGridItem(
