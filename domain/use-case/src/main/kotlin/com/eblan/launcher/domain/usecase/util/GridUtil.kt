@@ -181,13 +181,17 @@ internal fun getGridDimension(
 }
 
 internal suspend fun <T> List<T>.getGridItemsByPage(
-    maxFolderColumns: Int,
-    maxFolderRows: Int,
-): Map<Int, List<T>> = chunked(maxFolderColumns * maxFolderRows).mapIndexed { index, gridItems ->
-    currentCoroutineContext().ensureActive()
+    columns: Int,
+    rows: Int,
+): Map<Int, List<T>> {
+    if (isEmpty()) return emptyMap()
 
-    index to gridItems
-}.toMap()
+    return chunked(columns * rows).mapIndexed { index, gridItems ->
+        currentCoroutineContext().ensureActive()
+
+        index to gridItems
+    }.toMap()
+}
 
 internal fun ApplicationInfoGridItem.asGridItem(): GridItem = GridItem(
     id = id,

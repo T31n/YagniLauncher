@@ -101,18 +101,18 @@ internal suspend fun FolderGridItemWrapper.asPreviewFolder(
         }
     }
 
-    val gridItemsByPage = folderGridItems.getGridItemsByPage(
+    val (columns, rows) = getGridDimension(
+        count = folderGridItems.size,
         maxFolderColumns = maxFolderColumns,
         maxFolderRows = maxFolderRows,
+    )
+
+    val gridItemsByPage = folderGridItems.getGridItemsByPage(
+        columns = columns,
+        rows = rows,
     )
 
     val firstPageGridItems = gridItemsByPage.values.firstOrNull().orEmpty()
-
-    val (columns, rows) = getGridDimension(
-        count = firstPageGridItems.size,
-        maxFolderColumns = maxFolderColumns,
-        maxFolderRows = maxFolderRows,
-    )
 
     val previewFolderGridItems = getPreviewFolderGridItems(
         columns = columns,
@@ -147,18 +147,17 @@ private suspend fun FolderEblanApplicationInfoWrapper.asPreviewFolderEblanApplic
         }
     }
 
-    val folderEblanApplicationInfoGridItemsByPage = folderEblanApplicationInfoGridItems.getGridItemsByPage(
-        maxFolderColumns = maxFolderColumns,
-        maxFolderRows = maxFolderRows,
-    )
-
-    val firstPageGridItems = folderEblanApplicationInfoGridItemsByPage.values.firstOrNull().orEmpty()
-
     val (columns, rows) = getGridDimension(
-        count = firstPageGridItems.size,
+        count = folderEblanApplicationInfoGridItems.size,
         maxFolderColumns = maxFolderColumns,
         maxFolderRows = maxFolderRows,
     )
+
+    val folderEblanApplicationInfoGridItemsByPage =
+        folderEblanApplicationInfoGridItems.getGridItemsByPage(
+            columns = columns,
+            rows = rows,
+        )
 
     val previewFolderGridItems = getPreviewFolderGridItems(
         columns = columns,
@@ -173,6 +172,5 @@ private suspend fun FolderEblanApplicationInfoWrapper.asPreviewFolderEblanApplic
         folderEblanApplicationInfoGridItemsByPage = folderEblanApplicationInfoGridItemsByPage,
         columns = columns,
         rows = rows,
-
     )
 }
