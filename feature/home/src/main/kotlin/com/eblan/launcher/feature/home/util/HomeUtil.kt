@@ -131,24 +131,6 @@ internal fun getVerticalAlignment(verticalAlignment: VerticalAlignment): Alignme
     VerticalAlignment.Bottom -> Alignment.Bottom
 }
 
-internal fun onDoubleTap(
-    context: Context,
-    doubleTap: EblanAction,
-    launcherApps: AndroidLauncherAppsWrapper,
-    statusBarManagerWrapper: AndroidStatusBarManagerWrapper,
-    onOpenAppDrawer: () -> Unit,
-) {
-    if (doubleTap.eblanActionType == EblanActionType.None) return
-
-    handleEblanAction(
-        context = context,
-        eblanAction = doubleTap,
-        launcherApps = launcherApps,
-        statusBarManagerWrapper = statusBarManagerWrapper,
-        onOpenAppDrawer = onOpenAppDrawer,
-    )
-}
-
 internal fun updateAppWidgetOptions(
     height: Int,
     width: Int,

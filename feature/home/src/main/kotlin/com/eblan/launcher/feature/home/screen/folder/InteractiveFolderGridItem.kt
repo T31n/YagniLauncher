@@ -81,6 +81,7 @@ import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
+import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_COLUMNS
 import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_ROWS
@@ -93,7 +94,7 @@ import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.getHorizontalAlignment
 import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
 import com.eblan.launcher.feature.home.util.getVerticalArrangement
-import com.eblan.launcher.feature.home.util.onDoubleTap
+import com.eblan.launcher.feature.home.util.handleEblanAction
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import com.eblan.launcher.ui.local.LocalStatusBarManager
 import com.eblan.launcher.ui.settings.rememberIsNotificationAccessGranted
@@ -418,14 +419,18 @@ private fun InteractiveApplicationInfoGridItem(
                 if (!isVisibleOverlay && !isInProgress) {
                     pointerInput(key1 = Unit) {
                         detectTapGestures(
-                            onDoubleTap = {
-                                onDoubleTap(
-                                    context = context,
-                                    doubleTap = gridItem.doubleTap,
-                                    launcherApps = launcherApps,
-                                    statusBarManagerWrapper = androidStatusBarManagerWrapper,
-                                    onOpenAppDrawer = onOpenAppDrawer,
-                                )
+                            onDoubleTap = if (gridItem.doubleTap.eblanActionType != EblanActionType.None) {
+                                {
+                                    handleEblanAction(
+                                        context = context,
+                                        eblanAction = gridItem.doubleTap,
+                                        launcherApps = launcherApps,
+                                        statusBarManagerWrapper = androidStatusBarManagerWrapper,
+                                        onOpenAppDrawer = onOpenAppDrawer,
+                                    )
+                                }
+                            } else {
+                                null
                             },
                             onLongPress = {
                                 scope.launch {
@@ -588,16 +593,18 @@ private fun InteractiveShortcutInfoGridItem(
                 if (!isVisibleOverlay && !isInProgress) {
                     pointerInput(key1 = Unit) {
                         detectTapGestures(
-                            onDoubleTap = {
-                                scope.launch {
-                                    onDoubleTap(
+                            onDoubleTap = if (gridItem.doubleTap.eblanActionType != EblanActionType.None) {
+                                {
+                                    handleEblanAction(
                                         context = context,
-                                        doubleTap = gridItem.doubleTap,
+                                        eblanAction = gridItem.doubleTap,
                                         launcherApps = launcherApps,
                                         statusBarManagerWrapper = androidStatusBarManagerWrapper,
                                         onOpenAppDrawer = onOpenAppDrawer,
                                     )
                                 }
+                            } else {
+                                null
                             },
                             onLongPress = {
                                 scope.launch {
@@ -773,14 +780,18 @@ private fun InteractiveShortcutConfigGridItem(
                 if (!isVisibleOverlay && !isInProgress) {
                     pointerInput(key1 = Unit) {
                         detectTapGestures(
-                            onDoubleTap = {
-                                onDoubleTap(
-                                    context = context,
-                                    doubleTap = gridItem.doubleTap,
-                                    launcherApps = launcherApps,
-                                    statusBarManagerWrapper = androidStatusBarManagerWrapper,
-                                    onOpenAppDrawer = onOpenAppDrawer,
-                                )
+                            onDoubleTap = if (gridItem.doubleTap.eblanActionType != EblanActionType.None) {
+                                {
+                                    handleEblanAction(
+                                        context = context,
+                                        eblanAction = gridItem.doubleTap,
+                                        launcherApps = launcherApps,
+                                        statusBarManagerWrapper = androidStatusBarManagerWrapper,
+                                        onOpenAppDrawer = onOpenAppDrawer,
+                                    )
+                                }
+                            } else {
+                                null
                             },
                             onLongPress = {
                                 scope.launch {
@@ -927,14 +938,18 @@ private fun InteractiveNestedFolderGridItem(
                 if (!isVisibleOverlay && !isInProgress) {
                     pointerInput(key1 = Unit) {
                         detectTapGestures(
-                            onDoubleTap = {
-                                onDoubleTap(
-                                    context = context,
-                                    doubleTap = gridItem.doubleTap,
-                                    launcherApps = launcherApps,
-                                    statusBarManagerWrapper = androidStatusBarManagerWrapper,
-                                    onOpenAppDrawer = onOpenAppDrawer,
-                                )
+                            onDoubleTap = if (gridItem.doubleTap.eblanActionType != EblanActionType.None) {
+                                {
+                                    handleEblanAction(
+                                        context = context,
+                                        eblanAction = gridItem.doubleTap,
+                                        launcherApps = launcherApps,
+                                        statusBarManagerWrapper = androidStatusBarManagerWrapper,
+                                        onOpenAppDrawer = onOpenAppDrawer,
+                                    )
+                                }
+                            } else {
+                                null
                             },
                             onLongPress = {
                                 scope.launch {

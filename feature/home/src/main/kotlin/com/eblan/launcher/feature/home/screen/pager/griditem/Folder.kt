@@ -69,6 +69,7 @@ import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
+import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.GridItemLayoutType
 import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
@@ -80,7 +81,7 @@ import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.screen.pager.handleConflictingGridItem
 import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
-import com.eblan.launcher.feature.home.util.onDoubleTap
+import com.eblan.launcher.feature.home.util.handleEblanAction
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import com.eblan.launcher.ui.local.LocalStatusBarManager
 import kotlinx.coroutines.launch
@@ -190,14 +191,18 @@ internal fun InteractiveFolderGridItem(
             if (!isVisibleOverlay) {
                 pointerInput(key1 = Unit) {
                     detectTapGestures(
-                        onDoubleTap = {
-                            onDoubleTap(
-                                context = context,
-                                doubleTap = gridItem.doubleTap,
-                                launcherApps = launcherApps,
-                                statusBarManagerWrapper = androidStatusBarManagerWrapper,
-                                onOpenAppDrawer = currentOnOpenAppDrawer,
-                            )
+                        onDoubleTap = if (gridItem.doubleTap.eblanActionType != EblanActionType.None) {
+                            {
+                                handleEblanAction(
+                                    context = context,
+                                    eblanAction = gridItem.doubleTap,
+                                    launcherApps = launcherApps,
+                                    statusBarManagerWrapper = androidStatusBarManagerWrapper,
+                                    onOpenAppDrawer = currentOnOpenAppDrawer,
+                                )
+                            }
+                        } else {
+                            null
                         },
                         onLongPress = {
                             scope.launch {
