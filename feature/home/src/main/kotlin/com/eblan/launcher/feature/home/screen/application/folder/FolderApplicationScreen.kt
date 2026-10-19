@@ -97,7 +97,7 @@ internal fun FolderApplicationScreen(
     animations: Boolean,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
-    folderEblanApplicationInfosPopup: Map<String, FolderEblanApplicationInfoPopup>,
+    folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
     appDrawerSettings: AppDrawerSettings,
@@ -144,7 +144,7 @@ internal fun FolderApplicationScreen(
     ) -> Unit,
     onTapFolderEblanApplicationInfoItem: (FolderEntry) -> Unit,
 ) {
-    val previewFolderEblanApplicationInfo = folderEblanApplicationInfosPopup[folderEntry.id] ?: return
+    val previewFolderEblanApplicationInfo = folderEblanApplicationInfoPopups[folderEntry.id] ?: return
 
     val folderPopupIntOffset = IntOffset(
         x = folderEntry.x,
@@ -448,7 +448,7 @@ internal fun FolderApplicationScreen(
                                 customFolderBackgroundColor = customFolderBackgroundColor,
                                 systemTextColor = systemTextColor,
                                 systemCustomTextColor = systemCustomTextColor,
-                                folderEblanApplicationInfosPopup = folderEblanApplicationInfosPopup,
+                                folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                                 appDrawerSettings = appDrawerSettings,
                                 folderCornerRadius = folderCornerRadius,
                                 isVisibleOverlay = isVisibleOverlay,

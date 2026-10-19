@@ -203,7 +203,7 @@ internal fun FolderScreen(
 
     val folderGridHorizontalPagerState = rememberPagerState(
         pageCount = {
-            folderPopup.gridItemsByPage.size
+            folderPopup.folderGridItemsByPage.size
         },
     )
 
@@ -431,7 +431,7 @@ internal fun FolderScreen(
                     FolderGridLayout(
                         modifier = Modifier.fillMaxSize(),
                         columns = folderPopup.columns,
-                        gridItems = folderPopup.gridItemsByPage[index],
+                        gridItems = folderPopup.folderGridItemsByPage[index],
                         rows = folderPopup.rows,
                         width = animatedPreviewRect.width().roundToInt(),
                         height = animatedPreviewRect.height().roundToInt(),
@@ -478,7 +478,7 @@ internal fun FolderScreen(
 
                 FolderTitle(
                     label = folderPopup.folderGridItem.label,
-                    gridItemsByPage = folderPopup.gridItemsByPage,
+                    gridItemsByPage = folderPopup.folderGridItemsByPage,
                     folderGridHorizontalPagerState = folderGridHorizontalPagerState,
                     progress = progress.value,
                     folderBackgroundColor = folderBackgroundColor,

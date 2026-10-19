@@ -107,7 +107,7 @@ internal fun FolderEblanApplicationInfoItem(
     isScrollInProgress: Boolean,
     isSwiping: Boolean,
     drag: Drag,
-    folderEblanApplicationInfosPopup: Map<String, FolderEblanApplicationInfoPopup>,
+    folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     isVisibleFolderEblanApplicationInfos: Boolean,
     folderEblanApplicationInfoEntries: List<FolderEntry>,
     iconPackFilePaths: Map<String, String?>,
@@ -300,7 +300,7 @@ internal fun FolderEblanApplicationInfoItem(
             ) {
                 PreviewFolderGridLayout(
                     modifier = Modifier.fillMaxSize(),
-                    gridItems = folderEblanApplicationInfosPopup[folderEblanApplicationInfo.id]?.previewFolderEblanApplicationInfoGridItems,
+                    gridItems = folderEblanApplicationInfoPopups[folderEblanApplicationInfo.id]?.previewFolderEblanApplicationInfoGridItems,
                     slotId = { it.id },
                     content = {
                         PreviewFolderEblanApplicationInfoItem(

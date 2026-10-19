@@ -152,7 +152,7 @@ internal fun GridItem.isTopLevel() = when (val itemData = data) {
 internal suspend fun <T> getPreviewFolderGridItems(
     columns: Int,
     rows: Int,
-    folderGridItems: List<T>,
+    gridItems: List<T>,
 ): List<T> = buildList {
     for (row in 0 until minOf(rows, FOLDER_PREVIEW_ROWS)) {
         currentCoroutineContext().ensureActive()
@@ -162,7 +162,7 @@ internal suspend fun <T> getPreviewFolderGridItems(
 
             val index = row * columns + column
 
-            folderGridItems.getOrNull(index)?.let(::add)
+            gridItems.getOrNull(index)?.let(::add)
         }
     }
 }

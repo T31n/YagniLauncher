@@ -24,7 +24,7 @@ data class FolderPopup(
     val folderGridItem: FolderGridItem,
     val previewFolderGridItems: List<GridItem>,
     val folderGridItems: List<GridItem>,
-    val gridItemsByPage: Map<Int, List<GridItem>>,
+    val folderGridItemsByPage: Map<Int, List<GridItem>>,
     val columns: Int,
     val rows: Int,
 )

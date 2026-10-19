@@ -107,24 +107,24 @@ internal suspend fun FolderGridItemWrapper.asPreviewFolder(
         maxFolderRows = maxFolderRows,
     )
 
-    val gridItemsByPage = folderGridItems.getGridItemsByPage(
+    val folderGridItemsByPage = folderGridItems.getGridItemsByPage(
         columns = columns,
         rows = rows,
     )
 
-    val firstPageGridItems = gridItemsByPage.values.firstOrNull().orEmpty()
+    val firstPageFolderGridItems = folderGridItemsByPage.values.firstOrNull().orEmpty()
 
     val previewFolderGridItems = getPreviewFolderGridItems(
         columns = columns,
         rows = rows,
-        folderGridItems = firstPageGridItems,
+        gridItems = firstPageFolderGridItems,
     )
 
     return FolderPopup(
         folderGridItem = folderGridItem,
         previewFolderGridItems = previewFolderGridItems,
         folderGridItems = folderGridItems,
-        gridItemsByPage = gridItemsByPage,
+        folderGridItemsByPage = folderGridItemsByPage,
         columns = columns,
         rows = rows,
     )
@@ -162,7 +162,7 @@ private suspend fun FolderEblanApplicationInfoWrapper.asPreviewFolderEblanApplic
     val previewFolderGridItems = getPreviewFolderGridItems(
         columns = columns,
         rows = rows,
-        folderGridItems = folderEblanApplicationInfoGridItems,
+        gridItems = folderEblanApplicationInfoGridItems,
     )
 
     return FolderEblanApplicationInfoPopup(

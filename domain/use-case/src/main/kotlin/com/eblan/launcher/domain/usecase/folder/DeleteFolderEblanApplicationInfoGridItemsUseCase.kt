@@ -45,7 +45,7 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
     ) = withContext(defaultDispatcher) {
         val userData = userDataRepository.userDataFlow.first()
 
-        val previewFolderEblanApplicationInfos =
+        val folderEblanApplicationInfoPopups =
             folderEblanApplicationInfoRepository.getFolderEblanApplicationInfoWrappers()
                 .asPreviewFolderEblanApplicationInfos(
                     maxFolderColumns = userData.folderSettings.maxFolderColumns,
@@ -53,7 +53,7 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
                 )
 
         getRecursiveFolderGridItems(
-            folderEblanApplicationInfosPopup = previewFolderEblanApplicationInfos,
+            folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
             folderId = folderId,
         ).forEach { folderGridItem ->
             when (val data = folderGridItem.data) {
@@ -87,11 +87,11 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
     @OptIn(ExperimentalUuidApi::class)
     private fun getRecursiveFolderGridItems(
         folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem? = null,
-        folderEblanApplicationInfosPopup: Map<String, FolderEblanApplicationInfoPopup>,
+        folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
         folderId: String,
     ): List<FolderEblanApplicationInfoGridItem> = buildList {
         val previewFolderEblanApplicationInfo =
-            folderEblanApplicationInfosPopup[folderId] ?: return@buildList
+            folderEblanApplicationInfoPopups[folderId] ?: return@buildList
 
         if (folderEblanApplicationInfoGridItem != null) {
             add(folderEblanApplicationInfoGridItem)
@@ -107,7 +107,7 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
                     addAll(
                         getRecursiveFolderGridItems(
                             folderEblanApplicationInfoGridItem = it,
-                            folderEblanApplicationInfosPopup = folderEblanApplicationInfosPopup,
+                            folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                             folderId = it.id,
                         ),
                     )

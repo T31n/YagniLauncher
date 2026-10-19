@@ -100,7 +100,7 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
     customFolderBackgroundColor: Int,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
-    folderEblanApplicationInfosPopup: Map<String, FolderEblanApplicationInfoPopup>,
+    folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     appDrawerSettings: AppDrawerSettings,
     folderCornerRadius: Int,
     isVisibleOverlay: Boolean,
@@ -240,7 +240,7 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
                 isScrollInProgress = isScrollInProgress,
                 isInProgress = isInProgress,
                 animations = animations,
-                folderEblanApplicationInfosPopup = folderEblanApplicationInfosPopup,
+                folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                 systemCustomTextColor = systemCustomTextColor,
                 systemTextColor = systemTextColor,
                 textColor = textColor,
@@ -441,7 +441,7 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
     isScrollInProgress: Boolean,
     isInProgress: Boolean,
     animations: Boolean,
-    folderEblanApplicationInfosPopup: Map<String, FolderEblanApplicationInfoPopup>,
+    folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     systemCustomTextColor: Int,
     systemTextColor: TextColor,
     textColor: Color,
@@ -573,7 +573,7 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
             ) {
                 PreviewFolderGridLayout(
                     modifier = Modifier.fillMaxSize(),
-                    gridItems = folderEblanApplicationInfosPopup[folderEblanApplicationInfoGridItem.id]?.previewFolderEblanApplicationInfoGridItems,
+                    gridItems = folderEblanApplicationInfoPopups[folderEblanApplicationInfoGridItem.id]?.previewFolderEblanApplicationInfoGridItems,
                     slotId = { it.id },
                     content = {
                         PreviewFolderEblanApplicationInfoItem(
