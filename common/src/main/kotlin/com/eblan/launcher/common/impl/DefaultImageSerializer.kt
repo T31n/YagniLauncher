@@ -107,8 +107,6 @@ internal class DefaultImageSerializer @Inject constructor(
         drawable: Drawable,
         iconShape: IconShape,
     ): Drawable? {
-        if (iconShape == IconShape.None) return drawable
-
         val bitmap = drawable.toBitmap() ?: return null
         val shapedBitmap = createBitmap(bitmap.width, bitmap.height)
         val canvas = Canvas(shapedBitmap)
