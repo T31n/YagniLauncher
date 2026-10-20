@@ -21,6 +21,22 @@ import com.eblan.launcher.domain.model.grid.Anchor
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.SideAnchor
 
+/**
+ * Resizes a grid item to pixel dimensions while keeping the selected corner fixed.
+ *
+ * Pixel dimensions are rounded up to whole grid cells, with each span limited to at least one cell.
+ * The resulting position is not clamped to the grid bounds.
+ *
+ * @param gridItem The item to resize.
+ * @param width The requested width in pixels.
+ * @param height The requested height in pixels.
+ * @param rows The number of rows in the grid.
+ * @param columns The number of columns in the grid.
+ * @param gridWidth The grid width in pixels.
+ * @param gridHeight The grid height in pixels.
+ * @param anchor The corner to keep fixed during resizing.
+ * @return A copy of [gridItem] with updated position and span.
+ */
 fun resizeGridItemWithPixels(
     gridItem: GridItem,
     width: Int,
@@ -57,6 +73,22 @@ fun resizeGridItemWithPixels(
     )
 }
 
+/**
+ * Resizes a widget grid item to pixel dimensions while keeping the selected side fixed.
+ *
+ * Pixel dimensions are rounded up to whole grid cells, with each span limited to at least one cell.
+ * The resulting position is not clamped to the grid bounds.
+ *
+ * @param gridItem The widget item to resize.
+ * @param width The requested width in pixels.
+ * @param height The requested height in pixels.
+ * @param rows The number of rows in the grid.
+ * @param columns The number of columns in the grid.
+ * @param gridWidth The grid width in pixels.
+ * @param gridHeight The grid height in pixels.
+ * @param anchor The side to keep fixed during resizing.
+ * @return A copy of [gridItem] with updated position and span.
+ */
 fun resizeWidgetGridItemWithPixels(
     gridItem: GridItem,
     width: Int,
@@ -93,6 +125,15 @@ fun resizeWidgetGridItemWithPixels(
     )
 }
 
+/**
+ * Converts pixel dimensions to grid-cell spans, rounding up and enforcing a minimum span of one.
+ *
+ * @param width The width in pixels.
+ * @param height The height in pixels.
+ * @param gridCellWidth The width of one grid cell in pixels.
+ * @param gridCellHeight The height of one grid cell in pixels.
+ * @return The span as a pair of column count followed by row count.
+ */
 private fun pixelDimensionsToGridSpan(
     width: Int,
     height: Int,
@@ -106,6 +147,15 @@ private fun pixelDimensionsToGridSpan(
     return columnSpan to rowSpan
 }
 
+/**
+ * Calculates a resized item's start position so the selected corner remains fixed.
+ *
+ * @param gridItem The item before resizing.
+ * @param columnSpan The resized width in grid cells.
+ * @param rowSpan The resized height in grid cells.
+ * @param anchor The corner to keep fixed.
+ * @return The new start position as a pair of column followed by row.
+ */
 private fun resizeGridItemByAnchor(
     gridItem: GridItem,
     columnSpan: Int,
@@ -145,6 +195,17 @@ private fun resizeGridItemByAnchor(
     return newStartColumn to newStartRow
 }
 
+/**
+ * Calculates a resized widget's start position so the selected side remains fixed.
+ *
+ * The item's start position on the unanchored axis remains unchanged.
+ *
+ * @param gridItem The widget item before resizing.
+ * @param columnSpan The resized width in grid cells.
+ * @param rowSpan The resized height in grid cells.
+ * @param anchor The side to keep fixed.
+ * @return The new start position as a pair of column followed by row.
+ */
 private fun resizeGridItemBySideAnchor(
     gridItem: GridItem,
     columnSpan: Int,
