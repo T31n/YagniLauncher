@@ -111,11 +111,15 @@ class PinActivity : ComponentActivity() {
                                 theme = state.applicationTheme.theme,
                                 dynamicTheme = state.applicationTheme.dynamicTheme,
                             ) {
-                                PinScreen(pinItemRequest = pinItemRequest, onDragStart = {
-                                    startActivity(homeIntent)
+                                PinScreen(
+                                    pinItemRequest = pinItemRequest,
+                                    onDragStart = {
+                                        startActivity(homeIntent)
 
-                                    finish()
-                                }, onFinish = ::finish)
+                                        finish()
+                                    },
+                                    onFinish = ::finish
+                                )
                             }
                         }
                     }

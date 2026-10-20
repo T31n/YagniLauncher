@@ -37,12 +37,17 @@ import com.eblan.launcher.feature.home.util.PAGE_INDICATOR_HEIGHT
 
 @Composable
 internal fun ResizeScreen(
-    modifier: Modifier = Modifier,
-    homeSettings: HomeSettings,
-    lockMovement: Boolean,
+    // Layout
     paddingValues: PaddingValues,
-    textColor: TextColor,
+    // Content
+    homeSettings: HomeSettings,
     resizeGridItem: GridItem,
+    textColor: TextColor,
+    // State
+    lockMovement: Boolean,
+    // Layout
+    modifier: Modifier = Modifier,
+    // Callbacks
     onResizeCancel: () -> Unit,
     onResizeEnd: () -> Unit,
     onResizeGridItem: (
@@ -50,7 +55,7 @@ internal fun ResizeScreen(
         columns: Int,
         rows: Int,
     ) -> Unit,
-    onUpdateIsResizing: (Boolean) -> Unit,
+    onUpdateIsResizing: (Boolean) -> Unit
 ) {
     val density = LocalDensity.current
 
@@ -100,21 +105,21 @@ internal fun ResizeScreen(
                 val height = resizeGridItem.rowSpan * cellHeight
 
                 ResizeOverlay(
-                    cellHeight = cellHeight,
-                    cellWidth = cellWidth,
-                    columns = homeSettings.columns,
-                    gridHeight = gridHeight,
-                    gridItem = resizeGridItem,
-                    gridItemSettings = homeSettings.gridItemSettings,
-                    gridWidth = constraints.maxWidth,
-                    height = height,
-                    lockMovement = lockMovement,
-                    rows = homeSettings.rows,
-                    textColor = textColor,
-                    width = width,
                     x = x,
                     y = y,
-                    onResizeGridItem = onResizeGridItem,
+                    width = width,
+                    height = height,
+                    gridWidth = constraints.maxWidth,
+                    gridHeight = gridHeight,
+                    cellWidth = cellWidth,
+                    cellHeight = cellHeight,
+                    columns = homeSettings.columns,
+                    rows = homeSettings.rows,
+                    gridItem = resizeGridItem,
+                    gridItemSettings = homeSettings.gridItemSettings,
+                    lockMovement = lockMovement,
+                    textColor = textColor,
+                    onResizeGridItem = onResizeGridItem
                 )
             }
 
@@ -131,21 +136,21 @@ internal fun ResizeScreen(
                 val height = resizeGridItem.rowSpan * cellHeight
 
                 ResizeOverlay(
-                    cellHeight = cellHeight,
-                    cellWidth = cellWidth,
-                    columns = homeSettings.dockColumns,
-                    gridHeight = dockHeightPx,
-                    gridItem = resizeGridItem,
-                    gridItemSettings = homeSettings.gridItemSettings,
-                    gridWidth = constraints.maxWidth,
-                    height = height,
-                    lockMovement = lockMovement,
-                    rows = homeSettings.dockRows,
-                    textColor = textColor,
-                    width = width,
                     x = x,
                     y = dockY,
-                    onResizeGridItem = onResizeGridItem,
+                    width = width,
+                    height = height,
+                    gridWidth = constraints.maxWidth,
+                    gridHeight = dockHeightPx,
+                    cellWidth = cellWidth,
+                    cellHeight = cellHeight,
+                    columns = homeSettings.dockColumns,
+                    rows = homeSettings.dockRows,
+                    gridItem = resizeGridItem,
+                    gridItemSettings = homeSettings.gridItemSettings,
+                    lockMovement = lockMovement,
+                    textColor = textColor,
+                    onResizeGridItem = onResizeGridItem
                 )
             }
         }

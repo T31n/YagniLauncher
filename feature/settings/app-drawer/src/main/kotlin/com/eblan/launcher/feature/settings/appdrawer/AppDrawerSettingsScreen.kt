@@ -74,30 +74,33 @@ internal fun AppDrawerSettingsRoute(
     val folderEblanApplicationInfos by viewModel.folderEblanApplicationInfos.collectAsStateWithLifecycle()
 
     AppDrawerSettingsScreen(
-        modifier = modifier,
         appDrawerSettingsUiState = appDrawerSettingsUiState,
         eblanApplicationInfoTags = eblanApplicationInfoTags,
         folderEblanApplicationInfos = folderEblanApplicationInfos,
+        modifier = modifier,
         onNavigateUp = onNavigateUp,
         onUpdateAppDrawerSettings = viewModel::updateAppDrawerSettings,
         onUpdateEblanApplicationInfo = viewModel::updateEblanApplicationInfo,
         onUpdateEblanApplicationInfoTags = viewModel::updateEblanApplicationInfoTags,
-        onUpdateFolderEblanApplicationInfos = viewModel::updateFolderEblanApplicationInfos,
+        onUpdateFolderEblanApplicationInfos = viewModel::updateFolderEblanApplicationInfos
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun AppDrawerSettingsScreen(
-    modifier: Modifier = Modifier,
+    // State
     appDrawerSettingsUiState: AppDrawerSettingsUiState,
     eblanApplicationInfoTags: List<EblanApplicationInfoTag>,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Actions
     onNavigateUp: () -> Unit,
     onUpdateAppDrawerSettings: (AppDrawerSettings) -> Unit,
     onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
     onUpdateEblanApplicationInfoTags: (List<EblanApplicationInfoTag>) -> Unit,
-    onUpdateFolderEblanApplicationInfos: (List<FolderEblanApplicationInfo>) -> Unit,
+    onUpdateFolderEblanApplicationInfos: (List<FolderEblanApplicationInfo>) -> Unit
 ) {
     Scaffold(
         modifier = modifier,
@@ -131,7 +134,7 @@ internal fun AppDrawerSettingsScreen(
                     onUpdateAppDrawerSettings = onUpdateAppDrawerSettings,
                     onUpdateEblanApplicationInfo = onUpdateEblanApplicationInfo,
                     onUpdateEblanApplicationInfoTags = onUpdateEblanApplicationInfoTags,
-                    onUpdateFolderEblanApplicationInfos = onUpdateFolderEblanApplicationInfos,
+                    onUpdateFolderEblanApplicationInfos = onUpdateFolderEblanApplicationInfos
                 )
             }
         }
@@ -140,15 +143,18 @@ internal fun AppDrawerSettingsScreen(
 
 @Composable
 private fun Success(
-    modifier: Modifier = Modifier,
+    // Application Data
     appDrawerSettings: AppDrawerSettings,
     eblanApplicationInfos: List<EblanApplicationInfo>,
     eblanApplicationInfoTags: List<EblanApplicationInfoTag>,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    // Layout
+    modifier: Modifier = Modifier,
+    // Application Actions
     onUpdateAppDrawerSettings: (AppDrawerSettings) -> Unit,
     onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
     onUpdateEblanApplicationInfoTags: (List<EblanApplicationInfoTag>) -> Unit,
-    onUpdateFolderEblanApplicationInfos: (List<FolderEblanApplicationInfo>) -> Unit,
+    onUpdateFolderEblanApplicationInfos: (List<FolderEblanApplicationInfo>) -> Unit
 ) {
     var showAppDrawerTypeDialog by remember { mutableStateOf(false) }
     var showVerticalGridDialog by remember { mutableStateOf(false) }
@@ -189,7 +195,7 @@ private fun Success(
         },
         onScrollBarTypeClick = {
             showScrollBarTypeDialog = true
-        },
+        }
     )
 
     Column(
@@ -209,7 +215,7 @@ private fun Success(
                         gridItemSettings = it,
                     ),
                 )
-            },
+            }
         )
     }
 
@@ -226,7 +232,7 @@ private fun Success(
             },
             onUpdateClick = {
                 onUpdateAppDrawerSettings(appDrawerSettings.copy(appDrawerType = it))
-            },
+            }
         )
     }
 
@@ -244,7 +250,7 @@ private fun Success(
                         appDrawerRowsHeight = appDrawerRowsHeight,
                     ),
                 )
-            },
+            }
         )
     }
 
@@ -262,7 +268,7 @@ private fun Success(
                         horizontalAppDrawerRows = horizontalAppDrawerRows,
                     ),
                 )
-            },
+            }
         )
     }
 
@@ -291,7 +297,7 @@ private fun Success(
                         customBackgroundColor = customColor,
                     ),
                 )
-            },
+            }
         )
     }
 
@@ -328,7 +334,7 @@ private fun Success(
             },
             onUpdateClick = {
                 onUpdateAppDrawerSettings(appDrawerSettings.copy(searchBarPosition = it))
-            },
+            }
         )
     }
 
@@ -345,14 +351,16 @@ private fun Success(
             },
             onUpdateClick = {
                 onUpdateAppDrawerSettings(appDrawerSettings.copy(scrollBarType = it))
-            },
+            }
         )
     }
 }
 
 @Composable
 private fun buildAppDrawerSettingsItems(
+    // Settings
     appDrawerSettings: AppDrawerSettings,
+    // Callbacks
     onAppDrawerTypeClick: () -> Unit,
     onVerticalGridClick: () -> Unit,
     onHorizontalGridClick: () -> Unit,
@@ -362,7 +370,7 @@ private fun buildAppDrawerSettingsItems(
     onManageTags: () -> Unit,
     onManageFolders: () -> Unit,
     onSearchBarPositionClick: () -> Unit,
-    onScrollBarTypeClick: () -> Unit,
+    onScrollBarTypeClick: () -> Unit
 ): List<SettingsItem> = buildList {
     add(
         SettingsItem.Column(
@@ -536,14 +544,14 @@ private fun AppDrawerType.getTitle(): String = when (this) {
 }
 
 @Composable
-fun SearchBarPosition.getTitle(): String = when (this) {
+private fun SearchBarPosition.getTitle(): String = when (this) {
     SearchBarPosition.Top -> stringResource(R.string.top)
     SearchBarPosition.Bottom -> stringResource(R.string.bottom)
     SearchBarPosition.None -> stringResource(commonR.string.none)
 }
 
 @Composable
-fun ScrollBarType.getTitle(): String = when (this) {
+private fun ScrollBarType.getTitle(): String = when (this) {
     ScrollBarType.ScrollBar -> stringResource(R.string.scroll_bar)
     ScrollBarType.Alphabetical -> stringResource(R.string.alphabetical)
     ScrollBarType.None -> stringResource(commonR.string.none)

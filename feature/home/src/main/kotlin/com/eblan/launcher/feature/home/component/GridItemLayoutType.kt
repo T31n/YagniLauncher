@@ -28,15 +28,19 @@ import com.eblan.launcher.domain.model.grid.LayoutType
 
 @Composable
 internal fun GridItemLayoutType(
-    modifier: Modifier = Modifier,
+    // Settings
     gridItemSettings: GridItemSettings,
+    // Alignment and arrangement
     horizontalAlignment: Alignment.Horizontal,
-    horizontalArrangement: Arrangement.Horizontal,
     verticalAlignment: Alignment.Vertical,
+    horizontalArrangement: Arrangement.Horizontal,
     verticalArrangement: Arrangement.Vertical,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Content
     iconContent: @Composable () -> Unit,
     labelContent: @Composable () -> Unit,
-    labelOnlyContent: @Composable () -> Unit,
+    labelOnlyContent: @Composable () -> Unit
 ) {
     when (gridItemSettings.layoutType) {
         LayoutType.TopIconBottomLabel -> {

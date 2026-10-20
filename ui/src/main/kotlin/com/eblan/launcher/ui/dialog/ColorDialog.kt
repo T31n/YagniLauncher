@@ -42,76 +42,88 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 fun TextColorDialog(
-    modifier: Modifier = Modifier,
+    // Content
     title: String,
+    // State
     textColor: TextColor,
     customTextColor: Int,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Callbacks
     onDismissRequest: () -> Unit,
     onUpdateClick: (
         textColor: TextColor,
         customColor: Int,
-    ) -> Unit,
+    ) -> Unit
 ) {
     ColorDialog(
-        modifier = modifier,
         title = title,
         color = textColor,
         customColor = customTextColor,
         entries = TextColor.entries,
         customEntry = TextColor.Custom,
+        modifier = modifier,
         getTitle = { it.getTitle() },
         onDismissRequest = onDismissRequest,
-        onUpdateClick = onUpdateClick,
+        onUpdateClick = onUpdateClick
     )
 }
 
 @Composable
 fun BackgroundColorDialog(
-    modifier: Modifier = Modifier,
+    // Content
     title: String,
+    // Background
     backgroundColor: BackgroundColor,
     customBackgroundColor: Int,
+    // Layout
+    modifier: Modifier = Modifier,
+    // Actions
     onDismissRequest: () -> Unit,
     onUpdateClick: (
         backgroundColor: BackgroundColor,
         customColor: Int,
-    ) -> Unit,
+    ) -> Unit
 ) {
     ColorDialog(
-        modifier = modifier,
         title = title,
         color = backgroundColor,
         customColor = customBackgroundColor,
         entries = BackgroundColor.entries,
         customEntry = BackgroundColor.Custom,
+        modifier = modifier,
         getTitle = { it.getTitle() },
         onDismissRequest = onDismissRequest,
-        onUpdateClick = onUpdateClick,
+        onUpdateClick = onUpdateClick
     )
 }
 
 @Composable
 fun IconTintDialog(
-    modifier: Modifier = Modifier,
+    // Content
     title: String,
+    // Appearance
     iconTint: IconTint,
     customIconTint: Int,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Actions
     onDismissRequest: () -> Unit,
     onUpdateClick: (
         iconTint: IconTint,
         customColor: Int,
-    ) -> Unit,
+    ) -> Unit
 ) {
     ColorDialog(
-        modifier = modifier,
         title = title,
         color = iconTint,
         customColor = customIconTint,
         entries = IconTint.entries,
         customEntry = IconTint.Custom,
+        modifier = modifier,
         getTitle = { it.getTitle() },
         onDismissRequest = onDismissRequest,
-        onUpdateClick = onUpdateClick,
+        onUpdateClick = onUpdateClick
     )
 }
 
@@ -140,15 +152,19 @@ fun IconTint.getTitle() = when (this) {
 
 @Composable
 private fun <T : Enum<T>> ColorDialog(
-    modifier: Modifier = Modifier,
+    // Content
     title: String,
     color: T,
     customColor: Int,
     entries: List<T>,
     customEntry: T,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Content
     getTitle: @Composable (T) -> String,
+    // Callbacks
     onDismissRequest: () -> Unit,
-    onUpdateClick: (color: T, customColor: Int) -> Unit,
+    onUpdateClick: (color: T, customColor: Int) -> Unit
 ) {
     var selectedColor by remember { mutableStateOf(color) }
     var selectedCustomColor by remember { mutableIntStateOf(customColor) }
@@ -215,7 +231,7 @@ private fun <T : Enum<T>> ColorDialog(
             onSelectColor = {
                 selectedColor = customEntry
                 selectedCustomColor = it
-            },
+            }
         )
     }
 }

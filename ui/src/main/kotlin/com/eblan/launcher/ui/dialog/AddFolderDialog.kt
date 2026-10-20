@@ -41,10 +41,13 @@ import com.eblan.launcher.common.R as commonR
 @OptIn(ExperimentalUuidApi::class)
 @Composable
 fun AddFolderDialog(
-    modifier: Modifier = Modifier,
+    // Content
     topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    // Layout
+    modifier: Modifier = Modifier,
+    // Actions
     onDismissRequest: () -> Unit,
-    onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
+    onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit
 ) {
     val maxIndex = remember(key1 = topLevelFolderEblanApplicationInfos) {
         topLevelFolderEblanApplicationInfos.maxOfOrNull { it.index } ?: 0

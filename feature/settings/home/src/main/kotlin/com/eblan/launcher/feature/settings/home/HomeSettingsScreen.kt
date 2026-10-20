@@ -147,7 +147,6 @@ private fun Success(
         onDockHeightClick = {
             showDockHeightDialog = true
         },
-        onUpdateHomeSettings = onUpdateHomeSettings,
         onDockCustomBackgroundColorClick = {
             showDockCustomBackgroundColorDialog = true
         },
@@ -157,6 +156,7 @@ private fun Success(
         onDockCornerRadiusClick = {
             showDockCornerRadiusDialog = true
         },
+        onUpdateHomeSettings = onUpdateHomeSettings
     )
 
     Column(
@@ -178,7 +178,7 @@ private fun Success(
                 onUpdateHomeSettings(
                     homeSettings.copy(gridItemSettings = it),
                 )
-            },
+            }
         )
     }
 
@@ -211,7 +211,7 @@ private fun Success(
             },
             onUpdateClick = {
                 onUpdateHomeSettings(homeSettings.copy(pagerTransitionEffect = it))
-            },
+            }
         )
     }
 
@@ -229,7 +229,7 @@ private fun Success(
                         dockRows = dockRows,
                     ),
                 )
-            },
+            }
         )
     }
 
@@ -260,7 +260,7 @@ private fun Success(
             },
             onSelectColor = {
                 onUpdateHomeSettings(homeSettings.copy(dockCustomBackgroundColor = it))
-            },
+            }
         )
     }
 
@@ -298,8 +298,7 @@ private fun Success(
                         dockBottomEndCornerRadius = dockBottomEndCornerRadius,
                     ),
                 )
-            },
-
+            }
         )
     }
 }
@@ -420,13 +419,15 @@ private fun buildHomeSettingsItems(
 
 @Composable
 private fun buildDockHomeSettingsItems(
+    // Settings State
     homeSettings: HomeSettings,
+    // Dock Interactions
     onDockGridClick: () -> Unit,
     onDockHeightClick: () -> Unit,
     onDockCustomBackgroundColorClick: () -> Unit,
     onDockPaddingClick: () -> Unit,
     onDockCornerRadiusClick: () -> Unit,
-    onUpdateHomeSettings: (HomeSettings) -> Unit,
+    onUpdateHomeSettings: (HomeSettings) -> Unit
 ): List<SettingsItem> = buildList {
     add(
         SettingsItem.Column(

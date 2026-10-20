@@ -93,11 +93,15 @@ import com.eblan.launcher.common.R as commonR
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PinScreen(
-    modifier: Modifier = Modifier,
+    // Content
     pinItemRequest: PinItemRequest,
+    // Layout
+    modifier: Modifier = Modifier,
+    // ViewModel
     viewModel: PinScreenViewModel = hiltViewModel(),
+    // Actions
     onDragStart: () -> Unit,
-    onFinish: () -> Unit,
+    onFinish: () -> Unit
 ) {
     val gridItem by viewModel.gridItem.collectAsStateWithLifecycle()
     val isBoundWidget by viewModel.isBoundWidget.collectAsStateWithLifecycle()
@@ -106,31 +110,31 @@ fun PinScreen(
     when (pinItemRequest.requestType) {
         PinItemRequest.REQUEST_TYPE_APPWIDGET -> {
             PinWidgetScreen(
-                modifier = modifier,
                 gridItem = gridItem,
                 isBoundWidget = isBoundWidget,
                 isFinished = isFinished,
                 pinItemRequest = pinItemRequest,
+                modifier = modifier,
                 onAddPinWidgetToHomeScreen = viewModel::addPinWidgetToHomeScreen,
                 onDeleteGridItemCache = viewModel::deleteGridItem,
                 onDragStart = onDragStart,
                 onFinish = onFinish,
                 onUpdateGridItemCache = viewModel::updateGridItemData,
-                onUpdateGridItems = viewModel::updateGridItems,
+                onUpdateGridItems = viewModel::updateGridItems
             )
         }
 
         PinItemRequest.REQUEST_TYPE_SHORTCUT -> {
             PinShortcutScreen(
-                modifier = modifier,
                 gridItem = gridItem,
-                isFinished = isFinished,
                 pinItemRequest = pinItemRequest,
+                isFinished = isFinished,
+                modifier = modifier,
                 onAddPinShortcutToHomeScreen = viewModel::addPinShortcutToHomeScreen,
                 onDeleteShortcutGridItem = viewModel::deleteGridItem,
                 onDragStart = onDragStart,
                 onFinish = onFinish,
-                onUpdateGridItems = viewModel::updateGridItems,
+                onUpdateGridItems = viewModel::updateGridItems
             )
         }
     }
@@ -139,10 +143,14 @@ fun PinScreen(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun PinShortcutScreen(
-    modifier: Modifier = Modifier,
+    // Shortcut Content
     gridItem: GridItem?,
-    isFinished: Boolean,
     pinItemRequest: PinItemRequest,
+    // State
+    isFinished: Boolean,
+    // Layout
+    modifier: Modifier = Modifier,
+    // Actions
     onAddPinShortcutToHomeScreen: (
         serialNumber: Long,
         shortcutId: String,
@@ -155,7 +163,7 @@ private fun PinShortcutScreen(
     onDeleteShortcutGridItem: (GridItem) -> Unit,
     onDragStart: () -> Unit,
     onFinish: () -> Unit,
-    onUpdateGridItems: () -> Unit,
+    onUpdateGridItems: () -> Unit
 ) {
     val shortcutInfo = pinItemRequest.shortcutInfo ?: return
 
@@ -182,7 +190,7 @@ private fun PinShortcutScreen(
             pinItemRequest = pinItemRequest,
             context = context,
             onUpdateGridItems = onUpdateGridItems,
-            onDeleteShortcutGridItem = onDeleteShortcutGridItem,
+            onDeleteShortcutGridItem = onDeleteShortcutGridItem
         )
     }
 
@@ -204,13 +212,13 @@ private fun PinShortcutScreen(
                 onAdd = {
                     scope.launch {
                         addPinShortcutToHomeScreen(
-                            androidUserManagerWrapper = androidUserManagerWrapper,
                             shortcutInfo = shortcutInfo,
+                            androidUserManagerWrapper = androidUserManagerWrapper,
                             androidLauncherAppsWrapper = androidLauncherAppsWrapper,
                             fileManager = fileManager,
                             iconKeyGenerator = iconKeyGenerator,
                             imageSerializer = imageSerializer,
-                            onAddPinShortcutToHomeScreen = onAddPinShortcutToHomeScreen,
+                            onAddPinShortcutToHomeScreen = onAddPinShortcutToHomeScreen
                         )
                     }
                 },
@@ -223,7 +231,7 @@ private fun PinShortcutScreen(
                     onDragStart()
 
                     onFinish()
-                },
+                }
             )
         }
     }
@@ -232,11 +240,14 @@ private fun PinShortcutScreen(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun PinWidgetScreen(
-    modifier: Modifier = Modifier,
+    // Required Data
     gridItem: GridItem?,
     isBoundWidget: Boolean,
     isFinished: Boolean,
     pinItemRequest: PinItemRequest,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Callbacks
     onAddPinWidgetToHomeScreen: (
         serialNumber: Long,
         componentName: String,
@@ -259,7 +270,7 @@ private fun PinWidgetScreen(
     onDragStart: () -> Unit,
     onFinish: () -> Unit,
     onUpdateGridItemCache: (GridItem) -> Unit,
-    onUpdateGridItems: () -> Unit,
+    onUpdateGridItems: () -> Unit
 ) {
     val context = LocalContext.current
 
@@ -286,20 +297,20 @@ private fun PinWidgetScreen(
         contract = ActivityResultContracts.StartActivityForResult(),
     ) { result ->
         handleAppWidgetLauncherResult(
-            gridItem = gridItem,
             result = result,
+            gridItem = gridItem,
             onDeleteAppWidgetId = {
                 deleteAppWidgetId = true
             },
-            onUpdateGridItemCache = onUpdateGridItemCache,
+            onUpdateGridItemCache = onUpdateGridItemCache
         )
     }
 
     LaunchedEffect(key1 = gridItem) {
         handleGridItem(
-            appWidgetHostWrapper = appWidgetHostWrapper,
-            appWidgetManager = appWidgetManager,
             gridItem = gridItem,
+            appWidgetManager = appWidgetManager,
+            appWidgetHostWrapper = appWidgetHostWrapper,
             userHandle = appWidgetProviderInfo.profile,
             onAddedToHomeScreenToast = {
                 Toast.makeText(
@@ -312,7 +323,7 @@ private fun PinWidgetScreen(
             onUpdateAppWidgetId = {
                 appWidgetId = it
             },
-            onUpdateGridItemCache = onUpdateGridItemCache,
+            onUpdateGridItemCache = onUpdateGridItemCache
         )
     }
 
@@ -321,18 +332,18 @@ private fun PinWidgetScreen(
             appWidgetId = appWidgetId,
             deleteAppWidgetId = deleteAppWidgetId,
             gridItem = gridItem,
-            onDeleteGridItem = onDeleteGridItemCache,
+            onDeleteGridItem = onDeleteGridItemCache
         )
     }
 
     LaunchedEffect(key1 = isBoundWidget) {
         handleIsBoundWidget(
             appWidgetId = appWidgetId,
-            gridItem = gridItem,
             isBoundWidget = isBoundWidget,
+            gridItem = gridItem,
             pinItemRequest = pinItemRequest,
             onDeleteGridItem = onDeleteGridItemCache,
-            onUpdateGridItems = onUpdateGridItems,
+            onUpdateGridItems = onUpdateGridItems
         )
     }
 
@@ -353,12 +364,12 @@ private fun PinWidgetScreen(
             onAdd = {
                 addPinWidgetToHomeScreen(
                     appWidgetProviderInfo = appWidgetProviderInfo,
-                    fileManager = fileManager,
-                    iconKeyGenerator = iconKeyGenerator,
                     maxWidth = constraints.maxWidth,
                     maxHeight = constraints.maxHeight,
-                    onAddPinWidgetToHomeScreen = onAddPinWidgetToHomeScreen,
+                    fileManager = fileManager,
+                    iconKeyGenerator = iconKeyGenerator,
                     userManager = userManager,
+                    onAddPinWidgetToHomeScreen = onAddPinWidgetToHomeScreen
                 )
             },
             onFinish = onFinish,
@@ -370,7 +381,7 @@ private fun PinWidgetScreen(
                 onDragStart()
 
                 onFinish()
-            },
+            }
         )
     }
 }
@@ -380,12 +391,15 @@ private fun PinWidgetScreen(
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun PinBottomSheet(
-    modifier: Modifier = Modifier,
+    // Content
     icon: Any?,
     label: String,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Callbacks
     onAdd: suspend () -> Unit,
     onFinish: () -> Unit,
-    onLongPress: () -> Unit,
+    onLongPress: () -> Unit
 ) {
     var showBottomSheet by remember { mutableStateOf(true) }
 
@@ -481,11 +495,14 @@ private fun PinBottomSheet(
 
 @RequiresApi(Build.VERSION_CODES.O)
 private fun handleGridItem(
+    // Item
     gridItem: GridItem?,
     pinItemRequest: PinItemRequest,
+    // Environment
     context: Context,
+    // Actions
     onUpdateGridItems: () -> Unit,
-    onDeleteShortcutGridItem: (GridItem) -> Unit,
+    onDeleteShortcutGridItem: (GridItem) -> Unit
 ) {
     if (gridItem == null) return
 
@@ -508,12 +525,15 @@ private fun handleGridItem(
 
 @RequiresApi(Build.VERSION_CODES.O)
 private suspend fun addPinShortcutToHomeScreen(
-    androidUserManagerWrapper: AndroidUserManagerWrapper,
+    // Shortcut
     shortcutInfo: ShortcutInfo,
+    // Dependencies
+    androidUserManagerWrapper: AndroidUserManagerWrapper,
     androidLauncherAppsWrapper: AndroidLauncherAppsWrapper,
     fileManager: FileManager,
     iconKeyGenerator: IconKeyGenerator,
     imageSerializer: AndroidImageSerializer,
+    // Callback
     onAddPinShortcutToHomeScreen: (
         serialNumber: Long,
         shortcutId: String,
@@ -522,7 +542,7 @@ private suspend fun addPinShortcutToHomeScreen(
         longLabel: String,
         isEnabled: Boolean,
         icon: String?,
-    ) -> Unit,
+    ) -> Unit
 ) {
     val serialNumber =
         androidUserManagerWrapper.getSerialNumberForUser(userHandle = shortcutInfo.userHandle)
@@ -563,11 +583,16 @@ private suspend fun addPinShortcutToHomeScreen(
 }
 
 private suspend fun addPinWidgetToHomeScreen(
+    // Widget Configuration
     appWidgetProviderInfo: AppWidgetProviderInfo,
-    fileManager: FileManager,
-    iconKeyGenerator: IconKeyGenerator,
+    // Dimensions
     maxWidth: Int,
     maxHeight: Int,
+    // Dependencies
+    fileManager: FileManager,
+    iconKeyGenerator: IconKeyGenerator,
+    userManager: AndroidUserManagerWrapper,
+    // Callback
     onAddPinWidgetToHomeScreen: (
         serialNumber: Long,
         componentName: String,
@@ -585,8 +610,7 @@ private suspend fun addPinWidgetToHomeScreen(
         rootWidth: Int,
         rootHeight: Int,
         preview: String?,
-    ) -> Unit,
-    userManager: AndroidUserManagerWrapper,
+    ) -> Unit
 ) {
     val componentName = appWidgetProviderInfo.provider.flattenToString()
 

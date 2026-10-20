@@ -63,9 +63,12 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun SettingsPopup(
+    // Content
     gridItems: List<GridItem>,
+    // State
     hasSystemFeatureAppWidgets: Boolean,
     popupSettingsIntOffset: IntOffset?,
+    // Actions
     onDismissRequest: () -> Unit,
     onEditPage: (
         gridItems: List<GridItem>,
@@ -73,7 +76,7 @@ internal fun SettingsPopup(
     ) -> Unit,
     onSettings: () -> Unit,
     onShortcutConfigActivities: () -> Unit,
-    onWidgets: () -> Unit,
+    onWidgets: () -> Unit
 ) {
     requireNotNull(popupSettingsIntOffset)
 
@@ -166,11 +169,11 @@ internal fun SettingsPopup(
             ) {
                 items.forEachIndexed { index, settingsMenuItem ->
                     PopupMenuRow(
+                        title = settingsMenuItem.title,
+                        imageVector = settingsMenuItem.imageVector,
                         index = index,
                         size = items.size,
-                        imageVector = settingsMenuItem.imageVector,
-                        title = settingsMenuItem.title,
-                        onClick = settingsMenuItem.onClick,
+                        onClick = settingsMenuItem.onClick
                     )
                 }
             }
@@ -180,12 +183,15 @@ internal fun SettingsPopup(
 
 @Composable
 private fun PopupMenuRow(
-    modifier: Modifier = Modifier,
+    // Content
+    title: String,
+    imageVector: ImageVector,
     index: Int,
     size: Int,
-    imageVector: ImageVector,
-    title: String,
-    onClick: () -> Unit,
+    // Layout
+    modifier: Modifier = Modifier,
+    // Callbacks
+    onClick: () -> Unit
 ) {
     Card(
         modifier = modifier

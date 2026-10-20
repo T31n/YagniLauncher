@@ -59,9 +59,12 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 fun GridItemSettings(
-    modifier: Modifier = Modifier,
+    // Settings
     gridItemSettings: GridItemSettings,
-    onUpdateGridItemSettings: (GridItemSettings) -> Unit,
+    // Layout
+    modifier: Modifier = Modifier,
+    // Callbacks
+    onUpdateGridItemSettings: (GridItemSettings) -> Unit
 ) {
     var showIconSizeDialog by remember { mutableStateOf(false) }
     var showTextColorDialog by remember { mutableStateOf(false) }
@@ -118,7 +121,7 @@ fun GridItemSettings(
         },
         onTextPaddingClick = {
             showTextPaddingDialog = true
-        },
+        }
     )
 
     Column(
@@ -142,7 +145,7 @@ fun GridItemSettings(
                         iconSize = it,
                     ),
                 )
-            },
+            }
         )
     }
 
@@ -161,7 +164,7 @@ fun GridItemSettings(
                         customTextColor = customTextColor,
                     ),
                 )
-            },
+            }
         )
     }
 
@@ -177,7 +180,7 @@ fun GridItemSettings(
                         textSize = it,
                     ),
                 )
-            },
+            }
         )
     }
 
@@ -190,7 +193,7 @@ fun GridItemSettings(
             },
             onSelectColor = {
                 onUpdateGridItemSettings(gridItemSettings.copy(customBackgroundColor = it))
-            },
+            }
         )
     }
 
@@ -207,7 +210,7 @@ fun GridItemSettings(
                         padding = it,
                     ),
                 )
-            },
+            }
         )
     }
 
@@ -223,7 +226,7 @@ fun GridItemSettings(
                         cornerRadius = it,
                     ),
                 )
-            },
+            }
         )
     }
 
@@ -240,7 +243,7 @@ fun GridItemSettings(
             },
             onUpdateClick = {
                 onUpdateGridItemSettings(gridItemSettings.copy(horizontalAlignment = it))
-            },
+            }
         )
     }
 
@@ -257,7 +260,7 @@ fun GridItemSettings(
             },
             onUpdateClick = {
                 onUpdateGridItemSettings(gridItemSettings.copy(verticalArrangement = it))
-            },
+            }
         )
     }
 
@@ -274,7 +277,7 @@ fun GridItemSettings(
             },
             onUpdateClick = {
                 onUpdateGridItemSettings(gridItemSettings.copy(horizontalArrangement = it))
-            },
+            }
         )
     }
 
@@ -291,7 +294,7 @@ fun GridItemSettings(
             },
             onUpdateClick = {
                 onUpdateGridItemSettings(gridItemSettings.copy(verticalAlignment = it))
-            },
+            }
         )
     }
 
@@ -308,7 +311,7 @@ fun GridItemSettings(
             },
             onUpdateClick = {
                 onUpdateGridItemSettings(gridItemSettings.copy(layoutType = it))
-            },
+            }
         )
     }
 
@@ -325,7 +328,7 @@ fun GridItemSettings(
                         iconPadding = it,
                     ),
                 )
-            },
+            }
         )
     }
 
@@ -342,7 +345,7 @@ fun GridItemSettings(
                         textPadding = it,
                     ),
                 )
-            },
+            }
         )
     }
 }
@@ -357,12 +360,15 @@ fun TextColor.getSubtitle(): String = when (this) {
 
 @Composable
 internal fun CustomBackgroundColor(
-    modifier: Modifier = Modifier,
+    // Content
     index: Int,
     size: Int,
     title: String,
     customBackgroundColor: Int,
-    onClick: () -> Unit,
+    // Layout
+    modifier: Modifier = Modifier,
+    // Actions
+    onClick: () -> Unit
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -398,7 +404,9 @@ internal fun CustomBackgroundColor(
 
 @Composable
 private fun buildGridItemSettingsItems(
+    // Settings
     gridItemSettings: GridItemSettings,
+    // Actions
     onIconSizeClick: () -> Unit,
     onTextColorClick: () -> Unit,
     onTextSizeClick: () -> Unit,
@@ -412,7 +420,7 @@ private fun buildGridItemSettingsItems(
     onLayoutTypeClick: () -> Unit,
     onUpdateGridItemSettings: (GridItemSettings) -> Unit,
     onIconPaddingClick: () -> Unit,
-    onTextPaddingClick: () -> Unit,
+    onTextPaddingClick: () -> Unit
 ): List<SettingsItem> = buildList {
     add(
         SettingsItem.Column(

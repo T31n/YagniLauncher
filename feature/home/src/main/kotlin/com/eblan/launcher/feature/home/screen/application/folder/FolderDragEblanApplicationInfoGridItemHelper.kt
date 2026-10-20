@@ -29,26 +29,30 @@ import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.util.calculateFolderGridDragPosition
 
 internal fun handleDragFolderEblanApplicationInfoGridItem(
+    // Environment and Configuration
     density: Density,
+    layoutDirection: LayoutDirection,
+    screenHeight: Int,
+    screenWidth: Int,
+    paddingValues: PaddingValues,
+    // Folder and Grid State
+    currentPage: Int,
+    folderEntry: FolderEntry,
+    folderEblanApplicationInfoPopup: FolderEblanApplicationInfoPopup,
+    folderCellWidth: Int,
+    folderCellHeight: Int,
+    isLastFolderEblanApplicationInfoGridItem: Boolean,
+    moveFolderEblanApplicationInfoGridItemResult: MoveFolderEblanApplicationInfoGridItemResult?,
+    // Drag and Movement
     drag: Drag,
     dragIntOffset: IntOffset,
-    currentPage: Int,
-    folderEblanApplicationInfoPopup: FolderEblanApplicationInfoPopup,
-    folderEntry: FolderEntry,
     folderPopupIntOffset: IntOffset,
     isDragging: Boolean,
     isVisibleOverlay: Boolean,
     isScrollInProgress: Boolean,
     lockMovement: Boolean,
-    paddingValues: PaddingValues,
-    screenHeight: Int,
-    screenWidth: Int,
-    moveFolderEblanApplicationInfoGridItemResult: MoveFolderEblanApplicationInfoGridItemResult?,
-    layoutDirection: LayoutDirection,
-    folderCellWidth: Int,
-    folderCellHeight: Int,
-    isLastFolderEblanApplicationInfoGridItem: Boolean,
     isInProgress: Boolean,
+    // Callbacks
     onMoveFolderEblanApplicationInfoGridItem: (
         folderEblanApplicationInfoPopup: FolderEblanApplicationInfoPopup,
         folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
@@ -58,7 +62,7 @@ internal fun handleDragFolderEblanApplicationInfoGridItem(
         gridHeight: Int,
         currentPage: Int,
     ) -> Unit,
-    onUpsertFolderEblanApplicationInfoPopupEntry: (FolderEntry) -> Unit,
+    onUpsertFolderEblanApplicationInfoPopupEntry: (FolderEntry) -> Unit
 ) {
     if (drag != Drag.Dragging ||
         isScrollInProgress ||
@@ -74,16 +78,16 @@ internal fun handleDragFolderEblanApplicationInfoGridItem(
 
     val folderGridDragPosition = calculateFolderGridDragPosition(
         density = density,
-        dragIntOffset = dragIntOffset,
-        folderPopupIntOffset = folderPopupIntOffset,
+        layoutDirection = layoutDirection,
+        screenWidth = screenWidth,
+        screenHeight = screenHeight,
         columns = folderEblanApplicationInfoPopup.columns,
         rows = folderEblanApplicationInfoPopup.rows,
         paddingValues = paddingValues,
-        screenHeight = screenHeight,
-        screenWidth = screenWidth,
-        layoutDirection = layoutDirection,
         folderCellWidth = folderCellWidth,
         folderCellHeight = folderCellHeight,
+        folderPopupIntOffset = folderPopupIntOffset,
+        dragIntOffset = dragIntOffset
     )
 
     if (folderGridDragPosition.x in 0 until folderGridDragPosition.width &&

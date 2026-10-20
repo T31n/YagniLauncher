@@ -56,11 +56,14 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 fun ColorPickerDialog(
-    modifier: Modifier = Modifier,
+    // Required Parameters
     title: String,
     customColor: Int,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Callbacks
     onDismissRequest: () -> Unit,
-    onSelectColor: (Int) -> Unit,
+    onSelectColor: (Int) -> Unit
 ) {
     val hsv = FloatArray(3).apply {
         android.graphics.Color.RGBToHSV(
@@ -89,11 +92,11 @@ fun ColorPickerDialog(
         )
 
         ColorPicker(
-            modifier = Modifier.fillMaxWidth(),
             hue = hue,
             saturation = saturation,
             value = value,
             alpha = alpha,
+            modifier = Modifier.fillMaxWidth(),
             onSaturationSelected = {
                 saturation = it
             },
@@ -105,7 +108,7 @@ fun ColorPickerDialog(
             },
             onAlphaSelected = {
                 alpha = it
-            },
+            }
         )
 
         Row(
@@ -141,15 +144,18 @@ fun ColorPickerDialog(
 
 @Composable
 private fun ColorPicker(
-    modifier: Modifier = Modifier,
+    // Color Values
     hue: Float,
     saturation: Float,
     value: Float,
     alpha: Float,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Callbacks
     onSaturationSelected: (Float) -> Unit,
     onValueSelected: (Float) -> Unit,
     onHueSelected: (Float) -> Unit,
-    onAlphaSelected: (Float) -> Unit,
+    onAlphaSelected: (Float) -> Unit
 ) {
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
         val saturationValueHeight = (maxHeight * 0.55f).coerceAtMost(260.dp)
@@ -164,7 +170,7 @@ private fun ColorPicker(
                     .fillMaxWidth()
                     .height(saturationValueHeight),
                 onSaturationSelected = onSaturationSelected,
-                onValueSelected = onValueSelected,
+                onValueSelected = onValueSelected
             )
 
             Spacer(Modifier.height(16.dp))
@@ -192,12 +198,15 @@ private fun ColorPicker(
 
 @Composable
 private fun SaturationValueCanvas(
-    modifier: Modifier = Modifier,
+    // Color Value
     hue: Float,
     saturation: Float,
     value: Float,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Callbacks
     onSaturationSelected: (Float) -> Unit,
-    onValueSelected: (Float) -> Unit,
+    onValueSelected: (Float) -> Unit
 ) {
     Box(
         modifier = modifier

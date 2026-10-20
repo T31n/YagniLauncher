@@ -38,26 +38,31 @@ import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
 
 @Composable
 internal fun <T> FolderTitle(
-    modifier: Modifier = Modifier,
+    // Content
     label: String,
-    gridItemsByPage: Map<Int, List<T>>,
+    // Pager state
     folderGridHorizontalPagerState: PagerState,
+    gridItemsByPage: Map<Int, List<T>>,
     progress: Float,
+    // Folder background
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
+    // Text color
     textColor: TextColor,
     customTextColor: Int,
-    systemCustomTextColor: Int,
     systemTextColor: TextColor,
+    systemCustomTextColor: Int,
+    // Modifier
+    modifier: Modifier = Modifier
 ) {
     val color = getTextColorFromBackgroundColor(
         backgroundColor = folderBackgroundColor,
         customBackgroundColor = customFolderBackgroundColor,
         textColor = textColor,
         customTextColor = customTextColor,
-        systemTextColor = systemTextColor,
         systemCustomTextColor = systemCustomTextColor,
-        defaultColor = MaterialTheme.colorScheme.onSurface,
+        systemTextColor = systemTextColor,
+        defaultColor = MaterialTheme.colorScheme.onSurface
     )
 
     Box(
@@ -80,10 +85,10 @@ internal fun <T> FolderTitle(
                 )
 
                 PageIndicator(
-                    color = color,
                     gridHorizontalPagerState = folderGridHorizontalPagerState,
-                    infiniteScroll = false,
                     pageCount = gridItemsByPage.size,
+                    infiniteScroll = false,
+                    color = color
                 )
             }
         } else {

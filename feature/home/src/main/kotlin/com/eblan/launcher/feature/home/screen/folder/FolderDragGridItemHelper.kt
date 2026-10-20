@@ -29,26 +29,31 @@ import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.util.calculateFolderGridDragPosition
 
 internal fun handleDragFolderGridItem(
+    // Environment
     density: Density,
+    layoutDirection: LayoutDirection,
+    screenWidth: Int,
+    screenHeight: Int,
+    paddingValues: PaddingValues,
+    // State
+    currentPage: Int,
+    isDragging: Boolean,
+    isInProgress: Boolean,
+    isScrollInProgress: Boolean,
+    isVisibleOverlay: Boolean,
+    lockMovement: Boolean,
+    isLastFolderGridItem: Boolean,
+    // Drag
     drag: Drag,
     dragIntOffset: IntOffset,
-    currentPage: Int,
+    moveGridItemResult: MoveGridItemResult?,
+    // Folder
     folderEntry: FolderEntry,
     folderPopup: FolderPopup,
     folderPopupIntOffset: IntOffset,
-    isDragging: Boolean,
-    isVisibleOverlay: Boolean,
-    isScrollInProgress: Boolean,
-    lockMovement: Boolean,
-    paddingValues: PaddingValues,
-    screenHeight: Int,
-    screenWidth: Int,
-    moveGridItemResult: MoveGridItemResult?,
-    layoutDirection: LayoutDirection,
     folderCellWidth: Int,
     folderCellHeight: Int,
-    isLastFolderGridItem: Boolean,
-    isInProgress: Boolean,
+    // Callbacks
     onMoveFolderGridItem: (
         folderPopup: FolderPopup,
         movingFolderGridItem: GridItem,
@@ -58,7 +63,7 @@ internal fun handleDragFolderGridItem(
         gridHeight: Int,
         currentPage: Int,
     ) -> Unit,
-    onUpsertFolderGridItemPopupEntry: (FolderEntry) -> Unit,
+    onUpsertFolderGridItemPopupEntry: (FolderEntry) -> Unit
 ) {
     if (drag != Drag.Dragging ||
         isScrollInProgress ||
@@ -74,16 +79,16 @@ internal fun handleDragFolderGridItem(
 
     val folderGridDragPosition = calculateFolderGridDragPosition(
         density = density,
-        dragIntOffset = dragIntOffset,
+        layoutDirection = layoutDirection,
+        screenWidth = screenWidth,
+        screenHeight = screenHeight,
         columns = folderPopup.columns,
         rows = folderPopup.rows,
-        folderPopupIntOffset = folderPopupIntOffset,
         paddingValues = paddingValues,
-        screenHeight = screenHeight,
-        screenWidth = screenWidth,
-        layoutDirection = layoutDirection,
         folderCellWidth = folderCellWidth,
         folderCellHeight = folderCellHeight,
+        folderPopupIntOffset = folderPopupIntOffset,
+        dragIntOffset = dragIntOffset
     )
 
     if (folderGridDragPosition.x in 0 until folderGridDragPosition.width &&

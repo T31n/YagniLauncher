@@ -60,11 +60,14 @@ import kotlin.uuid.Uuid
 
 @Composable
 internal fun ShortcutInfoScreen(
-    modifier: Modifier = Modifier,
+    // Content
     eblanShortcutInfosGroup: List<EblanShortcutInfo>,
     gridItemSettings: GridItemSettings,
     icon: String?,
     isVisibleOverlay: Boolean,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Callbacks
     onTapShortcutInfo: (
         serialNumber: Long,
         packageName: String,
@@ -76,7 +79,7 @@ internal fun ShortcutInfoScreen(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit,
+    ) -> Unit
 ) {
     Column(
         modifier = modifier
@@ -89,11 +92,11 @@ internal fun ShortcutInfoScreen(
         eblanShortcutInfosGroup.forEach { eblanShortcutInfo ->
             ShortcutInfoMenuItem(
                 eblanShortcutInfo = eblanShortcutInfo,
-                gridItemSettings = gridItemSettings,
                 icon = icon,
                 isVisibleOverlay = isVisibleOverlay,
+                gridItemSettings = gridItemSettings,
                 onTapShortcutInfo = onTapShortcutInfo,
-                onDragShortcutInfo = onDragShortcutInfo,
+                onDragShortcutInfo = onDragShortcutInfo
             )
         }
     }
@@ -101,13 +104,16 @@ internal fun ShortcutInfoScreen(
 
 @Composable
 internal fun PrivateShortcutInfoMenu(
-    modifier: Modifier = Modifier,
+    // Shortcut Data
     eblanShortcutInfosGroup: List<EblanShortcutInfo>,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Callbacks
     onTapShortcutInfo: (
         serialNumber: Long,
         packageName: String,
         shortcutId: String,
-    ) -> Unit,
+    ) -> Unit
 ) {
     Column(
         modifier = modifier
@@ -120,7 +126,7 @@ internal fun PrivateShortcutInfoMenu(
         eblanShortcutInfosGroup.forEach { eblanShortcutInfo ->
             PrivateShortcutInfoMenuItem(
                 eblanShortcutInfo = eblanShortcutInfo,
-                onTapShortcutInfo = onTapShortcutInfo,
+                onTapShortcutInfo = onTapShortcutInfo
             )
         }
     }
@@ -128,11 +134,14 @@ internal fun PrivateShortcutInfoMenu(
 
 @Composable
 private fun ShortcutInfoMenuItem(
-    modifier: Modifier = Modifier,
+    // Shortcut Content
     eblanShortcutInfo: EblanShortcutInfo,
-    gridItemSettings: GridItemSettings,
     icon: String?,
     isVisibleOverlay: Boolean,
+    // Layout and Appearance
+    gridItemSettings: GridItemSettings,
+    modifier: Modifier = Modifier,
+    // Actions
     onTapShortcutInfo: (Long, String, String) -> Unit,
     onDragShortcutInfo: (
         gridItem: GridItem,
@@ -140,7 +149,7 @@ private fun ShortcutInfoMenuItem(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit,
+    ) -> Unit
 ) {
     val graphicsLayer = rememberGraphicsLayer()
 
@@ -189,12 +198,12 @@ private fun ShortcutInfoMenuItem(
                                 scope.launch {
                                     handleOnLongPress(
                                         eblanShortcutInfo = eblanShortcutInfo,
-                                        graphicsLayer = graphicsLayer,
-                                        gridItemSettings = gridItemSettings,
                                         icon = icon,
+                                        gridItemSettings = gridItemSettings,
+                                        graphicsLayer = graphicsLayer,
                                         intOffset = intOffset,
                                         intSize = intSize,
-                                        onDragShortcutInfo = onDragShortcutInfo,
+                                        onDragShortcutInfo = onDragShortcutInfo
                                     )
                                 }
                             },
@@ -207,9 +216,12 @@ private fun ShortcutInfoMenuItem(
 
 @Composable
 private fun PrivateShortcutInfoMenuItem(
-    modifier: Modifier = Modifier,
+    // Content
     eblanShortcutInfo: EblanShortcutInfo,
-    onTapShortcutInfo: (Long, String, String) -> Unit,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Callbacks
+    onTapShortcutInfo: (Long, String, String) -> Unit
 ) {
     ListItem(
         modifier = modifier
@@ -235,27 +247,31 @@ private fun PrivateShortcutInfoMenuItem(
 
 @OptIn(ExperimentalUuidApi::class)
 private suspend fun handleOnLongPress(
+    // Shortcut
     eblanShortcutInfo: EblanShortcutInfo,
-    graphicsLayer: GraphicsLayer,
-    gridItemSettings: GridItemSettings,
     icon: String?,
+    // Grid
+    gridItemSettings: GridItemSettings,
+    // Graphics and Bounds
+    graphicsLayer: GraphicsLayer,
     intOffset: IntOffset,
     intSize: IntSize,
+    // Actions
     onDragShortcutInfo: (
         gridItem: GridItem,
         imageBitmap: ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit,
+    ) -> Unit
 ) {
     val id = Uuid.random().toHexString()
 
     val gridItem = getShortcutInfoGridItem(
-        eblanShortcutInfo = eblanShortcutInfo,
-        gridItemSettings = gridItemSettings,
-        icon = icon,
         id = id,
+        eblanShortcutInfo = eblanShortcutInfo,
+        icon = icon,
+        gridItemSettings = gridItemSettings
     )
 
     onDragShortcutInfo(
@@ -271,10 +287,12 @@ private suspend fun handleOnLongPress(
 }
 
 private fun getShortcutInfoGridItem(
-    eblanShortcutInfo: EblanShortcutInfo,
-    gridItemSettings: GridItemSettings,
-    icon: String?,
+    // Identification and Data
     id: String,
+    eblanShortcutInfo: EblanShortcutInfo,
+    // Appearance and Layout
+    icon: String?,
+    gridItemSettings: GridItemSettings
 ): GridItem {
     val data = GridItemData.ShortcutInfo(
         shortcutId = eblanShortcutInfo.shortcutId,

@@ -84,19 +84,25 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun HorizontalApplicationScreen(
-    modifier: Modifier = Modifier,
+    // Layout and Sizing
     sharedTransitionScope: SharedTransitionScope,
-    appDrawerSettings: AppDrawerSettings,
-    drag: Drag,
-    eblanApplicationInfoTags: List<EblanApplicationInfoTag>,
-    getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
     paddingValues: PaddingValues,
     screenHeight: Int,
-    swipeY: Float,
-    isVisibleOverlay: Boolean,
+    // Application Data
+    eblanApplicationInfoTags: List<EblanApplicationInfoTag>,
+    getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
+    // Appearance and Styling
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     animations: Boolean,
+    // State
+    appDrawerSettings: AppDrawerSettings,
+    drag: Drag,
+    swipeY: Float,
+    isVisibleOverlay: Boolean,
+    // Layout and Sizing
+    modifier: Modifier = Modifier,
+    // Callbacks
     onDismiss: () -> Unit,
     onDragEnd: () -> Unit,
     onGetEblanApplicationInfosByLabel: (String) -> Unit,
@@ -115,7 +121,7 @@ internal fun HorizontalApplicationScreen(
         eblanApplicationInfo: EblanApplicationInfo,
         intOffset: IntOffset,
         intSize: IntSize,
-    ) -> Unit,
+    ) -> Unit
 ) {
     val layoutDirection = LocalLayoutDirection.current
 
@@ -145,11 +151,11 @@ internal fun HorizontalApplicationScreen(
         swipeY = swipeY,
         textFieldState = textFieldState,
         showKeyboard = appDrawerSettings.showKeyboard &&
-            appDrawerSettings.searchBarPosition != SearchBarPosition.None,
+                appDrawerSettings.searchBarPosition != SearchBarPosition.None,
         focusRequester = focusRequester,
         onDismiss = onDismiss,
         onGetEblanApplicationInfosByLabel = onGetEblanApplicationInfosByLabel,
-        onGetEblanApplicationInfosByTagId = onGetEblanApplicationInfosByTagId,
+        onGetEblanApplicationInfosByTagId = onGetEblanApplicationInfosByTagId
     )
 
     Column(
@@ -184,19 +190,19 @@ internal fun HorizontalApplicationScreen(
                 customBackgroundColor = appDrawerSettings.customBackgroundColor,
                 systemTextColor = systemTextColor,
                 systemCustomTextColor = systemCustomTextColor,
-                defaultColor = MaterialTheme.colorScheme.onSurface,
+                defaultColor = MaterialTheme.colorScheme.onSurface
             ),
         )
 
         if (appDrawerSettings.searchBarPosition == SearchBarPosition.Top) {
             ApplicationSearchBar(
-                focusRequester = focusRequester,
                 searchBarState = searchBarState,
                 textFieldState = textFieldState,
+                focusRequester = focusRequester,
                 backgroundColor = appDrawerSettings.backgroundColor,
                 customBackgroundColor = appDrawerSettings.customBackgroundColor,
                 systemTextColor = systemTextColor,
-                systemCustomTextColor = systemCustomTextColor,
+                systemCustomTextColor = systemCustomTextColor
             )
         }
 
@@ -209,7 +215,7 @@ internal fun HorizontalApplicationScreen(
                             selectedEblanApplicationInfoTag = selectedEblanApplicationInfoTagId,
                             onUpdateEblanApplicationInfoTag = {
                                 selectedEblanApplicationInfoTagId = it
-                            },
+                            }
                         )
                     }
                 }
@@ -217,15 +223,14 @@ internal fun HorizontalApplicationScreen(
 
             if (eblanUserPageKeys.size > 1) {
                 EblanApplicationInfoTabRow(
-                    currentPage = horizontalPagerState.currentPage,
                     eblanUserPageKeys = eblanUserPageKeys,
                     eblanApplicationInfos = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos,
+                    currentPage = horizontalPagerState.currentPage,
                     backgroundColor = appDrawerSettings.backgroundColor,
                     customBackgroundColor = appDrawerSettings.customBackgroundColor,
                     systemTextColor = systemTextColor,
                     systemCustomTextColor = systemCustomTextColor,
-                    onAnimateScrollToPage = horizontalPagerState::animateScrollToPage,
-
+                    onAnimateScrollToPage = horizontalPagerState::animateScrollToPage
                 )
             }
 
@@ -241,32 +246,31 @@ internal fun HorizontalApplicationScreen(
                     getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
                     index = index,
                     paddingValues = paddingValues,
-                    isVisibleOverlay = isVisibleOverlay,
                     swipeY = swipeY,
+                    isVisibleOverlay = isVisibleOverlay,
                     isScrollInProgress = horizontalPagerState.isScrollInProgress,
                     systemTextColor = systemTextColor,
                     systemCustomTextColor = systemCustomTextColor,
                     animations = animations,
                     onDragEnd = onDragEnd,
                     onVerticalDrag = onVerticalDrag,
-
                     onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                     onDragApplicationInfo = onDragApplicationInfo,
                     onLongPressApplicationInfo = onLongPressApplicationInfo,
-                    onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
+                    onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem
                 )
             }
         }
 
         if (appDrawerSettings.searchBarPosition == SearchBarPosition.Bottom) {
             ApplicationSearchBar(
-                focusRequester = focusRequester,
                 searchBarState = searchBarState,
                 textFieldState = textFieldState,
+                focusRequester = focusRequester,
                 backgroundColor = appDrawerSettings.backgroundColor,
                 customBackgroundColor = appDrawerSettings.customBackgroundColor,
                 systemTextColor = systemTextColor,
-                systemCustomTextColor = systemCustomTextColor,
+                systemCustomTextColor = systemCustomTextColor
             )
         }
     }
@@ -274,7 +278,7 @@ internal fun HorizontalApplicationScreen(
 
 @Composable
 private fun EblanApplicationInfosPage(
-    modifier: Modifier = Modifier,
+    // Required Parameters
     sharedTransitionScope: SharedTransitionScope,
     appDrawerSettings: AppDrawerSettings,
     drag: Drag,
@@ -287,6 +291,9 @@ private fun EblanApplicationInfosPage(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     animations: Boolean,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Callbacks
     onDragEnd: () -> Unit,
     onVerticalDrag: (Float) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
@@ -302,7 +309,7 @@ private fun EblanApplicationInfosPage(
         eblanApplicationInfo: EblanApplicationInfo,
         intOffset: IntOffset,
         intSize: IntSize,
-    ) -> Unit,
+    ) -> Unit
 ) {
     val scope = rememberCoroutineScope()
 
@@ -337,29 +344,29 @@ private fun EblanApplicationInfosPage(
                 userHandle = userHandle,
                 backgroundColor = appDrawerSettings.backgroundColor,
                 customBackgroundColor = appDrawerSettings.customBackgroundColor,
-                systemCustomTextColor = systemCustomTextColor,
                 systemTextColor = systemTextColor,
+                systemCustomTextColor = systemCustomTextColor,
                 onDragEnd = onDragEnd,
-                onVerticalDrag = onVerticalDrag,
+                onVerticalDrag = onVerticalDrag
             )
         } else {
             EblanApplicationInfos(
+                eblanUserPageKey = eblanUserPageKey,
                 sharedTransitionScope = sharedTransitionScope,
                 appDrawerSettings = appDrawerSettings,
-                drag = drag,
-                eblanUserPageKey = eblanUserPageKey,
-                getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
                 paddingValues = paddingValues,
-                isVisibleOverlay = isVisibleOverlay,
-                swipeY = swipeY,
-                isScrollInProgress = isScrollInProgress,
                 systemTextColor = systemTextColor,
                 systemCustomTextColor = systemCustomTextColor,
                 animations = animations,
+                getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
+                isVisibleOverlay = isVisibleOverlay,
+                drag = drag,
+                swipeY = swipeY,
+                isScrollInProgress = isScrollInProgress,
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                 onDragApplicationInfo = onDragApplicationInfo,
                 onLongPressApplicationInfo = onLongPressApplicationInfo,
-                onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
+                onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem
             )
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && isDefaultLauncher &&
@@ -393,19 +400,24 @@ private fun EblanApplicationInfosPage(
 
 @Composable
 private fun EblanApplicationInfos(
-    modifier: Modifier = Modifier,
+    // Navigation and State
+    eblanUserPageKey: EblanUserPageKey,
     sharedTransitionScope: SharedTransitionScope,
     appDrawerSettings: AppDrawerSettings,
-    drag: Drag,
-    eblanUserPageKey: EblanUserPageKey,
-    getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
+    // Layout and Appearance
     paddingValues: PaddingValues,
-    isVisibleOverlay: Boolean,
-    swipeY: Float,
-    isScrollInProgress: Boolean,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     animations: Boolean,
+    // Interaction State
+    getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
+    isVisibleOverlay: Boolean,
+    drag: Drag,
+    swipeY: Float,
+    isScrollInProgress: Boolean,
+    // Layout and Appearance
+    modifier: Modifier = Modifier,
+    // Callbacks
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onDragApplicationInfo: (GridItem) -> Unit,
     onLongPressApplicationInfo: (
@@ -419,52 +431,52 @@ private fun EblanApplicationInfos(
         eblanApplicationInfo: EblanApplicationInfo,
         intOffset: IntOffset,
         intSize: IntSize,
-    ) -> Unit,
+    ) -> Unit
 ) {
     HorizontalAppDrawerGridLayout(
-        modifier = modifier.fillMaxSize(),
-        columns = appDrawerSettings.horizontalAppDrawerColumns,
         eblanApplicationInfos = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos[eblanUserPageKey],
         rows = appDrawerSettings.horizontalAppDrawerRows,
+        columns = appDrawerSettings.horizontalAppDrawerColumns,
+        modifier = modifier.fillMaxSize(),
         content = {
             when (eblanUserPageKey.eblanUser.eblanUserType) {
                 EblanUserType.Personal,
                 EblanUserType.Clone,
                 EblanUserType.Work,
-                -> {
+                    -> {
                     EblanApplicationInfoItem(
-                        modifier = Modifier.fillMaxSize(),
-                        sharedTransitionScope = sharedTransitionScope,
-                        appDrawerSettings = appDrawerSettings,
-                        drag = drag,
                         eblanApplicationInfo = it,
+                        sharedTransitionScope = sharedTransitionScope,
+                        drag = drag,
                         paddingValues = paddingValues,
+                        animations = animations,
+                        appDrawerSettings = appDrawerSettings,
                         isVisibleOverlay = isVisibleOverlay,
-                        isSwiping = swipeY > 0f,
                         isScrollInProgress = isScrollInProgress,
+                        isSwiping = swipeY > 0f,
                         systemTextColor = systemTextColor,
                         systemCustomTextColor = systemCustomTextColor,
                         iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
-                        animations = animations,
+                        modifier = Modifier.fillMaxSize(),
                         onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                         onDragApplicationInfo = onDragApplicationInfo,
-                        onLongPressApplicationInfo = onLongPressApplicationInfo,
+                        onLongPressApplicationInfo = onLongPressApplicationInfo
                     )
                 }
 
                 EblanUserType.Private -> {
                     PrivateSpaceEblanApplicationInfoItem(
-                        appDrawerSettings = appDrawerSettings,
                         eblanApplicationInfo = it,
-                        paddingValues = paddingValues,
+                        appDrawerSettings = appDrawerSettings,
+                        iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
                         isVisibleOverlay = isVisibleOverlay,
                         systemTextColor = systemTextColor,
                         systemCustomTextColor = systemCustomTextColor,
-                        iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
-                        onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
+                        paddingValues = paddingValues,
+                        onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem
                     )
                 }
             }
-        },
+        }
     )
 }

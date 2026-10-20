@@ -74,26 +74,29 @@ internal fun GeneralSettingsRoute(
     val eblanIconPackInfos by viewModel.eblanIconPacks.collectAsStateWithLifecycle()
 
     GeneralSettingsScreen(
-        modifier = modifier,
-        eblanIconPackInfos = eblanIconPackInfos,
         generalSettingsUiState = generalSettingsUiState,
+        eblanIconPackInfos = eblanIconPackInfos,
         packageManagerIconPacks = packageManagerIconPackInfos,
+        modifier = modifier,
         onDeleteEblanIconPackInfo = viewModel::deleteIconPack,
         onNavigateUp = onNavigateUp,
-        onUpdateGeneralSettings = viewModel::updateGeneralSettings,
+        onUpdateGeneralSettings = viewModel::updateGeneralSettings
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun GeneralSettingsScreen(
-    modifier: Modifier = Modifier,
-    eblanIconPackInfos: List<EblanIconPackInfo>,
+    // State
     generalSettingsUiState: GeneralSettingsUiState,
+    eblanIconPackInfos: List<EblanIconPackInfo>,
     packageManagerIconPacks: List<PackageManagerIconPack>,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Callbacks
     onDeleteEblanIconPackInfo: (String) -> Unit,
     onNavigateUp: () -> Unit,
-    onUpdateGeneralSettings: (GeneralSettings) -> Unit,
+    onUpdateGeneralSettings: (GeneralSettings) -> Unit
 ) {
     Scaffold(
         modifier = modifier,
@@ -121,10 +124,10 @@ internal fun GeneralSettingsScreen(
             if (generalSettingsUiState is GeneralSettingsUiState.Success) {
                 Success(
                     eblanIconPackInfos = eblanIconPackInfos,
-                    generalSettings = generalSettingsUiState.generalSettings,
                     packageManagerIconPacks = packageManagerIconPacks,
+                    generalSettings = generalSettingsUiState.generalSettings,
                     onDeleteEblanIconPackInfo = onDeleteEblanIconPackInfo,
-                    onUpdateGeneralSettings = onUpdateGeneralSettings,
+                    onUpdateGeneralSettings = onUpdateGeneralSettings
                 )
             }
         }
@@ -133,12 +136,16 @@ internal fun GeneralSettingsScreen(
 
 @Composable
 private fun Success(
-    modifier: Modifier = Modifier,
+    // Icon Packs
     eblanIconPackInfos: List<EblanIconPackInfo>,
-    generalSettings: GeneralSettings,
     packageManagerIconPacks: List<PackageManagerIconPack>,
+    // General Settings
+    generalSettings: GeneralSettings,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Actions
     onDeleteEblanIconPackInfo: (String) -> Unit,
-    onUpdateGeneralSettings: (GeneralSettings) -> Unit,
+    onUpdateGeneralSettings: (GeneralSettings) -> Unit
 ) {
     val context = LocalContext.current
 
@@ -162,7 +169,7 @@ private fun Success(
         },
         onIconShapeClick = {
             showIconShapeDialog = true
-        },
+        }
     )
 
     Column(
@@ -188,7 +195,7 @@ private fun Success(
             },
             onUpdateClick = {
                 onUpdateGeneralSettings(generalSettings.copy(theme = it))
-            },
+            }
         )
     }
 
@@ -226,7 +233,7 @@ private fun Success(
             },
             onUpdateIconPackPackageName = {
                 onUpdateGeneralSettings(generalSettings.copy(iconPackPackageName = it))
-            },
+            }
         )
     }
 
@@ -245,7 +252,7 @@ private fun Success(
                         customIconTint = customIconTint,
                     ),
                 )
-            },
+            }
         )
     }
 
@@ -262,21 +269,23 @@ private fun Success(
             },
             onUpdateClick = {
                 onUpdateGeneralSettings(generalSettings.copy(iconShape = it))
-            },
+            }
         )
     }
 }
 
 @Composable
 private fun buildGeneralSettingsItems(
+    // General Settings
     generalSettings: GeneralSettings,
+    // Theme and Icon Actions
     onImportIconPackClick: () -> Unit,
     onSelectIconPackClick: () -> Unit,
     onThemeClick: () -> Unit,
     onIconColorClick: () -> Unit,
     onDynamicThemeChange: (Boolean) -> Unit,
     onEnforceThemedIconsChanged: (Boolean) -> Unit,
-    onIconShapeClick: () -> Unit,
+    onIconShapeClick: () -> Unit
 ): List<SettingsItem> {
     val context = LocalContext.current
 

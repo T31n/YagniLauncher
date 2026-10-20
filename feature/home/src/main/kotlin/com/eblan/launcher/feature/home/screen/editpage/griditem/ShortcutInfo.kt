@@ -45,16 +45,20 @@ import com.eblan.launcher.feature.home.component.GridItemLayoutType
 
 @Composable
 internal fun ShortcutInfoGridItem(
-    modifier: Modifier = Modifier,
+    // Data
     data: GridItemData.ShortcutInfo,
     gridItemSettings: GridItemSettings,
     hasShortcutHostPermission: Boolean,
+    // Appearance
     textColor: Color,
+    maxLines: Int,
+    // Layout
     horizontalAlignment: Alignment.Horizontal,
     verticalArrangement: Arrangement.Vertical,
     horizontalArrangement: Arrangement.Horizontal,
     verticalAlignment: Alignment.Vertical,
-    maxLines: Int,
+    // Modifier
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
 
@@ -120,14 +124,14 @@ internal fun ShortcutInfoGridItem(
     }
 
     GridItemLayoutType(
-        modifier = itemModifier,
         gridItemSettings = gridItemSettings,
         horizontalAlignment = horizontalAlignment,
-        horizontalArrangement = horizontalArrangement,
         verticalAlignment = verticalAlignment,
+        horizontalArrangement = horizontalArrangement,
         verticalArrangement = verticalArrangement,
+        modifier = itemModifier,
         iconContent = iconContent,
         labelContent = labelContent,
-        labelOnlyContent = labelContent,
+        labelOnlyContent = labelContent
     )
 }

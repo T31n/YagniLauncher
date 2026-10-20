@@ -33,14 +33,17 @@ import com.eblan.launcher.framework.widgetmanager.AndroidAppWidgetHostWrapper
 import com.eblan.launcher.framework.widgetmanager.AndroidAppWidgetManagerWrapper
 
 internal fun handleGridItem(
-    appWidgetHostWrapper: AndroidAppWidgetHostWrapper,
-    appWidgetManager: AndroidAppWidgetManagerWrapper,
+    // Grid Item
     gridItem: GridItem?,
+    // Android Context
+    appWidgetManager: AndroidAppWidgetManagerWrapper,
+    appWidgetHostWrapper: AndroidAppWidgetHostWrapper,
     userHandle: UserHandle,
+    // Callbacks
     onAddedToHomeScreenToast: (String) -> Unit,
     onLaunch: (Intent) -> Unit,
     onUpdateAppWidgetId: (Int) -> Unit,
-    onUpdateGridItemCache: (GridItem) -> Unit,
+    onUpdateGridItemCache: (GridItem) -> Unit
 ) {
     val data = gridItem?.data ?: return
 
@@ -56,7 +59,7 @@ internal fun handleGridItem(
             gridItem = gridItem,
             userHandle = userHandle,
             onLaunch = onLaunch,
-            onUpdateGridItemCache = onUpdateGridItemCache,
+            onUpdateGridItemCache = onUpdateGridItemCache
         )
 
         onAddedToHomeScreenToast(
@@ -70,13 +73,16 @@ internal fun handleGridItem(
 }
 
 internal fun onAddPinWidget(
+    // Widget Details
     appWidgetId: Int,
     appWidgetManager: AndroidAppWidgetManagerWrapper,
     data: GridItemData.Widget,
+    // Item Context
     gridItem: GridItem,
     userHandle: UserHandle,
+    // Actions
     onLaunch: (Intent) -> Unit,
-    onUpdateGridItemCache: (GridItem) -> Unit,
+    onUpdateGridItemCache: (GridItem) -> Unit
 ) {
     val provider = ComponentName.unflattenFromString(data.componentName)
 
@@ -102,10 +108,12 @@ internal fun onAddPinWidget(
 }
 
 internal fun handleAppWidgetLauncherResult(
-    gridItem: GridItem?,
+    // Launcher Result
     result: ActivityResult,
+    gridItem: GridItem?,
+    // Callbacks
     onDeleteAppWidgetId: () -> Unit,
-    onUpdateGridItemCache: (GridItem) -> Unit,
+    onUpdateGridItemCache: (GridItem) -> Unit
 ) {
     val data = gridItem?.data as? GridItemData.Widget ?: return
 
@@ -123,12 +131,15 @@ internal fun handleAppWidgetLauncherResult(
 
 @RequiresApi(Build.VERSION_CODES.O)
 internal fun handleIsBoundWidget(
+    // Widget Identifiers
     appWidgetId: Int,
-    gridItem: GridItem?,
     isBoundWidget: Boolean,
+    // Item Data
+    gridItem: GridItem?,
     pinItemRequest: PinItemRequest?,
+    // Actions
     onDeleteGridItem: (GridItem) -> Unit,
-    onUpdateGridItems: () -> Unit,
+    onUpdateGridItems: () -> Unit
 ) {
     if (gridItem == null || !isBoundWidget || pinItemRequest == null) return
 
@@ -146,10 +157,12 @@ internal fun handleIsBoundWidget(
 }
 
 internal fun handleDeleteAppWidgetId(
+    // Widget ID
     appWidgetId: Int,
     deleteAppWidgetId: Boolean,
+    // Grid Item
     gridItem: GridItem?,
-    onDeleteGridItem: (GridItem) -> Unit,
+    onDeleteGridItem: (GridItem) -> Unit
 ) {
     val data = gridItem?.data as? GridItemData.Widget ?: return
 

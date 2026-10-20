@@ -40,14 +40,17 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun EditVerticalGridDialog(
-    modifier: Modifier = Modifier,
+    // Grid Properties
     appDrawerColumns: Int,
     appDrawerRowsHeight: Int,
+    // Modifiers
+    modifier: Modifier = Modifier,
+    // Callbacks
     onDismissRequest: () -> Unit,
     onUpdateVerticalGrid: (
         appDrawerColumns: Int,
         appDrawerRowsHeight: Int,
-    ) -> Unit,
+    ) -> Unit
 ) {
     var currentAppDrawerColumns by remember { mutableStateOf("$appDrawerColumns") }
     var currentAppDrawerRowsHeight by remember { mutableStateOf("$appDrawerRowsHeight") }

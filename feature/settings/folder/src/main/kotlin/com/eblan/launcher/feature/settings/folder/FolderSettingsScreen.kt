@@ -136,7 +136,7 @@ private fun Success(
         },
         onFolderBackgroundColorClick = {
             showFolderBackgroundColorDialog = true
-        },
+        }
     )
 
     Column(
@@ -163,7 +163,7 @@ private fun Success(
                         folderCellHeight = folderCellHeight,
                     ),
                 )
-            },
+            }
         )
     }
 
@@ -181,7 +181,7 @@ private fun Success(
                         maxFolderRows = maxFolderRows,
                     ),
                 )
-            },
+            }
         )
     }
 
@@ -197,7 +197,7 @@ private fun Success(
                         folderCornerRadius = it,
                     ),
                 )
-            },
+            }
         )
     }
 
@@ -216,18 +216,20 @@ private fun Success(
                         customFolderBackgroundColor = customColor,
                     ),
                 )
-            },
+            }
         )
     }
 }
 
 @Composable
 private fun buildFolderHomeSettingsItems(
+    // Data
     folderSettings: FolderSettings,
+    // Callbacks
     onFolderCellDimensionClick: () -> Unit,
     onFolderMaxGridClick: () -> Unit,
     onFolderCornerRadiusClick: () -> Unit,
-    onFolderBackgroundColorClick: () -> Unit,
+    onFolderBackgroundColorClick: () -> Unit
 ): List<SettingsItem> = buildList {
     add(
         SettingsItem.Column(

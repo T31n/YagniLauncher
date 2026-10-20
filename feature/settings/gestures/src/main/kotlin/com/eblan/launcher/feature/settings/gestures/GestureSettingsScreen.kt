@@ -88,11 +88,11 @@ private fun GestureSettingsScreen(
         ) {
             if (gesturesSettingsUiState is GesturesSettingsUiState.Success) {
                 EblanActionSettings(
-                    modifier = Modifier.padding(10.dp),
                     doubleTap = gesturesSettingsUiState.gestureSettings.doubleTap,
                     swipeUp = gesturesSettingsUiState.gestureSettings.swipeUp,
                     swipeDown = gesturesSettingsUiState.gestureSettings.swipeDown,
                     eblanApplicationInfos = gesturesSettingsUiState.eblanApplicationInfos,
+                    modifier = Modifier.padding(10.dp),
                     onUpdateDoubleTap = {
                         onUpdateGestureSettings(
                             gesturesSettingsUiState.gestureSettings.copy(
@@ -113,7 +113,7 @@ private fun GestureSettingsScreen(
                                 swipeDown = it,
                             ),
                         )
-                    },
+                    }
                 )
             }
         }

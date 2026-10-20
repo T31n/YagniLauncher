@@ -90,13 +90,15 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun EditGridPageScreen(
-    modifier: Modifier = Modifier,
+    // State
     pageItems: List<PageItem>?,
     hasShortcutHostPermission: Boolean,
     homeSettings: HomeSettings,
+    // Layout
     paddingValues: PaddingValues,
     screenWidth: Int,
     screenHeight: Int,
+    // Appearance
     textColor: TextColor,
     folderPopupGridItems: Map<String, FolderPopup>,
     iconPackFilePaths: Map<String, String?>,
@@ -105,13 +107,16 @@ internal fun EditGridPageScreen(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     folderSettings: FolderSettings,
+    // Layout
+    modifier: Modifier = Modifier,
+    // Callbacks
     onSaveEditPage: (
         id: Int,
         pageItems: List<PageItem>,
         pageItemsToDelete: List<PageItem>,
         associate: Associate,
     ) -> Unit,
-    onUpdateScreen: (Screen) -> Unit,
+    onUpdateScreen: (Screen) -> Unit
 ) {
     requireNotNull(pageItems)
 
@@ -120,11 +125,11 @@ internal fun EditGridPageScreen(
     val layoutDirection = LocalLayoutDirection.current
 
     val (gridWidthDp, gridHeightDp) = getGridSize(
-        density = density,
-        paddingValues = paddingValues,
-        layoutDirection = layoutDirection,
         screenWidth = screenWidth,
         screenHeight = screenHeight,
+        density = density,
+        paddingValues = paddingValues,
+        layoutDirection = layoutDirection
     )
 
     var currentPageItems by remember { mutableStateOf(pageItems) }
@@ -203,39 +208,39 @@ internal fun EditGridPageScreen(
                     index = index,
                 ) {
                     GridLayout(
+                        gridItems = pageItem.gridItems,
+                        columns = columns,
+                        rows = rows,
+                        animate = false,
                         modifier = Modifier
                             .weight(1f)
                             .background(
                                 color = MaterialTheme.colorScheme.primary.copy(alpha = 0.25f),
                                 shape = RoundedCornerShape(8.dp),
                             ),
-                        columns = columns,
-                        gridItems = pageItem.gridItems,
-                        rows = rows,
-                        animate = false,
                         content = {
                             PageGridItem(
                                 gridItem = it,
                                 gridItemSettings = homeSettings.gridItemSettings,
+                                folderPopupGridItems = folderPopupGridItems,
                                 hasShortcutHostPermission = hasShortcutHostPermission,
                                 textColor = textColor,
-                                folderPopupGridItems = folderPopupGridItems,
-                                iconPackFilePaths = iconPackFilePaths,
-                                folderBackgroundColor = folderBackgroundColor,
-                                customFolderBackgroundColor = customFolderBackgroundColor,
                                 systemTextColor = systemTextColor,
                                 systemCustomTextColor = systemCustomTextColor,
+                                folderBackgroundColor = folderBackgroundColor,
+                                customFolderBackgroundColor = customFolderBackgroundColor,
                                 folderCornerRadius = folderSettings.folderCornerRadius,
+                                iconPackFilePaths = iconPackFilePaths
                             )
-                        },
+                        }
                     )
 
                     PageButtons(
+                        pageItem = pageItem,
+                        selectedId = selectedId,
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
                             .padding(5.dp),
-                        pageItem = pageItem,
-                        selectedId = selectedId,
                         onDeleteClick = {
                             currentPageItems = currentPageItems.toMutableList().apply {
                                 removeIf { currentPageItem ->
@@ -247,20 +252,20 @@ internal fun EditGridPageScreen(
                         },
                         onHomeClick = {
                             selectedId = pageItem.id
-                        },
+                        }
                     )
                 }
             }
         }
 
         ExpandableFloatingActionButton(
+            expanded = expanded,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(
                     end = paddingValues.calculateEndPadding(layoutDirection),
                     bottom = paddingValues.calculateBottomPadding(),
                 ),
-            expanded = expanded,
             onExpandedChange = { expanded = it },
             onAdd = {
                 currentPageItems = currentPageItems.toMutableList().apply {
@@ -279,17 +284,19 @@ internal fun EditGridPageScreen(
             },
             onCancel = {
                 onUpdateScreen(Screen.Pager)
-            },
+            }
         )
     }
 }
 
 private fun getGridSize(
-    density: Density,
-    paddingValues: PaddingValues,
-    layoutDirection: LayoutDirection,
+    // Screen Dimensions
     screenWidth: Int,
     screenHeight: Int,
+    // Layout Context
+    density: Density,
+    paddingValues: PaddingValues,
+    layoutDirection: LayoutDirection
 ): Pair<Dp, Dp> {
     val leftPadding = with(density) {
         paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
@@ -324,26 +331,31 @@ private fun getGridSize(
 
 @Composable
 internal fun EditDockGridPageScreen(
-    modifier: Modifier = Modifier,
+    // Content
     pageItems: List<PageItem>?,
-    hasShortcutHostPermission: Boolean,
-    homeSettings: HomeSettings,
-    paddingValues: PaddingValues,
-    textColor: TextColor,
     folderPopupGridItems: Map<String, FolderPopup>,
-    iconPackFilePaths: Map<String, String?>,
-    folderBackgroundColor: BackgroundColor,
-    customFolderBackgroundColor: Int,
+    hasShortcutHostPermission: Boolean,
+    // Settings
+    homeSettings: HomeSettings,
+    folderSettings: FolderSettings,
+    // Appearance
+    textColor: TextColor,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
-    folderSettings: FolderSettings,
+    folderBackgroundColor: BackgroundColor,
+    customFolderBackgroundColor: Int,
+    iconPackFilePaths: Map<String, String?>,
+    // Layout
+    paddingValues: PaddingValues,
+    modifier: Modifier = Modifier,
+    // Callbacks
     onSaveEditPage: (
         id: Int,
         pageItems: List<PageItem>,
         pageItemsToDelete: List<PageItem>,
         associate: Associate,
     ) -> Unit,
-    onUpdateScreen: (Screen) -> Unit,
+    onUpdateScreen: (Screen) -> Unit
 ) {
     requireNotNull(pageItems)
 
@@ -431,36 +443,36 @@ internal fun EditDockGridPageScreen(
                             ),
                     ) {
                         GridLayout(
+                            gridItems = pageItem.gridItems,
+                            columns = columns,
+                            rows = rows,
+                            animate = false,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(cardHeight),
-                            columns = columns,
-                            gridItems = pageItem.gridItems,
-                            rows = rows,
-                            animate = false,
                             content = {
                                 PageGridItem(
                                     gridItem = it,
                                     gridItemSettings = homeSettings.gridItemSettings,
+                                    folderPopupGridItems = folderPopupGridItems,
                                     hasShortcutHostPermission = hasShortcutHostPermission,
                                     textColor = textColor,
-                                    folderPopupGridItems = folderPopupGridItems,
-                                    iconPackFilePaths = iconPackFilePaths,
-                                    folderBackgroundColor = folderBackgroundColor,
-                                    customFolderBackgroundColor = customFolderBackgroundColor,
                                     systemTextColor = systemTextColor,
                                     systemCustomTextColor = systemCustomTextColor,
+                                    folderBackgroundColor = folderBackgroundColor,
+                                    customFolderBackgroundColor = customFolderBackgroundColor,
                                     folderCornerRadius = folderSettings.folderCornerRadius,
+                                    iconPackFilePaths = iconPackFilePaths
                                 )
-                            },
+                            }
                         )
 
                         PageButtons(
+                            pageItem = pageItem,
+                            selectedId = selectedId,
                             modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
                                 .padding(5.dp),
-                            pageItem = pageItem,
-                            selectedId = selectedId,
                             onDeleteClick = {
                                 currentPageItems = currentPageItems.toMutableList().apply {
                                     removeIf { currentPageItem ->
@@ -472,7 +484,7 @@ internal fun EditDockGridPageScreen(
                             },
                             onHomeClick = {
                                 selectedId = pageItem.id
-                            },
+                            }
                         )
                     }
                 }
@@ -480,13 +492,13 @@ internal fun EditDockGridPageScreen(
         }
 
         ExpandableFloatingActionButton(
+            expanded = expanded,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(
                     end = paddingValues.calculateEndPadding(layoutDirection),
                     bottom = paddingValues.calculateBottomPadding(),
                 ),
-            expanded = expanded,
             onExpandedChange = { expanded = it },
             onAdd = {
                 currentPageItems = currentPageItems.toMutableList().apply {
@@ -505,18 +517,21 @@ internal fun EditDockGridPageScreen(
             },
             onCancel = {
                 onUpdateScreen(Screen.Pager)
-            },
+            }
         )
     }
 }
 
 @Composable
 internal fun PageButtons(
-    modifier: Modifier = Modifier,
+    // Page Data
     pageItem: PageItem,
     selectedId: Int,
+    // Layout
+    modifier: Modifier = Modifier,
+    // Actions
     onDeleteClick: () -> Unit,
-    onHomeClick: () -> Unit,
+    onHomeClick: () -> Unit
 ) {
     Surface(
         modifier = modifier,
@@ -552,12 +567,15 @@ internal fun PageButtons(
 
 @Composable
 internal fun ExpandableFloatingActionButton(
-    modifier: Modifier = Modifier,
+    // State
     expanded: Boolean,
+    // Layout
+    modifier: Modifier = Modifier,
+    // Actions
     onExpandedChange: (Boolean) -> Unit,
     onAdd: () -> Unit,
     onSave: () -> Unit,
-    onCancel: () -> Unit,
+    onCancel: () -> Unit
 ) {
     Column(modifier = modifier.padding(15.dp)) {
         AnimatedVisibility(

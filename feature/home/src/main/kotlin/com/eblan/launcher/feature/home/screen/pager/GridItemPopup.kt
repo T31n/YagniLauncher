@@ -69,17 +69,21 @@ import com.eblan.launcher.ui.local.LocalLauncherApps
 
 @Composable
 internal fun GridItemPopup(
-    modifier: Modifier = Modifier,
-    eblanAppWidgetProviderInfosGroup: Map<String, List<EblanAppWidgetProviderInfo>>,
-    eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
+    // Grid Item
     gridItem: GridItem?,
     gridItemSettings: GridItemSettings,
+    isCloseGridItemPopup: Boolean,
+    // Data Providers
+    eblanAppWidgetProviderInfosGroup: Map<String, List<EblanAppWidgetProviderInfo>>,
+    eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
     hasShortcutHostPermission: Boolean,
+    // Layout and Positioning
     popupIntOffset: IntOffset?,
     popupIntSize: IntSize?,
     isVisibleOverlay: Boolean,
     paddingValues: PaddingValues,
-    isCloseGridItemPopup: Boolean,
+    modifier: Modifier = Modifier,
+    // Callbacks
     onDeleteGridItem: (GridItem) -> Unit,
     onDismissRequest: () -> Unit,
     onEdit: (String) -> Unit,
@@ -92,7 +96,7 @@ internal fun GridItemPopup(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit,
+    ) -> Unit
 ) {
     requireNotNull(gridItem)
 
@@ -181,12 +185,12 @@ internal fun GridItemPopup(
             exit = fadeOut(tween()) + scaleOut(targetScale = 0.8f, animationSpec = tween()),
         ) {
             GridItemPopupContent(
-                eblanAppWidgetProviderInfosGroup = eblanAppWidgetProviderInfosGroup,
-                eblanShortcutInfosGroup = eblanShortcutInfosGroup,
                 gridItem = gridItem,
                 gridItemSettings = gridItemSettings,
-                hasShortcutHostPermission = hasShortcutHostPermission,
                 isVisibleOverlay = isVisibleOverlay,
+                eblanAppWidgetProviderInfosGroup = eblanAppWidgetProviderInfosGroup,
+                eblanShortcutInfosGroup = eblanShortcutInfosGroup,
+                hasShortcutHostPermission = hasShortcutHostPermission,
                 onDeleteGridItem = onDeleteGridItem,
                 onDismiss = {
                     transitionState.targetState = false
@@ -212,7 +216,7 @@ internal fun GridItemPopup(
                 },
                 onWidgets = onWidgets,
                 onUpdateIsResizing = onUpdateIsResizing,
-                onDragShortcutInfo = onDragShortcutInfo,
+                onDragShortcutInfo = onDragShortcutInfo
             )
         }
     }
@@ -220,13 +224,17 @@ internal fun GridItemPopup(
 
 @Composable
 private fun GridItemPopupContent(
-    modifier: Modifier = Modifier,
-    eblanAppWidgetProviderInfosGroup: Map<String, List<EblanAppWidgetProviderInfo>>,
-    eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
+    // Grid Item
     gridItem: GridItem,
     gridItemSettings: GridItemSettings,
-    hasShortcutHostPermission: Boolean,
     isVisibleOverlay: Boolean,
+    // Providers and Shortcuts
+    eblanAppWidgetProviderInfosGroup: Map<String, List<EblanAppWidgetProviderInfo>>,
+    eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
+    hasShortcutHostPermission: Boolean,
+    // Layout
+    modifier: Modifier = Modifier,
+    // Actions
     onDeleteGridItem: (GridItem) -> Unit,
     onDismiss: () -> Unit,
     onEdit: (String) -> Unit,
@@ -248,7 +256,7 @@ private fun GridItemPopupContent(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit,
+    ) -> Unit
 ) {
     Surface(
         modifier = modifier.padding(5.dp),
@@ -258,6 +266,10 @@ private fun GridItemPopupContent(
             when (val data = gridItem.data) {
                 is GridItemData.ApplicationInfo -> {
                     ApplicationInfoGridItemMenu(
+                        icon = data.icon,
+                        gridItemSettings = gridItemSettings,
+                        isVisibleOverlay = isVisibleOverlay,
+                        hasShortcutHostPermission = hasShortcutHostPermission,
                         eblanAppWidgetProviderInfosByPackageName = eblanAppWidgetProviderInfosGroup[data.packageName],
                         eblanShortcutInfosByPackageName = eblanShortcutInfosGroup[
                             EblanShortcutInfoByGroup(
@@ -265,10 +277,6 @@ private fun GridItemPopupContent(
                                 packageName = data.packageName,
                             ),
                         ],
-                        gridItemSettings = gridItemSettings,
-                        hasShortcutHostPermission = hasShortcutHostPermission,
-                        icon = data.icon,
-                        isVisibleOverlay = isVisibleOverlay,
                         onDelete = {
                             onDeleteGridItem(gridItem)
 
@@ -294,15 +302,6 @@ private fun GridItemPopupContent(
 
                             onDismiss()
                         },
-                        onTapShortcutInfo = { serialNumber, packageName, shortcutId ->
-                            onTapShortcutInfo(
-                                serialNumber,
-                                packageName,
-                                shortcutId,
-                            )
-
-                            onDismiss()
-                        },
                         onWidgets = {
                             onWidgets(
                                 EblanApplicationInfoGroup(
@@ -315,7 +314,16 @@ private fun GridItemPopupContent(
 
                             onDismiss()
                         },
-                        onDragShortcutInfo = onDragShortcutInfo,
+                        onTapShortcutInfo = { serialNumber, packageName, shortcutId ->
+                            onTapShortcutInfo(
+                                serialNumber,
+                                packageName,
+                                shortcutId,
+                            )
+
+                            onDismiss()
+                        },
+                        onDragShortcutInfo = onDragShortcutInfo
                     )
                 }
 
@@ -367,30 +375,34 @@ private fun GridItemPopupContent(
 
 @Composable
 private fun ApplicationInfoGridItemMenu(
-    modifier: Modifier = Modifier,
+    // Item Details
+    icon: String?,
+    gridItemSettings: GridItemSettings,
+    isVisibleOverlay: Boolean,
+    hasShortcutHostPermission: Boolean,
+    // Content Providers
     eblanAppWidgetProviderInfosByPackageName: List<EblanAppWidgetProviderInfo>?,
     eblanShortcutInfosByPackageName: List<EblanShortcutInfo>?,
-    gridItemSettings: GridItemSettings,
-    hasShortcutHostPermission: Boolean,
-    icon: String?,
-    isVisibleOverlay: Boolean,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Actions
     onDelete: () -> Unit,
     onEdit: () -> Unit,
     onInfo: () -> Unit,
     onResize: () -> Unit,
+    onWidgets: () -> Unit,
     onTapShortcutInfo: (
         serialNumber: Long,
         packageName: String,
         shortcutId: String,
     ) -> Unit,
-    onWidgets: () -> Unit,
     onDragShortcutInfo: (
         gridItem: GridItem,
         imageBitmap: ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit,
+    ) -> Unit
 ) {
     Column(
         modifier = modifier,
@@ -400,13 +412,13 @@ private fun ApplicationInfoGridItemMenu(
             !eblanShortcutInfosByPackageName.isNullOrEmpty()
         ) {
             ShortcutInfoScreen(
-                modifier = modifier,
                 eblanShortcutInfosGroup = eblanShortcutInfosByPackageName,
                 gridItemSettings = gridItemSettings,
                 icon = icon,
                 isVisibleOverlay = isVisibleOverlay,
+                modifier = modifier,
                 onTapShortcutInfo = onTapShortcutInfo,
-                onDragShortcutInfo = onDragShortcutInfo,
+                onDragShortcutInfo = onDragShortcutInfo
             )
 
             Spacer(modifier = Modifier.height(5.dp))

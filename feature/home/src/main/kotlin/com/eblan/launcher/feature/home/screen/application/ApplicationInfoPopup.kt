@@ -73,17 +73,20 @@ import com.eblan.launcher.ui.local.LocalUserManager
 
 @Composable
 internal fun ApplicationInfoPopup(
-    modifier: Modifier = Modifier,
+    // Application Data
+    eblanApplicationInfo: EblanApplicationInfo?,
     eblanAppWidgetProviderInfos: Map<String, List<EblanAppWidgetProviderInfo>>,
     eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
-    eblanApplicationInfo: EblanApplicationInfo?,
     gridItemSettings: GridItemSettings,
+    // State & Configuration
     hasShortcutHostPermission: Boolean,
+    isVisibleOverlay: Boolean,
+    isCloseEblanApplicationInfoMenu: Boolean,
     popupIntOffset: IntOffset?,
     popupIntSize: IntSize?,
-    isVisibleOverlay: Boolean,
     paddingValues: PaddingValues,
-    isCloseEblanApplicationInfoMenu: Boolean,
+    modifier: Modifier = Modifier,
+    // Actions & Callbacks
     onDismissRequest: () -> Unit,
     onEditApplicationInfo: (
         serialNumber: Long,
@@ -96,7 +99,7 @@ internal fun ApplicationInfoPopup(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit,
+    ) -> Unit
 ) {
     requireNotNull(eblanApplicationInfo)
     requireNotNull(popupIntOffset)
@@ -198,13 +201,13 @@ internal fun ApplicationInfoPopup(
                 onUninstall = {
                     handleOnUninstall(
                         context = context,
+                        launcherApps = launcherApps,
+                        userManager = userManager,
                         serialNumber = eblanApplicationInfo.serialNumber,
                         componentName = eblanApplicationInfo.componentName,
                         packageName = eblanApplicationInfo.packageName,
-                        launcherApps = launcherApps,
                         popupIntOffset = popupIntOffset,
-                        popupIntSize = popupIntSize,
-                        userManager = userManager,
+                        popupIntSize = popupIntSize
                     )
 
                     transitionState.targetState = false
@@ -260,7 +263,7 @@ internal fun ApplicationInfoPopup(
 
                     transitionState.targetState = false
                 },
-                onDragShortcutInfo = onDragShortcutInfo,
+                onDragShortcutInfo = onDragShortcutInfo
             )
         }
     }
@@ -268,19 +271,24 @@ internal fun ApplicationInfoPopup(
 
 @Composable
 internal fun PrivateApplicationInfoPopup(
-    modifier: Modifier = Modifier,
-    eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
+    // Application Info
     eblanApplicationInfo: EblanApplicationInfo?,
+    eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
     hasShortcutHostPermission: Boolean,
+    // Layout and Positioning
     popupIntOffset: IntOffset?,
     popupIntSize: IntSize?,
     paddingValues: PaddingValues,
+    // State and Events
     isClosePrivateEblanApplicationInfoMenu: Boolean,
+    // Layout and Positioning
+    modifier: Modifier = Modifier,
+    // State and Events
     onDismissRequest: () -> Unit,
     onEditApplicationInfo: (
         serialNumber: Long,
         componentName: String,
-    ) -> Unit,
+    ) -> Unit
 ) {
     requireNotNull(eblanApplicationInfo)
     requireNotNull(popupIntOffset)
@@ -365,24 +373,24 @@ internal fun PrivateApplicationInfoPopup(
             ),
         ) {
             PrivateApplicationInfoMenu(
+                hasShortcutHostPermission = hasShortcutHostPermission,
+                isUserInstalled = packageManager.isUserInstalled(flags = eblanApplicationInfo.flags),
                 eblanShortcutInfosGroup = eblanShortcutInfosGroup[
                     EblanShortcutInfoByGroup(
                         serialNumber = eblanApplicationInfo.serialNumber,
                         packageName = eblanApplicationInfo.packageName,
                     ),
                 ],
-                hasShortcutHostPermission = hasShortcutHostPermission,
-                isUserInstalled = packageManager.isUserInstalled(flags = eblanApplicationInfo.flags),
                 onUninstall = {
                     handleOnUninstall(
                         context = context,
+                        launcherApps = launcherApps,
+                        userManager = userManager,
                         serialNumber = eblanApplicationInfo.serialNumber,
                         componentName = eblanApplicationInfo.componentName,
                         packageName = eblanApplicationInfo.packageName,
-                        launcherApps = launcherApps,
                         popupIntOffset = popupIntOffset,
-                        popupIntSize = popupIntSize,
-                        userManager = userManager,
+                        popupIntSize = popupIntSize
                     )
 
                     transitionState.targetState = false
@@ -425,7 +433,7 @@ internal fun PrivateApplicationInfoPopup(
                     }
 
                     transitionState.targetState = false
-                },
+                }
             )
         }
     }
@@ -433,7 +441,7 @@ internal fun PrivateApplicationInfoPopup(
 
 @Composable
 internal fun ApplicationInfoMenu(
-    modifier: Modifier = Modifier,
+    // Content
     eblanAppWidgetProviderInfosByPackageName: List<EblanAppWidgetProviderInfo>?,
     eblanShortcutInfosGroup: List<EblanShortcutInfo>?,
     gridItemSettings: GridItemSettings,
@@ -441,6 +449,9 @@ internal fun ApplicationInfoMenu(
     isUserInstalled: Boolean,
     icon: String?,
     isVisibleOverlay: Boolean,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Actions
     onUninstall: () -> Unit,
     onApplicationInfo: () -> Unit,
     onEdit: () -> Unit,
@@ -456,7 +467,7 @@ internal fun ApplicationInfoMenu(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit,
+    ) -> Unit
 ) {
     Surface(
         modifier = modifier.padding(5.dp),
@@ -473,7 +484,7 @@ internal fun ApplicationInfoMenu(
                         icon = icon,
                         isVisibleOverlay = isVisibleOverlay,
                         onTapShortcutInfo = onTapShortcutInfo,
-                        onDragShortcutInfo = onDragShortcutInfo,
+                        onDragShortcutInfo = onDragShortcutInfo
                     )
 
                     Spacer(modifier = Modifier.height(5.dp))
@@ -527,10 +538,14 @@ internal fun ApplicationInfoMenu(
 
 @Composable
 private fun PrivateApplicationInfoMenu(
-    modifier: Modifier = Modifier,
-    eblanShortcutInfosGroup: List<EblanShortcutInfo>?,
+    // Application State
     hasShortcutHostPermission: Boolean,
     isUserInstalled: Boolean,
+    // Shortcuts
+    eblanShortcutInfosGroup: List<EblanShortcutInfo>?,
+    // Layout
+    modifier: Modifier = Modifier,
+    // Actions
     onUninstall: () -> Unit,
     onApplicationInfo: () -> Unit,
     onEdit: () -> Unit,
@@ -538,7 +553,7 @@ private fun PrivateApplicationInfoMenu(
         serialNumber: Long,
         packageName: String,
         shortcutId: String,
-    ) -> Unit,
+    ) -> Unit
 ) {
     Surface(
         modifier = modifier.padding(5.dp),
@@ -551,7 +566,7 @@ private fun PrivateApplicationInfoMenu(
                 if (hasShortcutHostPermission && !eblanShortcutInfosGroup.isNullOrEmpty()) {
                     PrivateShortcutInfoMenu(
                         eblanShortcutInfosGroup = eblanShortcutInfosGroup,
-                        onTapShortcutInfo = onTapShortcutInfo,
+                        onTapShortcutInfo = onTapShortcutInfo
                     )
 
                     Spacer(modifier = Modifier.height(5.dp))

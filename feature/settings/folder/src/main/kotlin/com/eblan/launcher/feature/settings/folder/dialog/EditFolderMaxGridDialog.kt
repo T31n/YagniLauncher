@@ -40,14 +40,17 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun EditFolderMaxGridDialog(
-    modifier: Modifier = Modifier,
+    // Grid Dimensions
     maxFolderColumns: Int,
     maxFolderRows: Int,
+    // Appearance
+    modifier: Modifier = Modifier,
+    // Actions
     onDismissRequest: () -> Unit,
     onUpdateFolderMaxGrid: (
         maxFolderColumns: Int,
         maxFolderRows: Int,
-    ) -> Unit,
+    ) -> Unit
 ) {
     var currentMaxFolderColumns by remember { mutableStateOf("$maxFolderColumns") }
     var currentMaxFolderRows by remember { mutableStateOf("$maxFolderRows") }

@@ -68,11 +68,14 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 fun SettingsSwitch(
-    modifier: Modifier = Modifier,
-    checked: Boolean,
+    // Content
     title: String,
     subtitle: String,
-    onCheckedChange: (Boolean) -> Unit,
+    checked: Boolean,
+    // Layout
+    modifier: Modifier = Modifier,
+    // Behavior
+    onCheckedChange: (Boolean) -> Unit
 ) {
     Row(
         modifier = modifier
@@ -108,14 +111,19 @@ fun SettingsSwitch(
 
 @Composable
 fun SettingsSwitch(
-    modifier: Modifier = Modifier,
-    index: Int,
-    size: Int,
-    checked: Boolean,
+    // Content
     title: String,
     subtitle: String,
+    // State
+    checked: Boolean,
+    // Dimensions
+    index: Int,
+    size: Int,
+    // Layout
+    modifier: Modifier = Modifier,
+    // Callbacks
     onClick: () -> Unit,
-    onCheckedChange: (Boolean) -> Unit,
+    onCheckedChange: (Boolean) -> Unit
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -162,62 +170,62 @@ fun SettingsItems(
         when (settingsItem) {
             is SettingsItem.Column -> {
                 SettingsColumn(
-                    modifier = modifier,
-                    index = index,
-                    size = items.size,
                     title = settingsItem.title,
                     subtitle = settingsItem.subtitle,
-                    onClick = settingsItem.onClick,
+                    index = index,
+                    size = items.size,
+                    modifier = modifier,
+                    onClick = settingsItem.onClick
                 )
             }
 
             is SettingsItem.Switch -> {
                 SettingsSwitch(
-                    modifier = modifier,
-                    index = index,
-                    size = items.size,
-                    checked = settingsItem.checked,
                     title = settingsItem.title,
                     subtitle = settingsItem.subtitle,
+                    checked = settingsItem.checked,
+                    index = index,
+                    size = items.size,
+                    modifier = modifier,
                     onClick = settingsItem.onClick,
-                    onCheckedChange = settingsItem.onCheckedChange,
+                    onCheckedChange = settingsItem.onCheckedChange
                 )
             }
 
             is SettingsItem.CustomBackgroundColor,
             -> {
                 CustomBackgroundColor(
-                    modifier = modifier,
                     index = index,
                     size = items.size,
                     title = settingsItem.title,
                     customBackgroundColor = settingsItem.customBackgroundColor,
-                    onClick = settingsItem.onClick,
+                    modifier = modifier,
+                    onClick = settingsItem.onClick
                 )
             }
 
             is SettingsItem.Row -> {
                 SettingsRow(
-                    modifier = modifier,
-                    index = index,
-                    size = items.size,
-                    imageVector = settingsItem.imageVector,
                     title = settingsItem.title,
                     subtitle = settingsItem.subtitle,
-                    onClick = settingsItem.onClick,
+                    imageVector = settingsItem.imageVector,
+                    index = index,
+                    size = items.size,
+                    modifier = modifier,
+                    onClick = settingsItem.onClick
                 )
             }
 
             is SettingsItem.CustomIcon -> {
                 CustomIcon(
-                    modifier = modifier,
+                    customIcon = settingsItem.customIcon,
                     index = index,
                     size = items.size,
-                    customIcon = settingsItem.customIcon,
                     packageManagerIconPacks = settingsItem.packageManagerIconPacks,
+                    modifier = modifier,
                     onUpdateIconPackPackageName = settingsItem.onUpdateIconPackPackageName,
                     onUpdateUri = settingsItem.onUpdateUri,
-                    onResetCustomIcon = settingsItem.onResetCustomIcon,
+                    onResetCustomIcon = settingsItem.onResetCustomIcon
                 )
             }
         }
@@ -313,12 +321,15 @@ fun settingsItemShape(
 
 @Composable
 private fun SettingsColumn(
-    modifier: Modifier = Modifier,
-    index: Int,
-    size: Int,
+    // Content
     title: String,
     subtitle: String,
-    onClick: () -> Unit,
+    index: Int,
+    size: Int,
+    // Layout
+    modifier: Modifier = Modifier,
+    // Callbacks
+    onClick: () -> Unit
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -350,17 +361,20 @@ private fun SettingsColumn(
 
 @Composable
 private fun CustomIcon(
-    modifier: Modifier = Modifier,
+    // Icon Data
+    customIcon: String?,
     index: Int,
     size: Int,
-    customIcon: String?,
     packageManagerIconPacks: List<PackageManagerIconPack>,
+    // Layout
+    modifier: Modifier = Modifier,
+    // Callbacks
     onUpdateIconPackPackageName: (
         packageName: String,
         label: String?,
     ) -> Unit,
     onUpdateUri: (String) -> Unit,
-    onResetCustomIcon: () -> Unit,
+    onResetCustomIcon: () -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -438,7 +452,7 @@ private fun CustomIcon(
                         subtitle = stringResource(R.string.pick_icons_from_your_gallery),
                         onClick = {
                             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-                        },
+                        }
                     )
 
                     packageManagerIconPacks.forEach { packageManagerIconPackInfo ->
@@ -451,7 +465,7 @@ private fun CustomIcon(
                                     packageManagerIconPackInfo.packageName,
                                     packageManagerIconPackInfo.label,
                                 )
-                            },
+                            }
                         )
                     }
 
@@ -459,7 +473,7 @@ private fun CustomIcon(
                         SettingsColumn(
                             title = stringResource(R.string.reset_custom_icon),
                             subtitle = stringResource(R.string.reset_custom_icon),
-                            onClick = onResetCustomIcon,
+                            onClick = onResetCustomIcon
                         )
                     }
                 }
@@ -470,10 +484,13 @@ private fun CustomIcon(
 
 @Composable
 private fun SettingsColumn(
-    modifier: Modifier = Modifier,
+    // Content
     title: String,
     subtitle: String,
-    onClick: () -> Unit,
+    // Layout
+    modifier: Modifier = Modifier,
+    // Actions
+    onClick: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -497,11 +514,14 @@ private fun SettingsColumn(
 
 @Composable
 private fun IconPackItem(
-    modifier: Modifier = Modifier,
+    // Content
     icon: ByteArray?,
     label: String?,
     packageName: String,
-    onClick: () -> Unit,
+    // Layout
+    modifier: Modifier = Modifier,
+    // Callbacks
+    onClick: () -> Unit
 ) {
     Row(
         modifier = modifier
@@ -536,13 +556,17 @@ private fun IconPackItem(
 
 @Composable
 private fun SettingsRow(
-    modifier: Modifier = Modifier,
+    // Content
+    title: String,
+    subtitle: String,
+    imageVector: ImageVector,
+    // Index
     index: Int,
     size: Int,
-    imageVector: ImageVector,
-    subtitle: String,
-    title: String,
-    onClick: () -> Unit,
+    // Layout
+    modifier: Modifier = Modifier,
+    // Actions
+    onClick: () -> Unit
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),

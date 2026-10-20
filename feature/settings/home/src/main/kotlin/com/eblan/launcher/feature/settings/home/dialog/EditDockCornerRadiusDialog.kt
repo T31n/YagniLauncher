@@ -40,18 +40,21 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun EditDockCornerRadiusDialog(
-    modifier: Modifier = Modifier,
+    // Corner Radii
     dockTopStartCornerRadius: Int,
     dockTopEndCornerRadius: Int,
     dockBottomStartCornerRadius: Int,
     dockBottomEndCornerRadius: Int,
+    // Layout
+    modifier: Modifier = Modifier,
+    // Callbacks
     onDismissRequest: () -> Unit,
     onUpdateCornerRadius: (
         dockTopStartCornerRadius: Int,
         dockTopEndCornerRadius: Int,
         dockBottomStartCornerRadius: Int,
         dockBottomEndCornerRadius: Int,
-    ) -> Unit,
+    ) -> Unit
 ) {
     var currentDockTopStartCornerRadius by remember { mutableStateOf("$dockTopStartCornerRadius") }
     var currentDockTopEndCornerRadius by remember { mutableStateOf("$dockTopEndCornerRadius") }

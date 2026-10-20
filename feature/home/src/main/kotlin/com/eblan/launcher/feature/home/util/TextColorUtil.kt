@@ -23,16 +23,19 @@ import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
 
 internal fun getGridItemTextColor(
+    // Grid Item Colors
     gridItemCustomTextColor: Int,
     gridItemTextColor: TextColor,
+    // System Colors
     systemCustomTextColor: Int,
     systemTextColor: TextColor,
-    defaultColor: Color = Color.Unspecified,
+    // Defaults
+    defaultColor: Color = Color.Unspecified
 ): Color = when (gridItemTextColor) {
     TextColor.System -> getTextColor(
-        customTextColor = systemCustomTextColor,
         textColor = systemTextColor,
-        defaultColor = defaultColor,
+        customTextColor = systemCustomTextColor,
+        defaultColor = defaultColor
     )
 
     TextColor.Light -> Color.White
@@ -43,9 +46,10 @@ internal fun getGridItemTextColor(
 }
 
 internal fun getTextColor(
-    customTextColor: Int,
+    // Colors
     textColor: TextColor,
-    defaultColor: Color = Color.Unspecified,
+    customTextColor: Int,
+    defaultColor: Color = Color.Unspecified
 ): Color = when (textColor) {
     TextColor.System -> defaultColor
     TextColor.Light -> Color.White
@@ -54,13 +58,17 @@ internal fun getTextColor(
 }
 
 internal fun getTextColorFromBackgroundColor(
+    // Background
     backgroundColor: BackgroundColor,
     customBackgroundColor: Int,
+    // Text Color
     textColor: TextColor,
     customTextColor: Int,
+    // System Color
     systemCustomTextColor: Int,
     systemTextColor: TextColor,
-    defaultColor: Color = Color.Unspecified,
+    // Default
+    defaultColor: Color = Color.Unspecified
 ): Color = when (backgroundColor) {
     BackgroundColor.System -> defaultColor
 
@@ -70,30 +78,33 @@ internal fun getTextColorFromBackgroundColor(
 
     BackgroundColor.Custom -> {
         val gridItemTextColor = getTextColor(
-            customTextColor = systemCustomTextColor,
             textColor = systemTextColor,
-            defaultColor = defaultColor,
+            customTextColor = systemCustomTextColor,
+            defaultColor = defaultColor
         )
 
         val textColorByLuminance = getTextColorByLuminance(
             customBackgroundColor = Color(customBackgroundColor),
-            systemTextColor = gridItemTextColor,
+            systemTextColor = gridItemTextColor
         )
 
         getTextColor(
-            customTextColor = customTextColor,
             textColor = textColor,
-            defaultColor = textColorByLuminance,
+            customTextColor = customTextColor,
+            defaultColor = textColorByLuminance
         )
     }
 }
 
 internal fun getApplicationScreenTextColor(
+    // Background
     backgroundColor: BackgroundColor,
     customBackgroundColor: Int,
-    systemCustomTextColor: Int,
+    // System Text
     systemTextColor: TextColor,
-    defaultColor: Color = Color.Unspecified,
+    systemCustomTextColor: Int,
+    // Default
+    defaultColor: Color = Color.Unspecified
 ): Color = when (backgroundColor) {
     BackgroundColor.System -> defaultColor
 
@@ -103,23 +114,25 @@ internal fun getApplicationScreenTextColor(
 
     BackgroundColor.Custom -> {
         val gridItemTextColor = getTextColor(
-            customTextColor = systemCustomTextColor,
             textColor = systemTextColor,
-            defaultColor = defaultColor,
+            customTextColor = systemCustomTextColor,
+            defaultColor = defaultColor
         )
 
         getTextColorByLuminance(
             customBackgroundColor = Color(customBackgroundColor),
-            systemTextColor = gridItemTextColor,
+            systemTextColor = gridItemTextColor
         )
     }
 }
 
 private fun getTextColorByLuminance(
+    // Colors
     customBackgroundColor: Color,
     systemTextColor: Color,
+    // Thresholds
     alphaThreshold: Float = 0.5f,
-    luminanceCrossover: Float = 0.5f,
+    luminanceCrossover: Float = 0.5f
 ): Color {
     if (customBackgroundColor.alpha < alphaThreshold) return systemTextColor
 

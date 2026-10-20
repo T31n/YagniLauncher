@@ -35,15 +35,18 @@ import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
 internal fun getAnimatedRect(
+    // Animation Progress
     progress: Float,
+    // Dimensions
     startWidth: Float,
     startHeight: Float,
     endWidth: Float,
     endHeight: Float,
+    // Center Coordinates
     startCenterX: Float,
     startCenterY: Float,
     endCenterX: Float,
-    endCenterY: Float,
+    endCenterY: Float
 ): RectF {
     val width = lerp(
         startWidth,
@@ -78,17 +81,21 @@ internal fun getAnimatedRect(
 }
 
 internal fun getFolderPopupLayoutInfo(
+    // Environment
     density: Density,
     layoutDirection: LayoutDirection,
     paddingValues: PaddingValues,
+    // Screen
     safeDrawingWidth: Int,
     safeDrawingHeight: Int,
+    // Popup
     folderPopupIntOffset: IntOffset,
     folderPopupIntSize: IntSize,
+    // Grid
     folderCellWidth: Int,
     folderCellHeight: Int,
     columns: Int,
-    rows: Int,
+    rows: Int
 ): FolderPopupLayoutInfo {
     val leftPadding = with(density) {
         paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
@@ -167,10 +174,12 @@ internal fun getFolderPopupLayoutInfo(
 }
 
 internal suspend fun handlePageDirection(
+    // Page state
     pageDirection: PageDirection?,
     currentPage: Int,
     isInProgress: Boolean,
-    onAnimateScrollToPage: suspend (Int) -> Unit,
+    // Actions
+    onAnimateScrollToPage: suspend (Int) -> Unit
 ) {
     if (pageDirection == null || isInProgress) return
 
@@ -183,22 +192,26 @@ internal suspend fun handlePageDirection(
 }
 
 internal fun handleAnimateScrollToPage(
+    // Environment and Layout
     density: Density,
-    drag: Drag,
-    isVisibleOverlay: Boolean,
-    lockMovement: Boolean,
-    hasMoveGridItemResult: Boolean,
-    dragIntOffset: IntOffset,
-    columns: Int,
-    folderPopupIntOffset: IntOffset,
-    isDragging: Boolean,
-    paddingValues: PaddingValues,
-    screenWidth: Int,
     layoutDirection: LayoutDirection,
+    screenWidth: Int,
+    columns: Int,
+    paddingValues: PaddingValues,
+    // Drag and Gesture State
+    drag: Drag,
+    isDragging: Boolean,
+    dragIntOffset: IntOffset,
+    hasMoveGridItemResult: Boolean,
+    // Grid and Folder State
+    folderPopupIntOffset: IntOffset,
     folderCellWidth: Int,
     isLastFolderGridItem: Boolean,
+    isVisibleOverlay: Boolean,
+    lockMovement: Boolean,
     isInProgress: Boolean,
-    onUpdateFolderPageDirection: (PageDirection?) -> Unit,
+    // Callbacks
+    onUpdateFolderPageDirection: (PageDirection?) -> Unit
 ) {
     if (drag != Drag.Dragging ||
         !isVisibleOverlay ||
@@ -214,29 +227,32 @@ internal fun handleAnimateScrollToPage(
     onUpdateFolderPageDirection(
         calculateFolderPageDirection(
             density = density,
-            dragIntOffset = dragIntOffset,
-            columns = columns,
-            folderPopupIntOffset = folderPopupIntOffset,
-            paddingValues = paddingValues,
-            screenWidth = screenWidth,
             layoutDirection = layoutDirection,
+            screenWidth = screenWidth,
+            columns = columns,
+            paddingValues = paddingValues,
             folderCellWidth = folderCellWidth,
+            dragIntOffset = dragIntOffset,
+            folderPopupIntOffset = folderPopupIntOffset
         ),
     )
 }
 
 internal fun calculateFolderGridDragPosition(
+    // Environment and Layout
     density: Density,
-    dragIntOffset: IntOffset,
+    layoutDirection: LayoutDirection,
+    // Screen and Grid Dimensions
+    screenWidth: Int,
+    screenHeight: Int,
     columns: Int,
     rows: Int,
-    folderPopupIntOffset: IntOffset,
     paddingValues: PaddingValues,
-    screenHeight: Int,
-    screenWidth: Int,
-    layoutDirection: LayoutDirection,
+    // Cell and Popup Positioning
     folderCellWidth: Int,
     folderCellHeight: Int,
+    folderPopupIntOffset: IntOffset,
+    dragIntOffset: IntOffset
 ): FolderGridDragPosition {
     val leftPadding = with(density) {
         paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
@@ -330,15 +346,18 @@ internal fun calculateFolderGridDragPosition(
 }
 
 internal fun handleDropFolderGridItem(
+    // Drag State
     drag: Drag,
     isDragging: Boolean,
     lockMovement: Boolean,
+    // Folder Grid State
     isVisibleOverlay: Boolean,
     isLastFolderGridItem: Boolean,
+    // Callbacks
     onResetGrid: () -> Unit,
     onResetGridAfterMoveFolder: () -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
-    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
+    onUpdateIsVisibleOverlay: (Boolean) -> Unit
 ) {
     if (drag == Drag.None ||
         drag == Drag.Start ||
@@ -372,14 +391,17 @@ internal fun handleDropFolderGridItem(
 }
 
 private fun calculateFolderPageDirection(
+    // Context and Configuration
     density: Density,
-    dragIntOffset: IntOffset,
-    columns: Int,
-    folderPopupIntOffset: IntOffset,
-    paddingValues: PaddingValues,
-    screenWidth: Int,
     layoutDirection: LayoutDirection,
+    // Screen and Layout
+    screenWidth: Int,
+    columns: Int,
+    paddingValues: PaddingValues,
     folderCellWidth: Int,
+    // Offsets
+    dragIntOffset: IntOffset,
+    folderPopupIntOffset: IntOffset
 ): PageDirection? {
     val leftPadding = with(density) {
         paddingValues.calculateLeftPadding(layoutDirection).roundToPx()

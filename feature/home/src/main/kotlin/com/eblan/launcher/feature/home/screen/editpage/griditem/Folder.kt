@@ -56,24 +56,27 @@ import java.io.File
 
 @Composable
 internal fun FolderGridItem(
-    modifier: Modifier = Modifier,
+    // Item and Data
     gridItem: GridItem,
     data: GridItemData.Folder,
     gridItemSettings: GridItemSettings,
+    // Appearance and Styling
     textColor: Color,
-    folderPopupGridItems: Map<String, FolderPopup>,
-    hasShortcutHostPermission: Boolean,
-    iconPackFilePaths: Map<String, String?>,
-    horizontalAlignment: Alignment.Horizontal,
-    verticalArrangement: Arrangement.Vertical,
-    horizontalArrangement: Arrangement.Horizontal,
-    verticalAlignment: Alignment.Vertical,
-    maxLines: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     folderCornerRadius: Int,
+    iconPackFilePaths: Map<String, String?>,
+    hasShortcutHostPermission: Boolean,
+    folderPopupGridItems: Map<String, FolderPopup>,
+    maxLines: Int,
+    // Layout
+    horizontalAlignment: Alignment.Horizontal,
+    verticalArrangement: Arrangement.Vertical,
+    horizontalArrangement: Arrangement.Horizontal,
+    verticalAlignment: Alignment.Vertical,
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
 
@@ -114,21 +117,21 @@ internal fun FolderGridItem(
                 },
             ) {
                 PreviewFolderGridLayout(
-                    modifier = Modifier.fillMaxSize(),
                     gridItems = folderPopupGridItems[gridItem.id]?.previewFolderGridItems,
+                    modifier = Modifier.fillMaxSize(),
                     slotId = { it.id },
                     content = {
                         PreviewFolderGridItem(
                             gridItem = it,
-                            hasShortcutHostPermission = hasShortcutHostPermission,
                             iconPackFilePaths = iconPackFilePaths,
                             gridItemSettings = gridItemSettings,
                             folderBackgroundColor = folderBackgroundColor,
                             customFolderBackgroundColor = customFolderBackgroundColor,
                             systemTextColor = systemTextColor,
                             systemCustomTextColor = systemCustomTextColor,
+                            hasShortcutHostPermission = hasShortcutHostPermission
                         )
-                    },
+                    }
                 )
             }
         }
@@ -147,29 +150,33 @@ internal fun FolderGridItem(
     }
 
     GridItemLayoutType(
-        modifier = itemModifier,
         gridItemSettings = gridItemSettings,
         horizontalAlignment = horizontalAlignment,
-        horizontalArrangement = horizontalArrangement,
         verticalAlignment = verticalAlignment,
+        horizontalArrangement = horizontalArrangement,
         verticalArrangement = verticalArrangement,
+        modifier = itemModifier,
         iconContent = iconContent,
         labelContent = labelContent,
-        labelOnlyContent = labelContent,
+        labelOnlyContent = labelContent
     )
 }
 
 @Composable
 private fun PreviewFolderGridItem(
-    modifier: Modifier = Modifier,
+    // Content
     gridItem: GridItem,
-    hasShortcutHostPermission: Boolean,
     iconPackFilePaths: Map<String, String?>,
+    // Appearance
     gridItemSettings: GridItemSettings,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
+    // State
+    hasShortcutHostPermission: Boolean,
+    // Layout
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
 
@@ -197,9 +204,9 @@ private fun PreviewFolderGridItem(
             customBackgroundColor = customFolderBackgroundColor,
             textColor = currentGridItemSettings.textColor,
             customTextColor = currentGridItemSettings.customTextColor,
-            systemTextColor = systemTextColor,
             systemCustomTextColor = systemCustomTextColor,
-            defaultColor = MaterialTheme.colorScheme.onSurface,
+            systemTextColor = systemTextColor,
+            defaultColor = MaterialTheme.colorScheme.onSurface
         )
 
         val commonModifier = modifier

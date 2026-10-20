@@ -40,14 +40,17 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun EditHorizontalGridDialog(
-    modifier: Modifier = Modifier,
+    // Grid Dimensions
     horizontalAppDrawerColumns: Int,
     horizontalAppDrawerRows: Int,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Actions
     onDismissRequest: () -> Unit,
     onUpdateHorizontalGrid: (
         horizontalAppDrawerColumns: Int,
         horizontalAppDrawerRows: Int,
-    ) -> Unit,
+    ) -> Unit
 ) {
     var currentHorizontalAppDrawerColumns by remember { mutableStateOf("$horizontalAppDrawerColumns") }
     var currentHorizontalAppDrawerRows by remember { mutableStateOf("$horizontalAppDrawerRows") }

@@ -40,14 +40,18 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 fun EblanActionSettings(
-    modifier: Modifier = Modifier,
+    // Actions
     doubleTap: EblanAction,
     swipeUp: EblanAction,
     swipeDown: EblanAction,
+    // Applications
     eblanApplicationInfos: List<EblanApplicationInfo>,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Callbacks
     onUpdateDoubleTap: (EblanAction) -> Unit,
     onUpdateSwipeUp: (EblanAction) -> Unit,
-    onUpdateSwipeDown: (EblanAction) -> Unit,
+    onUpdateSwipeDown: (EblanAction) -> Unit
 ) {
     val context = LocalContext.current
 
@@ -70,7 +74,7 @@ fun EblanActionSettings(
         },
         onSwipeDownClick = {
             showSwipeDownDialog = true
-        },
+        }
     )
 
     Column(
@@ -92,7 +96,7 @@ fun EblanActionSettings(
             },
             onDismissRequest = {
                 showDoubleTapDialog = false
-            },
+            }
         )
     }
 
@@ -108,7 +112,7 @@ fun EblanActionSettings(
             },
             onDismissRequest = {
                 showSwipeUpDialog = false
-            },
+            }
         )
     }
 
@@ -124,20 +128,23 @@ fun EblanActionSettings(
             },
             onDismissRequest = {
                 showSwipeDownDialog = false
-            },
+            }
         )
     }
 }
 
 @Composable
 private fun buildEblanActionSettingsItems(
+    // Context
     context: Context,
+    // Actions
     doubleTap: EblanAction,
     swipeUp: EblanAction,
     swipeDown: EblanAction,
+    // Callbacks
     onDoubleTapClick: () -> Unit,
     onSwipeUpClick: () -> Unit,
-    onSwipeDownClick: () -> Unit,
+    onSwipeDownClick: () -> Unit
 ): List<SettingsItem> = buildList {
     add(
         SettingsItem.Column(

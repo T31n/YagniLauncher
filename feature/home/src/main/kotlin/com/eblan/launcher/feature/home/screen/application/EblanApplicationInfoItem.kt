@@ -86,19 +86,24 @@ import kotlin.uuid.Uuid
 
 @Composable
 internal fun EblanApplicationInfoItem(
-    modifier: Modifier = Modifier,
-    sharedTransitionScope: SharedTransitionScope,
-    appDrawerSettings: AppDrawerSettings,
-    drag: Drag,
+    // Application Data
     eblanApplicationInfo: EblanApplicationInfo,
+    // Layout and Animation
+    sharedTransitionScope: SharedTransitionScope,
+    drag: Drag,
     paddingValues: PaddingValues,
+    animations: Boolean,
+    // State
+    appDrawerSettings: AppDrawerSettings,
     isVisibleOverlay: Boolean,
     isScrollInProgress: Boolean,
     isSwiping: Boolean,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     iconPackFilePaths: Map<String, String?>,
-    animations: Boolean,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Callbacks
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onDragApplicationInfo: (GridItem) -> Unit,
     onLongPressApplicationInfo: (
@@ -107,7 +112,7 @@ internal fun EblanApplicationInfoItem(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit,
+    ) -> Unit
 ) {
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
@@ -135,8 +140,8 @@ internal fun EblanApplicationInfoItem(
         customBackgroundColor = appDrawerSettings.customBackgroundColor,
         textColor = gridItemSettings.textColor,
         customTextColor = gridItemSettings.customTextColor,
-        systemTextColor = systemTextColor,
         systemCustomTextColor = systemCustomTextColor,
+        systemTextColor = systemTextColor
     )
 
     val maxLines = if (gridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
@@ -183,14 +188,14 @@ internal fun EblanApplicationInfoItem(
         key2 = isLongPress,
     ) {
         handleDragEblanApplicationInfoItem(
+            eblanApplicationInfo = eblanApplicationInfo,
             appDrawerSettings = appDrawerSettings,
             drag = drag,
-            eblanApplicationInfo = eblanApplicationInfo,
             isLongPress = isLongPress,
             isSwiping = isSwiping,
             onUpdateIsLongPress = { isLongPress = it },
             onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-            onDragApplicationInfo = onDragApplicationInfo,
+            onDragApplicationInfo = onDragApplicationInfo
         )
     }
 
@@ -206,14 +211,14 @@ internal fun EblanApplicationInfoItem(
                     detectTapGestures(
                         onTap = {
                             handleOnTapEblanApplicationInfoItem(
-                                componentName = eblanApplicationInfo.componentName,
                                 serialNumber = eblanApplicationInfo.serialNumber,
+                                componentName = eblanApplicationInfo.componentName,
+                                launcherApps = launcherApps,
                                 intOffset = intOffset,
                                 intSize = intSize,
-                                keyboardController = keyboardController,
-                                launcherApps = launcherApps,
                                 leftPadding = leftPadding,
                                 topPadding = topPadding,
+                                keyboardController = keyboardController
                             )
                         },
                         onLongPress = {
@@ -312,27 +317,30 @@ internal fun EblanApplicationInfoItem(
     }
 
     GridItemLayoutType(
-        modifier = itemModifier,
         gridItemSettings = gridItemSettings,
         horizontalAlignment = horizontalAlignment,
-        horizontalArrangement = horizontalArrangement,
         verticalAlignment = verticalAlignment,
+        horizontalArrangement = horizontalArrangement,
         verticalArrangement = verticalArrangement,
+        modifier = itemModifier,
         iconContent = iconContent,
         labelContent = labelContent,
-        labelOnlyContent = labelOnlyContent,
+        labelOnlyContent = labelOnlyContent
     )
 }
 
 internal fun handleOnTapEblanApplicationInfoItem(
+    // Application Info
     serialNumber: Long,
     componentName: String,
+    launcherApps: AndroidLauncherAppsWrapper,
+    // Position and Layout
     intOffset: IntOffset,
     intSize: IntSize,
-    keyboardController: SoftwareKeyboardController?,
-    launcherApps: AndroidLauncherAppsWrapper,
     leftPadding: Int,
     topPadding: Int,
+    // Controller
+    keyboardController: SoftwareKeyboardController?
 ) {
     val left = intOffset.x + leftPadding
     val top = intOffset.y + topPadding
@@ -353,14 +361,17 @@ internal fun handleOnTapEblanApplicationInfoItem(
 
 @OptIn(ExperimentalUuidApi::class)
 internal fun handleDragEblanApplicationInfoItem(
-    appDrawerSettings: AppDrawerSettings,
-    drag: Drag,
+    // Application Data
     eblanApplicationInfo: EblanApplicationInfo,
+    appDrawerSettings: AppDrawerSettings,
+    // Drag State
+    drag: Drag,
     isLongPress: Boolean,
     isSwiping: Boolean,
+    // Callbacks
     onUpdateIsLongPress: (Boolean) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
-    onDragApplicationInfo: (GridItem) -> Unit,
+    onDragApplicationInfo: (GridItem) -> Unit
 ) {
     if (!isLongPress) return
 

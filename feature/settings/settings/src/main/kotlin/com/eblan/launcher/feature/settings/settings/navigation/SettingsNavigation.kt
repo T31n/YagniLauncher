@@ -38,7 +38,7 @@ fun NavGraphBuilder.settingsScreen(
             onGeneral = onGeneral,
             onGestures = onGestures,
             onHome = onHome,
-            onFolder = onFolder,
+            onFolder = onFolder
         )
     }
 }

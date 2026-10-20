@@ -39,10 +39,13 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun EditIconSizeDialog(
-    modifier: Modifier = Modifier,
+    // Icon Size
     iconSize: Int,
+    // Layout
+    modifier: Modifier = Modifier,
+    // Actions
     onDismissRequest: () -> Unit,
-    onUpdateIconSize: (Int) -> Unit,
+    onUpdateIconSize: (Int) -> Unit
 ) {
     var currentIconSize by remember { mutableStateOf("$iconSize") }
 

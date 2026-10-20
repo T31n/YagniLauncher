@@ -88,36 +88,43 @@ import kotlinx.coroutines.launch
 
 @Composable
 internal fun InteractiveFolderGridItem(
-    modifier: Modifier = Modifier,
-    sharedTransitionScope: SharedTransitionScope,
+    // Data
     data: GridItemData.Folder,
-    drag: Drag,
     gridItem: GridItem,
-    gridItemSettings: GridItemSettings,
+    sharedTransitionScope: SharedTransitionScope,
+    sharedElementKey: SharedElementKey,
+    iconPackFilePaths: Map<String, String?>,
+    folderPopups: Map<String, FolderPopup>,
+    // State
     isScrollInProgress: Boolean,
     isVisibleFolder: Boolean,
     isVisibleOverlay: Boolean,
-    sharedElementKey: SharedElementKey,
-    textColor: Color,
-    moveGridItemResult: MoveGridItemResult?,
-    lockMovement: Boolean,
     isDragging: Boolean,
     hasInteraction: Boolean,
     isVisibleWhiteBox: Boolean,
-    folderPopups: Map<String, FolderPopup>,
     hasShortcutHostPermission: Boolean,
-    iconPackFilePaths: Map<String, String?>,
     animations: Boolean,
+    moveGridItemResult: MoveGridItemResult?,
+    // Interaction
+    drag: Drag,
+    lockMovement: Boolean,
+    // Appearance
+    gridItemSettings: GridItemSettings,
+    textColor: Color,
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
     systemTextColor: TextColor,
+    systemCustomTextColor: Int,
+    maxLines: Int,
+    // Layout
     horizontalAlignment: Alignment.Horizontal,
     verticalArrangement: Arrangement.Vertical,
     horizontalArrangement: Arrangement.Horizontal,
     verticalAlignment: Alignment.Vertical,
-    maxLines: Int,
-    systemCustomTextColor: Int,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Callbacks
     onOpenAppDrawer: () -> Unit,
     onShowFolderWhenDragging: (
         folderEntry: FolderEntry,
@@ -131,7 +138,7 @@ internal fun InteractiveFolderGridItem(
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
     ) -> Unit,
-    onTapFolderGridItem: (FolderEntry) -> Unit,
+    onTapFolderGridItem: (FolderEntry) -> Unit
 ) {
     val launcherApps = LocalLauncherApps.current
     val androidStatusBarManagerWrapper = LocalStatusBarManager.current
@@ -163,6 +170,8 @@ internal fun InteractiveFolderGridItem(
 
     LaunchedEffect(key1 = moveGridItemResult) {
         handleConflictingGridItem(
+            gridItem = currentGridItem,
+            folderGridItems = currentFolderGridItems,
             drag = currentDrag,
             isDragging = currentIsDragging,
             isVisibleOverlay = currentIsVisibleOverlay,
@@ -170,9 +179,7 @@ internal fun InteractiveFolderGridItem(
             lockMovement = currentLockMovement,
             intOffset = intOffset,
             intSize = intSize,
-            gridItem = currentGridItem,
-            folderGridItems = currentFolderGridItems,
-            onShowFolderWhenDragging = currentOnShowFolderWhenDragging,
+            onShowFolderWhenDragging = currentOnShowFolderWhenDragging
         )
     }
 
@@ -198,7 +205,7 @@ internal fun InteractiveFolderGridItem(
                                     eblanAction = gridItem.doubleTap,
                                     launcherApps = launcherApps,
                                     statusBarManagerWrapper = androidStatusBarManagerWrapper,
-                                    onOpenAppDrawer = currentOnOpenAppDrawer,
+                                    onOpenAppDrawer = currentOnOpenAppDrawer
                                 )
                             }
                         } else {
@@ -288,8 +295,8 @@ internal fun InteractiveFolderGridItem(
                 },
             ) {
                 PreviewFolderGridLayout(
-                    modifier = Modifier.fillMaxSize(),
                     gridItems = folderPopups[gridItem.id]?.previewFolderGridItems,
+                    modifier = Modifier.fillMaxSize(),
                     slotId = { it.id },
                     content = {
                         PreviewFolderGridItem(
@@ -312,7 +319,7 @@ internal fun InteractiveFolderGridItem(
                             animations = animations,
                             onResetGrid = onResetGrid,
                         )
-                    },
+                    }
                 )
             }
         }
@@ -348,15 +355,15 @@ internal fun InteractiveFolderGridItem(
     }
 
     GridItemLayoutType(
-        modifier = itemModifier,
         gridItemSettings = gridItemSettings,
         horizontalAlignment = horizontalAlignment,
-        horizontalArrangement = horizontalArrangement,
         verticalAlignment = verticalAlignment,
+        horizontalArrangement = horizontalArrangement,
         verticalArrangement = verticalArrangement,
+        modifier = itemModifier,
         iconContent = iconContent,
         labelContent = labelContent,
-        labelOnlyContent = labelOnlyContent,
+        labelOnlyContent = labelOnlyContent
     )
 }
 
@@ -419,9 +426,9 @@ private fun PreviewFolderGridItem(
             customBackgroundColor = customFolderBackgroundColor,
             textColor = currentGridItemSettings.textColor,
             customTextColor = currentGridItemSettings.customTextColor,
-            systemTextColor = systemTextColor,
             systemCustomTextColor = systemCustomTextColor,
-            defaultColor = MaterialTheme.colorScheme.onSurface,
+            systemTextColor = systemTextColor,
+            defaultColor = MaterialTheme.colorScheme.onSurface
         )
 
         val commonModifier = modifier

@@ -40,10 +40,13 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 fun EditCustomLabelDialog(
-    modifier: Modifier = Modifier,
+    // Data
     customLabel: String?,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Callbacks
     onDismissRequest: () -> Unit,
-    onUpdateCustomLabel: (String?) -> Unit,
+    onUpdateCustomLabel: (String?) -> Unit
 ) {
     var currentCustomLabel by remember { mutableStateOf(customLabel ?: "") }
 

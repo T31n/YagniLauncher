@@ -49,14 +49,17 @@ import com.eblan.launcher.common.R as commonR
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ApplicationSearchBar(
-    modifier: Modifier = Modifier,
-    focusRequester: FocusRequester,
+    // State
     searchBarState: SearchBarState,
     textFieldState: TextFieldState,
+    focusRequester: FocusRequester,
+    // Appearance
     backgroundColor: BackgroundColor,
     customBackgroundColor: Int,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
+    // Layout
+    modifier: Modifier = Modifier
 ) {
     val scope = rememberCoroutineScope()
 
@@ -64,8 +67,8 @@ internal fun ApplicationSearchBar(
         getSearchBarColors(
             backgroundColor = backgroundColor,
             customBackgroundColor = customBackgroundColor,
-            systemCustomTextColor = systemCustomTextColor,
             systemTextColor = systemTextColor,
+            systemCustomTextColor = systemCustomTextColor
         )
 
     SearchBar(
@@ -112,10 +115,12 @@ internal fun ApplicationSearchBar(
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 private fun getSearchBarColors(
+    // Background Colors
     backgroundColor: BackgroundColor,
     customBackgroundColor: Int,
-    systemCustomTextColor: Int,
+    // Text Colors
     systemTextColor: TextColor,
+    systemCustomTextColor: Int
 ): SearchBarColors {
     val containerColor = when (backgroundColor) {
         BackgroundColor.System -> MaterialTheme.colorScheme.surfaceContainerHigh
@@ -127,9 +132,9 @@ private fun getSearchBarColors(
     val contentColor = getApplicationScreenTextColor(
         backgroundColor = backgroundColor,
         customBackgroundColor = customBackgroundColor,
-        systemCustomTextColor = systemCustomTextColor,
         systemTextColor = systemTextColor,
-        defaultColor = MaterialTheme.colorScheme.onSurface,
+        systemCustomTextColor = systemCustomTextColor,
+        defaultColor = MaterialTheme.colorScheme.onSurface
     )
 
     val searchBarColors = SearchBarDefaults.colors(

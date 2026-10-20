@@ -41,10 +41,13 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 fun SelectApplicationDialog(
-    modifier: Modifier = Modifier,
+    // Data
     eblanApplicationInfos: List<EblanApplicationInfo>,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Callbacks
     onDismissRequest: () -> Unit,
-    onClick: (EblanApplicationInfo) -> Unit,
+    onClick: (EblanApplicationInfo) -> Unit
 ) {
     EblanDialog(
         modifier = modifier,

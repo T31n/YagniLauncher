@@ -56,14 +56,16 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun SettingsRoute(
+    // Modifier
     modifier: Modifier = Modifier,
+    // Navigation Actions
     onAppDrawer: () -> Unit,
     onExperimental: () -> Unit,
     onFinish: () -> Unit,
     onGeneral: () -> Unit,
     onGestures: () -> Unit,
     onHome: () -> Unit,
-    onFolder: () -> Unit,
+    onFolder: () -> Unit
 ) {
     SettingsScreen(
         modifier = modifier,
@@ -73,21 +75,23 @@ internal fun SettingsRoute(
         onGeneral = onGeneral,
         onGestures = onGestures,
         onHome = onHome,
-        onFolder = onFolder,
+        onFolder = onFolder
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun SettingsScreen(
+    // Layout
     modifier: Modifier = Modifier,
+    // Navigation Callbacks
     onAppDrawer: () -> Unit,
     onExperimental: () -> Unit,
     onFinish: () -> Unit,
     onGeneral: () -> Unit,
     onGestures: () -> Unit,
     onHome: () -> Unit,
-    onFolder: () -> Unit,
+    onFolder: () -> Unit
 ) {
     val items = buildSettingsItems(
         onGeneralClick = onGeneral,
@@ -95,7 +99,7 @@ internal fun SettingsScreen(
         onAppDrawerClick = onAppDrawer,
         onGesturesClick = onGestures,
         onExperimentalClick = onExperimental,
-        onFolderClick = onFolder,
+        onFolderClick = onFolder
     )
 
     BackHandler {
@@ -212,12 +216,13 @@ private fun AlphaWarningCard(modifier: Modifier = Modifier) {
 
 @Composable
 private fun buildSettingsItems(
+    // Navigation and Layout
     onGeneralClick: () -> Unit,
     onHomeClick: () -> Unit,
     onAppDrawerClick: () -> Unit,
     onGesturesClick: () -> Unit,
     onExperimentalClick: () -> Unit,
-    onFolderClick: () -> Unit,
+    onFolderClick: () -> Unit
 ): List<SettingsItem> {
     val context = LocalContext.current
 

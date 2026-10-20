@@ -46,7 +46,7 @@ fun MainNavHost(
             onEditGridItem = navController::navigateToEditGridItemScreen,
             onResetConfigureResultCode = onResetConfigureResultCode,
             onSettings = onSettings,
-            onEditFolderApplicationInfo = navController::navigateToEditFolderApplicationScreen,
+            onEditFolderApplicationInfo = navController::navigateToEditFolderApplicationScreen
         )
 
         editGridItemScreen(onNavigateUp = navController::navigateUp)

@@ -139,7 +139,7 @@ private fun Success(
             },
             onUpdateSyncData = {
                 onUpdateExperimentalSettings(experimentalSettings.copy(syncData = it))
-            },
+            }
         )
     }
 }
