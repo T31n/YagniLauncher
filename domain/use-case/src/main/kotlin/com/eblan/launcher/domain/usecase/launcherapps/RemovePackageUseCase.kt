@@ -39,6 +39,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 
+/** Removes a package's stored components, grid items, and unreferenced icon files. */
 class RemovePackageUseCase @Inject constructor(
     private val fileManager: FileManager,
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
@@ -54,6 +55,12 @@ class RemovePackageUseCase @Inject constructor(
     private val iconKeyGenerator: IconKeyGenerator,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Deletes package-related icon files and repository records for the specified profile.
+     *
+     * @param serialNumber The user profile where the package was installed.
+     * @param packageName The package to remove.
+     */
     suspend operator fun invoke(
         serialNumber: Long,
         packageName: String,
@@ -117,6 +124,7 @@ class RemovePackageUseCase @Inject constructor(
         }
     }
 
+    /** Deletes unreferenced application icons and custom icons for the package's grid items. */
     private suspend fun deleteEblanApplicationInfoFiles(
         packageName: String,
         serialNumber: Long,
@@ -170,6 +178,7 @@ class RemovePackageUseCase @Inject constructor(
         }
     }
 
+    /** Deletes a cached icon-pack file when no remaining application references its component. */
     private suspend fun deleteIconPackFile(
         componentName: String?,
         iconPackPackageName: String,
@@ -198,6 +207,7 @@ class RemovePackageUseCase @Inject constructor(
         }
     }
 
+    /** Deletes widget provider and preview files associated with the package. */
     private suspend fun deleteEblanAppWidgetProviderInfoFiles(packageName: String) {
         eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfosByPackageName(
             packageName = packageName,
@@ -222,6 +232,7 @@ class RemovePackageUseCase @Inject constructor(
         }
     }
 
+    /** Deletes unreferenced shortcut icons and custom icons for the package's shortcut items. */
     private suspend fun deleteEblaShortcutInfoFiles(
         serialNumber: Long,
         packageName: String,
@@ -266,6 +277,7 @@ class RemovePackageUseCase @Inject constructor(
         }
     }
 
+    /** Deletes unreferenced shortcut-configuration icons and shortcut-intent icon files. */
     private suspend fun deleteEblanShortcutConfigFiles(
         serialNumber: Long,
         packageName: String,

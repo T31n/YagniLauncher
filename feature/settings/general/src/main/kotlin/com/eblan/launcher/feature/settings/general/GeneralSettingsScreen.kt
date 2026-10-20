@@ -80,7 +80,7 @@ internal fun GeneralSettingsRoute(
         modifier = modifier,
         onDeleteEblanIconPackInfo = viewModel::deleteIconPack,
         onNavigateUp = onNavigateUp,
-        onUpdateGeneralSettings = viewModel::updateGeneralSettings
+        onUpdateGeneralSettings = viewModel::updateGeneralSettings,
     )
 }
 
@@ -96,7 +96,7 @@ internal fun GeneralSettingsScreen(
     // Callbacks
     onDeleteEblanIconPackInfo: (String) -> Unit,
     onNavigateUp: () -> Unit,
-    onUpdateGeneralSettings: (GeneralSettings) -> Unit
+    onUpdateGeneralSettings: (GeneralSettings) -> Unit,
 ) {
     Scaffold(
         modifier = modifier,
@@ -127,7 +127,7 @@ internal fun GeneralSettingsScreen(
                     packageManagerIconPacks = packageManagerIconPacks,
                     generalSettings = generalSettingsUiState.generalSettings,
                     onDeleteEblanIconPackInfo = onDeleteEblanIconPackInfo,
-                    onUpdateGeneralSettings = onUpdateGeneralSettings
+                    onUpdateGeneralSettings = onUpdateGeneralSettings,
                 )
             }
         }
@@ -145,7 +145,7 @@ private fun Success(
     modifier: Modifier = Modifier,
     // Actions
     onDeleteEblanIconPackInfo: (String) -> Unit,
-    onUpdateGeneralSettings: (GeneralSettings) -> Unit
+    onUpdateGeneralSettings: (GeneralSettings) -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -169,7 +169,7 @@ private fun Success(
         },
         onIconShapeClick = {
             showIconShapeDialog = true
-        }
+        },
     )
 
     Column(
@@ -195,7 +195,7 @@ private fun Success(
             },
             onUpdateClick = {
                 onUpdateGeneralSettings(generalSettings.copy(theme = it))
-            }
+            },
         )
     }
 
@@ -233,7 +233,7 @@ private fun Success(
             },
             onUpdateIconPackPackageName = {
                 onUpdateGeneralSettings(generalSettings.copy(iconPackPackageName = it))
-            }
+            },
         )
     }
 
@@ -252,7 +252,7 @@ private fun Success(
                         customIconTint = customIconTint,
                     ),
                 )
-            }
+            },
         )
     }
 
@@ -269,7 +269,7 @@ private fun Success(
             },
             onUpdateClick = {
                 onUpdateGeneralSettings(generalSettings.copy(iconShape = it))
-            }
+            },
         )
     }
 }
@@ -285,7 +285,7 @@ private fun buildGeneralSettingsItems(
     onIconColorClick: () -> Unit,
     onDynamicThemeChange: (Boolean) -> Unit,
     onEnforceThemedIconsChanged: (Boolean) -> Unit,
-    onIconShapeClick: () -> Unit
+    onIconShapeClick: () -> Unit,
 ): List<SettingsItem> {
     val context = LocalContext.current
 

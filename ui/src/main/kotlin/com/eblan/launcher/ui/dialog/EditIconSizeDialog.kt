@@ -45,7 +45,7 @@ internal fun EditIconSizeDialog(
     modifier: Modifier = Modifier,
     // Actions
     onDismissRequest: () -> Unit,
-    onUpdateIconSize: (Int) -> Unit
+    onUpdateIconSize: (Int) -> Unit,
 ) {
     var currentIconSize by remember { mutableStateOf("$iconSize") }
 

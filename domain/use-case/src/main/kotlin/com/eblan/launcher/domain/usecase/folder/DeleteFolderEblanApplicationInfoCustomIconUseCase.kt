@@ -26,10 +26,16 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 
+/** Removes a folder's saved icon file and clears its icon reference. */
 class DeleteFolderEblanApplicationInfoCustomIconUseCase @Inject constructor(
     private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Deletes the current folder icon file, if present, and persists the folder without an icon.
+     *
+     * @param folderEblanApplicationInfo The folder whose icon should be removed.
+     */
     suspend operator fun invoke(folderEblanApplicationInfo: FolderEblanApplicationInfo) = withContext(ioDispatcher) {
         folderEblanApplicationInfo.icon?.let {
             val customIconFile = File(it)

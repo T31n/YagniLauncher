@@ -27,10 +27,16 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
+/** Provides application folders that are not nested inside another folder. */
 class GetTopLevelFolderEblanApplicationInfosUseCase @Inject constructor(
     private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Emits top-level folders ordered by their index.
+     *
+     * @return A flow of top-level application folders.
+     */
     operator fun invoke(): Flow<List<FolderEblanApplicationInfo>> = folderEblanApplicationInfoRepository.folderEblanApplicationInfosFlow.map { folderEblanApplicationInfos ->
         folderEblanApplicationInfos.filterNot { it.folderId != null }.sortedBy { it.index }
     }.flowOn(defaultDispatcher)

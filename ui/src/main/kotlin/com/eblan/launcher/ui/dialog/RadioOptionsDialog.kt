@@ -50,7 +50,7 @@ fun <T> RadioOptionsDialog(
     label: @Composable (T) -> String,
     // Events
     onDismissRequest: () -> Unit,
-    onUpdateClick: (T) -> Unit
+    onUpdateClick: (T) -> Unit,
 ) {
     var selectedOption by remember { mutableStateOf(selected) }
 

@@ -60,7 +60,7 @@ internal fun ApplicationInfoGridItem(
     horizontalArrangement: Arrangement.Horizontal,
     verticalAlignment: Alignment.Vertical,
     // Modifier
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
 
@@ -136,6 +136,6 @@ internal fun ApplicationInfoGridItem(
         modifier = itemModifier,
         iconContent = iconContent,
         labelContent = labelContent,
-        labelOnlyContent = labelContent
+        labelOnlyContent = labelContent,
     )
 }

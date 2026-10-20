@@ -29,6 +29,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+/** Refreshes shortcut metadata and cached shortcut grid items for one package. */
 class ChangeShortcutsUseCase @Inject constructor(
     private val eblanShortcutInfoRepository: EblanShortcutInfoRepository,
     private val launcherAppsWrapper: LauncherAppsWrapper,
@@ -38,6 +39,12 @@ class ChangeShortcutsUseCase @Inject constructor(
     private val iconKeyGenerator: IconKeyGenerator,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Re-queries, stores, and reconciles shortcuts when shortcut-host permission is granted.
+     *
+     * @param serialNumber The user profile that owns the shortcuts.
+     * @param packageName The package whose shortcuts changed.
+     */
     suspend operator fun invoke(
         serialNumber: Long,
         packageName: String,

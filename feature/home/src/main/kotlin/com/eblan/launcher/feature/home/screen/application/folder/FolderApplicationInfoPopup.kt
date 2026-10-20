@@ -84,7 +84,7 @@ internal fun FolderApplicationInfoPopup(
     onDeleteFolderEblanApplicationInfoGridItems: (
         icon: String?,
         folderId: String,
-    ) -> Unit
+    ) -> Unit,
 ) {
     requireNotNull(popupIntOffset)
 
@@ -220,7 +220,7 @@ internal fun FolderApplicationInfoGridItemPopup(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     requireNotNull(popupIntOffset)
 
@@ -319,7 +319,7 @@ internal fun FolderApplicationInfoGridItemPopup(
                 onDismiss = {
                     transitionState.targetState = false
                 },
-                onDragShortcutInfo = onDragShortcutInfo
+                onDragShortcutInfo = onDragShortcutInfo,
             )
         }
     }
@@ -355,7 +355,7 @@ private fun FolderApplicationInfoGridItemPopupContent(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val launcherApps = LocalLauncherApps.current
     val packageManager = LocalPackageManager.current
@@ -389,7 +389,7 @@ private fun FolderApplicationInfoGridItemPopupContent(
                         componentName = data.componentName,
                         packageName = data.packageName,
                         popupIntOffset = popupIntOffset,
-                        popupIntSize = popupIntSize
+                        popupIntSize = popupIntSize,
                     )
 
                     onDismiss()
@@ -447,7 +447,7 @@ private fun FolderApplicationInfoGridItemPopupContent(
 
                     onDismiss()
                 },
-                onDragShortcutInfo = onDragShortcutInfo
+                onDragShortcutInfo = onDragShortcutInfo,
             )
         }
 

@@ -27,10 +27,16 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
+/** Provides application tags in their configured display order. */
 class GetEblanApplicationTagsUseCase @Inject constructor(
     private val eblanApplicationInfoTagRepository: EblanApplicationInfoTagRepository,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Emits all tags sorted by their configured index.
+     *
+     * @return A flow of application tag lists.
+     */
     operator fun invoke(): Flow<List<EblanApplicationInfoTag>> = eblanApplicationInfoTagRepository.eblanApplicationInfoTagsFlow.map { eblanApplicationInfoTags ->
         eblanApplicationInfoTags.sortedBy { it.index }
     }.flowOn(defaultDispatcher)

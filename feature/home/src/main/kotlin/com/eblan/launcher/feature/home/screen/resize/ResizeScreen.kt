@@ -55,7 +55,7 @@ internal fun ResizeScreen(
         columns: Int,
         rows: Int,
     ) -> Unit,
-    onUpdateIsResizing: (Boolean) -> Unit
+    onUpdateIsResizing: (Boolean) -> Unit,
 ) {
     val density = LocalDensity.current
 
@@ -119,7 +119,7 @@ internal fun ResizeScreen(
                     gridItemSettings = homeSettings.gridItemSettings,
                     lockMovement = lockMovement,
                     textColor = textColor,
-                    onResizeGridItem = onResizeGridItem
+                    onResizeGridItem = onResizeGridItem,
                 )
             }
 
@@ -150,7 +150,7 @@ internal fun ResizeScreen(
                     gridItemSettings = homeSettings.gridItemSettings,
                     lockMovement = lockMovement,
                     textColor = textColor,
-                    onResizeGridItem = onResizeGridItem
+                    onResizeGridItem = onResizeGridItem,
                 )
             }
         }

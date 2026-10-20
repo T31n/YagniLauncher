@@ -128,7 +128,7 @@ internal fun ShortcutConfigScreen(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val layoutDirection = LocalLayoutDirection.current
 
@@ -151,7 +151,7 @@ internal fun ShortcutConfigScreen(
         screenHeight = screenHeight,
         onDismiss = onDismiss,
         onGetLabel = onGetEblanShortcutConfigsByLabel,
-        onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay
+        onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
     )
 
     Surface(
@@ -235,7 +235,7 @@ internal fun ShortcutConfigScreen(
                         isVisibleOverlay = isVisibleOverlay,
                         onDragEnd = onDragEnd,
                         onVerticalDrag = onVerticalDrag,
-                        onDragShortcutConfig = onDragShortcutConfig
+                        onDragShortcutConfig = onDragShortcutConfig,
                     )
                 }
             } else {
@@ -248,7 +248,7 @@ internal fun ShortcutConfigScreen(
                     isVisibleOverlay = isVisibleOverlay,
                     onDragEnd = onDragEnd,
                     onVerticalDrag = onVerticalDrag,
-                    onDragShortcutConfig = onDragShortcutConfig
+                    onDragShortcutConfig = onDragShortcutConfig,
                 )
             }
         }
@@ -304,7 +304,7 @@ private fun EblanShortcutConfigsPage(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val lazyListState = rememberLazyListState()
 
@@ -342,7 +342,7 @@ private fun EblanShortcutConfigsPage(
                         gridItemSettings = gridItemSettings,
                         isVisibleOverlay = isVisibleOverlay,
                         modifier = modifier,
-                        onDragShortcutConfig = onDragShortcutConfig
+                        onDragShortcutConfig = onDragShortcutConfig,
                     )
                 }
             }
@@ -366,7 +366,7 @@ private fun EblanApplicationInfoItem(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -416,7 +416,7 @@ private fun EblanApplicationInfoItem(
                         eblanShortcutConfig = eblanShortcutConfig,
                         gridItemSettings = gridItemSettings,
                         isVisibleOverlay = isVisibleOverlay,
-                        onDragShortcutConfig = onDragShortcutConfig
+                        onDragShortcutConfig = onDragShortcutConfig,
                     )
                 }
             }
@@ -439,7 +439,7 @@ private fun EblanShortcutConfigItem(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -468,7 +468,7 @@ private fun EblanShortcutConfigItem(
                                 intSize = intSize,
                                 graphicsLayer = graphicsLayer,
                                 keyboardController = keyboardController,
-                                onDragShortcutConfig = onDragShortcutConfig
+                                onDragShortcutConfig = onDragShortcutConfig,
                             )
                         }
                     },
@@ -525,7 +525,7 @@ private suspend fun handleOnLongPress(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val id = Uuid.random().toHexString()
 

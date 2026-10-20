@@ -109,7 +109,7 @@ internal fun AppWidgetScreen(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     requireNotNull(eblanApplicationInfoGroup)
 
@@ -208,7 +208,7 @@ internal fun AppWidgetScreen(
                             screenWidth = screenWidth,
                             gridItemSettings = gridItemSettings,
                             isVisibleOverlay = isVisibleOverlay,
-                            onDragAppWidget = onDragAppWidget
+                            onDragAppWidget = onDragAppWidget,
                         )
                     }
                 }
@@ -239,7 +239,7 @@ private fun EblanAppWidgetScreenItem(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -270,7 +270,7 @@ private fun EblanAppWidgetScreenItem(
                                 graphicsLayer = graphicsLayer,
                                 intOffset = intOffset,
                                 intSize = intSize,
-                                onDragAppWidget = onDragAppWidget
+                                onDragAppWidget = onDragAppWidget,
                             )
                         }
                     },
@@ -362,7 +362,7 @@ private suspend fun handleOnLongPressEblanAppWidgetScreenItem(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val gridItem = getWidgetGridItem(
         id = id,
@@ -383,7 +383,7 @@ private suspend fun handleOnLongPressEblanAppWidgetScreenItem(
         maxResizeWidth = eblanAppWidgetProviderInfo.maxResizeWidth,
         maxResizeHeight = eblanAppWidgetProviderInfo.maxResizeHeight,
         minResizeWidth = eblanAppWidgetProviderInfo.minResizeWidth,
-        minResizeHeight = eblanAppWidgetProviderInfo.minResizeHeight
+        minResizeHeight = eblanAppWidgetProviderInfo.minResizeHeight,
     )
 
     onDragAppWidget(

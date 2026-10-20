@@ -76,7 +76,7 @@ internal fun SettingsPopup(
     ) -> Unit,
     onSettings: () -> Unit,
     onShortcutConfigActivities: () -> Unit,
-    onWidgets: () -> Unit
+    onWidgets: () -> Unit,
 ) {
     requireNotNull(popupSettingsIntOffset)
 
@@ -173,7 +173,7 @@ internal fun SettingsPopup(
                         imageVector = settingsMenuItem.imageVector,
                         index = index,
                         size = items.size,
-                        onClick = settingsMenuItem.onClick
+                        onClick = settingsMenuItem.onClick,
                     )
                 }
             }
@@ -191,7 +191,7 @@ private fun PopupMenuRow(
     // Layout
     modifier: Modifier = Modifier,
     // Callbacks
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Card(
         modifier = modifier

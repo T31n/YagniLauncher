@@ -32,7 +32,7 @@ fun NavGraphBuilder.homeScreen(
     onEditGridItem: (String) -> Unit,
     onResetConfigureResultCode: () -> Unit,
     onSettings: () -> Unit,
-    onEditFolderApplicationInfo: (String) -> Unit
+    onEditFolderApplicationInfo: (String) -> Unit,
 ) {
     composable<HomeRouteData> {
         HomeRoute(
@@ -41,7 +41,7 @@ fun NavGraphBuilder.homeScreen(
             onEditApplicationInfo = onEditApplicationInfo,
             onEditGridItem = onEditGridItem,
             onSettings = onSettings,
-            onEditFolderApplicationInfo = onEditFolderApplicationInfo
+            onEditFolderApplicationInfo = onEditFolderApplicationInfo,
         )
     }
 }

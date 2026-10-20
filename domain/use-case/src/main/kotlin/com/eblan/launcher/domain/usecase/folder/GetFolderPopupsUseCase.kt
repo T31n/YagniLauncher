@@ -28,11 +28,17 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
+/** Exposes grid folders as preview popups arranged using the current folder settings. */
 class GetFolderPopupsUseCase @Inject constructor(
     private val folderGridItemRepository: FolderGridItemRepository,
     private val userDataRepository: UserDataRepository,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Emits folder popups built from the latest folder data and maximum row and column settings.
+     *
+     * @return A flow of folder popups indexed by folder ID.
+     */
     operator fun invoke(): Flow<Map<String, FolderPopup>> = combine(
         userDataRepository.userDataFlow,
         folderGridItemRepository.folderGridItemWrappersFlow,

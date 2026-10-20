@@ -46,7 +46,7 @@ internal fun TextDialog(
     modifier: Modifier = Modifier,
     // Actions
     onDismissRequest: () -> Unit,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     EblanDialog(
         modifier = modifier,

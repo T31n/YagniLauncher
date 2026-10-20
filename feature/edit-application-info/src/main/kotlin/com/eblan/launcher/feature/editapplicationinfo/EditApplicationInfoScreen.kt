@@ -110,7 +110,7 @@ internal fun EditApplicationInfoRoute(
         onSearchIconPackInfoComponent = viewModel::searchIconPackInfoComponent,
         onUpdateIconPackPackageName = viewModel::updateIconPackPackageName,
         onResetIconPackPackageName = viewModel::resetIconPackPackageName,
-        onAddFolderEblanApplicationInfo = viewModel::addFolderEblanApplicationInfo
+        onAddFolderEblanApplicationInfo = viewModel::addFolderEblanApplicationInfo,
     )
 }
 
@@ -143,7 +143,7 @@ internal fun EditApplicationInfoScreen(
     onSearchIconPackInfoComponent: (String) -> Unit,
     onUpdateIconPackPackageName: (String) -> Unit,
     onResetIconPackPackageName: () -> Unit,
-    onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit
+    onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
 ) {
     if (editApplicationInfoUiState is EditApplicationInfoUiState.Success && editApplicationInfoUiState.eblanApplicationInfo != null) {
         Scaffold(
@@ -192,7 +192,7 @@ internal fun EditApplicationInfoScreen(
                     onUpdateIconPackPackageName = onUpdateIconPackPackageName,
                     onResetEblanApplicationInfoCustomIcon = onResetEblanApplicationInfoCustomIcon,
                     onUpdateEblanApplicationInfoCustomIcon = onUpdateEblanApplicationInfoCustomIcon,
-                    onAddFolderEblanApplicationInfo = onAddFolderEblanApplicationInfo
+                    onAddFolderEblanApplicationInfo = onAddFolderEblanApplicationInfo,
                 )
             }
         }
@@ -226,7 +226,7 @@ private fun Success(
         eblanApplicationInfo: EblanApplicationInfo,
         uri: String,
     ) -> Unit,
-    onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit
+    onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
 ) {
     var showCustomIconDialog by remember { mutableStateOf(false) }
     var showCustomLabelDialog by remember { mutableStateOf(false) }
@@ -303,7 +303,7 @@ private fun Success(
             onAddEblanApplicationInfoTag = onAddEblanApplicationInfoTag,
             onDeleteEblanApplicationInfoCrossRef = onDeleteEblanApplicationInfoCrossRef,
             onDeleteEblanApplicationInfoTag = onDeleteEblanApplicationInfoTag,
-            onUpdateEblanApplicationInfoTag = onUpdateEblanApplicationInfoTag
+            onUpdateEblanApplicationInfoTag = onUpdateEblanApplicationInfoTag,
         )
 
         SettingsCategoryText(text = stringResource(commonR.string.folders))
@@ -314,7 +314,7 @@ private fun Success(
             folderEblanApplicationInfos = folderEblanApplicationInfos,
             folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
             onUpdateEblanApplicationInfo = onUpdateEblanApplicationInfo,
-            onAddFolderEblanApplicationInfo = onAddFolderEblanApplicationInfo
+            onAddFolderEblanApplicationInfo = onAddFolderEblanApplicationInfo,
         )
 
         SettingsItems(items = items)
@@ -334,7 +334,7 @@ private fun Success(
             onUpdateIcon = {
                 onUpdateEblanApplicationInfo(eblanApplicationInfo.copy(customIcon = it))
             },
-            onSearchIconPackInfoComponent = onSearchIconPackInfoComponent
+            onSearchIconPackInfoComponent = onSearchIconPackInfoComponent,
         )
     }
 
@@ -346,7 +346,7 @@ private fun Success(
             },
             onUpdateCustomLabel = {
                 onUpdateEblanApplicationInfo(eblanApplicationInfo.copy(customLabel = it))
-            }
+            },
         )
     }
 }
@@ -362,7 +362,7 @@ private fun Tags(
     onAddEblanApplicationInfoTag: (EblanApplicationInfoTag) -> Unit,
     onDeleteEblanApplicationInfoCrossRef: (Long) -> Unit,
     onDeleteEblanApplicationInfoTag: (EblanApplicationInfoTag) -> Unit,
-    onUpdateEblanApplicationInfoTag: (EblanApplicationInfoTag) -> Unit
+    onUpdateEblanApplicationInfoTag: (EblanApplicationInfoTag) -> Unit,
 ) {
     var showAddTagDialog by remember { mutableStateOf(false) }
     var showUpdateTagDialog by remember { mutableStateOf(false) }
@@ -381,7 +381,7 @@ private fun Tags(
                     showUpdateTagDialog = true
 
                     selectedEblanApplicationInfoTagUi = it
-                }
+                },
             )
         }
 
@@ -423,7 +423,7 @@ private fun EblanApplicationInfoTagItem(
     // Actions
     onAddEblanApplicationInfoCrossRef: (Long) -> Unit,
     onDeleteEblanApplicationInfoCrossRef: (Long) -> Unit,
-    onShowUpdateTagDialog: (EblanApplicationInfoTagUi) -> Unit
+    onShowUpdateTagDialog: (EblanApplicationInfoTagUi) -> Unit,
 ) {
     Card(
         modifier = modifier.padding(5.dp),
@@ -505,7 +505,7 @@ private fun Folders(
     modifier: Modifier = Modifier,
     // Callbacks
     onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
-    onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit
+    onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
 ) {
     var showAddFolderDialog by remember { mutableStateOf(false) }
 
@@ -515,7 +515,7 @@ private fun Folders(
                 folderEblanApplicationInfo = it,
                 eblanApplicationInfo = eblanApplicationInfo,
                 folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
-                onUpdateEblanApplicationInfo = onUpdateEblanApplicationInfo
+                onUpdateEblanApplicationInfo = onUpdateEblanApplicationInfo,
             )
         }
 
@@ -532,7 +532,7 @@ private fun Folders(
             onDismissRequest = {
                 showAddFolderDialog = false
             },
-            onAddFolderEblanApplicationInfo = onAddFolderEblanApplicationInfo
+            onAddFolderEblanApplicationInfo = onAddFolderEblanApplicationInfo,
         )
     }
 }
@@ -546,7 +546,7 @@ private fun FolderEblanApplicationInfoItem(
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     modifier: Modifier = Modifier,
     // Callbacks
-    onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit
+    onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
 ) {
     val folderIndex = remember(
         key1 = folderEblanApplicationInfoPopups,

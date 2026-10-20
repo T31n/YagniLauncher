@@ -27,10 +27,16 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
+/** Provides visible applications sorted by label and user profile. */
 class GetEblanApplicationInfosUseCase @Inject constructor(
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Emits non-hidden applications ordered by case-insensitive label and then serial number.
+     *
+     * @return A flow of visible application lists.
+     */
     operator fun invoke(): Flow<List<EblanApplicationInfo>> = eblanApplicationInfoRepository.eblanApplicationInfosFlow
         .map { eblanApplicationInfos ->
             eblanApplicationInfos.filterNot {

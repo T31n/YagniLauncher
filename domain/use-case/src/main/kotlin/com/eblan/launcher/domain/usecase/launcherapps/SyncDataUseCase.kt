@@ -59,6 +59,7 @@ import javax.inject.Inject
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
+/** Reconciles persisted application, widget, shortcut, and icon-pack data with installed packages. */
 class SyncDataUseCase @Inject constructor(
     private val userDataRepository: UserDataRepository,
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
@@ -79,6 +80,7 @@ class SyncDataUseCase @Inject constructor(
     private val updateIconPacksUseCase: UpdateIconPacksUseCase,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
+    /** Refreshes launcher data and icon-pack caches using the current user settings. */
     suspend operator fun invoke() {
         withContext(ioDispatcher) {
             val userData = userDataRepository.userDataFlow.first()
@@ -104,6 +106,7 @@ class SyncDataUseCase @Inject constructor(
         }
     }
 
+    /** Synchronizes installed applications and their related shortcut-configuration records. */
     private suspend fun updateEblanApplicationInfos(
         experimentalSettings: ExperimentalSettings,
         homeSettings: HomeSettings,
@@ -196,6 +199,7 @@ class SyncDataUseCase @Inject constructor(
         applicationInfoGridItemRepository.insertApplicationInfoGridItems(applicationInfoGridItems = newApplicationInfoGridItems)
     }
 
+    /** Adds newly installed non-system applications to the home screen when configured to do so. */
     private suspend fun addNewApplicationsToHomeScreen(
         homeSettings: HomeSettings,
         experimentalSettings: ExperimentalSettings,
@@ -256,6 +260,7 @@ class SyncDataUseCase @Inject constructor(
         }
     }
 
+    /** Synchronizes installed widget providers and updates their persisted grid-item metadata. */
     private suspend fun updateAppWidgetProviderInfos() {
         if (!packageManagerWrapper.hasSystemFeatureAppWidgets) return
 
@@ -303,6 +308,7 @@ class SyncDataUseCase @Inject constructor(
         )
     }
 
+    /** Synchronizes launcher shortcuts when shortcut-host permission is available. */
     private suspend fun updateEblanLauncherShortcutInfos() {
         if (!launcherAppsWrapper.hasShortcutHostPermission) return
 
@@ -342,6 +348,7 @@ class SyncDataUseCase @Inject constructor(
         )
     }
 
+    /** Reconciles shortcut-configuration records and the grid items that reference them. */
     private suspend fun updateEblanShortcutConfigs(
         newEblanShortcutConfigs: Set<EblanShortcutConfig>,
     ) {
@@ -373,6 +380,7 @@ class SyncDataUseCase @Inject constructor(
         )
     }
 
+    /** Seeds the home grid and dock with system applications during the first launch only. */
     @OptIn(ExperimentalUuidApi::class)
     private suspend fun insertApplicationInfoGridItems(
         eblanApplicationInfos: List<EblanApplicationInfo>,
@@ -402,6 +410,7 @@ class SyncDataUseCase @Inject constructor(
 
         val applicationInfoGridItems = mutableListOf<ApplicationInfoGridItem>()
 
+        /** Creates a default grid record for one application at the specified grid position. */
         @OptIn(ExperimentalUuidApi::class)
         fun insertApplicationInfoGridItem(
             index: Int,

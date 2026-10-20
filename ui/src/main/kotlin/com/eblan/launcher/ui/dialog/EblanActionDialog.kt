@@ -66,7 +66,7 @@ internal fun EblanActionDialog(
     modifier: Modifier = Modifier,
     // Callbacks
     onSelectEblanAction: (EblanAction) -> Unit,
-    onDismissRequest: () -> Unit
+    onDismissRequest: () -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -165,7 +165,7 @@ internal fun EblanActionDialog(
                 )
 
                 showSelectApplicationDialog = false
-            }
+            },
         )
     }
 }

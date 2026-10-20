@@ -117,7 +117,7 @@ internal fun InteractiveGridItem(
         sharedElementKey: SharedElementKey,
     ) -> Unit,
     onTapFolderGridItem: (FolderEntry) -> Unit,
-    onDragGridItem: () -> Unit
+    onDragGridItem: () -> Unit,
 ) {
     val isSelected =
         moveGridItemResult != null && moveGridItemResult.movingGridItem.id == gridItem.id
@@ -132,7 +132,7 @@ internal fun InteractiveGridItem(
         gridItemCustomTextColor = currentGridItemSettings.customTextColor,
         gridItemTextColor = currentGridItemSettings.textColor,
         systemCustomTextColor = gridItemSettings.customTextColor,
-        systemTextColor = textColor
+        systemTextColor = textColor,
     )
 
     val hasInteraction = isSelected && isVisibleOverlay
@@ -144,7 +144,7 @@ internal fun InteractiveGridItem(
         cellWidth = cellWidth,
         cellHeight = cellHeight,
         leftPadding = leftPadding,
-        topOffset = topOffset
+        topOffset = topOffset,
     )
 
     val isVisibleFolder = remember(
@@ -204,7 +204,7 @@ internal fun InteractiveGridItem(
                 verticalAlignment = verticalAlignment,
                 modifier = modifier,
                 onOpenAppDrawer = onOpenAppDrawer,
-                onLongPressGridItem = onLongPressGridItem
+                onLongPressGridItem = onLongPressGridItem,
             )
         }
 
@@ -221,7 +221,7 @@ internal fun InteractiveGridItem(
                 isVisibleWhiteBox = isVisibleWhiteBox,
                 animations = animations,
                 modifier = modifier,
-                onLongPressGridItem = onLongPressGridItem
+                onLongPressGridItem = onLongPressGridItem,
             )
         }
 
@@ -248,7 +248,7 @@ internal fun InteractiveGridItem(
                 sharedElementKey = sharedElementKey,
                 modifier = modifier,
                 onOpenAppDrawer = onOpenAppDrawer,
-                onLongPressGridItem = onLongPressGridItem
+                onLongPressGridItem = onLongPressGridItem,
             )
         }
 
@@ -288,7 +288,7 @@ internal fun InteractiveGridItem(
                 onShowFolderWhenDragging = onShowFolderWhenDragging,
                 onResetGrid = onResetGrid,
                 onLongPressGridItem = onLongPressGridItem,
-                onTapFolderGridItem = onTapFolderGridItem
+                onTapFolderGridItem = onTapFolderGridItem,
             )
         }
 
@@ -313,7 +313,7 @@ internal fun InteractiveGridItem(
                 verticalAlignment = verticalAlignment,
                 modifier = modifier,
                 onOpenAppDrawer = onOpenAppDrawer,
-                onLongPressGridItem = onLongPressGridItem
+                onLongPressGridItem = onLongPressGridItem,
             )
         }
     }
@@ -342,7 +342,7 @@ private fun InteractiveWidgetGridItem(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val appWidgetHost = LocalAppWidgetHost.current
     val appWidgetManager = LocalAppWidgetManager.current
@@ -454,7 +454,7 @@ private fun getSourceBounds(
     cellHeight: Int,
     // Offsets and Padding
     leftPadding: Int,
-    topOffset: Int
+    topOffset: Int,
 ): Rect {
     val x = gridItem.startColumn * cellWidth
     val y = gridItem.startRow * cellHeight

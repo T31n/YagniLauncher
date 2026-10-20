@@ -116,7 +116,7 @@ internal fun EditGridPageScreen(
         pageItemsToDelete: List<PageItem>,
         associate: Associate,
     ) -> Unit,
-    onUpdateScreen: (Screen) -> Unit
+    onUpdateScreen: (Screen) -> Unit,
 ) {
     requireNotNull(pageItems)
 
@@ -129,7 +129,7 @@ internal fun EditGridPageScreen(
         screenHeight = screenHeight,
         density = density,
         paddingValues = paddingValues,
-        layoutDirection = layoutDirection
+        layoutDirection = layoutDirection,
     )
 
     var currentPageItems by remember { mutableStateOf(pageItems) }
@@ -230,9 +230,9 @@ internal fun EditGridPageScreen(
                                 folderBackgroundColor = folderBackgroundColor,
                                 customFolderBackgroundColor = customFolderBackgroundColor,
                                 folderCornerRadius = folderSettings.folderCornerRadius,
-                                iconPackFilePaths = iconPackFilePaths
+                                iconPackFilePaths = iconPackFilePaths,
                             )
-                        }
+                        },
                     )
 
                     PageButtons(
@@ -252,7 +252,7 @@ internal fun EditGridPageScreen(
                         },
                         onHomeClick = {
                             selectedId = pageItem.id
-                        }
+                        },
                     )
                 }
             }
@@ -284,7 +284,7 @@ internal fun EditGridPageScreen(
             },
             onCancel = {
                 onUpdateScreen(Screen.Pager)
-            }
+            },
         )
     }
 }
@@ -296,7 +296,7 @@ private fun getGridSize(
     // Layout Context
     density: Density,
     paddingValues: PaddingValues,
-    layoutDirection: LayoutDirection
+    layoutDirection: LayoutDirection,
 ): Pair<Dp, Dp> {
     val leftPadding = with(density) {
         paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
@@ -355,7 +355,7 @@ internal fun EditDockGridPageScreen(
         pageItemsToDelete: List<PageItem>,
         associate: Associate,
     ) -> Unit,
-    onUpdateScreen: (Screen) -> Unit
+    onUpdateScreen: (Screen) -> Unit,
 ) {
     requireNotNull(pageItems)
 
@@ -462,9 +462,9 @@ internal fun EditDockGridPageScreen(
                                     folderBackgroundColor = folderBackgroundColor,
                                     customFolderBackgroundColor = customFolderBackgroundColor,
                                     folderCornerRadius = folderSettings.folderCornerRadius,
-                                    iconPackFilePaths = iconPackFilePaths
+                                    iconPackFilePaths = iconPackFilePaths,
                                 )
-                            }
+                            },
                         )
 
                         PageButtons(
@@ -484,7 +484,7 @@ internal fun EditDockGridPageScreen(
                             },
                             onHomeClick = {
                                 selectedId = pageItem.id
-                            }
+                            },
                         )
                     }
                 }
@@ -517,7 +517,7 @@ internal fun EditDockGridPageScreen(
             },
             onCancel = {
                 onUpdateScreen(Screen.Pager)
-            }
+            },
         )
     }
 }
@@ -531,7 +531,7 @@ internal fun PageButtons(
     modifier: Modifier = Modifier,
     // Actions
     onDeleteClick: () -> Unit,
-    onHomeClick: () -> Unit
+    onHomeClick: () -> Unit,
 ) {
     Surface(
         modifier = modifier,
@@ -575,7 +575,7 @@ internal fun ExpandableFloatingActionButton(
     onExpandedChange: (Boolean) -> Unit,
     onAdd: () -> Unit,
     onSave: () -> Unit,
-    onCancel: () -> Unit
+    onCancel: () -> Unit,
 ) {
     Column(modifier = modifier.padding(15.dp)) {
         AnimatedVisibility(

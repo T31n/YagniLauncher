@@ -89,7 +89,7 @@ internal fun HomeRoute(
     // Navigation actions
     onSettings: () -> Unit,
     // Edit actions
-    onEditFolderApplicationInfo: (String) -> Unit
+    onEditFolderApplicationInfo: (String) -> Unit,
 ) {
     val homeUiState by viewModel.homeUiState.collectAsStateWithLifecycle()
     val screen by viewModel.screen.collectAsStateWithLifecycle()
@@ -183,7 +183,7 @@ internal fun HomeRoute(
         onDragFolderEblanApplicationInfo = viewModel::dragFolderEblanApplicationInfoToGrid,
         onResetFolderEblanApplicationInfoPopupEntries = viewModel::resetFolderEblanApplicationInfoEntries,
         onDeleteFolderEblanApplicationInfoGridItems = viewModel::deleteFolderEblanApplicationInfoGridItems,
-        onUpdateGridItemsAfterMoveNewFolder = viewModel::updateGridItemsAfterMoveNewFolder
+        onUpdateGridItemsAfterMoveNewFolder = viewModel::updateGridItemsAfterMoveNewFolder,
     )
 }
 
@@ -339,7 +339,7 @@ internal fun HomeScreen(
     onUpdateGridItemsAfterMoveNewFolder: (
         folderGridItems: List<GridItem>,
         moveGridItemResult: MoveGridItemResult,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val paddingValues = WindowInsets.safeDrawing.asPaddingValues()
 
@@ -426,7 +426,7 @@ internal fun HomeScreen(
                 onPackageChanged = onPackageChanged,
                 onPackageRemoved = onPackageRemoved,
                 onShortcutsChanged = onShortcutsChanged,
-                onUpdateGridItemsAfterMoveNewFolder = onUpdateGridItemsAfterMoveNewFolder
+                onUpdateGridItemsAfterMoveNewFolder = onUpdateGridItemsAfterMoveNewFolder,
             )
         }
     }
@@ -580,7 +580,7 @@ private fun Success(
     onUpdateGridItemsAfterMoveNewFolder: (
         folderGridItems: List<GridItem>,
         moveGridItemResult: MoveGridItemResult,
-    ) -> Unit
+    ) -> Unit,
 ) {
     AnimatedContent(
         modifier = modifier,
@@ -668,7 +668,7 @@ private fun Success(
                     onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
                     onResetFolderEblanApplicationInfoPopupEntries = onResetFolderEblanApplicationInfoPopupEntries,
                     onDeleteFolderEblanApplicationInfoGridItems = onDeleteFolderEblanApplicationInfoGridItems,
-                    onUpdateGridItemsAfterMoveNewFolder = onUpdateGridItemsAfterMoveNewFolder
+                    onUpdateGridItemsAfterMoveNewFolder = onUpdateGridItemsAfterMoveNewFolder,
                 )
             }
 
@@ -691,7 +691,7 @@ private fun Success(
                     systemCustomTextColor = homeData.userData.homeSettings.gridItemSettings.customTextColor,
                     folderSettings = homeData.userData.folderSettings,
                     onSaveEditPage = onSaveEditPage,
-                    onUpdateScreen = onUpdateScreen
+                    onUpdateScreen = onUpdateScreen,
                 )
             }
 
@@ -710,7 +710,7 @@ private fun Success(
                     iconPackFilePaths = homeData.iconPackFilePaths,
                     paddingValues = paddingValues,
                     onSaveEditPage = onSaveEditPage,
-                    onUpdateScreen = onUpdateScreen
+                    onUpdateScreen = onUpdateScreen,
                 )
             }
         }
@@ -754,7 +754,7 @@ private fun RequestPermissionsEffect(modifier: Modifier = Modifier) {
                 notificationsPermissionState.launchMultiplePermissionRequest()
 
                 showTextDialog = false
-            }
+            },
         )
     }
 }

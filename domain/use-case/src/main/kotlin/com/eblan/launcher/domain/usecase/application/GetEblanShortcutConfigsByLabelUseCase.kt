@@ -30,11 +30,18 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
+/** Searches shortcut-configuration activities by application label and groups them by user and app. */
 class GetEblanShortcutConfigsByLabelUseCase @Inject constructor(
     private val eblanShortcutConfigRepository: EblanShortcutConfigRepository,
     private val launcherAppsWrapper: LauncherAppsWrapper,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Filters configurations by a case-insensitive application-label substring, then groups them.
+     *
+     * @param labelFlow The flow of query strings to apply.
+     * @return A flow grouped first by user and then by application.
+     */
     operator fun invoke(labelFlow: Flow<String>): Flow<Map<EblanUser, Map<EblanApplicationInfoGroup, List<EblanShortcutConfig>>>> = combine(
         eblanShortcutConfigRepository.eblanShortcutConfigsFlow,
         labelFlow,

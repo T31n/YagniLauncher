@@ -43,6 +43,7 @@ import kotlinx.coroutines.withContext
 import java.text.Normalizer
 import javax.inject.Inject
 
+/** Produces filtered app-drawer data from application, folder, user, and display settings. */
 class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
     private val launcherAppsWrapper: LauncherAppsWrapper,
@@ -53,6 +54,13 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
     private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Combines the query and selected tag with repository and user settings to build app-drawer data.
+     *
+     * @param labelFlow The flow of text entered in the app-drawer search.
+     * @param eblanApplicationInfoTagIdFlow The flow of the selected tag ID, or `null` for no tag.
+     * @return A flow of filtered application and folder data in the configured drawer layout.
+     */
     operator fun invoke(
         labelFlow: Flow<String>,
         eblanApplicationInfoTagIdFlow: Flow<Long?>,
@@ -107,6 +115,10 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
         }
     }.flowOn(defaultDispatcher)
 
+    /**
+     * Groups vertical or list drawer contents by user, adds folders to the personal profile, and
+     * builds optional alphabetical scroll-bar entries.
+     */
     private suspend fun getVerticalOrListEblanApplicationInfosByLabel(
         eblanApplicationInfos: List<EblanApplicationInfo>,
         folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
@@ -161,6 +173,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
         )
     }
 
+    /** Groups horizontal drawer results by user and splits each user's applications into pages. */
     private suspend fun getHorizontalEblanApplicationInfosByLabel(
         horizontalAppDrawerColumns: Int,
         horizontalAppDrawerRows: Int,
@@ -190,6 +203,10 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
         )
     }
 
+    /**
+     * Selects eligible applications by tag and search query, omitting hidden and folder-contained
+     * applications.
+     */
     private suspend fun getEblanApplicationInfos(
         eblanApplicationInfos: List<EblanApplicationInfo>,
         excludeTaggedApps: Boolean,
@@ -215,6 +232,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
         )
     }
 
+    /** Selects top-level folders for an untagged search and filters them by folder label. */
     private suspend fun getFolderEblanApplicationInfos(
         folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
         fuzzySearch: Boolean,
@@ -235,6 +253,15 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
         ).sortedBy { it.index }
     }
 
+    /**
+     * Returns substring matches followed by sufficiently similar fuzzy matches when enabled.
+     *
+     * @param items The items to search.
+     * @param fuzzySearch Whether to include normalized Jaro-Winkler matches.
+     * @param label The search query.
+     * @param getLabel Extracts the searchable label from an item.
+     * @return Matching items, with exact substring matches ordered before fuzzy matches.
+     */
     private suspend fun <T> getItemsByLabel(
         items: List<T>,
         fuzzySearch: Boolean,
@@ -272,12 +299,16 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
         }
     }
 
+    /** Removes diacritics and lowercases text for accent-insensitive fuzzy comparison. */
     private suspend fun normalize(text: String): String = withContext(defaultDispatcher) {
         Normalizer.normalize(text, Normalizer.Form.NFD)
             .replace("\\p{M}+".toRegex(), "")
             .lowercase()
     }
 
+    /**
+     * Builds unique, sorted first-letter index entries when the alphabetical scroll bar is enabled.
+     */
     private fun getAlphabeticalScrollBarItems(
         eblanApplicationInfos: Map<EblanUserPageKey, List<EblanApplicationInfo>>,
         folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,

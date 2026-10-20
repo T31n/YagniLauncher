@@ -28,11 +28,17 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
+/** Exposes application folders as preview popups sized by the current folder settings. */
 class GetFolderEblanApplicationInfoPopupsUseCase @Inject constructor(
     private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
     private val userDataRepository: UserDataRepository,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Emits folder popups ordered by folder label and arranged using the configured maximum size.
+     *
+     * @return A flow of folder popups indexed by folder ID.
+     */
     operator fun invoke(): Flow<Map<String, FolderEblanApplicationInfoPopup>> = combine(
         userDataRepository.userDataFlow,
         folderEblanApplicationInfoRepository.folderEblanApplicationInfoWrappersFlow,

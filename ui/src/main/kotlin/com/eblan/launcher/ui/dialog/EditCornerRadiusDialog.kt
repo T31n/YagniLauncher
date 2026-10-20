@@ -45,7 +45,7 @@ fun EditCornerRadiusDialog(
     modifier: Modifier = Modifier,
     // Actions
     onDismissRequest: () -> Unit,
-    onUpdateCornerRadius: (Int) -> Unit
+    onUpdateCornerRadius: (Int) -> Unit,
 ) {
     var currentCornerRadius by remember { mutableStateOf("$cornerRadius") }
 

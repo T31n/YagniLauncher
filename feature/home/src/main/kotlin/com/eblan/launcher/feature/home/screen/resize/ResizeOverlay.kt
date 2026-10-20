@@ -50,19 +50,19 @@ internal fun ResizeOverlay(
         gridItem: GridItem,
         columns: Int,
         rows: Int,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val currentTextColor = if (gridItem.override) {
         getGridItemTextColor(
             gridItemCustomTextColor = gridItem.gridItemSettings.customTextColor,
             gridItemTextColor = gridItem.gridItemSettings.textColor,
             systemCustomTextColor = gridItemSettings.customTextColor,
-            systemTextColor = textColor
+            systemTextColor = textColor,
         )
     } else {
         getTextColor(
             textColor = textColor,
-            customTextColor = gridItemSettings.customTextColor
+            customTextColor = gridItemSettings.customTextColor,
         )
     }
 
@@ -86,7 +86,7 @@ internal fun ResizeOverlay(
                 height = height,
                 color = currentTextColor,
                 lockMovement = lockMovement,
-                onResizeGridItem = onResizeGridItem
+                onResizeGridItem = onResizeGridItem,
             )
         }
 
@@ -104,7 +104,7 @@ internal fun ResizeOverlay(
                 y = y,
                 color = currentTextColor,
                 lockMovement = lockMovement,
-                onResizeWidgetGridItem = onResizeGridItem
+                onResizeWidgetGridItem = onResizeGridItem,
             )
         }
     }

@@ -82,7 +82,7 @@ internal fun WidgetGridItemResizeOverlay(
         gridItem: GridItem,
         columns: Int,
         rows: Int,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val density = LocalDensity.current
 
@@ -152,7 +152,7 @@ internal fun WidgetGridItemResizeOverlay(
                 width = width,
                 currentWidth = currentWidth.value,
                 dragHandle = dragHandle,
-                dragHandleSizePx = dragHandleSizePx
+                dragHandleSizePx = dragHandleSizePx,
             )
         }
     }
@@ -165,7 +165,7 @@ internal fun WidgetGridItemResizeOverlay(
                 height = height,
                 currentHeight = currentHeight.value,
                 dragHandle = dragHandle,
-                dragHandleSizePx = dragHandleSizePx
+                dragHandleSizePx = dragHandleSizePx,
             )
         }
     }
@@ -190,7 +190,7 @@ internal fun WidgetGridItemResizeOverlay(
             isResizing = isResizing,
             lockMovement = lockMovement,
             density = density,
-            onResizeWidgetGridItem = onResizeWidgetGridItem
+            onResizeWidgetGridItem = onResizeWidgetGridItem,
         )
     }
 
@@ -347,7 +347,7 @@ private fun getWidgetBorderX(
     currentWidth: Int,
     // Drag Handle
     dragHandle: Alignment,
-    dragHandleSizePx: Int
+    dragHandleSizePx: Int,
 ): Int = if (dragHandle == Alignment.CenterStart) {
     if (currentWidth >= dragHandleSizePx) {
         currentX
@@ -367,7 +367,7 @@ private fun getWidgetBorderY(
     currentHeight: Int,
     // Drag Handle
     dragHandle: Alignment,
-    dragHandleSizePx: Int
+    dragHandleSizePx: Int,
 ): Int = if (dragHandle == Alignment.TopCenter) {
     if (currentHeight >= dragHandleSizePx) {
         currentY
@@ -398,7 +398,7 @@ private fun resizeWidgetGridItem(
     lockMovement: Boolean,
     density: Density,
     // Callback
-    onResizeWidgetGridItem: (GridItem, Int, Int) -> Unit
+    onResizeWidgetGridItem: (GridItem, Int, Int) -> Unit,
 ) {
     val minResizeWidthPx = with(density) { data.minResizeWidth.dp.roundToPx() }
     val minResizeHeightPx = with(density) { data.minResizeHeight.dp.roundToPx() }
@@ -496,7 +496,7 @@ private fun resizeWidgetGridItem(
             gridWidth = gridWidth,
             gridHeight = gridHeight,
             startColumn = resizingGridItem.startColumn,
-            startRow = resizingGridItem.startRow
+            startRow = resizingGridItem.startRow,
         )
 
         onResizeWidgetGridItem(

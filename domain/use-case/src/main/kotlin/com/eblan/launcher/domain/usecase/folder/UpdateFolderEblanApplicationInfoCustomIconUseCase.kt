@@ -30,6 +30,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 
+/** Replaces a folder's saved icon using an image referenced by a content URI. */
 class UpdateFolderEblanApplicationInfoCustomIconUseCase @Inject constructor(
     private val fileManager: FileManager,
     private val iconKeyGenerator: IconKeyGenerator,
@@ -37,6 +38,15 @@ class UpdateFolderEblanApplicationInfoCustomIconUseCase @Inject constructor(
     private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Saves the image at [uri] and persists the folder with the new icon path.
+     *
+     * Any existing icon file is removed first. If the URI cannot be read, no repository update is
+     * made.
+     *
+     * @param folderEblanApplicationInfo The folder whose icon should be replaced.
+     * @param uri The URI of the replacement image.
+     */
     suspend operator fun invoke(
         folderEblanApplicationInfo: FolderEblanApplicationInfo,
         uri: String,

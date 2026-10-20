@@ -42,6 +42,7 @@ import javax.inject.Inject
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
+/** Creates a home-screen grid item for a pinned widget when a free region is available. */
 class AddPinWidgetToHomeScreenUseCase @Inject constructor(
     private val userDataRepository: UserDataRepository,
     private val fileManager: FileManager,
@@ -50,6 +51,27 @@ class AddPinWidgetToHomeScreenUseCase @Inject constructor(
     private val iconKeyGenerator: IconKeyGenerator,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Builds a widget item using its provider metadata and inserts it at the first available region.
+     *
+     * @param componentName The widget provider component name.
+     * @param configure The optional widget configuration activity.
+     * @param packageName The provider package name.
+     * @param serialNumber The user profile that owns the provider.
+     * @param targetCellHeight The provider's preferred height in cells.
+     * @param targetCellWidth The provider's preferred width in cells.
+     * @param minWidth The widget's minimum width in pixels.
+     * @param minHeight The widget's minimum height in pixels.
+     * @param resizeMode The widget's resize mode.
+     * @param minResizeWidth The minimum resizable width in pixels.
+     * @param minResizeHeight The minimum resizable height in pixels.
+     * @param maxResizeWidth The maximum resizable width in pixels.
+     * @param maxResizeHeight The maximum resizable height in pixels.
+     * @param rootWidth The home-grid root width in pixels.
+     * @param rootHeight The home-grid root height in pixels.
+     * @param preview The optional cached widget preview path.
+     * @return The inserted grid item, or `null` if no region is available.
+     */
     @OptIn(ExperimentalUuidApi::class)
     suspend operator fun invoke(
         componentName: String,

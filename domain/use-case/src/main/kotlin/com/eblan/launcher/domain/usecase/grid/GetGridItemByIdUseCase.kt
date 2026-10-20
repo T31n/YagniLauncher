@@ -26,10 +26,17 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+/** Retrieves a domain grid item by its ID. */
 class GetGridItemByIdUseCase @Inject constructor(
     private val gridRepository: GridRepository,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Loads grid data, converts it to domain items, and returns the matching item if present.
+     *
+     * @param id The grid item ID to find.
+     * @return The matching item, or `null` if no item has that ID.
+     */
     suspend operator fun invoke(id: String): GridItem? = withContext(defaultDispatcher) {
         gridRepository.getGridItems().toGridItems().firstOrNull { it.id == id }
     }

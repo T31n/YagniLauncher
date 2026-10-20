@@ -21,6 +21,7 @@ import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import java.io.File
 
+/** Deletes the custom icon file referenced by a supported grid-item type, if it exists. */
 internal fun deleteGridItemCustomIconFile(gridItem: GridItem) = when (val data = gridItem.data) {
     is GridItemData.ApplicationInfo -> {
         data.customIcon?.let {

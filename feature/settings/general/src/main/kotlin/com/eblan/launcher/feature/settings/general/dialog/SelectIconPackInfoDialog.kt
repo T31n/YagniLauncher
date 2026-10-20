@@ -52,7 +52,7 @@ internal fun SelectIconPackInfoDialog(
     onDeleteEblanIconPackInfo: (String) -> Unit,
     onDismissRequest: () -> Unit,
     onReset: () -> Unit,
-    onUpdateIconPackPackageName: (String) -> Unit
+    onUpdateIconPackPackageName: (String) -> Unit,
 ) {
     EblanDialog(
         modifier = modifier,

@@ -82,7 +82,7 @@ internal fun AppDrawerSettingsRoute(
         onUpdateAppDrawerSettings = viewModel::updateAppDrawerSettings,
         onUpdateEblanApplicationInfo = viewModel::updateEblanApplicationInfo,
         onUpdateEblanApplicationInfoTags = viewModel::updateEblanApplicationInfoTags,
-        onUpdateFolderEblanApplicationInfos = viewModel::updateFolderEblanApplicationInfos
+        onUpdateFolderEblanApplicationInfos = viewModel::updateFolderEblanApplicationInfos,
     )
 }
 
@@ -100,7 +100,7 @@ internal fun AppDrawerSettingsScreen(
     onUpdateAppDrawerSettings: (AppDrawerSettings) -> Unit,
     onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
     onUpdateEblanApplicationInfoTags: (List<EblanApplicationInfoTag>) -> Unit,
-    onUpdateFolderEblanApplicationInfos: (List<FolderEblanApplicationInfo>) -> Unit
+    onUpdateFolderEblanApplicationInfos: (List<FolderEblanApplicationInfo>) -> Unit,
 ) {
     Scaffold(
         modifier = modifier,
@@ -134,7 +134,7 @@ internal fun AppDrawerSettingsScreen(
                     onUpdateAppDrawerSettings = onUpdateAppDrawerSettings,
                     onUpdateEblanApplicationInfo = onUpdateEblanApplicationInfo,
                     onUpdateEblanApplicationInfoTags = onUpdateEblanApplicationInfoTags,
-                    onUpdateFolderEblanApplicationInfos = onUpdateFolderEblanApplicationInfos
+                    onUpdateFolderEblanApplicationInfos = onUpdateFolderEblanApplicationInfos,
                 )
             }
         }
@@ -154,7 +154,7 @@ private fun Success(
     onUpdateAppDrawerSettings: (AppDrawerSettings) -> Unit,
     onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
     onUpdateEblanApplicationInfoTags: (List<EblanApplicationInfoTag>) -> Unit,
-    onUpdateFolderEblanApplicationInfos: (List<FolderEblanApplicationInfo>) -> Unit
+    onUpdateFolderEblanApplicationInfos: (List<FolderEblanApplicationInfo>) -> Unit,
 ) {
     var showAppDrawerTypeDialog by remember { mutableStateOf(false) }
     var showVerticalGridDialog by remember { mutableStateOf(false) }
@@ -195,7 +195,7 @@ private fun Success(
         },
         onScrollBarTypeClick = {
             showScrollBarTypeDialog = true
-        }
+        },
     )
 
     Column(
@@ -215,7 +215,7 @@ private fun Success(
                         gridItemSettings = it,
                     ),
                 )
-            }
+            },
         )
     }
 
@@ -232,7 +232,7 @@ private fun Success(
             },
             onUpdateClick = {
                 onUpdateAppDrawerSettings(appDrawerSettings.copy(appDrawerType = it))
-            }
+            },
         )
     }
 
@@ -250,7 +250,7 @@ private fun Success(
                         appDrawerRowsHeight = appDrawerRowsHeight,
                     ),
                 )
-            }
+            },
         )
     }
 
@@ -268,7 +268,7 @@ private fun Success(
                         horizontalAppDrawerRows = horizontalAppDrawerRows,
                     ),
                 )
-            }
+            },
         )
     }
 
@@ -297,7 +297,7 @@ private fun Success(
                         customBackgroundColor = customColor,
                     ),
                 )
-            }
+            },
         )
     }
 
@@ -334,7 +334,7 @@ private fun Success(
             },
             onUpdateClick = {
                 onUpdateAppDrawerSettings(appDrawerSettings.copy(searchBarPosition = it))
-            }
+            },
         )
     }
 
@@ -351,7 +351,7 @@ private fun Success(
             },
             onUpdateClick = {
                 onUpdateAppDrawerSettings(appDrawerSettings.copy(scrollBarType = it))
-            }
+            },
         )
     }
 }
@@ -370,7 +370,7 @@ private fun buildAppDrawerSettingsItems(
     onManageTags: () -> Unit,
     onManageFolders: () -> Unit,
     onSearchBarPositionClick: () -> Unit,
-    onScrollBarTypeClick: () -> Unit
+    onScrollBarTypeClick: () -> Unit,
 ): List<SettingsItem> = buildList {
     add(
         SettingsItem.Column(

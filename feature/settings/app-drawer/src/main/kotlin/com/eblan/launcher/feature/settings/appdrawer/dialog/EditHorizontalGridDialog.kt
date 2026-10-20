@@ -50,7 +50,7 @@ internal fun EditHorizontalGridDialog(
     onUpdateHorizontalGrid: (
         horizontalAppDrawerColumns: Int,
         horizontalAppDrawerRows: Int,
-    ) -> Unit
+    ) -> Unit,
 ) {
     var currentHorizontalAppDrawerColumns by remember { mutableStateOf("$horizontalAppDrawerColumns") }
     var currentHorizontalAppDrawerRows by remember { mutableStateOf("$horizontalAppDrawerRows") }

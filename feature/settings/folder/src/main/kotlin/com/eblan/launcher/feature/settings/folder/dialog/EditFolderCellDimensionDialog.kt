@@ -50,7 +50,7 @@ internal fun EditFolderCellDimensionDialog(
     onUpdateFolderCellDimension: (
         folderCellWidth: Int,
         folderCellHeight: Int,
-    ) -> Unit
+    ) -> Unit,
 ) {
     var currentFolderCellWidth by remember { mutableStateOf("$folderCellWidth") }
     var currentFolderCellHeight by remember { mutableStateOf("$folderCellHeight") }

@@ -43,7 +43,7 @@ internal fun SyncDataDialog(
     modifier: Modifier = Modifier,
     // Callbacks
     onDismissRequest: () -> Unit,
-    onUpdateSyncData: (Boolean) -> Unit
+    onUpdateSyncData: (Boolean) -> Unit,
 ) {
     EblanDialog(
         modifier = modifier,
@@ -68,7 +68,7 @@ internal fun SyncDataDialog(
                     title = stringResource(R.string.sync_data),
                     subtitle = stringResource(R.string.keep_data_up_to_date),
                     checked = syncData,
-                    onCheckedChange = onUpdateSyncData
+                    onCheckedChange = onUpdateSyncData,
                 )
             }
         }

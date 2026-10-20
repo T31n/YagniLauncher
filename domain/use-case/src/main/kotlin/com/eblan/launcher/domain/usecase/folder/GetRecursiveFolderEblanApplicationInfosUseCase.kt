@@ -36,11 +36,19 @@ import javax.inject.Inject
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
+/** Builds grid-item models for every application and nested folder inside a selected folder. */
 class GetRecursiveFolderEblanApplicationInfosUseCase @Inject constructor(
     private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
     private val userDataRepository: UserDataRepository,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Loads folder contents recursively and returns them as grid items associated with [id].
+     *
+     * @param id The ID assigned to generated child grid items.
+     * @param folderId The ID of the folder whose descendants should be loaded.
+     * @return The descendant applications and folders as grid items.
+     */
     suspend operator fun invoke(
         id: String,
         folderId: String,
@@ -71,6 +79,7 @@ class GetRecursiveFolderEblanApplicationInfosUseCase @Inject constructor(
         )
     }
 
+    /** Recursively maps a folder popup's children to transient grid items. */
     @OptIn(ExperimentalUuidApi::class)
     private fun getRecursiveFolderGridItems(
         gridItemSettings: GridItemSettings,

@@ -43,7 +43,7 @@ internal fun ScreenEffect(
     // Callbacks
     onDismiss: () -> Unit,
     onGetLabel: (String) -> Unit,
-    onUpdateIsVisibleOverlay: (Boolean) -> Unit
+    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 

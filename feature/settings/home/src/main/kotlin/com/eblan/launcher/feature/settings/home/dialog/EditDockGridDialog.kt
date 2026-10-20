@@ -50,7 +50,7 @@ internal fun EditDockGridDialog(
     onUpdateDockGrid: (
         dockColumns: Int,
         dockRows: Int,
-    ) -> Unit
+    ) -> Unit,
 ) {
     var currentDockColumns by remember { mutableStateOf("$dockColumns") }
     var currentDockRows by remember { mutableStateOf("$dockRows") }

@@ -27,10 +27,17 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
+/** Observes application folders while excluding the folder with the supplied ID. */
 class GetFolderEblanApplicationInfosByIdUseCase @Inject constructor(
     private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Emits all folder records except the one matching [id].
+     *
+     * @param id The folder ID to omit.
+     * @return A flow of the remaining folders.
+     */
     operator fun invoke(id: String): Flow<List<FolderEblanApplicationInfo>> = folderEblanApplicationInfoRepository.folderEblanApplicationInfosFlow.map { folderEblanApplicationInfos ->
         folderEblanApplicationInfos.filterNot { it.id == id }
     }.flowOn(defaultDispatcher)

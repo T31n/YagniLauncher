@@ -167,12 +167,12 @@ internal fun ApplicationScreen(
         intOffset: IntOffset,
         intSize: IntSize,
     ) -> Unit,
-    onTapFolderApplicationInfo: (folderEntry: FolderEntry) -> Unit
+    onTapFolderApplicationInfo: (folderEntry: FolderEntry) -> Unit,
 ) {
     BlurBehindEffect(
         blurBehind = appDrawerSettings.blurBehind,
         screenHeight = screenHeight,
-        swipeY = swipeY
+        swipeY = swipeY,
     )
 
     Surface(
@@ -239,7 +239,7 @@ internal fun ApplicationScreen(
                     onLongPressApplicationInfo = onLongPressApplicationInfo,
                     onLongPressFolderApplicationInfo = onLongPressFolderApplicationInfo,
                     onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
-                    onTapFolderApplicationInfo = onTapFolderApplicationInfo
+                    onTapFolderApplicationInfo = onTapFolderApplicationInfo,
                 )
             }
 
@@ -265,7 +265,7 @@ internal fun ApplicationScreen(
                     onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                     onDragApplicationInfo = onDragApplicationInfo,
                     onLongPressApplicationInfo = onLongPressApplicationInfo,
-                    onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem
+                    onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
                 )
             }
         }
@@ -284,7 +284,7 @@ internal fun QuiteModeScreen(
     modifier: Modifier = Modifier,
     // Gestures
     onDragEnd: () -> Unit,
-    onVerticalDrag: (Float) -> Unit
+    onVerticalDrag: (Float) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -297,7 +297,7 @@ internal fun QuiteModeScreen(
         customBackgroundColor = customBackgroundColor,
         systemTextColor = systemTextColor,
         systemCustomTextColor = systemCustomTextColor,
-        defaultColor = MaterialTheme.colorScheme.onSurface
+        defaultColor = MaterialTheme.colorScheme.onSurface,
     )
 
     Column(
@@ -355,7 +355,7 @@ internal fun TagElevatedFilterChip(
     // Modifier
     modifier: Modifier = Modifier,
     // Callbacks
-    onUpdateEblanApplicationInfoTag: (Long?) -> Unit
+    onUpdateEblanApplicationInfoTag: (Long?) -> Unit,
 ) {
     ElevatedFilterChip(
         modifier = modifier.padding(5.dp),
@@ -397,7 +397,7 @@ internal fun EblanApplicationInfoTabRow(
     systemCustomTextColor: Int,
     modifier: Modifier = Modifier,
     // Actions
-    onAnimateScrollToPage: suspend (Int) -> Unit
+    onAnimateScrollToPage: suspend (Int) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -424,7 +424,7 @@ internal fun EblanApplicationInfoTabRow(
         customBackgroundColor = customBackgroundColor,
         systemTextColor = systemTextColor,
         systemCustomTextColor = systemCustomTextColor,
-        defaultColor = MaterialTheme.colorScheme.onSurface
+        defaultColor = MaterialTheme.colorScheme.onSurface,
     )
 
     SecondaryTabRow(
@@ -479,7 +479,7 @@ internal fun ApplicationScreenEffect(
     // Callbacks
     onDismiss: () -> Unit,
     onGetEblanApplicationInfosByLabel: (String) -> Unit,
-    onGetEblanApplicationInfosByTagId: (Long?) -> Unit
+    onGetEblanApplicationInfosByTagId: (Long?) -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -660,7 +660,7 @@ private fun BlurBehindEffect(
     blurBehind: Boolean,
     // Dimensions and Gesture
     screenHeight: Int,
-    swipeY: Float
+    swipeY: Float,
 ) {
     if (!blurBehind) return
 

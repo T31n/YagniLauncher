@@ -51,7 +51,7 @@ internal fun PageGridItem(
     // Assets
     iconPackFilePaths: Map<String, String?>,
     // Modifier
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val currentGridItemSettings = if (gridItem.override) {
         gridItem.gridItemSettings
@@ -63,7 +63,7 @@ internal fun PageGridItem(
         gridItemCustomTextColor = currentGridItemSettings.customTextColor,
         gridItemTextColor = currentGridItemSettings.textColor,
         systemCustomTextColor = gridItemSettings.customTextColor,
-        systemTextColor = textColor
+        systemTextColor = textColor,
     )
 
     val horizontalAlignment =
@@ -89,7 +89,7 @@ internal fun PageGridItem(
                 verticalArrangement = verticalArrangement,
                 horizontalArrangement = horizontalArrangement,
                 verticalAlignment = verticalAlignment,
-                modifier = modifier
+                modifier = modifier,
             )
 
         is GridItemData.Widget -> WidgetGridItem(
@@ -108,7 +108,7 @@ internal fun PageGridItem(
                 verticalArrangement = verticalArrangement,
                 horizontalArrangement = horizontalArrangement,
                 verticalAlignment = verticalAlignment,
-                modifier = modifier
+                modifier = modifier,
             )
 
         is GridItemData.Folder ->
@@ -130,7 +130,7 @@ internal fun PageGridItem(
                 verticalArrangement = verticalArrangement,
                 horizontalArrangement = horizontalArrangement,
                 verticalAlignment = verticalAlignment,
-                modifier = modifier
+                modifier = modifier,
             )
 
         is GridItemData.ShortcutConfig ->
@@ -143,7 +143,7 @@ internal fun PageGridItem(
                 verticalArrangement = verticalArrangement,
                 horizontalArrangement = horizontalArrangement,
                 verticalAlignment = verticalAlignment,
-                modifier = modifier
+                modifier = modifier,
             )
     }
 }

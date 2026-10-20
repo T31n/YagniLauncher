@@ -40,6 +40,7 @@ import javax.inject.Inject
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
+/** Creates a home-screen grid item for a pinned shortcut when a free region is available. */
 class AddPinShortcutToHomeScreenUseCase @Inject constructor(
     private val userDataRepository: UserDataRepository,
     private val fileManager: FileManager,
@@ -48,6 +49,18 @@ class AddPinShortcutToHomeScreenUseCase @Inject constructor(
     private val iconKeyGenerator: IconKeyGenerator,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Builds a shortcut item, finds an available home-grid region, and inserts it if one exists.
+     *
+     * @param serialNumber The user profile that owns the shortcut.
+     * @param shortcutId The shortcut ID.
+     * @param packageName The package that publishes the shortcut.
+     * @param shortLabel The shortcut's short label.
+     * @param longLabel The shortcut's long label.
+     * @param isEnabled Whether the shortcut is enabled.
+     * @param icon The cached shortcut icon path, if available.
+     * @return The inserted grid item, or `null` if no region is available.
+     */
     @OptIn(ExperimentalUuidApi::class)
     suspend operator fun invoke(
         serialNumber: Long,

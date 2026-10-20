@@ -120,7 +120,7 @@ internal fun WidgetScreen(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val layoutDirection = LocalLayoutDirection.current
 
@@ -146,7 +146,7 @@ internal fun WidgetScreen(
         screenHeight = screenHeight,
         onDismiss = onDismiss,
         onGetLabel = onGetEblanAppWidgetProviderInfosByLabel,
-        onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay
+        onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
     )
 
     Surface(
@@ -227,7 +227,7 @@ internal fun WidgetScreen(
                             columns = columns,
                             isVisibleOverlay = isVisibleOverlay,
                             gridItemSettings = gridItemSettings,
-                            onDragWidget = onDragWidget
+                            onDragWidget = onDragWidget,
                         )
                     }
                 }
@@ -258,7 +258,7 @@ private fun EblanApplicationInfoItem(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -312,7 +312,7 @@ private fun EblanApplicationInfoItem(
                         screenHeight = screenHeight,
                         gridItemSettings = gridItemSettings,
                         isVisibleOverlay = isVisibleOverlay,
-                        onDragWidget = onDragWidget
+                        onDragWidget = onDragWidget,
                     )
                 }
             }
@@ -341,7 +341,7 @@ private fun EblanAppWidgetProviderInfoItem(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -372,7 +372,7 @@ private fun EblanAppWidgetProviderInfoItem(
                                 intOffset = intOffset,
                                 intSize = intSize,
                                 keyboardController = keyboardController,
-                                onDragWidget = onDragWidget
+                                onDragWidget = onDragWidget,
                             )
                         }
                     },
@@ -469,7 +469,7 @@ private suspend fun handleOnLongPress(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val id = Uuid.random().toHexString()
 
@@ -492,7 +492,7 @@ private suspend fun handleOnLongPress(
         maxResizeWidth = eblanAppWidgetProviderInfo.maxResizeWidth,
         maxResizeHeight = eblanAppWidgetProviderInfo.maxResizeHeight,
         minResizeWidth = eblanAppWidgetProviderInfo.minResizeWidth,
-        minResizeHeight = eblanAppWidgetProviderInfo.minResizeHeight
+        minResizeHeight = eblanAppWidgetProviderInfo.minResizeHeight,
     )
 
     keyboardController?.hide()

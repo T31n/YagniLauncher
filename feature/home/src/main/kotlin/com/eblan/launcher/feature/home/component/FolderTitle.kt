@@ -53,7 +53,7 @@ internal fun <T> FolderTitle(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     // Modifier
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val color = getTextColorFromBackgroundColor(
         backgroundColor = folderBackgroundColor,
@@ -62,7 +62,7 @@ internal fun <T> FolderTitle(
         customTextColor = customTextColor,
         systemCustomTextColor = systemCustomTextColor,
         systemTextColor = systemTextColor,
-        defaultColor = MaterialTheme.colorScheme.onSurface
+        defaultColor = MaterialTheme.colorScheme.onSurface,
     )
 
     Box(
@@ -88,7 +88,7 @@ internal fun <T> FolderTitle(
                     gridHorizontalPagerState = folderGridHorizontalPagerState,
                     pageCount = gridItemsByPage.size,
                     infiniteScroll = false,
-                    color = color
+                    color = color,
                 )
             }
         } else {

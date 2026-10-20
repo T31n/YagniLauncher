@@ -121,7 +121,7 @@ internal fun Modifier.swipeGestures(
                                     eblanAction = swipeUp,
                                     launcherApps = launcherApps,
                                     statusBarManagerWrapper = androidStatusBarManagerWrapper,
-                                    onOpenAppDrawer = currentOnOpenAppDrawer
+                                    onOpenAppDrawer = currentOnOpenAppDrawer,
                                 )
                             }
 
@@ -131,7 +131,7 @@ internal fun Modifier.swipeGestures(
                                     eblanAction = swipeDown,
                                     launcherApps = launcherApps,
                                     statusBarManagerWrapper = androidStatusBarManagerWrapper,
-                                    onOpenAppDrawer = currentOnOpenAppDrawer
+                                    onOpenAppDrawer = currentOnOpenAppDrawer,
                                 )
                             }
                         }

@@ -63,7 +63,7 @@ fun ColorPickerDialog(
     modifier: Modifier = Modifier,
     // Callbacks
     onDismissRequest: () -> Unit,
-    onSelectColor: (Int) -> Unit
+    onSelectColor: (Int) -> Unit,
 ) {
     val hsv = FloatArray(3).apply {
         android.graphics.Color.RGBToHSV(
@@ -108,7 +108,7 @@ fun ColorPickerDialog(
             },
             onAlphaSelected = {
                 alpha = it
-            }
+            },
         )
 
         Row(
@@ -155,7 +155,7 @@ private fun ColorPicker(
     onSaturationSelected: (Float) -> Unit,
     onValueSelected: (Float) -> Unit,
     onHueSelected: (Float) -> Unit,
-    onAlphaSelected: (Float) -> Unit
+    onAlphaSelected: (Float) -> Unit,
 ) {
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
         val saturationValueHeight = (maxHeight * 0.55f).coerceAtMost(260.dp)
@@ -170,7 +170,7 @@ private fun ColorPicker(
                     .fillMaxWidth()
                     .height(saturationValueHeight),
                 onSaturationSelected = onSaturationSelected,
-                onValueSelected = onValueSelected
+                onValueSelected = onValueSelected,
             )
 
             Spacer(Modifier.height(16.dp))
@@ -206,7 +206,7 @@ private fun SaturationValueCanvas(
     modifier: Modifier = Modifier,
     // Callbacks
     onSaturationSelected: (Float) -> Unit,
-    onValueSelected: (Float) -> Unit
+    onValueSelected: (Float) -> Unit,
 ) {
     Box(
         modifier = modifier

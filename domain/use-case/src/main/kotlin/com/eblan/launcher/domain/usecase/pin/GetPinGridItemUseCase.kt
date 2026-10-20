@@ -38,6 +38,7 @@ import javax.inject.Inject
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
+/** Converts a system pin-item request into an unpersisted home-screen grid item. */
 class GetPinGridItemUseCase @Inject constructor(
     private val fileManager: FileManager,
     private val userDataRepository: UserDataRepository,
@@ -45,6 +46,12 @@ class GetPinGridItemUseCase @Inject constructor(
     private val iconKeyGenerator: IconKeyGenerator,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Creates a widget or shortcut grid item using the current home-screen settings.
+     *
+     * @param pinItemRequestType The system request describing the item to pin.
+     * @return A new grid item initialized on the current initial page.
+     */
     @OptIn(ExperimentalUuidApi::class)
     suspend operator fun invoke(
         pinItemRequestType: PinItemRequestType,

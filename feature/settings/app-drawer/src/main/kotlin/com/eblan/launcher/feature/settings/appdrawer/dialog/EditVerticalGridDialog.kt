@@ -50,7 +50,7 @@ internal fun EditVerticalGridDialog(
     onUpdateVerticalGrid: (
         appDrawerColumns: Int,
         appDrawerRowsHeight: Int,
-    ) -> Unit
+    ) -> Unit,
 ) {
     var currentAppDrawerColumns by remember { mutableStateOf("$appDrawerColumns") }
     var currentAppDrawerRowsHeight by remember { mutableStateOf("$appDrawerRowsHeight") }

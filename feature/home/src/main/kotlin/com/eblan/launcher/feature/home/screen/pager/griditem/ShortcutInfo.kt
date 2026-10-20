@@ -108,7 +108,7 @@ internal fun InteractiveShortcutInfoGridItem(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val androidLauncherAppsWrapper = LocalLauncherApps.current
     val androidStatusBarManagerWrapper = LocalStatusBarManager.current
@@ -162,7 +162,7 @@ internal fun InteractiveShortcutInfoGridItem(
                                     eblanAction = gridItem.doubleTap,
                                     launcherApps = androidLauncherAppsWrapper,
                                     statusBarManagerWrapper = androidStatusBarManagerWrapper,
-                                    onOpenAppDrawer = currentOnOpenAppDrawer
+                                    onOpenAppDrawer = currentOnOpenAppDrawer,
                                 )
                             }
                         } else {
@@ -302,6 +302,6 @@ internal fun InteractiveShortcutInfoGridItem(
         modifier = itemModifier,
         iconContent = iconContent,
         labelContent = labelContent,
-        labelOnlyContent = labelOnlyContent
+        labelOnlyContent = labelOnlyContent,
     )
 }

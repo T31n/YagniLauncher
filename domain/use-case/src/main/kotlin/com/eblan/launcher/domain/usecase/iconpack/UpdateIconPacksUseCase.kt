@@ -38,6 +38,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 
+/** Refreshes cached icons for an installed icon pack and stores its launcher-visible metadata. */
 class UpdateIconPacksUseCase @Inject constructor(
     private val launcherAppsWrapper: LauncherAppsWrapper,
     private val iconPackManager: IconPackManager,
@@ -48,6 +49,11 @@ class UpdateIconPacksUseCase @Inject constructor(
     private val iconKeyGenerator: IconKeyGenerator,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Updates icon-pack files and metadata when the package is installed for the personal user.
+     *
+     * @param iconPackPackageName The package name of the icon pack to refresh.
+     */
     suspend operator fun invoke(iconPackPackageName: String) {
         withContext(ioDispatcher) {
             val generalSettings = userDataRepository.userDataFlow.first().generalSettings
@@ -79,6 +85,7 @@ class UpdateIconPacksUseCase @Inject constructor(
         }
     }
 
+    /** Generates cache files for installed activities and removes stale cached files. */
     private suspend fun updateIconPackInfos(
         iconPackPackageName: String,
         fileManager: FileManager,

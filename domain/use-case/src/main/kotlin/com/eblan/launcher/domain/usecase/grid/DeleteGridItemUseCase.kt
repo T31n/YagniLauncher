@@ -32,6 +32,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+/** Removes a grid item and releases any associated system resources. */
 class DeleteGridItemUseCase @Inject constructor(
     private val userDataRepository: UserDataRepository,
     private val gridRepository: GridRepository,
@@ -40,6 +41,14 @@ class DeleteGridItemUseCase @Inject constructor(
     private val folderGridItemRepository: FolderGridItemRepository,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Deletes the item's nested resources and persisted grid record.
+     *
+     * Folder contents are expanded so pinned shortcuts and widgets inside nested folders are
+     * released before the folder's grid item is removed.
+     *
+     * @param gridItem The item to delete.
+     */
     suspend operator fun invoke(gridItem: GridItem) = withContext(defaultDispatcher) {
         val userData = userDataRepository.userDataFlow.first()
 

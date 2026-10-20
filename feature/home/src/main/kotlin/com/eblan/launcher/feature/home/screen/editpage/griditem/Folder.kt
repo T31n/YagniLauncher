@@ -76,7 +76,7 @@ internal fun FolderGridItem(
     verticalArrangement: Arrangement.Vertical,
     horizontalArrangement: Arrangement.Horizontal,
     verticalAlignment: Alignment.Vertical,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
 
@@ -129,9 +129,9 @@ internal fun FolderGridItem(
                             customFolderBackgroundColor = customFolderBackgroundColor,
                             systemTextColor = systemTextColor,
                             systemCustomTextColor = systemCustomTextColor,
-                            hasShortcutHostPermission = hasShortcutHostPermission
+                            hasShortcutHostPermission = hasShortcutHostPermission,
                         )
-                    }
+                    },
                 )
             }
         }
@@ -158,7 +158,7 @@ internal fun FolderGridItem(
         modifier = itemModifier,
         iconContent = iconContent,
         labelContent = labelContent,
-        labelOnlyContent = labelContent
+        labelOnlyContent = labelContent,
     )
 }
 
@@ -176,7 +176,7 @@ private fun PreviewFolderGridItem(
     // State
     hasShortcutHostPermission: Boolean,
     // Layout
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
 
@@ -206,7 +206,7 @@ private fun PreviewFolderGridItem(
             customTextColor = currentGridItemSettings.customTextColor,
             systemCustomTextColor = systemCustomTextColor,
             systemTextColor = systemTextColor,
-            defaultColor = MaterialTheme.colorScheme.onSurface
+            defaultColor = MaterialTheme.colorScheme.onSurface,
         )
 
         val commonModifier = modifier

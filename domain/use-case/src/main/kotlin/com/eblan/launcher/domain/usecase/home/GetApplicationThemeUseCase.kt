@@ -26,11 +26,17 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 
+/** Resolves the launcher theme from the user's preference and system wallpaper hints. */
 class GetApplicationThemeUseCase @Inject constructor(
     private val userDataRepository: UserDataRepository,
     private val wallpaperManagerWrapper: WallpaperManagerWrapper,
     private val resourcesWrapper: ResourcesWrapper,
 ) {
+    /**
+     * Emits the selected light or dark theme and whether dynamic colors are enabled.
+     *
+     * @return A flow that updates when user theme settings or wallpaper color hints change.
+     */
     operator fun invoke(): Flow<ApplicationTheme> = combine(
         userDataRepository.userDataFlow,
         wallpaperManagerWrapper.getColorsChanged(),
@@ -52,6 +58,7 @@ class GetApplicationThemeUseCase @Inject constructor(
         }
     }
 
+    /** Resolves system mode from wallpaper hints, falling back to the current system theme. */
     private fun getApplicationThemeByColorHints(
         colorHints: Int?,
         dynamicTheme: Boolean,

@@ -47,7 +47,7 @@ fun SelectApplicationDialog(
     modifier: Modifier = Modifier,
     // Callbacks
     onDismissRequest: () -> Unit,
-    onClick: (EblanApplicationInfo) -> Unit
+    onClick: (EblanApplicationInfo) -> Unit,
 ) {
     EblanDialog(
         modifier = modifier,

@@ -48,7 +48,7 @@ internal fun PageIndicator(
     // Appearance
     color: Color,
     // Modifier
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     if (pageCount < 1) return
 
@@ -64,7 +64,7 @@ internal fun PageIndicator(
                 pageCount = pageCount,
                 infiniteScroll = infiniteScroll,
                 color = color,
-                modifier = modifier
+                modifier = modifier,
             )
         }
     }
@@ -80,7 +80,7 @@ private fun PageIndicatorContent(
     // Appearance
     color: Color,
     // Modifier
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val baseWidth = 8.dp
     val baseHeight = 8.dp

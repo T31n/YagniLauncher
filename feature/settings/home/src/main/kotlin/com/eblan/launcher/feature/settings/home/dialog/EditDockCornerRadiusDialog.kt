@@ -54,7 +54,7 @@ internal fun EditDockCornerRadiusDialog(
         dockTopEndCornerRadius: Int,
         dockBottomStartCornerRadius: Int,
         dockBottomEndCornerRadius: Int,
-    ) -> Unit
+    ) -> Unit,
 ) {
     var currentDockTopStartCornerRadius by remember { mutableStateOf("$dockTopStartCornerRadius") }
     var currentDockTopEndCornerRadius by remember { mutableStateOf("$dockTopEndCornerRadius") }

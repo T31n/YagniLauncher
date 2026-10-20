@@ -59,7 +59,7 @@ internal fun ShortcutConfigGridItem(
     horizontalArrangement: Arrangement.Horizontal,
     verticalAlignment: Alignment.Vertical,
     // Appearance
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
 
@@ -147,6 +147,6 @@ internal fun ShortcutConfigGridItem(
         modifier = itemModifier,
         iconContent = iconContent,
         labelContent = labelContent,
-        labelOnlyContent = labelContent
+        labelOnlyContent = labelContent,
     )
 }

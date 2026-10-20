@@ -156,7 +156,7 @@ private fun Success(
         onDockCornerRadiusClick = {
             showDockCornerRadiusDialog = true
         },
-        onUpdateHomeSettings = onUpdateHomeSettings
+        onUpdateHomeSettings = onUpdateHomeSettings,
     )
 
     Column(
@@ -178,7 +178,7 @@ private fun Success(
                 onUpdateHomeSettings(
                     homeSettings.copy(gridItemSettings = it),
                 )
-            }
+            },
         )
     }
 
@@ -211,7 +211,7 @@ private fun Success(
             },
             onUpdateClick = {
                 onUpdateHomeSettings(homeSettings.copy(pagerTransitionEffect = it))
-            }
+            },
         )
     }
 
@@ -229,7 +229,7 @@ private fun Success(
                         dockRows = dockRows,
                     ),
                 )
-            }
+            },
         )
     }
 
@@ -260,7 +260,7 @@ private fun Success(
             },
             onSelectColor = {
                 onUpdateHomeSettings(homeSettings.copy(dockCustomBackgroundColor = it))
-            }
+            },
         )
     }
 
@@ -298,7 +298,7 @@ private fun Success(
                         dockBottomEndCornerRadius = dockBottomEndCornerRadius,
                     ),
                 )
-            }
+            },
         )
     }
 }
@@ -427,7 +427,7 @@ private fun buildDockHomeSettingsItems(
     onDockCustomBackgroundColorClick: () -> Unit,
     onDockPaddingClick: () -> Unit,
     onDockCornerRadiusClick: () -> Unit,
-    onUpdateHomeSettings: (HomeSettings) -> Unit
+    onUpdateHomeSettings: (HomeSettings) -> Unit,
 ): List<SettingsItem> = buildList {
     add(
         SettingsItem.Column(

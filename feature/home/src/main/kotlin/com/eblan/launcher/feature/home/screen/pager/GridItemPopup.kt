@@ -96,7 +96,7 @@ internal fun GridItemPopup(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     requireNotNull(gridItem)
 
@@ -216,7 +216,7 @@ internal fun GridItemPopup(
                 },
                 onWidgets = onWidgets,
                 onUpdateIsResizing = onUpdateIsResizing,
-                onDragShortcutInfo = onDragShortcutInfo
+                onDragShortcutInfo = onDragShortcutInfo,
             )
         }
     }
@@ -256,7 +256,7 @@ private fun GridItemPopupContent(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     Surface(
         modifier = modifier.padding(5.dp),
@@ -323,7 +323,7 @@ private fun GridItemPopupContent(
 
                             onDismiss()
                         },
-                        onDragShortcutInfo = onDragShortcutInfo
+                        onDragShortcutInfo = onDragShortcutInfo,
                     )
                 }
 
@@ -402,7 +402,7 @@ private fun ApplicationInfoGridItemMenu(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -418,7 +418,7 @@ private fun ApplicationInfoGridItemMenu(
                 isVisibleOverlay = isVisibleOverlay,
                 modifier = modifier,
                 onTapShortcutInfo = onTapShortcutInfo,
-                onDragShortcutInfo = onDragShortcutInfo
+                onDragShortcutInfo = onDragShortcutInfo,
             )
 
             Spacer(modifier = Modifier.height(5.dp))

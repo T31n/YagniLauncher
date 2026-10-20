@@ -46,7 +46,7 @@ internal fun EditPaddingDialog(
     modifier: Modifier = Modifier,
     // Callbacks
     onDismissRequest: () -> Unit,
-    onUpdatePadding: (Int) -> Unit
+    onUpdatePadding: (Int) -> Unit,
 ) {
     var currentPadding by remember { mutableStateOf("$padding") }
 

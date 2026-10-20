@@ -54,7 +54,7 @@ internal fun handleEblanAction(
     launcherApps: AndroidLauncherAppsWrapper,
     statusBarManagerWrapper: AndroidStatusBarManagerWrapper,
     // Callbacks
-    onOpenAppDrawer: () -> Unit
+    onOpenAppDrawer: () -> Unit,
 ) {
     when (eblanAction.eblanActionType) {
         EblanActionType.OpenApp -> launcherApps.startMainActivity(
@@ -150,7 +150,7 @@ internal fun updateAppWidgetOptions(
     gridWidth: Int,
     gridHeight: Int,
     startColumn: Int,
-    startRow: Int
+    startRow: Int,
 ) {
     val cellWidthPx = gridWidth.toFloat() / columns
     val cellHeightPx = gridHeight.toFloat() / rows
@@ -222,7 +222,7 @@ internal fun handleOnUninstall(
     packageName: String,
     // Popup Layout
     popupIntOffset: IntOffset,
-    popupIntSize: IntSize
+    popupIntSize: IntSize,
 ) {
     val userHandle =
         userManager.getUserForSerialNumber(serialNumber = serialNumber) ?: return

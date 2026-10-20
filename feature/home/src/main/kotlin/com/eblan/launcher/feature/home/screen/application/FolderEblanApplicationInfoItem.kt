@@ -128,7 +128,7 @@ internal fun FolderEblanApplicationInfoItem(
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
     ) -> Unit,
-    onTapFolderApplicationInfo: (folderEntry: FolderEntry) -> Unit
+    onTapFolderApplicationInfo: (folderEntry: FolderEntry) -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -147,7 +147,7 @@ internal fun FolderEblanApplicationInfoItem(
         textColor = gridItemSettings.textColor,
         customTextColor = gridItemSettings.customTextColor,
         systemCustomTextColor = systemCustomTextColor,
-        systemTextColor = systemTextColor
+        systemTextColor = systemTextColor,
     )
 
     val maxLines = if (gridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
@@ -200,7 +200,7 @@ internal fun FolderEblanApplicationInfoItem(
                 isLongPress = it
             },
             onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-            onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo
+            onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
         )
     }
 
@@ -315,9 +315,9 @@ internal fun FolderEblanApplicationInfoItem(
                             folderBackgroundColor = folderBackgroundColor,
                             customFolderBackgroundColor = customFolderBackgroundColor,
                             systemTextColor = systemTextColor,
-                            systemCustomTextColor = systemCustomTextColor
+                            systemCustomTextColor = systemCustomTextColor,
                         )
-                    }
+                    },
                 )
             }
         }
@@ -361,7 +361,7 @@ internal fun FolderEblanApplicationInfoItem(
         modifier = itemModifier,
         iconContent = iconContent,
         labelContent = labelContent,
-        labelOnlyContent = labelOnlyContent
+        labelOnlyContent = labelOnlyContent,
     )
 }
 
@@ -376,7 +376,7 @@ private fun PreviewFolderEblanApplicationInfoItem(
     customFolderBackgroundColor: Int,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     key(folderEblanApplicationInfoGridItem.id) {
         val context = LocalContext.current
@@ -388,7 +388,7 @@ private fun PreviewFolderEblanApplicationInfoItem(
             customTextColor = gridItemSettings.customTextColor,
             systemCustomTextColor = systemCustomTextColor,
             systemTextColor = systemTextColor,
-            defaultColor = MaterialTheme.colorScheme.onSurface
+            defaultColor = MaterialTheme.colorScheme.onSurface,
         )
 
         val commonModifier = modifier.padding(1.dp)
@@ -458,7 +458,7 @@ internal fun handleDragFolderEblanApplicationInfoItem(
     onDragFolderEblanApplicationInfo: (
         folderEblanApplicationInfo: FolderEblanApplicationInfo,
         gridItem: GridItem,
-    ) -> Unit
+    ) -> Unit,
 ) {
     if (!isLongPress) return
 

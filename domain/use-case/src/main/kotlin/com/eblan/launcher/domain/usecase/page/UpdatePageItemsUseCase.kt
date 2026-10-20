@@ -33,6 +33,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+/** Persists reordered pages and items, deleting resources belonging to removed pages. */
 class UpdatePageItemsUseCase @Inject constructor(
     private val userDataRepository: UserDataRepository,
     private val gridRepository: GridRepository,
@@ -41,6 +42,14 @@ class UpdatePageItemsUseCase @Inject constructor(
     private val folderGridItemRepository: FolderGridItemRepository,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Deletes requested pages, reindexes retained items, updates page settings, and saves the result.
+     *
+     * @param id The ID of the page that should become the initial page.
+     * @param pageItems The page items to retain, in their new order.
+     * @param pageItemsToDelete Pages and their items to delete.
+     * @param associate Whether the pages belong to the home grid or dock.
+     */
     suspend operator fun invoke(
         id: Int,
         pageItems: List<PageItem>,

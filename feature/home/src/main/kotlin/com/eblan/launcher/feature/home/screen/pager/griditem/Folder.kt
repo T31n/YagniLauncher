@@ -138,7 +138,7 @@ internal fun InteractiveFolderGridItem(
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
     ) -> Unit,
-    onTapFolderGridItem: (FolderEntry) -> Unit
+    onTapFolderGridItem: (FolderEntry) -> Unit,
 ) {
     val launcherApps = LocalLauncherApps.current
     val androidStatusBarManagerWrapper = LocalStatusBarManager.current
@@ -179,7 +179,7 @@ internal fun InteractiveFolderGridItem(
             lockMovement = currentLockMovement,
             intOffset = intOffset,
             intSize = intSize,
-            onShowFolderWhenDragging = currentOnShowFolderWhenDragging
+            onShowFolderWhenDragging = currentOnShowFolderWhenDragging,
         )
     }
 
@@ -205,7 +205,7 @@ internal fun InteractiveFolderGridItem(
                                     eblanAction = gridItem.doubleTap,
                                     launcherApps = launcherApps,
                                     statusBarManagerWrapper = androidStatusBarManagerWrapper,
-                                    onOpenAppDrawer = currentOnOpenAppDrawer
+                                    onOpenAppDrawer = currentOnOpenAppDrawer,
                                 )
                             }
                         } else {
@@ -319,7 +319,7 @@ internal fun InteractiveFolderGridItem(
                             animations = animations,
                             onResetGrid = onResetGrid,
                         )
-                    }
+                    },
                 )
             }
         }
@@ -363,7 +363,7 @@ internal fun InteractiveFolderGridItem(
         modifier = itemModifier,
         iconContent = iconContent,
         labelContent = labelContent,
-        labelOnlyContent = labelOnlyContent
+        labelOnlyContent = labelOnlyContent,
     )
 }
 
@@ -428,7 +428,7 @@ private fun PreviewFolderGridItem(
             customTextColor = currentGridItemSettings.customTextColor,
             systemCustomTextColor = systemCustomTextColor,
             systemTextColor = systemTextColor,
-            defaultColor = MaterialTheme.colorScheme.onSurface
+            defaultColor = MaterialTheme.colorScheme.onSurface,
         )
 
         val commonModifier = modifier

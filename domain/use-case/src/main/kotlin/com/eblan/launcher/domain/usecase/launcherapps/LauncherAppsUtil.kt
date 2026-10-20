@@ -60,6 +60,7 @@ import java.io.File
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
+/** Deletes application icon files that are no longer referenced by applications or widgets. */
 internal suspend fun deleteEblanApplicationInfoIcons(
     eblanApplicationInfos: List<EblanApplicationInfo>,
     eblanAppWidgetProviderInfos: List<EblanAppWidgetProviderInfo>,
@@ -87,6 +88,7 @@ internal suspend fun deleteEblanApplicationInfoIcons(
     }
 }
 
+/** Deletes unreferenced widget application icons and all removed widget preview files. */
 internal suspend fun deleteEblanAppWidgetProviderInfoIcons(
     eblanApplicationInfos: List<EblanApplicationInfo>,
     eblanAppWidgetProviderInfos: List<EblanAppWidgetProviderInfo>,
@@ -122,6 +124,7 @@ internal suspend fun deleteEblanAppWidgetProviderInfoIcons(
     }
 }
 
+/** Deletes shortcut icon files that are no longer referenced by any stored shortcut. */
 internal suspend fun deleteEblanShortInfoIcons(
     eblanShortcutInfos: List<EblanShortcutInfo>,
     deleteEblanShortcutInfos: List<EblanShortcutInfo>,
@@ -146,6 +149,7 @@ internal suspend fun deleteEblanShortInfoIcons(
     }
 }
 
+/** Deletes the cached activity icons belonging to removed shortcut configurations. */
 internal suspend fun deleteEblanShortcutConfigIcons(eblanShortcutConfigs: List<EblanShortcutConfig>) {
     eblanShortcutConfigs.forEach { deleteEblanShortcutConfig ->
         currentCoroutineContext().ensureActive()
@@ -162,6 +166,7 @@ internal suspend fun deleteEblanShortcutConfigIcons(eblanShortcutConfigs: List<E
     }
 }
 
+/** Updates non-overridden application grid items and removes items whose applications disappeared. */
 internal suspend fun updateApplicationInfoGridItems(
     eblanApplicationInfos: List<EblanApplicationInfo>,
     applicationInfoGridItemRepository: ApplicationInfoGridItemRepository,
@@ -205,6 +210,11 @@ internal suspend fun updateApplicationInfoGridItems(
     )
 }
 
+/**
+ * Updates non-overridden shortcut grid items and removes stale items when shortcut data is available.
+ *
+ * If [eblanShortcutInfos] is `null`, the repository is left unchanged.
+ */
 internal suspend fun updateShortcutInfoGridItems(
     eblanShortcutInfos: List<EblanShortcutInfo>?,
     shortcutInfoGridItemRepository: ShortcutInfoGridItemRepository,
@@ -258,6 +268,7 @@ internal suspend fun updateShortcutInfoGridItems(
     }
 }
 
+/** Updates non-overridden shortcut-configuration grid items and removes stale entries. */
 internal suspend fun updateShortcutConfigGridItems(
     eblanShortcutConfigs: List<EblanShortcutConfig>,
     shortcutConfigGridItemRepository: ShortcutConfigGridItemRepository,
@@ -313,6 +324,7 @@ internal suspend fun updateShortcutConfigGridItems(
     )
 }
 
+/** Updates widget grid-item metadata or deletes stale items when widgets are supported. */
 internal suspend fun updateWidgetGridItems(
     eblanAppWidgetProviderInfos: List<EblanAppWidgetProviderInfo>,
     fileManager: FileManager,
@@ -375,6 +387,7 @@ internal suspend fun updateWidgetGridItems(
     widgetGridItemRepository.deleteWidgetGridItemsByPackageName(widgetGridItems = deleteWidgetGridItems)
 }
 
+/** Converts framework widget-provider metadata to the persisted domain model. */
 internal suspend fun AppWidgetManagerAppWidgetProviderInfo.toEblanAppWidgetProviderInfo(
     fileManager: FileManager,
     packageManagerWrapper: PackageManagerWrapper,
@@ -409,6 +422,7 @@ internal suspend fun AppWidgetManagerAppWidgetProviderInfo.toEblanAppWidgetProvi
     description = description,
 )
 
+/** Copies an application's stored metadata into the synchronization model. */
 internal fun EblanApplicationInfo.toSyncEblanApplicationInfo() = SyncEblanApplicationInfo(
     serialNumber = serialNumber,
     componentName = componentName,
@@ -419,6 +433,7 @@ internal fun EblanApplicationInfo.toSyncEblanApplicationInfo() = SyncEblanApplic
     flags = flags,
 )
 
+/** Copies launcher activity metadata into the synchronization model. */
 internal fun LauncherAppsActivityInfo.toSyncEblanApplicationInfo() = SyncEblanApplicationInfo(
     serialNumber = serialNumber,
     componentName = componentName,
@@ -429,6 +444,13 @@ internal fun LauncherAppsActivityInfo.toSyncEblanApplicationInfo() = SyncEblanAp
     flags = flags,
 )
 
+/**
+ * Returns receiver items whose identity key is absent from [other].
+ *
+ * @param other The items whose identity keys are excluded.
+ * @param identity Extracts the comparison key from an item.
+ * @return Items from the receiver whose keys are not present in [other].
+ */
 internal inline fun <T, K> Iterable<T>.differenceByIdentity(
     other: Iterable<T>,
     identity: (T) -> K,
@@ -438,6 +460,7 @@ internal inline fun <T, K> Iterable<T>.differenceByIdentity(
     return filterNot { identity(it) in otherIdentities }
 }
 
+/** Converts synchronization data into the smaller record used to delete an application. */
 internal fun SyncEblanApplicationInfo.toDeleteEblanApplicationInfo() = DeleteEblanApplicationInfo(
     serialNumber = serialNumber,
     componentName = componentName,
@@ -445,6 +468,7 @@ internal fun SyncEblanApplicationInfo.toDeleteEblanApplicationInfo() = DeleteEbl
     icon = icon,
 )
 
+/** Converts shortcut-configuration activity metadata to a repository model with cached app icon data. */
 internal suspend fun ShortcutConfigActivityInfo.toEblanShortcutConfig(
     fileManager: FileManager,
     packageManagerWrapper: PackageManagerWrapper,
@@ -467,6 +491,7 @@ internal suspend fun ShortcutConfigActivityInfo.toEblanShortcutConfig(
     ),
 )
 
+/** Converts a launcher shortcut into its repository model. */
 internal fun LauncherAppsShortcutInfo.toEblanShortcutInfo(): EblanShortcutInfo = EblanShortcutInfo(
     shortcutId = shortcutId,
     serialNumber = serialNumber,
@@ -479,6 +504,10 @@ internal fun LauncherAppsShortcutInfo.toEblanShortcutInfo(): EblanShortcutInfo =
     lastChangedTimestamp = lastChangedTimestamp,
 )
 
+/**
+ * Adds an application to the home-screen grid if it is not already present at the top level or in
+ * one of its folders.
+ */
 @OptIn(ExperimentalUuidApi::class)
 internal suspend fun addNewApplicationToHomeScreen(
     gridItems: MutableList<GridItem>,
@@ -601,6 +630,7 @@ internal suspend fun addNewApplicationToHomeScreen(
     }
 }
 
+/** Converts synchronization data into the model used when adding a new home-screen application. */
 internal fun SyncEblanApplicationInfo.asAddNewEblanApplicationInfo(): AddNewEblanApplicationInfo = AddNewEblanApplicationInfo(
     serialNumber = serialNumber,
     componentName = componentName,
@@ -609,6 +639,7 @@ internal fun SyncEblanApplicationInfo.asAddNewEblanApplicationInfo(): AddNewEbla
     label = label,
 )
 
+/** Resolves an application's cached icon path, falling back from its launch activity to its package. */
 private suspend fun resolveApplicationIcon(
     fileManager: FileManager,
     packageManagerWrapper: PackageManagerWrapper,
@@ -621,6 +652,7 @@ private suspend fun resolveApplicationIcon(
     val componentName =
         packageManagerWrapper.getComponentName(packageName = packageName)
 
+    /** Returns the cached icon path for the given activity or package component. */
     suspend fun getApplicationIcon(componentName: String): String? {
         val file = File(
             directory,

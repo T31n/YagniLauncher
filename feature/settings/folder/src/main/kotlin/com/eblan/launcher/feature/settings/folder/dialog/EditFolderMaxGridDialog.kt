@@ -50,7 +50,7 @@ internal fun EditFolderMaxGridDialog(
     onUpdateFolderMaxGrid: (
         maxFolderColumns: Int,
         maxFolderRows: Int,
-    ) -> Unit
+    ) -> Unit,
 ) {
     var currentMaxFolderColumns by remember { mutableStateOf("$maxFolderColumns") }
     var currentMaxFolderRows by remember { mutableStateOf("$maxFolderRows") }

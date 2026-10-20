@@ -41,12 +41,14 @@ import kotlin.math.sqrt
 const val FOLDER_PREVIEW_COLUMNS = 2
 const val FOLDER_PREVIEW_ROWS = 2
 
+/** Releases external resources owned by a grid item and by items nested in its folder tree. */
 internal suspend fun deleteGridItemData(
     gridItem: GridItem,
     folderPopupGridItems: Map<String, FolderPopup>,
     appWidgetHostWrapper: AppWidgetHostWrapper,
     launcherAppsWrapper: LauncherAppsWrapper,
 ) {
+    /** Unpins a shortcut or releases a widget ID when the item owns either resource. */
     suspend fun delete(
         gridItem: GridItem,
         appWidgetHostWrapper: AppWidgetHostWrapper,
@@ -93,6 +95,7 @@ internal suspend fun deleteGridItemData(
  *
  * @param gridItem The current grid item representing the folder.
  * @param folderPopupGridItems A map of preview folder grid items by their IDs.
+ * @param folderId The ID of the folder whose contents should be traversed.
  * @return A list of grid items contained within the specified folder and its nested folders.
  */
 internal fun getRecursiveFolderGridItems(
@@ -129,6 +132,7 @@ internal fun getRecursiveFolderGridItems(
     }
 }
 
+/** Converts the repository's grid-item collections into a single domain grid-item list. */
 internal fun GridItems.toGridItems(): List<GridItem> = buildList {
     addAll(
         applicationInfoGridItems.map {
@@ -141,6 +145,7 @@ internal fun GridItems.toGridItems(): List<GridItem> = buildList {
     addAll(folderGridItems.map { it.asGridItem() })
 }
 
+/** Returns whether this item is not contained in another folder. */
 internal fun GridItem.isTopLevel() = when (val itemData = data) {
     is GridItemData.ApplicationInfo -> itemData.folderId == null
     is GridItemData.Folder -> itemData.folderId == null
@@ -149,6 +154,7 @@ internal fun GridItem.isTopLevel() = when (val itemData = data) {
     is GridItemData.Widget -> true
 }
 
+/** Selects the items displayed in the leading preview cells of a folder. */
 internal suspend fun <T> getPreviewFolderGridItems(
     columns: Int,
     rows: Int,
@@ -167,6 +173,11 @@ internal suspend fun <T> getPreviewFolderGridItems(
     }
 }
 
+/**
+ * Chooses a compact grid dimension that can contain [count] items without exceeding either limit.
+ *
+ * @return The selected column count followed by the row count, or `0 to 0` for an empty grid.
+ */
 internal fun getGridDimension(
     count: Int,
     maxFolderColumns: Int,
@@ -180,6 +191,7 @@ internal fun getGridDimension(
     return columns to rows
 }
 
+/** Splits items into sequential pages with at most [columns] times [rows] items per page. */
 internal suspend fun <T> List<T>.getGridItemsByPage(
     columns: Int,
     rows: Int,
@@ -193,6 +205,7 @@ internal suspend fun <T> List<T>.getGridItemsByPage(
     }.toMap()
 }
 
+/** Converts a persisted application grid item to its domain representation. */
 internal fun ApplicationInfoGridItem.asGridItem(): GridItem = GridItem(
     id = id,
     page = page,
@@ -219,6 +232,7 @@ internal fun ApplicationInfoGridItem.asGridItem(): GridItem = GridItem(
     swipeDown = swipeDown,
 )
 
+/** Converts a persisted widget grid item to its domain representation. */
 internal fun WidgetGridItem.asGridItem(): GridItem = GridItem(
     id = id,
     page = page,
@@ -265,6 +279,7 @@ internal fun WidgetGridItem.asGridItem(): GridItem = GridItem(
     ),
 )
 
+/** Converts a persisted shortcut grid item to its domain representation. */
 internal fun ShortcutInfoGridItem.asGridItem(): GridItem = GridItem(
     id = id,
     page = page,
@@ -294,6 +309,7 @@ internal fun ShortcutInfoGridItem.asGridItem(): GridItem = GridItem(
     swipeDown = swipeDown,
 )
 
+/** Converts a persisted shortcut-configuration grid item to its domain representation. */
 internal fun ShortcutConfigGridItem.asGridItem(): GridItem = GridItem(
     id = id,
     page = page,
@@ -325,6 +341,7 @@ internal fun ShortcutConfigGridItem.asGridItem(): GridItem = GridItem(
     swipeDown = swipeDown,
 )
 
+/** Converts a persisted folder grid item to its domain representation. */
 internal fun FolderGridItem.asGridItem(): GridItem = GridItem(
     id = id,
     page = page,
@@ -346,6 +363,7 @@ internal fun FolderGridItem.asGridItem(): GridItem = GridItem(
     swipeDown = swipeDown,
 )
 
+/** Removes a shortcut from the launcher's pinned shortcut list when permission is available. */
 private suspend fun updatePinShortcutsByPackageName(
     launcherAppsWrapper: LauncherAppsWrapper,
     data: GridItemData.ShortcutInfo,

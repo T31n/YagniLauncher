@@ -46,7 +46,7 @@ fun EditCustomLabelDialog(
     modifier: Modifier = Modifier,
     // Callbacks
     onDismissRequest: () -> Unit,
-    onUpdateCustomLabel: (String?) -> Unit
+    onUpdateCustomLabel: (String?) -> Unit,
 ) {
     var currentCustomLabel by remember { mutableStateOf(customLabel ?: "") }
 

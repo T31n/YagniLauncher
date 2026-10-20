@@ -145,7 +145,7 @@ internal fun FolderApplicationScreen(
         folderEntry: FolderEntry,
         isFirstFolderEblanApplicationInfoGridItem: Boolean,
     ) -> Unit,
-    onTapFolderEblanApplicationInfoItem: (FolderEntry) -> Unit
+    onTapFolderEblanApplicationInfoItem: (FolderEntry) -> Unit,
 ) {
     val previewFolderEblanApplicationInfo = folderEblanApplicationInfoPopups[folderEntry.id] ?: return
 
@@ -172,7 +172,7 @@ internal fun FolderApplicationScreen(
         folderCellWidth = folderCellWidth,
         folderCellHeight = folderCellHeight,
         columns = previewFolderEblanApplicationInfo.columns,
-        rows = previewFolderEblanApplicationInfo.rows
+        rows = previewFolderEblanApplicationInfo.rows,
     )
 
     val progress = remember { Animatable(0f) }
@@ -188,7 +188,7 @@ internal fun FolderApplicationScreen(
                 startCenterX = folderPopupLayoutInfo.startCenterX,
                 startCenterY = folderPopupLayoutInfo.startCenterY,
                 endCenterX = folderPopupLayoutInfo.endCenterX,
-                endCenterY = folderPopupLayoutInfo.endCenterY
+                endCenterY = folderPopupLayoutInfo.endCenterY,
             )
         }
     }
@@ -204,7 +204,7 @@ internal fun FolderApplicationScreen(
                 startCenterX = folderPopupLayoutInfo.startCenterX,
                 startCenterY = folderPopupLayoutInfo.startCenterY,
                 endCenterX = folderPopupLayoutInfo.endCenterX,
-                endCenterY = folderPopupLayoutInfo.endCenterY
+                endCenterY = folderPopupLayoutInfo.endCenterY,
             )
         }
     }
@@ -262,7 +262,7 @@ internal fun FolderApplicationScreen(
             gridItemSettings = appDrawerSettings.gridItemSettings,
             onAnimateToScrollToPage = folderGridHorizontalPagerState::animateScrollToPage,
             onMoveFolderEblanApplicationInfoGridItemOutsideFolder = onMoveFolderEblanApplicationInfoGridItemOutsideFolder,
-            onCloseFolder = onCloseFolder
+            onCloseFolder = onCloseFolder,
         )
     }
 
@@ -296,7 +296,7 @@ internal fun FolderApplicationScreen(
             lockMovement = currentLockMovement.value,
             isInProgress = isInProgress,
             onMoveFolderEblanApplicationInfoGridItem = onMoveFolderEblanApplicationInfoGridItem,
-            onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry
+            onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
         )
     }
 
@@ -313,7 +313,7 @@ internal fun FolderApplicationScreen(
             onResetGrid = onResetGrid,
             onResetGridAfterMoveFolder = onResetGridAfterMoveFolderEblanApplicationInfo,
             onUpdateIsDragging = onUpdateIsDragging,
-            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay
+            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
         )
     }
 
@@ -325,7 +325,7 @@ internal fun FolderApplicationScreen(
             pageDirection = pageDirection,
             currentPage = folderGridHorizontalPagerState.currentPage,
             isInProgress = isInProgress,
-            onAnimateScrollToPage = folderGridHorizontalPagerState::animateScrollToPage
+            onAnimateScrollToPage = folderGridHorizontalPagerState::animateScrollToPage,
         )
     }
 
@@ -361,7 +361,7 @@ internal fun FolderApplicationScreen(
             isInProgress = isInProgress,
             onUpdateFolderPageDirection = {
                 pageDirection = it
-            }
+            },
         )
     }
 
@@ -467,9 +467,9 @@ internal fun FolderApplicationScreen(
                                 showFolderEblanApplicationInfoGridItemMenu = showFolderEblanApplicationInfoGridItemMenu,
                                 onLongPressFolderEblanApplicationInfoGridItem = onLongPressFolderEblanApplicationInfoGridItem,
                                 onDragFolderEblanApplicationInfoGridItem = onDragFolderEblanApplicationInfoGridItem,
-                                onTapFolderEblanApplicationInfoItem = onTapFolderEblanApplicationInfoItem
+                                onTapFolderEblanApplicationInfoItem = onTapFolderEblanApplicationInfoItem,
                             )
-                        }
+                        },
                     )
                 }
 
@@ -483,7 +483,7 @@ internal fun FolderApplicationScreen(
                     textColor = appDrawerSettings.gridItemSettings.textColor,
                     customTextColor = appDrawerSettings.gridItemSettings.customTextColor,
                     systemTextColor = systemTextColor,
-                    systemCustomTextColor = systemCustomTextColor
+                    systemCustomTextColor = systemCustomTextColor,
                 )
             }
         }
@@ -514,7 +514,7 @@ private suspend fun handleIsCloseFolder(
     onCloseFolder: (
         folderEntry: FolderEntry,
         isFirstFolderEblanApplicationInfo: Boolean,
-    ) -> Unit
+    ) -> Unit,
 ) {
     if (!folderEntry.isCloseFolder || !isLastFolderEblanApplicationInfo) return
 
@@ -532,7 +532,7 @@ private suspend fun handleIsCloseFolder(
         isDragging = isDragging,
         isVisibleOverlay = isVisibleOverlay,
         moveFolderEblanApplicationInfoGridItemResult = moveFolderEblanApplicationInfoGridItemResult,
-        onMoveFolderEblanApplicationInfoGridItemOutsideFolder = onMoveFolderEblanApplicationInfoGridItemOutsideFolder
+        onMoveFolderEblanApplicationInfoGridItemOutsideFolder = onMoveFolderEblanApplicationInfoGridItemOutsideFolder,
     )
 
     onCloseFolder(
@@ -554,7 +554,7 @@ private fun handleMoveFolderGridItemOutsideFolder(
     onMoveFolderEblanApplicationInfoGridItemOutsideFolder: (
         folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
         movingGridItem: GridItem,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val folderEblanApplicationInfoGridItem =
         moveFolderEblanApplicationInfoGridItemResult.value?.folderEblanApplicationInfoGridItem

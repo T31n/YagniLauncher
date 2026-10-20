@@ -32,6 +32,7 @@ import com.eblan.launcher.domain.usecase.util.getGridItemsByPage
 import com.eblan.launcher.domain.usecase.util.getPreviewFolderGridItems
 import kotlin.collections.orEmpty
 
+/** Converts a stored folder record to its folder-grid-item representation. */
 internal fun FolderEblanApplicationInfo.asFolderEblanApplicationInfoGridItem(): FolderEblanApplicationInfoGridItem = FolderEblanApplicationInfoGridItem(
     id = id,
     data = FolderEblanApplicationInfoGridItemData.Folder(
@@ -43,6 +44,7 @@ internal fun FolderEblanApplicationInfo.asFolderEblanApplicationInfoGridItem(): 
     ),
 )
 
+/** Converts a stored application record to its folder-grid-item representation. */
 internal fun EblanApplicationInfo.asFolderEblanApplicationInfoGridItem(): FolderEblanApplicationInfoGridItem = FolderEblanApplicationInfoGridItem(
     id = "$componentName $serialNumber",
     data = FolderEblanApplicationInfoGridItemData.ApplicationInfo(
@@ -61,6 +63,7 @@ internal fun EblanApplicationInfo.asFolderEblanApplicationInfoGridItem(): Folder
     ),
 )
 
+/** Builds a preview popup for each stored folder and indexes the results by folder ID. */
 internal suspend fun List<FolderEblanApplicationInfoWrapper>.asPreviewFolderEblanApplicationInfos(
     maxFolderColumns: Int,
     maxFolderRows: Int,
@@ -71,6 +74,7 @@ internal suspend fun List<FolderEblanApplicationInfoWrapper>.asPreviewFolderEbla
     )
 }
 
+/** Builds a preview popup for each grid folder and indexes the results by folder ID. */
 internal suspend fun List<FolderGridItemWrapper>.asPreviewFolders(
     maxFolderColumns: Int,
     maxFolderRows: Int,
@@ -81,6 +85,10 @@ internal suspend fun List<FolderGridItemWrapper>.asPreviewFolders(
     )
 }
 
+/**
+ * Converts a folder wrapper into a popup containing ordered children, page groups, and preview
+ * items.
+ */
 internal suspend fun FolderGridItemWrapper.asPreviewFolder(
     maxFolderColumns: Int,
     maxFolderRows: Int,
@@ -130,6 +138,7 @@ internal suspend fun FolderGridItemWrapper.asPreviewFolder(
     )
 }
 
+/** Converts an application-folder wrapper into a popup with its nested folder contents. */
 private suspend fun FolderEblanApplicationInfoWrapper.asPreviewFolderEblanApplicationInfo(
     maxFolderColumns: Int,
     maxFolderRows: Int,

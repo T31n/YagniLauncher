@@ -30,10 +30,19 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+/** Resizes a top-level grid item and resolves any resulting overlap. */
 class ResizeGridItemUseCase @Inject constructor(
     private val gridRepository: GridRepository,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Persists the resized item when it fits or when all conflicts can be resolved.
+     *
+     * @param resizingGridItem The item with its requested position and span.
+     * @param columns The number of columns in the grid.
+     * @param rows The number of rows in the grid.
+     * @return The resized item on success, or the original item if the resize cannot be resolved.
+     */
     suspend operator fun invoke(
         resizingGridItem: GridItem,
         columns: Int,
@@ -77,6 +86,7 @@ class ResizeGridItemUseCase @Inject constructor(
         }
     }
 
+    /** Moves conflicting items away from the resized span, restoring the original item on failure. */
     private suspend fun handleConflictsOfGridItemSpan(
         oldGridItem: GridItem,
         conflictingGridItem: GridItem,

@@ -28,10 +28,18 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
+/** Exposes widget providers whose application labels match a changing search query. */
 class GetEblanAppWidgetProviderInfosByLabelUseCase @Inject constructor(
     private val eblanAppWidgetProviderInfoRepository: EblanAppWidgetProviderInfoRepository,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Filters providers by a case-insensitive label substring, sorts them by label, and groups them
+     * by application.
+     *
+     * @param labelFlow The flow of query strings to apply.
+     * @return A flow of provider lists grouped by their application information.
+     */
     operator fun invoke(labelFlow: Flow<String>): Flow<Map<EblanApplicationInfoGroup, List<EblanAppWidgetProviderInfo>>> = combine(
         eblanAppWidgetProviderInfoRepository.eblanAppWidgetProviderInfosFlow,
         labelFlow,

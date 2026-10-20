@@ -79,7 +79,7 @@ fun IconPackInfoFilesDialog(
     // Actions
     onDismissRequest: () -> Unit,
     onUpdateIcon: (String?) -> Unit,
-    onSearchIconPackInfoComponent: (String) -> Unit
+    onSearchIconPackInfoComponent: (String) -> Unit,
 ) {
     requireNotNull(iconPackPackageName)
 

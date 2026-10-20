@@ -90,7 +90,7 @@ internal fun EditFolderApplicationInfoRoute(
         onResetIconPackPackageName = viewModel::resetIconPackPackageName,
         onSearchIconPackInfoComponent = viewModel::searchIconPackInfoComponent,
         onUpdateFolderEblanApplicationInfo = viewModel::updateFolderEblanApplicationInfo,
-        onAddFolderEblanApplicationInfo = viewModel::addFolderEblanApplicationInfo
+        onAddFolderEblanApplicationInfo = viewModel::addFolderEblanApplicationInfo,
     )
 }
 
@@ -117,7 +117,7 @@ internal fun EditFolderApplicationInfoScreen(
     onResetIconPackPackageName: () -> Unit,
     onSearchIconPackInfoComponent: (String) -> Unit,
     onUpdateFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
-    onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit
+    onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
 ) {
     if (editFolderApplicationInfoUiState is EditFolderApplicationInfoUiState.Success && editFolderApplicationInfoUiState.folderEblanApplicationInfo != null) {
         Scaffold(
@@ -160,7 +160,7 @@ internal fun EditFolderApplicationInfoScreen(
                     onResetIconPackPackageName = onResetIconPackPackageName,
                     onSearchIconPackInfoComponent = onSearchIconPackInfoComponent,
                     onUpdateFolderEblanApplicationInfo = onUpdateFolderEblanApplicationInfo,
-                    onAddFolderEblanApplicationInfo = onAddFolderEblanApplicationInfo
+                    onAddFolderEblanApplicationInfo = onAddFolderEblanApplicationInfo,
                 )
             }
         }
@@ -189,7 +189,7 @@ internal fun Success(
     onResetIconPackPackageName: () -> Unit,
     onSearchIconPackInfoComponent: (String) -> Unit,
     onUpdateFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
-    onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit
+    onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
 ) {
     var showCustomIconDialog by remember { mutableStateOf(false) }
     var showEditLabelDialog by remember { mutableStateOf(false) }
@@ -249,7 +249,7 @@ internal fun Success(
             topLevelFolderEblanApplicationInfos = topLevelFolderEblanApplicationInfos,
             folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
             onUpdateFolderEblanApplicationInfo = onUpdateFolderEblanApplicationInfo,
-            onAddFolderEblanApplicationInfo = onAddFolderEblanApplicationInfo
+            onAddFolderEblanApplicationInfo = onAddFolderEblanApplicationInfo,
         )
 
         SettingsItems(items = items)
@@ -272,7 +272,7 @@ internal fun Success(
                         ),
                     )
                 },
-                onSearchIconPackInfoComponent = onSearchIconPackInfoComponent
+                onSearchIconPackInfoComponent = onSearchIconPackInfoComponent,
             )
         }
 
@@ -299,7 +299,7 @@ private fun Folders(
     modifier: Modifier = Modifier,
     // Callbacks
     onUpdateFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
-    onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit
+    onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
 ) {
     if (folderEblanApplicationInfos.size == 1 &&
         folderEblanApplicationInfos.single().folderId != null
@@ -316,7 +316,7 @@ private fun Folders(
                 label = it.label,
                 folderEblanApplicationInfo = folderEblanApplicationInfo,
                 folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
-                onUpdateFolderEblanApplicationInfo = onUpdateFolderEblanApplicationInfo
+                onUpdateFolderEblanApplicationInfo = onUpdateFolderEblanApplicationInfo,
             )
         }
 
@@ -333,7 +333,7 @@ private fun Folders(
             onDismissRequest = {
                 showAddFolderDialog = false
             },
-            onAddFolderEblanApplicationInfo = onAddFolderEblanApplicationInfo
+            onAddFolderEblanApplicationInfo = onAddFolderEblanApplicationInfo,
         )
     }
 }
@@ -349,7 +349,7 @@ private fun FolderEblanApplicationInfoItem(
     // Layout
     modifier: Modifier = Modifier,
     // Callbacks
-    onUpdateFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit
+    onUpdateFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
 ) {
     val folderIndex = remember(
         key1 = folderEblanApplicationInfoPopups,

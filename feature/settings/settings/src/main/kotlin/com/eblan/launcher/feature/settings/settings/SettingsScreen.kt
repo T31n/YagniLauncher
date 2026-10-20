@@ -65,7 +65,7 @@ internal fun SettingsRoute(
     onGeneral: () -> Unit,
     onGestures: () -> Unit,
     onHome: () -> Unit,
-    onFolder: () -> Unit
+    onFolder: () -> Unit,
 ) {
     SettingsScreen(
         modifier = modifier,
@@ -75,7 +75,7 @@ internal fun SettingsRoute(
         onGeneral = onGeneral,
         onGestures = onGestures,
         onHome = onHome,
-        onFolder = onFolder
+        onFolder = onFolder,
     )
 }
 
@@ -91,7 +91,7 @@ internal fun SettingsScreen(
     onGeneral: () -> Unit,
     onGestures: () -> Unit,
     onHome: () -> Unit,
-    onFolder: () -> Unit
+    onFolder: () -> Unit,
 ) {
     val items = buildSettingsItems(
         onGeneralClick = onGeneral,
@@ -99,7 +99,7 @@ internal fun SettingsScreen(
         onAppDrawerClick = onAppDrawer,
         onGesturesClick = onGestures,
         onExperimentalClick = onExperimental,
-        onFolderClick = onFolder
+        onFolderClick = onFolder,
     )
 
     BackHandler {
@@ -222,7 +222,7 @@ private fun buildSettingsItems(
     onAppDrawerClick: () -> Unit,
     onGesturesClick: () -> Unit,
     onExperimentalClick: () -> Unit,
-    onFolderClick: () -> Unit
+    onFolderClick: () -> Unit,
 ): List<SettingsItem> {
     val context = LocalContext.current
 

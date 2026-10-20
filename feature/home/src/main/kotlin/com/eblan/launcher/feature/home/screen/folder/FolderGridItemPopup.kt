@@ -96,7 +96,7 @@ internal fun FolderGridItemPopup(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     requireNotNull(folderGridItem)
 
@@ -221,7 +221,7 @@ internal fun FolderGridItemPopup(
                 },
                 onWidgets = onWidgets,
                 onResetFolderGridItemPopupEntries = onResetFolderGridItemPopupEntries,
-                onDragShortcutInfo = onDragShortcutInfo
+                onDragShortcutInfo = onDragShortcutInfo,
             )
         }
     }
@@ -256,7 +256,7 @@ private fun FolderGridItemPopupContent(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     Surface(
         modifier = modifier.width(IntrinsicSize.Max),
@@ -319,7 +319,7 @@ private fun FolderGridItemPopupContent(
 
                             onDismiss()
                         },
-                        onDragShortcutInfo = onDragShortcutInfo
+                        onDragShortcutInfo = onDragShortcutInfo,
                     )
                 }
 
@@ -376,7 +376,7 @@ private fun ApplicationInfoFolderGridItemPopupContent(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     Surface(
         modifier = modifier.width(IntrinsicSize.Max),
@@ -395,7 +395,7 @@ private fun ApplicationInfoFolderGridItemPopupContent(
                         isVisibleOverlay = isVisibleOverlay,
                         modifier = modifier,
                         onTapShortcutInfo = onTapShortcutInfo,
-                        onDragShortcutInfo = onDragShortcutInfo
+                        onDragShortcutInfo = onDragShortcutInfo,
                     )
 
                     Spacer(modifier = Modifier.height(5.dp))

@@ -62,7 +62,7 @@ internal fun handleDragFolderEblanApplicationInfoGridItem(
         gridHeight: Int,
         currentPage: Int,
     ) -> Unit,
-    onUpsertFolderEblanApplicationInfoPopupEntry: (FolderEntry) -> Unit
+    onUpsertFolderEblanApplicationInfoPopupEntry: (FolderEntry) -> Unit,
 ) {
     if (drag != Drag.Dragging ||
         isScrollInProgress ||
@@ -87,7 +87,7 @@ internal fun handleDragFolderEblanApplicationInfoGridItem(
         folderCellWidth = folderCellWidth,
         folderCellHeight = folderCellHeight,
         folderPopupIntOffset = folderPopupIntOffset,
-        dragIntOffset = dragIntOffset
+        dragIntOffset = dragIntOffset,
     )
 
     if (folderGridDragPosition.x in 0 until folderGridDragPosition.width &&

@@ -113,7 +113,7 @@ private fun GestureSettingsScreen(
                                 swipeDown = it,
                             ),
                         )
-                    }
+                    },
                 )
             }
         }

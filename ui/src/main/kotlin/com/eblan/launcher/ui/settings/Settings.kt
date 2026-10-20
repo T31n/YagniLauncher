@@ -75,7 +75,7 @@ fun SettingsSwitch(
     // Layout
     modifier: Modifier = Modifier,
     // Behavior
-    onCheckedChange: (Boolean) -> Unit
+    onCheckedChange: (Boolean) -> Unit,
 ) {
     Row(
         modifier = modifier
@@ -123,7 +123,7 @@ fun SettingsSwitch(
     modifier: Modifier = Modifier,
     // Callbacks
     onClick: () -> Unit,
-    onCheckedChange: (Boolean) -> Unit
+    onCheckedChange: (Boolean) -> Unit,
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -175,7 +175,7 @@ fun SettingsItems(
                     index = index,
                     size = items.size,
                     modifier = modifier,
-                    onClick = settingsItem.onClick
+                    onClick = settingsItem.onClick,
                 )
             }
 
@@ -188,7 +188,7 @@ fun SettingsItems(
                     size = items.size,
                     modifier = modifier,
                     onClick = settingsItem.onClick,
-                    onCheckedChange = settingsItem.onCheckedChange
+                    onCheckedChange = settingsItem.onCheckedChange,
                 )
             }
 
@@ -200,7 +200,7 @@ fun SettingsItems(
                     title = settingsItem.title,
                     customBackgroundColor = settingsItem.customBackgroundColor,
                     modifier = modifier,
-                    onClick = settingsItem.onClick
+                    onClick = settingsItem.onClick,
                 )
             }
 
@@ -212,7 +212,7 @@ fun SettingsItems(
                     index = index,
                     size = items.size,
                     modifier = modifier,
-                    onClick = settingsItem.onClick
+                    onClick = settingsItem.onClick,
                 )
             }
 
@@ -225,7 +225,7 @@ fun SettingsItems(
                     modifier = modifier,
                     onUpdateIconPackPackageName = settingsItem.onUpdateIconPackPackageName,
                     onUpdateUri = settingsItem.onUpdateUri,
-                    onResetCustomIcon = settingsItem.onResetCustomIcon
+                    onResetCustomIcon = settingsItem.onResetCustomIcon,
                 )
             }
         }
@@ -329,7 +329,7 @@ private fun SettingsColumn(
     // Layout
     modifier: Modifier = Modifier,
     // Callbacks
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -374,7 +374,7 @@ private fun CustomIcon(
         label: String?,
     ) -> Unit,
     onUpdateUri: (String) -> Unit,
-    onResetCustomIcon: () -> Unit
+    onResetCustomIcon: () -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -452,7 +452,7 @@ private fun CustomIcon(
                         subtitle = stringResource(R.string.pick_icons_from_your_gallery),
                         onClick = {
                             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-                        }
+                        },
                     )
 
                     packageManagerIconPacks.forEach { packageManagerIconPackInfo ->
@@ -465,7 +465,7 @@ private fun CustomIcon(
                                     packageManagerIconPackInfo.packageName,
                                     packageManagerIconPackInfo.label,
                                 )
-                            }
+                            },
                         )
                     }
 
@@ -473,7 +473,7 @@ private fun CustomIcon(
                         SettingsColumn(
                             title = stringResource(R.string.reset_custom_icon),
                             subtitle = stringResource(R.string.reset_custom_icon),
-                            onClick = onResetCustomIcon
+                            onClick = onResetCustomIcon,
                         )
                     }
                 }
@@ -490,7 +490,7 @@ private fun SettingsColumn(
     // Layout
     modifier: Modifier = Modifier,
     // Actions
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -521,7 +521,7 @@ private fun IconPackItem(
     // Layout
     modifier: Modifier = Modifier,
     // Callbacks
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Row(
         modifier = modifier
@@ -566,7 +566,7 @@ private fun SettingsRow(
     // Layout
     modifier: Modifier = Modifier,
     // Actions
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),

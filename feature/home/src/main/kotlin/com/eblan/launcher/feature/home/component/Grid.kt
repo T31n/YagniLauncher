@@ -59,7 +59,7 @@ internal fun GridLayout(
     // Modifier
     modifier: Modifier = Modifier,
     // Content
-    content: @Composable BoxScope.(GridItem) -> Unit
+    content: @Composable BoxScope.(GridItem) -> Unit,
 ) {
     SubcomposeLayout(modifier = modifier) { constraints ->
         val cellWidth = constraints.maxWidth / columns
@@ -73,7 +73,7 @@ internal fun GridLayout(
                         cellWidth = cellWidth,
                         cellHeight = cellHeight,
                         animate = animate,
-                        content = content
+                        content = content,
                     )
                 }.forEach { measurable ->
                     val parentData = measurable.parentData as GridItemParentData
@@ -106,7 +106,7 @@ internal fun DotsGridLayout(
     // Appearance
     textColor: TextColor,
     // Modifier
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     var gridPositionInRoot by remember { mutableStateOf(Offset.Zero) }
 
@@ -120,7 +120,7 @@ internal fun DotsGridLayout(
         gridItemCustomTextColor = currentGridItemSettings.customTextColor,
         gridItemTextColor = currentGridItemSettings.textColor,
         systemCustomTextColor = gridItemSettings.customTextColor,
-        systemTextColor = textColor
+        systemTextColor = textColor,
     )
 
     Canvas(
@@ -210,7 +210,7 @@ internal fun HorizontalAppDrawerGridLayout(
     // Modifier
     modifier: Modifier = Modifier,
     // Content
-    content: @Composable BoxScope.(EblanApplicationInfo) -> Unit
+    content: @Composable BoxScope.(EblanApplicationInfo) -> Unit,
 ) {
     SubcomposeLayout(modifier = modifier) { constraints ->
         val cellWidth = constraints.maxWidth / columns
@@ -289,7 +289,7 @@ private fun GridLayoutItem(
     // Modifier
     modifier: Modifier = Modifier,
     // Content
-    content: @Composable (BoxScope.(GridItem) -> Unit)
+    content: @Composable (BoxScope.(GridItem) -> Unit),
 ) {
     val width = gridItem.columnSpan * cellWidth
     val height = gridItem.rowSpan * cellHeight

@@ -54,7 +54,7 @@ fun TextColorDialog(
     onUpdateClick: (
         textColor: TextColor,
         customColor: Int,
-    ) -> Unit
+    ) -> Unit,
 ) {
     ColorDialog(
         title = title,
@@ -65,7 +65,7 @@ fun TextColorDialog(
         modifier = modifier,
         getTitle = { it.getTitle() },
         onDismissRequest = onDismissRequest,
-        onUpdateClick = onUpdateClick
+        onUpdateClick = onUpdateClick,
     )
 }
 
@@ -83,7 +83,7 @@ fun BackgroundColorDialog(
     onUpdateClick: (
         backgroundColor: BackgroundColor,
         customColor: Int,
-    ) -> Unit
+    ) -> Unit,
 ) {
     ColorDialog(
         title = title,
@@ -94,7 +94,7 @@ fun BackgroundColorDialog(
         modifier = modifier,
         getTitle = { it.getTitle() },
         onDismissRequest = onDismissRequest,
-        onUpdateClick = onUpdateClick
+        onUpdateClick = onUpdateClick,
     )
 }
 
@@ -112,7 +112,7 @@ fun IconTintDialog(
     onUpdateClick: (
         iconTint: IconTint,
         customColor: Int,
-    ) -> Unit
+    ) -> Unit,
 ) {
     ColorDialog(
         title = title,
@@ -123,7 +123,7 @@ fun IconTintDialog(
         modifier = modifier,
         getTitle = { it.getTitle() },
         onDismissRequest = onDismissRequest,
-        onUpdateClick = onUpdateClick
+        onUpdateClick = onUpdateClick,
     )
 }
 
@@ -164,7 +164,7 @@ private fun <T : Enum<T>> ColorDialog(
     getTitle: @Composable (T) -> String,
     // Callbacks
     onDismissRequest: () -> Unit,
-    onUpdateClick: (color: T, customColor: Int) -> Unit
+    onUpdateClick: (color: T, customColor: Int) -> Unit,
 ) {
     var selectedColor by remember { mutableStateOf(color) }
     var selectedCustomColor by remember { mutableIntStateOf(customColor) }
@@ -231,7 +231,7 @@ private fun <T : Enum<T>> ColorDialog(
             onSelectColor = {
                 selectedColor = customEntry
                 selectedCustomColor = it
-            }
+            },
         )
     }
 }

@@ -141,7 +141,7 @@ internal fun InteractiveFolderGridItem(
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
     ) -> Unit,
-    onDragFolderGridItem: () -> Unit
+    onDragFolderGridItem: () -> Unit,
 ) {
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
@@ -161,7 +161,7 @@ internal fun InteractiveFolderGridItem(
         textColor = currentGridItemSettings.textColor,
         customTextColor = currentGridItemSettings.customTextColor,
         systemCustomTextColor = systemCustomTextColor,
-        systemTextColor = systemTextColor
+        systemTextColor = systemTextColor,
     )
 
     val padding = if (animations) {
@@ -204,7 +204,7 @@ internal fun InteractiveFolderGridItem(
         startColumn = gridItem.startColumn,
         startRow = gridItem.startRow,
         cellWidth = minCellWidthPx,
-        cellHeight = minCellHeightPx
+        cellHeight = minCellHeightPx,
     )
 
     val isVisibleFolder = remember(
@@ -257,7 +257,7 @@ internal fun InteractiveFolderGridItem(
                 sourceBounds = sourceBounds,
                 modifier = modifier,
                 onOpenAppDrawer = onOpenAppDrawer,
-                onLongPressFolderGridItem = onLongPressFolderGridItem
+                onLongPressFolderGridItem = onLongPressFolderGridItem,
             )
         }
 
@@ -285,7 +285,7 @@ internal fun InteractiveFolderGridItem(
                 textPadding = textPadding,
                 modifier = modifier,
                 onOpenAppDrawer = onOpenAppDrawer,
-                onLongPressFolderGridItem = onLongPressFolderGridItem
+                onLongPressFolderGridItem = onLongPressFolderGridItem,
             )
         }
 
@@ -311,7 +311,7 @@ internal fun InteractiveFolderGridItem(
                 sharedElementKey = sharedElementKey,
                 modifier = modifier,
                 onOpenAppDrawer = onOpenAppDrawer,
-                onLongPressFolderGridItem = onLongPressFolderGridItem
+                onLongPressFolderGridItem = onLongPressFolderGridItem,
             )
         }
 
@@ -347,7 +347,7 @@ internal fun InteractiveFolderGridItem(
                 modifier = modifier,
                 onOpenAppDrawer = onOpenAppDrawer,
                 onUpsertFolderGridItemPopupEntry = onUpsertFolderGridItemPopupEntry,
-                onLongPressFolderGridItem = onLongPressFolderGridItem
+                onLongPressFolderGridItem = onLongPressFolderGridItem,
             )
         }
 
@@ -392,7 +392,7 @@ private fun InteractiveApplicationInfoGridItem(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val launcherApps = LocalLauncherApps.current
     val androidLauncherAppsWrapper = LocalLauncherApps.current
@@ -436,7 +436,7 @@ private fun InteractiveApplicationInfoGridItem(
                                         eblanAction = gridItem.doubleTap,
                                         launcherApps = launcherApps,
                                         statusBarManagerWrapper = androidStatusBarManagerWrapper,
-                                        onOpenAppDrawer = onOpenAppDrawer
+                                        onOpenAppDrawer = onOpenAppDrawer,
                                     )
                                 }
                             } else {
@@ -574,7 +574,7 @@ private fun InteractiveShortcutInfoGridItem(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val androidLauncherAppsWrapper = LocalLauncherApps.current
     val launcherApps = LocalLauncherApps.current
@@ -616,7 +616,7 @@ private fun InteractiveShortcutInfoGridItem(
                                         eblanAction = gridItem.doubleTap,
                                         launcherApps = launcherApps,
                                         statusBarManagerWrapper = androidStatusBarManagerWrapper,
-                                        onOpenAppDrawer = onOpenAppDrawer
+                                        onOpenAppDrawer = onOpenAppDrawer,
                                     )
                                 }
                             } else {
@@ -760,7 +760,7 @@ private fun InteractiveShortcutConfigGridItem(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val launcherApps = LocalLauncherApps.current
     val androidStatusBarManagerWrapper = LocalStatusBarManager.current
@@ -810,7 +810,7 @@ private fun InteractiveShortcutConfigGridItem(
                                         eblanAction = gridItem.doubleTap,
                                         launcherApps = launcherApps,
                                         statusBarManagerWrapper = androidStatusBarManagerWrapper,
-                                        onOpenAppDrawer = onOpenAppDrawer
+                                        onOpenAppDrawer = onOpenAppDrawer,
                                     )
                                 }
                             } else {
@@ -934,7 +934,7 @@ private fun InteractiveNestedFolderGridItem(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val launcherApps = LocalLauncherApps.current
     val androidStatusBarManagerWrapper = LocalStatusBarManager.current
@@ -971,7 +971,7 @@ private fun InteractiveNestedFolderGridItem(
                                         eblanAction = gridItem.doubleTap,
                                         launcherApps = launcherApps,
                                         statusBarManagerWrapper = androidStatusBarManagerWrapper,
-                                        onOpenAppDrawer = onOpenAppDrawer
+                                        onOpenAppDrawer = onOpenAppDrawer,
                                     )
                                 }
                             } else {
@@ -1073,9 +1073,9 @@ private fun InteractiveNestedFolderGridItem(
                             folderBackgroundColor = folderBackgroundColor,
                             customFolderBackgroundColor = customFolderBackgroundColor,
                             systemTextColor = systemTextColor,
-                            systemCustomTextColor = systemCustomTextColor
+                            systemCustomTextColor = systemCustomTextColor,
                         )
-                    }
+                    },
                 )
             }
         }
@@ -1108,7 +1108,7 @@ private fun PreviewNestedFolderGridItem(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     // Layout
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
 
@@ -1138,7 +1138,7 @@ private fun PreviewNestedFolderGridItem(
             customTextColor = currentGridItemSettings.customTextColor,
             systemCustomTextColor = systemCustomTextColor,
             systemTextColor = systemTextColor,
-            defaultColor = MaterialTheme.colorScheme.onSurface
+            defaultColor = MaterialTheme.colorScheme.onSurface,
         )
 
         val commonModifier = modifier
@@ -1216,7 +1216,7 @@ private fun getSourceBounds(
     startRow: Int,
     // Cell Dimensions
     cellWidth: Int,
-    cellHeight: Int
+    cellHeight: Int,
 ): Rect {
     val leftPadding = with(density) {
         paddingValues.calculateLeftPadding(layoutDirection).roundToPx()

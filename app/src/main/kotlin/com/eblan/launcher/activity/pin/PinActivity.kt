@@ -118,7 +118,7 @@ class PinActivity : ComponentActivity() {
 
                                         finish()
                                     },
-                                    onFinish = ::finish
+                                    onFinish = ::finish,
                                 )
                             }
                         }

@@ -99,7 +99,7 @@ internal fun ApplicationInfoPopup(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     requireNotNull(eblanApplicationInfo)
     requireNotNull(popupIntOffset)
@@ -207,7 +207,7 @@ internal fun ApplicationInfoPopup(
                         componentName = eblanApplicationInfo.componentName,
                         packageName = eblanApplicationInfo.packageName,
                         popupIntOffset = popupIntOffset,
-                        popupIntSize = popupIntSize
+                        popupIntSize = popupIntSize,
                     )
 
                     transitionState.targetState = false
@@ -263,7 +263,7 @@ internal fun ApplicationInfoPopup(
 
                     transitionState.targetState = false
                 },
-                onDragShortcutInfo = onDragShortcutInfo
+                onDragShortcutInfo = onDragShortcutInfo,
             )
         }
     }
@@ -288,7 +288,7 @@ internal fun PrivateApplicationInfoPopup(
     onEditApplicationInfo: (
         serialNumber: Long,
         componentName: String,
-    ) -> Unit
+    ) -> Unit,
 ) {
     requireNotNull(eblanApplicationInfo)
     requireNotNull(popupIntOffset)
@@ -390,7 +390,7 @@ internal fun PrivateApplicationInfoPopup(
                         componentName = eblanApplicationInfo.componentName,
                         packageName = eblanApplicationInfo.packageName,
                         popupIntOffset = popupIntOffset,
-                        popupIntSize = popupIntSize
+                        popupIntSize = popupIntSize,
                     )
 
                     transitionState.targetState = false
@@ -433,7 +433,7 @@ internal fun PrivateApplicationInfoPopup(
                     }
 
                     transitionState.targetState = false
-                }
+                },
             )
         }
     }
@@ -467,7 +467,7 @@ internal fun ApplicationInfoMenu(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     Surface(
         modifier = modifier.padding(5.dp),
@@ -484,7 +484,7 @@ internal fun ApplicationInfoMenu(
                         icon = icon,
                         isVisibleOverlay = isVisibleOverlay,
                         onTapShortcutInfo = onTapShortcutInfo,
-                        onDragShortcutInfo = onDragShortcutInfo
+                        onDragShortcutInfo = onDragShortcutInfo,
                     )
 
                     Spacer(modifier = Modifier.height(5.dp))
@@ -553,7 +553,7 @@ private fun PrivateApplicationInfoMenu(
         serialNumber: Long,
         packageName: String,
         shortcutId: String,
-    ) -> Unit
+    ) -> Unit,
 ) {
     Surface(
         modifier = modifier.padding(5.dp),
@@ -566,7 +566,7 @@ private fun PrivateApplicationInfoMenu(
                 if (hasShortcutHostPermission && !eblanShortcutInfosGroup.isNullOrEmpty()) {
                     PrivateShortcutInfoMenu(
                         eblanShortcutInfosGroup = eblanShortcutInfosGroup,
-                        onTapShortcutInfo = onTapShortcutInfo
+                        onTapShortcutInfo = onTapShortcutInfo,
                     )
 
                     Spacer(modifier = Modifier.height(5.dp))

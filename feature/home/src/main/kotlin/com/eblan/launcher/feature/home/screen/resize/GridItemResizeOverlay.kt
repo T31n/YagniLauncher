@@ -75,7 +75,7 @@ internal fun GridItemResizeOverlay(
         gridItem: GridItem,
         columns: Int,
         rows: Int,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val density = LocalDensity.current
 
@@ -143,7 +143,7 @@ internal fun GridItemResizeOverlay(
                 currentWidth = currentWidth.value,
                 width = width,
                 dragHandle = dragHandle,
-                dragHandleSizePx = dragHandleSizePx
+                dragHandleSizePx = dragHandleSizePx,
             )
         }
     }
@@ -156,7 +156,7 @@ internal fun GridItemResizeOverlay(
                 height = height,
                 currentHeight = currentHeight.value,
                 dragHandle = dragHandle,
-                dragHandleSizePx = dragHandleSizePx
+                dragHandleSizePx = dragHandleSizePx,
             )
         }
     }
@@ -178,7 +178,7 @@ internal fun GridItemResizeOverlay(
             gridHeight = gridHeight,
             columns = columns,
             rows = rows,
-            onResizeGridItem = onResizeGridItem
+            onResizeGridItem = onResizeGridItem,
         )
     }
 
@@ -335,7 +335,7 @@ private fun getBorderY(
     currentHeight: Int,
     // Drag Handle
     dragHandle: Alignment,
-    dragHandleSizePx: Int
+    dragHandleSizePx: Int,
 ): Int = if (currentHeight >= dragHandleSizePx) {
     currentY
 } else if (dragHandle == Alignment.TopStart || dragHandle == Alignment.TopEnd) {
@@ -353,7 +353,7 @@ private fun getBorderX(
     width: Int,
     // Drag Handle
     dragHandle: Alignment,
-    dragHandleSizePx: Int
+    dragHandleSizePx: Int,
 ): Int = when (dragHandle) {
     Alignment.TopStart -> {
         if (currentWidth >= dragHandleSizePx) {
@@ -404,7 +404,7 @@ private fun resizeGridItem(
     columns: Int,
     rows: Int,
     // Callback
-    onResizeGridItem: (GridItem, Int, Int) -> Unit
+    onResizeGridItem: (GridItem, Int, Int) -> Unit,
 ) {
     val allowedWidth = currentWidth.coerceAtLeast(cellWidth)
 

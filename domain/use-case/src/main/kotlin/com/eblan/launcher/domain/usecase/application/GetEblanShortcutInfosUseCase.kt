@@ -29,10 +29,16 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
+/** Provides launcher shortcuts grouped by their user and owning package. */
 class GetEblanShortcutInfosUseCase @Inject constructor(
     private val eblanShortcutInfoRepository: EblanShortcutInfoRepository,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Emits shortcuts grouped by user and package, excluding shortcuts already pinned to the home screen.
+     *
+     * @return A flow of shortcut groups and their shortcut lists.
+     */
     operator fun invoke(): Flow<Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>> = eblanShortcutInfoRepository.eblanShortcutInfosFlow.map { eblanShortcutInfos ->
         eblanShortcutInfos.filter {
             it.shortcutQueryFlag != ShortcutQueryFlag.Pinned

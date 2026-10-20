@@ -313,7 +313,7 @@ internal fun PagerScreen(
     onUpdateGridItemsAfterMoveNewFolder: (
         folderGridItems: List<GridItem>,
         moveGridItemResult: MoveGridItemResult,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val layoutDirection = LocalLayoutDirection.current
     val androidLauncherAppsWrapper = LocalLauncherApps.current
@@ -336,7 +336,7 @@ internal fun PagerScreen(
         experimentalSettings = experimentalSettings,
         screenHeight = screenHeight,
         onGetPinGridItem = onGetPinGridItem,
-        onResetPinGridItem = onResetPinGridItem
+        onResetPinGridItem = onResetPinGridItem,
     )
 
     val dockHeight = homeSettings.dockHeight.dp
@@ -400,7 +400,7 @@ internal fun PagerScreen(
             lastAppWidgetId = pagerScreenState.lastAppWidgetId,
             onUpdateWidgetGridItem = pagerScreenState::updateWidgetGridItem,
             onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
-            onUpdateLastAppWidgetId = pagerScreenState::updateLastAppWidgetId
+            onUpdateLastAppWidgetId = pagerScreenState::updateLastAppWidgetId,
         )
     }
 
@@ -415,7 +415,7 @@ internal fun PagerScreen(
                 androidImageSerializer = androidImageSerializer,
                 onDeleteGridItem = onResetGridAfterDeleteGridItem,
                 onUpdateGridItemsAfterMove = onUpdateGridItemsAfterMove,
-                onResetGrid = onResetGrid
+                onResetGrid = onResetGrid,
             )
         }
     }
@@ -433,7 +433,7 @@ internal fun PagerScreen(
                 fileManager = fileManager,
                 iconKeyGenerator = iconKeyGenerator,
                 onDeleteGridItem = onResetGridAfterDeleteGridItem,
-                onUpdateShortcutConfigIntoShortcutInfoGridItem = onUpdateShortcutConfigIntoShortcutInfoGridItem
+                onUpdateShortcutConfigIntoShortcutInfoGridItem = onUpdateShortcutConfigIntoShortcutInfoGridItem,
             )
         }
     }
@@ -570,7 +570,7 @@ internal fun PagerScreen(
         onPackageRemoved = onPackageRemoved,
         onPackageAdded = onPackageAdded,
         onPackageChanged = onPackageChanged,
-        onShortcutsChanged = onShortcutsChanged
+        onShortcutsChanged = onShortcutsChanged,
     )
 
     LaunchedEffect(
@@ -602,7 +602,7 @@ internal fun PagerScreen(
             isDockScrollInProgress = dockGridHorizontalPagerState.isScrollInProgress,
             onMoveGridItem = onMoveGridItem,
             onUpdateAssociate = pagerScreenState::updateAssociate,
-            onUpdateSharedElementKey = pagerScreenState::updateSharedElementKey
+            onUpdateSharedElementKey = pagerScreenState::updateSharedElementKey,
         )
     }
 
@@ -641,7 +641,7 @@ internal fun PagerScreen(
             onUpdateIsDragging = pagerScreenState::updateIsDragging,
             onUpdateWidgetGridItem = pagerScreenState::updateWidgetGridItem,
             onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-            onUpdateGridItemsAfterMoveNewFolder = onUpdateGridItemsAfterMoveNewFolder
+            onUpdateGridItemsAfterMoveNewFolder = onUpdateGridItemsAfterMoveNewFolder,
         )
     }
 
@@ -654,7 +654,7 @@ internal fun PagerScreen(
             widgetGridItem = pagerScreenState.widgetGridItem,
             onDeleteGridItem = onResetGridAfterDeleteGridItem,
             onUpdateGridItemsAfterMove = onUpdateGridItemsAfterMove,
-            onResetGrid = onResetGrid
+            onResetGrid = onResetGrid,
         )
     }
 
@@ -679,7 +679,7 @@ internal fun PagerScreen(
             paddingValues = paddingValues,
             gridItemSource = currentGridItemSource.value,
             onUpdateDockPageDirection = pagerScreenState::updateDockPageDirection,
-            onUpdateGridPageDirection = pagerScreenState::updateGridPageDirection
+            onUpdateGridPageDirection = pagerScreenState::updateGridPageDirection,
         )
     }
 
@@ -694,7 +694,7 @@ internal fun PagerScreen(
             onDeleteGridItem = onDeleteGridItem,
             onUpdateGridItemsAfterMove = onUpdateGridItemsAfterMove,
             onResetConfigureResultCode = onResetConfigureResultCode,
-            onResetGrid = onResetGrid
+            onResetGrid = onResetGrid,
         )
     }
 
@@ -703,7 +703,7 @@ internal fun PagerScreen(
             folderGridItemEntries = currentFolderGridItemEntries,
             pageDirection = pagerScreenState.gridPageDirection,
             currentPage = gridHorizontalPagerState.currentPage,
-            onAnimateScrollToPage = gridHorizontalPagerState::animateScrollToPage
+            onAnimateScrollToPage = gridHorizontalPagerState::animateScrollToPage,
         )
     }
 
@@ -712,7 +712,7 @@ internal fun PagerScreen(
             folderGridItemEntries = currentFolderGridItemEntries,
             pageDirection = pagerScreenState.dockPageDirection,
             currentPage = dockGridHorizontalPagerState.currentPage,
-            onAnimateScrollToPage = dockGridHorizontalPagerState::animateScrollToPage
+            onAnimateScrollToPage = dockGridHorizontalPagerState::animateScrollToPage,
         )
     }
 
@@ -854,7 +854,7 @@ internal fun PagerScreen(
                             .padding(
                                 start = paddingValues.calculateStartPadding(layoutDirection),
                                 end = paddingValues.calculateEndPadding(layoutDirection),
-                            )
+                            ),
                     )
                 }
 
@@ -935,7 +935,7 @@ internal fun PagerScreen(
                                         newSharedElementKey = sharedElementKey,
                                         onUpdateGridItemSource = onUpdateGridItemSource,
                                         onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult
+                                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
                                     )
                                 },
                                 onTapFolderGridItem = { folderPopupEntry ->
@@ -944,9 +944,9 @@ internal fun PagerScreen(
                                         onUpsertFolderGridItemPopupEntry = onUpsertFolderGridItemPopupEntry,
                                     )
                                 },
-                                onDragGridItem = pagerScreenState::dragGridItem
+                                onDragGridItem = pagerScreenState::dragGridItem,
                             )
-                        }
+                        },
                     )
                 }
             }
@@ -956,7 +956,7 @@ internal fun PagerScreen(
                 pageCount = homeSettings.pageCount,
                 color = getTextColor(
                     textColor = textColor,
-                    customTextColor = homeSettings.gridItemSettings.customTextColor
+                    customTextColor = homeSettings.gridItemSettings.customTextColor,
                 ),
                 showPageIndicator = homeSettings.showPageIndicator,
                 infiniteScroll = homeSettings.infiniteScroll,
@@ -964,7 +964,7 @@ internal fun PagerScreen(
                 swipeDown = gestureSettings.swipeDown,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(PAGE_INDICATOR_HEIGHT)
+                    .height(PAGE_INDICATOR_HEIGHT),
             )
 
             Box(
@@ -1009,7 +1009,7 @@ internal fun PagerScreen(
                             .padding(
                                 start = paddingValues.calculateStartPadding(layoutDirection),
                                 end = paddingValues.calculateEndPadding(layoutDirection),
-                            )
+                            ),
                     )
                 }
 
@@ -1094,7 +1094,7 @@ internal fun PagerScreen(
                                         newSharedElementKey = sharedElementKey,
                                         onUpdateGridItemSource = onUpdateGridItemSource,
                                         onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult
+                                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
                                     )
                                 },
                                 onTapFolderGridItem = { folderPopupEntry ->
@@ -1103,9 +1103,9 @@ internal fun PagerScreen(
                                         onUpsertFolderGridItemPopupEntry = onUpsertFolderGridItemPopupEntry,
                                     )
                                 },
-                                onDragGridItem = pagerScreenState::dragGridItem
+                                onDragGridItem = pagerScreenState::dragGridItem,
                             )
-                        }
+                        },
                     )
                 }
             }
@@ -1144,9 +1144,9 @@ internal fun PagerScreen(
                         newSharedElementKey = sharedElementKey,
                         onUpdateGridItemSource = onUpdateGridItemSource,
                         onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult
+                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
                     )
-                }
+                },
             )
         }
 
@@ -1159,7 +1159,7 @@ internal fun PagerScreen(
                 onEditPage = onEditPage,
                 onSettings = onSettings,
                 onShortcutConfigActivities = pagerScreenState::openShortcutConfigScreen,
-                onWidgets = pagerScreenState::openWidgetScreen
+                onWidgets = pagerScreenState::openWidgetScreen,
             )
         }
 
@@ -1217,7 +1217,7 @@ internal fun PagerScreen(
                             intSize = intSize,
                             newSharedElementKey = sharedElementKey,
                             onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                            onUpdateMoveGridItemResult = onUpdateMoveGridItemResult
+                            onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
                         )
                     },
                     onDragFolderGridItem = pagerScreenState::dragFolderGridItem,
@@ -1227,7 +1227,7 @@ internal fun PagerScreen(
                             isFirstFolderGridItem = isFirstFolderGridItem,
                             onDeleteFolderGridItemPopupEntry = onDeleteFolderGridItemPopupEntry,
                         )
-                    }
+                    },
                 )
             }
         }
@@ -1265,9 +1265,9 @@ internal fun PagerScreen(
                         onUpdateGridItemSource = onUpdateGridItemSource,
                         onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                         onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
-                        onResetFolderGridItemPopupEntries = onResetFolderGridItemPopupEntries
+                        onResetFolderGridItemPopupEntries = onResetFolderGridItemPopupEntries,
                     )
-                }
+                },
             )
         }
 
@@ -1321,7 +1321,7 @@ internal fun PagerScreen(
                         intOffset = intOffset,
                         intSize = intSize,
                         newSharedElementKey = sharedElementKey,
-                        onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay
+                        onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                     )
                 },
                 onLongPressFolderApplicationInfo = { folderEblanApplicationInfo: FolderEblanApplicationInfo, imageBitmap: ImageBitmap, intOffset: IntOffset, intSize: IntSize, sharedElementKey: SharedElementKey ->
@@ -1331,7 +1331,7 @@ internal fun PagerScreen(
                         intOffset = intOffset,
                         intSize = intSize,
                         newSharedElementKey = sharedElementKey,
-                        onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay
+                        onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                     )
                 },
                 onLongPressPrivateSpaceApplicationInfoItem = { eblanApplicationInfo, intOffset, intSize ->
@@ -1346,7 +1346,7 @@ internal fun PagerScreen(
                         folderEntry = it,
                         onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
                     )
-                }
+                },
             )
         }
 
@@ -1384,9 +1384,9 @@ internal fun PagerScreen(
                         newSharedElementKey = sharedElementKey,
                         onUpdateGridItemSource = onUpdateGridItemSource,
                         onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult
+                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
                     )
-                }
+                },
             )
         }
 
@@ -1404,7 +1404,7 @@ internal fun PagerScreen(
                 paddingValues = paddingValues,
                 isClosePrivateEblanApplicationInfoMenu = pagerScreenState.isClosePrivateEblanApplicationInfoMenu,
                 onDismissRequest = pagerScreenState::dismissPrivateEblanApplicationInfoMenu,
-                onEditApplicationInfo = onEditApplicationInfo
+                onEditApplicationInfo = onEditApplicationInfo,
             )
         }
 
@@ -1435,9 +1435,9 @@ internal fun PagerScreen(
                         intSize = intSize,
                         onUpdateGridItemSource = onUpdateGridItemSource,
                         onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult
+                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
                     )
-                }
+                },
             )
         }
 
@@ -1465,9 +1465,9 @@ internal fun PagerScreen(
                         newSharedElementKey = sharedElementKey,
                         onUpdateGridItemSource = onUpdateGridItemSource,
                         onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult
+                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
                     )
-                }
+                },
             )
         }
 
@@ -1497,9 +1497,9 @@ internal fun PagerScreen(
                         newSharedElementKey = sharedElementKey,
                         onUpdateGridItemSource = onUpdateGridItemSource,
                         onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult
+                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
                     )
-                }
+                },
             )
         }
 
@@ -1513,7 +1513,7 @@ internal fun PagerScreen(
                 onResizeCancel = onResizeCancel,
                 onResizeEnd = onResizeEnd,
                 onResizeGridItem = onResizeGridItem,
-                onUpdateIsResizing = pagerScreenState::updateIsResizing
+                onUpdateIsResizing = pagerScreenState::updateIsResizing,
             )
         }
 
@@ -1568,7 +1568,7 @@ internal fun PagerScreen(
                             intOffset = intOffset,
                             intSize = intSize,
                             onUpdateMoveFolderEblanApplicationInfoGridItemResult = onUpdateMoveFolderEblanApplicationInfoGridItemResult,
-                            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay
+                            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                         )
                     },
                     onDragFolderEblanApplicationInfoGridItem = pagerScreenState::dragFolderEblanApplicationInfoGridItem,
@@ -1584,7 +1584,7 @@ internal fun PagerScreen(
                             folderEntry = newFolderEntry,
                             onUpsertFolderEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
                         )
-                    }
+                    },
                 )
             }
         }
@@ -1598,7 +1598,7 @@ internal fun PagerScreen(
                 popupIntSize = pagerScreenState.menuIntSize,
                 onDismissRequest = pagerScreenState::dismissFolderEblanApplicationMenu,
                 onEditFolderApplicationInfo = onEditFolderApplicationInfo,
-                onDeleteFolderEblanApplicationInfoGridItems = onDeleteFolderEblanApplicationInfoGridItems
+                onDeleteFolderEblanApplicationInfoGridItems = onDeleteFolderEblanApplicationInfoGridItems,
             )
         }
 
@@ -1636,9 +1636,9 @@ internal fun PagerScreen(
                         onUpdateGridItemSource = onUpdateGridItemSource,
                         onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                         onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
-                        onResetFolderEblanApplicationInfoPopupEntries = onResetFolderEblanApplicationInfoPopupEntries
+                        onResetFolderEblanApplicationInfoPopupEntries = onResetFolderEblanApplicationInfoPopupEntries,
                     )
-                }
+                },
             )
         }
 
@@ -1650,7 +1650,7 @@ internal fun PagerScreen(
             overlayIntSize = pagerScreenState.overlayIntSize,
             screenWidth = screenWidth,
             sharedElementKey = pagerScreenState.sharedElementKey,
-            onResetOverlay = pagerScreenState::resetOverlay
+            onResetOverlay = pagerScreenState::resetOverlay,
         )
     }
 }
@@ -1670,7 +1670,7 @@ private fun SharedTransitionScope.OverlayImage(
     // Modifier
     modifier: Modifier = Modifier,
     // Callbacks
-    onResetOverlay: () -> Unit
+    onResetOverlay: () -> Unit,
 ) {
     if (overlayImageBitmap == null ||
         sharedElementKey == null ||
@@ -1751,7 +1751,7 @@ private fun SyncDataEffect(
     onShortcutsChanged: (
         serialNumber: Long,
         packageName: String,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val appWidgetHost = LocalAppWidgetHost.current
@@ -1834,7 +1834,7 @@ private fun GridPagerIndicator(
     swipeUp: EblanAction,
     swipeDown: EblanAction,
     // Appearance
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     if (!showPageIndicator) return
 
@@ -1856,7 +1856,7 @@ private fun GridPagerIndicator(
                 gridHorizontalPagerState = gridHorizontalPagerState,
                 pageCount = pageCount,
                 infiniteScroll = infiniteScroll,
-                color = color
+                color = color,
             )
         } else if (swipeUp.eblanActionType == EblanActionType.OpenAppDrawer) {
             Image(

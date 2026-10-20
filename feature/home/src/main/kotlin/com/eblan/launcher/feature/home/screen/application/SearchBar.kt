@@ -59,7 +59,7 @@ internal fun ApplicationSearchBar(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     // Layout
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -68,7 +68,7 @@ internal fun ApplicationSearchBar(
             backgroundColor = backgroundColor,
             customBackgroundColor = customBackgroundColor,
             systemTextColor = systemTextColor,
-            systemCustomTextColor = systemCustomTextColor
+            systemCustomTextColor = systemCustomTextColor,
         )
 
     SearchBar(
@@ -120,7 +120,7 @@ private fun getSearchBarColors(
     customBackgroundColor: Int,
     // Text Colors
     systemTextColor: TextColor,
-    systemCustomTextColor: Int
+    systemCustomTextColor: Int,
 ): SearchBarColors {
     val containerColor = when (backgroundColor) {
         BackgroundColor.System -> MaterialTheme.colorScheme.surfaceContainerHigh
@@ -134,7 +134,7 @@ private fun getSearchBarColors(
         customBackgroundColor = customBackgroundColor,
         systemTextColor = systemTextColor,
         systemCustomTextColor = systemCustomTextColor,
-        defaultColor = MaterialTheme.colorScheme.onSurface
+        defaultColor = MaterialTheme.colorScheme.onSurface,
     )
 
     val searchBarColors = SearchBarDefaults.colors(

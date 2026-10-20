@@ -43,7 +43,7 @@ internal fun handleGridItem(
     onAddedToHomeScreenToast: (String) -> Unit,
     onLaunch: (Intent) -> Unit,
     onUpdateAppWidgetId: (Int) -> Unit,
-    onUpdateGridItemCache: (GridItem) -> Unit
+    onUpdateGridItemCache: (GridItem) -> Unit,
 ) {
     val data = gridItem?.data ?: return
 
@@ -59,7 +59,7 @@ internal fun handleGridItem(
             gridItem = gridItem,
             userHandle = userHandle,
             onLaunch = onLaunch,
-            onUpdateGridItemCache = onUpdateGridItemCache
+            onUpdateGridItemCache = onUpdateGridItemCache,
         )
 
         onAddedToHomeScreenToast(
@@ -82,7 +82,7 @@ internal fun onAddPinWidget(
     userHandle: UserHandle,
     // Actions
     onLaunch: (Intent) -> Unit,
-    onUpdateGridItemCache: (GridItem) -> Unit
+    onUpdateGridItemCache: (GridItem) -> Unit,
 ) {
     val provider = ComponentName.unflattenFromString(data.componentName)
 
@@ -113,7 +113,7 @@ internal fun handleAppWidgetLauncherResult(
     gridItem: GridItem?,
     // Callbacks
     onDeleteAppWidgetId: () -> Unit,
-    onUpdateGridItemCache: (GridItem) -> Unit
+    onUpdateGridItemCache: (GridItem) -> Unit,
 ) {
     val data = gridItem?.data as? GridItemData.Widget ?: return
 
@@ -139,7 +139,7 @@ internal fun handleIsBoundWidget(
     pinItemRequest: PinItemRequest?,
     // Actions
     onDeleteGridItem: (GridItem) -> Unit,
-    onUpdateGridItems: () -> Unit
+    onUpdateGridItems: () -> Unit,
 ) {
     if (gridItem == null || !isBoundWidget || pinItemRequest == null) return
 
@@ -162,7 +162,7 @@ internal fun handleDeleteAppWidgetId(
     deleteAppWidgetId: Boolean,
     // Grid Item
     gridItem: GridItem?,
-    onDeleteGridItem: (GridItem) -> Unit
+    onDeleteGridItem: (GridItem) -> Unit,
 ) {
     val data = gridItem?.data as? GridItemData.Widget ?: return
 
