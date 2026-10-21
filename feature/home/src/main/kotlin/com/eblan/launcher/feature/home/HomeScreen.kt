@@ -747,18 +747,23 @@ private fun Success(
 
             Screen.EditDockGridPage -> {
                 EditDockGridPageScreen(
+                    // Content
                     pageItems = pageItems,
                     folderPopupGridItems = folderPopups,
                     hasShortcutHostPermission = homeData.hasShortcutHostPermission,
+                    // Settings
                     homeSettings = homeData.userData.homeSettings,
                     folderSettings = homeData.userData.folderSettings,
+                    // Appearance
                     textColor = textColor,
                     systemTextColor = textColor,
                     systemCustomTextColor = homeData.userData.homeSettings.gridItemSettings.customTextColor,
                     folderBackgroundColor = homeData.userData.folderSettings.folderBackgroundColor,
                     customFolderBackgroundColor = homeData.userData.folderSettings.customFolderBackgroundColor,
                     iconPackFilePaths = homeData.iconPackFilePaths,
+                    // Layout
                     paddingValues = paddingValues,
+                    // Callbacks
                     onSaveEditPage = onSaveEditPage,
                     onUpdateScreen = onUpdateScreen,
                 )
