@@ -26,11 +26,17 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 
+/** Deletes an icon-pack record and its cached icon files. */
 class DeleteIconPackInfoUseCase @Inject constructor(
     private val fileManager: FileManager,
     private val eblanIconPackInfoRepository: EblanIconPackInfoRepository,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Removes the stored icon-pack information and cache directory when the record exists.
+     *
+     * @param iconPackPackageName The package name identifying the icon pack.
+     */
     suspend operator fun invoke(iconPackPackageName: String) {
         withContext(ioDispatcher) {
             val eblanIconPackInfo =

@@ -40,11 +40,15 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 fun <T> RadioOptionsDialog(
+    // Content
     title: String,
-    modifier: Modifier = Modifier,
     options: List<T>,
     selected: T,
+    // Layout
+    modifier: Modifier = Modifier,
+    // Content
     label: @Composable (T) -> String,
+    // Events
     onDismissRequest: () -> Unit,
     onUpdateClick: (T) -> Unit,
 ) {

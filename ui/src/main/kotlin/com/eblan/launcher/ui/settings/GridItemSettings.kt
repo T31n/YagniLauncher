@@ -59,8 +59,11 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 fun GridItemSettings(
-    modifier: Modifier = Modifier,
+    // Settings
     gridItemSettings: GridItemSettings,
+    // Layout
+    modifier: Modifier = Modifier,
+    // Callbacks
     onUpdateGridItemSettings: (GridItemSettings) -> Unit,
 ) {
     var showIconSizeDialog by remember { mutableStateOf(false) }
@@ -357,11 +360,14 @@ fun TextColor.getSubtitle(): String = when (this) {
 
 @Composable
 internal fun CustomBackgroundColor(
-    modifier: Modifier = Modifier,
+    // Content
     index: Int,
     size: Int,
     title: String,
     customBackgroundColor: Int,
+    // Layout
+    modifier: Modifier = Modifier,
+    // Actions
     onClick: () -> Unit,
 ) {
     Card(
@@ -398,7 +404,9 @@ internal fun CustomBackgroundColor(
 
 @Composable
 private fun buildGridItemSettingsItems(
+    // Settings
     gridItemSettings: GridItemSettings,
+    // Actions
     onIconSizeClick: () -> Unit,
     onTextColorClick: () -> Unit,
     onTextSizeClick: () -> Unit,

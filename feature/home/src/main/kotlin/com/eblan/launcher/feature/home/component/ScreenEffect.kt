@@ -33,11 +33,14 @@ import kotlin.time.Duration.Companion.milliseconds
 @Composable
 @OptIn(FlowPreview::class)
 internal fun ScreenEffect(
-    drag: Drag,
+    // State
     isVisibleOverlay: Boolean,
-    screenHeight: Int,
-    swipeY: Float,
     textFieldState: TextFieldState,
+    // Gesture
+    drag: Drag,
+    swipeY: Float,
+    screenHeight: Int,
+    // Callbacks
     onDismiss: () -> Unit,
     onGetLabel: (String) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,

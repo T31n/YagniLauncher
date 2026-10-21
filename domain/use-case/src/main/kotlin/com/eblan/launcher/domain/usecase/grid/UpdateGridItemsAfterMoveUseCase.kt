@@ -34,12 +34,18 @@ import javax.inject.Inject
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
+/** Applies the result of a grid move, including combining items into folders when requested. */
 class UpdateGridItemsAfterMoveUseCase @Inject constructor(
     private val gridRepository: GridRepository,
     private val folderGridItemRepository: FolderGridItemRepository,
     private val userDataRepository: UserDataRepository,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Saves the move or applies the requested folder operation for the conflicting item.
+     *
+     * @param moveGridItemResult The result returned by the grid-item move operation.
+     */
     suspend operator fun invoke(moveGridItemResult: MoveGridItemResult) {
         withContext(defaultDispatcher) {
             val userData = userDataRepository.userDataFlow.first()
@@ -87,6 +93,7 @@ class UpdateGridItemsAfterMoveUseCase @Inject constructor(
         }
     }
 
+    /** Adds the moved item to an existing folder and assigns it the next child index. */
     private suspend fun addMovingGridItemIntoFolder(
         conflictingGridItem: GridItem,
         movingGridItem: GridItem,
@@ -131,6 +138,7 @@ class UpdateGridItemsAfterMoveUseCase @Inject constructor(
         )
     }
 
+    /** Creates a new folder containing the conflicting item followed by the moved item. */
     @OptIn(ExperimentalUuidApi::class)
     private suspend fun createNewFolder(
         conflictingGridItem: GridItem,

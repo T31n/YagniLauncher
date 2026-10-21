@@ -30,10 +30,13 @@ import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_ROWS
 
 @Composable
 internal fun <T> PreviewFolderGridLayout(
-    modifier: Modifier = Modifier,
+    // Data
     gridItems: List<T>?,
+    // Layout
+    modifier: Modifier = Modifier,
     previewColumns: Int = FOLDER_PREVIEW_COLUMNS,
     previewRows: Int = FOLDER_PREVIEW_ROWS,
+    // Content
     slotId: (T) -> String,
     content: @Composable BoxScope.(T) -> Unit,
 ) {
@@ -85,14 +88,21 @@ internal fun <T> PreviewFolderGridLayout(
 
 @Composable
 internal fun <T> FolderGridLayout(
-    modifier: Modifier = Modifier,
+    // Data
     gridItems: List<T>?,
+    // Grid structure
     columns: Int,
     rows: Int,
+    // Dimensions
     width: Int,
     height: Int,
+    // Animation
     animate: Boolean,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Item identification
     slotId: (T) -> String,
+    // Content
     content: @Composable BoxScope.(T) -> Unit,
 ) {
     SubcomposeLayout(modifier = modifier) { constraints ->
@@ -106,11 +116,11 @@ internal fun <T> FolderGridLayout(
             gridItems?.forEachIndexed { index, gridItem ->
                 subcompose(slotId(gridItem)) {
                     FolderGridLayoutContent(
+                        gridItem = gridItem,
                         index = index,
                         columns = columns,
                         cellWidth = cellWidth,
                         cellHeight = cellHeight,
-                        gridItem = gridItem,
                         animate = animate,
                         content = content,
                     )
@@ -134,13 +144,18 @@ internal fun <T> FolderGridLayout(
 
 @Composable
 private fun <T> FolderGridLayoutContent(
-    modifier: Modifier = Modifier,
+    // Item
+    gridItem: T,
     index: Int,
+    // Layout
     columns: Int,
     cellWidth: Int,
     cellHeight: Int,
-    gridItem: T,
+    // Animation
     animate: Boolean,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Content
     content: @Composable (BoxScope.(T) -> Unit),
 ) {
     val x = (index % columns) * cellWidth

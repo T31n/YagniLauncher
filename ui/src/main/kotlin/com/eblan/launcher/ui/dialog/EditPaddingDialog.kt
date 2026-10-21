@@ -39,9 +39,12 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun EditPaddingDialog(
-    modifier: Modifier = Modifier,
+    // Content
     title: String,
     padding: Int,
+    // Layout
+    modifier: Modifier = Modifier,
+    // Callbacks
     onDismissRequest: () -> Unit,
     onUpdatePadding: (Int) -> Unit,
 ) {

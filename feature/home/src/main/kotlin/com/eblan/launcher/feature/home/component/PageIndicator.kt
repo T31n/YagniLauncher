@@ -41,11 +41,14 @@ import kotlin.math.abs
 
 @Composable
 internal fun PageIndicator(
-    modifier: Modifier = Modifier,
-    color: Color,
+    // Pager state
     gridHorizontalPagerState: PagerState,
-    infiniteScroll: Boolean,
     pageCount: Int,
+    infiniteScroll: Boolean,
+    // Appearance
+    color: Color,
+    // Modifier
+    modifier: Modifier = Modifier,
 ) {
     if (pageCount < 1) return
 
@@ -56,12 +59,12 @@ internal fun PageIndicator(
     ) {
         repeat(pageCount) { index ->
             PageIndicatorContent(
-                modifier = modifier,
-                color = color,
                 gridHorizontalPagerState = gridHorizontalPagerState,
                 index = index,
-                infiniteScroll = infiniteScroll,
                 pageCount = pageCount,
+                infiniteScroll = infiniteScroll,
+                color = color,
+                modifier = modifier,
             )
         }
     }
@@ -69,12 +72,15 @@ internal fun PageIndicator(
 
 @Composable
 private fun PageIndicatorContent(
-    modifier: Modifier = Modifier,
-    color: Color,
+    // Pager state
     gridHorizontalPagerState: PagerState,
     index: Int,
-    infiniteScroll: Boolean,
     pageCount: Int,
+    infiniteScroll: Boolean,
+    // Appearance
+    color: Color,
+    // Modifier
+    modifier: Modifier = Modifier,
 ) {
     val baseWidth = 8.dp
     val baseHeight = 8.dp

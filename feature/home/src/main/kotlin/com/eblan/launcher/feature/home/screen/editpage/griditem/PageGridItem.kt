@@ -35,18 +35,23 @@ import com.eblan.launcher.feature.home.util.getVerticalArrangement
 
 @Composable
 internal fun PageGridItem(
-    modifier: Modifier = Modifier,
+    // Grid Item
     gridItem: GridItem,
     gridItemSettings: GridItemSettings,
-    hasShortcutHostPermission: Boolean,
-    textColor: TextColor,
     folderPopupGridItems: Map<String, FolderPopup>,
-    iconPackFilePaths: Map<String, String?>,
-    folderBackgroundColor: BackgroundColor,
-    customFolderBackgroundColor: Int,
+    // Permissions
+    hasShortcutHostPermission: Boolean,
+    // Styling
+    textColor: TextColor,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
+    folderBackgroundColor: BackgroundColor,
+    customFolderBackgroundColor: Int,
     folderCornerRadius: Int,
+    // Assets
+    iconPackFilePaths: Map<String, String?>,
+    // Modifier
+    modifier: Modifier = Modifier,
 ) {
     val currentGridItemSettings = if (gridItem.override) {
         gridItem.gridItemSettings
@@ -75,16 +80,16 @@ internal fun PageGridItem(
     when (val data = gridItem.data) {
         is GridItemData.ApplicationInfo ->
             ApplicationInfoGridItem(
-                modifier = modifier,
                 data = data,
                 gridItemSettings = currentGridItemSettings,
                 textColor = currentTextColor,
                 iconPackFilePaths = iconPackFilePaths,
+                maxLines = maxLines,
                 horizontalAlignment = horizontalAlignment,
                 verticalArrangement = verticalArrangement,
                 horizontalArrangement = horizontalArrangement,
                 verticalAlignment = verticalAlignment,
-                maxLines = maxLines,
+                modifier = modifier,
             )
 
         is GridItemData.Widget -> WidgetGridItem(
@@ -94,51 +99,51 @@ internal fun PageGridItem(
 
         is GridItemData.ShortcutInfo ->
             ShortcutInfoGridItem(
-                modifier = modifier,
                 data = data,
                 gridItemSettings = currentGridItemSettings,
                 hasShortcutHostPermission = hasShortcutHostPermission,
                 textColor = currentTextColor,
+                maxLines = maxLines,
                 horizontalAlignment = horizontalAlignment,
                 verticalArrangement = verticalArrangement,
                 horizontalArrangement = horizontalArrangement,
                 verticalAlignment = verticalAlignment,
-                maxLines = maxLines,
+                modifier = modifier,
             )
 
         is GridItemData.Folder ->
             FolderGridItem(
-                modifier = modifier,
                 gridItem = gridItem,
                 data = data,
                 gridItemSettings = currentGridItemSettings,
                 textColor = currentTextColor,
-                folderPopupGridItems = folderPopupGridItems,
-                hasShortcutHostPermission = hasShortcutHostPermission,
-                iconPackFilePaths = iconPackFilePaths,
-                horizontalAlignment = horizontalAlignment,
-                verticalArrangement = verticalArrangement,
-                horizontalArrangement = horizontalArrangement,
-                verticalAlignment = verticalAlignment,
-                maxLines = maxLines,
                 folderBackgroundColor = folderBackgroundColor,
                 customFolderBackgroundColor = customFolderBackgroundColor,
                 systemTextColor = systemTextColor,
                 systemCustomTextColor = systemCustomTextColor,
                 folderCornerRadius = folderCornerRadius,
-            )
-
-        is GridItemData.ShortcutConfig ->
-            ShortcutConfigGridItem(
-                modifier = modifier,
-                data = data,
-                gridItemSettings = currentGridItemSettings,
-                textColor = currentTextColor,
+                iconPackFilePaths = iconPackFilePaths,
+                hasShortcutHostPermission = hasShortcutHostPermission,
+                folderPopupGridItems = folderPopupGridItems,
+                maxLines = maxLines,
                 horizontalAlignment = horizontalAlignment,
                 verticalArrangement = verticalArrangement,
                 horizontalArrangement = horizontalArrangement,
                 verticalAlignment = verticalAlignment,
+                modifier = modifier,
+            )
+
+        is GridItemData.ShortcutConfig ->
+            ShortcutConfigGridItem(
+                data = data,
+                gridItemSettings = currentGridItemSettings,
+                textColor = currentTextColor,
                 maxLines = maxLines,
+                horizontalAlignment = horizontalAlignment,
+                verticalArrangement = verticalArrangement,
+                horizontalArrangement = horizontalArrangement,
+                verticalAlignment = verticalAlignment,
+                modifier = modifier,
             )
     }
 }

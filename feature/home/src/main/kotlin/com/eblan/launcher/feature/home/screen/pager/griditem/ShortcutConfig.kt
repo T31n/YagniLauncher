@@ -74,24 +74,28 @@ import kotlinx.coroutines.launch
 
 @Composable
 internal fun InteractiveShortcutConfigGridItem(
-    modifier: Modifier = Modifier,
-    sharedTransitionScope: SharedTransitionScope,
+    // Data
     data: GridItemData.ShortcutConfig,
     gridItem: GridItem,
+    // Settings and State
     gridItemSettings: GridItemSettings,
     isScrollInProgress: Boolean,
     isVisibleFolders: Boolean,
     isVisibleOverlay: Boolean,
-    sharedElementKey: SharedElementKey,
     textColor: Color,
     hasInteraction: Boolean,
     isVisibleWhiteBox: Boolean,
     animations: Boolean,
+    maxLines: Int,
+    // Layout and Animation
+    sharedTransitionScope: SharedTransitionScope,
+    sharedElementKey: SharedElementKey,
     horizontalAlignment: Alignment.Horizontal,
     verticalArrangement: Arrangement.Vertical,
     horizontalArrangement: Arrangement.Horizontal,
     verticalAlignment: Alignment.Vertical,
-    maxLines: Int,
+    modifier: Modifier = Modifier,
+    // Callbacks
     onOpenAppDrawer: () -> Unit,
     onLongPressGridItem: (
         gridItem: GridItem,
@@ -266,12 +270,12 @@ internal fun InteractiveShortcutConfigGridItem(
     }
 
     GridItemLayoutType(
-        modifier = itemModifier,
         gridItemSettings = gridItemSettings,
         horizontalAlignment = horizontalAlignment,
-        horizontalArrangement = horizontalArrangement,
         verticalAlignment = verticalAlignment,
+        horizontalArrangement = horizontalArrangement,
         verticalArrangement = verticalArrangement,
+        modifier = itemModifier,
         iconContent = iconContent,
         labelContent = labelContent,
         labelOnlyContent = labelOnlyContent,

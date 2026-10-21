@@ -49,11 +49,16 @@ import kotlin.math.hypot
 
 @Composable
 internal fun GridLayout(
-    modifier: Modifier = Modifier,
-    columns: Int,
+    // Data
     gridItems: List<GridItem>?,
+    // Grid dimensions
+    columns: Int,
     rows: Int,
+    // Animation
     animate: Boolean,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Content
     content: @Composable BoxScope.(GridItem) -> Unit,
 ) {
     SubcomposeLayout(modifier = modifier) { constraints ->
@@ -90,13 +95,18 @@ internal fun GridLayout(
 
 @Composable
 internal fun DotsGridLayout(
-    modifier: Modifier = Modifier,
+    // Grid dimensions
     columns: Int,
     rows: Int,
-    dragIntOffset: IntOffset,
-    textColor: TextColor,
+    // Item configuration
     gridItem: GridItem,
     gridItemSettings: GridItemSettings,
+    // Interaction state
+    dragIntOffset: IntOffset,
+    // Appearance
+    textColor: TextColor,
+    // Modifier
+    modifier: Modifier = Modifier,
 ) {
     var gridPositionInRoot by remember { mutableStateOf(Offset.Zero) }
 
@@ -192,10 +202,14 @@ internal fun DotsGridLayout(
 
 @Composable
 internal fun HorizontalAppDrawerGridLayout(
-    modifier: Modifier = Modifier,
-    columns: Int,
+    // Data
     eblanApplicationInfos: List<EblanApplicationInfo>?,
+    // Grid dimensions
     rows: Int,
+    columns: Int,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Content
     content: @Composable BoxScope.(EblanApplicationInfo) -> Unit,
 ) {
     SubcomposeLayout(modifier = modifier) { constraints ->
@@ -265,11 +279,16 @@ internal fun animateGridIntAsState(
 
 @Composable
 private fun GridLayoutItem(
-    modifier: Modifier = Modifier,
+    // Item data
     gridItem: GridItem,
+    // Dimensions
     cellWidth: Int,
     cellHeight: Int,
+    // Animation
     animate: Boolean,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Content
     content: @Composable (BoxScope.(GridItem) -> Unit),
 ) {
     val width = gridItem.columnSpan * cellWidth

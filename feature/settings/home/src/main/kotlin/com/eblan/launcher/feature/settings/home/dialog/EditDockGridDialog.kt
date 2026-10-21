@@ -40,9 +40,12 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun EditDockGridDialog(
-    modifier: Modifier = Modifier,
+    // Grid Dimensions
     dockColumns: Int,
     dockRows: Int,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Callbacks
     onDismissRequest: () -> Unit,
     onUpdateDockGrid: (
         dockColumns: Int,

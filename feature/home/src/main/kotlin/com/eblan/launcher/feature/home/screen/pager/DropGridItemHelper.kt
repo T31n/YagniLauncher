@@ -57,25 +57,30 @@ import com.eblan.launcher.framework.widgetmanager.AndroidAppWidgetManagerWrapper
 import java.io.File
 
 internal suspend fun handleDropGridItem(
+    // Context and Environment
+    context: Context,
+    density: Density,
+    layoutDirection: LayoutDirection,
+    // Android Wrappers
     androidAppWidgetHostWrapper: AndroidAppWidgetHostWrapper,
     androidAppWidgetManagerWrapper: AndroidAppWidgetManagerWrapper,
     androidLauncherAppsWrapper: AndroidLauncherAppsWrapper,
     androidUserManagerWrapper: AndroidUserManagerWrapper,
-    context: Context,
+    // Grid Dimensions and Layout
+    columns: Int,
+    rows: Int,
+    screenHeight: Int,
+    screenWidth: Int,
+    dockHeight: Int,
+    paddingValues: PaddingValues,
+    // Grid State and Data
     drag: Drag,
     gridItemSource: GridItemSource?,
     isDragging: Boolean,
     moveGridItemResult: MoveGridItemResult?,
     lockMovement: Boolean,
     isVisibleOverlay: Boolean,
-    columns: Int,
-    density: Density,
-    rows: Int,
-    paddingValues: PaddingValues,
-    screenHeight: Int,
-    screenWidth: Int,
-    dockHeight: Int,
-    layoutDirection: LayoutDirection,
+    // Callbacks
     onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
     onResetGrid: () -> Unit,
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
@@ -103,12 +108,12 @@ internal suspend fun handleDropGridItem(
     }
 
     val gridSize = calculateGridSize(
-        density = density,
-        paddingValues = paddingValues,
         screenWidth = screenWidth,
         screenHeight = screenHeight,
         dockHeight = dockHeight,
+        density = density,
         layoutDirection = layoutDirection,
+        paddingValues = paddingValues,
         associate = currentMoveGridItemResult.movingGridItem.associate,
     )
 
@@ -147,20 +152,20 @@ internal suspend fun handleDropGridItem(
 
         is GridItemSource.New ->
             handleNewGridItemSource(
+                context = context,
+                density = density,
                 androidAppWidgetHostWrapper = androidAppWidgetHostWrapper,
                 androidAppWidgetManagerWrapper = androidAppWidgetManagerWrapper,
                 androidLauncherAppsWrapper = androidLauncherAppsWrapper,
                 androidUserManagerWrapper = androidUserManagerWrapper,
                 columns = columns,
-                context = context,
-                currentMoveGridItemResult = currentMoveGridItemResult,
-                density = density,
+                rows = rows,
                 gridSize = gridSize,
                 isDragging = isDragging,
-                isMoveGridItemResultFailed = isMoveGridItemResultFailed,
                 isVisibleOverlay = isVisibleOverlay,
                 lockMovement = lockMovement,
-                rows = rows,
+                currentMoveGridItemResult = currentMoveGridItemResult,
+                isMoveGridItemResultFailed = isMoveGridItemResultFailed,
                 onLaunchShortcutConfigIntent = onLaunchShortcutConfigIntent,
                 onLaunchShortcutConfigIntentSenderRequest = onLaunchShortcutConfigIntentSenderRequest,
                 onLaunchWidgetIntent = onLaunchWidgetIntent,
@@ -189,19 +194,19 @@ internal suspend fun handleDropGridItem(
 
         is GridItemSource.Pin ->
             handlePinGridItemSource(
-                androidAppWidgetHostWrapper = androidAppWidgetHostWrapper,
-                androidAppWidgetManagerWrapper = androidAppWidgetManagerWrapper,
-                columns = columns,
                 context = context,
+                density = density,
+                columns = columns,
+                rows = rows,
+                gridSize = gridSize,
                 currentGridItemSource = currentGridItemSource,
                 currentMoveGridItemResult = currentMoveGridItemResult,
-                density = density,
-                gridSize = gridSize,
-                isDragging = isDragging,
                 isMoveGridItemResultFailed = isMoveGridItemResultFailed,
+                isDragging = isDragging,
                 isVisibleOverlay = isVisibleOverlay,
                 lockMovement = lockMovement,
-                rows = rows,
+                androidAppWidgetManagerWrapper = androidAppWidgetManagerWrapper,
+                androidAppWidgetHostWrapper = androidAppWidgetHostWrapper,
                 onLaunchWidgetIntent = onLaunchWidgetIntent,
                 onResetGrid = onResetGrid,
                 onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
@@ -215,9 +220,11 @@ internal suspend fun handleDropGridItem(
 }
 
 internal fun handleAppWidgetLauncherResult(
+    // Result
     androidAppWidgetManagerWrapper: AndroidAppWidgetManagerWrapper,
     moveGridItemResult: MoveGridItemResult?,
     result: ActivityResult,
+    // Configuration
     columns: Int,
     density: Density,
     rows: Int,
@@ -227,6 +234,7 @@ internal fun handleAppWidgetLauncherResult(
     layoutDirection: LayoutDirection,
     dockHeight: Int,
     lastAppWidgetId: Int,
+    // Callbacks
     onUpdateWidgetGridItem: (GridItem) -> Unit,
     onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
     onUpdateLastAppWidgetId: (Int) -> Unit,
@@ -236,12 +244,12 @@ internal fun handleAppWidgetLauncherResult(
     val data = movingGridItem.data as GridItemData.Widget
 
     val gridSize = calculateGridSize(
-        density = density,
-        paddingValues = paddingValues,
         screenWidth = screenWidth,
         screenHeight = screenHeight,
         dockHeight = dockHeight,
+        density = density,
         layoutDirection = layoutDirection,
+        paddingValues = paddingValues,
         associate = movingGridItem.associate,
     )
 
@@ -251,15 +259,15 @@ internal fun handleAppWidgetLauncherResult(
         val newData = data.copy(appWidgetId = appWidgetId)
 
         updateAppWidgetOptions(
-            height = with(density) { data.minHeight.dp.roundToPx() },
-            width = with(density) { data.minWidth.dp.roundToPx() },
             androidAppWidgetManagerWrapper = androidAppWidgetManagerWrapper,
-            columns = columns,
             data = newData,
+            width = with(density) { data.minWidth.dp.roundToPx() },
+            height = with(density) { data.minHeight.dp.roundToPx() },
             density = density,
-            gridHeight = gridSize.height,
-            gridWidth = gridSize.width,
+            columns = columns,
             rows = rows,
+            gridWidth = gridSize.width,
+            gridHeight = gridSize.height,
             startColumn = movingGridItem.startColumn,
             startRow = movingGridItem.startRow,
         )
@@ -275,9 +283,11 @@ internal fun handleAppWidgetLauncherResult(
 }
 
 internal fun handleConfigureLauncherResultEffect(
-    moveGridItemResult: MoveGridItemResult?,
+    // Result Data
     resultCode: Int?,
+    moveGridItemResult: MoveGridItemResult?,
     widgetGridItem: GridItem?,
+    // Actions
     onDeleteGridItem: (GridItem) -> Unit,
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
     onResetConfigureResultCode: () -> Unit,
@@ -303,11 +313,14 @@ internal fun handleConfigureLauncherResultEffect(
 }
 
 internal fun handleBoundWidgetEffect(
+    // Context and Host
     activity: Activity?,
     androidAppWidgetHostWrapper: AndroidAppWidgetHostWrapper,
+    // Widget Grid State
     gridItemSource: GridItemSource?,
     moveGridItemResult: MoveGridItemResult?,
     widgetGridItem: GridItem?,
+    // Callbacks
     onDeleteGridItem: (GridItem) -> Unit,
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
     onResetGrid: () -> Unit,
@@ -338,9 +351,9 @@ internal fun handleBoundWidgetEffect(
         is GridItemSource.Pin -> {
             bindPinWidget(
                 appWidgetId = data.appWidgetId,
-                moveGridItemResult = currentMoveGridItemResult,
                 pinItemRequest = currentGridItemSource.pinItemRequest,
                 updatedWidgetGridItem = widgetGridItem,
+                moveGridItemResult = currentMoveGridItemResult,
                 onDeleteGridItem = onDeleteGridItem,
                 onUpdateGridItemsAfterMove = onUpdateGridItemsAfterMove,
                 onResetGrid = onResetGrid,
@@ -353,10 +366,13 @@ internal fun handleBoundWidgetEffect(
 
 @Suppress("DEPRECATION")
 internal suspend fun handleShortcutConfigLauncherResult(
-    androidImageSerializer: AndroidImageSerializer,
-    moveGridItemResult: MoveGridItemResult?,
+    // Result Data
     result: ActivityResult,
+    moveGridItemResult: MoveGridItemResult?,
+    // Dependencies
     fileManager: FileManager,
+    androidImageSerializer: AndroidImageSerializer,
+    // Callbacks
     onDeleteGridItem: (GridItem) -> Unit,
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
     onResetGrid: () -> Unit,
@@ -422,13 +438,16 @@ internal suspend fun handleShortcutConfigLauncherResult(
 
 @Suppress("DEPRECATION")
 internal suspend fun handleShortcutConfigIntentSenderLauncherResult(
+    // Result Data
+    moveGridItemResult: MoveGridItemResult?,
+    result: ActivityResult,
+    // System Wrappers
     androidImageSerializer: AndroidImageSerializer,
     androidLauncherAppsWrapper: AndroidLauncherAppsWrapper,
     androidUserManagerWrapper: AndroidUserManagerWrapper,
     fileManager: FileManager,
-    moveGridItemResult: MoveGridItemResult?,
-    result: ActivityResult,
     iconKeyGenerator: IconKeyGenerator,
+    // Callbacks
     onDeleteGridItem: (GridItem) -> Unit,
     onUpdateShortcutConfigIntoShortcutInfoGridItem: (
         moveGridItemResult: MoveGridItemResult,
@@ -510,15 +529,19 @@ internal suspend fun handleShortcutConfigIntentSenderLauncherResult(
 }
 
 private fun onDragEndWidget(
+    // Widget Wrappers
     androidAppWidgetHostWrapper: AndroidAppWidgetHostWrapper,
     androidAppWidgetManagerWrapper: AndroidAppWidgetManagerWrapper,
+    // Widget Data
     data: GridItemData.Widget,
     gridItem: GridItem,
+    // Grid Metrics
     columns: Int,
     density: Density,
     gridHeight: Int,
     gridWidth: Int,
     rows: Int,
+    // Callbacks
     onLaunchWidgetIntent: (Intent) -> Unit,
     onUpdateAppWidgetId: (Int) -> Unit,
     onUpdateWidgetGridItem: (GridItem) -> Unit,
@@ -543,15 +566,15 @@ private fun onDragEndWidget(
         val minHeightPx = with(density) { data.minHeight.dp.roundToPx() }
 
         updateAppWidgetOptions(
-            height = minHeightPx,
-            width = minWidthPx,
             androidAppWidgetManagerWrapper = androidAppWidgetManagerWrapper,
-            columns = columns,
             data = newData,
+            width = minWidthPx,
+            height = minHeightPx,
             density = density,
-            gridHeight = gridHeight,
-            gridWidth = gridWidth,
+            columns = columns,
             rows = rows,
+            gridWidth = gridWidth,
+            gridHeight = gridHeight,
             startColumn = gridItem.startColumn,
             startRow = gridItem.startRow,
         )
@@ -573,9 +596,11 @@ private fun onDragEndWidget(
 }
 
 private fun onDragEndPinShortcut(
+    // Item Data
     gridItem: GridItem,
     moveGridItemResult: MoveGridItemResult,
     pinItemRequest: PinItemRequest?,
+    // Actions
     onDeleteGridItem: (GridItem) -> Unit,
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
@@ -602,10 +627,13 @@ private fun onDragEndPinShortcut(
 }
 
 private fun bindPinWidget(
+    // Widget Data
     appWidgetId: Int,
-    moveGridItemResult: MoveGridItemResult,
     pinItemRequest: PinItemRequest,
     updatedWidgetGridItem: GridItem,
+    // Grid Operations
+    moveGridItemResult: MoveGridItemResult,
+    // Callbacks
     onDeleteGridItem: (GridItem) -> Unit,
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
     onResetGrid: () -> Unit,
@@ -627,10 +655,13 @@ private fun bindPinWidget(
 }
 
 private suspend fun onDragEndShortcutConfig(
+    // System Wrappers
     androidLauncherAppsWrapper: AndroidLauncherAppsWrapper,
     androidUserManagerWrapper: AndroidUserManagerWrapper,
+    // Item Data
     data: GridItemData.ShortcutConfig,
     gridItem: GridItem,
+    // Callbacks
     onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
     onLaunchShortcutConfigIntent: (Intent) -> Unit,
     onLaunchShortcutConfigIntentSenderRequest: (IntentSenderRequest) -> Unit,
@@ -672,12 +703,15 @@ private suspend fun onDragEndShortcutConfig(
 }
 
 private fun startAppWidgetConfigureActivityForResult(
+    // Widget Configuration
     activity: Activity?,
     androidAppWidgetHostWrapper: AndroidAppWidgetHostWrapper,
     appWidgetId: Int,
     configure: String?,
+    // Grid Item State
     moveGridItemResult: MoveGridItemResult,
     updatedWidgetGridItem: GridItem,
+    // Callbacks
     onDeleteGridItem: (GridItem) -> Unit,
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
     onResetGrid: () -> Unit,
@@ -706,12 +740,15 @@ private fun startAppWidgetConfigureActivityForResult(
 }
 
 private fun calculateGridSize(
-    density: Density,
-    paddingValues: PaddingValues,
+    // Screen Dimensions
     screenWidth: Int,
     screenHeight: Int,
     dockHeight: Int,
+    // Layout Context
+    density: Density,
     layoutDirection: LayoutDirection,
+    paddingValues: PaddingValues,
+    // Configuration
     associate: Associate,
 ): IntSize {
     val leftPadding = with(density) {
@@ -756,11 +793,13 @@ private fun calculateGridSize(
 }
 
 private fun handleExistingGridItemSource(
+    // State
     currentMoveGridItemResult: MoveGridItemResult,
     isLongPress: Boolean,
     isMoveGridItemResultFailed: Boolean,
     isVisibleOverlay: Boolean,
     lockMovement: Boolean,
+    // Callbacks
     onResetGrid: () -> Unit,
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
@@ -796,11 +835,13 @@ private fun handleExistingGridItemSource(
 }
 
 private fun handleExistingFolderGridItemSource(
+    // State
     currentMoveGridItemResult: MoveGridItemResult,
     isLongPress: Boolean,
     isMoveGridItemResultFailed: Boolean,
     isVisibleOverlay: Boolean,
     lockMovement: Boolean,
+    // Callbacks
     onResetGrid: () -> Unit,
     onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
@@ -839,20 +880,24 @@ private fun handleExistingFolderGridItemSource(
 }
 
 private suspend fun handleNewGridItemSource(
+    // Context and System Wrappers
+    context: Context,
+    density: Density,
     androidAppWidgetHostWrapper: AndroidAppWidgetHostWrapper,
     androidAppWidgetManagerWrapper: AndroidAppWidgetManagerWrapper,
     androidLauncherAppsWrapper: AndroidLauncherAppsWrapper,
     androidUserManagerWrapper: AndroidUserManagerWrapper,
+    // Grid Configuration
     columns: Int,
-    context: Context,
-    currentMoveGridItemResult: MoveGridItemResult,
-    density: Density,
+    rows: Int,
     gridSize: IntSize,
+    // Grid State and Interaction
     isDragging: Boolean,
-    isMoveGridItemResultFailed: Boolean,
     isVisibleOverlay: Boolean,
     lockMovement: Boolean,
-    rows: Int,
+    currentMoveGridItemResult: MoveGridItemResult,
+    isMoveGridItemResultFailed: Boolean,
+    // Callbacks
     onLaunchShortcutConfigIntent: (Intent) -> Unit,
     onLaunchShortcutConfigIntentSenderRequest: (IntentSenderRequest) -> Unit,
     onLaunchWidgetIntent: (Intent) -> Unit,
@@ -938,13 +983,16 @@ private suspend fun handleNewGridItemSource(
 }
 
 private fun handleNewFolderGridItemSource(
+    // Context
     context: Context,
+    // State
     currentMoveGridItemResult: MoveGridItemResult,
     isDragging: Boolean,
     isMoveGridItemResultFailed: Boolean,
     isVisibleOverlay: Boolean,
     lockMovement: Boolean,
     folderGridItems: List<GridItem>,
+    // Callbacks
     onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
     onUpdateGridItemsAfterMoveNewFolder: (
         folderGridItems: List<GridItem>,
@@ -989,19 +1037,24 @@ private fun handleNewFolderGridItemSource(
 }
 
 private fun handlePinGridItemSource(
-    androidAppWidgetHostWrapper: AndroidAppWidgetHostWrapper,
-    androidAppWidgetManagerWrapper: AndroidAppWidgetManagerWrapper,
-    columns: Int,
+    // Context and Environment
     context: Context,
+    density: Density,
+    // Grid State and Dimensions
+    columns: Int,
+    rows: Int,
+    gridSize: IntSize,
     currentGridItemSource: GridItemSource.Pin,
     currentMoveGridItemResult: MoveGridItemResult,
-    density: Density,
-    gridSize: IntSize,
-    isDragging: Boolean,
     isMoveGridItemResultFailed: Boolean,
+    // Interaction and Visibility State
+    isDragging: Boolean,
     isVisibleOverlay: Boolean,
     lockMovement: Boolean,
-    rows: Int,
+    // Widget Wrappers
+    androidAppWidgetManagerWrapper: AndroidAppWidgetManagerWrapper,
+    androidAppWidgetHostWrapper: AndroidAppWidgetHostWrapper,
+    // Callbacks
     onLaunchWidgetIntent: (Intent) -> Unit,
     onResetGrid: () -> Unit,
     onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
@@ -1072,8 +1125,11 @@ private fun handlePinGridItemSource(
 }
 
 private fun cancelAndDeleteGridItem(
+    // Context
     context: Context,
+    // Grid Item
     moveGridItemResult: MoveGridItemResult,
+    // Callbacks
     onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,

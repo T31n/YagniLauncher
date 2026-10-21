@@ -74,13 +74,15 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 internal fun ScrollBarType(
-    modifier: Modifier = Modifier,
+    // Content and State
     alphabeticalScrollBarItems: List<AlphabeticalScrollBarItem>,
-    appDrawerSettings: AppDrawerSettings,
-    canScroll: Boolean,
     lazyGridState: LazyGridState,
+    canScroll: Boolean,
+    // Layout and Appearance
+    appDrawerSettings: AppDrawerSettings,
     paddingValues: PaddingValues,
     isPrivateSpaceEntryPointHidden: Boolean,
+    modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier.fillMaxHeight(),
@@ -89,11 +91,11 @@ internal fun ScrollBarType(
         when (appDrawerSettings.scrollBarType) {
             ScrollBarType.ScrollBar -> {
                 ScrollBarThumb(
-                    appDrawerColumns = appDrawerSettings.appDrawerColumns,
                     lazyGridState = lazyGridState,
+                    canScroll = canScroll,
+                    appDrawerColumns = appDrawerSettings.appDrawerColumns,
                     paddingValues = paddingValues,
                     searchBarPosition = appDrawerSettings.searchBarPosition,
-                    canScroll = canScroll,
                     isPrivateSpaceEntryPointHidden = isPrivateSpaceEntryPointHidden,
                     onScrollToItem = lazyGridState::scrollToItem,
                 )
@@ -118,11 +120,16 @@ internal fun ScrollBarType(
 
 @Composable
 internal fun AlphabeticalScrollBar(
-    modifier: Modifier = Modifier,
+    // Data
     alphabeticalScrollBarItems: List<AlphabeticalScrollBarItem>,
+    // Layout
     paddingValues: PaddingValues,
     searchBarPosition: SearchBarPosition,
+    // State
     canScroll: Boolean,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Callbacks
     onScrollToItem: suspend (Int) -> Unit,
 ) {
     if (!canScroll) return
@@ -248,13 +255,17 @@ internal fun AlphabeticalScrollBar(
 
 @Composable
 private fun ScrollBarThumb(
-    modifier: Modifier = Modifier,
-    appDrawerColumns: Int,
+    // Grid State
     lazyGridState: LazyGridState,
+    canScroll: Boolean,
+    // Layout
+    appDrawerColumns: Int,
     paddingValues: PaddingValues,
     searchBarPosition: SearchBarPosition,
-    canScroll: Boolean,
     isPrivateSpaceEntryPointHidden: Boolean,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Grid State
     onScrollToItem: suspend (Int) -> Unit,
 ) {
     if (!canScroll) return
@@ -291,10 +302,10 @@ private fun ScrollBarThumb(
             getViewPortThumbY(
                 lazyGridState = lazyGridState,
                 appDrawerColumns = appDrawerColumns,
-                density = density,
-                thumbHeight = thumbHeight,
-                bottomPadding = bottomPaddingPx,
                 headerHeightPx = headerHeightPx,
+                bottomPadding = bottomPaddingPx,
+                thumbHeight = thumbHeight,
+                density = density,
             )
         }
     }
@@ -322,13 +333,13 @@ private fun ScrollBarThumb(
                 detectTapGestures(
                     onTap = {
                         scrollToTap(
+                            lazyGridState = lazyGridState,
+                            scope = scope,
                             appDrawerColumns = appDrawerColumns,
                             bottomPaddingPx = bottomPaddingPx,
                             density = density,
-                            lazyGridState = lazyGridState,
-                            offset = it,
-                            scope = scope,
                             thumbHeight = thumbHeight,
+                            offset = it,
                             onScrollToItem = onScrollToItem,
                         )
                     },
@@ -359,14 +370,14 @@ private fun ScrollBarThumb(
                         },
                         onDrag = { _, dragAmount ->
                             scrollToDrag(
-                                appDrawerColumns = appDrawerColumns,
-                                bottomPaddingPx = bottomPaddingPx,
-                                deltaY = dragAmount.y,
-                                density = density,
-                                headerHeightPx = headerHeightPx,
                                 lazyGridState = lazyGridState,
                                 scope = scope,
+                                appDrawerColumns = appDrawerColumns,
+                                headerHeightPx = headerHeightPx,
+                                bottomPaddingPx = bottomPaddingPx,
                                 thumbHeight = thumbHeight,
+                                density = density,
+                                deltaY = dragAmount.y,
                                 thumbY = thumbY,
                                 onScrollToItem = onScrollToItem,
                                 onUpdateThumbY = {
@@ -410,13 +421,17 @@ private fun rememberHasPrivateSpaceStickyHeader(
 }
 
 private fun scrollToTap(
+    // State and Scope
+    lazyGridState: LazyGridState,
+    scope: CoroutineScope,
+    // Layout Dimensions
     appDrawerColumns: Int,
     bottomPaddingPx: Int,
     density: Density,
-    lazyGridState: LazyGridState,
-    offset: Offset,
-    scope: CoroutineScope,
     thumbHeight: Dp,
+    // Interaction
+    offset: Offset,
+    // Callbacks
     onScrollToItem: suspend (Int) -> Unit,
 ) {
     val viewportHeight = lazyGridState.layoutInfo.viewportSize.height - bottomPaddingPx
@@ -443,15 +458,19 @@ private fun scrollToTap(
 }
 
 private fun scrollToDrag(
-    appDrawerColumns: Int,
-    bottomPaddingPx: Int,
-    deltaY: Float,
-    density: Density,
-    headerHeightPx: Int,
+    // State and Scope
     lazyGridState: LazyGridState,
     scope: CoroutineScope,
+    // Layout Dimensions
+    appDrawerColumns: Int,
+    headerHeightPx: Int,
+    bottomPaddingPx: Int,
     thumbHeight: Dp,
+    density: Density,
+    // Gesture and Position
+    deltaY: Float,
     thumbY: Float,
+    // Callbacks
     onScrollToItem: suspend (Int) -> Unit,
     onUpdateThumbY: (Float) -> Unit,
 ) {
@@ -514,12 +533,15 @@ private fun scrollToDrag(
 }
 
 private fun getViewPortThumbY(
+    // Grid State
     lazyGridState: LazyGridState,
+    // Layout Dimensions
     appDrawerColumns: Int,
-    density: Density,
-    thumbHeight: Dp,
-    bottomPadding: Int,
     headerHeightPx: Int,
+    bottomPadding: Int,
+    thumbHeight: Dp,
+    // Rendering Environment
+    density: Density,
 ): Float {
     val layoutInfo = lazyGridState.layoutInfo
     val visibleItemsInfo = layoutInfo.visibleItemsInfo

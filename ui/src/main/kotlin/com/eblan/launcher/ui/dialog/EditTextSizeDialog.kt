@@ -39,8 +39,11 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun EditTextSizeDialog(
-    modifier: Modifier = Modifier,
+    // Text State
     textSize: Int,
+    // Layout
+    modifier: Modifier = Modifier,
+    // Actions
     onDismissRequest: () -> Unit,
     onUpdateTextSize: (Int) -> Unit,
 ) {

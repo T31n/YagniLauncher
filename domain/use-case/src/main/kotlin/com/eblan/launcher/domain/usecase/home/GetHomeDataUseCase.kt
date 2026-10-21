@@ -37,6 +37,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
+/** Combines home settings and grid contents into the data needed to render the home screen. */
 class GetHomeDataUseCase @Inject constructor(
     private val userDataRepository: UserDataRepository,
     private val launcherAppsWrapper: LauncherAppsWrapper,
@@ -46,6 +47,13 @@ class GetHomeDataUseCase @Inject constructor(
     private val iconKeyGenerator: IconKeyGenerator,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Emits top-level grid items grouped by page, together with permissions and icon-pack paths.
+     *
+     * Invalidly positioned items are omitted from the page groups but remain in the full item list.
+     *
+     * @return A flow of home-screen data that updates with settings and grid changes.
+     */
     operator fun invoke(): Flow<HomeData> = combine(
         userDataRepository.userDataFlow,
         gridRepository.gridItemsFlow,

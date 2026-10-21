@@ -77,12 +77,12 @@ internal fun EditFolderApplicationInfoRoute(
     val folderEblanApplicationInfoPopups by viewModel.folderEblanApplicationInfoPopups.collectAsStateWithLifecycle()
 
     EditFolderApplicationInfoScreen(
-        modifier = modifier,
         editFolderApplicationInfoUiState = editFolderApplicationInfoUiState,
         iconPackComponents = iconPackInfoComponents,
         packageManagerIconPacks = packageManagerIconPackInfos,
         folderEblanApplicationInfos = folderEblanApplicationInfos,
         folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+        modifier = modifier,
         onNavigateUp = onNavigateUp,
         onUpdateIconPackPackageName = viewModel::updateIconPackPackageName,
         onResetFolderEblanApplicationInfoCustomIcon = viewModel::resetFolderEblanApplicationInfoCustomIcon,
@@ -97,12 +97,16 @@ internal fun EditFolderApplicationInfoRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun EditFolderApplicationInfoScreen(
-    modifier: Modifier = Modifier,
+    // State
     editFolderApplicationInfoUiState: EditFolderApplicationInfoUiState,
+    // Data
     iconPackComponents: List<IconPackComponent>,
     packageManagerIconPacks: List<PackageManagerIconPack>,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Callbacks
     onNavigateUp: () -> Unit,
     onUpdateIconPackPackageName: (String) -> Unit,
     onResetFolderEblanApplicationInfoCustomIcon: (FolderEblanApplicationInfo) -> Unit,
@@ -145,11 +149,11 @@ internal fun EditFolderApplicationInfoScreen(
             ) {
                 Success(
                     folderEblanApplicationInfo = editFolderApplicationInfoUiState.folderEblanApplicationInfo,
+                    folderEblanApplicationInfos = folderEblanApplicationInfos,
+                    topLevelFolderEblanApplicationInfos = folderEblanApplicationInfos,
+                    folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                     iconPackComponents = iconPackComponents,
                     packageManagerIconPacks = packageManagerIconPacks,
-                    folderEblanApplicationInfos = folderEblanApplicationInfos,
-                    folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
-                    topLevelFolderEblanApplicationInfos = folderEblanApplicationInfos,
                     onUpdateIconPackPackageName = onUpdateIconPackPackageName,
                     onResetFolderEblanApplicationInfoCustomIcon = onResetFolderEblanApplicationInfoCustomIcon,
                     onUpdateFolderEblanApplicationInfoCustomIcon = onUpdateFolderEblanApplicationInfoCustomIcon,
@@ -165,13 +169,17 @@ internal fun EditFolderApplicationInfoScreen(
 
 @Composable
 internal fun Success(
-    modifier: Modifier = Modifier,
+    // Application Info
     folderEblanApplicationInfo: FolderEblanApplicationInfo,
+    folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
+    // Icon Packs
     iconPackComponents: List<IconPackComponent>,
     packageManagerIconPacks: List<PackageManagerIconPack>,
-    folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
-    folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
-    topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Actions
     onUpdateIconPackPackageName: (String) -> Unit,
     onResetFolderEblanApplicationInfoCustomIcon: (FolderEblanApplicationInfo) -> Unit,
     onUpdateFolderEblanApplicationInfoCustomIcon: (
@@ -238,8 +246,8 @@ internal fun Success(
         Folders(
             folderEblanApplicationInfo = folderEblanApplicationInfo,
             folderEblanApplicationInfos = folderEblanApplicationInfos,
-            folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
             topLevelFolderEblanApplicationInfos = topLevelFolderEblanApplicationInfos,
+            folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
             onUpdateFolderEblanApplicationInfo = onUpdateFolderEblanApplicationInfo,
             onAddFolderEblanApplicationInfo = onAddFolderEblanApplicationInfo,
         )
@@ -282,11 +290,14 @@ internal fun Success(
 
 @Composable
 private fun Folders(
-    modifier: Modifier = Modifier,
+    // Data
     folderEblanApplicationInfo: FolderEblanApplicationInfo,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
-    folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Callbacks
     onUpdateFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
     onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
 ) {
@@ -301,9 +312,9 @@ private fun Folders(
     FlowRow(modifier = modifier.fillMaxWidth()) {
         folderEblanApplicationInfos.forEach {
             FolderEblanApplicationInfoItem(
-                folderEblanApplicationInfo = folderEblanApplicationInfo,
                 id = it.id,
                 label = it.label,
+                folderEblanApplicationInfo = folderEblanApplicationInfo,
                 folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                 onUpdateFolderEblanApplicationInfo = onUpdateFolderEblanApplicationInfo,
             )
@@ -329,11 +340,15 @@ private fun Folders(
 
 @Composable
 private fun FolderEblanApplicationInfoItem(
-    modifier: Modifier = Modifier,
-    folderEblanApplicationInfo: FolderEblanApplicationInfo,
+    // Identity
     id: String,
     label: String,
+    // Content
+    folderEblanApplicationInfo: FolderEblanApplicationInfo,
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
+    // Layout
+    modifier: Modifier = Modifier,
+    // Callbacks
     onUpdateFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
 ) {
     val folderIndex = remember(

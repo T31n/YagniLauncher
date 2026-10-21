@@ -103,15 +103,20 @@ import com.eblan.launcher.common.R as commonR
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ShortcutConfigScreen(
-    modifier: Modifier = Modifier,
+    // Configuration
     eblanShortcutConfigs: Map<EblanUser, Map<EblanApplicationInfoGroup, List<EblanShortcutConfig>>>,
     gridItemSettings: GridItemSettings,
     paddingValues: PaddingValues,
+    // Layout
     screenHeight: Int,
+    // Animation and State
     swipeY: Float,
     alpha: Float,
     isVisibleOverlay: Boolean,
     drag: Drag,
+    // Layout
+    modifier: Modifier = Modifier,
+    // Callbacks
     onDismiss: () -> Unit,
     onGetEblanShortcutConfigsByLabel: (String) -> Unit,
     onVerticalDrag: (Float) -> Unit,
@@ -139,11 +144,11 @@ internal fun ShortcutConfigScreen(
     val scope = rememberCoroutineScope()
 
     ScreenEffect(
-        drag = drag,
         isVisibleOverlay = isVisibleOverlay,
-        screenHeight = screenHeight,
-        swipeY = swipeY,
         textFieldState = textFieldState,
+        drag = drag,
+        swipeY = swipeY,
+        screenHeight = screenHeight,
         onDismiss = onDismiss,
         onGetLabel = onGetEblanShortcutConfigsByLabel,
         onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
@@ -280,13 +285,17 @@ private fun EblanShortcutConfigTabRow(
 
 @Composable
 private fun EblanShortcutConfigsPage(
-    modifier: Modifier = Modifier,
+    // Content
     eblanShortcutConfigs: Map<EblanUser, Map<EblanApplicationInfoGroup, List<EblanShortcutConfig>>>,
+    // Layout
     gridItemSettings: GridItemSettings,
     index: Int,
     paddingValues: PaddingValues,
     swipeY: Float,
     isVisibleOverlay: Boolean,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Actions
     onDragEnd: () -> Unit,
     onVerticalDrag: (Float) -> Unit,
     onDragShortcutConfig: (
@@ -328,11 +337,11 @@ private fun EblanShortcutConfigsPage(
             items(eblanShortcutConfigs[serialNumber].orEmpty().keys.toList()) { eblanApplicationInfoGroup ->
                 key(eblanApplicationInfoGroup.serialNumber, eblanApplicationInfoGroup.packageName) {
                     EblanApplicationInfoItem(
-                        modifier = modifier,
                         eblanApplicationInfoGroup = eblanApplicationInfoGroup,
                         eblanShortcutConfigs = eblanShortcutConfigs[serialNumber].orEmpty(),
                         gridItemSettings = gridItemSettings,
                         isVisibleOverlay = isVisibleOverlay,
+                        modifier = modifier,
                         onDragShortcutConfig = onDragShortcutConfig,
                     )
                 }
@@ -343,11 +352,14 @@ private fun EblanShortcutConfigsPage(
 
 @Composable
 private fun EblanApplicationInfoItem(
-    modifier: Modifier = Modifier,
+    // Content Data
     eblanApplicationInfoGroup: EblanApplicationInfoGroup,
     eblanShortcutConfigs: Map<EblanApplicationInfoGroup, List<EblanShortcutConfig>>,
+    // Appearance and Layout
     gridItemSettings: GridItemSettings,
     isVisibleOverlay: Boolean,
+    modifier: Modifier = Modifier,
+    // Interactions
     onDragShortcutConfig: (
         gridItem: GridItem,
         imageBitmap: ImageBitmap,
@@ -414,10 +426,13 @@ private fun EblanApplicationInfoItem(
 
 @Composable
 private fun EblanShortcutConfigItem(
-    modifier: Modifier = Modifier,
+    // Content
     eblanShortcutConfig: EblanShortcutConfig,
     gridItemSettings: GridItemSettings,
     isVisibleOverlay: Boolean,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Callbacks
     onDragShortcutConfig: (
         gridItem: GridItem,
         imageBitmap: ImageBitmap,
@@ -448,10 +463,10 @@ private fun EblanShortcutConfigItem(
                         scope.launch {
                             handleOnLongPress(
                                 eblanShortcutConfig = eblanShortcutConfig,
-                                graphicsLayer = graphicsLayer,
                                 gridItemSettings = gridItemSettings,
                                 intOffset = intOffset,
                                 intSize = intSize,
+                                graphicsLayer = graphicsLayer,
                                 keyboardController = keyboardController,
                                 onDragShortcutConfig = onDragShortcutConfig,
                             )
@@ -493,12 +508,17 @@ private fun EblanShortcutConfigItem(
 
 @OptIn(ExperimentalUuidApi::class)
 private suspend fun handleOnLongPress(
+    // Settings and Configuration
     eblanShortcutConfig: EblanShortcutConfig,
-    graphicsLayer: GraphicsLayer,
     gridItemSettings: GridItemSettings,
+    // Position and Dimensions
     intOffset: IntOffset,
     intSize: IntSize,
+    // Rendering
+    graphicsLayer: GraphicsLayer,
+    // Input Control
     keyboardController: SoftwareKeyboardController?,
+    // Callbacks
     onDragShortcutConfig: (
         gridItem: GridItem,
         imageBitmap: ImageBitmap,

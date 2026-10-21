@@ -44,6 +44,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+/** Refreshes application, widget, shortcut, and shortcut-configuration data after a package change. */
 class ChangePackageUseCase @Inject constructor(
     private val packageManagerWrapper: PackageManagerWrapper,
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
@@ -61,6 +62,12 @@ class ChangePackageUseCase @Inject constructor(
     private val userDataRepository: UserDataRepository,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Refreshes the installed components associated with a package for the specified user profile.
+     *
+     * @param serialNumber The user profile where the package is installed.
+     * @param packageName The package whose components changed.
+     */
     suspend operator fun invoke(
         serialNumber: Long,
         packageName: String,
@@ -90,6 +97,7 @@ class ChangePackageUseCase @Inject constructor(
         }
     }
 
+    /** Reconciles application activities and shortcut-configuration records with the package manager. */
     private suspend fun updateEblanApplicationInfo(
         packageName: String,
         serialNumber: Long,
@@ -176,6 +184,7 @@ class ChangePackageUseCase @Inject constructor(
         )
     }
 
+    /** Reconciles widget-provider metadata and updates or removes related grid-item data. */
     private suspend fun updateEblanAppWidgetProviderInfo(
         serialNumber: Long,
         packageName: String,
@@ -234,6 +243,7 @@ class ChangePackageUseCase @Inject constructor(
         )
     }
 
+    /** Reconciles launcher shortcuts and updates or removes their grid-item data. */
     private suspend fun updateEblanShortcutInfo(
         serialNumber: Long,
         packageName: String,
@@ -284,6 +294,7 @@ class ChangePackageUseCase @Inject constructor(
         )
     }
 
+    /** Reconciles shortcut-configuration activities and their grid-item data for this package. */
     private suspend fun updateEblanShortcutConfigs(
         serialNumber: Long,
         packageName: String,

@@ -78,27 +78,32 @@ import kotlinx.coroutines.launch
 
 @Composable
 internal fun InteractiveApplicationInfoGridItem(
-    modifier: Modifier = Modifier,
-    sharedTransitionScope: SharedTransitionScope,
-    data: GridItemData.ApplicationInfo,
+    // Grid Item Data
     gridItem: GridItem,
+    data: GridItemData.ApplicationInfo,
     gridItemSettings: GridItemSettings,
+    // State
     isScrollInProgress: Boolean,
+    hasInteraction: Boolean,
+    animations: Boolean,
+    statusBarNotifications: Map<String, Int>,
+    iconPackFilePaths: Map<String, String?>,
+    // Visual Properties
+    textColor: Color,
+    maxLines: Int,
     isVisibleFolders: Boolean,
     isVisibleOverlay: Boolean,
-    sharedElementKey: SharedElementKey,
-    statusBarNotifications: Map<String, Int>,
-    textColor: Color,
-    hasInteraction: Boolean,
     isVisibleWhiteBox: Boolean,
+    // Layout and Animation
+    sharedTransitionScope: SharedTransitionScope,
+    sharedElementKey: SharedElementKey,
     sourceBounds: Rect,
-    iconPackFilePaths: Map<String, String?>,
-    animations: Boolean,
     horizontalAlignment: Alignment.Horizontal,
     verticalArrangement: Arrangement.Vertical,
     horizontalArrangement: Arrangement.Horizontal,
     verticalAlignment: Alignment.Vertical,
-    maxLines: Int,
+    modifier: Modifier = Modifier,
+    // Callbacks
     onOpenAppDrawer: () -> Unit,
     onLongPressGridItem: (
         gridItem: GridItem,
@@ -284,12 +289,12 @@ internal fun InteractiveApplicationInfoGridItem(
     }
 
     GridItemLayoutType(
-        modifier = itemModifier,
         gridItemSettings = gridItemSettings,
         horizontalAlignment = horizontalAlignment,
-        horizontalArrangement = horizontalArrangement,
         verticalAlignment = verticalAlignment,
+        horizontalArrangement = horizontalArrangement,
         verticalArrangement = verticalArrangement,
+        modifier = itemModifier,
         iconContent = iconContent,
         labelContent = labelContent,
         labelOnlyContent = labelOnlyContent,

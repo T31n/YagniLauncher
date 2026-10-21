@@ -94,23 +94,26 @@ import kotlin.uuid.Uuid
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun WidgetScreen(
-    modifier: Modifier = Modifier,
-    alpha: Float,
+    // Required
     columns: Int,
-    drag: Drag,
-    eblanAppWidgetProviderInfos: Map<EblanApplicationInfoGroup, List<EblanAppWidgetProviderInfo>>,
-    gridItemSettings: GridItemSettings,
+    rows: Int,
+    screenWidth: Int,
+    screenHeight: Int,
+    alpha: Float,
     isVisibleOverlay: Boolean,
     paddingValues: PaddingValues,
-    rows: Int,
-    screenHeight: Int,
-    screenWidth: Int,
+    gridItemSettings: GridItemSettings,
+    drag: Drag,
     swipeY: Float,
+    eblanAppWidgetProviderInfos: Map<EblanApplicationInfoGroup, List<EblanAppWidgetProviderInfo>>,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Callbacks
     onDismiss: () -> Unit,
-    onDragEnd: () -> Unit,
-    onGetEblanAppWidgetProviderInfosByLabel: (String) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onVerticalDrag: (Float) -> Unit,
+    onDragEnd: () -> Unit,
+    onGetEblanAppWidgetProviderInfosByLabel: (String) -> Unit,
     onDragWidget: (
         gridItem: GridItem,
         imageBitmap: ImageBitmap,
@@ -136,11 +139,11 @@ internal fun WidgetScreen(
     val textFieldState = rememberTextFieldState()
 
     ScreenEffect(
-        drag = drag,
         isVisibleOverlay = isVisibleOverlay,
-        screenHeight = screenHeight,
-        swipeY = swipeY,
         textFieldState = textFieldState,
+        drag = drag,
+        swipeY = swipeY,
+        screenHeight = screenHeight,
         onDismiss = onDismiss,
         onGetLabel = onGetEblanAppWidgetProviderInfosByLabel,
         onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
@@ -216,14 +219,14 @@ internal fun WidgetScreen(
                 items(eblanAppWidgetProviderInfos.keys.toList()) { eblanApplicationInfoGroup ->
                     key(eblanApplicationInfoGroup.packageName) {
                         EblanApplicationInfoItem(
-                            columns = columns,
-                            eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfos,
                             eblanApplicationInfoGroup = eblanApplicationInfoGroup,
-                            gridItemSettings = gridItemSettings,
-                            rows = rows,
-                            screenHeight = screenHeight,
+                            eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfos,
                             screenWidth = screenWidth,
+                            screenHeight = screenHeight,
+                            rows = rows,
+                            columns = columns,
                             isVisibleOverlay = isVisibleOverlay,
+                            gridItemSettings = gridItemSettings,
                             onDragWidget = onDragWidget,
                         )
                     }
@@ -235,15 +238,20 @@ internal fun WidgetScreen(
 
 @Composable
 private fun EblanApplicationInfoItem(
-    modifier: Modifier = Modifier,
-    columns: Int,
-    eblanAppWidgetProviderInfos: Map<EblanApplicationInfoGroup, List<EblanAppWidgetProviderInfo>>,
+    // Data
     eblanApplicationInfoGroup: EblanApplicationInfoGroup,
-    gridItemSettings: GridItemSettings,
-    rows: Int,
-    screenHeight: Int,
+    eblanAppWidgetProviderInfos: Map<EblanApplicationInfoGroup, List<EblanAppWidgetProviderInfo>>,
+    // Dimensions
     screenWidth: Int,
+    screenHeight: Int,
+    rows: Int,
+    columns: Int,
+    // State
     isVisibleOverlay: Boolean,
+    gridItemSettings: GridItemSettings,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Callbacks
     onDragWidget: (
         gridItem: GridItem,
         imageBitmap: ImageBitmap,
@@ -297,12 +305,12 @@ private fun EblanApplicationInfoItem(
 
                 eblanAppWidgetProviderInfos[eblanApplicationInfoGroup]?.forEach { eblanAppWidgetProviderInfo ->
                     EblanAppWidgetProviderInfoItem(
-                        columns = columns,
                         eblanAppWidgetProviderInfo = eblanAppWidgetProviderInfo,
-                        gridItemSettings = gridItemSettings,
+                        columns = columns,
                         rows = rows,
-                        screenHeight = screenHeight,
                         screenWidth = screenWidth,
+                        screenHeight = screenHeight,
+                        gridItemSettings = gridItemSettings,
                         isVisibleOverlay = isVisibleOverlay,
                         onDragWidget = onDragWidget,
                     )
@@ -314,14 +322,19 @@ private fun EblanApplicationInfoItem(
 
 @Composable
 private fun EblanAppWidgetProviderInfoItem(
-    modifier: Modifier = Modifier,
-    columns: Int,
+    // Widget Info
     eblanAppWidgetProviderInfo: EblanAppWidgetProviderInfo,
-    gridItemSettings: GridItemSettings,
+    // Dimensions
+    columns: Int,
     rows: Int,
-    screenHeight: Int,
     screenWidth: Int,
+    screenHeight: Int,
+    // Settings
+    gridItemSettings: GridItemSettings,
     isVisibleOverlay: Boolean,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Callbacks
     onDragWidget: (
         gridItem: GridItem,
         imageBitmap: ImageBitmap,
@@ -354,8 +367,8 @@ private fun EblanAppWidgetProviderInfoItem(
                         scope.launch {
                             handleOnLongPress(
                                 eblanAppWidgetProviderInfo = eblanAppWidgetProviderInfo,
-                                graphicsLayer = graphicsLayer,
                                 gridItemSettings = gridItemSettings,
+                                graphicsLayer = graphicsLayer,
                                 intOffset = intOffset,
                                 intSize = intSize,
                                 keyboardController = keyboardController,
@@ -439,12 +452,17 @@ private fun EblanAppWidgetProviderInfoItem(
 
 @OptIn(ExperimentalUuidApi::class)
 private suspend fun handleOnLongPress(
+    // Widget Info
     eblanAppWidgetProviderInfo: EblanAppWidgetProviderInfo,
-    graphicsLayer: GraphicsLayer,
+    // Grid Settings
     gridItemSettings: GridItemSettings,
+    // Graphics & Layout
+    graphicsLayer: GraphicsLayer,
     intOffset: IntOffset,
     intSize: IntSize,
+    // Controllers
     keyboardController: SoftwareKeyboardController?,
+    // Callbacks
     onDragWidget: (
         gridItem: GridItem,
         imageBitmap: ImageBitmap,
@@ -456,25 +474,25 @@ private suspend fun handleOnLongPress(
     val id = Uuid.random().toHexString()
 
     val gridItem = getWidgetGridItem(
+        id = id,
+        serialNumber = eblanAppWidgetProviderInfo.serialNumber,
+        packageName = eblanAppWidgetProviderInfo.packageName,
         componentName = eblanAppWidgetProviderInfo.componentName,
+        label = eblanAppWidgetProviderInfo.applicationLabel,
+        icon = eblanAppWidgetProviderInfo.applicationIcon,
+        preview = eblanAppWidgetProviderInfo.preview,
         configure = eblanAppWidgetProviderInfo.configure,
         gridItemSettings = gridItemSettings,
-        icon = eblanAppWidgetProviderInfo.applicationIcon,
-        id = id,
-        label = eblanAppWidgetProviderInfo.applicationLabel,
-        maxResizeHeight = eblanAppWidgetProviderInfo.maxResizeHeight,
-        maxResizeWidth = eblanAppWidgetProviderInfo.maxResizeWidth,
-        minHeight = eblanAppWidgetProviderInfo.minHeight,
-        minResizeHeight = eblanAppWidgetProviderInfo.minResizeHeight,
-        minResizeWidth = eblanAppWidgetProviderInfo.minResizeWidth,
-        minWidth = eblanAppWidgetProviderInfo.minWidth,
-        packageName = eblanAppWidgetProviderInfo.packageName,
         page = 0,
-        preview = eblanAppWidgetProviderInfo.preview,
-        resizeMode = eblanAppWidgetProviderInfo.resizeMode,
-        serialNumber = eblanAppWidgetProviderInfo.serialNumber,
-        targetCellHeight = eblanAppWidgetProviderInfo.targetCellHeight,
+        minWidth = eblanAppWidgetProviderInfo.minWidth,
+        minHeight = eblanAppWidgetProviderInfo.minHeight,
         targetCellWidth = eblanAppWidgetProviderInfo.targetCellWidth,
+        targetCellHeight = eblanAppWidgetProviderInfo.targetCellHeight,
+        resizeMode = eblanAppWidgetProviderInfo.resizeMode,
+        maxResizeWidth = eblanAppWidgetProviderInfo.maxResizeWidth,
+        maxResizeHeight = eblanAppWidgetProviderInfo.maxResizeHeight,
+        minResizeWidth = eblanAppWidgetProviderInfo.minResizeWidth,
+        minResizeHeight = eblanAppWidgetProviderInfo.minResizeHeight,
     )
 
     keyboardController?.hide()

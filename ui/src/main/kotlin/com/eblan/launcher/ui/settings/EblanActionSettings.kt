@@ -40,11 +40,15 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 fun EblanActionSettings(
-    modifier: Modifier = Modifier,
+    // Actions
     doubleTap: EblanAction,
     swipeUp: EblanAction,
     swipeDown: EblanAction,
+    // Applications
     eblanApplicationInfos: List<EblanApplicationInfo>,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Callbacks
     onUpdateDoubleTap: (EblanAction) -> Unit,
     onUpdateSwipeUp: (EblanAction) -> Unit,
     onUpdateSwipeDown: (EblanAction) -> Unit,
@@ -131,10 +135,13 @@ fun EblanActionSettings(
 
 @Composable
 private fun buildEblanActionSettingsItems(
+    // Context
     context: Context,
+    // Actions
     doubleTap: EblanAction,
     swipeUp: EblanAction,
     swipeDown: EblanAction,
+    // Callbacks
     onDoubleTapClick: () -> Unit,
     onSwipeUpClick: () -> Unit,
     onSwipeDownClick: () -> Unit,

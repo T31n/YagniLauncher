@@ -22,7 +22,6 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.testing.Test
-import org.gradle.kotlin.dsl.assign
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.kotlin
@@ -42,7 +41,7 @@ class JvmLibraryConventionPlugin : Plugin<Project> {
 
             extensions.configure<KotlinJvmProjectExtension> {
                 compilerOptions {
-                    jvmTarget.assign(JvmTarget.JVM_11)
+                    jvmTarget.set(JvmTarget.JVM_11)
                 }
             }
 

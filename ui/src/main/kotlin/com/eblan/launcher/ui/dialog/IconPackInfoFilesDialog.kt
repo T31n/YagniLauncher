@@ -69,11 +69,14 @@ import com.eblan.launcher.common.R as commonR
 @OptIn(ExperimentalMaterial3Api::class, FlowPreview::class)
 @Composable
 fun IconPackInfoFilesDialog(
-    modifier: Modifier = Modifier,
+    // Icon Pack Data
     iconPackComponents: List<IconPackComponent>,
     iconPackPackageName: String?,
     iconPackInfoLabel: String?,
     iconName: String,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Actions
     onDismissRequest: () -> Unit,
     onUpdateIcon: (String?) -> Unit,
     onSearchIconPackInfoComponent: (String) -> Unit,

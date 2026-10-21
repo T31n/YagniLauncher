@@ -39,9 +39,12 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun TextDialog(
-    modifier: Modifier = Modifier,
+    // Content
     title: String,
     text: String,
+    // Appearance
+    modifier: Modifier = Modifier,
+    // Actions
     onDismissRequest: () -> Unit,
     onClick: () -> Unit,
 ) {

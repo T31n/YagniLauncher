@@ -25,6 +25,11 @@ import java.io.IOException
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
+/**
+ * Copies an image referenced by [uri] to the custom-icon cache and returns its absolute path.
+ *
+ * @return The saved file path, or `null` if the URI cannot be opened or writing fails.
+ */
 @OptIn(ExperimentalUuidApi::class)
 internal suspend fun getCustomIcon(
     contentResolverWrapper: ContentResolverWrapper,

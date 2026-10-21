@@ -51,6 +51,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 
+/** Imports a newly installed package's activities, widgets, shortcuts, and launchable entries. */
 class AddPackageUseCase @Inject constructor(
     private val userDataRepository: UserDataRepository,
     private val packageManagerWrapper: PackageManagerWrapper,
@@ -68,6 +69,12 @@ class AddPackageUseCase @Inject constructor(
     private val gridRepository: GridRepository,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Loads package components, stores their metadata, and optionally adds activities to the home screen.
+     *
+     * @param serialNumber The user profile where the package is installed.
+     * @param packageName The package to import.
+     */
     suspend operator fun invoke(
         serialNumber: Long,
         packageName: String,
@@ -127,6 +134,7 @@ class AddPackageUseCase @Inject constructor(
         }
     }
 
+    /** Stores an activity and queues a home-screen item when that setting is enabled. */
     private suspend fun addEblanApplicationInfo(
         homeSettings: HomeSettings,
         serialNumber: Long,
@@ -177,6 +185,7 @@ class AddPackageUseCase @Inject constructor(
         )
     }
 
+    /** Imports widget-provider metadata and caches the provider's associated icons. */
     private suspend fun addEblanAppWidgetProviderInfos(
         serialNumber: Long,
         packageName: String,
@@ -200,6 +209,7 @@ class AddPackageUseCase @Inject constructor(
         )
     }
 
+    /** Imports launcher shortcuts for the specified package when shortcut data is available. */
     private suspend fun addEblanShortcutInfos(
         serialNumber: Long,
         packageName: String,
@@ -219,6 +229,7 @@ class AddPackageUseCase @Inject constructor(
         }
     }
 
+    /** Imports shortcut-configuration activities and their cached icon metadata. */
     private suspend fun addEblanShortcutConfigs(
         serialNumber: Long,
         packageName: String,
@@ -241,6 +252,7 @@ class AddPackageUseCase @Inject constructor(
         )
     }
 
+    /** Caches icon-pack images for the activities discovered in the newly added package. */
     private suspend fun addIconPackInfos(
         iconPackPackageName: String,
         launcherAppsActivityInfos: List<LauncherAppsActivityInfo>,

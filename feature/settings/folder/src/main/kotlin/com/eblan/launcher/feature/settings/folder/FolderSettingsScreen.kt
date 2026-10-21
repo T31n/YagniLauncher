@@ -223,7 +223,9 @@ private fun Success(
 
 @Composable
 private fun buildFolderHomeSettingsItems(
+    // Data
     folderSettings: FolderSettings,
+    // Callbacks
     onFolderCellDimensionClick: () -> Unit,
     onFolderMaxGridClick: () -> Unit,
     onFolderCornerRadiusClick: () -> Unit,

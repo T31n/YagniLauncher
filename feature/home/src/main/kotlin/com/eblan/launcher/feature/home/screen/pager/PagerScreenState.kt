@@ -1141,11 +1141,14 @@ internal class PagerScreenState(
     }
 
     fun dragShortcutInfoFromGridItemMenu(
+        // Grid Item
         gridItem: GridItem,
+        // Visual Data
         imageBitmap: ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
         newSharedElementKey: SharedElementKey,
+        // Callbacks
         onUpdateGridItemSource: (GridItemSource) -> Unit,
         onUpdateIsVisibleOverlay: (Boolean) -> Unit,
         onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
@@ -1176,11 +1179,14 @@ internal class PagerScreenState(
     }
 
     fun dragShortcutInfoFromApplicationMenu(
+        // Grid Item
         gridItem: GridItem,
+        // Visual Data
         imageBitmap: ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
         newSharedElementKey: SharedElementKey,
+        // Callbacks
         onUpdateGridItemSource: (GridItemSource) -> Unit,
         onUpdateIsVisibleOverlay: (Boolean) -> Unit,
         onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
@@ -1213,11 +1219,14 @@ internal class PagerScreenState(
     }
 
     fun dragShortcutInfoFromFolderGridItemMenu(
+        // Grid Item
         gridItem: GridItem,
+        // Visual Data
         imageBitmap: ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
         newSharedElementKey: SharedElementKey,
+        // Callbacks
         onUpdateGridItemSource: (GridItemSource) -> Unit,
         onUpdateIsVisibleOverlay: (Boolean) -> Unit,
         onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
@@ -1251,11 +1260,14 @@ internal class PagerScreenState(
     }
 
     fun dragShortcutInfoFromFolderApplicationGridItemMenu(
+        // Grid Item
         gridItem: GridItem,
+        // Visual Data
         imageBitmap: ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
         newSharedElementKey: SharedElementKey,
+        // Callbacks
         onUpdateGridItemSource: (GridItemSource) -> Unit,
         onUpdateIsVisibleOverlay: (Boolean) -> Unit,
         onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
@@ -1291,11 +1303,16 @@ internal class PagerScreenState(
     }
 
     fun dragAppWidget(
+        // Grid Item
         gridItem: GridItem,
+        // Visual Representation
         imageBitmap: ImageBitmap,
+        // Position and Size
         intOffset: IntOffset,
         intSize: IntSize,
+        // Shared Element
         newSharedElementKey: SharedElementKey,
+        // Callbacks
         onUpdateGridItemSource: (GridItemSource) -> Unit,
         onUpdateIsVisibleOverlay: (Boolean) -> Unit,
         onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
@@ -1326,11 +1343,16 @@ internal class PagerScreenState(
     }
 
     fun longPressGridItem(
+        // Grid Item
         gridItem: GridItem,
+        // Visual Asset
         imageBitmap: ImageBitmap,
+        // Position and Size
         intOffset: IntOffset,
         intSize: IntSize,
+        // Shared Element
         newSharedElementKey: SharedElementKey,
+        // Callbacks
         onUpdateGridItemSource: (GridItemSource) -> Unit,
         onUpdateIsVisibleOverlay: (Boolean) -> Unit,
         onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
@@ -1401,11 +1423,14 @@ internal class PagerScreenState(
     }
 
     fun longPressFolderGridItem(
+        // Item Data
         gridItem: GridItem,
         imageBitmap: ImageBitmap,
+        // Position and Bounds
         intOffset: IntOffset,
         intSize: IntSize,
         newSharedElementKey: SharedElementKey,
+        // Callbacks
         onUpdateIsVisibleOverlay: (Boolean) -> Unit,
         onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
     ) {
@@ -1463,11 +1488,14 @@ internal class PagerScreenState(
     }
 
     fun dragWidget(
+        // Widget Details
         gridItem: GridItem,
+        newSharedElementKey: SharedElementKey,
+        // Visual Representation
         imageBitmap: ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
-        newSharedElementKey: SharedElementKey,
+        // Callbacks
         onUpdateGridItemSource: (GridItemSource) -> Unit,
         onUpdateIsVisibleOverlay: (Boolean) -> Unit,
         onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
@@ -1498,11 +1526,15 @@ internal class PagerScreenState(
     }
 
     fun dragShortcutConfig(
+        // Shortcut
         gridItem: GridItem,
         imageBitmap: ImageBitmap,
+        // Position
         intOffset: IntOffset,
         intSize: IntSize,
+        // Transition
         newSharedElementKey: SharedElementKey,
+        // Callbacks
         onUpdateGridItemSource: (GridItemSource) -> Unit,
         onUpdateIsVisibleOverlay: (Boolean) -> Unit,
         onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
@@ -1533,11 +1565,14 @@ internal class PagerScreenState(
     }
 
     fun longPressEblanApplicationInfo(
+        // Application Info
         eblanApplicationInfo: EblanApplicationInfo,
+        // Visuals and Layout
         imageBitmap: ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
         newSharedElementKey: SharedElementKey,
+        // Callbacks
         onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     ) {
         overlayImageBitmap = imageBitmap
@@ -1637,11 +1672,15 @@ internal class PagerScreenState(
     }
 
     fun longPressFolderEblanApplicationInfo(
+        // Folder
         folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        // Layout
         imageBitmap: ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
+        // Animation
         newSharedElementKey: SharedElementKey,
+        // Callbacks
         onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     ) {
         overlayImageBitmap = imageBitmap
@@ -1664,11 +1703,14 @@ internal class PagerScreenState(
     }
 
     fun longPressFolderEblanApplicationInfoGridItem(
+        // Item
         folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
+        newSharedElementKey: SharedElementKey,
+        // Position
         imageBitmap: ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
-        newSharedElementKey: SharedElementKey,
+        // Callbacks
         onUpdateMoveFolderEblanApplicationInfoGridItemResult: (MoveFolderEblanApplicationInfoGridItemResult) -> Unit,
         onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     ) {
@@ -1744,10 +1786,13 @@ internal class PagerScreenState(
 
 @Composable
 internal fun rememberPagerScreenState(
+    // Settings
     gestureSettings: GestureSettings,
     homeSettings: HomeSettings,
-    screenHeight: Int,
     experimentalSettings: ExperimentalSettings,
+    // Dimensions
+    screenHeight: Int,
+    // Callbacks
     onGetPinGridItem: (PinItemRequestType) -> Unit,
     onResetPinGridItem: () -> Unit,
 ): PagerScreenState {

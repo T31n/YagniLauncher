@@ -35,10 +35,23 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+/** Moves a grid item and resolves any item it overlaps on the same page and association. */
 class MoveGridItemUseCase @Inject constructor(
     private val gridRepository: GridRepository,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Moves [movingGridItem] to the requested pixel position and persists conflict resolution.
+     *
+     * @param movingGridItem The item being moved.
+     * @param x The horizontal pointer coordinate in grid pixels.
+     * @param y The vertical pointer coordinate in grid pixels.
+     * @param columns The number of columns in the grid.
+     * @param rows The number of rows in the grid.
+     * @param gridWidth The grid width in pixels.
+     * @param gridHeight The grid height in pixels.
+     * @return The move result, including whether the move succeeded and any item to combine.
+     */
     suspend operator fun invoke(
         movingGridItem: GridItem,
         x: Int,
@@ -115,6 +128,7 @@ class MoveGridItemUseCase @Inject constructor(
         }
     }
 
+    /** Resolves a pointer hit according to the horizontal section of the conflicting item. */
     private suspend fun handleConflictsOfGridItemCoordinates(
         gridItems: MutableList<GridItem>,
         movingGridItem: GridItem,
@@ -174,6 +188,7 @@ class MoveGridItemUseCase @Inject constructor(
         }
     }
 
+    /** Resolves a span overlap using the relative positions of the moving and conflicting items. */
     private suspend fun handleConflictsOfGridItemSpan(
         movingGridItem: GridItem,
         conflictingGridItem: GridItem,

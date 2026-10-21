@@ -58,10 +58,13 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun EblanActionDialog(
-    modifier: Modifier = Modifier,
+    // Content
     title: String,
     eblanAction: EblanAction,
     eblanApplicationInfos: List<EblanApplicationInfo>,
+    // Layout
+    modifier: Modifier = Modifier,
+    // Callbacks
     onSelectEblanAction: (EblanAction) -> Unit,
     onDismissRequest: () -> Unit,
 ) {

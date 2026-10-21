@@ -24,6 +24,7 @@ import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
 import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import java.io.File
 
+/** Caches the icon-pack drawable for a component when the pack defines a matching entry. */
 internal suspend fun cacheIconPackFile(
     iconPackManager: IconPackManager,
     appFilter: List<IconPackComponent>,
@@ -49,6 +50,11 @@ internal suspend fun cacheIconPackFile(
     }
 }
 
+/**
+ * Resolves cached icon-pack file paths for the requested components.
+ *
+ * @return A map from component name to an existing cached file path, or `null` when absent.
+ */
 internal suspend fun getIconPackFilePaths(
     iconPackPackageName: String,
     componentNames: List<String>,

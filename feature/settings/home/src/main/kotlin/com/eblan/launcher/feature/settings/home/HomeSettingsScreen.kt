@@ -147,7 +147,6 @@ private fun Success(
         onDockHeightClick = {
             showDockHeightDialog = true
         },
-        onUpdateHomeSettings = onUpdateHomeSettings,
         onDockCustomBackgroundColorClick = {
             showDockCustomBackgroundColorDialog = true
         },
@@ -157,6 +156,7 @@ private fun Success(
         onDockCornerRadiusClick = {
             showDockCornerRadiusDialog = true
         },
+        onUpdateHomeSettings = onUpdateHomeSettings,
     )
 
     Column(
@@ -299,7 +299,6 @@ private fun Success(
                     ),
                 )
             },
-
         )
     }
 }
@@ -420,7 +419,9 @@ private fun buildHomeSettingsItems(
 
 @Composable
 private fun buildDockHomeSettingsItems(
+    // Settings State
     homeSettings: HomeSettings,
+    // Dock Interactions
     onDockGridClick: () -> Unit,
     onDockHeightClick: () -> Unit,
     onDockCustomBackgroundColorClick: () -> Unit,

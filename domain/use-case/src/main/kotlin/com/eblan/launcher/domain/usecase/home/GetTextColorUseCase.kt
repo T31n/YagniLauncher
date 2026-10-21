@@ -30,12 +30,18 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
+/** Resolves the home-screen text color from user settings or system wallpaper colors. */
 class GetTextColorUseCase @Inject constructor(
     private val userDataRepository: UserDataRepository,
     private val wallpaperManagerWrapper: WallpaperManagerWrapper,
     private val resourcesWrapper: ResourcesWrapper,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Emits the configured text color, resolving system mode from wallpaper hints or theme.
+     *
+     * @return A flow of the effective home-screen text color.
+     */
     operator fun invoke(): Flow<TextColor> = combine(
         userDataRepository.userDataFlow,
         wallpaperManagerWrapper.getColorsChanged(),
@@ -52,6 +58,7 @@ class GetTextColorUseCase @Inject constructor(
         }
     }.flowOn(defaultDispatcher)
 
+    /** Uses wallpaper hints when available, otherwise derives the text color from the theme. */
     private fun getTextColorFromWallpaperColors(
         theme: Theme,
         colorHints: Int?,
@@ -67,6 +74,7 @@ class GetTextColorUseCase @Inject constructor(
         getTextColorFromSystemTheme(theme = theme)
     }
 
+    /** Maps an explicit theme to its text color, consulting system resources for system mode. */
     private fun getTextColorFromSystemTheme(theme: Theme): TextColor = when (theme) {
         Theme.System -> getTextColorFromSystemTheme(
             theme = if (resourcesWrapper.isDarkTheme()) {

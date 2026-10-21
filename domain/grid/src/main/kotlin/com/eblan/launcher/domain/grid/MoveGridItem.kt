@@ -22,6 +22,19 @@ import com.eblan.launcher.domain.model.grid.ResolveDirection
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 
+/**
+ * Moves overlapping items according to [resolveDirection], processing any resulting overlaps.
+ *
+ * This function updates [gridItems] in place. If an item cannot be moved within the grid, it
+ * returns `false`; items moved before that point remain updated.
+ *
+ * @param gridItems The mutable items to resolve in place.
+ * @param resolveDirection The direction used to reposition conflicting items.
+ * @param movingGridItem The item whose conflicts are resolved first.
+ * @param columns The number of columns in the grid.
+ * @param rows The number of rows in the grid.
+ * @return `true` if all conflicts are resolved, or `false` if a conflicting item cannot be moved.
+ */
 suspend fun resolveConflicts(
     gridItems: MutableList<GridItem>,
     resolveDirection: ResolveDirection,
@@ -74,6 +87,16 @@ suspend fun resolveConflicts(
     return true
 }
 
+/**
+ * Selects the repositioning strategy for a conflicting item.
+ *
+ * @param resolveDirection The direction in which to resolve the conflict.
+ * @param moving The item that caused the conflict.
+ * @param conflicting The item to reposition.
+ * @param columns The number of columns in the grid.
+ * @param rows The number of rows in the grid.
+ * @return The repositioned item, or `null` if it cannot fit in the grid.
+ */
 private fun moveGridItem(
     resolveDirection: ResolveDirection,
     moving: GridItem,
@@ -102,6 +125,16 @@ private fun moveGridItem(
     ResolveDirection.Center -> moving
 }
 
+/**
+ * Places the conflicting item immediately to the right of [moving], wrapping to the next row
+ * beneath it when there is not enough horizontal space.
+ *
+ * @param moving The item that caused the conflict.
+ * @param conflicting The item to reposition.
+ * @param columns The number of columns in the grid.
+ * @param rows The number of rows in the grid.
+ * @return The repositioned item, or `null` if its resulting row exceeds the grid.
+ */
 private fun moveGridItemToRight(
     moving: GridItem,
     conflicting: GridItem,
@@ -126,6 +159,16 @@ private fun moveGridItemToRight(
     }
 }
 
+/**
+ * Places the conflicting item immediately to the left of [moving], wrapping to the last column
+ * on the row above it when there is not enough horizontal space.
+ *
+ * @param moving The item that caused the conflict.
+ * @param conflicting The item to reposition.
+ * @param columns The number of columns in the grid.
+ * @param rows The number of rows in the grid.
+ * @return The repositioned item, or `null` if its resulting row is outside the grid.
+ */
 private fun moveGridItemToLeft(
     moving: GridItem,
     conflicting: GridItem,

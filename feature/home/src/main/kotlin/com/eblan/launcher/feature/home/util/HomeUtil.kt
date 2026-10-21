@@ -46,10 +46,14 @@ import com.eblan.launcher.framework.widgetmanager.AndroidAppWidgetManagerWrapper
 import kotlin.math.roundToInt
 
 internal fun handleEblanAction(
+    // Context
     context: Context,
+    // Action
     eblanAction: EblanAction,
+    // System Wrappers
     launcherApps: AndroidLauncherAppsWrapper,
     statusBarManagerWrapper: AndroidStatusBarManagerWrapper,
+    // Callbacks
     onOpenAppDrawer: () -> Unit,
 ) {
     when (eblanAction.eblanActionType) {
@@ -132,15 +136,19 @@ internal fun getVerticalAlignment(verticalAlignment: VerticalAlignment): Alignme
 }
 
 internal fun updateAppWidgetOptions(
-    height: Int,
-    width: Int,
+    // Manager
     androidAppWidgetManagerWrapper: AndroidAppWidgetManagerWrapper,
-    columns: Int,
+    // Data
     data: GridItemData.Widget,
+    // Dimensions
+    width: Int,
+    height: Int,
     density: Density,
-    gridHeight: Int,
-    gridWidth: Int,
+    // Grid
+    columns: Int,
     rows: Int,
+    gridWidth: Int,
+    gridHeight: Int,
     startColumn: Int,
     startRow: Int,
 ) {
@@ -204,14 +212,17 @@ internal fun updateAppWidgetOptions(
 }
 
 internal fun handleOnUninstall(
+    // Context & System
     context: Context,
+    launcherApps: AndroidLauncherAppsWrapper,
+    userManager: AndroidUserManagerWrapper,
+    // Target Identification
     serialNumber: Long,
     componentName: String,
     packageName: String,
-    launcherApps: AndroidLauncherAppsWrapper,
+    // Popup Layout
     popupIntOffset: IntOffset,
     popupIntSize: IntSize,
-    userManager: AndroidUserManagerWrapper,
 ) {
     val userHandle =
         userManager.getUserForSerialNumber(serialNumber = serialNumber) ?: return

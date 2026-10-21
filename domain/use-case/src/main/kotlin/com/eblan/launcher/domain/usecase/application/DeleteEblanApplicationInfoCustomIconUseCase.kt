@@ -26,10 +26,16 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 
+/** Removes an application's saved custom icon and clears its reference in the repository. */
 class DeleteEblanApplicationInfoCustomIconUseCase @Inject constructor(
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Deletes the custom icon file, if present, and persists the application without a custom icon.
+     *
+     * @param eblanApplicationInfo The application whose custom icon should be removed.
+     */
     suspend operator fun invoke(eblanApplicationInfo: EblanApplicationInfo) = withContext(ioDispatcher) {
         eblanApplicationInfo.customIcon?.let {
             val customIconFile = File(it)

@@ -28,11 +28,19 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
+/** Combines application-tag assignments with all tags to produce tag-selection UI state. */
 class GetEblanApplicationInfosTagsUiUseCase @Inject constructor(
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
     private val eblanApplicationInfoTagRepository: EblanApplicationInfoTagRepository,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Builds a sorted list of tags and marks which are assigned to the specified application.
+     *
+     * @param serialNumber The user's serial number.
+     * @param componentName The application component name.
+     * @return A flow of tag UI entries ordered by tag ID.
+     */
     operator fun invoke(
         serialNumber: Long,
         componentName: String,

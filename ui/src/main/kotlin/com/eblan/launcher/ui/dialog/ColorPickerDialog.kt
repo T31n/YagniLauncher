@@ -56,9 +56,12 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 fun ColorPickerDialog(
-    modifier: Modifier = Modifier,
+    // Required Parameters
     title: String,
     customColor: Int,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Callbacks
     onDismissRequest: () -> Unit,
     onSelectColor: (Int) -> Unit,
 ) {
@@ -89,11 +92,11 @@ fun ColorPickerDialog(
         )
 
         ColorPicker(
-            modifier = Modifier.fillMaxWidth(),
             hue = hue,
             saturation = saturation,
             value = value,
             alpha = alpha,
+            modifier = Modifier.fillMaxWidth(),
             onSaturationSelected = {
                 saturation = it
             },
@@ -141,11 +144,14 @@ fun ColorPickerDialog(
 
 @Composable
 private fun ColorPicker(
-    modifier: Modifier = Modifier,
+    // Color Values
     hue: Float,
     saturation: Float,
     value: Float,
     alpha: Float,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Callbacks
     onSaturationSelected: (Float) -> Unit,
     onValueSelected: (Float) -> Unit,
     onHueSelected: (Float) -> Unit,
@@ -192,10 +198,13 @@ private fun ColorPicker(
 
 @Composable
 private fun SaturationValueCanvas(
-    modifier: Modifier = Modifier,
+    // Color Value
     hue: Float,
     saturation: Float,
     value: Float,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Callbacks
     onSaturationSelected: (Float) -> Unit,
     onValueSelected: (Float) -> Unit,
 ) {

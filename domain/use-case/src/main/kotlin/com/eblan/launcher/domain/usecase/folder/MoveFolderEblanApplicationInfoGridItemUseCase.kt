@@ -28,10 +28,23 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+/** Reorders application-folder items and persists their updated child indices. */
 class MoveFolderEblanApplicationInfoGridItemUseCase @Inject constructor(
     private val folderGridItemTransaction: FolderGridItemTransaction,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Moves a folder child to the index indicated by its drag position on the current page.
+     *
+     * @param folderGridItemPopup The folder popup containing the ordered child items.
+     * @param folderEblanApplicationInfoGridItem The child item being moved.
+     * @param dragX The horizontal drag coordinate in pixels.
+     * @param dragY The vertical drag coordinate in pixels.
+     * @param gridWidth The popup grid width in pixels.
+     * @param gridHeight The popup grid height in pixels.
+     * @param currentPage The page containing the drop position.
+     * @return A successful move result for the moved child.
+     */
     suspend operator fun invoke(
         folderGridItemPopup: FolderEblanApplicationInfoPopup,
         folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,

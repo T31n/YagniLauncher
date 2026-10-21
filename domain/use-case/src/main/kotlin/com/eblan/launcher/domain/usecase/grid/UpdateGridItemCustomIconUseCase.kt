@@ -30,6 +30,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+/** Replaces a supported grid item's custom icon using an image referenced by a content URI. */
 class UpdateGridItemCustomIconUseCase @Inject constructor(
     private val fileManager: FileManager,
     private val iconKeyGenerator: IconKeyGenerator,
@@ -37,6 +38,14 @@ class UpdateGridItemCustomIconUseCase @Inject constructor(
     private val gridRepository: GridRepository,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Saves the image at [uri], updates the item's icon reference, then deletes its previous icon.
+     *
+     * If the URI cannot be read, the grid item is left unchanged.
+     *
+     * @param gridItem The item whose custom icon should be replaced.
+     * @param uri The URI of the replacement image.
+     */
     suspend operator fun invoke(
         gridItem: GridItem,
         uri: String,

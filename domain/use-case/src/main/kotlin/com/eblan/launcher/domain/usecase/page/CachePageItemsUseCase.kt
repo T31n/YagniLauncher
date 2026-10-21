@@ -29,10 +29,20 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+/** Builds the configured page list and assigns valid grid items to their pages. */
 class CachePageItemsUseCase @Inject constructor(
     private val userDataRepository: UserDataRepository,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Returns all pages for the selected grid association, including empty pages.
+     *
+     * Only items that fit within the association's configured grid dimensions are included.
+     *
+     * @param gridItems The candidate grid items.
+     * @param associate Whether to build home-grid pages or dock pages.
+     * @return The page list with each page's matching items.
+     */
     suspend operator fun invoke(
         gridItems: List<GridItem>,
         associate: Associate,

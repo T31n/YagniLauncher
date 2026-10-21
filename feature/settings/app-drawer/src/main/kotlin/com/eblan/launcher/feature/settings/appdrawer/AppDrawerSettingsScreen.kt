@@ -74,10 +74,10 @@ internal fun AppDrawerSettingsRoute(
     val folderEblanApplicationInfos by viewModel.folderEblanApplicationInfos.collectAsStateWithLifecycle()
 
     AppDrawerSettingsScreen(
-        modifier = modifier,
         appDrawerSettingsUiState = appDrawerSettingsUiState,
         eblanApplicationInfoTags = eblanApplicationInfoTags,
         folderEblanApplicationInfos = folderEblanApplicationInfos,
+        modifier = modifier,
         onNavigateUp = onNavigateUp,
         onUpdateAppDrawerSettings = viewModel::updateAppDrawerSettings,
         onUpdateEblanApplicationInfo = viewModel::updateEblanApplicationInfo,
@@ -89,10 +89,13 @@ internal fun AppDrawerSettingsRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun AppDrawerSettingsScreen(
-    modifier: Modifier = Modifier,
+    // State
     appDrawerSettingsUiState: AppDrawerSettingsUiState,
     eblanApplicationInfoTags: List<EblanApplicationInfoTag>,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Actions
     onNavigateUp: () -> Unit,
     onUpdateAppDrawerSettings: (AppDrawerSettings) -> Unit,
     onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
@@ -140,11 +143,14 @@ internal fun AppDrawerSettingsScreen(
 
 @Composable
 private fun Success(
-    modifier: Modifier = Modifier,
+    // Application Data
     appDrawerSettings: AppDrawerSettings,
     eblanApplicationInfos: List<EblanApplicationInfo>,
     eblanApplicationInfoTags: List<EblanApplicationInfoTag>,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    // Layout
+    modifier: Modifier = Modifier,
+    // Application Actions
     onUpdateAppDrawerSettings: (AppDrawerSettings) -> Unit,
     onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
     onUpdateEblanApplicationInfoTags: (List<EblanApplicationInfoTag>) -> Unit,
@@ -352,7 +358,9 @@ private fun Success(
 
 @Composable
 private fun buildAppDrawerSettingsItems(
+    // Settings
     appDrawerSettings: AppDrawerSettings,
+    // Callbacks
     onAppDrawerTypeClick: () -> Unit,
     onVerticalGridClick: () -> Unit,
     onHorizontalGridClick: () -> Unit,
@@ -536,14 +544,14 @@ private fun AppDrawerType.getTitle(): String = when (this) {
 }
 
 @Composable
-fun SearchBarPosition.getTitle(): String = when (this) {
+private fun SearchBarPosition.getTitle(): String = when (this) {
     SearchBarPosition.Top -> stringResource(R.string.top)
     SearchBarPosition.Bottom -> stringResource(R.string.bottom)
     SearchBarPosition.None -> stringResource(commonR.string.none)
 }
 
 @Composable
-fun ScrollBarType.getTitle(): String = when (this) {
+private fun ScrollBarType.getTitle(): String = when (this) {
     ScrollBarType.ScrollBar -> stringResource(R.string.scroll_bar)
     ScrollBarType.Alphabetical -> stringResource(R.string.alphabetical)
     ScrollBarType.None -> stringResource(commonR.string.none)

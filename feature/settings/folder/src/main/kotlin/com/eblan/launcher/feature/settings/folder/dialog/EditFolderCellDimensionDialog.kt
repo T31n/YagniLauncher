@@ -40,9 +40,12 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun EditFolderCellDimensionDialog(
-    modifier: Modifier = Modifier,
+    // Dimensions
     folderCellWidth: Int,
     folderCellHeight: Int,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Callbacks
     onDismissRequest: () -> Unit,
     onUpdateFolderCellDimension: (
         folderCellWidth: Int,

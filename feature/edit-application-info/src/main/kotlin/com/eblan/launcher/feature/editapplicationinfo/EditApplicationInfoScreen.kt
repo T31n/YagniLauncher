@@ -90,26 +90,26 @@ internal fun EditApplicationInfoRoute(
     val topLevelFolderEblanApplicationInfos by viewModel.topLevelFolderEblanApplicationInfos.collectAsStateWithLifecycle()
 
     EditApplicationInfoScreen(
-        modifier = modifier,
-        eblanApplicationInfoTagsUi = eblanApplicationInfoTagsUi,
         editApplicationInfoUiState = editApplicationInfoUiState,
+        eblanApplicationInfoTagsUi = eblanApplicationInfoTagsUi,
+        folderEblanApplicationInfos = folderEblanApplicationInfos,
+        topLevelFolderEblanApplicationInfos = topLevelFolderEblanApplicationInfos,
+        folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
         iconPackComponents = iconPackInfoComponents,
         packageManagerIconPacks = packageManagerIconPackInfos,
-        folderEblanApplicationInfos = folderEblanApplicationInfos,
-        folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
-        topLevelFolderEblanApplicationInfos = topLevelFolderEblanApplicationInfos,
-        onAddEblanApplicationInfoCrossRef = viewModel::addEblanApplicationInfoTagCrossRef,
-        onAddEblanApplicationInfoTag = viewModel::addEblanApplicationInfoTag,
-        onDeleteEblanApplicationInfoCrossRef = viewModel::deleteEblanApplicationInfoTagCrossRef,
-        onDeleteEblanApplicationInfoTag = viewModel::deleteEblanApplicationInfoTag,
+        modifier = modifier,
         onNavigateUp = onNavigateUp,
-        onResetIconPackPackageName = viewModel::resetIconPackPackageName,
-        onResetEblanApplicationInfoCustomIcon = viewModel::resetEblanApplicationInfoCustomIcon,
-        onSearchIconPackInfoComponent = viewModel::searchIconPackInfoComponent,
         onUpdateEblanApplicationInfo = viewModel::updateEblanApplicationInfo,
-        onUpdateEblanApplicationInfoTag = viewModel::updateEblanApplicationInfoTag,
-        onUpdateIconPackPackageName = viewModel::updateIconPackPackageName,
+        onResetEblanApplicationInfoCustomIcon = viewModel::resetEblanApplicationInfoCustomIcon,
         onUpdateEblanApplicationInfoCustomIcon = viewModel::updateEblanApplicationInfoCustomIcon,
+        onAddEblanApplicationInfoCrossRef = viewModel::addEblanApplicationInfoTagCrossRef,
+        onDeleteEblanApplicationInfoCrossRef = viewModel::deleteEblanApplicationInfoTagCrossRef,
+        onAddEblanApplicationInfoTag = viewModel::addEblanApplicationInfoTag,
+        onUpdateEblanApplicationInfoTag = viewModel::updateEblanApplicationInfoTag,
+        onDeleteEblanApplicationInfoTag = viewModel::deleteEblanApplicationInfoTag,
+        onSearchIconPackInfoComponent = viewModel::searchIconPackInfoComponent,
+        onUpdateIconPackPackageName = viewModel::updateIconPackPackageName,
+        onResetIconPackPackageName = viewModel::resetIconPackPackageName,
         onAddFolderEblanApplicationInfo = viewModel::addFolderEblanApplicationInfo,
     )
 }
@@ -117,29 +117,32 @@ internal fun EditApplicationInfoRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun EditApplicationInfoScreen(
-    modifier: Modifier = Modifier,
-    eblanApplicationInfoTagsUi: List<EblanApplicationInfoTagUi>,
+    // State
     editApplicationInfoUiState: EditApplicationInfoUiState,
+    eblanApplicationInfoTagsUi: List<EblanApplicationInfoTagUi>,
+    folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     iconPackComponents: List<IconPackComponent>,
     packageManagerIconPacks: List<PackageManagerIconPack>,
-    folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
-    folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
-    topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
-    onAddEblanApplicationInfoCrossRef: (Long) -> Unit,
-    onAddEblanApplicationInfoTag: (EblanApplicationInfoTag) -> Unit,
-    onDeleteEblanApplicationInfoCrossRef: (Long) -> Unit,
-    onDeleteEblanApplicationInfoTag: (EblanApplicationInfoTag) -> Unit,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Actions
     onNavigateUp: () -> Unit,
-    onResetIconPackPackageName: () -> Unit,
-    onSearchIconPackInfoComponent: (String) -> Unit,
     onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
-    onUpdateEblanApplicationInfoTag: (EblanApplicationInfoTag) -> Unit,
-    onUpdateIconPackPackageName: (String) -> Unit,
     onResetEblanApplicationInfoCustomIcon: (EblanApplicationInfo) -> Unit,
     onUpdateEblanApplicationInfoCustomIcon: (
         eblanApplicationInfo: EblanApplicationInfo,
         uri: String,
     ) -> Unit,
+    onAddEblanApplicationInfoCrossRef: (Long) -> Unit,
+    onDeleteEblanApplicationInfoCrossRef: (Long) -> Unit,
+    onAddEblanApplicationInfoTag: (EblanApplicationInfoTag) -> Unit,
+    onUpdateEblanApplicationInfoTag: (EblanApplicationInfoTag) -> Unit,
+    onDeleteEblanApplicationInfoTag: (EblanApplicationInfoTag) -> Unit,
+    onSearchIconPackInfoComponent: (String) -> Unit,
+    onUpdateIconPackPackageName: (String) -> Unit,
+    onResetIconPackPackageName: () -> Unit,
     onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
 ) {
     if (editApplicationInfoUiState is EditApplicationInfoUiState.Success && editApplicationInfoUiState.eblanApplicationInfo != null) {
@@ -173,11 +176,11 @@ internal fun EditApplicationInfoScreen(
                 Success(
                     eblanApplicationInfo = editApplicationInfoUiState.eblanApplicationInfo,
                     eblanApplicationInfoTagsUi = eblanApplicationInfoTagsUi,
-                    iconPackComponents = iconPackComponents,
-                    packageManagerIconPacks = packageManagerIconPacks,
                     folderEblanApplicationInfos = folderEblanApplicationInfos,
                     folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                     topLevelFolderEblanApplicationInfos = topLevelFolderEblanApplicationInfos,
+                    iconPackComponents = iconPackComponents,
+                    packageManagerIconPacks = packageManagerIconPacks,
                     onAddEblanApplicationInfoCrossRef = onAddEblanApplicationInfoCrossRef,
                     onAddEblanApplicationInfoTag = onAddEblanApplicationInfoTag,
                     onDeleteEblanApplicationInfoCrossRef = onDeleteEblanApplicationInfoCrossRef,
@@ -198,14 +201,17 @@ internal fun EditApplicationInfoScreen(
 
 @Composable
 private fun Success(
-    modifier: Modifier = Modifier,
+    // Application Info
     eblanApplicationInfo: EblanApplicationInfo,
     eblanApplicationInfoTagsUi: List<EblanApplicationInfoTagUi>,
-    iconPackComponents: List<IconPackComponent>,
-    packageManagerIconPacks: List<PackageManagerIconPack>,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    // Icon Packs
+    iconPackComponents: List<IconPackComponent>,
+    packageManagerIconPacks: List<PackageManagerIconPack>,
+    modifier: Modifier = Modifier,
+    // Callbacks
     onAddEblanApplicationInfoCrossRef: (Long) -> Unit,
     onAddEblanApplicationInfoTag: (EblanApplicationInfoTag) -> Unit,
     onDeleteEblanApplicationInfoCrossRef: (Long) -> Unit,
@@ -304,9 +310,9 @@ private fun Success(
 
         Folders(
             eblanApplicationInfo = eblanApplicationInfo,
+            topLevelFolderEblanApplicationInfos = topLevelFolderEblanApplicationInfos,
             folderEblanApplicationInfos = folderEblanApplicationInfos,
             folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
-            topLevelFolderEblanApplicationInfos = topLevelFolderEblanApplicationInfos,
             onUpdateEblanApplicationInfo = onUpdateEblanApplicationInfo,
             onAddFolderEblanApplicationInfo = onAddFolderEblanApplicationInfo,
         )
@@ -347,8 +353,11 @@ private fun Success(
 
 @Composable
 private fun Tags(
-    modifier: Modifier = Modifier,
+    // Content
     eblanApplicationInfoTagsUi: List<EblanApplicationInfoTagUi>,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Actions
     onAddEblanApplicationInfoCrossRef: (Long) -> Unit,
     onAddEblanApplicationInfoTag: (EblanApplicationInfoTag) -> Unit,
     onDeleteEblanApplicationInfoCrossRef: (Long) -> Unit,
@@ -407,8 +416,11 @@ private fun Tags(
 
 @Composable
 private fun EblanApplicationInfoTagItem(
-    modifier: Modifier = Modifier,
+    // Data
     eblanApplicationInfoTagUi: EblanApplicationInfoTagUi,
+    // Appearance
+    modifier: Modifier = Modifier,
+    // Actions
     onAddEblanApplicationInfoCrossRef: (Long) -> Unit,
     onDeleteEblanApplicationInfoCrossRef: (Long) -> Unit,
     onShowUpdateTagDialog: (EblanApplicationInfoTagUi) -> Unit,
@@ -483,11 +495,15 @@ private fun AddTag(
 
 @Composable
 private fun Folders(
-    modifier: Modifier = Modifier,
+    // Application Info
     eblanApplicationInfo: EblanApplicationInfo,
+    // Folders
+    topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
-    topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Callbacks
     onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
     onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
 ) {
@@ -523,10 +539,13 @@ private fun Folders(
 
 @Composable
 private fun FolderEblanApplicationInfoItem(
-    modifier: Modifier = Modifier,
+    // Application Info
     folderEblanApplicationInfo: FolderEblanApplicationInfo,
     eblanApplicationInfo: EblanApplicationInfo,
+    // UI Configuration
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
+    modifier: Modifier = Modifier,
+    // Callbacks
     onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
 ) {
     val folderIndex = remember(

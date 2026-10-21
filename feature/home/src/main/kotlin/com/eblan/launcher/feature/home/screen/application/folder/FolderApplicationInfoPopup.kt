@@ -70,12 +70,15 @@ import com.eblan.launcher.ui.local.LocalUserManager
 
 @Composable
 internal fun FolderApplicationInfoPopup(
-    modifier: Modifier = Modifier,
+    // Content
     folderEblanApplicationInfo: FolderEblanApplicationInfo?,
-    popupIntOffset: IntOffset?,
-    popupIntSize: IntSize?,
     paddingValues: PaddingValues,
     isCloseFolderEblanApplicationInfoMenu: Boolean,
+    // Layout
+    popupIntOffset: IntOffset?,
+    popupIntSize: IntSize?,
+    modifier: Modifier = Modifier,
+    // Callbacks
     onDismissRequest: () -> Unit,
     onEditFolderApplicationInfo: (String) -> Unit,
     onDeleteFolderEblanApplicationInfoGridItems: (
@@ -184,17 +187,21 @@ internal fun FolderApplicationInfoPopup(
 
 @Composable
 internal fun FolderApplicationInfoGridItemPopup(
-    modifier: Modifier = Modifier,
+    // Content
     folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem?,
-    popupIntOffset: IntOffset?,
-    popupIntSize: IntSize?,
-    paddingValues: PaddingValues,
     eblanAppWidgetProviderInfosGroup: Map<String, List<EblanAppWidgetProviderInfo>>,
     eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
     gridItemSettings: GridItemSettings,
+    // Popup Configuration
+    popupIntOffset: IntOffset?,
+    popupIntSize: IntSize?,
+    paddingValues: PaddingValues,
     hasShortcutHostPermission: Boolean,
     isVisibleOverlay: Boolean,
     isCloseFolderEblanApplicationInfoGridItemMenu: Boolean,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Callbacks
     onDismissRequest: () -> Unit,
     onEditFolderApplicationInfo: (String) -> Unit,
     onEditApplicationInfo: (
@@ -296,22 +303,22 @@ internal fun FolderApplicationInfoGridItemPopup(
             ),
         ) {
             FolderApplicationInfoGridItemPopupContent(
-                eblanAppWidgetProviderInfosGroup = eblanAppWidgetProviderInfosGroup,
-                eblanShortcutInfosGroup = eblanShortcutInfosGroup,
                 folderEblanApplicationInfoGridItem = folderEblanApplicationInfoGridItem,
                 gridItemSettings = gridItemSettings,
+                eblanAppWidgetProviderInfosGroup = eblanAppWidgetProviderInfosGroup,
+                eblanShortcutInfosGroup = eblanShortcutInfosGroup,
                 hasShortcutHostPermission = hasShortcutHostPermission,
                 isVisibleOverlay = isVisibleOverlay,
                 popupIntOffset = popupIntOffset,
                 popupIntSize = popupIntSize,
+                onWidgets = onWidgets,
+                onEditApplicationInfo = onEditApplicationInfo,
+                onEditFolderApplicationInfo = onEditFolderApplicationInfo,
                 onDeleteFolderEblanApplicationInfoGridItems = onDeleteFolderEblanApplicationInfoGridItems,
+                onResetFolderEblanApplicationInfoPopupEntries = onResetFolderEblanApplicationInfoPopupEntries,
                 onDismiss = {
                     transitionState.targetState = false
                 },
-                onEditApplicationInfo = onEditApplicationInfo,
-                onEditFolderApplicationInfo = onEditFolderApplicationInfo,
-                onResetFolderEblanApplicationInfoPopupEntries = onResetFolderEblanApplicationInfoPopupEntries,
-                onWidgets = onWidgets,
                 onDragShortcutInfo = onDragShortcutInfo,
             )
         }
@@ -320,24 +327,28 @@ internal fun FolderApplicationInfoGridItemPopup(
 
 @Composable
 private fun FolderApplicationInfoGridItemPopupContent(
-    modifier: Modifier = Modifier,
-    eblanAppWidgetProviderInfosGroup: Map<String, List<EblanAppWidgetProviderInfo>>,
-    eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
+    // Item Data
     folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
     gridItemSettings: GridItemSettings,
+    eblanAppWidgetProviderInfosGroup: Map<String, List<EblanAppWidgetProviderInfo>>,
+    eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
     hasShortcutHostPermission: Boolean,
+    // Popup State
     isVisibleOverlay: Boolean,
     popupIntOffset: IntOffset,
     popupIntSize: IntSize,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Actions
+    onWidgets: (EblanApplicationInfoGroup) -> Unit,
+    onEditApplicationInfo: (Long, String) -> Unit,
+    onEditFolderApplicationInfo: (String) -> Unit,
     onDeleteFolderEblanApplicationInfoGridItems: (
         icon: String?,
         folderId: String,
     ) -> Unit,
-    onDismiss: () -> Unit,
-    onEditApplicationInfo: (Long, String) -> Unit,
-    onEditFolderApplicationInfo: (String) -> Unit,
     onResetFolderEblanApplicationInfoPopupEntries: () -> Unit,
-    onWidgets: (EblanApplicationInfoGroup) -> Unit,
+    onDismiss: () -> Unit,
     onDragShortcutInfo: (
         gridItem: GridItem,
         imageBitmap: ImageBitmap,
@@ -354,7 +365,6 @@ private fun FolderApplicationInfoGridItemPopupContent(
     when (val data = folderEblanApplicationInfoGridItem.data) {
         is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
             ApplicationInfoMenu(
-                modifier = modifier,
                 eblanAppWidgetProviderInfosByPackageName = eblanAppWidgetProviderInfosGroup[
                     data.packageName,
                 ],
@@ -369,16 +379,17 @@ private fun FolderApplicationInfoGridItemPopupContent(
                 isUserInstalled = packageManager.isUserInstalled(data.flags),
                 icon = data.icon,
                 isVisibleOverlay = isVisibleOverlay,
+                modifier = modifier,
                 onUninstall = {
                     handleOnUninstall(
                         context = context,
+                        launcherApps = launcherApps,
+                        userManager = userManager,
                         serialNumber = data.serialNumber,
                         componentName = data.componentName,
                         packageName = data.packageName,
-                        launcherApps = launcherApps,
                         popupIntOffset = popupIntOffset,
                         popupIntSize = popupIntSize,
-                        userManager = userManager,
                     )
 
                     onDismiss()

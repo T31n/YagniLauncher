@@ -74,10 +74,10 @@ internal fun GeneralSettingsRoute(
     val eblanIconPackInfos by viewModel.eblanIconPacks.collectAsStateWithLifecycle()
 
     GeneralSettingsScreen(
-        modifier = modifier,
-        eblanIconPackInfos = eblanIconPackInfos,
         generalSettingsUiState = generalSettingsUiState,
+        eblanIconPackInfos = eblanIconPackInfos,
         packageManagerIconPacks = packageManagerIconPackInfos,
+        modifier = modifier,
         onDeleteEblanIconPackInfo = viewModel::deleteIconPack,
         onNavigateUp = onNavigateUp,
         onUpdateGeneralSettings = viewModel::updateGeneralSettings,
@@ -87,10 +87,13 @@ internal fun GeneralSettingsRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun GeneralSettingsScreen(
-    modifier: Modifier = Modifier,
-    eblanIconPackInfos: List<EblanIconPackInfo>,
+    // State
     generalSettingsUiState: GeneralSettingsUiState,
+    eblanIconPackInfos: List<EblanIconPackInfo>,
     packageManagerIconPacks: List<PackageManagerIconPack>,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Callbacks
     onDeleteEblanIconPackInfo: (String) -> Unit,
     onNavigateUp: () -> Unit,
     onUpdateGeneralSettings: (GeneralSettings) -> Unit,
@@ -121,8 +124,8 @@ internal fun GeneralSettingsScreen(
             if (generalSettingsUiState is GeneralSettingsUiState.Success) {
                 Success(
                     eblanIconPackInfos = eblanIconPackInfos,
-                    generalSettings = generalSettingsUiState.generalSettings,
                     packageManagerIconPacks = packageManagerIconPacks,
+                    generalSettings = generalSettingsUiState.generalSettings,
                     onDeleteEblanIconPackInfo = onDeleteEblanIconPackInfo,
                     onUpdateGeneralSettings = onUpdateGeneralSettings,
                 )
@@ -133,10 +136,14 @@ internal fun GeneralSettingsScreen(
 
 @Composable
 private fun Success(
-    modifier: Modifier = Modifier,
+    // Icon Packs
     eblanIconPackInfos: List<EblanIconPackInfo>,
-    generalSettings: GeneralSettings,
     packageManagerIconPacks: List<PackageManagerIconPack>,
+    // General Settings
+    generalSettings: GeneralSettings,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Actions
     onDeleteEblanIconPackInfo: (String) -> Unit,
     onUpdateGeneralSettings: (GeneralSettings) -> Unit,
 ) {
@@ -269,7 +276,9 @@ private fun Success(
 
 @Composable
 private fun buildGeneralSettingsItems(
+    // General Settings
     generalSettings: GeneralSettings,
+    // Theme and Icon Actions
     onImportIconPackClick: () -> Unit,
     onSelectIconPackClick: () -> Unit,
     onThemeClick: () -> Unit,

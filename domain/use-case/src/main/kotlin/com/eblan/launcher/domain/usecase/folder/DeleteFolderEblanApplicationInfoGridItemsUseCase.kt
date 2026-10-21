@@ -31,12 +31,20 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 
+/** Deletes a folder tree, clears child application folder links, and removes its icon files. */
 class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
     private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
     private val userDataRepository: UserDataRepository,
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
+    /**
+     * Removes all descendants of [folderId], restores contained applications to the top level, and
+     * deletes the folder and its icon.
+     *
+     * @param icon The icon path of the folder being deleted, if any.
+     * @param folderId The ID of the folder to delete.
+     */
     suspend operator fun invoke(
         icon: String?,
         folderId: String,
@@ -82,6 +90,7 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
         folderEblanApplicationInfoRepository.deleteFolderEblanApplicationInfoById(id = folderId)
     }
 
+    /** Collects a folder and all nested descendants from the preview-folder map. */
     private fun getRecursiveFolderGridItems(
         folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem? = null,
         folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
@@ -113,6 +122,7 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
         }
     }
 
+    /** Deletes an icon file when a path is available and the file exists. */
     private fun deleteCustomIcon(icon: String?) {
         if (icon == null) return
 
