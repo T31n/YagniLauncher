@@ -40,8 +40,11 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun ImportIconPackInfoDialog(
+    // Layout and Appearance
     modifier: Modifier = Modifier,
+    // Data
     packageManagerIconPacks: List<PackageManagerIconPack>,
+    // Actions
     onDismissRequest: () -> Unit,
     onUpdateIconPackInfo: (
         packageName: String,

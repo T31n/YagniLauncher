@@ -43,7 +43,7 @@ import com.eblan.launcher.common.R as commonR
 fun SelectApplicationDialog(
     // Data
     eblanApplicationInfos: List<EblanApplicationInfo>,
-    // Modifier
+    // Layout
     modifier: Modifier = Modifier,
     // Callbacks
     onDismissRequest: () -> Unit,

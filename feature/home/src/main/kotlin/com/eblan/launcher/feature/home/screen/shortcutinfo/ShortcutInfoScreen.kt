@@ -60,14 +60,14 @@ import kotlin.uuid.Uuid
 
 @Composable
 internal fun ShortcutInfoScreen(
-    // Content
+    // Data
     eblanShortcutInfosGroup: List<EblanShortcutInfo>,
     gridItemSettings: GridItemSettings,
+    // Appearance
     icon: String?,
     isVisibleOverlay: Boolean,
-    // Modifier
     modifier: Modifier = Modifier,
-    // Callbacks
+    // Actions
     onTapShortcutInfo: (
         serialNumber: Long,
         packageName: String,
@@ -91,10 +91,14 @@ internal fun ShortcutInfoScreen(
     ) {
         eblanShortcutInfosGroup.forEach { eblanShortcutInfo ->
             ShortcutInfoMenuItem(
+                // Shortcut Info
                 eblanShortcutInfo = eblanShortcutInfo,
+                // Item Appearance
                 icon = icon,
                 isVisibleOverlay = isVisibleOverlay,
+                // Grid Settings
                 gridItemSettings = gridItemSettings,
+                // Actions
                 onTapShortcutInfo = onTapShortcutInfo,
                 onDragShortcutInfo = onDragShortcutInfo,
             )
@@ -106,9 +110,9 @@ internal fun ShortcutInfoScreen(
 internal fun PrivateShortcutInfoMenu(
     // Shortcut Data
     eblanShortcutInfosGroup: List<EblanShortcutInfo>,
-    // Modifier
+    // Layout
     modifier: Modifier = Modifier,
-    // Callbacks
+    // Actions
     onTapShortcutInfo: (
         serialNumber: Long,
         packageName: String,
@@ -125,7 +129,9 @@ internal fun PrivateShortcutInfoMenu(
     ) {
         eblanShortcutInfosGroup.forEach { eblanShortcutInfo ->
             PrivateShortcutInfoMenuItem(
+                // Shortcut Info
                 eblanShortcutInfo = eblanShortcutInfo,
+                // Callbacks
                 onTapShortcutInfo = onTapShortcutInfo,
             )
         }
@@ -134,11 +140,12 @@ internal fun PrivateShortcutInfoMenu(
 
 @Composable
 private fun ShortcutInfoMenuItem(
-    // Shortcut Content
+    // Shortcut Info
     eblanShortcutInfo: EblanShortcutInfo,
+    // Item Appearance
     icon: String?,
     isVisibleOverlay: Boolean,
-    // Layout and Appearance
+    // Grid Settings
     gridItemSettings: GridItemSettings,
     modifier: Modifier = Modifier,
     // Actions
@@ -197,12 +204,15 @@ private fun ShortcutInfoMenuItem(
                             onLongPress = {
                                 scope.launch {
                                     handleOnLongPress(
+                                        // Shortcut Information
                                         eblanShortcutInfo = eblanShortcutInfo,
+                                        // Item Appearance and Settings
                                         icon = icon,
                                         gridItemSettings = gridItemSettings,
                                         graphicsLayer = graphicsLayer,
                                         intOffset = intOffset,
                                         intSize = intSize,
+                                        // Drag Callback
                                         onDragShortcutInfo = onDragShortcutInfo,
                                     )
                                 }
@@ -216,9 +226,9 @@ private fun ShortcutInfoMenuItem(
 
 @Composable
 private fun PrivateShortcutInfoMenuItem(
-    // Content
+    // Shortcut Info
     eblanShortcutInfo: EblanShortcutInfo,
-    // Modifier
+    // Modifiers
     modifier: Modifier = Modifier,
     // Callbacks
     onTapShortcutInfo: (Long, String, String) -> Unit,
@@ -247,16 +257,15 @@ private fun PrivateShortcutInfoMenuItem(
 
 @OptIn(ExperimentalUuidApi::class)
 private suspend fun handleOnLongPress(
-    // Shortcut
+    // Shortcut Information
     eblanShortcutInfo: EblanShortcutInfo,
+    // Item Appearance and Settings
     icon: String?,
-    // Grid
     gridItemSettings: GridItemSettings,
-    // Graphics and Bounds
     graphicsLayer: GraphicsLayer,
     intOffset: IntOffset,
     intSize: IntSize,
-    // Actions
+    // Drag Callback
     onDragShortcutInfo: (
         gridItem: GridItem,
         imageBitmap: ImageBitmap,
@@ -268,9 +277,13 @@ private suspend fun handleOnLongPress(
     val id = Uuid.random().toHexString()
 
     val gridItem = getShortcutInfoGridItem(
+        // Identification
         id = id,
+        // Shortcut Data
         eblanShortcutInfo = eblanShortcutInfo,
+        // Appearance
         icon = icon,
+        // Settings
         gridItemSettings = gridItemSettings,
     )
 
@@ -287,11 +300,13 @@ private suspend fun handleOnLongPress(
 }
 
 private fun getShortcutInfoGridItem(
-    // Identification and Data
+    // Identification
     id: String,
+    // Shortcut Data
     eblanShortcutInfo: EblanShortcutInfo,
-    // Appearance and Layout
+    // Appearance
     icon: String?,
+    // Settings
     gridItemSettings: GridItemSettings,
 ): GridItem {
     val data = GridItemData.ShortcutInfo(

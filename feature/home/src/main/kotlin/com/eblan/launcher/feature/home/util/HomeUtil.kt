@@ -46,9 +46,8 @@ import com.eblan.launcher.framework.widgetmanager.AndroidAppWidgetManagerWrapper
 import kotlin.math.roundToInt
 
 internal fun handleEblanAction(
-    // Context
+    // Context and Action
     context: Context,
-    // Action
     eblanAction: EblanAction,
     // System Wrappers
     launcherApps: AndroidLauncherAppsWrapper,
@@ -144,7 +143,6 @@ internal fun updateAppWidgetOptions(
     width: Int,
     height: Int,
     density: Density,
-    // Grid
     columns: Int,
     rows: Int,
     gridWidth: Int,
@@ -212,11 +210,11 @@ internal fun updateAppWidgetOptions(
 }
 
 internal fun handleOnUninstall(
-    // Context & System
+    // Android Context and Wrappers
     context: Context,
     launcherApps: AndroidLauncherAppsWrapper,
     userManager: AndroidUserManagerWrapper,
-    // Target Identification
+    // App Target Identification
     serialNumber: Long,
     componentName: String,
     packageName: String,

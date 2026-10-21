@@ -179,7 +179,9 @@ private fun Success(
 
     if (showSelectApplicationDialog) {
         SelectApplicationDialog(
+            // Data
             eblanApplicationInfos = eblanApplicationInfos,
+            // Callbacks
             onDismissRequest = {
                 showSelectApplicationDialog = false
             },

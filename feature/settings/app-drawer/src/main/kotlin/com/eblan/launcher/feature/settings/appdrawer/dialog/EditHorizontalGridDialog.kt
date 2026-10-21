@@ -43,9 +43,9 @@ internal fun EditHorizontalGridDialog(
     // Grid Dimensions
     horizontalAppDrawerColumns: Int,
     horizontalAppDrawerRows: Int,
-    // Modifier
+    // Layout
     modifier: Modifier = Modifier,
-    // Actions
+    // Callbacks
     onDismissRequest: () -> Unit,
     onUpdateHorizontalGrid: (
         horizontalAppDrawerColumns: Int,

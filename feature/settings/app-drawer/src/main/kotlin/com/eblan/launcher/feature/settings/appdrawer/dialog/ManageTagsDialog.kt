@@ -47,8 +47,11 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun ManageTagsDialog(
+    // Modifier
     modifier: Modifier = Modifier,
+    // Tags
     eblanApplicationInfoTags: List<EblanApplicationInfoTag>,
+    // Callbacks
     onDismissRequest: () -> Unit,
     onUpdateEblanApplicationInfoTags: (List<EblanApplicationInfoTag>) -> Unit,
 ) {

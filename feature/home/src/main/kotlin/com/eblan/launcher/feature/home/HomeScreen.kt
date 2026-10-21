@@ -72,23 +72,18 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 
 @Composable
 internal fun HomeRoute(
-    // Configuration
+    // State and Modifier
     configureResultCode: Int?,
-    // Modifier
     modifier: Modifier = Modifier,
-    // Dependencies
     viewModel: HomeViewModel = hiltViewModel(),
-    // Configuration actions
+    // Actions
     onResetConfigureResultCode: () -> Unit,
-    // Edit actions
     onEditApplicationInfo: (
         serialNumber: Long,
         componentName: String,
     ) -> Unit,
     onEditGridItem: (String) -> Unit,
-    // Navigation actions
     onSettings: () -> Unit,
-    // Edit actions
     onEditFolderApplicationInfo: (String) -> Unit,
 ) {
     val homeUiState by viewModel.homeUiState.collectAsStateWithLifecycle()
@@ -113,43 +108,53 @@ internal fun HomeRoute(
     val moveFolderEblanApplicationInfoGridItemResult by viewModel.moveFolderEblanApplicationInfoGridItemResult.collectAsStateWithLifecycle()
 
     HomeScreen(
+        // General State
         homeUiState = homeUiState,
         screen = screen,
         textColor = textColor,
         isVisibleOverlay = isVisibleOverlay,
         configureResultCode = configureResultCode,
+        modifier = modifier,
+        // Pages and Grid Data
         pageItems = pageItems,
         gridItemSource = gridItemSource,
         pinGridItem = pinGridItem,
         resizeGridItem = resizeGridItem,
         movedGridItemResult = movedGridItemResult,
+        // Folders Data
         folderGridItemEntries = folderGridItemEntries,
         folderPopups = folderPopups,
         folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
         folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
         moveFolderEblanApplicationInfoGridItemResult = moveFolderEblanApplicationInfoGridItemResult,
+        // App Widgets Shortcuts and Applications Data
         eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfos,
         eblanAppWidgetProviderInfosGroup = eblanAppWidgetProviderInfosGroup,
         eblanApplicationInfoTags = eblanApplicationInfoTags,
         eblanShortcutConfigs = eblanShortcutConfigs,
         eblanShortcutInfosGroup = eblanShortcutInfosGroup,
         getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfos,
-        modifier = modifier,
+        // Screen and Settings Callbacks
         onUpdateScreen = viewModel::updateScreen,
         onSettings = onSettings,
+        // Sync and Configure Callbacks
         onStartSyncData = viewModel::startSyncData,
         onStopSyncData = viewModel::stopSyncData,
         onResetConfigureResultCode = onResetConfigureResultCode,
+        // Package and Shortcut Change Callbacks
         onPackageAdded = viewModel::packageAdded,
         onPackageChanged = viewModel::packageChanged,
         onPackageRemoved = viewModel::packageRemove,
         onShortcutsChanged = viewModel::shortcutsChanged,
+        // Page Editing Callbacks
         onEditPage = viewModel::showPageCache,
         onSaveEditPage = viewModel::saveEditPage,
+        // Application and Widget Queries Callbacks
         onGetEblanAppWidgetProviderInfosByLabel = viewModel::getEblanAppWidgetProviderInfosByLabel,
         onGetEblanApplicationInfosByLabel = viewModel::getEblanApplicationInfosByLabel,
         onGetEblanApplicationInfosByTagId = viewModel::getEblanApplicationInfosByTagId,
         onGetEblanShortcutConfigsByLabel = viewModel::getEblanShortcutConfigsByLabel,
+        // Grid and Application Management Callbacks
         onEditApplicationInfo = onEditApplicationInfo,
         onResetGrid = viewModel::resetGrid,
         onDeleteGridItem = viewModel::deleteGridItem,
@@ -166,6 +171,7 @@ internal fun HomeRoute(
         onUpdateGridItemSource = viewModel::updateGridItemSource,
         onUpdateIsVisibleOverlay = viewModel::updateIsVisibleOverlay,
         onUpdateShortcutConfigIntoShortcutInfoGridItem = viewModel::updateShortcutConfigIntoShortcutInfoGridItem,
+        // Folder Management Callbacks
         onMoveFolderGridItem = viewModel::moveFolderGridItem,
         onMoveFolderGridItemOutsideFolder = viewModel::moveFolderGridItemOutsideFolder,
         onResetGridAfterMoveFolder = viewModel::resetGridAfterMoveFolder,
@@ -189,39 +195,40 @@ internal fun HomeRoute(
 
 @Composable
 internal fun HomeScreen(
-    // Screen and UI state
+    // General State
     homeUiState: HomeUiState,
     screen: Screen,
     textColor: TextColor,
     isVisibleOverlay: Boolean,
     configureResultCode: Int?,
-    // Page and grid state
+    modifier: Modifier = Modifier,
+    // Pages and Grid Data
     pageItems: List<PageItem>?,
     gridItemSource: GridItemSource?,
     pinGridItem: GridItem?,
     resizeGridItem: GridItem?,
     movedGridItemResult: MoveGridItemResult?,
-    // Folder state
+    // Folders Data
     folderGridItemEntries: List<FolderEntry>,
     folderPopups: Map<String, FolderPopup>,
     folderEblanApplicationInfoEntries: List<FolderEntry>,
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     moveFolderEblanApplicationInfoGridItemResult: MoveFolderEblanApplicationInfoGridItemResult?,
-    // Application and widget data
+    // App Widgets Shortcuts and Applications Data
     eblanAppWidgetProviderInfos: Map<EblanApplicationInfoGroup, List<EblanAppWidgetProviderInfo>>,
     eblanAppWidgetProviderInfosGroup: Map<String, List<EblanAppWidgetProviderInfo>>,
     eblanApplicationInfoTags: List<EblanApplicationInfoTag>,
     eblanShortcutConfigs: Map<EblanUser, Map<EblanApplicationInfoGroup, List<EblanShortcutConfig>>>,
     eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
     getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
-    // Modifier
-    modifier: Modifier = Modifier,
-    // System and screen callbacks
+    // Screen and Settings Callbacks
     onUpdateScreen: (Screen) -> Unit,
     onSettings: () -> Unit,
+    // Sync and Configure Callbacks
     onStartSyncData: () -> Unit,
     onStopSyncData: () -> Unit,
     onResetConfigureResultCode: () -> Unit,
+    // Package and Shortcut Change Callbacks
     onPackageAdded: (
         serialNumber: Long,
         packageName: String,
@@ -238,7 +245,7 @@ internal fun HomeScreen(
         serialNumber: Long,
         packageName: String,
     ) -> Unit,
-    // Page and data query callbacks
+    // Page Editing Callbacks
     onEditPage: (
         gridItems: List<GridItem>,
         associate: Associate,
@@ -249,15 +256,16 @@ internal fun HomeScreen(
         pageItemsToDelete: List<PageItem>,
         associate: Associate,
     ) -> Unit,
+    // Application and Widget Queries Callbacks
     onGetEblanAppWidgetProviderInfosByLabel: (String) -> Unit,
     onGetEblanApplicationInfosByLabel: (String) -> Unit,
     onGetEblanApplicationInfosByTagId: (Long?) -> Unit,
     onGetEblanShortcutConfigsByLabel: (String) -> Unit,
+    // Grid and Application Management Callbacks
     onEditApplicationInfo: (
         serialNumber: Long,
         componentName: String,
     ) -> Unit,
-    // Grid item callbacks
     onResetGrid: () -> Unit,
     onDeleteGridItem: (GridItem) -> Unit,
     onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
@@ -288,7 +296,7 @@ internal fun HomeScreen(
         moveGridItemResult: MoveGridItemResult,
         pinItemRequestType: PinItemRequestType.ShortcutInfo,
     ) -> Unit,
-    // Folder grid item callbacks
+    // Folder Management Callbacks
     onMoveFolderGridItem: (
         folderPopup: FolderPopup,
         movingGridItem: GridItem,
@@ -307,7 +315,6 @@ internal fun HomeScreen(
         folderEntry: FolderEntry,
         movingGridItem: GridItem,
     ) -> Unit,
-    // Folder application info callbacks
     onUpsertFolderEblanApplicationInfoPopupEntry: (FolderEntry) -> Unit,
     onDeleteFolderEblanApplicationInfoPopupEntry: (FolderEntry) -> Unit,
     onEditFolderApplicationInfo: (String) -> Unit,
@@ -335,7 +342,6 @@ internal fun HomeScreen(
         icon: String?,
         folderId: String,
     ) -> Unit,
-    // Grid item callbacks
     onUpdateGridItemsAfterMoveNewFolder: (
         folderGridItems: List<GridItem>,
         moveGridItemResult: MoveGridItemResult,
@@ -354,6 +360,7 @@ internal fun HomeScreen(
     ) {
         if (homeUiState is HomeUiState.Success && screenIntSize != IntSize.Zero) {
             Success(
+                // State
                 homeData = homeUiState.homeData,
                 screen = screen,
                 screenWidth = screenIntSize.width,
@@ -363,34 +370,41 @@ internal fun HomeScreen(
                 isVisibleOverlay = isVisibleOverlay,
                 configureResultCode = configureResultCode,
                 pageItems = pageItems,
+                // Data Providers
                 eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfos,
                 eblanAppWidgetProviderInfosGroup = eblanAppWidgetProviderInfosGroup,
                 eblanApplicationInfoTags = eblanApplicationInfoTags,
                 eblanShortcutConfigs = eblanShortcutConfigs,
                 eblanShortcutInfosGroup = eblanShortcutInfosGroup,
                 getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
+                // Folder Entries
                 folderGridItemEntries = folderGridItemEntries,
                 folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
                 folderPopups = folderPopups,
                 folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+                // Grid Interaction State
                 pinGridItem = pinGridItem,
                 resizeGridItem = resizeGridItem,
                 gridItemSource = gridItemSource,
                 movedGridItemResult = movedGridItemResult,
                 moveFolderEblanApplicationInfoGridItemResult = moveFolderEblanApplicationInfoGridItemResult,
+                // Screen and Overlay Actions
                 onUpdateScreen = onUpdateScreen,
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                 onResetConfigureResultCode = onResetConfigureResultCode,
                 onSettings = onSettings,
                 onStartSyncData = onStartSyncData,
                 onStopSyncData = onStopSyncData,
+                // Grid Management Actions
                 onResetGrid = onResetGrid,
                 onEditPage = onEditPage,
                 onSaveEditPage = onSaveEditPage,
+                // Application Info Query Actions
                 onGetEblanApplicationInfosByLabel = onGetEblanApplicationInfosByLabel,
                 onGetEblanApplicationInfosByTagId = onGetEblanApplicationInfosByTagId,
                 onGetEblanAppWidgetProviderInfosByLabel = onGetEblanAppWidgetProviderInfosByLabel,
                 onGetEblanShortcutConfigsByLabel = onGetEblanShortcutConfigsByLabel,
+                // Grid Item Actions
                 onEditApplicationInfo = onEditApplicationInfo,
                 onEditGridItem = onEditGridItem,
                 onDeleteGridItem = onDeleteGridItem,
@@ -398,13 +412,17 @@ internal fun HomeScreen(
                 onMoveGridItem = onMoveGridItem,
                 onUpdateGridItemsAfterMove = onUpdateGridItemsAfterMove,
                 onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+                // Pin Item Actions
                 onGetPinGridItem = onGetPinGridItem,
                 onResetPinGridItem = onResetPinGridItem,
                 onUpdateShortcutConfigIntoShortcutInfoGridItem = onUpdateShortcutConfigIntoShortcutInfoGridItem,
+                // Resize Grid Item Actions
                 onResizeGridItem = onResizeGridItem,
                 onUpdateResizeGridItem = onUpdateResizeGridItem,
                 onResetGridAfterResize = onResetGridAfterResize,
+                // Grid Item Source Actions
                 onUpdateGridItemSource = onUpdateGridItemSource,
+                // Folder Grid Item Actions
                 onUpsertFolderGridItemPopupEntry = onUpsertFolderGridItemPopupEntry,
                 onDeleteFolderPopupEntry = onDeleteFolderPopupEntry,
                 onResetFolderGridItemPopupEntries = onResetFolderGridItemPopupEntries,
@@ -412,6 +430,7 @@ internal fun HomeScreen(
                 onMoveFolderGridItem = onMoveFolderGridItem,
                 onMoveFolderGridItemOutsideFolder = onMoveFolderGridItemOutsideFolder,
                 onResetGridAfterMoveFolder = onResetGridAfterMoveFolder,
+                // Folder Application Info Actions
                 onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
                 onDeleteFolderEblanApplicationInfoPopupEntry = onDeleteFolderEblanApplicationInfoPopupEntry,
                 onResetFolderEblanApplicationInfoPopupEntries = onResetFolderEblanApplicationInfoPopupEntries,
@@ -422,10 +441,12 @@ internal fun HomeScreen(
                 onMoveFolderEblanApplicationInfoGridItemOutsideFolder = onMoveFolderEblanApplicationInfoGridItemOutsideFolder,
                 onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
                 onDeleteFolderEblanApplicationInfoGridItems = onDeleteFolderEblanApplicationInfoGridItems,
+                // Package Lifecycle Actions
                 onPackageAdded = onPackageAdded,
                 onPackageChanged = onPackageChanged,
                 onPackageRemoved = onPackageRemoved,
                 onShortcutsChanged = onShortcutsChanged,
+                // New Folder Actions
                 onUpdateGridItemsAfterMoveNewFolder = onUpdateGridItemsAfterMoveNewFolder,
             )
         }
@@ -443,18 +464,20 @@ private fun Success(
     textColor: TextColor,
     isVisibleOverlay: Boolean,
     configureResultCode: Int?,
-    // Data
     pageItems: List<PageItem>?,
+    // Data Providers
     eblanAppWidgetProviderInfos: Map<EblanApplicationInfoGroup, List<EblanAppWidgetProviderInfo>>,
     eblanAppWidgetProviderInfosGroup: Map<String, List<EblanAppWidgetProviderInfo>>,
     eblanApplicationInfoTags: List<EblanApplicationInfoTag>,
     eblanShortcutConfigs: Map<EblanUser, Map<EblanApplicationInfoGroup, List<EblanShortcutConfig>>>,
     eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
     getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
+    // Folder Entries
     folderGridItemEntries: List<FolderEntry>,
     folderEblanApplicationInfoEntries: List<FolderEntry>,
     folderPopups: Map<String, FolderPopup>,
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
+    // Grid Interaction State
     pinGridItem: GridItem?,
     resizeGridItem: GridItem?,
     gridItemSource: GridItemSource?,
@@ -462,13 +485,14 @@ private fun Success(
     moveFolderEblanApplicationInfoGridItemResult: MoveFolderEblanApplicationInfoGridItemResult?,
     // Modifier
     modifier: Modifier = Modifier,
-    // Callbacks
+    // Screen and Overlay Actions
     onUpdateScreen: (Screen) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onResetConfigureResultCode: () -> Unit,
     onSettings: () -> Unit,
     onStartSyncData: () -> Unit,
     onStopSyncData: () -> Unit,
+    // Grid Management Actions
     onResetGrid: () -> Unit,
     onEditPage: (
         gridItems: List<GridItem>,
@@ -480,10 +504,12 @@ private fun Success(
         pageItemsToDelete: List<PageItem>,
         associate: Associate,
     ) -> Unit,
+    // Application Info Query Actions
     onGetEblanApplicationInfosByLabel: (String) -> Unit,
     onGetEblanApplicationInfosByTagId: (Long?) -> Unit,
     onGetEblanAppWidgetProviderInfosByLabel: (String) -> Unit,
     onGetEblanShortcutConfigsByLabel: (String) -> Unit,
+    // Grid Item Actions
     onEditApplicationInfo: (
         serialNumber: Long,
         componentName: String,
@@ -502,12 +528,14 @@ private fun Success(
     ) -> Unit,
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
     onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
+    // Pin Item Actions
     onGetPinGridItem: (PinItemRequestType) -> Unit,
     onResetPinGridItem: () -> Unit,
     onUpdateShortcutConfigIntoShortcutInfoGridItem: (
         moveGridItemResult: MoveGridItemResult,
         pinItemRequestType: PinItemRequestType.ShortcutInfo,
     ) -> Unit,
+    // Resize Grid Item Actions
     onResizeGridItem: (
         gridItem: GridItem,
         columns: Int,
@@ -515,7 +543,9 @@ private fun Success(
     ) -> Unit,
     onUpdateResizeGridItem: (GridItem) -> Unit,
     onResetGridAfterResize: () -> Unit,
+    // Grid Item Source Actions
     onUpdateGridItemSource: (GridItemSource) -> Unit,
+    // Folder Grid Item Actions
     onUpsertFolderGridItemPopupEntry: (FolderEntry) -> Unit,
     onDeleteFolderPopupEntry: (FolderEntry) -> Unit,
     onResetFolderGridItemPopupEntries: () -> Unit,
@@ -534,6 +564,7 @@ private fun Success(
     ) -> Unit,
     onMoveFolderGridItemOutsideFolder: (GridItem) -> Unit,
     onResetGridAfterMoveFolder: () -> Unit,
+    // Folder Application Info Actions
     onUpsertFolderEblanApplicationInfoPopupEntry: (FolderEntry) -> Unit,
     onDeleteFolderEblanApplicationInfoPopupEntry: (FolderEntry) -> Unit,
     onResetFolderEblanApplicationInfoPopupEntries: () -> Unit,
@@ -561,6 +592,7 @@ private fun Success(
         icon: String?,
         folderId: String,
     ) -> Unit,
+    // Package Lifecycle Actions
     onPackageAdded: (
         serialNumber: Long,
         packageName: String,
@@ -577,6 +609,7 @@ private fun Success(
         serialNumber: Long,
         packageName: String,
     ) -> Unit,
+    // New Folder Actions
     onUpdateGridItemsAfterMoveNewFolder: (
         folderGridItems: List<GridItem>,
         moveGridItemResult: MoveGridItemResult,
@@ -589,86 +622,98 @@ private fun Success(
         when (targetState) {
             Screen.Pager -> {
                 PagerScreen(
-                    appDrawerSettings = homeData.userData.appDrawerSettings,
-                    configureResultCode = configureResultCode,
-                    dockGridItemsByPage = homeData.dockGridItemsByPage,
-                    eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfos,
-                    eblanAppWidgetProviderInfosGroup = eblanAppWidgetProviderInfosGroup,
-                    eblanApplicationInfoTags = eblanApplicationInfoTags,
-                    eblanShortcutConfigs = eblanShortcutConfigs,
-                    eblanShortcutInfosGroup = eblanShortcutInfosGroup,
-                    experimentalSettings = homeData.userData.experimentalSettings,
-                    folderGridItemEntries = folderGridItemEntries,
-                    folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
-                    gestureSettings = homeData.userData.gestureSettings,
-                    getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
-                    gridItems = homeData.gridItems,
-                    gridItemsByPage = homeData.gridItemsByPage,
-                    hasShortcutHostPermission = homeData.hasShortcutHostPermission,
-                    hasSystemFeatureAppWidgets = homeData.hasSystemFeatureAppWidgets,
+                    // Screen Dimensions
+                    screenWidth = screenWidth,
+                    screenHeight = screenHeight,
+                    // Settings
                     homeSettings = homeData.userData.homeSettings,
                     folderSettings = homeData.userData.folderSettings,
-                    moveGridItemResult = movedGridItemResult,
-                    paddingValues = paddingValues,
-                    pinGridItem = pinGridItem,
-                    screenHeight = screenHeight,
-                    screenWidth = screenWidth,
+                    appDrawerSettings = homeData.userData.appDrawerSettings,
+                    gestureSettings = homeData.userData.gestureSettings,
+                    experimentalSettings = homeData.userData.experimentalSettings,
                     textColor = textColor,
+                    // System Features
+                    hasSystemFeatureAppWidgets = homeData.hasSystemFeatureAppWidgets,
+                    hasShortcutHostPermission = homeData.hasShortcutHostPermission,
+                    // Data
+                    gridItems = homeData.gridItems,
+                    gridItemsByPage = homeData.gridItemsByPage,
+                    dockGridItemsByPage = homeData.dockGridItemsByPage,
+                    folderGridItemEntries = folderGridItemEntries,
+                    folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
+                    eblanApplicationInfoTags = eblanApplicationInfoTags,
+                    eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfos,
+                    eblanAppWidgetProviderInfosGroup = eblanAppWidgetProviderInfosGroup,
+                    eblanShortcutConfigs = eblanShortcutConfigs,
+                    eblanShortcutInfosGroup = eblanShortcutInfosGroup,
+                    folderPopups = folderPopups,
+                    folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+                    iconPackFilePaths = homeData.iconPackFilePaths,
+                    getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
+                    // State
+                    configureResultCode = configureResultCode,
+                    moveGridItemResult = movedGridItemResult,
+                    moveFolderEblanApplicationInfoGridItemResult = moveFolderEblanApplicationInfoGridItemResult,
+                    pinGridItem = pinGridItem,
                     resizeGridItem = resizeGridItem,
                     gridItemSource = gridItemSource,
                     isVisibleOverlay = isVisibleOverlay,
-                    folderPopups = folderPopups,
-                    iconPackFilePaths = homeData.iconPackFilePaths,
-                    folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
-                    moveFolderEblanApplicationInfoGridItemResult = moveFolderEblanApplicationInfoGridItemResult,
+                    // Layout
+                    paddingValues = paddingValues,
+                    // Callbacks - Data Management
+                    onStartSyncData = onStartSyncData,
+                    onStopSyncData = onStopSyncData,
+                    onResetGrid = onResetGrid,
+                    onResetConfigureResultCode = onResetConfigureResultCode,
+                    onResetPinGridItem = onResetPinGridItem,
+                    onResetFolderGridItemPopupEntries = onResetFolderGridItemPopupEntries,
+                    onResetFolderEblanApplicationInfoPopupEntries = onResetFolderEblanApplicationInfoPopupEntries,
+                    // Callbacks - Grid Item Actions
                     onDeleteGridItem = onDeleteGridItem,
                     onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
                     onUpdateGridItemsAfterMove = onUpdateGridItemsAfterMove,
-                    onResetGridAfterMoveFolder = onResetGridAfterMoveFolder,
-                    onEditApplicationInfo = onEditApplicationInfo,
                     onEditGridItem = onEditGridItem,
-                    onEditPage = onEditPage,
-                    onGetEblanAppWidgetProviderInfosByLabel = onGetEblanAppWidgetProviderInfosByLabel,
-                    onGetEblanApplicationInfosByLabel = onGetEblanApplicationInfosByLabel,
-                    onGetEblanApplicationInfosByTagId = onGetEblanApplicationInfosByTagId,
-                    onGetEblanShortcutConfigsByLabel = onGetEblanShortcutConfigsByLabel,
-                    onGetPinGridItem = onGetPinGridItem,
-                    onMoveFolderGridItem = onMoveFolderGridItem,
-                    onMoveFolderGridItemOutsideFolder = onMoveFolderGridItemOutsideFolder,
                     onMoveGridItem = onMoveGridItem,
-                    onResetConfigureResultCode = onResetConfigureResultCode,
-                    onResetPinGridItem = onResetPinGridItem,
+                    onResizeGridItem = onResizeGridItem,
                     onResizeCancel = onResetGrid,
                     onResizeEnd = onResetGridAfterResize,
-                    onResizeGridItem = onResizeGridItem,
-                    onSettings = onSettings,
-                    onStartSyncData = onStartSyncData,
-                    onStopSyncData = onStopSyncData,
+                    onUpdateResizeGridItem = onUpdateResizeGridItem,
+                    onUpdateGridItemSource = onUpdateGridItemSource,
+                    onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+                    onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+                    onUpdateGridItemsAfterMoveNewFolder = onUpdateGridItemsAfterMoveNewFolder,
+                    onUpdateShortcutConfigIntoShortcutInfoGridItem = onUpdateShortcutConfigIntoShortcutInfoGridItem,
+                    // Callbacks - Folder Actions
+                    onResetGridAfterMoveFolder = onResetGridAfterMoveFolder,
                     onUpsertFolderGridItemPopupEntry = onUpsertFolderGridItemPopupEntry,
                     onDeleteFolderGridItemPopupEntry = onDeleteFolderPopupEntry,
                     onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
                     onDeleteFolderEblanApplicationInfoPopupEntry = onDeleteFolderEblanApplicationInfoPopupEntry,
+                    onMoveFolderGridItem = onMoveFolderGridItem,
+                    onMoveFolderGridItemOutsideFolder = onMoveFolderGridItemOutsideFolder,
                     onShowFolderWhenDragging = onShowFolderWhenDragging,
-                    onUpdateShortcutConfigIntoShortcutInfoGridItem = onUpdateShortcutConfigIntoShortcutInfoGridItem,
-                    onUpdateGridItemSource = onUpdateGridItemSource,
-                    onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                    onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
-                    onUpdateResizeGridItem = onUpdateResizeGridItem,
-                    onResetGrid = onResetGrid,
-                    onPackageRemoved = onPackageRemoved,
-                    onPackageAdded = onPackageAdded,
-                    onPackageChanged = onPackageChanged,
-                    onShortcutsChanged = onShortcutsChanged,
-                    onResetFolderGridItemPopupEntries = onResetFolderGridItemPopupEntries,
                     onEditFolderApplicationInfo = onEditFolderApplicationInfo,
                     onUpdateMoveFolderEblanApplicationInfoGridItemResult = onUpdateMoveFolderEblanApplicationInfoGridItemResult,
                     onMoveFolderEblanApplicationInfoGridItem = onMoveFolderEblanApplicationInfoGridItem,
                     onDragEndAfterMoveFolderEblanApplicationInfo = onResetGridAfterMoveFolderEblanApplicationInfo,
                     onMoveFolderEblanApplicationInfoGridItemOutsideFolder = onMoveFolderEblanApplicationInfoGridItemOutsideFolder,
                     onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
-                    onResetFolderEblanApplicationInfoPopupEntries = onResetFolderEblanApplicationInfoPopupEntries,
                     onDeleteFolderEblanApplicationInfoGridItems = onDeleteFolderEblanApplicationInfoGridItems,
-                    onUpdateGridItemsAfterMoveNewFolder = onUpdateGridItemsAfterMoveNewFolder,
+                    // Callbacks - Application Info Actions
+                    onEditApplicationInfo = onEditApplicationInfo,
+                    onPackageRemoved = onPackageRemoved,
+                    onPackageAdded = onPackageAdded,
+                    onPackageChanged = onPackageChanged,
+                    onShortcutsChanged = onShortcutsChanged,
+                    // Callbacks - Page and Widget Actions
+                    onEditPage = onEditPage,
+                    onGetEblanAppWidgetProviderInfosByLabel = onGetEblanAppWidgetProviderInfosByLabel,
+                    onGetEblanApplicationInfosByLabel = onGetEblanApplicationInfosByLabel,
+                    onGetEblanApplicationInfosByTagId = onGetEblanApplicationInfosByTagId,
+                    onGetEblanShortcutConfigsByLabel = onGetEblanShortcutConfigsByLabel,
+                    onGetPinGridItem = onGetPinGridItem,
+                    // Callbacks - General UI
+                    onSettings = onSettings,
                 )
             }
 
@@ -676,20 +721,25 @@ private fun Success(
 
             Screen.EditGridPage -> {
                 EditGridPageScreen(
+                    // Content
                     pageItems = pageItems,
-                    hasShortcutHostPermission = homeData.hasShortcutHostPermission,
-                    homeSettings = homeData.userData.homeSettings,
+                    folderPopupGridItems = folderPopups,
+                    iconPackFilePaths = homeData.iconPackFilePaths,
+                    // Layout
                     paddingValues = paddingValues,
                     screenWidth = screenWidth,
                     screenHeight = screenHeight,
+                    // Configuration
+                    hasShortcutHostPermission = homeData.hasShortcutHostPermission,
+                    homeSettings = homeData.userData.homeSettings,
+                    folderSettings = homeData.userData.folderSettings,
+                    // Appearance
                     textColor = textColor,
-                    folderPopupGridItems = folderPopups,
-                    iconPackFilePaths = homeData.iconPackFilePaths,
                     folderBackgroundColor = homeData.userData.folderSettings.folderBackgroundColor,
                     customFolderBackgroundColor = homeData.userData.folderSettings.customFolderBackgroundColor,
                     systemTextColor = textColor,
                     systemCustomTextColor = homeData.userData.homeSettings.gridItemSettings.customTextColor,
-                    folderSettings = homeData.userData.folderSettings,
+                    // Actions
                     onSaveEditPage = onSaveEditPage,
                     onUpdateScreen = onUpdateScreen,
                 )
@@ -744,9 +794,12 @@ private fun RequestPermissionsEffect(modifier: Modifier = Modifier) {
 
     if (showTextDialog) {
         TextDialog(
+            // Content
             title = stringResource(R.string.request_permissions),
             text = stringResource(R.string.allow_permissions_so_we_can_inform_you_about_important_crash_reports_and_make_phone_shortcuts),
+            // Layout
             modifier = modifier,
+            // Callbacks
             onDismissRequest = {
                 showTextDialog = false
             },

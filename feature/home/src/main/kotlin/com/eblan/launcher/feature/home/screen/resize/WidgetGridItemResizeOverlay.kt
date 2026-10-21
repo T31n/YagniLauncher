@@ -59,25 +59,23 @@ import kotlin.math.roundToInt
 
 @Composable
 internal fun WidgetGridItemResizeOverlay(
-    // Data
+    // Item Data
     data: GridItemData.Widget,
     gridItem: GridItem,
-    // Grid Dimensions
+    // Dimensions
     columns: Int,
     rows: Int,
     gridWidth: Int,
     gridHeight: Int,
-    // Item Dimensions and Position
     width: Int,
     height: Int,
+    // Position and Style
     x: Int,
     y: Int,
-    // Appearance and Behavior
     color: Color,
     lockMovement: Boolean,
-    // Modifier
     modifier: Modifier = Modifier,
-    // Callbacks
+    // Callback
     onResizeWidgetGridItem: (
         gridItem: GridItem,
         columns: Int,
@@ -147,10 +145,13 @@ internal fun WidgetGridItemResizeOverlay(
     val borderX by remember {
         derivedStateOf {
             getWidgetBorderX(
+                // Position
                 x = x,
                 currentX = currentX.value,
+                // Dimensions
                 width = width,
                 currentWidth = currentWidth.value,
+                // DragHandle
                 dragHandle = dragHandle,
                 dragHandleSizePx = dragHandleSizePx,
             )
@@ -160,10 +161,13 @@ internal fun WidgetGridItemResizeOverlay(
     val borderY by remember {
         derivedStateOf {
             getWidgetBorderY(
+                // Position
                 y = y,
                 currentY = currentY.value,
+                // Dimensions
                 height = height,
                 currentHeight = currentHeight.value,
+                // Drag Configuration
                 dragHandle = dragHandle,
                 dragHandleSizePx = dragHandleSizePx,
             )
@@ -175,8 +179,10 @@ internal fun WidgetGridItemResizeOverlay(
         key2 = currentHeight.value,
     ) {
         resizeWidgetGridItem(
+            // Widget Data and Manager
             data = data,
             appWidgetManager = appWidgetManager,
+            // Grid Item and Dimensions
             gridItem = gridItem,
             gridWidth = gridWidth,
             gridHeight = gridHeight,
@@ -186,10 +192,12 @@ internal fun WidgetGridItemResizeOverlay(
             columns = columns,
             width = width,
             height = height,
+            // Interaction and Layout
             dragHandle = dragHandle,
             isResizing = isResizing,
             lockMovement = lockMovement,
             density = density,
+            // Callback
             onResizeWidgetGridItem = onResizeWidgetGridItem,
         )
     }
@@ -345,7 +353,7 @@ private fun getWidgetBorderX(
     // Dimensions
     width: Int,
     currentWidth: Int,
-    // Drag Handle
+    // DragHandle
     dragHandle: Alignment,
     dragHandleSizePx: Int,
 ): Int = if (dragHandle == Alignment.CenterStart) {
@@ -365,7 +373,7 @@ private fun getWidgetBorderY(
     // Dimensions
     height: Int,
     currentHeight: Int,
-    // Drag Handle
+    // Drag Configuration
     dragHandle: Alignment,
     dragHandleSizePx: Int,
 ): Int = if (dragHandle == Alignment.TopCenter) {
@@ -379,10 +387,10 @@ private fun getWidgetBorderY(
 }
 
 private fun resizeWidgetGridItem(
-    // Widget Data
+    // Widget Data and Manager
     data: GridItemData.Widget,
     appWidgetManager: AndroidAppWidgetManagerWrapper,
-    // Grid State
+    // Grid Item and Dimensions
     gridItem: GridItem,
     gridWidth: Int,
     gridHeight: Int,
@@ -390,9 +398,9 @@ private fun resizeWidgetGridItem(
     currentHeight: Int,
     rows: Int,
     columns: Int,
-    // Resize Dimensions
     width: Int,
     height: Int,
+    // Interaction and Layout
     dragHandle: Alignment,
     isResizing: Boolean,
     lockMovement: Boolean,
@@ -486,8 +494,11 @@ private fun resizeWidgetGridItem(
         ) && !lockMovement
     ) {
         updateAppWidgetOptions(
+            // Manager
             androidAppWidgetManagerWrapper = appWidgetManager,
+            // Data
             data = data,
+            // Dimensions
             width = allowedWidth,
             height = allowedHeight,
             density = density,

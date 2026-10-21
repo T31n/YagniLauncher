@@ -39,9 +39,12 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun EditGridDialog(
+    // Modifier
     modifier: Modifier = Modifier,
+    // Grid Dimensions
     columns: Int,
     rows: Int,
+    // Callbacks
     onDismissRequest: () -> Unit,
     onUpdateGrid: (
         columns: Int,

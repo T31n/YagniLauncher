@@ -39,14 +39,13 @@ import com.eblan.launcher.feature.home.util.PAGE_INDICATOR_HEIGHT
 internal fun ResizeScreen(
     // Layout
     paddingValues: PaddingValues,
+    modifier: Modifier = Modifier,
     // Content
     homeSettings: HomeSettings,
     resizeGridItem: GridItem,
+    // Appearance
     textColor: TextColor,
-    // State
     lockMovement: Boolean,
-    // Layout
-    modifier: Modifier = Modifier,
     // Callbacks
     onResizeCancel: () -> Unit,
     onResizeEnd: () -> Unit,
@@ -105,20 +104,26 @@ internal fun ResizeScreen(
                 val height = resizeGridItem.rowSpan * cellHeight
 
                 ResizeOverlay(
+                    // Position and Size
                     x = x,
                     y = y,
                     width = width,
                     height = height,
+                    // Grid Dimensions
                     gridWidth = constraints.maxWidth,
                     gridHeight = gridHeight,
                     cellWidth = cellWidth,
                     cellHeight = cellHeight,
+                    // Grid Structure
                     columns = homeSettings.columns,
                     rows = homeSettings.rows,
+                    // Grid Item
                     gridItem = resizeGridItem,
                     gridItemSettings = homeSettings.gridItemSettings,
+                    // Behavior and Appearance
                     lockMovement = lockMovement,
                     textColor = textColor,
+                    // Callbacks
                     onResizeGridItem = onResizeGridItem,
                 )
             }
@@ -136,20 +141,26 @@ internal fun ResizeScreen(
                 val height = resizeGridItem.rowSpan * cellHeight
 
                 ResizeOverlay(
+                    // Position and Size
                     x = x,
                     y = dockY,
                     width = width,
                     height = height,
+                    // Grid Dimensions
                     gridWidth = constraints.maxWidth,
                     gridHeight = dockHeightPx,
                     cellWidth = cellWidth,
                     cellHeight = cellHeight,
+                    // Grid Structure
                     columns = homeSettings.dockColumns,
                     rows = homeSettings.dockRows,
+                    // Grid Item
                     gridItem = resizeGridItem,
                     gridItemSettings = homeSettings.gridItemSettings,
+                    // Behavior and Appearance
                     lockMovement = lockMovement,
                     textColor = textColor,
+                    // Callbacks
                     onResizeGridItem = onResizeGridItem,
                 )
             }

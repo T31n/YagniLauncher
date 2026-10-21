@@ -67,9 +67,12 @@ import kotlin.math.roundToInt
 
 @Composable
 internal fun Modifier.swipeGestures(
+    // State
+    enabled: Boolean = true,
+    // Gestures
     swipeDown: EblanAction,
     swipeUp: EblanAction,
-    enabled: Boolean = true,
+    // Actions
     onOpenAppDrawer: () -> Unit,
 ): Modifier {
     val context = LocalContext.current
@@ -117,20 +120,26 @@ internal fun Modifier.swipeGestures(
                         when {
                             lastSwipeY <= -maxSwipeY -> {
                                 handleEblanAction(
+                                    // Context and Action
                                     context = context,
                                     eblanAction = swipeUp,
+                                    // System Wrappers
                                     launcherApps = launcherApps,
                                     statusBarManagerWrapper = androidStatusBarManagerWrapper,
+                                    // Callbacks
                                     onOpenAppDrawer = currentOnOpenAppDrawer,
                                 )
                             }
 
                             lastSwipeY >= maxSwipeY -> {
                                 handleEblanAction(
+                                    // Context and Action
                                     context = context,
                                     eblanAction = swipeDown,
+                                    // System Wrappers
                                     launcherApps = launcherApps,
                                     statusBarManagerWrapper = androidStatusBarManagerWrapper,
+                                    // Callbacks
                                     onOpenAppDrawer = currentOnOpenAppDrawer,
                                 )
                             }
@@ -150,8 +159,10 @@ internal fun Modifier.swipeGestures(
 }
 
 internal fun Modifier.popup(
+    // Dimensions
     width: Int,
     height: Int,
+    // Position
     x: Int,
     y: Int,
 ): Modifier = layout { measurable, constraints ->
@@ -177,9 +188,11 @@ internal fun Modifier.popup(
 
 @Composable
 internal fun Modifier.gridItemSharedElement(
-    enabled: Boolean,
-    sharedElementKey: SharedElementKey,
+    // Transition State
     sharedTransitionScope: SharedTransitionScope,
+    sharedElementKey: SharedElementKey,
+    // Visibility Control
+    enabled: Boolean,
     visible: Boolean,
 ): Modifier = if (enabled && visible) {
     with(sharedTransitionScope) {

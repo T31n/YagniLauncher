@@ -71,10 +71,11 @@ fun SettingsSwitch(
     // Content
     title: String,
     subtitle: String,
+    // State
     checked: Boolean,
     // Layout
     modifier: Modifier = Modifier,
-    // Behavior
+    // Callbacks
     onCheckedChange: (Boolean) -> Unit,
 ) {
     Row(
@@ -116,12 +117,11 @@ fun SettingsSwitch(
     subtitle: String,
     // State
     checked: Boolean,
-    // Dimensions
+    // Layout
     index: Int,
     size: Int,
-    // Layout
     modifier: Modifier = Modifier,
-    // Callbacks
+    // Actions
     onClick: () -> Unit,
     onCheckedChange: (Boolean) -> Unit,
 ) {
@@ -170,23 +170,30 @@ fun SettingsItems(
         when (settingsItem) {
             is SettingsItem.Column -> {
                 SettingsColumn(
+                    // Content
                     title = settingsItem.title,
                     subtitle = settingsItem.subtitle,
+                    // Layout
                     index = index,
                     size = items.size,
                     modifier = modifier,
+                    // Actions
                     onClick = settingsItem.onClick,
                 )
             }
 
             is SettingsItem.Switch -> {
                 SettingsSwitch(
+                    // Content
                     title = settingsItem.title,
                     subtitle = settingsItem.subtitle,
+                    // State
                     checked = settingsItem.checked,
+                    // Layout
                     index = index,
                     size = items.size,
                     modifier = modifier,
+                    // Actions
                     onClick = settingsItem.onClick,
                     onCheckedChange = settingsItem.onCheckedChange,
                 )
@@ -195,34 +202,45 @@ fun SettingsItems(
             is SettingsItem.CustomBackgroundColor,
             -> {
                 CustomBackgroundColor(
+                    // Item Data
                     index = index,
                     size = items.size,
                     title = settingsItem.title,
+                    // Appearance
                     customBackgroundColor = settingsItem.customBackgroundColor,
+                    // Layout
                     modifier = modifier,
+                    // Actions
                     onClick = settingsItem.onClick,
                 )
             }
 
             is SettingsItem.Row -> {
                 SettingsRow(
+                    // Content
                     title = settingsItem.title,
                     subtitle = settingsItem.subtitle,
                     imageVector = settingsItem.imageVector,
+                    // Dimensions
                     index = index,
                     size = items.size,
+                    // Layout
                     modifier = modifier,
+                    // Actions
                     onClick = settingsItem.onClick,
                 )
             }
 
             is SettingsItem.CustomIcon -> {
                 CustomIcon(
+                    // Icon Data
                     customIcon = settingsItem.customIcon,
                     index = index,
                     size = items.size,
                     packageManagerIconPacks = settingsItem.packageManagerIconPacks,
+                    // Layout
                     modifier = modifier,
+                    // Callbacks
                     onUpdateIconPackPackageName = settingsItem.onUpdateIconPackPackageName,
                     onUpdateUri = settingsItem.onUpdateUri,
                     onResetCustomIcon = settingsItem.onResetCustomIcon,
@@ -324,11 +342,11 @@ private fun SettingsColumn(
     // Content
     title: String,
     subtitle: String,
+    // Layout
     index: Int,
     size: Int,
-    // Layout
     modifier: Modifier = Modifier,
-    // Callbacks
+    // Actions
     onClick: () -> Unit,
 ) {
     Card(
@@ -448,8 +466,10 @@ private fun CustomIcon(
             VerticalSlideReveal(visible = expanded) {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     SettingsColumn(
+                        // Content
                         title = stringResource(R.string.gallery),
                         subtitle = stringResource(R.string.pick_icons_from_your_gallery),
+                        // Actions
                         onClick = {
                             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                         },
@@ -457,9 +477,11 @@ private fun CustomIcon(
 
                     packageManagerIconPacks.forEach { packageManagerIconPackInfo ->
                         IconPackItem(
+                            // Item Data
                             icon = packageManagerIconPackInfo.icon,
                             label = packageManagerIconPackInfo.label,
                             packageName = packageManagerIconPackInfo.packageName,
+                            // Action
                             onClick = {
                                 onUpdateIconPackPackageName(
                                     packageManagerIconPackInfo.packageName,
@@ -471,8 +493,10 @@ private fun CustomIcon(
 
                     if (customIcon != null) {
                         SettingsColumn(
+                            // Content
                             title = stringResource(R.string.reset_custom_icon),
                             subtitle = stringResource(R.string.reset_custom_icon),
+                            // Actions
                             onClick = onResetCustomIcon,
                         )
                     }
@@ -514,13 +538,13 @@ private fun SettingsColumn(
 
 @Composable
 private fun IconPackItem(
-    // Content
+    // Item Data
     icon: ByteArray?,
     label: String?,
     packageName: String,
     // Layout
     modifier: Modifier = Modifier,
-    // Callbacks
+    // Action
     onClick: () -> Unit,
 ) {
     Row(
@@ -560,7 +584,7 @@ private fun SettingsRow(
     title: String,
     subtitle: String,
     imageVector: ImageVector,
-    // Index
+    // Dimensions
     index: Int,
     size: Int,
     // Layout

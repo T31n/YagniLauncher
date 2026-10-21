@@ -40,7 +40,7 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun EditDockGridDialog(
-    // Grid Dimensions
+    // Grid
     dockColumns: Int,
     dockRows: Int,
     // Modifier

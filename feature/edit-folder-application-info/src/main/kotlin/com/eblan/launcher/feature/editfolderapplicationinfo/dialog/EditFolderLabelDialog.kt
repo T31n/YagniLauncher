@@ -37,8 +37,11 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun EditFolderLabelDialog(
+    // Modifier
     modifier: Modifier = Modifier,
+    // Data
     folderEblanApplicationInfo: FolderEblanApplicationInfo,
+    // Callbacks
     onDismissRequest: () -> Unit,
     onUpdateFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
 ) {

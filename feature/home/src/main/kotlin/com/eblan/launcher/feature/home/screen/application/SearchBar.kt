@@ -49,11 +49,11 @@ import com.eblan.launcher.common.R as commonR
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ApplicationSearchBar(
-    // State
+    // State and Focus
     searchBarState: SearchBarState,
     textFieldState: TextFieldState,
     focusRequester: FocusRequester,
-    // Appearance
+    // Colors
     backgroundColor: BackgroundColor,
     customBackgroundColor: Int,
     systemTextColor: TextColor,
@@ -65,8 +65,10 @@ internal fun ApplicationSearchBar(
 
     val searchBarColors =
         getSearchBarColors(
+            // Background Colors
             backgroundColor = backgroundColor,
             customBackgroundColor = customBackgroundColor,
+            // Text Colors
             systemTextColor = systemTextColor,
             systemCustomTextColor = systemCustomTextColor,
         )
@@ -130,10 +132,13 @@ private fun getSearchBarColors(
     }
 
     val contentColor = getApplicationScreenTextColor(
+        // Background Colors
         backgroundColor = backgroundColor,
         customBackgroundColor = customBackgroundColor,
+        // Text Colors
         systemTextColor = systemTextColor,
         systemCustomTextColor = systemCustomTextColor,
+        // Defaults
         defaultColor = MaterialTheme.colorScheme.onSurface,
     )
 

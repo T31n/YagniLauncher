@@ -39,11 +39,11 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 fun EditCornerRadiusDialog(
-    // Corner Radius
+    // State
     cornerRadius: Int,
     // Layout
     modifier: Modifier = Modifier,
-    // Actions
+    // Callbacks
     onDismissRequest: () -> Unit,
     onUpdateCornerRadius: (Int) -> Unit,
 ) {

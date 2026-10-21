@@ -59,6 +59,7 @@ internal fun GridItemResizeOverlay(
     rows: Int,
     gridWidth: Int,
     gridHeight: Int,
+    // Cell Dimensions
     cellWidth: Int,
     cellHeight: Int,
     // Position and Size
@@ -138,10 +139,13 @@ internal fun GridItemResizeOverlay(
     val borderX by remember {
         derivedStateOf {
             getBorderX(
+                // Position
                 currentX = currentX.value,
                 x = x,
+                // Dimensions
                 currentWidth = currentWidth.value,
                 width = width,
+                // Drag Configuration
                 dragHandle = dragHandle,
                 dragHandleSizePx = dragHandleSizePx,
             )
@@ -151,10 +155,13 @@ internal fun GridItemResizeOverlay(
     val borderY by remember {
         derivedStateOf {
             getBorderY(
+                // Position
                 y = y,
                 currentY = currentY.value,
+                // Dimensions
                 height = height,
                 currentHeight = currentHeight.value,
+                // Drag Configuration
                 dragHandle = dragHandle,
                 dragHandleSizePx = dragHandleSizePx,
             )
@@ -166,10 +173,12 @@ internal fun GridItemResizeOverlay(
         key2 = currentHeight.value,
     ) {
         resizeGridItem(
+            // Item and State
             gridItem = gridItem,
             dragHandle = dragHandle,
             isResizing = isResizing,
             lockMovement = lockMovement,
+            // Dimensions
             currentWidth = currentWidth.value,
             currentHeight = currentHeight.value,
             cellWidth = cellWidth,
@@ -178,6 +187,7 @@ internal fun GridItemResizeOverlay(
             gridHeight = gridHeight,
             columns = columns,
             rows = rows,
+            // Callback
             onResizeGridItem = onResizeGridItem,
         )
     }
@@ -333,7 +343,7 @@ private fun getBorderY(
     // Dimensions
     height: Int,
     currentHeight: Int,
-    // Drag Handle
+    // Drag Configuration
     dragHandle: Alignment,
     dragHandleSizePx: Int,
 ): Int = if (currentHeight >= dragHandleSizePx) {
@@ -351,7 +361,7 @@ private fun getBorderX(
     // Dimensions
     currentWidth: Int,
     width: Int,
-    // Drag Handle
+    // Drag Configuration
     dragHandle: Alignment,
     dragHandleSizePx: Int,
 ): Int = when (dragHandle) {
@@ -389,7 +399,7 @@ private fun getBorderX(
 }
 
 private fun resizeGridItem(
-    // Grid Item
+    // Item and State
     gridItem: GridItem,
     dragHandle: Alignment,
     isResizing: Boolean,

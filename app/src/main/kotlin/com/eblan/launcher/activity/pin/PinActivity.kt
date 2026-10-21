@@ -112,7 +112,9 @@ class PinActivity : ComponentActivity() {
                                 dynamicTheme = state.applicationTheme.dynamicTheme,
                             ) {
                                 PinScreen(
+                                    // Data and State
                                     pinItemRequest = pinItemRequest,
+                                    // Callbacks
                                     onDragStart = {
                                         startActivity(homeIntent)
 

@@ -56,7 +56,7 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun SettingsRoute(
-    // Modifier
+    // Layout
     modifier: Modifier = Modifier,
     // Navigation Actions
     onAppDrawer: () -> Unit,
@@ -68,7 +68,9 @@ internal fun SettingsRoute(
     onFolder: () -> Unit,
 ) {
     SettingsScreen(
+        // Layout
         modifier = modifier,
+        // Navigation Actions
         onAppDrawer = onAppDrawer,
         onExperimental = onExperimental,
         onFinish = onFinish,
@@ -84,7 +86,7 @@ internal fun SettingsRoute(
 internal fun SettingsScreen(
     // Layout
     modifier: Modifier = Modifier,
-    // Navigation Callbacks
+    // Navigation Actions
     onAppDrawer: () -> Unit,
     onExperimental: () -> Unit,
     onFinish: () -> Unit,
@@ -94,6 +96,7 @@ internal fun SettingsScreen(
     onFolder: () -> Unit,
 ) {
     val items = buildSettingsItems(
+        // Settings Clicks
         onGeneralClick = onGeneral,
         onHomeClick = onHome,
         onAppDrawerClick = onAppDrawer,
@@ -216,7 +219,7 @@ private fun AlphaWarningCard(modifier: Modifier = Modifier) {
 
 @Composable
 private fun buildSettingsItems(
-    // Navigation and Layout
+    // Settings Clicks
     onGeneralClick: () -> Unit,
     onHomeClick: () -> Unit,
     onAppDrawerClick: () -> Unit,

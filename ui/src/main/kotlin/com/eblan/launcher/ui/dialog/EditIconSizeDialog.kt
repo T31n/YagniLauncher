@@ -39,11 +39,11 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun EditIconSizeDialog(
-    // Icon Size
+    // Content
     iconSize: Int,
     // Layout
     modifier: Modifier = Modifier,
-    // Actions
+    // Callbacks
     onDismissRequest: () -> Unit,
     onUpdateIconSize: (Int) -> Unit,
 ) {

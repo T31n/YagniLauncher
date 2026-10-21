@@ -84,8 +84,8 @@ internal fun getFolderPopupLayoutInfo(
     // Environment
     density: Density,
     layoutDirection: LayoutDirection,
+    // Layout
     paddingValues: PaddingValues,
-    // Screen
     safeDrawingWidth: Int,
     safeDrawingHeight: Int,
     // Popup
@@ -174,7 +174,7 @@ internal fun getFolderPopupLayoutInfo(
 }
 
 internal suspend fun handlePageDirection(
-    // Page state
+    // Page State
     pageDirection: PageDirection?,
     currentPage: Int,
     isInProgress: Boolean,
@@ -198,12 +198,12 @@ internal fun handleAnimateScrollToPage(
     screenWidth: Int,
     columns: Int,
     paddingValues: PaddingValues,
-    // Drag and Gesture State
+    // Drag and Gesture
     drag: Drag,
     isDragging: Boolean,
     dragIntOffset: IntOffset,
-    hasMoveGridItemResult: Boolean,
     // Grid and Folder State
+    hasMoveGridItemResult: Boolean,
     folderPopupIntOffset: IntOffset,
     folderCellWidth: Int,
     isLastFolderGridItem: Boolean,
@@ -226,12 +226,16 @@ internal fun handleAnimateScrollToPage(
 
     onUpdateFolderPageDirection(
         calculateFolderPageDirection(
+            // Environment
             density = density,
             layoutDirection = layoutDirection,
+            // Screen
             screenWidth = screenWidth,
             columns = columns,
             paddingValues = paddingValues,
+            // Folder
             folderCellWidth = folderCellWidth,
+            // Offsets
             dragIntOffset = dragIntOffset,
             folderPopupIntOffset = folderPopupIntOffset,
         ),
@@ -242,15 +246,17 @@ internal fun calculateFolderGridDragPosition(
     // Environment and Layout
     density: Density,
     layoutDirection: LayoutDirection,
-    // Screen and Grid Dimensions
+    // Screen Dimensions
     screenWidth: Int,
     screenHeight: Int,
+    // Grid Dimensions
     columns: Int,
     rows: Int,
     paddingValues: PaddingValues,
-    // Cell and Popup Positioning
+    // Cell Dimensions
     folderCellWidth: Int,
     folderCellHeight: Int,
+    // Offsets
     folderPopupIntOffset: IntOffset,
     dragIntOffset: IntOffset,
 ): FolderGridDragPosition {
@@ -350,7 +356,6 @@ internal fun handleDropFolderGridItem(
     drag: Drag,
     isDragging: Boolean,
     lockMovement: Boolean,
-    // Folder Grid State
     isVisibleOverlay: Boolean,
     isLastFolderGridItem: Boolean,
     // Callbacks
@@ -391,13 +396,14 @@ internal fun handleDropFolderGridItem(
 }
 
 private fun calculateFolderPageDirection(
-    // Context and Configuration
+    // Environment
     density: Density,
     layoutDirection: LayoutDirection,
-    // Screen and Layout
+    // Screen
     screenWidth: Int,
     columns: Int,
     paddingValues: PaddingValues,
+    // Folder
     folderCellWidth: Int,
     // Offsets
     dragIntOffset: IntOffset,

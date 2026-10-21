@@ -45,7 +45,7 @@ import com.eblan.launcher.feature.home.component.GridItemLayoutType
 
 @Composable
 internal fun ShortcutInfoGridItem(
-    // Data
+    // Data and Settings
     data: GridItemData.ShortcutInfo,
     gridItemSettings: GridItemSettings,
     hasShortcutHostPermission: Boolean,
@@ -124,12 +124,15 @@ internal fun ShortcutInfoGridItem(
     }
 
     GridItemLayoutType(
+        // Settings and Modifier
         gridItemSettings = gridItemSettings,
+        modifier = itemModifier,
+        // Alignment and Arrangement
         horizontalAlignment = horizontalAlignment,
         verticalAlignment = verticalAlignment,
         horizontalArrangement = horizontalArrangement,
         verticalArrangement = verticalArrangement,
-        modifier = itemModifier,
+        // Content
         iconContent = iconContent,
         labelContent = labelContent,
         labelOnlyContent = labelContent,

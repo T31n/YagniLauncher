@@ -89,7 +89,9 @@ internal fun SettingsPopup(
     }
 
     val items = buildSettingsMenuItems(
+        // Features
         hasSystemFeatureAppWidgets = hasSystemFeatureAppWidgets,
+        // Callbacks
         onSettingsClick = {
             onSettings()
 
@@ -169,10 +171,13 @@ internal fun SettingsPopup(
             ) {
                 items.forEachIndexed { index, settingsMenuItem ->
                     PopupMenuRow(
+                        // Content
                         title = settingsMenuItem.title,
                         imageVector = settingsMenuItem.imageVector,
+                        // Index and Size
                         index = index,
                         size = items.size,
+                        // Action
                         onClick = settingsMenuItem.onClick,
                     )
                 }
@@ -186,11 +191,12 @@ private fun PopupMenuRow(
     // Content
     title: String,
     imageVector: ImageVector,
+    // Index and Size
     index: Int,
     size: Int,
     // Layout
     modifier: Modifier = Modifier,
-    // Callbacks
+    // Action
     onClick: () -> Unit,
 ) {
     Card(
@@ -223,7 +229,9 @@ private fun PopupMenuRow(
 
 @Composable
 private fun buildSettingsMenuItems(
+    // Features
     hasSystemFeatureAppWidgets: Boolean,
+    // Callbacks
     onSettingsClick: () -> Unit,
     onEditPageClick: () -> Unit,
     onEditDockPageClick: () -> Unit,

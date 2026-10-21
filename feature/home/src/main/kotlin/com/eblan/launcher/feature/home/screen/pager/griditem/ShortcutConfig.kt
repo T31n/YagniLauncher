@@ -74,26 +74,29 @@ import kotlinx.coroutines.launch
 
 @Composable
 internal fun InteractiveShortcutConfigGridItem(
-    // Data
-    data: GridItemData.ShortcutConfig,
+    // Grid Item Data
     gridItem: GridItem,
-    // Settings and State
+    data: GridItemData.ShortcutConfig,
     gridItemSettings: GridItemSettings,
+    // State Flags
     isScrollInProgress: Boolean,
     isVisibleFolders: Boolean,
     isVisibleOverlay: Boolean,
-    textColor: Color,
     hasInteraction: Boolean,
     isVisibleWhiteBox: Boolean,
     animations: Boolean,
+    // Appearance and Styling
+    textColor: Color,
     maxLines: Int,
-    // Layout and Animation
+    // Shared Transition
     sharedTransitionScope: SharedTransitionScope,
     sharedElementKey: SharedElementKey,
+    // Layout and Alignment
     horizontalAlignment: Alignment.Horizontal,
     verticalArrangement: Arrangement.Vertical,
     horizontalArrangement: Arrangement.Horizontal,
     verticalAlignment: Alignment.Vertical,
+    // Modifier
     modifier: Modifier = Modifier,
     // Callbacks
     onOpenAppDrawer: () -> Unit,
@@ -162,10 +165,13 @@ internal fun InteractiveShortcutConfigGridItem(
                         onDoubleTap = if (gridItem.doubleTap.eblanActionType != EblanActionType.None) {
                             {
                                 handleEblanAction(
+                                    // Context and Action
                                     context = context,
                                     eblanAction = gridItem.doubleTap,
+                                    // System Wrappers
                                     launcherApps = launcherApps,
                                     statusBarManagerWrapper = androidStatusBarManagerWrapper,
+                                    // Callbacks
                                     onOpenAppDrawer = currentOnOpenAppDrawer,
                                 )
                             }
@@ -195,8 +201,10 @@ internal fun InteractiveShortcutConfigGridItem(
             }
         }
         .swipeGestures(
+            // Gestures
             swipeDown = gridItem.swipeDown,
             swipeUp = gridItem.swipeUp,
+            // Actions
             onOpenAppDrawer = onOpenAppDrawer,
         )
 
@@ -208,9 +216,11 @@ internal fun InteractiveShortcutConfigGridItem(
             },
         )
         .gridItemSharedElement(
-            enabled = animations,
-            sharedElementKey = sharedElementKey,
+            // Transition State
             sharedTransitionScope = sharedTransitionScope,
+            sharedElementKey = sharedElementKey,
+            // Visibility Control
+            enabled = animations,
             visible = !isScrollInProgress && !hasInteraction,
         )
         .gridItemScaleAnimation(
@@ -270,12 +280,15 @@ internal fun InteractiveShortcutConfigGridItem(
     }
 
     GridItemLayoutType(
+        // Settings and Modifier
         gridItemSettings = gridItemSettings,
+        modifier = itemModifier,
+        // Alignment and Arrangement
         horizontalAlignment = horizontalAlignment,
         verticalAlignment = verticalAlignment,
         horizontalArrangement = horizontalArrangement,
         verticalArrangement = verticalArrangement,
-        modifier = itemModifier,
+        // Content
         iconContent = iconContent,
         labelContent = labelContent,
         labelOnlyContent = labelOnlyContent,

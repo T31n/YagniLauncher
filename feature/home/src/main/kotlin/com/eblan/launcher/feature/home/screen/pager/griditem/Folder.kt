@@ -88,13 +88,16 @@ import kotlinx.coroutines.launch
 
 @Composable
 internal fun InteractiveFolderGridItem(
-    // Data
+    // Item Data
     data: GridItemData.Folder,
     gridItem: GridItem,
+    // Transition
     sharedTransitionScope: SharedTransitionScope,
     sharedElementKey: SharedElementKey,
+    // Configuration
     iconPackFilePaths: Map<String, String?>,
     folderPopups: Map<String, FolderPopup>,
+    gridItemSettings: GridItemSettings,
     // State
     isScrollInProgress: Boolean,
     isVisibleFolder: Boolean,
@@ -105,11 +108,9 @@ internal fun InteractiveFolderGridItem(
     hasShortcutHostPermission: Boolean,
     animations: Boolean,
     moveGridItemResult: MoveGridItemResult?,
-    // Interaction
     drag: Drag,
     lockMovement: Boolean,
     // Appearance
-    gridItemSettings: GridItemSettings,
     textColor: Color,
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
@@ -122,7 +123,6 @@ internal fun InteractiveFolderGridItem(
     verticalArrangement: Arrangement.Vertical,
     horizontalArrangement: Arrangement.Horizontal,
     verticalAlignment: Alignment.Vertical,
-    // Modifier
     modifier: Modifier = Modifier,
     // Callbacks
     onOpenAppDrawer: () -> Unit,
@@ -170,15 +170,19 @@ internal fun InteractiveFolderGridItem(
 
     LaunchedEffect(key1 = moveGridItemResult) {
         handleConflictingGridItem(
+            // Grid Item State
             gridItem = currentGridItem,
             folderGridItems = currentFolderGridItems,
+            moveGridItemResult = moveGridItemResult,
+            // Drag State
             drag = currentDrag,
             isDragging = currentIsDragging,
             isVisibleOverlay = currentIsVisibleOverlay,
-            moveGridItemResult = moveGridItemResult,
             lockMovement = currentLockMovement,
+            // Layout Dimensions
             intOffset = intOffset,
             intSize = intSize,
+            // Callbacks
             onShowFolderWhenDragging = currentOnShowFolderWhenDragging,
         )
     }
@@ -201,10 +205,13 @@ internal fun InteractiveFolderGridItem(
                         onDoubleTap = if (gridItem.doubleTap.eblanActionType != EblanActionType.None) {
                             {
                                 handleEblanAction(
+                                    // Context and Action
                                     context = context,
                                     eblanAction = gridItem.doubleTap,
+                                    // System Wrappers
                                     launcherApps = launcherApps,
                                     statusBarManagerWrapper = androidStatusBarManagerWrapper,
+                                    // Callbacks
                                     onOpenAppDrawer = currentOnOpenAppDrawer,
                                 )
                             }
@@ -241,8 +248,10 @@ internal fun InteractiveFolderGridItem(
             }
         }
         .swipeGestures(
+            // Gestures
             swipeDown = gridItem.swipeDown,
             swipeUp = gridItem.swipeUp,
+            // Actions
             onOpenAppDrawer = onOpenAppDrawer,
         )
 
@@ -254,9 +263,11 @@ internal fun InteractiveFolderGridItem(
             },
         )
         .gridItemSharedElement(
-            enabled = animations,
-            sharedElementKey = sharedElementKey,
+            // Transition State
             sharedTransitionScope = sharedTransitionScope,
+            sharedElementKey = sharedElementKey,
+            // Visibility Control
+            enabled = animations,
             visible = !isScrollInProgress && !hasInteraction,
         )
         .gridItemScaleAnimation(
@@ -295,28 +306,35 @@ internal fun InteractiveFolderGridItem(
                 },
             ) {
                 PreviewFolderGridLayout(
+                    // Data
                     gridItems = folderPopups[gridItem.id]?.previewFolderGridItems,
+                    // Layout
                     modifier = Modifier.fillMaxSize(),
+                    // Callbacks
                     slotId = { it.id },
                     content = {
                         PreviewFolderGridItem(
+                            // Grid Item
                             sharedTransitionScope = sharedTransitionScope,
                             gridItem = it,
-                            isScrollInProgress = isScrollInProgress,
-                            isVisibleOverlay = isVisibleOverlay,
                             parent = sharedElementKey.parent,
+                            gridItemSettings = gridItemSettings,
                             moveGridItemResult = moveGridItemResult,
                             drag = drag,
                             folderGridItems = folderPopups[gridItem.id]?.folderGridItems,
+                            // State
+                            isScrollInProgress = isScrollInProgress,
+                            isVisibleOverlay = isVisibleOverlay,
                             isVisibleFolders = isVisibleFolder,
                             hasShortcutHostPermission = hasShortcutHostPermission,
-                            iconPackFilePaths = iconPackFilePaths,
-                            gridItemSettings = gridItemSettings,
+                            animations = animations,
+                            // Appearance
                             folderBackgroundColor = folderBackgroundColor,
                             customFolderBackgroundColor = customFolderBackgroundColor,
                             systemTextColor = systemTextColor,
                             systemCustomTextColor = systemCustomTextColor,
-                            animations = animations,
+                            iconPackFilePaths = iconPackFilePaths,
+                            // Actions
                             onResetGrid = onResetGrid,
                         )
                     },
@@ -355,12 +373,15 @@ internal fun InteractiveFolderGridItem(
     }
 
     GridItemLayoutType(
+        // Settings and Modifier
         gridItemSettings = gridItemSettings,
+        modifier = itemModifier,
+        // Alignment and Arrangement
         horizontalAlignment = horizontalAlignment,
         verticalAlignment = verticalAlignment,
         horizontalArrangement = horizontalArrangement,
         verticalArrangement = verticalArrangement,
-        modifier = itemModifier,
+        // Content
         iconContent = iconContent,
         labelContent = labelContent,
         labelOnlyContent = labelOnlyContent,
@@ -369,24 +390,29 @@ internal fun InteractiveFolderGridItem(
 
 @Composable
 private fun PreviewFolderGridItem(
-    modifier: Modifier = Modifier,
+    // Grid Item
     sharedTransitionScope: SharedTransitionScope,
     gridItem: GridItem,
-    isScrollInProgress: Boolean,
-    isVisibleOverlay: Boolean,
     parent: SharedElementKey.Parent,
+    gridItemSettings: GridItemSettings,
     moveGridItemResult: MoveGridItemResult?,
     drag: Drag,
     folderGridItems: List<GridItem>?,
+    // State
+    isScrollInProgress: Boolean,
+    isVisibleOverlay: Boolean,
     isVisibleFolders: Boolean,
     hasShortcutHostPermission: Boolean,
-    gridItemSettings: GridItemSettings,
+    animations: Boolean,
+    // Appearance
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     iconPackFilePaths: Map<String, String?>,
-    animations: Boolean,
+    // Modifier
+    modifier: Modifier = Modifier,
+    // Actions
     onResetGrid: () -> Unit,
 ) {
     key(gridItem.id) {
@@ -422,12 +448,15 @@ private fun PreviewFolderGridItem(
         }
 
         val folderIconTint = getTextColorFromBackgroundColor(
+            // Background Color
             backgroundColor = folderBackgroundColor,
             customBackgroundColor = customFolderBackgroundColor,
+            // Text Color
             textColor = currentGridItemSettings.textColor,
             customTextColor = currentGridItemSettings.customTextColor,
             systemCustomTextColor = systemCustomTextColor,
             systemTextColor = systemTextColor,
+            // Default Color
             defaultColor = MaterialTheme.colorScheme.onSurface,
         )
 
@@ -435,12 +464,14 @@ private fun PreviewFolderGridItem(
             .fillMaxSize()
             .padding(1.dp)
             .gridItemSharedElement(
-                enabled = animations,
+                // Transition State
+                sharedTransitionScope = sharedTransitionScope,
                 sharedElementKey = SharedElementKey(
                     id = gridItem.id,
                     parent = parent,
                 ),
-                sharedTransitionScope = sharedTransitionScope,
+                // Visibility Control
+                enabled = animations,
                 visible = !isScrollInProgress && !hasInteraction,
             )
             .gridItemScaleAnimation(

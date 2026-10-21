@@ -47,7 +47,7 @@ import com.eblan.launcher.feature.home.component.GridItemLayoutType
 
 @Composable
 internal fun ApplicationInfoGridItem(
-    // Data
+    // Data and Settings
     data: GridItemData.ApplicationInfo,
     gridItemSettings: GridItemSettings,
     // Appearance
@@ -59,7 +59,6 @@ internal fun ApplicationInfoGridItem(
     verticalArrangement: Arrangement.Vertical,
     horizontalArrangement: Arrangement.Horizontal,
     verticalAlignment: Alignment.Vertical,
-    // Modifier
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -128,12 +127,15 @@ internal fun ApplicationInfoGridItem(
     }
 
     GridItemLayoutType(
+        // Settings and Modifier
         gridItemSettings = gridItemSettings,
+        modifier = itemModifier,
+        // Alignment and Arrangement
         horizontalAlignment = horizontalAlignment,
         verticalAlignment = verticalAlignment,
         horizontalArrangement = horizontalArrangement,
         verticalArrangement = verticalArrangement,
-        modifier = itemModifier,
+        // Content
         iconContent = iconContent,
         labelContent = labelContent,
         labelOnlyContent = labelContent,

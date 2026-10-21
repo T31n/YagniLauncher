@@ -78,7 +78,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 internal fun InteractiveApplicationInfoGridItem(
-    // Grid Item Data
+    // Item Data
     gridItem: GridItem,
     data: GridItemData.ApplicationInfo,
     gridItemSettings: GridItemSettings,
@@ -88,16 +88,17 @@ internal fun InteractiveApplicationInfoGridItem(
     animations: Boolean,
     statusBarNotifications: Map<String, Int>,
     iconPackFilePaths: Map<String, String?>,
-    // Visual Properties
+    // Appearance
     textColor: Color,
     maxLines: Int,
     isVisibleFolders: Boolean,
     isVisibleOverlay: Boolean,
     isVisibleWhiteBox: Boolean,
-    // Layout and Animation
+    // Shared Transition
     sharedTransitionScope: SharedTransitionScope,
     sharedElementKey: SharedElementKey,
     sourceBounds: Rect,
+    // Layout
     horizontalAlignment: Alignment.Horizontal,
     verticalArrangement: Arrangement.Vertical,
     horizontalArrangement: Arrangement.Horizontal,
@@ -161,10 +162,13 @@ internal fun InteractiveApplicationInfoGridItem(
                         onDoubleTap = if (gridItem.doubleTap.eblanActionType != EblanActionType.None) {
                             {
                                 handleEblanAction(
+                                    // Context and Action
                                     context = context,
                                     eblanAction = gridItem.doubleTap,
+                                    // System Wrappers
                                     launcherApps = androidLauncherAppsWrapper,
                                     statusBarManagerWrapper = androidStatusBarManagerWrapper,
+                                    // Callbacks
                                     onOpenAppDrawer = currentOnOpenAppDrawer,
                                 )
                             }
@@ -196,8 +200,10 @@ internal fun InteractiveApplicationInfoGridItem(
             }
         }
         .swipeGestures(
+            // Gestures
             swipeDown = gridItem.swipeDown,
             swipeUp = gridItem.swipeUp,
+            // Actions
             onOpenAppDrawer = onOpenAppDrawer,
         )
 
@@ -209,9 +215,11 @@ internal fun InteractiveApplicationInfoGridItem(
             },
         )
         .gridItemSharedElement(
-            enabled = animations,
-            sharedElementKey = sharedElementKey,
+            // Transition State
             sharedTransitionScope = sharedTransitionScope,
+            sharedElementKey = sharedElementKey,
+            // Visibility Control
+            enabled = animations,
             visible = !isScrollInProgress && !hasInteraction,
         )
         .gridItemScaleAnimation(
@@ -289,12 +297,15 @@ internal fun InteractiveApplicationInfoGridItem(
     }
 
     GridItemLayoutType(
+        // Settings and Modifier
         gridItemSettings = gridItemSettings,
+        modifier = itemModifier,
+        // Alignment and Arrangement
         horizontalAlignment = horizontalAlignment,
         verticalAlignment = verticalAlignment,
         horizontalArrangement = horizontalArrangement,
         verticalArrangement = verticalArrangement,
-        modifier = itemModifier,
+        // Content
         iconContent = iconContent,
         labelContent = labelContent,
         labelOnlyContent = labelOnlyContent,

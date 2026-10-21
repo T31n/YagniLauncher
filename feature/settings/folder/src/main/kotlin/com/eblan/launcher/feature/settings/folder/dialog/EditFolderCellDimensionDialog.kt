@@ -43,7 +43,7 @@ internal fun EditFolderCellDimensionDialog(
     // Dimensions
     folderCellWidth: Int,
     folderCellHeight: Int,
-    // Modifier
+    // Layout
     modifier: Modifier = Modifier,
     // Callbacks
     onDismissRequest: () -> Unit,

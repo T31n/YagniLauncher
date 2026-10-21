@@ -40,28 +40,30 @@ import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
 internal fun <T> FolderTitle(
     // Content
     label: String,
-    // Pager state
-    folderGridHorizontalPagerState: PagerState,
     gridItemsByPage: Map<Int, List<T>>,
     progress: Float,
-    // Folder background
+    // State
+    folderGridHorizontalPagerState: PagerState,
+    // Appearance
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
-    // Text color
     textColor: TextColor,
     customTextColor: Int,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
-    // Modifier
+    // Layout
     modifier: Modifier = Modifier,
 ) {
     val color = getTextColorFromBackgroundColor(
+        // Background Color
         backgroundColor = folderBackgroundColor,
         customBackgroundColor = customFolderBackgroundColor,
+        // Text Color
         textColor = textColor,
         customTextColor = customTextColor,
         systemCustomTextColor = systemCustomTextColor,
         systemTextColor = systemTextColor,
+        // Default Color
         defaultColor = MaterialTheme.colorScheme.onSurface,
     )
 
@@ -85,9 +87,11 @@ internal fun <T> FolderTitle(
                 )
 
                 PageIndicator(
+                    // Pager State and Pagination
                     gridHorizontalPagerState = folderGridHorizontalPagerState,
                     pageCount = gridItemsByPage.size,
                     infiniteScroll = false,
+                    // Appearance and Layout
                     color = color,
                 )
             }

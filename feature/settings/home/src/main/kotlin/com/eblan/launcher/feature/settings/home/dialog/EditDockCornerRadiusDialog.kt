@@ -45,7 +45,7 @@ internal fun EditDockCornerRadiusDialog(
     dockTopEndCornerRadius: Int,
     dockBottomStartCornerRadius: Int,
     dockBottomEndCornerRadius: Int,
-    // Layout
+    // Modifiers
     modifier: Modifier = Modifier,
     // Callbacks
     onDismissRequest: () -> Unit,

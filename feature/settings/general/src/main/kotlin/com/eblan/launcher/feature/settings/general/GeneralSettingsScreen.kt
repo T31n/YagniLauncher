@@ -74,10 +74,13 @@ internal fun GeneralSettingsRoute(
     val eblanIconPackInfos by viewModel.eblanIconPacks.collectAsStateWithLifecycle()
 
     GeneralSettingsScreen(
+        // State
         generalSettingsUiState = generalSettingsUiState,
+        // Content
         eblanIconPackInfos = eblanIconPackInfos,
         packageManagerIconPacks = packageManagerIconPackInfos,
         modifier = modifier,
+        // Actions
         onDeleteEblanIconPackInfo = viewModel::deleteIconPack,
         onNavigateUp = onNavigateUp,
         onUpdateGeneralSettings = viewModel::updateGeneralSettings,
@@ -89,11 +92,11 @@ internal fun GeneralSettingsRoute(
 internal fun GeneralSettingsScreen(
     // State
     generalSettingsUiState: GeneralSettingsUiState,
+    // Content
     eblanIconPackInfos: List<EblanIconPackInfo>,
     packageManagerIconPacks: List<PackageManagerIconPack>,
-    // Modifier
     modifier: Modifier = Modifier,
-    // Callbacks
+    // Actions
     onDeleteEblanIconPackInfo: (String) -> Unit,
     onNavigateUp: () -> Unit,
     onUpdateGeneralSettings: (GeneralSettings) -> Unit,
@@ -123,9 +126,12 @@ internal fun GeneralSettingsScreen(
         ) {
             if (generalSettingsUiState is GeneralSettingsUiState.Success) {
                 Success(
+                    // Icon Packs
                     eblanIconPackInfos = eblanIconPackInfos,
                     packageManagerIconPacks = packageManagerIconPacks,
+                    // Settings
                     generalSettings = generalSettingsUiState.generalSettings,
+                    // Callbacks
                     onDeleteEblanIconPackInfo = onDeleteEblanIconPackInfo,
                     onUpdateGeneralSettings = onUpdateGeneralSettings,
                 )
@@ -139,11 +145,11 @@ private fun Success(
     // Icon Packs
     eblanIconPackInfos: List<EblanIconPackInfo>,
     packageManagerIconPacks: List<PackageManagerIconPack>,
-    // General Settings
+    // Settings
     generalSettings: GeneralSettings,
-    // Modifier
+    // UI
     modifier: Modifier = Modifier,
-    // Actions
+    // Callbacks
     onDeleteEblanIconPackInfo: (String) -> Unit,
     onUpdateGeneralSettings: (GeneralSettings) -> Unit,
 ) {
@@ -156,7 +162,9 @@ private fun Success(
     var showIconShapeDialog by remember { mutableStateOf(false) }
 
     val items = buildGeneralSettingsItems(
+        // Settings
         generalSettings = generalSettings,
+        // Actions
         onImportIconPackClick = { showImportIconPackDialog = true },
         onSelectIconPackClick = { selectIconPackDialog = true },
         onThemeClick = { showThemeDialog = true },
@@ -184,9 +192,11 @@ private fun Success(
 
     if (showThemeDialog) {
         RadioOptionsDialog(
+            // Dialog Content
             title = stringResource(R.string.theme),
             options = Theme.entries,
             selected = generalSettings.theme,
+            // Callbacks
             label = {
                 it.getTitle()
             },
@@ -201,7 +211,9 @@ private fun Success(
 
     if (showImportIconPackDialog) {
         ImportIconPackInfoDialog(
+            // Data
             packageManagerIconPacks = packageManagerIconPacks,
+            // Actions
             onDismissRequest = {
                 showImportIconPackDialog = false
             },
@@ -222,8 +234,10 @@ private fun Success(
 
     if (selectIconPackDialog) {
         SelectIconPackInfoDialog(
+            // Icon Pack Data
             eblanIconPackInfos = eblanIconPackInfos,
             iconPackPackageName = generalSettings.iconPackPackageName,
+            // Actions
             onDeleteEblanIconPackInfo = onDeleteEblanIconPackInfo,
             onDismissRequest = {
                 selectIconPackDialog = false
@@ -239,9 +253,12 @@ private fun Success(
 
     if (showIconTintDialog) {
         IconTintDialog(
+            // Content
             title = stringResource(R.string.icon_tint),
+            // State
             iconTint = generalSettings.iconTint,
             customIconTint = generalSettings.customIconTint,
+            // Actions
             onDismissRequest = {
                 showIconTintDialog = false
             },
@@ -258,9 +275,11 @@ private fun Success(
 
     if (showIconShapeDialog) {
         RadioOptionsDialog(
+            // Dialog Content
             title = stringResource(R.string.icon_shape),
             options = IconShape.entries,
             selected = generalSettings.iconShape,
+            // Callbacks
             label = {
                 it.getTitle()
             },
@@ -276,9 +295,9 @@ private fun Success(
 
 @Composable
 private fun buildGeneralSettingsItems(
-    // General Settings
+    // Settings
     generalSettings: GeneralSettings,
-    // Theme and Icon Actions
+    // Actions
     onImportIconPackClick: () -> Unit,
     onSelectIconPackClick: () -> Unit,
     onThemeClick: () -> Unit,

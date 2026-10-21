@@ -36,7 +36,9 @@ fun NavGraphBuilder.homeScreen(
 ) {
     composable<HomeRouteData> {
         HomeRoute(
+            // State and Modifier
             configureResultCode = configureResultCode,
+            // Actions
             onResetConfigureResultCode = onResetConfigureResultCode,
             onEditApplicationInfo = onEditApplicationInfo,
             onEditGridItem = onEditGridItem,

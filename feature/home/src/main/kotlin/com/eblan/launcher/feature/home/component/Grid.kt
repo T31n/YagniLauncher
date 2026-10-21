@@ -49,14 +49,12 @@ import kotlin.math.hypot
 
 @Composable
 internal fun GridLayout(
-    // Data
+    // Grid Properties
     gridItems: List<GridItem>?,
-    // Grid dimensions
     columns: Int,
     rows: Int,
-    // Animation
+    // Layout Options
     animate: Boolean,
-    // Modifier
     modifier: Modifier = Modifier,
     // Content
     content: @Composable BoxScope.(GridItem) -> Unit,
@@ -69,10 +67,13 @@ internal fun GridLayout(
             gridItems?.forEach { gridItem ->
                 subcompose(gridItem.id) {
                     GridLayoutItem(
+                        // Item and Dimensions
                         gridItem = gridItem,
                         cellWidth = cellWidth,
                         cellHeight = cellHeight,
+                        // Behavior and Modifier
                         animate = animate,
+                        // Content
                         content = content,
                     )
                 }.forEach { measurable ->
@@ -95,15 +96,14 @@ internal fun GridLayout(
 
 @Composable
 internal fun DotsGridLayout(
-    // Grid dimensions
+    // Grid Structure
     columns: Int,
     rows: Int,
-    // Item configuration
+    // Grid Item
     gridItem: GridItem,
     gridItemSettings: GridItemSettings,
-    // Interaction state
+    // Drag and Style
     dragIntOffset: IntOffset,
-    // Appearance
     textColor: TextColor,
     // Modifier
     modifier: Modifier = Modifier,
@@ -117,10 +117,12 @@ internal fun DotsGridLayout(
     }
 
     val currentTextColor = getGridItemTextColor(
-        gridItemCustomTextColor = currentGridItemSettings.customTextColor,
+        // Grid Item Text Colors
         gridItemTextColor = currentGridItemSettings.textColor,
-        systemCustomTextColor = gridItemSettings.customTextColor,
+        gridItemCustomTextColor = currentGridItemSettings.customTextColor,
+        // System Text Colors
         systemTextColor = textColor,
+        systemCustomTextColor = gridItemSettings.customTextColor,
     )
 
     Canvas(
@@ -204,7 +206,7 @@ internal fun DotsGridLayout(
 internal fun HorizontalAppDrawerGridLayout(
     // Data
     eblanApplicationInfos: List<EblanApplicationInfo>?,
-    // Grid dimensions
+    // Layout
     rows: Int,
     columns: Int,
     // Modifier
@@ -279,14 +281,12 @@ internal fun animateGridIntAsState(
 
 @Composable
 private fun GridLayoutItem(
-    // Item data
+    // Item and Dimensions
     gridItem: GridItem,
-    // Dimensions
     cellWidth: Int,
     cellHeight: Int,
-    // Animation
+    // Behavior and Modifier
     animate: Boolean,
-    // Modifier
     modifier: Modifier = Modifier,
     // Content
     content: @Composable (BoxScope.(GridItem) -> Unit),

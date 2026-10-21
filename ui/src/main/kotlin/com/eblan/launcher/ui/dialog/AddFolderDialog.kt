@@ -41,11 +41,11 @@ import com.eblan.launcher.common.R as commonR
 @OptIn(ExperimentalUuidApi::class)
 @Composable
 fun AddFolderDialog(
-    // Content
+    // Data
     topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
-    // Layout
+    // Modifier
     modifier: Modifier = Modifier,
-    // Actions
+    // Callbacks
     onDismissRequest: () -> Unit,
     onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
 ) {

@@ -47,10 +47,13 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun ManageFoldersDialog(
+    // Modifiers
     modifier: Modifier = Modifier,
+    // Data
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
-    onDismissRequest: () -> Unit,
+    // Callbacks
     onUpdateFolderEblanApplicationInfos: (List<FolderEblanApplicationInfo>) -> Unit,
+    onDismissRequest: () -> Unit,
 ) {
     var currentFolderEblanApplicationInfos by remember { mutableStateOf(folderEblanApplicationInfos) }
 

@@ -82,22 +82,22 @@ import kotlin.uuid.Uuid
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun AppWidgetScreen(
-    // Content
+    // Data
     eblanAppWidgetProviderInfosGroup: Map<String, List<EblanAppWidgetProviderInfo>>,
     eblanApplicationInfoGroup: EblanApplicationInfoGroup?,
-    // Layout
+    // Grid
     columns: Int,
     rows: Int,
     gridItemSettings: GridItemSettings,
+    // Layout
     paddingValues: PaddingValues,
     screenWidth: Int,
     screenHeight: Int,
-    // State
+    modifier: Modifier = Modifier,
+    // Interaction
     swipeY: Float,
     isVisibleOverlay: Boolean,
     drag: Drag,
-    // Modifier
-    modifier: Modifier = Modifier,
     // Callbacks
     onDismiss: () -> Unit,
     onVerticalDrag: (Float) -> Unit,
@@ -201,13 +201,17 @@ internal fun AppWidgetScreen(
                 ) {
                     items(items = eblanAppWidgetProviderInfosGroup[eblanApplicationInfoGroup.packageName].orEmpty()) { eblanAppWidgetProviderInfo ->
                         EblanAppWidgetScreenItem(
+                            // Widget Info
                             eblanAppWidgetProviderInfo = eblanAppWidgetProviderInfo,
+                            // Dimensions
                             columns = columns,
                             rows = rows,
                             screenHeight = screenHeight,
                             screenWidth = screenWidth,
+                            // Layout and Settings
                             gridItemSettings = gridItemSettings,
                             isVisibleOverlay = isVisibleOverlay,
+                            // Actions
                             onDragAppWidget = onDragAppWidget,
                         )
                     }
@@ -227,12 +231,11 @@ private fun EblanAppWidgetScreenItem(
     rows: Int,
     screenHeight: Int,
     screenWidth: Int,
-    // Settings
+    // Layout and Settings
     gridItemSettings: GridItemSettings,
     isVisibleOverlay: Boolean,
-    // Modifier
     modifier: Modifier = Modifier,
-    // Callback
+    // Actions
     onDragAppWidget: (
         gridItem: GridItem,
         imageBitmap: ImageBitmap,
@@ -264,12 +267,16 @@ private fun EblanAppWidgetScreenItem(
                     onLongPress = {
                         scope.launch {
                             handleOnLongPressEblanAppWidgetScreenItem(
+                                // Widget Identification
                                 id = id,
                                 eblanAppWidgetProviderInfo = eblanAppWidgetProviderInfo,
+                                // Widget Settings and UI
                                 gridItemSettings = gridItemSettings,
                                 graphicsLayer = graphicsLayer,
+                                // Widget Positioning
                                 intOffset = intOffset,
                                 intSize = intSize,
+                                // Drag Callback
                                 onDragAppWidget = onDragAppWidget,
                             )
                         }
@@ -347,15 +354,16 @@ private fun EblanAppWidgetScreenItem(
 }
 
 private suspend fun handleOnLongPressEblanAppWidgetScreenItem(
-    // Item Information
+    // Widget Identification
     id: String,
     eblanAppWidgetProviderInfo: EblanAppWidgetProviderInfo,
+    // Widget Settings and UI
     gridItemSettings: GridItemSettings,
-    // Layout and Rendering
     graphicsLayer: GraphicsLayer,
+    // Widget Positioning
     intOffset: IntOffset,
     intSize: IntSize,
-    // Callbacks
+    // Drag Callback
     onDragAppWidget: (
         gridItem: GridItem,
         imageBitmap: ImageBitmap,
@@ -365,14 +373,17 @@ private suspend fun handleOnLongPressEblanAppWidgetScreenItem(
     ) -> Unit,
 ) {
     val gridItem = getWidgetGridItem(
+        // Identifiers
         id = id,
         serialNumber = eblanAppWidgetProviderInfo.serialNumber,
         packageName = eblanAppWidgetProviderInfo.packageName,
         componentName = eblanAppWidgetProviderInfo.componentName,
+        // Display Info
         label = eblanAppWidgetProviderInfo.applicationLabel,
         icon = eblanAppWidgetProviderInfo.applicationIcon,
         preview = eblanAppWidgetProviderInfo.preview,
         configure = eblanAppWidgetProviderInfo.configure,
+        // Layout and Dimensions
         gridItemSettings = gridItemSettings,
         page = 0,
         minWidth = eblanAppWidgetProviderInfo.minWidth,

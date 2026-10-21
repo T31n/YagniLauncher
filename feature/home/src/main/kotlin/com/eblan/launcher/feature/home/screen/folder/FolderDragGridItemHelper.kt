@@ -32,6 +32,7 @@ internal fun handleDragFolderGridItem(
     // Environment
     density: Density,
     layoutDirection: LayoutDirection,
+    // Screen
     screenWidth: Int,
     screenHeight: Int,
     paddingValues: PaddingValues,
@@ -43,7 +44,7 @@ internal fun handleDragFolderGridItem(
     isVisibleOverlay: Boolean,
     lockMovement: Boolean,
     isLastFolderGridItem: Boolean,
-    // Drag
+    // Drag And Position
     drag: Drag,
     dragIntOffset: IntOffset,
     moveGridItemResult: MoveGridItemResult?,
@@ -78,15 +79,20 @@ internal fun handleDragFolderGridItem(
     }
 
     val folderGridDragPosition = calculateFolderGridDragPosition(
+        // Environment and Layout
         density = density,
         layoutDirection = layoutDirection,
+        // Screen Dimensions
         screenWidth = screenWidth,
         screenHeight = screenHeight,
+        // Grid Dimensions
         columns = folderPopup.columns,
         rows = folderPopup.rows,
         paddingValues = paddingValues,
+        // Cell Dimensions
         folderCellWidth = folderCellWidth,
         folderCellHeight = folderCellHeight,
+        // Offsets
         folderPopupIntOffset = folderPopupIntOffset,
         dragIntOffset = dragIntOffset,
     )

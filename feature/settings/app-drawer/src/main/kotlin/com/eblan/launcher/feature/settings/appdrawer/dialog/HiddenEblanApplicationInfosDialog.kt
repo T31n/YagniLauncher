@@ -42,8 +42,11 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun HiddenEblanApplicationInfosDialog(
-    modifier: Modifier = Modifier,
+    // Data
     eblanApplicationInfos: List<EblanApplicationInfo>,
+    // Layout
+    modifier: Modifier = Modifier,
+    // Callbacks
     onDismissRequest: () -> Unit,
     onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
 ) {

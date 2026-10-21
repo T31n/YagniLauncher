@@ -74,10 +74,12 @@ internal fun AppDrawerSettingsRoute(
     val folderEblanApplicationInfos by viewModel.folderEblanApplicationInfos.collectAsStateWithLifecycle()
 
     AppDrawerSettingsScreen(
+        // State
         appDrawerSettingsUiState = appDrawerSettingsUiState,
         eblanApplicationInfoTags = eblanApplicationInfoTags,
         folderEblanApplicationInfos = folderEblanApplicationInfos,
         modifier = modifier,
+        // Actions
         onNavigateUp = onNavigateUp,
         onUpdateAppDrawerSettings = viewModel::updateAppDrawerSettings,
         onUpdateEblanApplicationInfo = viewModel::updateEblanApplicationInfo,
@@ -93,7 +95,6 @@ internal fun AppDrawerSettingsScreen(
     appDrawerSettingsUiState: AppDrawerSettingsUiState,
     eblanApplicationInfoTags: List<EblanApplicationInfoTag>,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
-    // Modifier
     modifier: Modifier = Modifier,
     // Actions
     onNavigateUp: () -> Unit,
@@ -127,10 +128,12 @@ internal fun AppDrawerSettingsScreen(
         ) {
             if (appDrawerSettingsUiState is AppDrawerSettingsUiState.Success) {
                 Success(
-                    appDrawerSettings = appDrawerSettingsUiState.appDrawerSettings,
+                    // Data
                     eblanApplicationInfos = appDrawerSettingsUiState.eblanApplicationInfos,
-                    eblanApplicationInfoTags = eblanApplicationInfoTags,
                     folderEblanApplicationInfos = folderEblanApplicationInfos,
+                    eblanApplicationInfoTags = eblanApplicationInfoTags,
+                    appDrawerSettings = appDrawerSettingsUiState.appDrawerSettings,
+                    // Callbacks
                     onUpdateAppDrawerSettings = onUpdateAppDrawerSettings,
                     onUpdateEblanApplicationInfo = onUpdateEblanApplicationInfo,
                     onUpdateEblanApplicationInfoTags = onUpdateEblanApplicationInfoTags,
@@ -143,14 +146,14 @@ internal fun AppDrawerSettingsScreen(
 
 @Composable
 private fun Success(
-    // Application Data
-    appDrawerSettings: AppDrawerSettings,
+    // Data
     eblanApplicationInfos: List<EblanApplicationInfo>,
-    eblanApplicationInfoTags: List<EblanApplicationInfoTag>,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
-    // Layout
+    eblanApplicationInfoTags: List<EblanApplicationInfoTag>,
+    appDrawerSettings: AppDrawerSettings,
+    // Modifiers
     modifier: Modifier = Modifier,
-    // Application Actions
+    // Callbacks
     onUpdateAppDrawerSettings: (AppDrawerSettings) -> Unit,
     onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
     onUpdateEblanApplicationInfoTags: (List<EblanApplicationInfoTag>) -> Unit,
@@ -167,7 +170,9 @@ private fun Success(
     var showScrollBarTypeDialog by remember { mutableStateOf(false) }
 
     val items = buildAppDrawerSettingsItems(
+        // Settings
         appDrawerSettings = appDrawerSettings,
+        // Actions
         onAppDrawerTypeClick = {
             showAppDrawerTypeDialog = true
         },
@@ -208,7 +213,9 @@ private fun Success(
         SettingsItems(items = items)
 
         GridItemSettings(
+            // Grid item
             gridItemSettings = appDrawerSettings.gridItemSettings,
+            // Actions
             onUpdateGridItemSettings = {
                 onUpdateAppDrawerSettings(
                     appDrawerSettings.copy(
@@ -221,9 +228,11 @@ private fun Success(
 
     if (showAppDrawerTypeDialog) {
         RadioOptionsDialog(
+            // Dialog Content
             title = stringResource(R.string.app_drawer_type),
             options = AppDrawerType.entries,
             selected = appDrawerSettings.appDrawerType,
+            // Callbacks
             label = {
                 it.getTitle()
             },
@@ -238,8 +247,10 @@ private fun Success(
 
     if (showVerticalGridDialog) {
         EditVerticalGridDialog(
+            // Grid Properties
             appDrawerColumns = appDrawerSettings.appDrawerColumns,
             appDrawerRowsHeight = appDrawerSettings.appDrawerRowsHeight,
+            // Callbacks
             onDismissRequest = {
                 showVerticalGridDialog = false
             },
@@ -256,8 +267,10 @@ private fun Success(
 
     if (showHorizontalGridDialog) {
         EditHorizontalGridDialog(
+            // Grid Dimensions
             horizontalAppDrawerColumns = appDrawerSettings.horizontalAppDrawerColumns,
             horizontalAppDrawerRows = appDrawerSettings.horizontalAppDrawerRows,
+            // Callbacks
             onDismissRequest = {
                 showHorizontalGridDialog = false
             },
@@ -274,7 +287,9 @@ private fun Success(
 
     if (showHiddenEblanApplicationInfosDialog) {
         HiddenEblanApplicationInfosDialog(
+            // Data
             eblanApplicationInfos = eblanApplicationInfos,
+            // Callbacks
             onDismissRequest = {
                 showHiddenEblanApplicationInfosDialog = false
             },
@@ -284,9 +299,12 @@ private fun Success(
 
     if (showBackgroundColorDialog) {
         BackgroundColorDialog(
+            // Content
             title = stringResource(commonR.string.background_color),
+            // State
             backgroundColor = appDrawerSettings.backgroundColor,
             customBackgroundColor = appDrawerSettings.customBackgroundColor,
+            // Actions
             onDismissRequest = {
                 showBackgroundColorDialog = false
             },
@@ -303,7 +321,9 @@ private fun Success(
 
     if (showManageTagsDialog) {
         ManageTagsDialog(
+            // Tags
             eblanApplicationInfoTags = eblanApplicationInfoTags,
+            // Callbacks
             onDismissRequest = {
                 showManageTagsDialog = false
             },
@@ -313,19 +333,23 @@ private fun Success(
 
     if (showManageFoldersDialog) {
         ManageFoldersDialog(
+            // Data
             folderEblanApplicationInfos = folderEblanApplicationInfos,
+            // Callbacks
+            onUpdateFolderEblanApplicationInfos = onUpdateFolderEblanApplicationInfos,
             onDismissRequest = {
                 showManageFoldersDialog = false
             },
-            onUpdateFolderEblanApplicationInfos = onUpdateFolderEblanApplicationInfos,
         )
     }
 
     if (showSearchBarPositionDialog) {
         RadioOptionsDialog(
+            // Dialog Content
             title = stringResource(R.string.search_bar_position),
             options = SearchBarPosition.entries,
             selected = appDrawerSettings.searchBarPosition,
+            // Callbacks
             label = {
                 it.getTitle()
             },
@@ -340,9 +364,11 @@ private fun Success(
 
     if (showScrollBarTypeDialog) {
         RadioOptionsDialog(
+            // Dialog Content
             title = stringResource(R.string.scroll_bar_type),
             options = ScrollBarType.entries,
             selected = appDrawerSettings.scrollBarType,
+            // Callbacks
             label = {
                 it.getTitle()
             },
@@ -360,7 +386,7 @@ private fun Success(
 private fun buildAppDrawerSettingsItems(
     // Settings
     appDrawerSettings: AppDrawerSettings,
-    // Callbacks
+    // Actions
     onAppDrawerTypeClick: () -> Unit,
     onVerticalGridClick: () -> Unit,
     onHorizontalGridClick: () -> Unit,

@@ -45,8 +45,11 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun AddTagDialog(
+    // Modifier
     modifier: Modifier = Modifier,
+    // State
     eblanApplicationInfoTagsUi: List<EblanApplicationInfoTagUi>,
+    // Callbacks
     onDismissRequest: () -> Unit,
     onAddEblanApplicationInfoTag: (EblanApplicationInfoTag) -> Unit,
 ) {

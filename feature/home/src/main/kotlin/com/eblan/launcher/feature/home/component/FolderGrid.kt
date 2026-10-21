@@ -36,7 +36,7 @@ internal fun <T> PreviewFolderGridLayout(
     modifier: Modifier = Modifier,
     previewColumns: Int = FOLDER_PREVIEW_COLUMNS,
     previewRows: Int = FOLDER_PREVIEW_ROWS,
-    // Content
+    // Callbacks
     slotId: (T) -> String,
     content: @Composable BoxScope.(T) -> Unit,
 ) {
@@ -88,21 +88,17 @@ internal fun <T> PreviewFolderGridLayout(
 
 @Composable
 internal fun <T> FolderGridLayout(
-    // Data
+    // Grid Configuration
     gridItems: List<T>?,
-    // Grid structure
     columns: Int,
     rows: Int,
-    // Dimensions
     width: Int,
     height: Int,
-    // Animation
+    // Animation and Modifier
     animate: Boolean,
-    // Modifier
     modifier: Modifier = Modifier,
-    // Item identification
+    // Callbacks
     slotId: (T) -> String,
-    // Content
     content: @Composable BoxScope.(T) -> Unit,
 ) {
     SubcomposeLayout(modifier = modifier) { constraints ->
@@ -116,12 +112,16 @@ internal fun <T> FolderGridLayout(
             gridItems?.forEachIndexed { index, gridItem ->
                 subcompose(slotId(gridItem)) {
                     FolderGridLayoutContent(
+                        // Item Data
                         gridItem = gridItem,
                         index = index,
+                        // Dimensions
                         columns = columns,
                         cellWidth = cellWidth,
                         cellHeight = cellHeight,
+                        // Appearance and Behavior
                         animate = animate,
+                        // Content
                         content = content,
                     )
                 }.forEach { measurable ->
@@ -144,16 +144,15 @@ internal fun <T> FolderGridLayout(
 
 @Composable
 private fun <T> FolderGridLayoutContent(
-    // Item
+    // Item Data
     gridItem: T,
     index: Int,
-    // Layout
+    // Dimensions
     columns: Int,
     cellWidth: Int,
     cellHeight: Int,
-    // Animation
+    // Appearance and Behavior
     animate: Boolean,
-    // Modifier
     modifier: Modifier = Modifier,
     // Content
     content: @Composable (BoxScope.(T) -> Unit),

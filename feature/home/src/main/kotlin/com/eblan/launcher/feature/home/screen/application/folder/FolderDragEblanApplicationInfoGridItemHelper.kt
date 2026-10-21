@@ -29,13 +29,14 @@ import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.util.calculateFolderGridDragPosition
 
 internal fun handleDragFolderEblanApplicationInfoGridItem(
-    // Environment and Configuration
+    // Environment
     density: Density,
     layoutDirection: LayoutDirection,
+    // Screen Dimensions
     screenHeight: Int,
     screenWidth: Int,
     paddingValues: PaddingValues,
-    // Folder and Grid State
+    // Folder Item State
     currentPage: Int,
     folderEntry: FolderEntry,
     folderEblanApplicationInfoPopup: FolderEblanApplicationInfoPopup,
@@ -43,7 +44,7 @@ internal fun handleDragFolderEblanApplicationInfoGridItem(
     folderCellHeight: Int,
     isLastFolderEblanApplicationInfoGridItem: Boolean,
     moveFolderEblanApplicationInfoGridItemResult: MoveFolderEblanApplicationInfoGridItemResult?,
-    // Drag and Movement
+    // Drag State
     drag: Drag,
     dragIntOffset: IntOffset,
     folderPopupIntOffset: IntOffset,
@@ -77,15 +78,20 @@ internal fun handleDragFolderEblanApplicationInfoGridItem(
     }
 
     val folderGridDragPosition = calculateFolderGridDragPosition(
+        // Environment and Layout
         density = density,
         layoutDirection = layoutDirection,
+        // Screen Dimensions
         screenWidth = screenWidth,
         screenHeight = screenHeight,
+        // Grid Dimensions
         columns = folderEblanApplicationInfoPopup.columns,
         rows = folderEblanApplicationInfoPopup.rows,
         paddingValues = paddingValues,
+        // Cell Dimensions
         folderCellWidth = folderCellWidth,
         folderCellHeight = folderCellHeight,
+        // Offsets
         folderPopupIntOffset = folderPopupIntOffset,
         dragIntOffset = dragIntOffset,
     )

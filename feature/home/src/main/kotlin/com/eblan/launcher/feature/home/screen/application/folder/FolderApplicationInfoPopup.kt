@@ -70,15 +70,15 @@ import com.eblan.launcher.ui.local.LocalUserManager
 
 @Composable
 internal fun FolderApplicationInfoPopup(
-    // Content
+    // Application Info
     folderEblanApplicationInfo: FolderEblanApplicationInfo?,
-    paddingValues: PaddingValues,
     isCloseFolderEblanApplicationInfoMenu: Boolean,
-    // Layout
+    // Layout and Positioning
+    paddingValues: PaddingValues,
     popupIntOffset: IntOffset?,
     popupIntSize: IntSize?,
     modifier: Modifier = Modifier,
-    // Callbacks
+    // Actions
     onDismissRequest: () -> Unit,
     onEditFolderApplicationInfo: (String) -> Unit,
     onDeleteFolderEblanApplicationInfoGridItems: (
@@ -151,8 +151,10 @@ internal fun FolderApplicationInfoPopup(
     ) {
         AnimatedVisibility(
             modifier = Modifier.popup(
+                // Dimensions
                 width = popupIntSize.width,
                 height = popupIntSize.height,
+                // Position
                 x = x,
                 y = y,
             ),
@@ -187,7 +189,7 @@ internal fun FolderApplicationInfoPopup(
 
 @Composable
 internal fun FolderApplicationInfoGridItemPopup(
-    // Content
+    // Folder Data
     folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem?,
     eblanAppWidgetProviderInfosGroup: Map<String, List<EblanAppWidgetProviderInfo>>,
     eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
@@ -199,9 +201,8 @@ internal fun FolderApplicationInfoGridItemPopup(
     hasShortcutHostPermission: Boolean,
     isVisibleOverlay: Boolean,
     isCloseFolderEblanApplicationInfoGridItemMenu: Boolean,
-    // Modifier
     modifier: Modifier = Modifier,
-    // Callbacks
+    // Actions
     onDismissRequest: () -> Unit,
     onEditFolderApplicationInfo: (String) -> Unit,
     onEditApplicationInfo: (
@@ -287,8 +288,10 @@ internal fun FolderApplicationInfoGridItemPopup(
     ) {
         AnimatedVisibility(
             modifier = Modifier.popup(
+                // Dimensions
                 width = popupIntSize.width,
                 height = popupIntSize.height,
+                // Position
                 x = x,
                 y = y,
             ),
@@ -303,14 +306,19 @@ internal fun FolderApplicationInfoGridItemPopup(
             ),
         ) {
             FolderApplicationInfoGridItemPopupContent(
+                // Item Data
                 folderEblanApplicationInfoGridItem = folderEblanApplicationInfoGridItem,
                 gridItemSettings = gridItemSettings,
+                // Providers and Shortcuts
                 eblanAppWidgetProviderInfosGroup = eblanAppWidgetProviderInfosGroup,
                 eblanShortcutInfosGroup = eblanShortcutInfosGroup,
+                // State and Permissions
                 hasShortcutHostPermission = hasShortcutHostPermission,
                 isVisibleOverlay = isVisibleOverlay,
+                // Popup Metrics
                 popupIntOffset = popupIntOffset,
                 popupIntSize = popupIntSize,
+                // Actions
                 onWidgets = onWidgets,
                 onEditApplicationInfo = onEditApplicationInfo,
                 onEditFolderApplicationInfo = onEditFolderApplicationInfo,
@@ -330,11 +338,13 @@ private fun FolderApplicationInfoGridItemPopupContent(
     // Item Data
     folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
     gridItemSettings: GridItemSettings,
+    // Providers and Shortcuts
     eblanAppWidgetProviderInfosGroup: Map<String, List<EblanAppWidgetProviderInfo>>,
     eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
+    // State and Permissions
     hasShortcutHostPermission: Boolean,
-    // Popup State
     isVisibleOverlay: Boolean,
+    // Popup Metrics
     popupIntOffset: IntOffset,
     popupIntSize: IntSize,
     // Modifier
@@ -365,35 +375,24 @@ private fun FolderApplicationInfoGridItemPopupContent(
     when (val data = folderEblanApplicationInfoGridItem.data) {
         is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
             ApplicationInfoMenu(
-                eblanAppWidgetProviderInfosByPackageName = eblanAppWidgetProviderInfosGroup[
-                    data.packageName,
-                ],
+                // Item Data
+                icon = data.icon,
+                isUserInstalled = packageManager.isUserInstalled(data.flags),
+                isVisibleOverlay = isVisibleOverlay,
+                hasShortcutHostPermission = hasShortcutHostPermission,
+                gridItemSettings = gridItemSettings,
                 eblanShortcutInfosGroup = eblanShortcutInfosGroup[
                     EblanShortcutInfoByGroup(
                         serialNumber = data.serialNumber,
                         packageName = data.packageName,
                     ),
                 ],
-                gridItemSettings = gridItemSettings,
-                hasShortcutHostPermission = hasShortcutHostPermission,
-                isUserInstalled = packageManager.isUserInstalled(data.flags),
-                icon = data.icon,
-                isVisibleOverlay = isVisibleOverlay,
+                eblanAppWidgetProviderInfosByPackageName = eblanAppWidgetProviderInfosGroup[
+                    data.packageName,
+                ],
+                // Modifier
                 modifier = modifier,
-                onUninstall = {
-                    handleOnUninstall(
-                        context = context,
-                        launcherApps = launcherApps,
-                        userManager = userManager,
-                        serialNumber = data.serialNumber,
-                        componentName = data.componentName,
-                        packageName = data.packageName,
-                        popupIntOffset = popupIntOffset,
-                        popupIntSize = popupIntSize,
-                    )
-
-                    onDismiss()
-                },
+                // Callbacks
                 onApplicationInfo = {
                     launcherApps.startAppDetailsActivity(
                         serialNumber = data.serialNumber,
@@ -418,6 +417,35 @@ private fun FolderApplicationInfoGridItemPopupContent(
 
                     onDismiss()
                 },
+                onWidgets = {
+                    onWidgets(
+                        EblanApplicationInfoGroup(
+                            serialNumber = data.serialNumber,
+                            packageName = data.packageName,
+                            icon = data.icon,
+                            label = data.label,
+                        ),
+                    )
+
+                    onDismiss()
+                },
+                onUninstall = {
+                    handleOnUninstall(
+                        // Android Context and Wrappers
+                        context = context,
+                        launcherApps = launcherApps,
+                        userManager = userManager,
+                        // App Target Identification
+                        serialNumber = data.serialNumber,
+                        componentName = data.componentName,
+                        packageName = data.packageName,
+                        // Popup Layout
+                        popupIntOffset = popupIntOffset,
+                        popupIntSize = popupIntSize,
+                    )
+
+                    onDismiss()
+                },
                 onTapShortcutInfo = { serialNumber, packageName, shortcutId ->
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
                         launcherApps.startShortcut(
@@ -432,18 +460,6 @@ private fun FolderApplicationInfoGridItemPopupContent(
                             ),
                         )
                     }
-
-                    onDismiss()
-                },
-                onWidgets = {
-                    onWidgets(
-                        EblanApplicationInfoGroup(
-                            serialNumber = data.serialNumber,
-                            packageName = data.packageName,
-                            icon = data.icon,
-                            label = data.label,
-                        ),
-                    )
 
                     onDismiss()
                 },

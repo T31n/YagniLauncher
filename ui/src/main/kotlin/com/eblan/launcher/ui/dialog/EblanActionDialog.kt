@@ -153,7 +153,9 @@ internal fun EblanActionDialog(
 
     if (showSelectApplicationDialog) {
         SelectApplicationDialog(
+            // Data
             eblanApplicationInfos = eblanApplicationInfos,
+            // Callbacks
             onDismissRequest = {
                 showSelectApplicationDialog = false
             },

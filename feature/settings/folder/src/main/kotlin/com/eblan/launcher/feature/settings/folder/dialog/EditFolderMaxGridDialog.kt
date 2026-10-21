@@ -43,7 +43,7 @@ internal fun EditFolderMaxGridDialog(
     // Grid Dimensions
     maxFolderColumns: Int,
     maxFolderRows: Int,
-    // Appearance
+    // Layout
     modifier: Modifier = Modifier,
     // Actions
     onDismissRequest: () -> Unit,
