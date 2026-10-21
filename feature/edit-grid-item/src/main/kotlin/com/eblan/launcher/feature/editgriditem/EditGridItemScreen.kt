@@ -405,22 +405,20 @@ private fun EditApplicationInfo(
 
 @Composable
 private fun EditFolder(
-    // Folder Data
+    // Folder
     gridItem: GridItem,
     data: GridItemData.Folder,
     // Icon Packs
     iconPackComponents: List<IconPackComponent>,
     packageManagerIconPacks: List<PackageManagerIconPack>,
-    // Layout
+    // Folder
     modifier: Modifier = Modifier,
-    // Folder Actions
+    // Callbacks
     onUpdateGridItem: (GridItem) -> Unit,
     onResetGridItemCustomIcon: (GridItem) -> Unit,
-    // Icon Pack Actions
     onResetIconPackPackageName: () -> Unit,
     onSearchIconPackInfoComponent: (String) -> Unit,
     onUpdateIconPackPackageName: (String) -> Unit,
-    // Folder Actions
     onUpdateGridItemCustomIcon: (
         gridItem: GridItem,
         uri: String,

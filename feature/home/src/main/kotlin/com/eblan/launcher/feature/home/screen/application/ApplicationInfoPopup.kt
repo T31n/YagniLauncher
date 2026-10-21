@@ -281,9 +281,9 @@ internal fun PrivateApplicationInfoPopup(
     paddingValues: PaddingValues,
     // State and Events
     isClosePrivateEblanApplicationInfoMenu: Boolean,
-    // Layout and Positioning
+    // Modifier
     modifier: Modifier = Modifier,
-    // State and Events
+    // Callbacks
     onDismissRequest: () -> Unit,
     onEditApplicationInfo: (
         serialNumber: Long,

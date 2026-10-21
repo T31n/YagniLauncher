@@ -22,7 +22,6 @@ import com.eblan.launcher.configureCompose
 import com.eblan.launcher.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.assign
 import org.gradle.kotlin.dsl.configure
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
@@ -41,7 +40,7 @@ class AndroidLibraryComposeConventionPlugin : Plugin<Project> {
 
             extensions.configure<KotlinAndroidProjectExtension> {
                 compilerOptions {
-                    jvmTarget.assign(JvmTarget.JVM_11)
+                    jvmTarget.set(JvmTarget.JVM_11)
                 }
             }
         }
