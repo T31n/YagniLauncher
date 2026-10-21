@@ -79,7 +79,7 @@ internal fun ShortcutInfoScreen(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -100,7 +100,7 @@ internal fun ShortcutInfoScreen(
                 gridItemSettings = gridItemSettings,
                 // Actions
                 onTapShortcutInfo = onTapShortcutInfo,
-                onDragShortcutInfo = onDragShortcutInfo
+                onDragShortcutInfo = onDragShortcutInfo,
             )
         }
     }
@@ -117,7 +117,7 @@ internal fun PrivateShortcutInfoMenu(
         serialNumber: Long,
         packageName: String,
         shortcutId: String,
-    ) -> Unit
+    ) -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -132,7 +132,7 @@ internal fun PrivateShortcutInfoMenu(
                 // Shortcut Info
                 eblanShortcutInfo = eblanShortcutInfo,
                 // Callbacks
-                onTapShortcutInfo = onTapShortcutInfo
+                onTapShortcutInfo = onTapShortcutInfo,
             )
         }
     }
@@ -156,7 +156,7 @@ private fun ShortcutInfoMenuItem(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val graphicsLayer = rememberGraphicsLayer()
 
@@ -213,7 +213,7 @@ private fun ShortcutInfoMenuItem(
                                         intOffset = intOffset,
                                         intSize = intSize,
                                         // Drag Callback
-                                        onDragShortcutInfo = onDragShortcutInfo
+                                        onDragShortcutInfo = onDragShortcutInfo,
                                     )
                                 }
                             },
@@ -231,7 +231,7 @@ private fun PrivateShortcutInfoMenuItem(
     // Modifiers
     modifier: Modifier = Modifier,
     // Callbacks
-    onTapShortcutInfo: (Long, String, String) -> Unit
+    onTapShortcutInfo: (Long, String, String) -> Unit,
 ) {
     ListItem(
         modifier = modifier
@@ -272,7 +272,7 @@ private suspend fun handleOnLongPress(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val id = Uuid.random().toHexString()
 
@@ -284,7 +284,7 @@ private suspend fun handleOnLongPress(
         // Appearance
         icon = icon,
         // Settings
-        gridItemSettings = gridItemSettings
+        gridItemSettings = gridItemSettings,
     )
 
     onDragShortcutInfo(
@@ -307,7 +307,7 @@ private fun getShortcutInfoGridItem(
     // Appearance
     icon: String?,
     // Settings
-    gridItemSettings: GridItemSettings
+    gridItemSettings: GridItemSettings,
 ): GridItem {
     val data = GridItemData.ShortcutInfo(
         shortcutId = eblanShortcutInfo.shortcutId,

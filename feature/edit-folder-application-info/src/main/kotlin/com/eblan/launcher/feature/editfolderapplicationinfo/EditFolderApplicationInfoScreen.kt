@@ -77,12 +77,16 @@ internal fun EditFolderApplicationInfoRoute(
     val folderEblanApplicationInfoPopups by viewModel.folderEblanApplicationInfoPopups.collectAsStateWithLifecycle()
 
     EditFolderApplicationInfoScreen(
+        // State
         editFolderApplicationInfoUiState = editFolderApplicationInfoUiState,
+        // Data
         iconPackComponents = iconPackInfoComponents,
         packageManagerIconPacks = packageManagerIconPackInfos,
         folderEblanApplicationInfos = folderEblanApplicationInfos,
         folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+        // Layout
         modifier = modifier,
+        // Actions
         onNavigateUp = onNavigateUp,
         onUpdateIconPackPackageName = viewModel::updateIconPackPackageName,
         onResetFolderEblanApplicationInfoCustomIcon = viewModel::resetFolderEblanApplicationInfoCustomIcon,
@@ -104,9 +108,9 @@ internal fun EditFolderApplicationInfoScreen(
     packageManagerIconPacks: List<PackageManagerIconPack>,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
-    // Modifier
+    // Layout
     modifier: Modifier = Modifier,
-    // Callbacks
+    // Actions
     onNavigateUp: () -> Unit,
     onUpdateIconPackPackageName: (String) -> Unit,
     onResetFolderEblanApplicationInfoCustomIcon: (FolderEblanApplicationInfo) -> Unit,
@@ -148,12 +152,15 @@ internal fun EditFolderApplicationInfoScreen(
                     .padding(paddingValues),
             ) {
                 Success(
+                    // Application Info
                     folderEblanApplicationInfo = editFolderApplicationInfoUiState.folderEblanApplicationInfo,
                     folderEblanApplicationInfos = folderEblanApplicationInfos,
                     topLevelFolderEblanApplicationInfos = folderEblanApplicationInfos,
                     folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+                    // Icon Packs
                     iconPackComponents = iconPackComponents,
                     packageManagerIconPacks = packageManagerIconPacks,
+                    // Callbacks
                     onUpdateIconPackPackageName = onUpdateIconPackPackageName,
                     onResetFolderEblanApplicationInfoCustomIcon = onResetFolderEblanApplicationInfoCustomIcon,
                     onUpdateFolderEblanApplicationInfoCustomIcon = onUpdateFolderEblanApplicationInfoCustomIcon,
@@ -179,7 +186,7 @@ internal fun Success(
     packageManagerIconPacks: List<PackageManagerIconPack>,
     // Modifier
     modifier: Modifier = Modifier,
-    // Actions
+    // Callbacks
     onUpdateIconPackPackageName: (String) -> Unit,
     onResetFolderEblanApplicationInfoCustomIcon: (FolderEblanApplicationInfo) -> Unit,
     onUpdateFolderEblanApplicationInfoCustomIcon: (
@@ -244,10 +251,12 @@ internal fun Success(
         SettingsCategoryText(text = stringResource(commonR.string.folders))
 
         Folders(
+            // Folder Data
             folderEblanApplicationInfo = folderEblanApplicationInfo,
             folderEblanApplicationInfos = folderEblanApplicationInfos,
             topLevelFolderEblanApplicationInfos = topLevelFolderEblanApplicationInfos,
             folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+            // Folder Callbacks
             onUpdateFolderEblanApplicationInfo = onUpdateFolderEblanApplicationInfo,
             onAddFolderEblanApplicationInfo = onAddFolderEblanApplicationInfo,
         )
@@ -256,10 +265,12 @@ internal fun Success(
 
         if (showCustomIconDialog) {
             IconPackInfoFilesDialog(
+                // Icon Information
                 iconPackComponents = iconPackComponents,
                 iconPackPackageName = iconPackPackageName,
                 iconPackInfoLabel = iconPackInfoLabel,
                 iconName = folderEblanApplicationInfo.id,
+                // Callbacks
                 onDismissRequest = {
                     onResetIconPackPackageName()
 
@@ -278,7 +289,9 @@ internal fun Success(
 
         if (showEditLabelDialog) {
             EditFolderLabelDialog(
+                // Data
                 folderEblanApplicationInfo = folderEblanApplicationInfo,
+                // Callbacks
                 onDismissRequest = {
                     showEditLabelDialog = false
                 },
@@ -290,14 +303,14 @@ internal fun Success(
 
 @Composable
 private fun Folders(
-    // Data
+    // Folder Data
     folderEblanApplicationInfo: FolderEblanApplicationInfo,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     // Modifier
     modifier: Modifier = Modifier,
-    // Callbacks
+    // Folder Callbacks
     onUpdateFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
     onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
 ) {
@@ -312,10 +325,13 @@ private fun Folders(
     FlowRow(modifier = modifier.fillMaxWidth()) {
         folderEblanApplicationInfos.forEach {
             FolderEblanApplicationInfoItem(
+                // Identifier and Label
                 id = it.id,
                 label = it.label,
+                // Application Info
                 folderEblanApplicationInfo = folderEblanApplicationInfo,
                 folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+                // Callbacks
                 onUpdateFolderEblanApplicationInfo = onUpdateFolderEblanApplicationInfo,
             )
         }
@@ -329,7 +345,9 @@ private fun Folders(
 
     if (showAddFolderDialog) {
         AddFolderDialog(
+            // Data
             topLevelFolderEblanApplicationInfos = topLevelFolderEblanApplicationInfos,
+            // Callbacks
             onDismissRequest = {
                 showAddFolderDialog = false
             },
@@ -340,13 +358,13 @@ private fun Folders(
 
 @Composable
 private fun FolderEblanApplicationInfoItem(
-    // Identity
+    // Identifier and Label
     id: String,
     label: String,
-    // Content
+    // Application Info
     folderEblanApplicationInfo: FolderEblanApplicationInfo,
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
-    // Layout
+    // Modifier
     modifier: Modifier = Modifier,
     // Callbacks
     onUpdateFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,

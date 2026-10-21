@@ -133,7 +133,9 @@ private fun Success(
 
     if (showSyncDataDialog) {
         SyncDataDialog(
+            // State
             syncData = experimentalSettings.syncData,
+            // Actions
             onDismissRequest = {
                 showSyncDataDialog = false
             },

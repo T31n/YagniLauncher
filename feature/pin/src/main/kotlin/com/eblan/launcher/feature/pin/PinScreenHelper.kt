@@ -33,9 +33,9 @@ import com.eblan.launcher.framework.widgetmanager.AndroidAppWidgetHostWrapper
 import com.eblan.launcher.framework.widgetmanager.AndroidAppWidgetManagerWrapper
 
 internal fun handleGridItem(
-    // Grid Item
+    // Item
     gridItem: GridItem?,
-    // Android Context
+    // Managers
     appWidgetManager: AndroidAppWidgetManagerWrapper,
     appWidgetHostWrapper: AndroidAppWidgetHostWrapper,
     userHandle: UserHandle,
@@ -53,11 +53,13 @@ internal fun handleGridItem(
         onUpdateAppWidgetId(appWidgetId)
 
         onAddPinWidget(
+            // Widget Info
             appWidgetId = appWidgetId,
             appWidgetManager = appWidgetManager,
             data = data,
             gridItem = gridItem,
             userHandle = userHandle,
+            // Callbacks
             onLaunch = onLaunch,
             onUpdateGridItemCache = onUpdateGridItemCache,
         )
@@ -73,14 +75,13 @@ internal fun handleGridItem(
 }
 
 internal fun onAddPinWidget(
-    // Widget Details
+    // Widget Info
     appWidgetId: Int,
     appWidgetManager: AndroidAppWidgetManagerWrapper,
     data: GridItemData.Widget,
-    // Item Context
     gridItem: GridItem,
     userHandle: UserHandle,
-    // Actions
+    // Callbacks
     onLaunch: (Intent) -> Unit,
     onUpdateGridItemCache: (GridItem) -> Unit,
 ) {
@@ -108,7 +109,7 @@ internal fun onAddPinWidget(
 }
 
 internal fun handleAppWidgetLauncherResult(
-    // Launcher Result
+    // Result
     result: ActivityResult,
     gridItem: GridItem?,
     // Callbacks
@@ -131,13 +132,13 @@ internal fun handleAppWidgetLauncherResult(
 
 @RequiresApi(Build.VERSION_CODES.O)
 internal fun handleIsBoundWidget(
-    // Widget Identifiers
+    // Widget Info
     appWidgetId: Int,
     isBoundWidget: Boolean,
-    // Item Data
+    // Grid and Pin Items
     gridItem: GridItem?,
     pinItemRequest: PinItemRequest?,
-    // Actions
+    // Callbacks
     onDeleteGridItem: (GridItem) -> Unit,
     onUpdateGridItems: () -> Unit,
 ) {
@@ -157,11 +158,12 @@ internal fun handleIsBoundWidget(
 }
 
 internal fun handleDeleteAppWidgetId(
-    // Widget ID
+    // App Widget
     appWidgetId: Int,
     deleteAppWidgetId: Boolean,
     // Grid Item
     gridItem: GridItem?,
+    // Callbacks
     onDeleteGridItem: (GridItem) -> Unit,
 ) {
     val data = gridItem?.data as? GridItemData.Widget ?: return

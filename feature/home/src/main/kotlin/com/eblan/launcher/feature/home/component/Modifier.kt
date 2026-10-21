@@ -73,7 +73,7 @@ internal fun Modifier.swipeGestures(
     swipeDown: EblanAction,
     swipeUp: EblanAction,
     // Actions
-    onOpenAppDrawer: () -> Unit
+    onOpenAppDrawer: () -> Unit,
 ): Modifier {
     val context = LocalContext.current
     val density = LocalDensity.current
@@ -127,7 +127,7 @@ internal fun Modifier.swipeGestures(
                                     launcherApps = launcherApps,
                                     statusBarManagerWrapper = androidStatusBarManagerWrapper,
                                     // Callbacks
-                                    onOpenAppDrawer = currentOnOpenAppDrawer
+                                    onOpenAppDrawer = currentOnOpenAppDrawer,
                                 )
                             }
 
@@ -140,7 +140,7 @@ internal fun Modifier.swipeGestures(
                                     launcherApps = launcherApps,
                                     statusBarManagerWrapper = androidStatusBarManagerWrapper,
                                     // Callbacks
-                                    onOpenAppDrawer = currentOnOpenAppDrawer
+                                    onOpenAppDrawer = currentOnOpenAppDrawer,
                                 )
                             }
                         }
@@ -164,7 +164,7 @@ internal fun Modifier.popup(
     height: Int,
     // Position
     x: Int,
-    y: Int
+    y: Int,
 ): Modifier = layout { measurable, constraints ->
     val placeable = measurable.measure(
         constraints.copy(minWidth = 0, minHeight = 0),
@@ -193,7 +193,7 @@ internal fun Modifier.gridItemSharedElement(
     sharedElementKey: SharedElementKey,
     // Visibility Control
     enabled: Boolean,
-    visible: Boolean
+    visible: Boolean,
 ): Modifier = if (enabled && visible) {
     with(sharedTransitionScope) {
         sharedElementWithCallerManagedVisibility(

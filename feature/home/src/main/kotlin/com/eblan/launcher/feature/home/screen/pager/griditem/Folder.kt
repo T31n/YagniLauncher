@@ -138,7 +138,7 @@ internal fun InteractiveFolderGridItem(
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
     ) -> Unit,
-    onTapFolderGridItem: (FolderEntry) -> Unit
+    onTapFolderGridItem: (FolderEntry) -> Unit,
 ) {
     val launcherApps = LocalLauncherApps.current
     val androidStatusBarManagerWrapper = LocalStatusBarManager.current
@@ -183,7 +183,7 @@ internal fun InteractiveFolderGridItem(
             intOffset = intOffset,
             intSize = intSize,
             // Callbacks
-            onShowFolderWhenDragging = currentOnShowFolderWhenDragging
+            onShowFolderWhenDragging = currentOnShowFolderWhenDragging,
         )
     }
 
@@ -212,7 +212,7 @@ internal fun InteractiveFolderGridItem(
                                     launcherApps = launcherApps,
                                     statusBarManagerWrapper = androidStatusBarManagerWrapper,
                                     // Callbacks
-                                    onOpenAppDrawer = currentOnOpenAppDrawer
+                                    onOpenAppDrawer = currentOnOpenAppDrawer,
                                 )
                             }
                         } else {
@@ -252,7 +252,7 @@ internal fun InteractiveFolderGridItem(
             swipeDown = gridItem.swipeDown,
             swipeUp = gridItem.swipeUp,
             // Actions
-            onOpenAppDrawer = onOpenAppDrawer
+            onOpenAppDrawer = onOpenAppDrawer,
         )
 
     val iconModifier = Modifier
@@ -268,7 +268,7 @@ internal fun InteractiveFolderGridItem(
             sharedElementKey = sharedElementKey,
             // Visibility Control
             enabled = animations,
-            visible = !isScrollInProgress && !hasInteraction
+            visible = !isScrollInProgress && !hasInteraction,
         )
         .gridItemScaleAnimation(
             animations = animations,
@@ -335,9 +335,9 @@ internal fun InteractiveFolderGridItem(
                             systemCustomTextColor = systemCustomTextColor,
                             iconPackFilePaths = iconPackFilePaths,
                             // Actions
-                            onResetGrid = onResetGrid
+                            onResetGrid = onResetGrid,
                         )
-                    }
+                    },
                 )
             }
         }
@@ -384,7 +384,7 @@ internal fun InteractiveFolderGridItem(
         // Content
         iconContent = iconContent,
         labelContent = labelContent,
-        labelOnlyContent = labelOnlyContent
+        labelOnlyContent = labelOnlyContent,
     )
 }
 
@@ -413,7 +413,7 @@ private fun PreviewFolderGridItem(
     // Modifier
     modifier: Modifier = Modifier,
     // Actions
-    onResetGrid: () -> Unit
+    onResetGrid: () -> Unit,
 ) {
     key(gridItem.id) {
         val context = LocalContext.current
@@ -457,7 +457,7 @@ private fun PreviewFolderGridItem(
             systemCustomTextColor = systemCustomTextColor,
             systemTextColor = systemTextColor,
             // Default Color
-            defaultColor = MaterialTheme.colorScheme.onSurface
+            defaultColor = MaterialTheme.colorScheme.onSurface,
         )
 
         val commonModifier = modifier
@@ -472,7 +472,7 @@ private fun PreviewFolderGridItem(
                 ),
                 // Visibility Control
                 enabled = animations,
-                visible = !isScrollInProgress && !hasInteraction
+                visible = !isScrollInProgress && !hasInteraction,
             )
             .gridItemScaleAnimation(
                 animations = animations,

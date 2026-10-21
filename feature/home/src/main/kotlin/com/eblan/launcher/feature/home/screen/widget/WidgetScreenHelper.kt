@@ -46,7 +46,7 @@ internal fun getWidgetGridItem(
     maxResizeWidth: Int,
     maxResizeHeight: Int,
     minResizeWidth: Int,
-    minResizeHeight: Int
+    minResizeHeight: Int,
 ): GridItem {
     val data = GridItemData.Widget(
         appWidgetId = 0,

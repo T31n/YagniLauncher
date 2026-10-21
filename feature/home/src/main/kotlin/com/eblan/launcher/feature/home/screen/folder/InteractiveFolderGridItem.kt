@@ -139,7 +139,7 @@ internal fun InteractiveFolderGridItem(
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
     ) -> Unit,
-    onDragFolderGridItem: () -> Unit
+    onDragFolderGridItem: () -> Unit,
 ) {
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
@@ -161,7 +161,7 @@ internal fun InteractiveFolderGridItem(
         textColor = currentGridItemSettings.textColor,
         customTextColor = currentGridItemSettings.customTextColor,
         systemCustomTextColor = systemCustomTextColor,
-        systemTextColor = systemTextColor
+        systemTextColor = systemTextColor,
     )
 
     val padding = if (animations) {
@@ -207,7 +207,7 @@ internal fun InteractiveFolderGridItem(
         startRow = gridItem.startRow,
         // Dimensions
         cellWidth = minCellWidthPx,
-        cellHeight = minCellHeightPx
+        cellHeight = minCellHeightPx,
     )
 
     val isVisibleFolder = remember(
@@ -265,7 +265,7 @@ internal fun InteractiveFolderGridItem(
                 modifier = modifier,
                 // Callbacks
                 onOpenAppDrawer = onOpenAppDrawer,
-                onLongPressFolderGridItem = onLongPressFolderGridItem
+                onLongPressFolderGridItem = onLongPressFolderGridItem,
             )
         }
 
@@ -299,7 +299,7 @@ internal fun InteractiveFolderGridItem(
                 modifier = modifier,
                 // Callbacks
                 onOpenAppDrawer = onOpenAppDrawer,
-                onLongPressFolderGridItem = onLongPressFolderGridItem
+                onLongPressFolderGridItem = onLongPressFolderGridItem,
             )
         }
 
@@ -331,7 +331,7 @@ internal fun InteractiveFolderGridItem(
                 modifier = modifier,
                 // Callbacks
                 onOpenAppDrawer = onOpenAppDrawer,
-                onLongPressFolderGridItem = onLongPressFolderGridItem
+                onLongPressFolderGridItem = onLongPressFolderGridItem,
             )
         }
 
@@ -372,7 +372,7 @@ internal fun InteractiveFolderGridItem(
                 // Callbacks
                 onOpenAppDrawer = onOpenAppDrawer,
                 onUpsertFolderGridItemPopupEntry = onUpsertFolderGridItemPopupEntry,
-                onLongPressFolderGridItem = onLongPressFolderGridItem
+                onLongPressFolderGridItem = onLongPressFolderGridItem,
             )
         }
 
@@ -416,7 +416,7 @@ private fun InteractiveApplicationInfoGridItem(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val launcherApps = LocalLauncherApps.current
     val androidLauncherAppsWrapper = LocalLauncherApps.current
@@ -463,7 +463,7 @@ private fun InteractiveApplicationInfoGridItem(
                                         launcherApps = launcherApps,
                                         statusBarManagerWrapper = androidStatusBarManagerWrapper,
                                         // Callbacks
-                                        onOpenAppDrawer = onOpenAppDrawer
+                                        onOpenAppDrawer = onOpenAppDrawer,
                                     )
                                 }
                             } else {
@@ -500,7 +500,7 @@ private fun InteractiveApplicationInfoGridItem(
                 swipeDown = gridItem.swipeDown,
                 swipeUp = gridItem.swipeUp,
                 // Actions
-                onOpenAppDrawer = onOpenAppDrawer
+                onOpenAppDrawer = onOpenAppDrawer,
             ),
         horizontalAlignment = horizontalAlignment,
         verticalArrangement = verticalArrangement,
@@ -528,7 +528,7 @@ private fun InteractiveApplicationInfoGridItem(
                         sharedElementKey = sharedElementKey,
                         // Visibility Control
                         enabled = animations && !isInProgress,
-                        visible = !isScrollInProgress && !hasInteraction
+                        visible = !isScrollInProgress && !hasInteraction,
                     )
                     .gridItemScaleAnimation(
                         animations = animations,
@@ -606,7 +606,7 @@ private fun InteractiveShortcutInfoGridItem(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val androidLauncherAppsWrapper = LocalLauncherApps.current
     val launcherApps = LocalLauncherApps.current
@@ -651,7 +651,7 @@ private fun InteractiveShortcutInfoGridItem(
                                         launcherApps = launcherApps,
                                         statusBarManagerWrapper = androidStatusBarManagerWrapper,
                                         // Callbacks
-                                        onOpenAppDrawer = onOpenAppDrawer
+                                        onOpenAppDrawer = onOpenAppDrawer,
                                     )
                                 }
                             } else {
@@ -695,7 +695,7 @@ private fun InteractiveShortcutInfoGridItem(
                 swipeDown = gridItem.swipeDown,
                 swipeUp = gridItem.swipeUp,
                 // Actions
-                onOpenAppDrawer = onOpenAppDrawer
+                onOpenAppDrawer = onOpenAppDrawer,
             ),
         horizontalAlignment = horizontalAlignment,
         verticalArrangement = verticalArrangement,
@@ -720,7 +720,7 @@ private fun InteractiveShortcutInfoGridItem(
                         sharedElementKey = sharedElementKey,
                         // Visibility Control
                         enabled = animations && !isInProgress,
-                        visible = !isScrollInProgress && !hasInteraction
+                        visible = !isScrollInProgress && !hasInteraction,
                     )
                     .gridItemScaleAnimation(
                         animations = animations,
@@ -799,7 +799,7 @@ private fun InteractiveShortcutConfigGridItem(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val launcherApps = LocalLauncherApps.current
     val androidStatusBarManagerWrapper = LocalStatusBarManager.current
@@ -852,7 +852,7 @@ private fun InteractiveShortcutConfigGridItem(
                                         launcherApps = launcherApps,
                                         statusBarManagerWrapper = androidStatusBarManagerWrapper,
                                         // Callbacks
-                                        onOpenAppDrawer = onOpenAppDrawer
+                                        onOpenAppDrawer = onOpenAppDrawer,
                                     )
                                 }
                             } else {
@@ -887,7 +887,7 @@ private fun InteractiveShortcutConfigGridItem(
                 swipeDown = gridItem.swipeDown,
                 swipeUp = gridItem.swipeUp,
                 // Actions
-                onOpenAppDrawer = onOpenAppDrawer
+                onOpenAppDrawer = onOpenAppDrawer,
             ),
         horizontalAlignment = horizontalAlignment,
         verticalArrangement = verticalArrangement,
@@ -910,7 +910,7 @@ private fun InteractiveShortcutConfigGridItem(
                     sharedElementKey = sharedElementKey,
                     // Visibility Control
                     enabled = animations && !isInProgress,
-                    visible = !isScrollInProgress && !hasInteraction
+                    visible = !isScrollInProgress && !hasInteraction,
                 )
                 .gridItemScaleAnimation(
                     animations = animations,
@@ -983,7 +983,7 @@ private fun InteractiveNestedFolderGridItem(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val launcherApps = LocalLauncherApps.current
     val androidStatusBarManagerWrapper = LocalStatusBarManager.current
@@ -1023,7 +1023,7 @@ private fun InteractiveNestedFolderGridItem(
                                         launcherApps = launcherApps,
                                         statusBarManagerWrapper = androidStatusBarManagerWrapper,
                                         // Callbacks
-                                        onOpenAppDrawer = onOpenAppDrawer
+                                        onOpenAppDrawer = onOpenAppDrawer,
                                     )
                                 }
                             } else {
@@ -1065,7 +1065,7 @@ private fun InteractiveNestedFolderGridItem(
                 swipeDown = gridItem.swipeDown,
                 swipeUp = gridItem.swipeUp,
                 // Actions
-                onOpenAppDrawer = onOpenAppDrawer
+                onOpenAppDrawer = onOpenAppDrawer,
             ),
         horizontalAlignment = horizontalAlignment,
         verticalArrangement = verticalArrangement,
@@ -1084,7 +1084,7 @@ private fun InteractiveNestedFolderGridItem(
                 sharedElementKey = sharedElementKey,
                 // Visibility Control
                 enabled = animations && !isInProgress,
-                visible = !isScrollInProgress && !hasInteraction
+                visible = !isScrollInProgress && !hasInteraction,
             )
             .gridItemScaleAnimation(
                 animations = animations,
@@ -1136,9 +1136,9 @@ private fun InteractiveNestedFolderGridItem(
                             folderBackgroundColor = folderBackgroundColor,
                             customFolderBackgroundColor = customFolderBackgroundColor,
                             systemTextColor = systemTextColor,
-                            systemCustomTextColor = systemCustomTextColor
+                            systemCustomTextColor = systemCustomTextColor,
                         )
-                    }
+                    },
                 )
             }
         }
@@ -1172,7 +1172,7 @@ private fun PreviewNestedFolderGridItem(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     // Layout
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
 
@@ -1205,7 +1205,7 @@ private fun PreviewNestedFolderGridItem(
             systemCustomTextColor = systemCustomTextColor,
             systemTextColor = systemTextColor,
             // Default Color
-            defaultColor = MaterialTheme.colorScheme.onSurface
+            defaultColor = MaterialTheme.colorScheme.onSurface,
         )
 
         val commonModifier = modifier
@@ -1283,7 +1283,7 @@ private fun getSourceBounds(
     startRow: Int,
     // Dimensions
     cellWidth: Int,
-    cellHeight: Int
+    cellHeight: Int,
 ): Rect {
     val leftPadding = with(density) {
         paddingValues.calculateLeftPadding(layoutDirection).roundToPx()

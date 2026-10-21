@@ -56,10 +56,10 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 fun ColorPickerDialog(
-    // Required Parameters
+    // Content
     title: String,
     customColor: Int,
-    // Modifier
+    // Layout
     modifier: Modifier = Modifier,
     // Callbacks
     onDismissRequest: () -> Unit,

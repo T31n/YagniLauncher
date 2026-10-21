@@ -110,7 +110,7 @@ internal fun EblanApplicationInfoItem(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
@@ -141,7 +141,7 @@ internal fun EblanApplicationInfoItem(
         textColor = gridItemSettings.textColor,
         customTextColor = gridItemSettings.customTextColor,
         systemCustomTextColor = systemCustomTextColor,
-        systemTextColor = systemTextColor
+        systemTextColor = systemTextColor,
     )
 
     val maxLines = if (gridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
@@ -198,7 +198,7 @@ internal fun EblanApplicationInfoItem(
             // Callbacks
             onUpdateIsLongPress = { isLongPress = it },
             onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-            onDragApplicationInfo = onDragApplicationInfo
+            onDragApplicationInfo = onDragApplicationInfo,
         )
     }
 
@@ -225,7 +225,7 @@ internal fun EblanApplicationInfoItem(
                                 leftPadding = leftPadding,
                                 topPadding = topPadding,
                                 // Controller
-                                keyboardController = keyboardController
+                                keyboardController = keyboardController,
                             )
                         },
                         onLongPress = {
@@ -262,9 +262,9 @@ internal fun EblanApplicationInfoItem(
             // Visibility Control
             enabled = animations,
             visible = !isSwiping &&
-                    !isScrollInProgress &&
-                    !isLongPress &&
-                    !isVisibleOverlay
+                !isScrollInProgress &&
+                !isLongPress &&
+                !isVisibleOverlay,
         )
         .gridItemScaleAnimation(
             animations = animations,
@@ -337,7 +337,7 @@ internal fun EblanApplicationInfoItem(
         // Content
         iconContent = iconContent,
         labelContent = labelContent,
-        labelOnlyContent = labelOnlyContent
+        labelOnlyContent = labelOnlyContent,
     )
 }
 
@@ -353,7 +353,7 @@ internal fun handleOnTapEblanApplicationInfoItem(
     leftPadding: Int,
     topPadding: Int,
     // Controller
-    keyboardController: SoftwareKeyboardController?
+    keyboardController: SoftwareKeyboardController?,
 ) {
     val left = intOffset.x + leftPadding
     val top = intOffset.y + topPadding
@@ -384,7 +384,7 @@ internal fun handleDragEblanApplicationInfoItem(
     // Callbacks
     onUpdateIsLongPress: (Boolean) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
-    onDragApplicationInfo: (GridItem) -> Unit
+    onDragApplicationInfo: (GridItem) -> Unit,
 ) {
     if (!isLongPress) return
 

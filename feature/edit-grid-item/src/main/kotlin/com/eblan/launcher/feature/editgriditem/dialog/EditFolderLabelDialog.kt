@@ -38,9 +38,12 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun EditFolderLabelDialog(
-    modifier: Modifier = Modifier,
+    // Item Data
     gridItem: GridItem,
     data: GridItemData.Folder,
+    // Modifiers
+    modifier: Modifier = Modifier,
+    // Callbacks
     onDismissRequest: () -> Unit,
     onUpdateGridItem: (GridItem) -> Unit,
 ) {

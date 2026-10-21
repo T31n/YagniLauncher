@@ -43,7 +43,7 @@ internal fun EditVerticalGridDialog(
     // Grid Properties
     appDrawerColumns: Int,
     appDrawerRowsHeight: Int,
-    // Modifiers
+    // Modifier
     modifier: Modifier = Modifier,
     // Callbacks
     onDismissRequest: () -> Unit,

@@ -100,7 +100,7 @@ internal fun ApplicationInfoPopup(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     requireNotNull(eblanApplicationInfo)
     requireNotNull(popupIntOffset)
@@ -174,7 +174,7 @@ internal fun ApplicationInfoPopup(
                 height = popupIntSize.height,
                 // Position
                 x = x,
-                y = y
+                y = y,
             ),
             visibleState = transitionState,
             enter = fadeIn(tween()) + scaleIn(
@@ -249,7 +249,7 @@ internal fun ApplicationInfoPopup(
                         packageName = eblanApplicationInfo.packageName,
                         // Popup Layout
                         popupIntOffset = popupIntOffset,
-                        popupIntSize = popupIntSize
+                        popupIntSize = popupIntSize,
                     )
 
                     transitionState.targetState = false
@@ -271,7 +271,7 @@ internal fun ApplicationInfoPopup(
 
                     transitionState.targetState = false
                 },
-                onDragShortcutInfo = onDragShortcutInfo
+                onDragShortcutInfo = onDragShortcutInfo,
             )
         }
     }
@@ -294,7 +294,7 @@ internal fun PrivateApplicationInfoPopup(
     onEditApplicationInfo: (
         serialNumber: Long,
         componentName: String,
-    ) -> Unit
+    ) -> Unit,
 ) {
     requireNotNull(eblanApplicationInfo)
     requireNotNull(popupIntOffset)
@@ -368,7 +368,7 @@ internal fun PrivateApplicationInfoPopup(
                 height = popupIntSize.height,
                 // Position
                 x = x,
-                y = y
+                y = y,
             ),
             visibleState = transitionState,
             enter = fadeIn(tween()) + scaleIn(
@@ -403,7 +403,7 @@ internal fun PrivateApplicationInfoPopup(
                         packageName = eblanApplicationInfo.packageName,
                         // Popup Layout
                         popupIntOffset = popupIntOffset,
-                        popupIntSize = popupIntSize
+                        popupIntSize = popupIntSize,
                     )
 
                     transitionState.targetState = false
@@ -446,7 +446,7 @@ internal fun PrivateApplicationInfoPopup(
                     }
 
                     transitionState.targetState = false
-                }
+                },
             )
         }
     }
@@ -480,7 +480,7 @@ internal fun ApplicationInfoMenu(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     Surface(
         modifier = modifier.padding(5.dp),
@@ -500,7 +500,7 @@ internal fun ApplicationInfoMenu(
                         isVisibleOverlay = isVisibleOverlay,
                         // Actions
                         onTapShortcutInfo = onTapShortcutInfo,
-                        onDragShortcutInfo = onDragShortcutInfo
+                        onDragShortcutInfo = onDragShortcutInfo,
                     )
 
                     Spacer(modifier = Modifier.height(5.dp))
@@ -568,7 +568,7 @@ private fun PrivateApplicationInfoMenu(
         serialNumber: Long,
         packageName: String,
         shortcutId: String,
-    ) -> Unit
+    ) -> Unit,
 ) {
     Surface(
         modifier = modifier.padding(5.dp),
@@ -583,7 +583,7 @@ private fun PrivateApplicationInfoMenu(
                         // Shortcut Data
                         eblanShortcutInfosGroup = eblanShortcutInfosGroup,
                         // Actions
-                        onTapShortcutInfo = onTapShortcutInfo
+                        onTapShortcutInfo = onTapShortcutInfo,
                     )
 
                     Spacer(modifier = Modifier.height(5.dp))

@@ -38,7 +38,7 @@ internal fun <T> PreviewFolderGridLayout(
     previewRows: Int = FOLDER_PREVIEW_ROWS,
     // Callbacks
     slotId: (T) -> String,
-    content: @Composable BoxScope.(T) -> Unit
+    content: @Composable BoxScope.(T) -> Unit,
 ) {
     SubcomposeLayout(modifier = modifier) { constraints ->
         val previewCellSize = minOf(
@@ -99,7 +99,7 @@ internal fun <T> FolderGridLayout(
     modifier: Modifier = Modifier,
     // Callbacks
     slotId: (T) -> String,
-    content: @Composable BoxScope.(T) -> Unit
+    content: @Composable BoxScope.(T) -> Unit,
 ) {
     SubcomposeLayout(modifier = modifier) { constraints ->
         val cellWidth = width / columns
@@ -122,7 +122,7 @@ internal fun <T> FolderGridLayout(
                         // Appearance and Behavior
                         animate = animate,
                         // Content
-                        content = content
+                        content = content,
                     )
                 }.forEach { measurable ->
                     val parentData = measurable.parentData as FolderGridItemParentData
@@ -155,7 +155,7 @@ private fun <T> FolderGridLayoutContent(
     animate: Boolean,
     modifier: Modifier = Modifier,
     // Content
-    content: @Composable (BoxScope.(T) -> Unit)
+    content: @Composable (BoxScope.(T) -> Unit),
 ) {
     val x = (index % columns) * cellWidth
     val y = (index / columns) * cellHeight

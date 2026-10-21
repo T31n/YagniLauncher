@@ -32,6 +32,7 @@ fun NavGraphBuilder.settingsScreen(
 ) {
     composable<SettingsRouteData> {
         SettingsRoute(
+            // Navigation Actions
             onAppDrawer = onAppDrawer,
             onExperimental = onExperimental,
             onFinish = onFinish,

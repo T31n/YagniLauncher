@@ -93,13 +93,11 @@ import com.eblan.launcher.common.R as commonR
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PinScreen(
-    // Content
+    // Data and State
     pinItemRequest: PinItemRequest,
-    // Layout
     modifier: Modifier = Modifier,
-    // ViewModel
     viewModel: PinScreenViewModel = hiltViewModel(),
-    // Actions
+    // Callbacks
     onDragStart: () -> Unit,
     onFinish: () -> Unit,
 ) {
@@ -110,11 +108,13 @@ fun PinScreen(
     when (pinItemRequest.requestType) {
         PinItemRequest.REQUEST_TYPE_APPWIDGET -> {
             PinWidgetScreen(
+                // Widget State
                 gridItem = gridItem,
+                pinItemRequest = pinItemRequest,
                 isBoundWidget = isBoundWidget,
                 isFinished = isFinished,
-                pinItemRequest = pinItemRequest,
                 modifier = modifier,
+                // Widget Actions
                 onAddPinWidgetToHomeScreen = viewModel::addPinWidgetToHomeScreen,
                 onDeleteGridItemCache = viewModel::deleteGridItem,
                 onDragStart = onDragStart,
@@ -126,10 +126,14 @@ fun PinScreen(
 
         PinItemRequest.REQUEST_TYPE_SHORTCUT -> {
             PinShortcutScreen(
+                // Item Data
                 gridItem = gridItem,
                 pinItemRequest = pinItemRequest,
+                // State
                 isFinished = isFinished,
+                // Layout
                 modifier = modifier,
+                // Actions
                 onAddPinShortcutToHomeScreen = viewModel::addPinShortcutToHomeScreen,
                 onDeleteShortcutGridItem = viewModel::deleteGridItem,
                 onDragStart = onDragStart,
@@ -143,7 +147,7 @@ fun PinScreen(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun PinShortcutScreen(
-    // Shortcut Content
+    // Item Data
     gridItem: GridItem?,
     pinItemRequest: PinItemRequest,
     // State
@@ -186,9 +190,11 @@ private fun PinShortcutScreen(
 
     LaunchedEffect(key1 = gridItem) {
         handleGridItem(
+            // Context and Item
+            context = context,
             gridItem = gridItem,
             pinItemRequest = pinItemRequest,
-            context = context,
+            // Callbacks
             onUpdateGridItems = onUpdateGridItems,
             onDeleteShortcutGridItem = onDeleteShortcutGridItem,
         )
@@ -207,17 +213,23 @@ private fun PinShortcutScreen(
                 .padding(paddingValues),
         ) {
             PinBottomSheet(
+                // Content
                 icon = icon,
                 label = shortcutInfo.shortLabel.toString(),
+                // Actions
                 onAdd = {
                     scope.launch {
                         addPinShortcutToHomeScreen(
+                            // Shortcut Information
                             shortcutInfo = shortcutInfo,
+                            // System Wrappers
                             androidUserManagerWrapper = androidUserManagerWrapper,
                             androidLauncherAppsWrapper = androidLauncherAppsWrapper,
+                            // File and Image Processing
                             fileManager = fileManager,
                             iconKeyGenerator = iconKeyGenerator,
                             imageSerializer = imageSerializer,
+                            // Callbacks
                             onAddPinShortcutToHomeScreen = onAddPinShortcutToHomeScreen,
                         )
                     }
@@ -240,14 +252,13 @@ private fun PinShortcutScreen(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun PinWidgetScreen(
-    // Required Data
+    // Widget State
     gridItem: GridItem?,
+    pinItemRequest: PinItemRequest,
     isBoundWidget: Boolean,
     isFinished: Boolean,
-    pinItemRequest: PinItemRequest,
-    // Modifier
     modifier: Modifier = Modifier,
-    // Callbacks
+    // Widget Actions
     onAddPinWidgetToHomeScreen: (
         serialNumber: Long,
         componentName: String,
@@ -297,8 +308,10 @@ private fun PinWidgetScreen(
         contract = ActivityResultContracts.StartActivityForResult(),
     ) { result ->
         handleAppWidgetLauncherResult(
+            // Result
             result = result,
             gridItem = gridItem,
+            // Callbacks
             onDeleteAppWidgetId = {
                 deleteAppWidgetId = true
             },
@@ -308,10 +321,13 @@ private fun PinWidgetScreen(
 
     LaunchedEffect(key1 = gridItem) {
         handleGridItem(
+            // Item
             gridItem = gridItem,
+            // Managers
             appWidgetManager = appWidgetManager,
             appWidgetHostWrapper = appWidgetHostWrapper,
             userHandle = appWidgetProviderInfo.profile,
+            // Callbacks
             onAddedToHomeScreenToast = {
                 Toast.makeText(
                     context,
@@ -329,19 +345,25 @@ private fun PinWidgetScreen(
 
     LaunchedEffect(key1 = deleteAppWidgetId) {
         handleDeleteAppWidgetId(
+            // App Widget
             appWidgetId = appWidgetId,
             deleteAppWidgetId = deleteAppWidgetId,
+            // Grid Item
             gridItem = gridItem,
+            // Callbacks
             onDeleteGridItem = onDeleteGridItemCache,
         )
     }
 
     LaunchedEffect(key1 = isBoundWidget) {
         handleIsBoundWidget(
+            // Widget Info
             appWidgetId = appWidgetId,
             isBoundWidget = isBoundWidget,
+            // Grid and Pin Items
             gridItem = gridItem,
             pinItemRequest = pinItemRequest,
+            // Callbacks
             onDeleteGridItem = onDeleteGridItemCache,
             onUpdateGridItems = onUpdateGridItems,
         )
@@ -359,16 +381,22 @@ private fun PinWidgetScreen(
             .padding(paddingValues),
     ) {
         PinBottomSheet(
+            // Content
             icon = icon,
             label = appWidgetProviderInfo.loadLabel(context.packageManager),
+            // Actions
             onAdd = {
                 addPinWidgetToHomeScreen(
+                    // Widget Info
                     appWidgetProviderInfo = appWidgetProviderInfo,
+                    // Dimensions
                     maxWidth = constraints.maxWidth,
                     maxHeight = constraints.maxHeight,
+                    // Dependencies
                     fileManager = fileManager,
                     iconKeyGenerator = iconKeyGenerator,
                     userManager = userManager,
+                    // Callback
                     onAddPinWidgetToHomeScreen = onAddPinWidgetToHomeScreen,
                 )
             },
@@ -394,9 +422,9 @@ private fun PinBottomSheet(
     // Content
     icon: Any?,
     label: String,
-    // Modifier
+    // Layout
     modifier: Modifier = Modifier,
-    // Callbacks
+    // Actions
     onAdd: suspend () -> Unit,
     onFinish: () -> Unit,
     onLongPress: () -> Unit,
@@ -495,12 +523,11 @@ private fun PinBottomSheet(
 
 @RequiresApi(Build.VERSION_CODES.O)
 private fun handleGridItem(
-    // Item
+    // Context and Item
+    context: Context,
     gridItem: GridItem?,
     pinItemRequest: PinItemRequest,
-    // Environment
-    context: Context,
-    // Actions
+    // Callbacks
     onUpdateGridItems: () -> Unit,
     onDeleteShortcutGridItem: (GridItem) -> Unit,
 ) {
@@ -525,15 +552,16 @@ private fun handleGridItem(
 
 @RequiresApi(Build.VERSION_CODES.O)
 private suspend fun addPinShortcutToHomeScreen(
-    // Shortcut
+    // Shortcut Information
     shortcutInfo: ShortcutInfo,
-    // Dependencies
+    // System Wrappers
     androidUserManagerWrapper: AndroidUserManagerWrapper,
     androidLauncherAppsWrapper: AndroidLauncherAppsWrapper,
+    // File and Image Processing
     fileManager: FileManager,
     iconKeyGenerator: IconKeyGenerator,
     imageSerializer: AndroidImageSerializer,
-    // Callback
+    // Callbacks
     onAddPinShortcutToHomeScreen: (
         serialNumber: Long,
         shortcutId: String,
@@ -583,7 +611,7 @@ private suspend fun addPinShortcutToHomeScreen(
 }
 
 private suspend fun addPinWidgetToHomeScreen(
-    // Widget Configuration
+    // Widget Info
     appWidgetProviderInfo: AppWidgetProviderInfo,
     // Dimensions
     maxWidth: Int,

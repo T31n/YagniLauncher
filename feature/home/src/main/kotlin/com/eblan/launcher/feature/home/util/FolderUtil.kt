@@ -46,7 +46,7 @@ internal fun getAnimatedRect(
     startCenterX: Float,
     startCenterY: Float,
     endCenterX: Float,
-    endCenterY: Float
+    endCenterY: Float,
 ): RectF {
     val width = lerp(
         startWidth,
@@ -95,7 +95,7 @@ internal fun getFolderPopupLayoutInfo(
     folderCellWidth: Int,
     folderCellHeight: Int,
     columns: Int,
-    rows: Int
+    rows: Int,
 ): FolderPopupLayoutInfo {
     val leftPadding = with(density) {
         paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
@@ -179,7 +179,7 @@ internal suspend fun handlePageDirection(
     currentPage: Int,
     isInProgress: Boolean,
     // Actions
-    onAnimateScrollToPage: suspend (Int) -> Unit
+    onAnimateScrollToPage: suspend (Int) -> Unit,
 ) {
     if (pageDirection == null || isInProgress) return
 
@@ -211,7 +211,7 @@ internal fun handleAnimateScrollToPage(
     lockMovement: Boolean,
     isInProgress: Boolean,
     // Callbacks
-    onUpdateFolderPageDirection: (PageDirection?) -> Unit
+    onUpdateFolderPageDirection: (PageDirection?) -> Unit,
 ) {
     if (drag != Drag.Dragging ||
         !isVisibleOverlay ||
@@ -237,7 +237,7 @@ internal fun handleAnimateScrollToPage(
             folderCellWidth = folderCellWidth,
             // Offsets
             dragIntOffset = dragIntOffset,
-            folderPopupIntOffset = folderPopupIntOffset
+            folderPopupIntOffset = folderPopupIntOffset,
         ),
     )
 }
@@ -258,7 +258,7 @@ internal fun calculateFolderGridDragPosition(
     folderCellHeight: Int,
     // Offsets
     folderPopupIntOffset: IntOffset,
-    dragIntOffset: IntOffset
+    dragIntOffset: IntOffset,
 ): FolderGridDragPosition {
     val leftPadding = with(density) {
         paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
@@ -362,7 +362,7 @@ internal fun handleDropFolderGridItem(
     onResetGrid: () -> Unit,
     onResetGridAfterMoveFolder: () -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
-    onUpdateIsVisibleOverlay: (Boolean) -> Unit
+    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
 ) {
     if (drag == Drag.None ||
         drag == Drag.Start ||
@@ -407,7 +407,7 @@ private fun calculateFolderPageDirection(
     folderCellWidth: Int,
     // Offsets
     dragIntOffset: IntOffset,
-    folderPopupIntOffset: IntOffset
+    folderPopupIntOffset: IntOffset,
 ): PageDirection? {
     val leftPadding = with(density) {
         paddingValues.calculateLeftPadding(layoutDirection).roundToPx()

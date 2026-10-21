@@ -129,7 +129,7 @@ internal fun FolderEblanApplicationInfoItem(
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
     ) -> Unit,
-    onTapFolderApplicationInfo: (folderEntry: FolderEntry) -> Unit
+    onTapFolderApplicationInfo: (folderEntry: FolderEntry) -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -150,7 +150,7 @@ internal fun FolderEblanApplicationInfoItem(
         textColor = gridItemSettings.textColor,
         customTextColor = gridItemSettings.customTextColor,
         systemCustomTextColor = systemCustomTextColor,
-        systemTextColor = systemTextColor
+        systemTextColor = systemTextColor,
     )
 
     val maxLines = if (gridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
@@ -206,7 +206,7 @@ internal fun FolderEblanApplicationInfoItem(
                 isLongPress = it
             },
             onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-            onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo
+            onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
         )
     }
 
@@ -271,9 +271,9 @@ internal fun FolderEblanApplicationInfoItem(
             // Visibility Control
             enabled = animations,
             visible = !isSwiping &&
-                    !isScrollInProgress &&
-                    !isLongPress &&
-                    !isVisibleOverlay
+                !isScrollInProgress &&
+                !isLongPress &&
+                !isVisibleOverlay,
         )
         .gridItemScaleAnimation(
             animations = animations,
@@ -330,9 +330,9 @@ internal fun FolderEblanApplicationInfoItem(
                             customFolderBackgroundColor = customFolderBackgroundColor,
                             // Text Colors
                             systemTextColor = systemTextColor,
-                            systemCustomTextColor = systemCustomTextColor
+                            systemCustomTextColor = systemCustomTextColor,
                         )
-                    }
+                    },
                 )
             }
         }
@@ -379,7 +379,7 @@ internal fun FolderEblanApplicationInfoItem(
         // Content
         iconContent = iconContent,
         labelContent = labelContent,
-        labelOnlyContent = labelOnlyContent
+        labelOnlyContent = labelOnlyContent,
     )
 }
 
@@ -397,7 +397,7 @@ private fun PreviewFolderEblanApplicationInfoItem(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     // Layout
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     key(folderEblanApplicationInfoGridItem.id) {
         val context = LocalContext.current
@@ -412,7 +412,7 @@ private fun PreviewFolderEblanApplicationInfoItem(
             systemCustomTextColor = systemCustomTextColor,
             systemTextColor = systemTextColor,
             // Default Color
-            defaultColor = MaterialTheme.colorScheme.onSurface
+            defaultColor = MaterialTheme.colorScheme.onSurface,
         )
 
         val commonModifier = modifier.padding(1.dp)
@@ -482,7 +482,7 @@ internal fun handleDragFolderEblanApplicationInfoItem(
     onDragFolderEblanApplicationInfo: (
         folderEblanApplicationInfo: FolderEblanApplicationInfo,
         gridItem: GridItem,
-    ) -> Unit
+    ) -> Unit,
 ) {
     if (!isLongPress) return
 

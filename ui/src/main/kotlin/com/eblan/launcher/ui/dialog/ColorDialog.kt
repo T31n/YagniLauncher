@@ -47,9 +47,9 @@ fun TextColorDialog(
     // State
     textColor: TextColor,
     customTextColor: Int,
-    // Modifier
+    // Layout
     modifier: Modifier = Modifier,
-    // Callbacks
+    // Actions
     onDismissRequest: () -> Unit,
     onUpdateClick: (
         textColor: TextColor,
@@ -57,12 +57,15 @@ fun TextColorDialog(
     ) -> Unit,
 ) {
     ColorDialog(
+        // Content
         title = title,
         color = textColor,
         customColor = customTextColor,
         entries = TextColor.entries,
         customEntry = TextColor.Custom,
+        // Layout
         modifier = modifier,
+        // Callbacks
         getTitle = { it.getTitle() },
         onDismissRequest = onDismissRequest,
         onUpdateClick = onUpdateClick,
@@ -73,7 +76,7 @@ fun TextColorDialog(
 fun BackgroundColorDialog(
     // Content
     title: String,
-    // Background
+    // State
     backgroundColor: BackgroundColor,
     customBackgroundColor: Int,
     // Layout
@@ -86,12 +89,15 @@ fun BackgroundColorDialog(
     ) -> Unit,
 ) {
     ColorDialog(
+        // Content
         title = title,
         color = backgroundColor,
         customColor = customBackgroundColor,
         entries = BackgroundColor.entries,
         customEntry = BackgroundColor.Custom,
+        // Layout
         modifier = modifier,
+        // Callbacks
         getTitle = { it.getTitle() },
         onDismissRequest = onDismissRequest,
         onUpdateClick = onUpdateClick,
@@ -102,10 +108,10 @@ fun BackgroundColorDialog(
 fun IconTintDialog(
     // Content
     title: String,
-    // Appearance
+    // State
     iconTint: IconTint,
     customIconTint: Int,
-    // Modifier
+    // Layout
     modifier: Modifier = Modifier,
     // Actions
     onDismissRequest: () -> Unit,
@@ -115,12 +121,15 @@ fun IconTintDialog(
     ) -> Unit,
 ) {
     ColorDialog(
+        // Content
         title = title,
         color = iconTint,
         customColor = customIconTint,
         entries = IconTint.entries,
         customEntry = IconTint.Custom,
+        // Layout
         modifier = modifier,
+        // Callbacks
         getTitle = { it.getTitle() },
         onDismissRequest = onDismissRequest,
         onUpdateClick = onUpdateClick,
@@ -158,11 +167,10 @@ private fun <T : Enum<T>> ColorDialog(
     customColor: Int,
     entries: List<T>,
     customEntry: T,
-    // Modifier
+    // Layout
     modifier: Modifier = Modifier,
-    // Content
-    getTitle: @Composable (T) -> String,
     // Callbacks
+    getTitle: @Composable (T) -> String,
     onDismissRequest: () -> Unit,
     onUpdateClick: (color: T, customColor: Int) -> Unit,
 ) {
@@ -223,8 +231,10 @@ private fun <T : Enum<T>> ColorDialog(
 
     if (showColorPickerDialog) {
         ColorPickerDialog(
+            // Content
             title = title,
             customColor = customColor,
+            // Callbacks
             onDismissRequest = {
                 showColorPickerDialog = false
             },

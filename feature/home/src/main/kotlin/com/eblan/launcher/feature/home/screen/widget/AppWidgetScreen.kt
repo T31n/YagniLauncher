@@ -109,7 +109,7 @@ internal fun AppWidgetScreen(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     requireNotNull(eblanApplicationInfoGroup)
 
@@ -212,7 +212,7 @@ internal fun AppWidgetScreen(
                             gridItemSettings = gridItemSettings,
                             isVisibleOverlay = isVisibleOverlay,
                             // Actions
-                            onDragAppWidget = onDragAppWidget
+                            onDragAppWidget = onDragAppWidget,
                         )
                     }
                 }
@@ -242,7 +242,7 @@ private fun EblanAppWidgetScreenItem(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -277,7 +277,7 @@ private fun EblanAppWidgetScreenItem(
                                 intOffset = intOffset,
                                 intSize = intSize,
                                 // Drag Callback
-                                onDragAppWidget = onDragAppWidget
+                                onDragAppWidget = onDragAppWidget,
                             )
                         }
                     },
@@ -370,7 +370,7 @@ private suspend fun handleOnLongPressEblanAppWidgetScreenItem(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val gridItem = getWidgetGridItem(
         // Identifiers
@@ -394,7 +394,7 @@ private suspend fun handleOnLongPressEblanAppWidgetScreenItem(
         maxResizeWidth = eblanAppWidgetProviderInfo.maxResizeWidth,
         maxResizeHeight = eblanAppWidgetProviderInfo.maxResizeHeight,
         minResizeWidth = eblanAppWidgetProviderInfo.minResizeWidth,
-        minResizeHeight = eblanAppWidgetProviderInfo.minResizeHeight
+        minResizeHeight = eblanAppWidgetProviderInfo.minResizeHeight,
     )
 
     onDragAppWidget(

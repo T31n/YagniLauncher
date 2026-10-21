@@ -39,8 +39,11 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun EditDockPaddingDialog(
+    // Modifier
     modifier: Modifier = Modifier,
+    // Padding
     padding: Int,
+    // Callbacks
     onDismissRequest: () -> Unit,
     onUpdatePadding: (Int) -> Unit,
 ) {

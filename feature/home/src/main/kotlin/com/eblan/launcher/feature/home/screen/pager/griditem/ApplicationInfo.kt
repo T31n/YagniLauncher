@@ -112,7 +112,7 @@ internal fun InteractiveApplicationInfoGridItem(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val androidLauncherAppsWrapper = LocalLauncherApps.current
     val androidStatusBarManagerWrapper = LocalStatusBarManager.current
@@ -169,7 +169,7 @@ internal fun InteractiveApplicationInfoGridItem(
                                     launcherApps = androidLauncherAppsWrapper,
                                     statusBarManagerWrapper = androidStatusBarManagerWrapper,
                                     // Callbacks
-                                    onOpenAppDrawer = currentOnOpenAppDrawer
+                                    onOpenAppDrawer = currentOnOpenAppDrawer,
                                 )
                             }
                         } else {
@@ -204,7 +204,7 @@ internal fun InteractiveApplicationInfoGridItem(
             swipeDown = gridItem.swipeDown,
             swipeUp = gridItem.swipeUp,
             // Actions
-            onOpenAppDrawer = onOpenAppDrawer
+            onOpenAppDrawer = onOpenAppDrawer,
         )
 
     val iconModifier = Modifier
@@ -220,7 +220,7 @@ internal fun InteractiveApplicationInfoGridItem(
             sharedElementKey = sharedElementKey,
             // Visibility Control
             enabled = animations,
-            visible = !isScrollInProgress && !hasInteraction
+            visible = !isScrollInProgress && !hasInteraction,
         )
         .gridItemScaleAnimation(
             animations = animations,
@@ -308,6 +308,6 @@ internal fun InteractiveApplicationInfoGridItem(
         // Content
         iconContent = iconContent,
         labelContent = labelContent,
-        labelOnlyContent = labelOnlyContent
+        labelOnlyContent = labelOnlyContent,
     )
 }

@@ -47,7 +47,7 @@ internal suspend fun handlePageDirection(
     pageDirection: PageDirection?,
     currentPage: Int,
     // Callbacks
-    onAnimateScrollToPage: suspend (Int) -> Unit
+    onAnimateScrollToPage: suspend (Int) -> Unit,
 ) {
     delay(500L.milliseconds)
 
@@ -72,7 +72,7 @@ internal fun handleAnimateScrollToPage(
     gridItemSource: GridItemSource?,
     // Callbacks
     onUpdateDockPageDirection: (PageDirection?) -> Unit,
-    onUpdateGridPageDirection: (PageDirection?) -> Unit
+    onUpdateGridPageDirection: (PageDirection?) -> Unit,
 ) {
     if (gridItemSource == null || !isDragging) return
 
@@ -102,7 +102,7 @@ internal fun handleAnimateScrollToPage(
         safeDrawingWidth = safeDrawingWidth,
         // Direction Updates
         onUpdateDockPageDirection = onUpdateDockPageDirection,
-        onUpdateGridPageDirection = onUpdateGridPageDirection
+        onUpdateGridPageDirection = onUpdateGridPageDirection,
     )
 }
 
@@ -144,7 +144,7 @@ internal fun handleDragGridItem(
         gridHeight: Int,
     ) -> Unit,
     onUpdateAssociate: (Associate) -> Unit,
-    onUpdateSharedElementKey: (SharedElementKey?) -> Unit
+    onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
 ) {
     if (drag != Drag.Dragging ||
         isGridScrollInProgress ||
@@ -218,7 +218,7 @@ internal fun handleDragGridItem(
                     // Callbacks
                     onMoveGridItem = onMoveGridItem,
                     onUpdateAssociate = onUpdateAssociate,
-                    onUpdateSharedElementKey = onUpdateSharedElementKey
+                    onUpdateSharedElementKey = onUpdateSharedElementKey,
                 )
             } else {
                 dragGridItem(
@@ -240,7 +240,7 @@ internal fun handleDragGridItem(
                     // Callbacks
                     onMoveGridItem = onMoveGridItem,
                     onUpdateAssociate = onUpdateAssociate,
-                    onUpdateSharedElementKey = onUpdateSharedElementKey
+                    onUpdateSharedElementKey = onUpdateSharedElementKey,
                 )
             }
         }
@@ -264,7 +264,7 @@ internal suspend fun handleConflictingGridItem(
     onShowFolderWhenDragging: (
         folderEntry: FolderEntry,
         gridItem: GridItem,
-    ) -> Unit
+    ) -> Unit,
 ) {
     delay(1000L.milliseconds)
 
@@ -284,7 +284,7 @@ internal suspend fun handleConflictingGridItem(
         // Grid Items
         movingGridItem = moveGridItemResult.movingGridItem,
         conflictingGridItem = conflictingGridItem,
-        folderGridItems = folderGridItems.value
+        folderGridItems = folderGridItems.value,
     )
 
     onShowFolderWhenDragging(
@@ -315,7 +315,7 @@ private fun getMoveGridItem(
     gridItem: GridItem,
     gridItemSource: GridItemSource,
     associate: Associate,
-    currentPage: Int
+    currentPage: Int,
 ): GridItem = when (gridItemSource) {
     is GridItemSource.Existing,
     is GridItemSource.ExistingFolder,
@@ -332,7 +332,7 @@ private fun getMoveGridItem(
             rows = rows,
             // Span
             columnSpan = gridItem.columnSpan,
-            rowSpan = gridItem.rowSpan
+            rowSpan = gridItem.rowSpan,
         )
 
         gridItem.copy(
@@ -362,7 +362,7 @@ private fun getMoveGridItem(
             // Position and Page
             gridX = gridX,
             gridY = gridY,
-            currentPage = currentPage
+            currentPage = currentPage,
         )
     }
 }
@@ -382,7 +382,7 @@ private fun getMoveNewGridItem(
     // Position and Page
     gridX: Int,
     gridY: Int,
-    currentPage: Int
+    currentPage: Int,
 ): GridItem = when (val data = gridItem.data) {
     is GridItemData.Widget -> {
         val (checkedColumnSpan, checkedRowSpan) = getWidgetGridItemSpan(
@@ -417,7 +417,7 @@ private fun getMoveNewGridItem(
             rows = rows,
             // Span
             columnSpan = checkedColumnSpan,
-            rowSpan = checkedRowSpan
+            rowSpan = checkedRowSpan,
         )
 
         val newData = data.copy(
@@ -449,7 +449,7 @@ private fun getMoveNewGridItem(
             rows = rows,
             // Span
             columnSpan = gridItem.columnSpan,
-            rowSpan = gridItem.rowSpan
+            rowSpan = gridItem.rowSpan,
         )
 
         gridItem.copy(
@@ -469,7 +469,7 @@ private fun animateScrollToPage(
     safeDrawingWidth: Int,
     // Direction Updates
     onUpdateDockPageDirection: (PageDirection?) -> Unit,
-    onUpdateGridPageDirection: (PageDirection?) -> Unit
+    onUpdateGridPageDirection: (PageDirection?) -> Unit,
 ) {
     val isOnLeftGrid = dragX < edgeDistance
 
@@ -504,7 +504,7 @@ private fun getStartPosition(
     rows: Int,
     // Span
     columnSpan: Int,
-    rowSpan: Int
+    rowSpan: Int,
 ): Pair<Int, Int> {
     val safeColumnSpan = columnSpan.coerceIn(1, columns)
     val safeRowSpan = rowSpan.coerceIn(1, rows)
@@ -525,7 +525,7 @@ private fun calculateMovingFolderGridItem(
     // Grid Items
     movingGridItem: GridItem,
     conflictingGridItem: GridItem,
-    folderGridItems: List<GridItem>?
+    folderGridItems: List<GridItem>?,
 ): GridItem {
     val maxIndex = folderGridItems?.maxOfOrNull {
         when (val data = it.data) {
@@ -593,7 +593,7 @@ private fun dragGridItem(
         gridHeight: Int,
     ) -> Unit,
     onUpdateAssociate: (Associate) -> Unit,
-    onUpdateSharedElementKey: (SharedElementKey?) -> Unit
+    onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
 ) {
     val movingGridItem = moveGridItemResult?.movingGridItem ?: return
 
@@ -621,7 +621,7 @@ private fun dragGridItem(
         gridItem = movingGridItem,
         gridItemSource = gridItemSource,
         associate = Associate.Grid,
-        currentPage = currentPage
+        currentPage = currentPage,
     )
 
     if (isGridItemSpanWithinBounds(
@@ -677,7 +677,7 @@ private fun dragDockGridItem(
         gridHeight: Int,
     ) -> Unit,
     onUpdateAssociate: (Associate) -> Unit,
-    onUpdateSharedElementKey: (SharedElementKey?) -> Unit
+    onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
 ) {
     val movingGridItem = moveGridItemResult?.movingGridItem ?: return
 
@@ -701,7 +701,7 @@ private fun dragDockGridItem(
         gridItem = movingGridItem,
         gridItemSource = gridItemSource,
         associate = Associate.Dock,
-        currentPage = currentPage
+        currentPage = currentPage,
     )
 
     if (isGridItemSpanWithinBounds(

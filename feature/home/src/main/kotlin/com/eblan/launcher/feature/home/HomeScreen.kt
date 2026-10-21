@@ -84,7 +84,7 @@ internal fun HomeRoute(
     ) -> Unit,
     onEditGridItem: (String) -> Unit,
     onSettings: () -> Unit,
-    onEditFolderApplicationInfo: (String) -> Unit
+    onEditFolderApplicationInfo: (String) -> Unit,
 ) {
     val homeUiState by viewModel.homeUiState.collectAsStateWithLifecycle()
     val screen by viewModel.screen.collectAsStateWithLifecycle()
@@ -189,7 +189,7 @@ internal fun HomeRoute(
         onDragFolderEblanApplicationInfo = viewModel::dragFolderEblanApplicationInfoToGrid,
         onResetFolderEblanApplicationInfoPopupEntries = viewModel::resetFolderEblanApplicationInfoEntries,
         onDeleteFolderEblanApplicationInfoGridItems = viewModel::deleteFolderEblanApplicationInfoGridItems,
-        onUpdateGridItemsAfterMoveNewFolder = viewModel::updateGridItemsAfterMoveNewFolder
+        onUpdateGridItemsAfterMoveNewFolder = viewModel::updateGridItemsAfterMoveNewFolder,
     )
 }
 
@@ -345,7 +345,7 @@ internal fun HomeScreen(
     onUpdateGridItemsAfterMoveNewFolder: (
         folderGridItems: List<GridItem>,
         moveGridItemResult: MoveGridItemResult,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val paddingValues = WindowInsets.safeDrawing.asPaddingValues()
 
@@ -447,7 +447,7 @@ internal fun HomeScreen(
                 onPackageRemoved = onPackageRemoved,
                 onShortcutsChanged = onShortcutsChanged,
                 // New Folder Actions
-                onUpdateGridItemsAfterMoveNewFolder = onUpdateGridItemsAfterMoveNewFolder
+                onUpdateGridItemsAfterMoveNewFolder = onUpdateGridItemsAfterMoveNewFolder,
             )
         }
     }
@@ -613,7 +613,7 @@ private fun Success(
     onUpdateGridItemsAfterMoveNewFolder: (
         folderGridItems: List<GridItem>,
         moveGridItemResult: MoveGridItemResult,
-    ) -> Unit
+    ) -> Unit,
 ) {
     AnimatedContent(
         modifier = modifier,
@@ -713,7 +713,7 @@ private fun Success(
                     onGetEblanShortcutConfigsByLabel = onGetEblanShortcutConfigsByLabel,
                     onGetPinGridItem = onGetPinGridItem,
                     // Callbacks - General UI
-                    onSettings = onSettings
+                    onSettings = onSettings,
                 )
             }
 
@@ -741,7 +741,7 @@ private fun Success(
                     systemCustomTextColor = homeData.userData.homeSettings.gridItemSettings.customTextColor,
                     // Actions
                     onSaveEditPage = onSaveEditPage,
-                    onUpdateScreen = onUpdateScreen
+                    onUpdateScreen = onUpdateScreen,
                 )
             }
 
@@ -807,7 +807,7 @@ private fun RequestPermissionsEffect(modifier: Modifier = Modifier) {
                 notificationsPermissionState.launchMultiplePermissionRequest()
 
                 showTextDialog = false
-            }
+            },
         )
     }
 }

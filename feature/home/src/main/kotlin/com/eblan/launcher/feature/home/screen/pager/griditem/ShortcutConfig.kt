@@ -106,7 +106,7 @@ internal fun InteractiveShortcutConfigGridItem(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val launcherApps = LocalLauncherApps.current
     val androidStatusBarManagerWrapper = LocalStatusBarManager.current
@@ -172,7 +172,7 @@ internal fun InteractiveShortcutConfigGridItem(
                                     launcherApps = launcherApps,
                                     statusBarManagerWrapper = androidStatusBarManagerWrapper,
                                     // Callbacks
-                                    onOpenAppDrawer = currentOnOpenAppDrawer
+                                    onOpenAppDrawer = currentOnOpenAppDrawer,
                                 )
                             }
                         } else {
@@ -205,7 +205,7 @@ internal fun InteractiveShortcutConfigGridItem(
             swipeDown = gridItem.swipeDown,
             swipeUp = gridItem.swipeUp,
             // Actions
-            onOpenAppDrawer = onOpenAppDrawer
+            onOpenAppDrawer = onOpenAppDrawer,
         )
 
     val iconModifier = Modifier
@@ -221,7 +221,7 @@ internal fun InteractiveShortcutConfigGridItem(
             sharedElementKey = sharedElementKey,
             // Visibility Control
             enabled = animations,
-            visible = !isScrollInProgress && !hasInteraction
+            visible = !isScrollInProgress && !hasInteraction,
         )
         .gridItemScaleAnimation(
             animations = animations,
@@ -291,6 +291,6 @@ internal fun InteractiveShortcutConfigGridItem(
         // Content
         iconContent = iconContent,
         labelContent = labelContent,
-        labelOnlyContent = labelOnlyContent
+        labelOnlyContent = labelOnlyContent,
     )
 }

@@ -49,7 +49,7 @@ internal fun PageGridItem(
     folderCornerRadius: Int,
     // Assets and Styling
     iconPackFilePaths: Map<String, String?>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val currentGridItemSettings = if (gridItem.override) {
         gridItem.gridItemSettings
@@ -63,7 +63,7 @@ internal fun PageGridItem(
         gridItemCustomTextColor = currentGridItemSettings.customTextColor,
         // System Text Colors
         systemTextColor = textColor,
-        systemCustomTextColor = gridItemSettings.customTextColor
+        systemCustomTextColor = gridItemSettings.customTextColor,
     )
 
     val horizontalAlignment =
@@ -92,7 +92,7 @@ internal fun PageGridItem(
                 verticalArrangement = verticalArrangement,
                 horizontalArrangement = horizontalArrangement,
                 verticalAlignment = verticalAlignment,
-                modifier = modifier
+                modifier = modifier,
             )
 
         is GridItemData.Widget -> WidgetGridItem(
@@ -115,7 +115,7 @@ internal fun PageGridItem(
                 horizontalArrangement = horizontalArrangement,
                 verticalAlignment = verticalAlignment,
                 // Modifier
-                modifier = modifier
+                modifier = modifier,
             )
 
         is GridItemData.Folder ->
@@ -142,7 +142,7 @@ internal fun PageGridItem(
                 horizontalArrangement = horizontalArrangement,
                 verticalAlignment = verticalAlignment,
                 // Modifier
-                modifier = modifier
+                modifier = modifier,
             )
 
         is GridItemData.ShortcutConfig ->
@@ -158,7 +158,7 @@ internal fun PageGridItem(
                 verticalArrangement = verticalArrangement,
                 horizontalArrangement = horizontalArrangement,
                 verticalAlignment = verticalAlignment,
-                modifier = modifier
+                modifier = modifier,
             )
     }
 }

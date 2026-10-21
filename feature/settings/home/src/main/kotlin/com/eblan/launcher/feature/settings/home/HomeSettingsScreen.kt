@@ -140,7 +140,9 @@ private fun Success(
     )
 
     val dockHomeSettingsItems = buildDockHomeSettingsItems(
+        // Settings
         homeSettings = homeSettings,
+        // Actions
         onDockGridClick = {
             showDockGridDialog = true
         },
@@ -173,7 +175,9 @@ private fun Success(
         SettingsItems(items = dockHomeSettingsItems)
 
         GridItemSettings(
+            // Grid item
             gridItemSettings = homeSettings.gridItemSettings,
+            // Actions
             onUpdateGridItemSettings = {
                 onUpdateHomeSettings(
                     homeSettings.copy(gridItemSettings = it),
@@ -184,8 +188,10 @@ private fun Success(
 
     if (showGridDialog) {
         EditGridDialog(
+            // Grid Dimensions
             columns = homeSettings.columns,
             rows = homeSettings.rows,
+            // Callbacks
             onDismissRequest = {
                 showGridDialog = false
             },
@@ -202,9 +208,11 @@ private fun Success(
 
     if (showPagerTransitionEffectDialog) {
         RadioOptionsDialog(
+            // Dialog Content
             title = stringResource(R.string.pager_transition_effect),
             options = PagerTransitionEffect.entries,
             selected = homeSettings.pagerTransitionEffect,
+            // Callbacks
             label = { it.getTitle() },
             onDismissRequest = {
                 showPagerTransitionEffectDialog = false
@@ -217,8 +225,10 @@ private fun Success(
 
     if (showDockGridDialog) {
         EditDockGridDialog(
+            // Grid
             dockColumns = homeSettings.dockColumns,
             dockRows = homeSettings.dockRows,
+            // Callbacks
             onDismissRequest = {
                 showDockGridDialog = false
             },
@@ -235,7 +245,9 @@ private fun Success(
 
     if (showDockHeightDialog) {
         EditDockHeightDialog(
+            // Layout
             dockHeight = homeSettings.dockHeight,
+            // Actions
             onDismissRequest = {
                 showDockHeightDialog = false
             },
@@ -253,8 +265,10 @@ private fun Success(
 
     if (showDockCustomBackgroundColorDialog) {
         ColorPickerDialog(
+            // Content
             title = stringResource(R.string.dock_background_color),
             customColor = homeSettings.dockCustomBackgroundColor,
+            // Callbacks
             onDismissRequest = {
                 showDockCustomBackgroundColorDialog = false
             },
@@ -266,7 +280,9 @@ private fun Success(
 
     if (showDockPaddingDialog) {
         EditDockPaddingDialog(
+            // Padding
             padding = homeSettings.dockPadding,
+            // Callbacks
             onDismissRequest = {
                 showDockPaddingDialog = false
             },
@@ -282,10 +298,12 @@ private fun Success(
 
     if (showDockCornerRadiusDialog) {
         EditDockCornerRadiusDialog(
+            // Corner Radii
             dockTopStartCornerRadius = homeSettings.dockTopStartCornerRadius,
             dockTopEndCornerRadius = homeSettings.dockTopEndCornerRadius,
             dockBottomStartCornerRadius = homeSettings.dockBottomStartCornerRadius,
             dockBottomEndCornerRadius = homeSettings.dockBottomEndCornerRadius,
+            // Callbacks
             onDismissRequest = {
                 showDockCornerRadiusDialog = false
             },
@@ -419,9 +437,9 @@ private fun buildHomeSettingsItems(
 
 @Composable
 private fun buildDockHomeSettingsItems(
-    // Settings State
+    // Settings
     homeSettings: HomeSettings,
-    // Dock Interactions
+    // Actions
     onDockGridClick: () -> Unit,
     onDockHeightClick: () -> Unit,
     onDockCustomBackgroundColorClick: () -> Unit,

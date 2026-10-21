@@ -119,7 +119,7 @@ internal fun HorizontalApplicationScreen(
         eblanApplicationInfo: EblanApplicationInfo,
         intOffset: IntOffset,
         intSize: IntSize,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val layoutDirection = LocalLayoutDirection.current
 
@@ -151,12 +151,12 @@ internal fun HorizontalApplicationScreen(
         selectedEblanApplicationInfoTagId = selectedEblanApplicationInfoTagId,
         textFieldState = textFieldState,
         showKeyboard = appDrawerSettings.showKeyboard &&
-                appDrawerSettings.searchBarPosition != SearchBarPosition.None,
+            appDrawerSettings.searchBarPosition != SearchBarPosition.None,
         focusRequester = focusRequester,
         // Callbacks
         onDismiss = onDismiss,
         onGetEblanApplicationInfosByLabel = onGetEblanApplicationInfosByLabel,
-        onGetEblanApplicationInfosByTagId = onGetEblanApplicationInfosByTagId
+        onGetEblanApplicationInfosByTagId = onGetEblanApplicationInfosByTagId,
     )
 
     Column(
@@ -194,7 +194,7 @@ internal fun HorizontalApplicationScreen(
                 systemTextColor = systemTextColor,
                 systemCustomTextColor = systemCustomTextColor,
                 // Defaults
-                defaultColor = MaterialTheme.colorScheme.onSurface
+                defaultColor = MaterialTheme.colorScheme.onSurface,
             ),
         )
 
@@ -208,7 +208,7 @@ internal fun HorizontalApplicationScreen(
                 backgroundColor = appDrawerSettings.backgroundColor,
                 customBackgroundColor = appDrawerSettings.customBackgroundColor,
                 systemTextColor = systemTextColor,
-                systemCustomTextColor = systemCustomTextColor
+                systemCustomTextColor = systemCustomTextColor,
             )
         }
 
@@ -223,7 +223,7 @@ internal fun HorizontalApplicationScreen(
                             // Callbacks
                             onUpdateEblanApplicationInfoTag = {
                                 selectedEblanApplicationInfoTagId = it
-                            }
+                            },
                         )
                     }
                 }
@@ -242,7 +242,7 @@ internal fun HorizontalApplicationScreen(
                     systemTextColor = systemTextColor,
                     systemCustomTextColor = systemCustomTextColor,
                     // Callbacks
-                    onAnimateScrollToPage = horizontalPagerState::animateScrollToPage
+                    onAnimateScrollToPage = horizontalPagerState::animateScrollToPage,
                 )
             }
 
@@ -275,7 +275,7 @@ internal fun HorizontalApplicationScreen(
                     onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                     onDragApplicationInfo = onDragApplicationInfo,
                     onLongPressApplicationInfo = onLongPressApplicationInfo,
-                    onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem
+                    onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
                 )
             }
         }
@@ -290,7 +290,7 @@ internal fun HorizontalApplicationScreen(
                 backgroundColor = appDrawerSettings.backgroundColor,
                 customBackgroundColor = appDrawerSettings.customBackgroundColor,
                 systemTextColor = systemTextColor,
-                systemCustomTextColor = systemCustomTextColor
+                systemCustomTextColor = systemCustomTextColor,
             )
         }
     }
@@ -332,7 +332,7 @@ private fun EblanApplicationInfosPage(
         eblanApplicationInfo: EblanApplicationInfo,
         intOffset: IntOffset,
         intSize: IntSize,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -373,7 +373,7 @@ private fun EblanApplicationInfosPage(
                 systemCustomTextColor = systemCustomTextColor,
                 // Callbacks
                 onDragEnd = onDragEnd,
-                onVerticalDrag = onVerticalDrag
+                onVerticalDrag = onVerticalDrag,
             )
         } else {
             EblanApplicationInfos(
@@ -396,7 +396,7 @@ private fun EblanApplicationInfosPage(
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                 onDragApplicationInfo = onDragApplicationInfo,
                 onLongPressApplicationInfo = onLongPressApplicationInfo,
-                onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem
+                onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
             )
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && isDefaultLauncher &&
@@ -460,7 +460,7 @@ private fun EblanApplicationInfos(
         eblanApplicationInfo: EblanApplicationInfo,
         intOffset: IntOffset,
         intSize: IntSize,
-    ) -> Unit
+    ) -> Unit,
 ) {
     HorizontalAppDrawerGridLayout(
         // Data
@@ -476,7 +476,7 @@ private fun EblanApplicationInfos(
                 EblanUserType.Personal,
                 EblanUserType.Clone,
                 EblanUserType.Work,
-                    -> {
+                -> {
                     EblanApplicationInfoItem(
                         // Application Data and Settings
                         eblanApplicationInfo = it,
@@ -496,7 +496,7 @@ private fun EblanApplicationInfos(
                         // Callbacks
                         onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                         onDragApplicationInfo = onDragApplicationInfo,
-                        onLongPressApplicationInfo = onLongPressApplicationInfo
+                        onLongPressApplicationInfo = onLongPressApplicationInfo,
                     )
                 }
 
@@ -512,10 +512,10 @@ private fun EblanApplicationInfos(
                         systemCustomTextColor = systemCustomTextColor,
                         paddingValues = paddingValues,
                         // Actions
-                        onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem
+                        onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
                     )
                 }
             }
-        }
+        },
     )
 }

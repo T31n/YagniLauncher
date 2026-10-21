@@ -95,7 +95,7 @@ internal fun GridItemPopup(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     requireNotNull(gridItem)
 
@@ -179,7 +179,7 @@ internal fun GridItemPopup(
                 height = popupIntSize.height,
                 // Position
                 x = x,
-                y = y
+                y = y,
             ),
             visibleState = transitionState,
             enter = fadeIn(tween()) + scaleIn(initialScale = 0.8f, animationSpec = tween()),
@@ -221,7 +221,7 @@ internal fun GridItemPopup(
                 },
                 onWidgets = onWidgets,
                 onUpdateIsResizing = onUpdateIsResizing,
-                onDragShortcutInfo = onDragShortcutInfo
+                onDragShortcutInfo = onDragShortcutInfo,
             )
         }
     }
@@ -262,7 +262,7 @@ private fun GridItemPopupContent(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     Surface(
         modifier = modifier.padding(5.dp),
@@ -333,7 +333,7 @@ private fun GridItemPopupContent(
 
                             onDismiss()
                         },
-                        onDragShortcutInfo = onDragShortcutInfo
+                        onDragShortcutInfo = onDragShortcutInfo,
                     )
                 }
 
@@ -413,7 +413,7 @@ private fun ApplicationInfoGridItemMenu(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -432,7 +432,7 @@ private fun ApplicationInfoGridItemMenu(
                 modifier = modifier,
                 // Actions
                 onTapShortcutInfo = onTapShortcutInfo,
-                onDragShortcutInfo = onDragShortcutInfo
+                onDragShortcutInfo = onDragShortcutInfo,
             )
 
             Spacer(modifier = Modifier.height(5.dp))

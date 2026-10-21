@@ -76,7 +76,7 @@ internal fun SettingsPopup(
     ) -> Unit,
     onSettings: () -> Unit,
     onShortcutConfigActivities: () -> Unit,
-    onWidgets: () -> Unit
+    onWidgets: () -> Unit,
 ) {
     requireNotNull(popupSettingsIntOffset)
 
@@ -131,7 +131,7 @@ internal fun SettingsPopup(
             context.startActivity(chooser)
 
             transitionState.targetState = false
-        }
+        },
     )
 
     LaunchedEffect(
@@ -178,7 +178,7 @@ internal fun SettingsPopup(
                         index = index,
                         size = items.size,
                         // Action
-                        onClick = settingsMenuItem.onClick
+                        onClick = settingsMenuItem.onClick,
                     )
                 }
             }
@@ -197,7 +197,7 @@ private fun PopupMenuRow(
     // Layout
     modifier: Modifier = Modifier,
     // Action
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Card(
         modifier = modifier
@@ -237,7 +237,7 @@ private fun buildSettingsMenuItems(
     onEditDockPageClick: () -> Unit,
     onWidgetsClick: () -> Unit,
     onShortcutConfigActivitiesClick: () -> Unit,
-    onWallpaperClick: () -> Unit
+    onWallpaperClick: () -> Unit,
 ): List<SettingsMenuItem> = buildList {
     add(
         SettingsMenuItem(

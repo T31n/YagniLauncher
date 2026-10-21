@@ -107,7 +107,7 @@ internal fun LazyGridScope.privateSpace(
         eblanApplicationInfo: EblanApplicationInfo,
         intOffset: IntOffset,
         intSize: IntSize,
-    ) -> Unit
+    ) -> Unit,
 ) {
     if (privateEblanUser == null || privateEblanUser.isPrivateSpaceEntryPointHidden) return
 
@@ -120,7 +120,7 @@ internal fun LazyGridScope.privateSpace(
             backgroundColor = backgroundColor,
             customBackgroundColor = customBackgroundColor,
             systemTextColor = systemTextColor,
-            systemCustomTextColor = systemCustomTextColor
+            systemCustomTextColor = systemCustomTextColor,
         )
     }
 
@@ -137,7 +137,7 @@ internal fun LazyGridScope.privateSpace(
                 systemCustomTextColor = systemCustomTextColor,
                 paddingValues = paddingValues,
                 // Actions
-                onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem
+                onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
             )
         }
     }
@@ -154,7 +154,7 @@ internal fun PrivateSpaceStickyHeader(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     // Layout
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -178,7 +178,7 @@ internal fun PrivateSpaceStickyHeader(
         systemTextColor = systemTextColor,
         systemCustomTextColor = systemCustomTextColor,
         // Defaults
-        defaultColor = MaterialTheme.colorScheme.onSurface
+        defaultColor = MaterialTheme.colorScheme.onSurface,
     )
 
     Row(
@@ -251,7 +251,7 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
         eblanApplicationInfo: EblanApplicationInfo,
         intOffset: IntOffset,
         intSize: IntSize,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val context = LocalContext.current
     val density = LocalDensity.current
@@ -271,7 +271,7 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
         textColor = gridItemSettings.textColor,
         customTextColor = gridItemSettings.customTextColor,
         systemCustomTextColor = systemCustomTextColor,
-        systemTextColor = systemTextColor
+        systemTextColor = systemTextColor,
     )
 
     val appDrawerRowsHeight = appDrawerSettings.appDrawerRowsHeight.dp
@@ -329,7 +329,7 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
                                 leftPadding = leftPadding,
                                 topPadding = topPadding,
                                 // Controller
-                                keyboardController = keyboardController
+                                keyboardController = keyboardController,
                             )
                         }
                     }
@@ -348,7 +348,7 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
                                 // Keyboard
                                 keyboardController = keyboardController,
                                 // Callbacks
-                                onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem
+                                onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
                             )
                         }
                     }
@@ -406,7 +406,7 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
         // Content
         iconContent = iconContent,
         labelContent = labelContent,
-        labelOnlyContent = labelContent
+        labelOnlyContent = labelContent,
     )
 }
 
@@ -423,7 +423,7 @@ internal fun handleOnLongPressPrivateSpaceEblanApplicationInfoItem(
         eblanApplicationInfo: EblanApplicationInfo,
         intOffset: IntOffset,
         intSize: IntSize,
-    ) -> Unit
+    ) -> Unit,
 ) {
     onLongPressPrivateSpaceApplicationInfoItem(
         eblanApplicationInfo,

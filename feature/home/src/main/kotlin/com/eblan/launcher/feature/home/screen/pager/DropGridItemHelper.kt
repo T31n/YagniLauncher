@@ -96,7 +96,7 @@ internal suspend fun handleDropGridItem(
     // State and UI Update Callbacks
     onUpdateIsDragging: (Boolean) -> Unit,
     onUpdateWidgetGridItem: (GridItem) -> Unit,
-    onUpdateIsVisibleOverlay: (Boolean) -> Unit
+    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
 ) {
     val currentGridItemSource = gridItemSource ?: return
 
@@ -119,7 +119,7 @@ internal suspend fun handleDropGridItem(
         layoutDirection = layoutDirection,
         // Layout and Association
         paddingValues = paddingValues,
-        associate = currentMoveGridItemResult.movingGridItem.associate
+        associate = currentMoveGridItemResult.movingGridItem.associate,
     )
 
     val isLongPress = isVisibleOverlay && !isDragging
@@ -141,7 +141,7 @@ internal suspend fun handleDropGridItem(
                 onResetGrid = onResetGrid,
                 onUpdateGridItemsAfterMove = onUpdateGridItemsAfterMove,
                 onUpdateIsDragging = onUpdateIsDragging,
-                onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay
+                onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
             )
 
         is GridItemSource.ExistingFolder ->
@@ -157,7 +157,7 @@ internal suspend fun handleDropGridItem(
                 onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
                 onUpdateGridItemsAfterMove = onUpdateGridItemsAfterMove,
                 onUpdateIsDragging = onUpdateIsDragging,
-                onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay
+                onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
             )
 
         is GridItemSource.New ->
@@ -191,7 +191,7 @@ internal suspend fun handleDropGridItem(
                 onUpdateGridItemsAfterMove = onUpdateGridItemsAfterMove,
                 onUpdateIsDragging = onUpdateIsDragging,
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                onUpdateWidgetGridItem = onUpdateWidgetGridItem
+                onUpdateWidgetGridItem = onUpdateWidgetGridItem,
             )
 
         is GridItemSource.NewFolder ->
@@ -210,7 +210,7 @@ internal suspend fun handleDropGridItem(
                 onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
                 onUpdateGridItemsAfterMoveNewFolder = onUpdateGridItemsAfterMoveNewFolder,
                 onUpdateIsDragging = onUpdateIsDragging,
-                onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay
+                onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
             )
 
         is GridItemSource.Pin ->
@@ -241,7 +241,7 @@ internal suspend fun handleDropGridItem(
                 onUpdateGridItemsAfterMove = onUpdateGridItemsAfterMove,
                 onUpdateIsDragging = onUpdateIsDragging,
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                onUpdateWidgetGridItem = onUpdateWidgetGridItem
+                onUpdateWidgetGridItem = onUpdateWidgetGridItem,
             )
     }
 }
@@ -264,7 +264,7 @@ internal fun handleAppWidgetLauncherResult(
     // Callbacks
     onUpdateWidgetGridItem: (GridItem) -> Unit,
     onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
-    onUpdateLastAppWidgetId: (Int) -> Unit
+    onUpdateLastAppWidgetId: (Int) -> Unit,
 ) {
     val movingGridItem = requireNotNull(moveGridItemResult?.movingGridItem)
 
@@ -280,7 +280,7 @@ internal fun handleAppWidgetLauncherResult(
         layoutDirection = layoutDirection,
         // Layout and Association
         paddingValues = paddingValues,
-        associate = movingGridItem.associate
+        associate = movingGridItem.associate,
     )
 
     if (result.resultCode == Activity.RESULT_OK) {
@@ -302,7 +302,7 @@ internal fun handleAppWidgetLauncherResult(
             gridWidth = gridSize.width,
             gridHeight = gridSize.height,
             startColumn = movingGridItem.startColumn,
-            startRow = movingGridItem.startRow
+            startRow = movingGridItem.startRow,
         )
 
         onUpdateWidgetGridItem(movingGridItem.copy(data = newData))
@@ -324,7 +324,7 @@ internal fun handleConfigureLauncherResultEffect(
     onDeleteGridItem: (GridItem) -> Unit,
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
     onResetConfigureResultCode: () -> Unit,
-    onResetGrid: () -> Unit
+    onResetGrid: () -> Unit,
 ) {
     if (resultCode == null) return
 
@@ -356,7 +356,7 @@ internal fun handleBoundWidgetEffect(
     // Callbacks
     onDeleteGridItem: (GridItem) -> Unit,
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
-    onResetGrid: () -> Unit
+    onResetGrid: () -> Unit,
 ) {
     if (widgetGridItem == null) return
 
@@ -381,7 +381,7 @@ internal fun handleBoundWidgetEffect(
                 // Grid Callbacks
                 onDeleteGridItem = onDeleteGridItem,
                 onUpdateGridItemsAfterMove = onUpdateGridItemsAfterMove,
-                onResetGrid = onResetGrid
+                onResetGrid = onResetGrid,
             )
         }
 
@@ -396,7 +396,7 @@ internal fun handleBoundWidgetEffect(
                 // Grid Actions
                 onDeleteGridItem = onDeleteGridItem,
                 onUpdateGridItemsAfterMove = onUpdateGridItemsAfterMove,
-                onResetGrid = onResetGrid
+                onResetGrid = onResetGrid,
             )
         }
 
@@ -415,7 +415,7 @@ internal suspend fun handleShortcutConfigLauncherResult(
     // Callbacks
     onDeleteGridItem: (GridItem) -> Unit,
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
-    onResetGrid: () -> Unit
+    onResetGrid: () -> Unit,
 ) {
     val currentMoveGridItemResult = requireNotNull(moveGridItemResult)
 
@@ -492,7 +492,7 @@ internal suspend fun handleShortcutConfigIntentSenderLauncherResult(
     onUpdateShortcutConfigIntoShortcutInfoGridItem: (
         moveGridItemResult: MoveGridItemResult,
         pinItemRequestType: PinItemRequestType.ShortcutInfo,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val currentMoveGridItemResult = requireNotNull(moveGridItemResult)
 
@@ -586,7 +586,7 @@ private fun onDragEndWidget(
     onUpdateAppWidgetId: (Int) -> Unit,
     onUpdateWidgetGridItem: (GridItem) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
-    onUpdateIsDragging: (Boolean) -> Unit
+    onUpdateIsDragging: (Boolean) -> Unit,
 ) {
     val appWidgetId = androidAppWidgetHostWrapper.allocateAppWidgetId()
 
@@ -619,7 +619,7 @@ private fun onDragEndWidget(
             gridWidth = gridWidth,
             gridHeight = gridHeight,
             startColumn = gridItem.startColumn,
-            startRow = gridItem.startRow
+            startRow = gridItem.startRow,
         )
 
         onUpdateWidgetGridItem(gridItem.copy(data = newData))
@@ -648,7 +648,7 @@ private fun onDragEndPinShortcut(
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
-    onResetGrid: () -> Unit
+    onResetGrid: () -> Unit,
 ) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
         pinItemRequest != null &&
@@ -679,7 +679,7 @@ private fun bindPinWidget(
     // Grid Actions
     onDeleteGridItem: (GridItem) -> Unit,
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
-    onResetGrid: () -> Unit
+    onResetGrid: () -> Unit,
 ) {
     val extras = Bundle().apply {
         putInt(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
@@ -709,7 +709,7 @@ private suspend fun onDragEndShortcutConfig(
     onLaunchShortcutConfigIntent: (Intent) -> Unit,
     onLaunchShortcutConfigIntentSenderRequest: (IntentSenderRequest) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
-    onUpdateIsDragging: (Boolean) -> Unit
+    onUpdateIsDragging: (Boolean) -> Unit,
 ) {
     val serialNumber =
         androidUserManagerWrapper.getSerialNumberForUser(userHandle = Process.myUserHandle())
@@ -758,7 +758,7 @@ private fun startAppWidgetConfigureActivityForResult(
     // Grid Callbacks
     onDeleteGridItem: (GridItem) -> Unit,
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
-    onResetGrid: () -> Unit
+    onResetGrid: () -> Unit,
 ) {
     val configureComponent = configure?.let(ComponentName::unflattenFromString)
 
@@ -793,7 +793,7 @@ private fun calculateGridSize(
     layoutDirection: LayoutDirection,
     // Layout and Association
     paddingValues: PaddingValues,
-    associate: Associate
+    associate: Associate,
 ): IntSize {
     val leftPadding = with(density) {
         paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
@@ -848,7 +848,7 @@ private fun handleExistingGridItemSource(
     onResetGrid: () -> Unit,
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
-    onUpdateIsVisibleOverlay: (Boolean) -> Unit
+    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
 ) {
     fun cancel() {
         onUpdateIsVisibleOverlay(false)
@@ -891,7 +891,7 @@ private fun handleExistingFolderGridItemSource(
     onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
-    onUpdateIsVisibleOverlay: (Boolean) -> Unit
+    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
 ) {
     fun cancel() {
         onUpdateIsVisibleOverlay(false)
@@ -954,7 +954,7 @@ private suspend fun handleNewGridItemSource(
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
-    onUpdateWidgetGridItem: (GridItem) -> Unit
+    onUpdateWidgetGridItem: (GridItem) -> Unit,
 ) {
     if (isVisibleOverlay &&
         isDragging &&
@@ -968,7 +968,7 @@ private suspend fun handleNewGridItemSource(
             // Callbacks
             onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
             onUpdateIsDragging = onUpdateIsDragging,
-            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay
+            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
         )
     }
 
@@ -981,7 +981,7 @@ private suspend fun handleNewGridItemSource(
             // Callbacks
             onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
             onUpdateIsDragging = onUpdateIsDragging,
-            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay
+            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
         )
     }
 
@@ -1010,7 +1010,7 @@ private suspend fun handleNewGridItemSource(
                     onUpdateAppWidgetId = onUpdateAppWidgetId,
                     onUpdateWidgetGridItem = onUpdateWidgetGridItem,
                     onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                    onUpdateIsDragging = onUpdateIsDragging
+                    onUpdateIsDragging = onUpdateIsDragging,
                 )
             }
 
@@ -1027,7 +1027,7 @@ private suspend fun handleNewGridItemSource(
                     onLaunchShortcutConfigIntent = onLaunchShortcutConfigIntent,
                     onLaunchShortcutConfigIntentSenderRequest = onLaunchShortcutConfigIntentSenderRequest,
                     onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                    onUpdateIsDragging = onUpdateIsDragging
+                    onUpdateIsDragging = onUpdateIsDragging,
                 )
             }
 
@@ -1061,7 +1061,7 @@ private fun handleNewFolderGridItemSource(
         moveGridItemResult: MoveGridItemResult,
     ) -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
-    onUpdateIsVisibleOverlay: (Boolean) -> Unit
+    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
 ) {
     if (isVisibleOverlay &&
         isDragging &&
@@ -1075,7 +1075,7 @@ private fun handleNewFolderGridItemSource(
             // Callbacks
             onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
             onUpdateIsDragging = onUpdateIsDragging,
-            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay
+            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
         )
     }
 
@@ -1088,7 +1088,7 @@ private fun handleNewFolderGridItemSource(
             // Callbacks
             onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
             onUpdateIsDragging = onUpdateIsDragging,
-            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay
+            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
         )
     }
 
@@ -1131,7 +1131,7 @@ private fun handlePinGridItemSource(
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
-    onUpdateWidgetGridItem: (GridItem) -> Unit
+    onUpdateWidgetGridItem: (GridItem) -> Unit,
 ) {
     if (isVisibleOverlay &&
         isDragging &&
@@ -1145,7 +1145,7 @@ private fun handlePinGridItemSource(
             // Callbacks
             onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
             onUpdateIsDragging = onUpdateIsDragging,
-            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay
+            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
         )
     }
 
@@ -1158,7 +1158,7 @@ private fun handlePinGridItemSource(
             // Callbacks
             onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
             onUpdateIsDragging = onUpdateIsDragging,
-            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay
+            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
         )
     }
 
@@ -1176,7 +1176,7 @@ private fun handlePinGridItemSource(
                 onUpdateGridItemsAfterMove = onUpdateGridItemsAfterMove,
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                 onUpdateIsDragging = onUpdateIsDragging,
-                onResetGrid = onResetGrid
+                onResetGrid = onResetGrid,
             )
 
             is GridItemData.Widget -> onDragEndWidget(
@@ -1197,7 +1197,7 @@ private fun handlePinGridItemSource(
                 onUpdateAppWidgetId = onUpdateAppWidgetId,
                 onUpdateWidgetGridItem = onUpdateWidgetGridItem,
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                onUpdateIsDragging = onUpdateIsDragging
+                onUpdateIsDragging = onUpdateIsDragging,
             )
 
             else -> error("Expected ShortcutInfo or Widget")
@@ -1213,7 +1213,7 @@ private fun cancelAndDeleteGridItem(
     // Callbacks
     onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
-    onUpdateIsVisibleOverlay: (Boolean) -> Unit
+    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
 ) {
     onUpdateIsVisibleOverlay(false)
 

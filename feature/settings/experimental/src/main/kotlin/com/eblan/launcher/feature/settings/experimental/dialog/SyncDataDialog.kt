@@ -39,9 +39,9 @@ import com.eblan.launcher.common.R as commonR
 internal fun SyncDataDialog(
     // State
     syncData: Boolean,
-    // Modifier
+    // Layout
     modifier: Modifier = Modifier,
-    // Callbacks
+    // Actions
     onDismissRequest: () -> Unit,
     onUpdateSyncData: (Boolean) -> Unit,
 ) {
@@ -65,9 +65,12 @@ internal fun SyncDataDialog(
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 SettingsSwitch(
+                    // Content
                     title = stringResource(R.string.sync_data),
                     subtitle = stringResource(R.string.keep_data_up_to_date),
+                    // State
                     checked = syncData,
+                    // Callbacks
                     onCheckedChange = onUpdateSyncData,
                 )
             }

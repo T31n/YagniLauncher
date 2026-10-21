@@ -59,11 +59,11 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 fun GridItemSettings(
-    // Settings
+    // Grid item
     gridItemSettings: GridItemSettings,
     // Layout
     modifier: Modifier = Modifier,
-    // Callbacks
+    // Actions
     onUpdateGridItemSettings: (GridItemSettings) -> Unit,
 ) {
     var showIconSizeDialog by remember { mutableStateOf(false) }
@@ -81,7 +81,9 @@ fun GridItemSettings(
     var showTextPaddingDialog by remember { mutableStateOf(false) }
 
     val items = buildGridItemSettingsItems(
+        // Settings
         gridItemSettings = gridItemSettings,
+        // Click Actions
         onIconSizeClick = {
             showIconSizeDialog = true
         },
@@ -115,13 +117,14 @@ fun GridItemSettings(
         onLayoutTypeClick = {
             showLayoutType = true
         },
-        onUpdateGridItemSettings = onUpdateGridItemSettings,
         onIconPaddingClick = {
             showIconPaddingDialog = true
         },
         onTextPaddingClick = {
             showTextPaddingDialog = true
         },
+        // Update Actions
+        onUpdateGridItemSettings = onUpdateGridItemSettings,
     )
 
     Column(
@@ -135,7 +138,9 @@ fun GridItemSettings(
 
     if (showIconSizeDialog) {
         EditIconSizeDialog(
+            // Content
             iconSize = gridItemSettings.iconSize,
+            // Callbacks
             onDismissRequest = {
                 showIconSizeDialog = false
             },
@@ -151,9 +156,12 @@ fun GridItemSettings(
 
     if (showTextColorDialog) {
         TextColorDialog(
+            // Content
             title = stringResource(R.string.text_color),
+            // State
             textColor = gridItemSettings.textColor,
             customTextColor = gridItemSettings.customTextColor,
+            // Actions
             onDismissRequest = {
                 showTextColorDialog = false
             },
@@ -170,7 +178,9 @@ fun GridItemSettings(
 
     if (showTextSizeDialog) {
         EditTextSizeDialog(
+            // State
             textSize = gridItemSettings.textSize,
+            // Actions
             onDismissRequest = {
                 showTextSizeDialog = false
             },
@@ -186,8 +196,10 @@ fun GridItemSettings(
 
     if (showBackgroundColorDialog) {
         ColorPickerDialog(
+            // Content
             title = stringResource(commonR.string.background_color),
             customColor = gridItemSettings.customBackgroundColor,
+            // Callbacks
             onDismissRequest = {
                 showBackgroundColorDialog = false
             },
@@ -199,8 +211,10 @@ fun GridItemSettings(
 
     if (showPaddingDialog) {
         EditPaddingDialog(
+            // Content
             title = stringResource(R.string.padding),
             padding = gridItemSettings.padding,
+            // Callbacks
             onDismissRequest = {
                 showPaddingDialog = false
             },
@@ -216,7 +230,9 @@ fun GridItemSettings(
 
     if (showCornerRadiusDialog) {
         EditCornerRadiusDialog(
+            // State
             cornerRadius = gridItemSettings.cornerRadius,
+            // Callbacks
             onDismissRequest = {
                 showCornerRadiusDialog = false
             },
@@ -232,9 +248,11 @@ fun GridItemSettings(
 
     if (showHorizontalAlignment) {
         RadioOptionsDialog(
+            // Dialog Content
             title = stringResource(R.string.horizontal_alignment),
             options = HorizontalAlignment.entries,
             selected = gridItemSettings.horizontalAlignment,
+            // Callbacks
             label = {
                 it.getSubtitle()
             },
@@ -249,9 +267,11 @@ fun GridItemSettings(
 
     if (showVerticalArrangement) {
         RadioOptionsDialog(
+            // Dialog Content
             title = stringResource(R.string.vertical_arrangement),
             options = VerticalArrangement.entries,
             selected = gridItemSettings.verticalArrangement,
+            // Callbacks
             label = {
                 it.getSubtitle()
             },
@@ -266,9 +286,11 @@ fun GridItemSettings(
 
     if (showHorizontalArrangement) {
         RadioOptionsDialog(
+            // Dialog Content
             title = "Horizontal Arrangement",
             options = HorizontalArrangement.entries,
             selected = gridItemSettings.horizontalArrangement,
+            // Callbacks
             label = {
                 it.getSubtitle()
             },
@@ -283,9 +305,11 @@ fun GridItemSettings(
 
     if (showVerticalAlignment) {
         RadioOptionsDialog(
+            // Dialog Content
             title = "Vertical Alignment",
             options = VerticalAlignment.entries,
             selected = gridItemSettings.verticalAlignment,
+            // Callbacks
             label = {
                 it.getSubtitle()
             },
@@ -300,9 +324,11 @@ fun GridItemSettings(
 
     if (showLayoutType) {
         RadioOptionsDialog(
+            // Dialog Content
             title = "Layout Type",
             options = LayoutType.entries,
             selected = gridItemSettings.layoutType,
+            // Callbacks
             label = {
                 it.getSubtitle()
             },
@@ -317,8 +343,10 @@ fun GridItemSettings(
 
     if (showIconPaddingDialog) {
         EditPaddingDialog(
+            // Content
             title = "Icon Padding",
             padding = gridItemSettings.iconPadding,
+            // Callbacks
             onDismissRequest = {
                 showIconPaddingDialog = false
             },
@@ -334,8 +362,10 @@ fun GridItemSettings(
 
     if (showTextPaddingDialog) {
         EditPaddingDialog(
+            // Content
             title = "Text Padding",
             padding = gridItemSettings.textPadding,
+            // Callbacks
             onDismissRequest = {
                 showTextPaddingDialog = false
             },
@@ -360,10 +390,11 @@ fun TextColor.getSubtitle(): String = when (this) {
 
 @Composable
 internal fun CustomBackgroundColor(
-    // Content
+    // Item Data
     index: Int,
     size: Int,
     title: String,
+    // Appearance
     customBackgroundColor: Int,
     // Layout
     modifier: Modifier = Modifier,
@@ -406,7 +437,7 @@ internal fun CustomBackgroundColor(
 private fun buildGridItemSettingsItems(
     // Settings
     gridItemSettings: GridItemSettings,
-    // Actions
+    // Click Actions
     onIconSizeClick: () -> Unit,
     onTextColorClick: () -> Unit,
     onTextSizeClick: () -> Unit,
@@ -418,9 +449,10 @@ private fun buildGridItemSettingsItems(
     onHorizontalArrangementClick: () -> Unit,
     onVerticalAlignmentClick: () -> Unit,
     onLayoutTypeClick: () -> Unit,
-    onUpdateGridItemSettings: (GridItemSettings) -> Unit,
     onIconPaddingClick: () -> Unit,
     onTextPaddingClick: () -> Unit,
+    // Update Actions
+    onUpdateGridItemSettings: (GridItemSettings) -> Unit,
 ): List<SettingsItem> = buildList {
     add(
         SettingsItem.Column(

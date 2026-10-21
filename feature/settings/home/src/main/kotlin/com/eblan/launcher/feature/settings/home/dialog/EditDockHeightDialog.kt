@@ -39,8 +39,10 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun EditDockHeightDialog(
+    // Layout
     modifier: Modifier = Modifier,
     dockHeight: Int,
+    // Actions
     onDismissRequest: () -> Unit,
     onUpdateDockHeight: (Int) -> Unit,
 ) {

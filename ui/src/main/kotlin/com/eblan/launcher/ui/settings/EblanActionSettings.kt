@@ -40,15 +40,15 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 fun EblanActionSettings(
+    // Modifier
+    modifier: Modifier = Modifier,
     // Actions
     doubleTap: EblanAction,
     swipeUp: EblanAction,
     swipeDown: EblanAction,
-    // Applications
+    // Application Info
     eblanApplicationInfos: List<EblanApplicationInfo>,
-    // Modifier
-    modifier: Modifier = Modifier,
-    // Callbacks
+    // Action Callbacks
     onUpdateDoubleTap: (EblanAction) -> Unit,
     onUpdateSwipeUp: (EblanAction) -> Unit,
     onUpdateSwipeDown: (EblanAction) -> Unit,
@@ -62,10 +62,13 @@ fun EblanActionSettings(
     var showSwipeDownDialog by remember { mutableStateOf(false) }
 
     val items = buildEblanActionSettingsItems(
+        // Context
         context = context,
+        // Actions
         doubleTap = doubleTap,
         swipeUp = swipeUp,
         swipeDown = swipeDown,
+        // Callbacks
         onDoubleTapClick = {
             showDoubleTapDialog = true
         },
@@ -86,9 +89,11 @@ fun EblanActionSettings(
 
     if (showDoubleTapDialog) {
         EblanActionDialog(
+            // Content
             title = stringResource(R.string.double_tap),
             eblanAction = doubleTap,
             eblanApplicationInfos = eblanApplicationInfos,
+            // Callbacks
             onSelectEblanAction = {
                 onUpdateDoubleTap(it)
 
@@ -102,9 +107,11 @@ fun EblanActionSettings(
 
     if (showSwipeUpDialog) {
         EblanActionDialog(
+            // Content
             title = stringResource(R.string.swipe_up),
             eblanAction = swipeUp,
             eblanApplicationInfos = eblanApplicationInfos,
+            // Callbacks
             onSelectEblanAction = {
                 onUpdateSwipeUp(it)
 
@@ -118,9 +125,11 @@ fun EblanActionSettings(
 
     if (showSwipeDownDialog) {
         EblanActionDialog(
+            // Content
             title = stringResource(R.string.swipe_down),
             eblanAction = swipeDown,
             eblanApplicationInfos = eblanApplicationInfos,
+            // Callbacks
             onSelectEblanAction = {
                 onUpdateSwipeDown(it)
 

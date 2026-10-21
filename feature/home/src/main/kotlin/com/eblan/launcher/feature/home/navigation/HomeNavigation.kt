@@ -43,7 +43,7 @@ fun NavGraphBuilder.homeScreen(
             onEditApplicationInfo = onEditApplicationInfo,
             onEditGridItem = onEditGridItem,
             onSettings = onSettings,
-            onEditFolderApplicationInfo = onEditFolderApplicationInfo
+            onEditFolderApplicationInfo = onEditFolderApplicationInfo,
         )
     }
 }

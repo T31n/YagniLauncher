@@ -124,7 +124,9 @@ private fun Success(
     var showFolderBackgroundColorDialog by remember { mutableStateOf(false) }
 
     val folderHomeSettingsItems = buildFolderHomeSettingsItems(
+        // Settings
         folderSettings = folderSettings,
+        // Callbacks
         onFolderCellDimensionClick = {
             showFolderCellDimensionDialog = true
         },
@@ -151,8 +153,10 @@ private fun Success(
 
     if (showFolderCellDimensionDialog) {
         EditFolderCellDimensionDialog(
+            // Dimensions
             folderCellWidth = folderSettings.folderCellWidth,
             folderCellHeight = folderSettings.folderCellHeight,
+            // Callbacks
             onDismissRequest = {
                 showFolderCellDimensionDialog = false
             },
@@ -169,8 +173,10 @@ private fun Success(
 
     if (showFolderMaxGridDialog) {
         EditFolderMaxGridDialog(
+            // Grid Dimensions
             maxFolderColumns = folderSettings.maxFolderColumns,
             maxFolderRows = folderSettings.maxFolderRows,
+            // Actions
             onDismissRequest = {
                 showFolderMaxGridDialog = false
             },
@@ -187,7 +193,9 @@ private fun Success(
 
     if (showFolderCornerRadiusGridDialog) {
         EditCornerRadiusDialog(
+            // State
             cornerRadius = folderSettings.folderCornerRadius,
+            // Callbacks
             onDismissRequest = {
                 showFolderCornerRadiusGridDialog = false
             },
@@ -203,9 +211,12 @@ private fun Success(
 
     if (showFolderBackgroundColorDialog) {
         BackgroundColorDialog(
+            // Content
             title = stringResource(commonR.string.background_color),
+            // State
             backgroundColor = folderSettings.folderBackgroundColor,
             customBackgroundColor = folderSettings.customFolderBackgroundColor,
+            // Actions
             onDismissRequest = {
                 showFolderBackgroundColorDialog = false
             },
@@ -223,7 +234,7 @@ private fun Success(
 
 @Composable
 private fun buildFolderHomeSettingsItems(
-    // Data
+    // Settings
     folderSettings: FolderSettings,
     // Callbacks
     onFolderCellDimensionClick: () -> Unit,

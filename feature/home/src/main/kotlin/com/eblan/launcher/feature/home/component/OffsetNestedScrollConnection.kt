@@ -34,7 +34,7 @@ internal fun rememberNestedScrollConnectionEffect(
     swipeY: Float,
     // Drag Callbacks
     onVerticalDrag: (Float) -> Unit,
-    onDragEnd: () -> Unit
+    onDragEnd: () -> Unit,
 ): OffsetNestedScrollConnection {
     val currentOnVerticalDrag by rememberUpdatedState(onVerticalDrag)
     val currentOnDragEnd by rememberUpdatedState(onDragEnd)

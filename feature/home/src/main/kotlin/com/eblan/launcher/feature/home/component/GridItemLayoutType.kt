@@ -39,7 +39,7 @@ internal fun GridItemLayoutType(
     // Content
     iconContent: @Composable () -> Unit,
     labelContent: @Composable () -> Unit,
-    labelOnlyContent: @Composable () -> Unit
+    labelOnlyContent: @Composable () -> Unit,
 ) {
     when (gridItemSettings.layoutType) {
         LayoutType.TopIconBottomLabel -> {

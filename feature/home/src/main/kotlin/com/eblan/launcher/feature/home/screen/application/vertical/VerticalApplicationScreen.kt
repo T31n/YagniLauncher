@@ -152,7 +152,7 @@ internal fun VerticalApplicationScreen(
         intOffset: IntOffset,
         intSize: IntSize,
     ) -> Unit,
-    onTapFolderApplicationInfo: (folderEntry: FolderEntry) -> Unit
+    onTapFolderApplicationInfo: (folderEntry: FolderEntry) -> Unit,
 ) {
     val layoutDirection = LocalLayoutDirection.current
 
@@ -183,12 +183,12 @@ internal fun VerticalApplicationScreen(
         selectedEblanApplicationInfoTagId = selectedEblanApplicationInfoTagId,
         textFieldState = textFieldState,
         showKeyboard = appDrawerSettings.showKeyboard &&
-                appDrawerSettings.searchBarPosition != SearchBarPosition.None,
+            appDrawerSettings.searchBarPosition != SearchBarPosition.None,
         focusRequester = focusRequester,
         // Callbacks
         onDismiss = onDismiss,
         onGetEblanApplicationInfosByLabel = onGetEblanApplicationInfosByLabel,
-        onGetEblanApplicationInfosByTagId = onGetEblanApplicationInfosByTagId
+        onGetEblanApplicationInfosByTagId = onGetEblanApplicationInfosByTagId,
     )
 
     Column(
@@ -214,7 +214,7 @@ internal fun VerticalApplicationScreen(
                 systemTextColor = systemTextColor,
                 systemCustomTextColor = systemCustomTextColor,
                 // Defaults
-                defaultColor = MaterialTheme.colorScheme.onSurface
+                defaultColor = MaterialTheme.colorScheme.onSurface,
             ),
         )
 
@@ -228,7 +228,7 @@ internal fun VerticalApplicationScreen(
                 backgroundColor = appDrawerSettings.backgroundColor,
                 customBackgroundColor = appDrawerSettings.customBackgroundColor,
                 systemTextColor = systemTextColor,
-                systemCustomTextColor = systemCustomTextColor
+                systemCustomTextColor = systemCustomTextColor,
             )
         }
 
@@ -243,7 +243,7 @@ internal fun VerticalApplicationScreen(
                             // Callbacks
                             onUpdateEblanApplicationInfoTag = { id ->
                                 selectedEblanApplicationInfoTagId = id
-                            }
+                            },
                         )
                     }
                 }
@@ -262,7 +262,7 @@ internal fun VerticalApplicationScreen(
                     systemTextColor = systemTextColor,
                     systemCustomTextColor = systemCustomTextColor,
                     // Callbacks
-                    onAnimateScrollToPage = horizontalPagerState::animateScrollToPage
+                    onAnimateScrollToPage = horizontalPagerState::animateScrollToPage,
                 )
             }
 
@@ -306,7 +306,7 @@ internal fun VerticalApplicationScreen(
                     onLongPressApplicationInfo = onLongPressApplicationInfo,
                     onLongPressFolderApplicationInfo = onLongPressFolderApplicationInfo,
                     onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
-                    onTapFolderApplicationInfo = onTapFolderApplicationInfo
+                    onTapFolderApplicationInfo = onTapFolderApplicationInfo,
                 )
             }
         }
@@ -321,7 +321,7 @@ internal fun VerticalApplicationScreen(
                 backgroundColor = appDrawerSettings.backgroundColor,
                 customBackgroundColor = appDrawerSettings.customBackgroundColor,
                 systemTextColor = systemTextColor,
-                systemCustomTextColor = systemCustomTextColor
+                systemCustomTextColor = systemCustomTextColor,
             )
         }
     }
@@ -383,7 +383,7 @@ private fun EblanApplicationInfosPage(
         intOffset: IntOffset,
         intSize: IntSize,
     ) -> Unit,
-    onTapFolderApplicationInfo: (folderEntry: FolderEntry) -> Unit
+    onTapFolderApplicationInfo: (folderEntry: FolderEntry) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -424,7 +424,7 @@ private fun EblanApplicationInfosPage(
                 systemCustomTextColor = systemCustomTextColor,
                 // Callbacks
                 onDragEnd = onDragEnd,
-                onVerticalDrag = onVerticalDrag
+                onVerticalDrag = onVerticalDrag,
             )
         } else {
             EblanApplicationInfos(
@@ -457,7 +457,7 @@ private fun EblanApplicationInfosPage(
                 onLongPressApplicationInfo = onLongPressApplicationInfo,
                 onLongPressFolderApplicationInfo = onLongPressFolderApplicationInfo,
                 onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
-                onTapFolderApplicationInfo = onTapFolderApplicationInfo
+                onTapFolderApplicationInfo = onTapFolderApplicationInfo,
             )
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && isDefaultLauncher &&
@@ -540,7 +540,7 @@ private fun EblanApplicationInfos(
         intOffset: IntOffset,
         intSize: IntSize,
     ) -> Unit,
-    onTapFolderApplicationInfo: (folderEntry: FolderEntry) -> Unit
+    onTapFolderApplicationInfo: (folderEntry: FolderEntry) -> Unit,
 ) {
     val lazyGridState = rememberLazyGridState()
 
@@ -556,7 +556,7 @@ private fun EblanApplicationInfos(
         swipeY = swipeY,
         // Drag Callbacks
         onVerticalDrag = onVerticalDrag,
-        onDragEnd = onDragEnd
+        onDragEnd = onDragEnd,
     )
 
     val privateIsQuiteModeEnabled by rememberIsPrivateQuietModeEnabled(eblanUser = getEblanApplicationInfosByLabelAndTag.privateEblanUser)
@@ -623,7 +623,7 @@ private fun EblanApplicationInfos(
                             onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                             onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
                             onLongPressFolderApplicationInfo = onLongPressFolderApplicationInfo,
-                            onTapFolderApplicationInfo = onTapFolderApplicationInfo
+                            onTapFolderApplicationInfo = onTapFolderApplicationInfo,
                         )
                     }
 
@@ -650,7 +650,7 @@ private fun EblanApplicationInfos(
                             // Callbacks
                             onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                             onDragApplicationInfo = onDragApplicationInfo,
-                            onLongPressApplicationInfo = onLongPressApplicationInfo
+                            onLongPressApplicationInfo = onLongPressApplicationInfo,
                         )
                     }
 
@@ -671,7 +671,7 @@ private fun EblanApplicationInfos(
                         systemTextColor = systemTextColor,
                         systemCustomTextColor = systemCustomTextColor,
                         // Callbacks
-                        onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem
+                        onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
                     )
                 }
 
@@ -702,7 +702,7 @@ private fun EblanApplicationInfos(
                             // Callbacks
                             onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                             onDragApplicationInfo = onDragApplicationInfo,
-                            onLongPressApplicationInfo = onLongPressApplicationInfo
+                            onLongPressApplicationInfo = onLongPressApplicationInfo,
                         )
                     }
                 }
@@ -718,9 +718,9 @@ private fun EblanApplicationInfos(
             appDrawerSettings = appDrawerSettings,
             paddingValues = paddingValues,
             isPrivateSpaceEntryPointHidden = isDefaultLauncher &&
-                    eblanUserPageKey.eblanUser.eblanUserType == EblanUserType.Personal &&
-                    getEblanApplicationInfosByLabelAndTag.privateEblanUser
-                        ?.isPrivateSpaceEntryPointHidden == false
+                eblanUserPageKey.eblanUser.eblanUserType == EblanUserType.Personal &&
+                getEblanApplicationInfosByLabelAndTag.privateEblanUser
+                    ?.isPrivateSpaceEntryPointHidden == false,
         )
     }
 }

@@ -82,7 +82,7 @@ internal fun ScrollBarType(
     appDrawerSettings: AppDrawerSettings,
     paddingValues: PaddingValues,
     isPrivateSpaceEntryPointHidden: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier.fillMaxHeight(),
@@ -101,7 +101,7 @@ internal fun ScrollBarType(
                     // Privacy and Modifiers
                     isPrivateSpaceEntryPointHidden = isPrivateSpaceEntryPointHidden,
                     // Callbacks
-                    onScrollToItem = lazyGridState::scrollToItem
+                    onScrollToItem = lazyGridState::scrollToItem,
                 )
             }
 
@@ -115,7 +115,7 @@ internal fun ScrollBarType(
                         searchBarPosition = appDrawerSettings.searchBarPosition,
                         canScroll = canScroll,
                         // Actions
-                        onScrollToItem = lazyGridState::scrollToItem
+                        onScrollToItem = lazyGridState::scrollToItem,
                     )
                 }
             }
@@ -135,7 +135,7 @@ internal fun AlphabeticalScrollBar(
     canScroll: Boolean,
     modifier: Modifier = Modifier,
     // Actions
-    onScrollToItem: suspend (Int) -> Unit
+    onScrollToItem: suspend (Int) -> Unit,
 ) {
     if (!canScroll) return
 
@@ -271,7 +271,7 @@ private fun ScrollBarThumb(
     isPrivateSpaceEntryPointHidden: Boolean,
     modifier: Modifier = Modifier,
     // Callbacks
-    onScrollToItem: suspend (Int) -> Unit
+    onScrollToItem: suspend (Int) -> Unit,
 ) {
     if (!canScroll) return
 
@@ -301,7 +301,7 @@ private fun ScrollBarThumb(
         // State
         lazyGridState = lazyGridState,
         // Configuration
-        isPrivateSpaceEntryPointHidden = isPrivateSpaceEntryPointHidden
+        isPrivateSpaceEntryPointHidden = isPrivateSpaceEntryPointHidden,
     )
 
     val viewPortThumbY by remember(key1 = lazyGridState) {
@@ -315,7 +315,7 @@ private fun ScrollBarThumb(
                 bottomPadding = bottomPaddingPx,
                 thumbHeight = thumbHeight,
                 // Display Metrics
-                density = density
+                density = density,
             )
         }
     }
@@ -354,7 +354,7 @@ private fun ScrollBarThumb(
                             // Target
                             offset = it,
                             // Action
-                            onScrollToItem = onScrollToItem
+                            onScrollToItem = onScrollToItem,
                         )
                     },
                 )
@@ -400,7 +400,7 @@ private fun ScrollBarThumb(
                                 onScrollToItem = onScrollToItem,
                                 onUpdateThumbY = {
                                     thumbY = it
-                                }
+                                },
                             )
                         },
                         onDragEnd = {
@@ -420,7 +420,7 @@ private fun rememberHasPrivateSpaceStickyHeader(
     // State
     lazyGridState: LazyGridState,
     // Configuration
-    isPrivateSpaceEntryPointHidden: Boolean
+    isPrivateSpaceEntryPointHidden: Boolean,
 ): State<Int> = produceState(
     initialValue = 0,
     key1 = lazyGridState,
@@ -452,7 +452,7 @@ private fun scrollToTap(
     // Target
     offset: Offset,
     // Action
-    onScrollToItem: suspend (Int) -> Unit
+    onScrollToItem: suspend (Int) -> Unit,
 ) {
     val viewportHeight = lazyGridState.layoutInfo.viewportSize.height - bottomPaddingPx
 
@@ -492,7 +492,7 @@ private fun scrollToDrag(
     thumbY: Float,
     // Callbacks
     onScrollToItem: suspend (Int) -> Unit,
-    onUpdateThumbY: (Float) -> Unit
+    onUpdateThumbY: (Float) -> Unit,
 ) {
     if (deltaY == 0f) return
 
@@ -561,7 +561,7 @@ private fun getViewPortThumbY(
     bottomPadding: Int,
     thumbHeight: Dp,
     // Display Metrics
-    density: Density
+    density: Density,
 ): Float {
     val layoutInfo = lazyGridState.layoutInfo
     val visibleItemsInfo = layoutInfo.visibleItemsInfo

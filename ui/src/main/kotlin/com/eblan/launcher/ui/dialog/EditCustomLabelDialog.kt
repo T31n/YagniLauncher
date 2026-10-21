@@ -40,7 +40,7 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 fun EditCustomLabelDialog(
-    // Data
+    // Content
     customLabel: String?,
     // Modifier
     modifier: Modifier = Modifier,

@@ -98,7 +98,7 @@ internal fun FolderGridItemPopup(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     requireNotNull(folderGridItem)
 
@@ -182,7 +182,7 @@ internal fun FolderGridItemPopup(
                 height = popupIntSize.height,
                 // Position
                 x = x,
-                y = y
+                y = y,
             ),
             visibleState = transitionState,
             enter = fadeIn(tween()) + scaleIn(
@@ -229,7 +229,7 @@ internal fun FolderGridItemPopup(
                 },
                 onWidgets = onWidgets,
                 onResetFolderGridItemPopupEntries = onResetFolderGridItemPopupEntries,
-                onDragShortcutInfo = onDragShortcutInfo
+                onDragShortcutInfo = onDragShortcutInfo,
             )
         }
     }
@@ -265,7 +265,7 @@ private fun FolderGridItemPopupContent(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     Surface(
         modifier = modifier.width(IntrinsicSize.Max),
@@ -333,7 +333,7 @@ private fun FolderGridItemPopupContent(
 
                             onDismiss()
                         },
-                        onDragShortcutInfo = onDragShortcutInfo
+                        onDragShortcutInfo = onDragShortcutInfo,
                     )
                 }
 
@@ -392,7 +392,7 @@ private fun ApplicationInfoFolderGridItemPopupContent(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     Surface(
         modifier = modifier.width(IntrinsicSize.Max),
@@ -414,7 +414,7 @@ private fun ApplicationInfoFolderGridItemPopupContent(
                         modifier = modifier,
                         // Actions
                         onTapShortcutInfo = onTapShortcutInfo,
-                        onDragShortcutInfo = onDragShortcutInfo
+                        onDragShortcutInfo = onDragShortcutInfo,
                     )
 
                     Spacer(modifier = Modifier.height(5.dp))

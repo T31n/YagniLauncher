@@ -128,7 +128,7 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
         sharedElementKey: SharedElementKey,
     ) -> Unit,
     onDragFolderEblanApplicationInfoGridItem: () -> Unit,
-    onTapFolderEblanApplicationInfoItem: (FolderEntry) -> Unit
+    onTapFolderEblanApplicationInfoItem: (FolderEntry) -> Unit,
 ) {
     val isSelected =
         moveFolderEblanApplicationInfoGridItemResult != null && moveFolderEblanApplicationInfoGridItemResult.folderEblanApplicationInfoGridItem.id == folderEblanApplicationInfoGridItem.id
@@ -141,7 +141,7 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
         textColor = appDrawerSettings.gridItemSettings.textColor,
         customTextColor = appDrawerSettings.gridItemSettings.customTextColor,
         systemCustomTextColor = systemCustomTextColor,
-        systemTextColor = systemTextColor
+        systemTextColor = systemTextColor,
     )
 
     val padding = if (animations) {
@@ -237,7 +237,7 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
                 // Modifier
                 modifier = modifier,
                 // Callbacks
-                onLongPressFolderEblanApplicationInfoGridItem = onLongPressFolderEblanApplicationInfoGridItem
+                onLongPressFolderEblanApplicationInfoGridItem = onLongPressFolderEblanApplicationInfoGridItem,
             )
         }
 
@@ -276,7 +276,7 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
                 modifier = modifier,
                 // Callbacks
                 onLongPressFolderEblanApplicationInfoGridItem = onLongPressFolderEblanApplicationInfoGridItem,
-                onTapFolderEblanApplicationInfoItem = onTapFolderEblanApplicationInfoItem
+                onTapFolderEblanApplicationInfoItem = onTapFolderEblanApplicationInfoItem,
             )
         }
     }
@@ -318,7 +318,7 @@ private fun InteractiveEblanApplicationInfoItem(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit
+    ) -> Unit,
 ) {
     val context = LocalContext.current
     val density = LocalDensity.current
@@ -427,7 +427,7 @@ private fun InteractiveEblanApplicationInfoItem(
                     sharedElementKey = sharedElementKey,
                     // Visibility Control
                     enabled = animations && !isInProgress,
-                    visible = !isScrollInProgress && !hasInteraction
+                    visible = !isScrollInProgress && !hasInteraction,
                 )
                 .gridItemScaleAnimation(
                     animations = animations,
@@ -498,7 +498,7 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
     ) -> Unit,
-    onTapFolderEblanApplicationInfoItem: (FolderEntry) -> Unit
+    onTapFolderEblanApplicationInfoItem: (FolderEntry) -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -577,7 +577,7 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
                     sharedElementKey = sharedElementKey,
                     // Visibility Control
                     enabled = animations && !isInProgress,
-                    visible = !isScrollInProgress && !hasInteraction
+                    visible = !isScrollInProgress && !hasInteraction,
                 )
                 .gridItemScaleAnimation(
                     animations = animations,
@@ -628,9 +628,9 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
                             systemTextColor = systemTextColor,
                             systemCustomTextColor = systemCustomTextColor,
                             // Icons
-                            iconPackFilePaths = iconPackFilePaths
+                            iconPackFilePaths = iconPackFilePaths,
                         )
-                    }
+                    },
                 )
             }
         }
@@ -663,7 +663,7 @@ private fun PreviewFolderEblanApplicationInfoItem(
     // Icons
     iconPackFilePaths: Map<String, String?>,
     // Layout
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     key(folderEblanApplicationInfoGridItem.id) {
         val context = LocalContext.current
@@ -678,7 +678,7 @@ private fun PreviewFolderEblanApplicationInfoItem(
             systemCustomTextColor = systemCustomTextColor,
             systemTextColor = systemTextColor,
             // Default Color
-            defaultColor = MaterialTheme.colorScheme.onSurface
+            defaultColor = MaterialTheme.colorScheme.onSurface,
         )
 
         val commonModifier = modifier

@@ -346,7 +346,7 @@ internal class PagerScreenState(
         // Callbacks
         onUpdateGridItemSource: (GridItemSource) -> Unit,
         onUpdateIsVisibleOverlay: (Boolean) -> Unit,
-        onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit
+        onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
     ) {
         if (pinGridItem == null) return
 
@@ -389,7 +389,7 @@ internal class PagerScreenState(
             launcherApps = androidLauncherAppsWrapper,
             statusBarManagerWrapper = androidStatusBarManagerWrapper,
             // Callbacks
-            onOpenAppDrawer = ::openApplicationScreen
+            onOpenAppDrawer = ::openApplicationScreen,
         )
 
         hasDoubleTap = false
@@ -565,7 +565,7 @@ internal class PagerScreenState(
                 launcherApps = androidLauncherAppsWrapper,
                 statusBarManagerWrapper = androidStatusBarManagerWrapper,
                 // Callbacks
-                onOpenAppDrawer = {}
+                onOpenAppDrawer = {},
             )
         }
 
@@ -578,7 +578,7 @@ internal class PagerScreenState(
                 launcherApps = androidLauncherAppsWrapper,
                 statusBarManagerWrapper = androidStatusBarManagerWrapper,
                 // Callbacks
-                onOpenAppDrawer = {}
+                onOpenAppDrawer = {},
             )
         }
 
@@ -1130,7 +1130,7 @@ internal class PagerScreenState(
             launcherApps = androidLauncherAppsWrapper,
             statusBarManagerWrapper = androidStatusBarManagerWrapper,
             // Callbacks
-            onOpenAppDrawer = ::openApplicationScreen
+            onOpenAppDrawer = ::openApplicationScreen,
         )
     }
 
@@ -1164,7 +1164,7 @@ internal class PagerScreenState(
         // Callbacks
         onUpdateGridItemSource: (GridItemSource) -> Unit,
         onUpdateIsVisibleOverlay: (Boolean) -> Unit,
-        onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit
+        onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
     ) {
         onUpdateGridItemSource(GridItemSource.New)
 
@@ -1201,7 +1201,7 @@ internal class PagerScreenState(
         // Callbacks
         onUpdateGridItemSource: (GridItemSource) -> Unit,
         onUpdateIsVisibleOverlay: (Boolean) -> Unit,
-        onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit
+        onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
     ) {
         onUpdateGridItemSource(GridItemSource.New)
 
@@ -1242,7 +1242,7 @@ internal class PagerScreenState(
         onUpdateGridItemSource: (GridItemSource) -> Unit,
         onUpdateIsVisibleOverlay: (Boolean) -> Unit,
         onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
-        onResetFolderGridItemPopupEntries: () -> Unit
+        onResetFolderGridItemPopupEntries: () -> Unit,
     ) {
         onUpdateGridItemSource(GridItemSource.New)
 
@@ -1283,7 +1283,7 @@ internal class PagerScreenState(
         onUpdateGridItemSource: (GridItemSource) -> Unit,
         onUpdateIsVisibleOverlay: (Boolean) -> Unit,
         onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
-        onResetFolderEblanApplicationInfoPopupEntries: () -> Unit
+        onResetFolderEblanApplicationInfoPopupEntries: () -> Unit,
     ) {
         onUpdateGridItemSource(GridItemSource.New)
 
@@ -1326,7 +1326,7 @@ internal class PagerScreenState(
         // Callbacks
         onUpdateGridItemSource: (GridItemSource) -> Unit,
         onUpdateIsVisibleOverlay: (Boolean) -> Unit,
-        onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit
+        onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
     ) {
         onUpdateGridItemSource(GridItemSource.New)
 
@@ -1364,7 +1364,7 @@ internal class PagerScreenState(
         // Callbacks
         onUpdateGridItemSource: (GridItemSource) -> Unit,
         onUpdateIsVisibleOverlay: (Boolean) -> Unit,
-        onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit
+        onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
     ) {
         onUpdateGridItemSource(GridItemSource.Existing)
 
@@ -1403,7 +1403,7 @@ internal class PagerScreenState(
         onShowFolderWhenDragging: (
             folderEntry: FolderEntry,
             movingGridItem: GridItem,
-        ) -> Unit
+        ) -> Unit,
     ) {
         sharedElementKey = SharedElementKey(
             id = movingGridItem.id,
@@ -1444,7 +1444,7 @@ internal class PagerScreenState(
         newSharedElementKey: SharedElementKey,
         // Callbacks
         onUpdateIsVisibleOverlay: (Boolean) -> Unit,
-        onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit
+        onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
     ) {
         onUpdateMoveGridItemResult(
             MoveGridItemResult(
@@ -1485,7 +1485,7 @@ internal class PagerScreenState(
         // New location
         newSharedElementKey: SharedElementKey,
         // Callbacks
-        onMoveFolderGridItemOutsideFolder: (GridItem) -> Unit
+        onMoveFolderGridItemOutsideFolder: (GridItem) -> Unit,
     ) {
         sharedElementKey = newSharedElementKey
 
@@ -1497,7 +1497,7 @@ internal class PagerScreenState(
         folderEntry: FolderEntry,
         isFirstFolderGridItem: Boolean,
         // Callbacks
-        onDeleteFolderGridItemPopupEntry: (FolderEntry) -> Unit
+        onDeleteFolderGridItemPopupEntry: (FolderEntry) -> Unit,
     ) {
         isVisibleFolderGridItems = !isFirstFolderGridItem
 
@@ -1514,7 +1514,7 @@ internal class PagerScreenState(
         // Callbacks
         onUpdateGridItemSource: (GridItemSource) -> Unit,
         onUpdateIsVisibleOverlay: (Boolean) -> Unit,
-        onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit
+        onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
     ) {
         onUpdateGridItemSource(GridItemSource.New)
 
@@ -1551,7 +1551,7 @@ internal class PagerScreenState(
         // Callbacks
         onUpdateGridItemSource: (GridItemSource) -> Unit,
         onUpdateIsVisibleOverlay: (Boolean) -> Unit,
-        onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit
+        onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
     ) {
         onUpdateGridItemSource(GridItemSource.New)
 
@@ -1587,7 +1587,7 @@ internal class PagerScreenState(
         intSize: IntSize,
         newSharedElementKey: SharedElementKey,
         // Callbacks
-        onUpdateIsVisibleOverlay: (Boolean) -> Unit
+        onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     ) {
         overlayImageBitmap = imageBitmap
 
@@ -1654,7 +1654,7 @@ internal class PagerScreenState(
             movingGridItem: GridItem,
         ) -> Unit,
         onUpdateGridItemSource: (GridItemSource) -> Unit,
-        onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit
+        onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
     ) {
         onUpdateGridItemSource(GridItemSource.New)
 
@@ -1696,7 +1696,7 @@ internal class PagerScreenState(
         intOffset: IntOffset,
         intSize: IntSize,
         // Callbacks
-        onUpdateIsVisibleOverlay: (Boolean) -> Unit
+        onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     ) {
         overlayImageBitmap = imageBitmap
 
@@ -1728,7 +1728,7 @@ internal class PagerScreenState(
         intSize: IntSize,
         // Callbacks
         onUpdateMoveFolderEblanApplicationInfoGridItemResult: (MoveFolderEblanApplicationInfoGridItemResult) -> Unit,
-        onUpdateIsVisibleOverlay: (Boolean) -> Unit
+        onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     ) {
         onUpdateMoveFolderEblanApplicationInfoGridItemResult(
             MoveFolderEblanApplicationInfoGridItemResult(
@@ -1770,7 +1770,7 @@ internal class PagerScreenState(
         onMoveFolderEblanApplicationInfoGridItemOutsideFolder: (
             folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
             movingGridItem: GridItem,
-        ) -> Unit
+        ) -> Unit,
     ) {
         isDragging = true
 
@@ -1787,7 +1787,7 @@ internal class PagerScreenState(
         folderEntry: FolderEntry,
         isFirstFolderEblanApplicationInfo: Boolean,
         // Callbacks
-        onDeleteFolderPopupEntry: (FolderEntry) -> Unit
+        onDeleteFolderPopupEntry: (FolderEntry) -> Unit,
     ) {
         isVisibleFolderEblanApplicationInfos = !isFirstFolderEblanApplicationInfo
 
@@ -1814,7 +1814,7 @@ internal fun rememberPagerScreenState(
     screenHeight: Int,
     // Callbacks
     onGetPinGridItem: (PinItemRequestType) -> Unit,
-    onResetPinGridItem: () -> Unit
+    onResetPinGridItem: () -> Unit,
 ): PagerScreenState {
     val scope = rememberCoroutineScope()
 

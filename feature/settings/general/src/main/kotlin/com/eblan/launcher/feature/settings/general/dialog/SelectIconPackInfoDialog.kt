@@ -43,12 +43,12 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun SelectIconPackInfoDialog(
-    // Data
+    // Icon Pack Data
     eblanIconPackInfos: List<EblanIconPackInfo>,
     iconPackPackageName: String,
-    // Modifier
+    // Layout
     modifier: Modifier = Modifier,
-    // Callbacks
+    // Actions
     onDeleteEblanIconPackInfo: (String) -> Unit,
     onDismissRequest: () -> Unit,
     onReset: () -> Unit,

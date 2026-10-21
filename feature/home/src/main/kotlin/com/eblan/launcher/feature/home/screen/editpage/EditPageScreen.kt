@@ -116,7 +116,7 @@ internal fun EditGridPageScreen(
         pageItemsToDelete: List<PageItem>,
         associate: Associate,
     ) -> Unit,
-    onUpdateScreen: (Screen) -> Unit
+    onUpdateScreen: (Screen) -> Unit,
 ) {
     requireNotNull(pageItems)
 
@@ -236,9 +236,9 @@ internal fun EditGridPageScreen(
                                 customFolderBackgroundColor = customFolderBackgroundColor,
                                 folderCornerRadius = folderSettings.folderCornerRadius,
                                 // Assets and Styling
-                                iconPackFilePaths = iconPackFilePaths
+                                iconPackFilePaths = iconPackFilePaths,
                             )
-                        }
+                        },
                     )
 
                     PageButtons(
@@ -474,9 +474,9 @@ internal fun EditDockGridPageScreen(
                                     customFolderBackgroundColor = customFolderBackgroundColor,
                                     folderCornerRadius = folderSettings.folderCornerRadius,
                                     // Assets and Styling
-                                    iconPackFilePaths = iconPackFilePaths
+                                    iconPackFilePaths = iconPackFilePaths,
                                 )
-                            }
+                            },
                         )
 
                         PageButtons(
