@@ -76,10 +76,11 @@ import kotlinx.coroutines.launch
 
 @Composable
 internal fun InteractiveShortcutInfoGridItem(
-    // Data and State
+    // Data
     data: GridItemData.ShortcutInfo,
     gridItem: GridItem,
     gridItemSettings: GridItemSettings,
+    // State
     hasShortcutHostPermission: Boolean,
     isScrollInProgress: Boolean,
     isVisibleFolders: Boolean,
@@ -87,18 +88,19 @@ internal fun InteractiveShortcutInfoGridItem(
     hasInteraction: Boolean,
     isVisibleWhiteBox: Boolean,
     animations: Boolean,
-    // Layout and Appearance
+    // Appearance
     textColor: Color,
     sourceBounds: Rect,
+    // Layout
     horizontalAlignment: Alignment.Horizontal,
     verticalArrangement: Arrangement.Vertical,
     horizontalArrangement: Arrangement.Horizontal,
     verticalAlignment: Alignment.Vertical,
     maxLines: Int,
-    // Transition and Shared Elements
+    // Animation
     sharedTransitionScope: SharedTransitionScope,
     sharedElementKey: SharedElementKey,
-    // Layout and Appearance
+    // Modifier
     modifier: Modifier = Modifier,
     // Callbacks
     onOpenAppDrawer: () -> Unit,
@@ -108,7 +110,7 @@ internal fun InteractiveShortcutInfoGridItem(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit,
+    ) -> Unit
 ) {
     val androidLauncherAppsWrapper = LocalLauncherApps.current
     val androidStatusBarManagerWrapper = LocalStatusBarManager.current
@@ -158,11 +160,14 @@ internal fun InteractiveShortcutInfoGridItem(
                         onDoubleTap = if (gridItem.doubleTap.eblanActionType != EblanActionType.None) {
                             {
                                 handleEblanAction(
+                                    // Context and Action
                                     context = context,
                                     eblanAction = gridItem.doubleTap,
+                                    // System Wrappers
                                     launcherApps = androidLauncherAppsWrapper,
                                     statusBarManagerWrapper = androidStatusBarManagerWrapper,
-                                    onOpenAppDrawer = currentOnOpenAppDrawer,
+                                    // Callbacks
+                                    onOpenAppDrawer = currentOnOpenAppDrawer
                                 )
                             }
                         } else {
@@ -200,9 +205,11 @@ internal fun InteractiveShortcutInfoGridItem(
             }
         }
         .swipeGestures(
+            // Gestures
             swipeDown = gridItem.swipeDown,
             swipeUp = gridItem.swipeUp,
-            onOpenAppDrawer = onOpenAppDrawer,
+            // Actions
+            onOpenAppDrawer = onOpenAppDrawer
         )
 
     val iconModifier = Modifier
@@ -213,10 +220,12 @@ internal fun InteractiveShortcutInfoGridItem(
             },
         )
         .gridItemSharedElement(
-            enabled = animations,
-            sharedElementKey = sharedElementKey,
+            // Transition State
             sharedTransitionScope = sharedTransitionScope,
-            visible = !isScrollInProgress && !hasInteraction,
+            sharedElementKey = sharedElementKey,
+            // Visibility Control
+            enabled = animations,
+            visible = !isScrollInProgress && !hasInteraction
         )
         .gridItemScaleAnimation(
             animations = animations,
@@ -294,14 +303,17 @@ internal fun InteractiveShortcutInfoGridItem(
     }
 
     GridItemLayoutType(
+        // Settings and Modifier
         gridItemSettings = gridItemSettings,
+        modifier = itemModifier,
+        // Alignment and Arrangement
         horizontalAlignment = horizontalAlignment,
         verticalAlignment = verticalAlignment,
         horizontalArrangement = horizontalArrangement,
         verticalArrangement = verticalArrangement,
-        modifier = itemModifier,
+        // Content
         iconContent = iconContent,
         labelContent = labelContent,
-        labelOnlyContent = labelOnlyContent,
+        labelOnlyContent = labelOnlyContent
     )
 }

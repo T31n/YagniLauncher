@@ -33,17 +33,17 @@ import kotlin.time.Duration.Companion.milliseconds
 @Composable
 @OptIn(FlowPreview::class)
 internal fun ScreenEffect(
-    // State
+    // State and Visibility
     isVisibleOverlay: Boolean,
     textFieldState: TextFieldState,
-    // Gesture
+    screenHeight: Int,
+    // Gestures
     drag: Drag,
     swipeY: Float,
-    screenHeight: Int,
     // Callbacks
     onDismiss: () -> Unit,
     onGetLabel: (String) -> Unit,
-    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
+    onUpdateIsVisibleOverlay: (Boolean) -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 

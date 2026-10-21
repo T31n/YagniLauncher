@@ -76,7 +76,7 @@ internal fun SettingsPopup(
     ) -> Unit,
     onSettings: () -> Unit,
     onShortcutConfigActivities: () -> Unit,
-    onWidgets: () -> Unit,
+    onWidgets: () -> Unit
 ) {
     requireNotNull(popupSettingsIntOffset)
 
@@ -89,7 +89,9 @@ internal fun SettingsPopup(
     }
 
     val items = buildSettingsMenuItems(
+        // Features
         hasSystemFeatureAppWidgets = hasSystemFeatureAppWidgets,
+        // Callbacks
         onSettingsClick = {
             onSettings()
 
@@ -129,7 +131,7 @@ internal fun SettingsPopup(
             context.startActivity(chooser)
 
             transitionState.targetState = false
-        },
+        }
     )
 
     LaunchedEffect(
@@ -169,11 +171,14 @@ internal fun SettingsPopup(
             ) {
                 items.forEachIndexed { index, settingsMenuItem ->
                     PopupMenuRow(
+                        // Content
                         title = settingsMenuItem.title,
                         imageVector = settingsMenuItem.imageVector,
+                        // Index and Size
                         index = index,
                         size = items.size,
-                        onClick = settingsMenuItem.onClick,
+                        // Action
+                        onClick = settingsMenuItem.onClick
                     )
                 }
             }
@@ -186,12 +191,13 @@ private fun PopupMenuRow(
     // Content
     title: String,
     imageVector: ImageVector,
+    // Index and Size
     index: Int,
     size: Int,
     // Layout
     modifier: Modifier = Modifier,
-    // Callbacks
-    onClick: () -> Unit,
+    // Action
+    onClick: () -> Unit
 ) {
     Card(
         modifier = modifier
@@ -223,13 +229,15 @@ private fun PopupMenuRow(
 
 @Composable
 private fun buildSettingsMenuItems(
+    // Features
     hasSystemFeatureAppWidgets: Boolean,
+    // Callbacks
     onSettingsClick: () -> Unit,
     onEditPageClick: () -> Unit,
     onEditDockPageClick: () -> Unit,
     onWidgetsClick: () -> Unit,
     onShortcutConfigActivitiesClick: () -> Unit,
-    onWallpaperClick: () -> Unit,
+    onWallpaperClick: () -> Unit
 ): List<SettingsMenuItem> = buildList {
     add(
         SettingsMenuItem(

@@ -110,13 +110,17 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 internal fun ApplicationScreen(
-    // Layout and Animation
+    // Layout and Transition
     sharedTransitionScope: SharedTransitionScope,
     screenHeight: Int,
     paddingValues: PaddingValues,
+    modifier: Modifier = Modifier,
+    // Visual and Animation
     animations: Boolean,
     alpha: Float,
-    // Application Info
+    systemTextColor: TextColor,
+    systemCustomTextColor: Int,
+    // Application Data
     eblanApplicationInfoTags: List<EblanApplicationInfoTag>,
     getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
     appDrawerSettings: AppDrawerSettings,
@@ -127,15 +131,10 @@ internal fun ApplicationScreen(
     customFolderBackgroundColor: Int,
     isVisibleFolderEblanApplicationInfos: Boolean,
     folderEblanApplicationInfoEntries: List<FolderEntry>,
-    // System Appearance
-    systemTextColor: TextColor,
-    systemCustomTextColor: Int,
-    // Overlay and Gestures
+    // Gesture and State
     isVisibleOverlay: Boolean,
     swipeY: Float,
     drag: Drag,
-    // Layout and Animation
-    modifier: Modifier = Modifier,
     // Actions and Callbacks
     onDismiss: () -> Unit,
     onDragEnd: () -> Unit,
@@ -167,12 +166,14 @@ internal fun ApplicationScreen(
         intOffset: IntOffset,
         intSize: IntSize,
     ) -> Unit,
-    onTapFolderApplicationInfo: (folderEntry: FolderEntry) -> Unit,
+    onTapFolderApplicationInfo: (folderEntry: FolderEntry) -> Unit
 ) {
     BlurBehindEffect(
+        // Effect
         blurBehind = appDrawerSettings.blurBehind,
+        // Layout
         screenHeight = screenHeight,
-        swipeY = swipeY,
+        swipeY = swipeY
     )
 
     Surface(
@@ -210,24 +211,30 @@ internal fun ApplicationScreen(
         when (appDrawerSettings.appDrawerType) {
             AppDrawerType.Vertical -> {
                 VerticalApplicationScreen(
+                    // Layout and Transition
                     sharedTransitionScope = sharedTransitionScope,
                     screenHeight = screenHeight,
                     paddingValues = paddingValues,
+                    // Application Info
                     eblanApplicationInfoTags = eblanApplicationInfoTags,
                     getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
+                    // Folder Configuration
                     folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                     folderCornerRadius = folderCornerRadius,
                     folderBackgroundColor = folderBackgroundColor,
                     customFolderBackgroundColor = customFolderBackgroundColor,
                     isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
                     folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
+                    // System and Appearance
                     appDrawerSettings = appDrawerSettings,
                     systemTextColor = systemTextColor,
                     systemCustomTextColor = systemCustomTextColor,
                     animations = animations,
+                    // Gesture and Interaction State
                     drag = drag,
                     swipeY = swipeY,
                     isVisibleOverlay = isVisibleOverlay,
+                    // Callbacks
                     onDismiss = onDismiss,
                     onDragEnd = onDragEnd,
                     onGetEblanApplicationInfosByLabel = onGetEblanApplicationInfosByLabel,
@@ -239,33 +246,37 @@ internal fun ApplicationScreen(
                     onLongPressApplicationInfo = onLongPressApplicationInfo,
                     onLongPressFolderApplicationInfo = onLongPressFolderApplicationInfo,
                     onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
-                    onTapFolderApplicationInfo = onTapFolderApplicationInfo,
+                    onTapFolderApplicationInfo = onTapFolderApplicationInfo
                 )
             }
 
             AppDrawerType.Horizontal -> {
                 HorizontalApplicationScreen(
+                    // Layout and Transition
                     sharedTransitionScope = sharedTransitionScope,
                     paddingValues = paddingValues,
                     screenHeight = screenHeight,
+                    // Application Info and Data
                     eblanApplicationInfoTags = eblanApplicationInfoTags,
                     getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
+                    onGetEblanApplicationInfosByLabel = onGetEblanApplicationInfosByLabel,
+                    onGetEblanApplicationInfosByTagId = onGetEblanApplicationInfosByTagId,
+                    // Theme and Appearance
                     systemTextColor = systemTextColor,
                     systemCustomTextColor = systemCustomTextColor,
+                    // Settings and Interaction
                     animations = animations,
                     appDrawerSettings = appDrawerSettings,
                     drag = drag,
                     swipeY = swipeY,
                     isVisibleOverlay = isVisibleOverlay,
                     onDismiss = onDismiss,
-                    onDragEnd = onDragEnd,
-                    onGetEblanApplicationInfosByLabel = onGetEblanApplicationInfosByLabel,
-                    onGetEblanApplicationInfosByTagId = onGetEblanApplicationInfosByTagId,
                     onVerticalDrag = onVerticalDrag,
                     onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+                    onDragEnd = onDragEnd,
                     onDragApplicationInfo = onDragApplicationInfo,
                     onLongPressApplicationInfo = onLongPressApplicationInfo,
-                    onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
+                    onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem
                 )
             }
         }
@@ -281,10 +292,11 @@ internal fun QuiteModeScreen(
     customBackgroundColor: Int,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
+    // Layout
     modifier: Modifier = Modifier,
-    // Gestures
+    // Callbacks
     onDragEnd: () -> Unit,
-    onVerticalDrag: (Float) -> Unit,
+    onVerticalDrag: (Float) -> Unit
 ) {
     val scope = rememberCoroutineScope()
 
@@ -293,11 +305,14 @@ internal fun QuiteModeScreen(
     val isDefaultLauncher by rememberIsDefaultLauncher()
 
     val textColor = getApplicationScreenTextColor(
+        // Background Colors
         backgroundColor = backgroundColor,
         customBackgroundColor = customBackgroundColor,
+        // Text Colors
         systemTextColor = systemTextColor,
         systemCustomTextColor = systemCustomTextColor,
-        defaultColor = MaterialTheme.colorScheme.onSurface,
+        // Defaults
+        defaultColor = MaterialTheme.colorScheme.onSurface
     )
 
     Column(
@@ -349,13 +364,13 @@ internal fun QuiteModeScreen(
 
 @Composable
 internal fun TagElevatedFilterChip(
-    // Tag Data
+    // Data
     eblanApplicationInfoTag: EblanApplicationInfoTag,
     selectedEblanApplicationInfoTag: Long?,
-    // Modifier
+    // Layout
     modifier: Modifier = Modifier,
     // Callbacks
-    onUpdateEblanApplicationInfoTag: (Long?) -> Unit,
+    onUpdateEblanApplicationInfoTag: (Long?) -> Unit
 ) {
     ElevatedFilterChip(
         modifier = modifier.padding(5.dp),
@@ -386,9 +401,10 @@ internal fun TagElevatedFilterChip(
 
 @Composable
 internal fun EblanApplicationInfoTabRow(
-    // Content
+    // Data
     eblanUserPageKeys: List<EblanUserPageKey>,
     eblanApplicationInfos: Map<EblanUserPageKey, List<EblanApplicationInfo>>,
+    // State
     currentPage: Int,
     // Appearance
     backgroundColor: BackgroundColor,
@@ -396,8 +412,8 @@ internal fun EblanApplicationInfoTabRow(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     modifier: Modifier = Modifier,
-    // Actions
-    onAnimateScrollToPage: suspend (Int) -> Unit,
+    // Callbacks
+    onAnimateScrollToPage: suspend (Int) -> Unit
 ) {
     val scope = rememberCoroutineScope()
 
@@ -420,11 +436,14 @@ internal fun EblanApplicationInfoTabRow(
     }
 
     val contentColor = getApplicationScreenTextColor(
+        // Background Colors
         backgroundColor = backgroundColor,
         customBackgroundColor = customBackgroundColor,
+        // Text Colors
         systemTextColor = systemTextColor,
         systemCustomTextColor = systemCustomTextColor,
-        defaultColor = MaterialTheme.colorScheme.onSurface,
+        // Defaults
+        defaultColor = MaterialTheme.colorScheme.onSurface
     )
 
     SecondaryTabRow(
@@ -467,19 +486,19 @@ internal fun EblanApplicationInfoTabRow(
 @OptIn(FlowPreview::class)
 @Composable
 internal fun ApplicationScreenEffect(
-    // Pager and UI State
+    // Pager and Dimensions
     horizontalPagerState: PagerState,
     screenHeight: Int,
-    selectedEblanApplicationInfoTagId: Long?,
     swipeY: Float,
+    // State and Focus
+    selectedEblanApplicationInfoTagId: Long?,
     textFieldState: TextFieldState,
-    // Keyboard and Focus
     showKeyboard: Boolean,
     focusRequester: FocusRequester,
     // Callbacks
     onDismiss: () -> Unit,
     onGetEblanApplicationInfosByLabel: (String) -> Unit,
-    onGetEblanApplicationInfosByTagId: (Long?) -> Unit,
+    onGetEblanApplicationInfosByTagId: (Long?) -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -656,11 +675,11 @@ internal fun rememberIsPrivateQuietModeEnabled(eblanUser: EblanUser?): State<Boo
 
 @Composable
 private fun BlurBehindEffect(
-    // Effect Configuration
+    // Effect
     blurBehind: Boolean,
-    // Dimensions and Gesture
+    // Layout
     screenHeight: Int,
-    swipeY: Float,
+    swipeY: Float
 ) {
     if (!blurBehind) return
 

@@ -25,17 +25,17 @@ import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
 
 internal fun getWidgetGridItem(
-    // Identification
+    // Identifiers
     id: String,
     serialNumber: Long,
     packageName: String,
     componentName: String,
-    // Content
+    // Display Info
     label: String?,
     icon: String?,
     preview: String?,
     configure: String?,
-    // Layout
+    // Layout and Dimensions
     gridItemSettings: GridItemSettings,
     page: Int,
     minWidth: Int,
@@ -43,11 +43,10 @@ internal fun getWidgetGridItem(
     targetCellWidth: Int,
     targetCellHeight: Int,
     resizeMode: Int,
-    // Constraints
     maxResizeWidth: Int,
     maxResizeHeight: Int,
     minResizeWidth: Int,
-    minResizeHeight: Int,
+    minResizeHeight: Int
 ): GridItem {
     val data = GridItemData.Widget(
         appWidgetId = 0,

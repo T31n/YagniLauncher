@@ -42,11 +42,11 @@ internal fun TextDialog(
     // Content
     title: String,
     text: String,
-    // Appearance
+    // Layout
     modifier: Modifier = Modifier,
-    // Actions
+    // Callbacks
     onDismissRequest: () -> Unit,
-    onClick: () -> Unit,
+    onClick: () -> Unit
 ) {
     EblanDialog(
         modifier = modifier,

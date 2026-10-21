@@ -166,60 +166,92 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 internal fun PagerScreen(
-    // State
-    appDrawerSettings: AppDrawerSettings,
-    configureResultCode: Int?,
-    dockGridItemsByPage: Map<Int, List<GridItem>>,
-    eblanAppWidgetProviderInfos: Map<EblanApplicationInfoGroup, List<EblanAppWidgetProviderInfo>>,
-    eblanAppWidgetProviderInfosGroup: Map<String, List<EblanAppWidgetProviderInfo>>,
-    eblanApplicationInfoTags: List<EblanApplicationInfoTag>,
-    eblanShortcutConfigs: Map<EblanUser, Map<EblanApplicationInfoGroup, List<EblanShortcutConfig>>>,
-    eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
-    experimentalSettings: ExperimentalSettings,
-    folderGridItemEntries: List<FolderEntry>,
-    folderEblanApplicationInfoEntries: List<FolderEntry>,
-    gestureSettings: GestureSettings,
-    getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
-    gridItems: List<GridItem>,
-    gridItemsByPage: Map<Int, List<GridItem>>,
-    hasShortcutHostPermission: Boolean,
-    hasSystemFeatureAppWidgets: Boolean,
+    // Screen Dimensions
+    screenWidth: Int,
+    screenHeight: Int,
+    // Settings
     homeSettings: HomeSettings,
     folderSettings: FolderSettings,
-    moveGridItemResult: MoveGridItemResult?,
-    paddingValues: PaddingValues,
-    pinGridItem: GridItem?,
-    screenHeight: Int,
-    screenWidth: Int,
+    appDrawerSettings: AppDrawerSettings,
+    gestureSettings: GestureSettings,
+    experimentalSettings: ExperimentalSettings,
     textColor: TextColor,
+    // System Features
+    hasSystemFeatureAppWidgets: Boolean,
+    hasShortcutHostPermission: Boolean,
+    // Data
+    gridItems: List<GridItem>,
+    gridItemsByPage: Map<Int, List<GridItem>>,
+    dockGridItemsByPage: Map<Int, List<GridItem>>,
+    folderGridItemEntries: List<FolderEntry>,
+    folderEblanApplicationInfoEntries: List<FolderEntry>,
+    eblanApplicationInfoTags: List<EblanApplicationInfoTag>,
+    eblanAppWidgetProviderInfos: Map<EblanApplicationInfoGroup, List<EblanAppWidgetProviderInfo>>,
+    eblanAppWidgetProviderInfosGroup: Map<String, List<EblanAppWidgetProviderInfo>>,
+    eblanShortcutConfigs: Map<EblanUser, Map<EblanApplicationInfoGroup, List<EblanShortcutConfig>>>,
+    eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
+    folderPopups: Map<String, FolderPopup>,
+    folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
+    iconPackFilePaths: Map<String, String?>,
+    getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
+    // State
+    configureResultCode: Int?,
+    moveGridItemResult: MoveGridItemResult?,
+    moveFolderEblanApplicationInfoGridItemResult: MoveFolderEblanApplicationInfoGridItemResult?,
+    pinGridItem: GridItem?,
     resizeGridItem: GridItem?,
     gridItemSource: GridItemSource?,
     isVisibleOverlay: Boolean,
-    folderPopups: Map<String, FolderPopup>,
-    iconPackFilePaths: Map<String, String?>,
-    folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
-    moveFolderEblanApplicationInfoGridItemResult: MoveFolderEblanApplicationInfoGridItemResult?,
-    // Modifier
+    // Layout
+    paddingValues: PaddingValues,
     modifier: Modifier = Modifier,
-    // Callbacks
+    // Callbacks - Data Management
+    onStartSyncData: () -> Unit,
+    onStopSyncData: () -> Unit,
+    onResetGrid: () -> Unit,
+    onResetConfigureResultCode: () -> Unit,
+    onResetPinGridItem: () -> Unit,
+    onResetFolderGridItemPopupEntries: () -> Unit,
+    onResetFolderEblanApplicationInfoPopupEntries: () -> Unit,
+    // Callbacks - Grid Item Actions
     onDeleteGridItem: (GridItem) -> Unit,
     onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
-    onResetGridAfterMoveFolder: () -> Unit,
-    onEditApplicationInfo: (
-        serialNumber: Long,
-        componentName: String,
-    ) -> Unit,
     onEditGridItem: (String) -> Unit,
-    onEditPage: (
-        gridItems: List<GridItem>,
-        associate: Associate,
+    onMoveGridItem: (
+        movingGridItem: GridItem,
+        x: Int,
+        y: Int,
+        columns: Int,
+        rows: Int,
+        gridWidth: Int,
+        gridHeight: Int,
     ) -> Unit,
-    onGetEblanAppWidgetProviderInfosByLabel: (String) -> Unit,
-    onGetEblanApplicationInfosByLabel: (String) -> Unit,
-    onGetEblanApplicationInfosByTagId: (Long?) -> Unit,
-    onGetEblanShortcutConfigsByLabel: (String) -> Unit,
-    onGetPinGridItem: (PinItemRequestType) -> Unit,
+    onResizeGridItem: (
+        gridItem: GridItem,
+        columns: Int,
+        rows: Int,
+    ) -> Unit,
+    onResizeCancel: () -> Unit,
+    onResizeEnd: () -> Unit,
+    onUpdateResizeGridItem: (GridItem) -> Unit,
+    onUpdateGridItemSource: (GridItemSource) -> Unit,
+    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
+    onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
+    onUpdateGridItemsAfterMoveNewFolder: (
+        folderGridItems: List<GridItem>,
+        moveGridItemResult: MoveGridItemResult,
+    ) -> Unit,
+    onUpdateShortcutConfigIntoShortcutInfoGridItem: (
+        moveGridItemResult: MoveGridItemResult,
+        pinItemRequestType: PinItemRequestType.ShortcutInfo,
+    ) -> Unit,
+    // Callbacks - Folder Actions
+    onResetGridAfterMoveFolder: () -> Unit,
+    onUpsertFolderGridItemPopupEntry: (FolderEntry) -> Unit,
+    onDeleteFolderGridItemPopupEntry: (FolderEntry) -> Unit,
+    onUpsertFolderEblanApplicationInfoPopupEntry: (FolderEntry) -> Unit,
+    onDeleteFolderEblanApplicationInfoPopupEntry: (FolderEntry) -> Unit,
     onMoveFolderGridItem: (
         folderPopup: FolderPopup,
         movingGridItem: GridItem,
@@ -230,61 +262,10 @@ internal fun PagerScreen(
         currentPage: Int,
     ) -> Unit,
     onMoveFolderGridItemOutsideFolder: (GridItem) -> Unit,
-    onMoveGridItem: (
-        movingGridItem: GridItem,
-        x: Int,
-        y: Int,
-        columns: Int,
-        rows: Int,
-        gridWidth: Int,
-        gridHeight: Int,
-    ) -> Unit,
-    onResetConfigureResultCode: () -> Unit,
-    onResetPinGridItem: () -> Unit,
-    onResizeCancel: () -> Unit,
-    onResizeEnd: () -> Unit,
-    onResizeGridItem: (
-        gridItem: GridItem,
-        columns: Int,
-        rows: Int,
-    ) -> Unit,
-    onSettings: () -> Unit,
-    onStartSyncData: () -> Unit,
-    onStopSyncData: () -> Unit,
-    onUpsertFolderGridItemPopupEntry: (FolderEntry) -> Unit,
-    onDeleteFolderGridItemPopupEntry: (FolderEntry) -> Unit,
-    onUpsertFolderEblanApplicationInfoPopupEntry: (FolderEntry) -> Unit,
-    onDeleteFolderEblanApplicationInfoPopupEntry: (FolderEntry) -> Unit,
     onShowFolderWhenDragging: (
         folderEntry: FolderEntry,
         movingGridItem: GridItem,
     ) -> Unit,
-    onUpdateShortcutConfigIntoShortcutInfoGridItem: (
-        moveGridItemResult: MoveGridItemResult,
-        pinItemRequestType: PinItemRequestType.ShortcutInfo,
-    ) -> Unit,
-    onUpdateGridItemSource: (GridItemSource) -> Unit,
-    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
-    onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
-    onUpdateResizeGridItem: (GridItem) -> Unit,
-    onResetGrid: () -> Unit,
-    onPackageRemoved: (
-        serialNumber: Long,
-        packageName: String,
-    ) -> Unit,
-    onPackageAdded: (
-        serialNumber: Long,
-        packageName: String,
-    ) -> Unit,
-    onPackageChanged: (
-        serialNumber: Long,
-        packageName: String,
-    ) -> Unit,
-    onShortcutsChanged: (
-        serialNumber: Long,
-        packageName: String,
-    ) -> Unit,
-    onResetFolderGridItemPopupEntries: () -> Unit,
     onEditFolderApplicationInfo: (String) -> Unit,
     onUpdateMoveFolderEblanApplicationInfoGridItemResult: (MoveFolderEblanApplicationInfoGridItemResult) -> Unit,
     onMoveFolderEblanApplicationInfoGridItem: (
@@ -305,15 +286,43 @@ internal fun PagerScreen(
         folderEblanApplicationInfo: FolderEblanApplicationInfo,
         movingGridItem: GridItem,
     ) -> Unit,
-    onResetFolderEblanApplicationInfoPopupEntries: () -> Unit,
     onDeleteFolderEblanApplicationInfoGridItems: (
         icon: String?,
         folderId: String,
     ) -> Unit,
-    onUpdateGridItemsAfterMoveNewFolder: (
-        folderGridItems: List<GridItem>,
-        moveGridItemResult: MoveGridItemResult,
+    // Callbacks - Application Info Actions
+    onEditApplicationInfo: (
+        serialNumber: Long,
+        componentName: String,
     ) -> Unit,
+    onPackageRemoved: (
+        serialNumber: Long,
+        packageName: String,
+    ) -> Unit,
+    onPackageAdded: (
+        serialNumber: Long,
+        packageName: String,
+    ) -> Unit,
+    onPackageChanged: (
+        serialNumber: Long,
+        packageName: String,
+    ) -> Unit,
+    onShortcutsChanged: (
+        serialNumber: Long,
+        packageName: String,
+    ) -> Unit,
+    // Callbacks - Page and Widget Actions
+    onEditPage: (
+        gridItems: List<GridItem>,
+        associate: Associate,
+    ) -> Unit,
+    onGetEblanAppWidgetProviderInfosByLabel: (String) -> Unit,
+    onGetEblanApplicationInfosByLabel: (String) -> Unit,
+    onGetEblanApplicationInfosByTagId: (Long?) -> Unit,
+    onGetEblanShortcutConfigsByLabel: (String) -> Unit,
+    onGetPinGridItem: (PinItemRequestType) -> Unit,
+    // Callbacks - General UI
+    onSettings: () -> Unit
 ) {
     val layoutDirection = LocalLayoutDirection.current
     val androidLauncherAppsWrapper = LocalLauncherApps.current
@@ -331,12 +340,15 @@ internal fun PagerScreen(
     val scope = rememberCoroutineScope()
 
     val pagerScreenState = rememberPagerScreenState(
+        // Settings
         gestureSettings = gestureSettings,
         homeSettings = homeSettings,
         experimentalSettings = experimentalSettings,
+        // Dimensions
         screenHeight = screenHeight,
+        // Callbacks
         onGetPinGridItem = onGetPinGridItem,
-        onResetPinGridItem = onResetPinGridItem,
+        onResetPinGridItem = onResetPinGridItem
     )
 
     val dockHeight = homeSettings.dockHeight.dp
@@ -386,9 +398,12 @@ internal fun PagerScreen(
         contract = ActivityResultContracts.StartActivityForResult(),
     ) {
         handleAppWidgetLauncherResult(
+            // Result and Manager
             androidAppWidgetManagerWrapper = androidAppWidgetManagerWrapper,
             moveGridItemResult = currentMoveGridItemResult.value,
             result = it,
+            lastAppWidgetId = pagerScreenState.lastAppWidgetId,
+            // Screen and Grid Configuration
             columns = homeSettings.columns,
             density = density,
             rows = homeSettings.rows,
@@ -397,10 +412,10 @@ internal fun PagerScreen(
             paddingValues = paddingValues,
             layoutDirection = layoutDirection,
             dockHeight = homeSettings.dockHeight,
-            lastAppWidgetId = pagerScreenState.lastAppWidgetId,
+            // Callbacks
             onUpdateWidgetGridItem = pagerScreenState::updateWidgetGridItem,
             onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
-            onUpdateLastAppWidgetId = pagerScreenState::updateLastAppWidgetId,
+            onUpdateLastAppWidgetId = pagerScreenState::updateLastAppWidgetId
         )
     }
 
@@ -409,13 +424,16 @@ internal fun PagerScreen(
     ) {
         scope.launch {
             handleShortcutConfigLauncherResult(
+                // Result Parameters
                 result = it,
                 moveGridItemResult = currentMoveGridItemResult.value,
+                // Dependencies
                 fileManager = fileManager,
                 androidImageSerializer = androidImageSerializer,
+                // Callbacks
                 onDeleteGridItem = onResetGridAfterDeleteGridItem,
                 onUpdateGridItemsAfterMove = onUpdateGridItemsAfterMove,
-                onResetGrid = onResetGrid,
+                onResetGrid = onResetGrid
             )
         }
     }
@@ -425,15 +443,18 @@ internal fun PagerScreen(
     ) {
         scope.launch {
             handleShortcutConfigIntentSenderLauncherResult(
+                // Results
                 moveGridItemResult = currentMoveGridItemResult.value,
                 result = it,
+                // Dependencies
                 androidImageSerializer = androidImageSerializer,
                 androidLauncherAppsWrapper = androidLauncherAppsWrapper,
                 androidUserManagerWrapper = androidUserManagerWrapper,
                 fileManager = fileManager,
                 iconKeyGenerator = iconKeyGenerator,
+                // Callbacks
                 onDeleteGridItem = onResetGridAfterDeleteGridItem,
-                onUpdateShortcutConfigIntoShortcutInfoGridItem = onUpdateShortcutConfigIntoShortcutInfoGridItem,
+                onUpdateShortcutConfigIntoShortcutInfoGridItem = onUpdateShortcutConfigIntoShortcutInfoGridItem
             )
         }
     }
@@ -556,21 +577,26 @@ internal fun PagerScreen(
         key2 = pagerScreenState,
     ) {
         pagerScreenState.handlePinGridItemEffect(
+            // Item
             pinGridItem = pinGridItem,
+            // Callbacks
             onUpdateGridItemSource = onUpdateGridItemSource,
             onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-            onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+            onUpdateMoveGridItemResult = onUpdateMoveGridItemResult
         )
     }
 
     SyncDataEffect(
+        // Sync Control
         syncData = experimentalSettings.syncData,
+        // Sync Callbacks
         onStartSyncData = onStartSyncData,
         onStopSyncData = onStopSyncData,
+        // Package Event Callbacks
         onPackageRemoved = onPackageRemoved,
         onPackageAdded = onPackageAdded,
         onPackageChanged = onPackageChanged,
-        onShortcutsChanged = onShortcutsChanged,
+        onShortcutsChanged = onShortcutsChanged
     )
 
     LaunchedEffect(
@@ -579,30 +605,36 @@ internal fun PagerScreen(
         key3 = experimentalSettings,
     ) {
         handleDragGridItem(
+            // Grid Dimensions
             columns = homeSettings.columns,
             rows = homeSettings.rows,
             gridCurrentPage = gridCurrentPage,
+            // Dock Dimensions
             dockColumns = homeSettings.dockColumns,
             dockRows = homeSettings.dockRows,
             dockGridCurrentPage = dockGridCurrentPage,
             dockHeight = homeSettings.dockHeight,
+            // Screen and Layout
             screenWidth = screenWidth,
             screenHeight = screenHeight,
             density = density,
             layoutDirection = layoutDirection,
             paddingValues = paddingValues,
+            // Drag State
             drag = pagerScreenState.drag,
             dragIntOffset = pagerScreenState.dragIntOffset,
             isDragging = pagerScreenState.isDragging,
             isVisibleOverlay = currentIsVisibleOverlay.value,
             lockMovement = experimentalSettings.lockMovement,
+            // Grid and Scroll State
             gridItemSource = currentGridItemSource.value,
             moveGridItemResult = currentMoveGridItemResult.value,
             isGridScrollInProgress = gridHorizontalPagerState.isScrollInProgress,
             isDockScrollInProgress = dockGridHorizontalPagerState.isScrollInProgress,
+            // Callbacks
             onMoveGridItem = onMoveGridItem,
             onUpdateAssociate = pagerScreenState::updateAssociate,
-            onUpdateSharedElementKey = pagerScreenState::updateSharedElementKey,
+            onUpdateSharedElementKey = pagerScreenState::updateSharedElementKey
         )
     }
 
@@ -612,49 +644,59 @@ internal fun PagerScreen(
         key3 = experimentalSettings,
     ) {
         handleDropGridItem(
+            // Context and Environment
             context = context,
             density = density,
             layoutDirection = layoutDirection,
+            // Android System Wrappers
             androidAppWidgetHostWrapper = androidAppWidgetHostWrapper,
             androidAppWidgetManagerWrapper = androidAppWidgetManagerWrapper,
             androidLauncherAppsWrapper = androidLauncherAppsWrapper,
             androidUserManagerWrapper = androidUserManagerWrapper,
+            // Grid and Layout Configuration
             columns = homeSettings.columns,
             rows = homeSettings.rows,
             screenHeight = screenHeight,
             screenWidth = screenWidth,
             dockHeight = homeSettings.dockHeight,
             paddingValues = paddingValues,
+            // Drag and Drop State
             drag = pagerScreenState.drag,
             gridItemSource = currentGridItemSource.value,
             isDragging = pagerScreenState.isDragging,
             moveGridItemResult = currentMoveGridItemResult.value,
             lockMovement = experimentalSettings.lockMovement,
             isVisibleOverlay = currentIsVisibleOverlay.value,
+            // Grid and Layout Callbacks
             onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
             onResetGrid = onResetGrid,
             onUpdateGridItemsAfterMove = onUpdateGridItemsAfterMove,
+            onUpdateGridItemsAfterMoveNewFolder = onUpdateGridItemsAfterMoveNewFolder,
+            // Intent and Configuration Callbacks
             onLaunchShortcutConfigIntent = shortcutConfigLauncher::launch,
             onLaunchShortcutConfigIntentSenderRequest = shortcutConfigIntentSenderLauncher::launch,
             onLaunchWidgetIntent = appWidgetLauncher::launch,
             onUpdateAppWidgetId = pagerScreenState::updateLastAppWidgetId,
+            // State and UI Update Callbacks
             onUpdateIsDragging = pagerScreenState::updateIsDragging,
             onUpdateWidgetGridItem = pagerScreenState::updateWidgetGridItem,
-            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-            onUpdateGridItemsAfterMoveNewFolder = onUpdateGridItemsAfterMoveNewFolder,
+            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay
         )
     }
 
     LaunchedEffect(key1 = pagerScreenState.widgetGridItem) {
         handleBoundWidgetEffect(
+            // Context and Host
             activity = activity,
             androidAppWidgetHostWrapper = androidAppWidgetHostWrapper,
+            // Grid State
             gridItemSource = currentGridItemSource.value,
             moveGridItemResult = currentMoveGridItemResult.value,
             widgetGridItem = pagerScreenState.widgetGridItem,
+            // Callbacks
             onDeleteGridItem = onResetGridAfterDeleteGridItem,
             onUpdateGridItemsAfterMove = onUpdateGridItemsAfterMove,
-            onResetGrid = onResetGrid,
+            onResetGrid = onResetGrid
         )
     }
 
@@ -670,16 +712,19 @@ internal fun PagerScreen(
         key2 = pagerScreenState,
     ) {
         handleAnimateScrollToPage(
+            // State
             isDragging = pagerScreenState.isDragging,
             dragIntOffset = pagerScreenState.dragIntOffset,
             associate = pagerScreenState.associate,
+            // Layout
             screenWidth = screenWidth,
             density = density,
             layoutDirection = layoutDirection,
             paddingValues = paddingValues,
             gridItemSource = currentGridItemSource.value,
+            // Callbacks
             onUpdateDockPageDirection = pagerScreenState::updateDockPageDirection,
-            onUpdateGridPageDirection = pagerScreenState::updateGridPageDirection,
+            onUpdateGridPageDirection = pagerScreenState::updateGridPageDirection
         )
     }
 
@@ -688,31 +733,39 @@ internal fun PagerScreen(
         key2 = pagerScreenState.widgetGridItem,
     ) {
         handleConfigureLauncherResultEffect(
+            // Result Data
             resultCode = configureResultCode,
             moveGridItemResult = currentMoveGridItemResult.value,
             widgetGridItem = pagerScreenState.widgetGridItem,
+            // Callbacks
             onDeleteGridItem = onDeleteGridItem,
             onUpdateGridItemsAfterMove = onUpdateGridItemsAfterMove,
             onResetConfigureResultCode = onResetConfigureResultCode,
-            onResetGrid = onResetGrid,
+            onResetGrid = onResetGrid
         )
     }
 
     LaunchedEffect(key1 = pagerScreenState.gridPageDirection) {
         handlePageDirection(
+            // State
             folderGridItemEntries = currentFolderGridItemEntries,
+            // Pagination
             pageDirection = pagerScreenState.gridPageDirection,
             currentPage = gridHorizontalPagerState.currentPage,
-            onAnimateScrollToPage = gridHorizontalPagerState::animateScrollToPage,
+            // Callbacks
+            onAnimateScrollToPage = gridHorizontalPagerState::animateScrollToPage
         )
     }
 
     LaunchedEffect(key1 = pagerScreenState.dockPageDirection) {
         handlePageDirection(
+            // State
             folderGridItemEntries = currentFolderGridItemEntries,
+            // Pagination
             pageDirection = pagerScreenState.dockPageDirection,
             currentPage = dockGridHorizontalPagerState.currentPage,
-            onAnimateScrollToPage = dockGridHorizontalPagerState::animateScrollToPage,
+            // Callbacks
+            onAnimateScrollToPage = dockGridHorizontalPagerState::animateScrollToPage
         )
     }
 
@@ -843,18 +896,22 @@ internal fun PagerScreen(
             Box(modifier = Modifier.weight(1f)) {
                 if (isVisibleDotsGrid) {
                     DotsGridLayout(
+                        // Grid Structure
                         columns = homeSettings.columns,
                         rows = homeSettings.rows,
+                        // Grid Item
                         gridItem = moveGridItemResult.movingGridItem,
                         gridItemSettings = homeSettings.gridItemSettings,
+                        // Drag and Style
                         dragIntOffset = pagerScreenState.dragIntOffset,
                         textColor = textColor,
+                        // Modifier
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(
                                 start = paddingValues.calculateStartPadding(layoutDirection),
                                 end = paddingValues.calculateEndPadding(layoutDirection),
-                            ),
+                            )
                     )
                 }
 
@@ -870,9 +927,11 @@ internal fun PagerScreen(
                     )
 
                     GridLayout(
+                        // Grid Properties
                         gridItems = gridItemsByPage[page],
                         columns = homeSettings.columns,
                         rows = homeSettings.rows,
+                        // Layout Options
                         animate = (isVisibleOverlay || isResizing) && experimentalSettings.gridItemAnimation,
                         modifier = Modifier
                             .fillMaxSize()
@@ -885,57 +944,69 @@ internal fun PagerScreen(
                                 page = index,
                                 effect = homeSettings.pagerTransitionEffect,
                             ),
+                        // Content
                         content = {
                             InteractiveGridItem(
+                                // Item Data
                                 gridItem = it,
                                 gridItemSettings = homeSettings.gridItemSettings,
                                 sharedElementKey = SharedElementKey(
                                     id = it.id,
                                     parent = SharedElementKey.Parent.Grid,
                                 ),
+                                statusBarNotifications = statusBarNotifications,
+                                moveGridItemResult = moveGridItemResult,
+                                // Layout and Dimensions
                                 cellWidth = safeDrawingWidth / homeSettings.columns,
                                 cellHeight = gridHeight / homeSettings.rows,
                                 leftPadding = leftPadding,
                                 topOffset = topPadding,
+                                // Styling and Appearance
                                 textColor = textColor,
                                 folderCornerRadius = folderSettings.folderCornerRadius,
                                 folderBackgroundColor = folderSettings.folderBackgroundColor,
                                 customFolderBackgroundColor = folderSettings.customFolderBackgroundColor,
                                 systemCustomTextColor = homeSettings.gridItemSettings.customTextColor,
+                                iconPackFilePaths = iconPackFilePaths,
+                                // Animation and Transition
                                 sharedTransitionScope = this@SharedTransitionLayout,
+                                animations = experimentalSettings.gridItemAnimation,
+                                // State and Flags
                                 drag = pagerScreenState.drag,
                                 hasShortcutHostPermission = hasShortcutHostPermission,
                                 isScrollInProgress = gridHorizontalPagerState.isScrollInProgress,
-                                statusBarNotifications = statusBarNotifications,
                                 isVisibleOverlay = isVisibleOverlay,
                                 isVisibleFolderGridItems = isVisibleFolderGridItems,
-                                moveGridItemResult = moveGridItemResult,
                                 lockMovement = experimentalSettings.lockMovement,
                                 isDragging = pagerScreenState.isDragging,
                                 showGridItemMenu = pagerScreenState.showGridItemMenu,
                                 folderPopups = folderPopups,
-                                iconPackFilePaths = iconPackFilePaths,
-                                animations = experimentalSettings.gridItemAnimation,
                                 folderGridItemEntries = folderGridItemEntries,
+                                // Callbacks
                                 onOpenAppDrawer = pagerScreenState::openApplicationScreen,
                                 onShowFolderWhenDragging = { folderPopupEntry, gridItem ->
                                     pagerScreenState.showFolderWhenDragging(
+                                        // Folder and item being dragged
                                         folderEntry = folderPopupEntry,
                                         movingGridItem = gridItem,
-                                        onShowFolderWhenDragging = onShowFolderWhenDragging,
+                                        // Callbacks
+                                        onShowFolderWhenDragging = onShowFolderWhenDragging
                                     )
                                 },
                                 onResetGrid = onResetGrid,
                                 onLongPressGridItem = { gridItem, imageBitmap, intOffset, intSize, sharedElementKey ->
                                     pagerScreenState.longPressGridItem(
+                                        // Grid item details
                                         gridItem = gridItem,
                                         imageBitmap = imageBitmap,
+                                        newSharedElementKey = sharedElementKey,
+                                        // Grid item position and size
                                         intOffset = intOffset,
                                         intSize = intSize,
-                                        newSharedElementKey = sharedElementKey,
+                                        // Callbacks
                                         onUpdateGridItemSource = onUpdateGridItemSource,
                                         onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+                                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult
                                     )
                                 },
                                 onTapFolderGridItem = { folderPopupEntry ->
@@ -944,27 +1015,32 @@ internal fun PagerScreen(
                                         onUpsertFolderGridItemPopupEntry = onUpsertFolderGridItemPopupEntry,
                                     )
                                 },
-                                onDragGridItem = pagerScreenState::dragGridItem,
+                                onDragGridItem = pagerScreenState::dragGridItem
                             )
-                        },
+                        }
                     )
                 }
             }
 
             GridPagerIndicator(
+                // Pager State
                 gridHorizontalPagerState = gridHorizontalPagerState,
                 pageCount = homeSettings.pageCount,
+                // Indicator Appearance
                 color = getTextColor(
+                    // Text Colors
                     textColor = textColor,
-                    customTextColor = homeSettings.gridItemSettings.customTextColor,
+                    customTextColor = homeSettings.gridItemSettings.customTextColor
                 ),
                 showPageIndicator = homeSettings.showPageIndicator,
+                // Scroll Behavior
                 infiniteScroll = homeSettings.infiniteScroll,
                 swipeUp = gestureSettings.swipeUp,
                 swipeDown = gestureSettings.swipeDown,
+                // Layout
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(PAGE_INDICATOR_HEIGHT),
+                    .height(PAGE_INDICATOR_HEIGHT)
             )
 
             Box(
@@ -998,18 +1074,22 @@ internal fun PagerScreen(
 
                 if (isVisibleDotsGrid) {
                     DotsGridLayout(
+                        // Grid Structure
                         columns = homeSettings.dockColumns,
                         rows = homeSettings.dockRows,
+                        // Grid Item
                         gridItem = moveGridItemResult.movingGridItem,
                         gridItemSettings = homeSettings.gridItemSettings,
+                        // Drag and Style
                         dragIntOffset = pagerScreenState.dragIntOffset,
                         textColor = textColor,
+                        // Modifier
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(
                                 start = paddingValues.calculateStartPadding(layoutDirection),
                                 end = paddingValues.calculateEndPadding(layoutDirection),
-                            ),
+                            )
                     )
                 }
 
@@ -1029,9 +1109,11 @@ internal fun PagerScreen(
                     )
 
                     GridLayout(
+                        // Grid Properties
                         gridItems = dockGridItemsByPage[page],
                         columns = homeSettings.dockColumns,
                         rows = homeSettings.dockRows,
+                        // Layout Options
                         animate = (isVisibleOverlay || isResizing) && experimentalSettings.gridItemAnimation,
                         modifier = Modifier
                             .fillMaxSize()
@@ -1044,57 +1126,69 @@ internal fun PagerScreen(
                                 page = index,
                                 effect = homeSettings.pagerTransitionEffect,
                             ),
+                        // Content
                         content = {
                             InteractiveGridItem(
+                                // Item Data
                                 gridItem = it,
                                 gridItemSettings = homeSettings.gridItemSettings,
                                 sharedElementKey = SharedElementKey(
                                     id = it.id,
                                     parent = SharedElementKey.Parent.Dock,
                                 ),
+                                statusBarNotifications = statusBarNotifications,
+                                moveGridItemResult = moveGridItemResult,
+                                // Layout and Dimensions
                                 cellWidth = safeDrawingWidth / homeSettings.dockColumns,
                                 cellHeight = dockHeightPx / homeSettings.dockRows,
                                 leftPadding = leftPadding,
                                 topOffset = dockTopLeft,
+                                // Styling and Appearance
                                 textColor = textColor,
                                 folderCornerRadius = folderSettings.folderCornerRadius,
                                 folderBackgroundColor = folderSettings.folderBackgroundColor,
                                 customFolderBackgroundColor = folderSettings.customFolderBackgroundColor,
                                 systemCustomTextColor = homeSettings.gridItemSettings.customTextColor,
+                                iconPackFilePaths = iconPackFilePaths,
+                                // Animation and Transition
                                 sharedTransitionScope = this@SharedTransitionLayout,
+                                animations = experimentalSettings.gridItemAnimation,
+                                // State and Flags
                                 drag = pagerScreenState.drag,
                                 hasShortcutHostPermission = hasShortcutHostPermission,
                                 isScrollInProgress = dockGridHorizontalPagerState.isScrollInProgress,
-                                statusBarNotifications = statusBarNotifications,
                                 isVisibleOverlay = isVisibleOverlay,
                                 isVisibleFolderGridItems = isVisibleFolderGridItems,
-                                moveGridItemResult = moveGridItemResult,
                                 lockMovement = experimentalSettings.lockMovement,
                                 isDragging = pagerScreenState.isDragging,
                                 showGridItemMenu = pagerScreenState.showGridItemMenu,
                                 folderPopups = folderPopups,
-                                iconPackFilePaths = iconPackFilePaths,
-                                animations = experimentalSettings.gridItemAnimation,
                                 folderGridItemEntries = folderGridItemEntries,
+                                // Callbacks
                                 onOpenAppDrawer = pagerScreenState::openApplicationScreen,
                                 onShowFolderWhenDragging = { folderPopupEntry, gridItem ->
                                     pagerScreenState.showFolderWhenDragging(
+                                        // Folder and item being dragged
                                         folderEntry = folderPopupEntry,
                                         movingGridItem = gridItem,
-                                        onShowFolderWhenDragging = onShowFolderWhenDragging,
+                                        // Callbacks
+                                        onShowFolderWhenDragging = onShowFolderWhenDragging
                                     )
                                 },
                                 onResetGrid = onResetGrid,
                                 onLongPressGridItem = { gridItem, imageBitmap, intOffset, intSize, sharedElementKey ->
                                     pagerScreenState.longPressGridItem(
+                                        // Grid item details
                                         gridItem = gridItem,
                                         imageBitmap = imageBitmap,
+                                        newSharedElementKey = sharedElementKey,
+                                        // Grid item position and size
                                         intOffset = intOffset,
                                         intSize = intSize,
-                                        newSharedElementKey = sharedElementKey,
+                                        // Callbacks
                                         onUpdateGridItemSource = onUpdateGridItemSource,
                                         onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+                                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult
                                     )
                                 },
                                 onTapFolderGridItem = { folderPopupEntry ->
@@ -1103,9 +1197,9 @@ internal fun PagerScreen(
                                         onUpsertFolderGridItemPopupEntry = onUpsertFolderGridItemPopupEntry,
                                     )
                                 },
-                                onDragGridItem = pagerScreenState::dragGridItem,
+                                onDragGridItem = pagerScreenState::dragGridItem
                             )
-                        },
+                        }
                     )
                 }
             }
@@ -1113,16 +1207,19 @@ internal fun PagerScreen(
 
         if (isVisibleGridItemMenu) {
             GridItemPopup(
+                // Grid Item Details
                 gridItem = pagerScreenState.selectedGridItem,
                 gridItemSettings = homeSettings.gridItemSettings,
                 isCloseGridItemPopup = pagerScreenState.isCloseGridItemMenu,
-                eblanAppWidgetProviderInfosGroup = eblanAppWidgetProviderInfosGroup,
-                eblanShortcutInfosGroup = eblanShortcutInfosGroup,
-                hasShortcutHostPermission = hasShortcutHostPermission,
                 popupIntOffset = pagerScreenState.menuIntOffset,
                 popupIntSize = pagerScreenState.menuIntSize,
                 isVisibleOverlay = isVisibleOverlay,
                 paddingValues = paddingValues,
+                // Shortcut and Widget Data
+                eblanAppWidgetProviderInfosGroup = eblanAppWidgetProviderInfosGroup,
+                eblanShortcutInfosGroup = eblanShortcutInfosGroup,
+                hasShortcutHostPermission = hasShortcutHostPermission,
+                // Callbacks
                 onDeleteGridItem = onDeleteGridItem,
                 onDismissRequest = pagerScreenState::dismissGridItemMenu,
                 onEdit = onEditGridItem,
@@ -1137,113 +1234,138 @@ internal fun PagerScreen(
                 onUpdateIsResizing = pagerScreenState::updateIsResizing,
                 onDragShortcutInfo = { gridItem, imageBitmap, intOffset, intSize, sharedElementKey ->
                     pagerScreenState.dragShortcutInfoFromGridItemMenu(
+                        // Drag source information
                         gridItem = gridItem,
                         imageBitmap = imageBitmap,
                         intOffset = intOffset,
                         intSize = intSize,
                         newSharedElementKey = sharedElementKey,
+                        // Callbacks
                         onUpdateGridItemSource = onUpdateGridItemSource,
                         onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult
                     )
-                },
+                }
             )
         }
 
         if (isVisibleSettingsMenu) {
             SettingsPopup(
+                // Content
                 gridItems = gridItems,
+                // State
                 hasSystemFeatureAppWidgets = hasSystemFeatureAppWidgets,
                 popupSettingsIntOffset = pagerScreenState.settingsMenuIntOffset,
+                // Actions
                 onDismissRequest = pagerScreenState::dismissSettingsMenu,
                 onEditPage = onEditPage,
                 onSettings = onSettings,
                 onShortcutConfigActivities = pagerScreenState::openShortcutConfigScreen,
-                onWidgets = pagerScreenState::openWidgetScreen,
+                onWidgets = pagerScreenState::openWidgetScreen
             )
         }
 
         if (isVisibleFolderGridItems) {
             folderGridItemEntries.forEach {
                 FolderScreen(
+                    // Transition and Layout
                     sharedTransitionScope = this@SharedTransitionLayout,
-                    drag = pagerScreenState.drag,
-                    folderEntry = it,
-                    gridItemSettings = homeSettings.gridItemSettings,
                     paddingValues = paddingValues,
                     safeDrawingHeight = safeDrawingHeight,
                     safeDrawingWidth = safeDrawingWidth,
-                    statusBarNotifications = statusBarNotifications,
-                    isVisibleOverlay = isVisibleOverlay,
-                    hasShortcutHostPermission = hasShortcutHostPermission,
-                    moveGridItemResult = moveGridItemResult,
-                    isDragging = pagerScreenState.isDragging,
-                    dragIntOffset = pagerScreenState.dragIntOffset,
-                    lockMovement = experimentalSettings.lockMovement,
-                    folderCellWidth = folderSettings.folderCellWidth,
-                    folderCellHeight = folderSettings.folderCellHeight,
                     screenHeight = screenHeight,
                     screenWidth = screenWidth,
+                    // Folder Content and Settings
+                    folderEntry = it,
                     folderGridItemEntries = folderGridItemEntries,
-                    showFolderGridItemMenu = pagerScreenState.showFolderGridItemMenu,
+                    gridItemSettings = homeSettings.gridItemSettings,
+                    folderCellWidth = folderSettings.folderCellWidth,
+                    folderCellHeight = folderSettings.folderCellHeight,
                     folderPopups = folderPopups,
                     iconPackFilePaths = iconPackFilePaths,
+                    statusBarNotifications = statusBarNotifications,
+                    // Appearance and Style
                     animations = experimentalSettings.gridItemAnimation,
                     systemTextColor = textColor,
                     systemCustomTextColor = homeSettings.gridItemSettings.customTextColor,
                     folderBackgroundColor = folderSettings.folderBackgroundColor,
                     folderCornerRadius = folderSettings.folderCornerRadius,
                     customFolderBackgroundColor = folderSettings.customFolderBackgroundColor,
-                    onMoveFolderGridItemOutsideFolder = { gridItem, sharedElementKey ->
-                        pagerScreenState.moveFolderGridItemOutsideFolder(
-                            gridItem = gridItem,
-                            newSharedElementKey = sharedElementKey,
-                            onMoveFolderGridItemOutsideFolder = onMoveFolderGridItemOutsideFolder,
+                    // Drag and Drop State
+                    drag = pagerScreenState.drag,
+                    moveGridItemResult = moveGridItemResult,
+                    isDragging = pagerScreenState.isDragging,
+                    dragIntOffset = pagerScreenState.dragIntOffset,
+                    lockMovement = experimentalSettings.lockMovement,
+                    // Overlay and Permission State
+                    isVisibleOverlay = isVisibleOverlay,
+                    hasShortcutHostPermission = hasShortcutHostPermission,
+                    showFolderGridItemMenu = pagerScreenState.showFolderGridItemMenu,
+                    // Folder Actions
+                    onCloseFolder = { folderPopupEntry, isFirstFolderGridItem ->
+                        pagerScreenState.closeFolderGridItem(
+                            // Folder Item
+                            folderEntry = folderPopupEntry,
+                            isFirstFolderGridItem = isFirstFolderGridItem,
+                            // Callbacks
+                            onDeleteFolderGridItemPopupEntry = onDeleteFolderGridItemPopupEntry
                         )
                     },
                     onOpenAppDrawer = pagerScreenState::openApplicationScreen,
-                    onUpdateIsDragging = pagerScreenState::updateIsDragging,
-                    onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                    onMoveFolderGridItem = onMoveFolderGridItem,
-                    onDismissFolderGridItemMenu = pagerScreenState::dismissFolderGridItemMenu,
                     onResetGrid = onResetGrid,
                     onResetGridAfterMoveFolder = onResetGridAfterMoveFolder,
+                    onUpdateIsDragging = pagerScreenState::updateIsDragging,
+                    onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+                    onDismissFolderGridItemMenu = pagerScreenState::dismissFolderGridItemMenu,
                     onUpsertFolderGridItemPopupEntry = onUpsertFolderGridItemPopupEntry,
+                    onDragFolderGridItem = pagerScreenState::dragFolderGridItem,
                     onLongPressFolderGridItem = { gridItem, imageBitmap, intOffset, intSize, sharedElementKey ->
                         pagerScreenState.longPressFolderGridItem(
+                            // Item details
                             gridItem = gridItem,
                             imageBitmap = imageBitmap,
+                            // Position and size
                             intOffset = intOffset,
                             intSize = intSize,
+                            // Shared element
                             newSharedElementKey = sharedElementKey,
+                            // Callbacks
                             onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                            onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+                            onUpdateMoveGridItemResult = onUpdateMoveGridItemResult
                         )
                     },
-                    onDragFolderGridItem = pagerScreenState::dragFolderGridItem,
-                    onCloseFolder = { folderPopupEntry, isFirstFolderGridItem ->
-                        pagerScreenState.closeFolderGridItem(
-                            folderEntry = folderPopupEntry,
-                            isFirstFolderGridItem = isFirstFolderGridItem,
-                            onDeleteFolderGridItemPopupEntry = onDeleteFolderGridItemPopupEntry,
+                    onMoveFolderGridItem = onMoveFolderGridItem,
+                    onMoveFolderGridItemOutsideFolder = { gridItem, sharedElementKey ->
+                        pagerScreenState.moveFolderGridItemOutsideFolder(
+                            // Item to move
+                            gridItem = gridItem,
+                            // New location
+                            newSharedElementKey = sharedElementKey,
+                            // Callbacks
+                            onMoveFolderGridItemOutsideFolder = onMoveFolderGridItemOutsideFolder
                         )
-                    },
+                    }
                 )
             }
         }
 
         if (isVisibleFolderGridItemMenu) {
             FolderGridItemPopup(
+                // Grid Item
                 gridItemSettings = homeSettings.gridItemSettings,
+                folderGridItem = pagerScreenState.selectedGridItem,
+                // Permission and Visibility
                 hasShortcutHostPermission = hasShortcutHostPermission,
+                isVisibleOverlay = isVisibleOverlay,
+                isCloseFolderGridItemPopup = pagerScreenState.isCloseFolderGridItemMenu,
+                // Popup Layout
                 popupIntOffset = pagerScreenState.menuIntOffset,
                 popupIntSize = pagerScreenState.menuIntSize,
-                folderGridItem = pagerScreenState.selectedGridItem,
-                isVisibleOverlay = isVisibleOverlay,
                 paddingValues = paddingValues,
-                isCloseFolderGridItemPopup = pagerScreenState.isCloseFolderGridItemMenu,
+                // Widget and Shortcut Data
                 eblanAppWidgetProviderInfosGroup = eblanAppWidgetProviderInfosGroup,
                 eblanShortcutInfosGroup = eblanShortcutInfosGroup,
+                // Actions
                 onDeleteGridItem = onDeleteGridItem,
                 onDismissRequest = pagerScreenState::dismissFolderGridItemMenu,
                 onEdit = onEditGridItem,
@@ -1257,41 +1379,50 @@ internal fun PagerScreen(
                 onResetFolderGridItemPopupEntries = onResetFolderGridItemPopupEntries,
                 onDragShortcutInfo = { gridItem, imageBitmap, intOffset, intSize, sharedElementKey ->
                     pagerScreenState.dragShortcutInfoFromFolderGridItemMenu(
+                        // Grid item details
                         gridItem = gridItem,
                         imageBitmap = imageBitmap,
                         intOffset = intOffset,
                         intSize = intSize,
+                        // Shared element key
                         newSharedElementKey = sharedElementKey,
+                        // Callbacks
                         onUpdateGridItemSource = onUpdateGridItemSource,
                         onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                         onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
-                        onResetFolderGridItemPopupEntries = onResetFolderGridItemPopupEntries,
+                        onResetFolderGridItemPopupEntries = onResetFolderGridItemPopupEntries
                     )
-                },
+                }
             )
         }
 
         if (pagerScreenState.showApplicationScreen) {
             ApplicationScreen(
+                // Layout and Transition
                 sharedTransitionScope = this@SharedTransitionLayout,
                 screenHeight = screenHeight,
                 paddingValues = paddingValues,
+                // Visual and Animation
                 animations = experimentalSettings.gridItemAnimation,
                 alpha = pagerScreenState.applicationScreenAlpha,
+                systemTextColor = textColor,
+                systemCustomTextColor = homeSettings.gridItemSettings.customTextColor,
+                // Application Data
                 eblanApplicationInfoTags = eblanApplicationInfoTags,
                 getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
                 appDrawerSettings = appDrawerSettings,
+                // Folder Settings
                 folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                 folderCornerRadius = folderSettings.folderCornerRadius,
                 folderBackgroundColor = folderSettings.folderBackgroundColor,
                 customFolderBackgroundColor = folderSettings.customFolderBackgroundColor,
                 isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
                 folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
-                systemTextColor = textColor,
-                systemCustomTextColor = homeSettings.gridItemSettings.customTextColor,
+                // Gesture and State
                 isVisibleOverlay = isVisibleOverlay,
                 swipeY = pagerScreenState.applicationScreenSwipeY.value,
                 drag = pagerScreenState.drag,
+                // Actions and Callbacks
                 onDismiss = pagerScreenState::dismissApplicationScreen,
                 onDragEnd = pagerScreenState::handleOnDragEndApplicationScreen,
                 onGetEblanApplicationInfosByLabel = onGetEblanApplicationInfosByLabel,
@@ -1300,11 +1431,13 @@ internal fun PagerScreen(
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                 onDragFolderEblanApplicationInfo = { folderEblanApplicationInfo, movingGridItem ->
                     pagerScreenState.dragFolderEblanApplicationInfo(
+                        // Data
                         folderEblanApplicationInfo = folderEblanApplicationInfo,
                         gridItem = movingGridItem,
+                        // Callbacks
                         onDragFolderEblanApplicationInfoToGrid = onDragFolderEblanApplicationInfo,
                         onUpdateGridItemSource = onUpdateGridItemSource,
-                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult
                     )
                 },
                 onDragApplicationInfo = {
@@ -1316,22 +1449,28 @@ internal fun PagerScreen(
                 },
                 onLongPressApplicationInfo = { eblanApplicationInfo, imageBitmap, intOffset, intSize, sharedElementKey ->
                     pagerScreenState.longPressEblanApplicationInfo(
+                        // Application Info
                         eblanApplicationInfo = eblanApplicationInfo,
+                        // Layout Bounds
                         imageBitmap = imageBitmap,
                         intOffset = intOffset,
                         intSize = intSize,
                         newSharedElementKey = sharedElementKey,
-                        onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+                        // Callbacks
+                        onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay
                     )
                 },
                 onLongPressFolderApplicationInfo = { folderEblanApplicationInfo: FolderEblanApplicationInfo, imageBitmap: ImageBitmap, intOffset: IntOffset, intSize: IntSize, sharedElementKey: SharedElementKey ->
                     pagerScreenState.longPressFolderEblanApplicationInfo(
+                        // Target Data
                         folderEblanApplicationInfo = folderEblanApplicationInfo,
+                        newSharedElementKey = sharedElementKey,
+                        // Visual Data
                         imageBitmap = imageBitmap,
                         intOffset = intOffset,
                         intSize = intSize,
-                        newSharedElementKey = sharedElementKey,
-                        onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+                        // Callbacks
+                        onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay
                     )
                 },
                 onLongPressPrivateSpaceApplicationInfoItem = { eblanApplicationInfo, intOffset, intSize ->
@@ -1346,7 +1485,7 @@ internal fun PagerScreen(
                         folderEntry = it,
                         onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
                     )
-                },
+                }
             )
         }
 
@@ -1356,16 +1495,20 @@ internal fun PagerScreen(
             pagerScreenState.menuIntSize != null
         ) {
             ApplicationInfoPopup(
+                // Application Data
                 eblanApplicationInfo = pagerScreenState.selectedEblanApplicationInfo,
                 eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfosGroup,
                 eblanShortcutInfosGroup = eblanShortcutInfosGroup,
+                // Settings and State
                 gridItemSettings = appDrawerSettings.gridItemSettings,
                 hasShortcutHostPermission = hasShortcutHostPermission,
                 isVisibleOverlay = isVisibleOverlay,
                 isCloseEblanApplicationInfoMenu = pagerScreenState.isCloseEblanApplicationInfoMenu,
+                // Layout and Positioning
                 popupIntOffset = pagerScreenState.menuIntOffset,
                 popupIntSize = pagerScreenState.menuIntSize,
                 paddingValues = paddingValues,
+                // Callbacks
                 onDismissRequest = pagerScreenState::dismissEblanApplicationInfoMenu,
                 onEditApplicationInfo = onEditApplicationInfo,
                 onWidgets = {
@@ -1377,16 +1520,18 @@ internal fun PagerScreen(
                 },
                 onDragShortcutInfo = { gridItem, imageBitmap, intOffset, intSize, sharedElementKey ->
                     pagerScreenState.dragShortcutInfoFromApplicationMenu(
+                        // Drag information
                         gridItem = gridItem,
                         imageBitmap = imageBitmap,
                         intOffset = intOffset,
                         intSize = intSize,
                         newSharedElementKey = sharedElementKey,
+                        // Callbacks
                         onUpdateGridItemSource = onUpdateGridItemSource,
                         onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult
                     )
-                },
+                }
             )
         }
 
@@ -1396,31 +1541,39 @@ internal fun PagerScreen(
             pagerScreenState.menuIntSize != null
         ) {
             PrivateApplicationInfoPopup(
+                // Application Info
                 eblanApplicationInfo = pagerScreenState.selectedEblanApplicationInfo,
                 eblanShortcutInfosGroup = eblanShortcutInfosGroup,
                 hasShortcutHostPermission = hasShortcutHostPermission,
+                // Popup Layout
                 popupIntOffset = pagerScreenState.menuIntOffset,
                 popupIntSize = pagerScreenState.menuIntSize,
                 paddingValues = paddingValues,
                 isClosePrivateEblanApplicationInfoMenu = pagerScreenState.isClosePrivateEblanApplicationInfoMenu,
+                // Callbacks
                 onDismissRequest = pagerScreenState::dismissPrivateEblanApplicationInfoMenu,
-                onEditApplicationInfo = onEditApplicationInfo,
+                onEditApplicationInfo = onEditApplicationInfo
             )
         }
 
         if (pagerScreenState.showWidgetScreen) {
             WidgetScreen(
+                // Grid Configuration
                 columns = homeSettings.columns,
                 rows = homeSettings.rows,
+                gridItemSettings = homeSettings.gridItemSettings,
+                // Dimensions
                 screenWidth = screenWidth,
                 screenHeight = screenHeight,
+                paddingValues = paddingValues,
+                // State
                 alpha = pagerScreenState.widgetScreenAlpha,
                 isVisibleOverlay = isVisibleOverlay,
-                paddingValues = paddingValues,
-                gridItemSettings = homeSettings.gridItemSettings,
-                drag = pagerScreenState.drag,
                 swipeY = pagerScreenState.widgetScreenSwipeY.value,
                 eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfos,
+                // Interaction
+                drag = pagerScreenState.drag,
+                // Actions
                 onDismiss = pagerScreenState::dismissWidgetScreen,
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                 onVerticalDrag = pagerScreenState::verticalDragWidgetScreen,
@@ -1428,29 +1581,35 @@ internal fun PagerScreen(
                 onGetEblanAppWidgetProviderInfosByLabel = onGetEblanAppWidgetProviderInfosByLabel,
                 onDragWidget = { gridItem, imageBitmap, intOffset, intSize, sharedElementKey ->
                     pagerScreenState.dragWidget(
+                        // Drag details
                         gridItem = gridItem,
                         newSharedElementKey = sharedElementKey,
                         imageBitmap = imageBitmap,
                         intOffset = intOffset,
                         intSize = intSize,
+                        // Callbacks
                         onUpdateGridItemSource = onUpdateGridItemSource,
                         onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult
                     )
-                },
+                }
             )
         }
 
         if (pagerScreenState.showShortcutConfigScreen) {
             ShortcutConfigScreen(
+                // Configuration
                 eblanShortcutConfigs = eblanShortcutConfigs,
                 gridItemSettings = homeSettings.gridItemSettings,
+                // Layout
                 paddingValues = paddingValues,
                 screenHeight = screenHeight,
+                // State
                 swipeY = pagerScreenState.shortcutConfigScreenSwipeY.value,
                 alpha = pagerScreenState.shortcutConfigScreenAlpha,
                 isVisibleOverlay = isVisibleOverlay,
                 drag = pagerScreenState.drag,
+                // Callbacks
                 onDismiss = pagerScreenState::dismissShortcutConfigScreen,
                 onGetEblanShortcutConfigsByLabel = onGetEblanShortcutConfigsByLabel,
                 onVerticalDrag = pagerScreenState::verticalDragShortcutConfigScreen,
@@ -1458,68 +1617,84 @@ internal fun PagerScreen(
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                 onDragShortcutConfig = { gridItem, imageBitmap, intOffset, intSize, sharedElementKey ->
                     pagerScreenState.dragShortcutConfig(
+                        // Drag item details
                         gridItem = gridItem,
                         imageBitmap = imageBitmap,
                         intOffset = intOffset,
                         intSize = intSize,
                         newSharedElementKey = sharedElementKey,
+                        // Callbacks
                         onUpdateGridItemSource = onUpdateGridItemSource,
                         onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult
                     )
-                },
+                }
             )
         }
 
         if (pagerScreenState.eblanApplicationInfoGroup != null) {
             AppWidgetScreen(
+                // Data
                 eblanAppWidgetProviderInfosGroup = eblanAppWidgetProviderInfosGroup,
                 eblanApplicationInfoGroup = pagerScreenState.eblanApplicationInfoGroup,
+                // Grid
                 columns = homeSettings.columns,
                 rows = homeSettings.rows,
                 gridItemSettings = homeSettings.gridItemSettings,
+                // Layout
                 paddingValues = paddingValues,
                 screenWidth = screenWidth,
                 screenHeight = screenHeight,
+                // Interaction
                 swipeY = pagerScreenState.appWidgetScreenSwipeY.value,
                 isVisibleOverlay = isVisibleOverlay,
                 drag = pagerScreenState.drag,
+                // Callbacks
                 onDismiss = pagerScreenState::dismissAppWidgetScreen,
                 onVerticalDrag = pagerScreenState::verticalDragAppWidgetScreen,
                 onDragEnd = pagerScreenState::handleOnDragEndAppWidgetScreen,
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                 onDragAppWidget = { gridItem, imageBitmap, intOffset, intSize, sharedElementKey ->
                     pagerScreenState.dragAppWidget(
+                        // Widget details
                         gridItem = gridItem,
                         imageBitmap = imageBitmap,
+                        // Drag position and size
                         intOffset = intOffset,
                         intSize = intSize,
+                        // Shared element
                         newSharedElementKey = sharedElementKey,
+                        // Callbacks
                         onUpdateGridItemSource = onUpdateGridItemSource,
                         onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+                        onUpdateMoveGridItemResult = onUpdateMoveGridItemResult
                     )
-                },
+                }
             )
         }
 
         if (isResizing) {
             ResizeScreen(
+                // Layout
                 paddingValues = paddingValues,
+                // Content
                 homeSettings = homeSettings,
                 resizeGridItem = resizeGridItem,
+                // Appearance
                 textColor = textColor,
                 lockMovement = experimentalSettings.lockMovement,
+                // Callbacks
                 onResizeCancel = onResizeCancel,
                 onResizeEnd = onResizeEnd,
                 onResizeGridItem = onResizeGridItem,
-                onUpdateIsResizing = pagerScreenState::updateIsResizing,
+                onUpdateIsResizing = pagerScreenState::updateIsResizing
             )
         }
 
         if (isVisibleFolderEblanApplicationInfos) {
             folderEblanApplicationInfoEntries.forEach {
                 FolderApplicationScreen(
+                    // Core State and Layout
                     sharedTransitionScope = this,
                     folderEntry = it,
                     paddingValues = paddingValues,
@@ -1528,6 +1703,7 @@ internal fun PagerScreen(
                     isVisibleOverlay = isVisibleOverlay,
                     screenWidth = screenWidth,
                     screenHeight = screenHeight,
+                    // Folder Content and Appearance
                     folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
                     animations = experimentalSettings.gridItemAnimation,
                     systemTextColor = textColor,
@@ -1539,13 +1715,15 @@ internal fun PagerScreen(
                     folderCornerRadius = folderSettings.folderCornerRadius,
                     folderCellWidth = folderSettings.folderCellWidth,
                     folderCellHeight = folderSettings.folderCellHeight,
+                    iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
+                    // Drag and Drop State
                     moveFolderEblanApplicationInfoGridItemResult = moveFolderEblanApplicationInfoGridItemResult,
                     drag = pagerScreenState.drag,
                     isDragging = pagerScreenState.isDragging,
                     lockMovement = experimentalSettings.lockMovement,
                     dragIntOffset = pagerScreenState.dragIntOffset,
                     showFolderEblanApplicationInfoGridItemMenu = pagerScreenState.showFolderEblanApplicationInfoGridItemMenu,
-                    iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
+                    // Actions and Callbacks
                     onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
                     onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                     onMoveFolderEblanApplicationInfoGridItem = onMoveFolderEblanApplicationInfoGridItem,
@@ -1555,28 +1733,36 @@ internal fun PagerScreen(
                     onUpdateIsDragging = pagerScreenState::updateIsDragging,
                     onMoveFolderEblanApplicationInfoGridItemOutsideFolder = { folderEblanApplicationInfoGridItem, movingGridItem ->
                         pagerScreenState.moveFolderEblanApplicationInfoGridItemOutsideFolder(
+                            // Grid Items
                             folderEblanApplicationInfoGridItem = folderEblanApplicationInfoGridItem,
                             movingGridItem = movingGridItem,
-                            onMoveFolderEblanApplicationInfoGridItemOutsideFolder = onMoveFolderEblanApplicationInfoGridItemOutsideFolder,
+                            // Actions
+                            onMoveFolderEblanApplicationInfoGridItemOutsideFolder = onMoveFolderEblanApplicationInfoGridItemOutsideFolder
                         )
                     },
                     onLongPressFolderEblanApplicationInfoGridItem = { folderEblanApplicationInfoGridItem, imageBitmap, intOffset, intSize, sharedElementKey ->
                         pagerScreenState.longPressFolderEblanApplicationInfoGridItem(
+                            // Item
                             folderEblanApplicationInfoGridItem = folderEblanApplicationInfoGridItem,
+                            // Visuals
                             newSharedElementKey = sharedElementKey,
                             imageBitmap = imageBitmap,
+                            // Layout
                             intOffset = intOffset,
                             intSize = intSize,
+                            // Callbacks
                             onUpdateMoveFolderEblanApplicationInfoGridItemResult = onUpdateMoveFolderEblanApplicationInfoGridItemResult,
-                            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+                            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay
                         )
                     },
                     onDragFolderEblanApplicationInfoGridItem = pagerScreenState::dragFolderEblanApplicationInfoGridItem,
                     onCloseFolder = { folderEntry, isFirstFolderGridItem ->
                         pagerScreenState.closeFolderEblanApplicationInfo(
+                            // Folder Information
                             folderEntry = folderEntry,
                             isFirstFolderEblanApplicationInfo = isFirstFolderGridItem,
-                            onDeleteFolderPopupEntry = onDeleteFolderEblanApplicationInfoPopupEntry,
+                            // Callbacks
+                            onDeleteFolderPopupEntry = onDeleteFolderEblanApplicationInfoPopupEntry
                         )
                     },
                     onTapFolderEblanApplicationInfoItem = { newFolderEntry ->
@@ -1584,36 +1770,42 @@ internal fun PagerScreen(
                             folderEntry = newFolderEntry,
                             onUpsertFolderEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
                         )
-                    },
+                    }
                 )
             }
         }
 
         if (pagerScreenState.showFolderEblanApplicationInfoMenu && pagerScreenState.selectedFolderEblanApplicationInfo != null) {
             FolderApplicationInfoPopup(
+                // Application Info
                 folderEblanApplicationInfo = pagerScreenState.selectedFolderEblanApplicationInfo,
-                paddingValues = paddingValues,
                 isCloseFolderEblanApplicationInfoMenu = pagerScreenState.isCloseFolderEblanApplicationInfoMenu,
+                // Layout and Positioning
+                paddingValues = paddingValues,
                 popupIntOffset = pagerScreenState.menuIntOffset,
                 popupIntSize = pagerScreenState.menuIntSize,
+                // Actions
                 onDismissRequest = pagerScreenState::dismissFolderEblanApplicationMenu,
                 onEditFolderApplicationInfo = onEditFolderApplicationInfo,
-                onDeleteFolderEblanApplicationInfoGridItems = onDeleteFolderEblanApplicationInfoGridItems,
+                onDeleteFolderEblanApplicationInfoGridItems = onDeleteFolderEblanApplicationInfoGridItems
             )
         }
 
         if (isVisibleFolderEblanApplicationInfoGridItemMenu) {
             FolderApplicationInfoGridItemPopup(
+                // Folder Data
                 folderEblanApplicationInfoGridItem = pagerScreenState.selectedFolderEblanApplicationInfoGridItem,
                 eblanAppWidgetProviderInfosGroup = eblanAppWidgetProviderInfosGroup,
                 eblanShortcutInfosGroup = eblanShortcutInfosGroup,
                 gridItemSettings = appDrawerSettings.gridItemSettings,
+                // Popup Configuration
                 popupIntOffset = pagerScreenState.menuIntOffset,
                 popupIntSize = pagerScreenState.menuIntSize,
                 paddingValues = paddingValues,
                 hasShortcutHostPermission = hasShortcutHostPermission,
                 isVisibleOverlay = isVisibleOverlay,
                 isCloseFolderEblanApplicationInfoGridItemMenu = pagerScreenState.isCloseFolderEblanApplicationInfoGridItemMenu,
+                // Actions
                 onDismissRequest = pagerScreenState::dismissFolderEblanApplicationInfoGridItemMenu,
                 onEditFolderApplicationInfo = onEditFolderApplicationInfo,
                 onEditApplicationInfo = onEditApplicationInfo,
@@ -1628,49 +1820,58 @@ internal fun PagerScreen(
                 onDeleteFolderEblanApplicationInfoGridItems = onDeleteFolderEblanApplicationInfoGridItems,
                 onDragShortcutInfo = { gridItem, imageBitmap, intOffset, intSize, sharedElementKey ->
                     pagerScreenState.dragShortcutInfoFromFolderApplicationGridItemMenu(
+                        // Grid item details
                         gridItem = gridItem,
                         imageBitmap = imageBitmap,
                         intOffset = intOffset,
                         intSize = intSize,
+                        // Shared element key
                         newSharedElementKey = sharedElementKey,
+                        // Callbacks
                         onUpdateGridItemSource = onUpdateGridItemSource,
                         onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                         onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
-                        onResetFolderEblanApplicationInfoPopupEntries = onResetFolderEblanApplicationInfoPopupEntries,
+                        onResetFolderEblanApplicationInfoPopupEntries = onResetFolderEblanApplicationInfoPopupEntries
                     )
-                },
+                }
             )
         }
 
         OverlayImage(
+            // Overlay Image
             overlayImageBitmap = pagerScreenState.overlayImageBitmap,
-            isVisibleOverlay = isVisibleOverlay,
-            animations = experimentalSettings.gridItemAnimation,
             overlayIntOffset = pagerScreenState.overlayIntOffset,
             overlayIntSize = pagerScreenState.overlayIntSize,
+            // Overlay State
+            isVisibleOverlay = isVisibleOverlay,
+            animations = experimentalSettings.gridItemAnimation,
+            // Screen Dimensions
             screenWidth = screenWidth,
+            // Shared Element
             sharedElementKey = pagerScreenState.sharedElementKey,
-            onResetOverlay = pagerScreenState::resetOverlay,
+            // Callbacks
+            onResetOverlay = pagerScreenState::resetOverlay
         )
     }
 }
 
 @Composable
 private fun SharedTransitionScope.OverlayImage(
-    // Overlay Content
+    // Overlay Image
     overlayImageBitmap: ImageBitmap?,
-    isVisibleOverlay: Boolean,
-    animations: Boolean,
-    // Layout and Sizing
     overlayIntOffset: IntOffset?,
     overlayIntSize: IntSize?,
+    // Overlay State
+    isVisibleOverlay: Boolean,
+    animations: Boolean,
+    // Screen Dimensions
     screenWidth: Int,
     // Shared Element
     sharedElementKey: SharedElementKey?,
-    // Modifier
+    // Layout
     modifier: Modifier = Modifier,
     // Callbacks
-    onResetOverlay: () -> Unit,
+    onResetOverlay: () -> Unit
 ) {
     if (overlayImageBitmap == null ||
         sharedElementKey == null ||
@@ -1730,12 +1931,12 @@ private fun SharedTransitionScope.OverlayImage(
 
 @Composable
 private fun SyncDataEffect(
-    // State
+    // Sync Control
     syncData: Boolean,
     // Sync Callbacks
     onStartSyncData: () -> Unit,
     onStopSyncData: () -> Unit,
-    // Package Callbacks
+    // Package Event Callbacks
     onPackageRemoved: (
         serialNumber: Long,
         packageName: String,
@@ -1751,7 +1952,7 @@ private fun SyncDataEffect(
     onShortcutsChanged: (
         serialNumber: Long,
         packageName: String,
-    ) -> Unit,
+    ) -> Unit
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val appWidgetHost = LocalAppWidgetHost.current
@@ -1764,11 +1965,14 @@ private fun SyncDataEffect(
         key2 = syncData,
     ) {
         val launcherAppsCallback = getLauncherAppsCallback(
+            // Dependencies
             userManagerWrapper = userManagerWrapper,
+            // Package change callbacks
             onPackageRemoved = onPackageRemoved,
             onPackageAdded = onPackageAdded,
             onPackageChanged = onPackageChanged,
-            onShortcutsChanged = onShortcutsChanged,
+            // Shortcut change callbacks
+            onShortcutsChanged = onShortcutsChanged
         )
 
         val lifecycleEventObserver = LifecycleEventObserver { lifecycleOwner, event ->
@@ -1826,15 +2030,15 @@ private fun GridPagerIndicator(
     // Pager State
     gridHorizontalPagerState: PagerState,
     pageCount: Int,
-    // Appearance
+    // Indicator Appearance
     color: Color,
     showPageIndicator: Boolean,
+    // Scroll Behavior
     infiniteScroll: Boolean,
-    // Actions
     swipeUp: EblanAction,
     swipeDown: EblanAction,
-    // Appearance
-    modifier: Modifier = Modifier,
+    // Layout
+    modifier: Modifier = Modifier
 ) {
     if (!showPageIndicator) return
 
@@ -1853,10 +2057,12 @@ private fun GridPagerIndicator(
     ) {
         if (isScrollInProgress) {
             PageIndicator(
+                // Pager State and Pagination
                 gridHorizontalPagerState = gridHorizontalPagerState,
                 pageCount = pageCount,
                 infiniteScroll = infiniteScroll,
-                color = color,
+                // Appearance and Layout
+                color = color
             )
         } else if (swipeUp.eblanActionType == EblanActionType.OpenAppDrawer) {
             Image(
@@ -1920,7 +2126,9 @@ private fun rememberStatusBarNotifications(): State<Map<String, Int>> {
 }
 
 private fun getLauncherAppsCallback(
+    // Dependencies
     userManagerWrapper: AndroidUserManagerWrapper,
+    // Package change callbacks
     onPackageRemoved: (
         serialNumber: Long,
         packageName: String,
@@ -1933,10 +2141,11 @@ private fun getLauncherAppsCallback(
         serialNumber: Long,
         packageName: String,
     ) -> Unit,
+    // Shortcut change callbacks
     onShortcutsChanged: (
         serialNumber: Long,
         packageName: String,
-    ) -> Unit,
+    ) -> Unit
 ): LauncherApps.Callback = object : LauncherApps.Callback() {
     override fun onPackageRemoved(packageName: String?, user: UserHandle?) {
         if (packageName != null && user != null) {

@@ -67,10 +67,13 @@ import kotlin.math.roundToInt
 
 @Composable
 internal fun Modifier.swipeGestures(
+    // State
+    enabled: Boolean = true,
+    // Gestures
     swipeDown: EblanAction,
     swipeUp: EblanAction,
-    enabled: Boolean = true,
-    onOpenAppDrawer: () -> Unit,
+    // Actions
+    onOpenAppDrawer: () -> Unit
 ): Modifier {
     val context = LocalContext.current
     val density = LocalDensity.current
@@ -117,21 +120,27 @@ internal fun Modifier.swipeGestures(
                         when {
                             lastSwipeY <= -maxSwipeY -> {
                                 handleEblanAction(
+                                    // Context and Action
                                     context = context,
                                     eblanAction = swipeUp,
+                                    // System Wrappers
                                     launcherApps = launcherApps,
                                     statusBarManagerWrapper = androidStatusBarManagerWrapper,
-                                    onOpenAppDrawer = currentOnOpenAppDrawer,
+                                    // Callbacks
+                                    onOpenAppDrawer = currentOnOpenAppDrawer
                                 )
                             }
 
                             lastSwipeY >= maxSwipeY -> {
                                 handleEblanAction(
+                                    // Context and Action
                                     context = context,
                                     eblanAction = swipeDown,
+                                    // System Wrappers
                                     launcherApps = launcherApps,
                                     statusBarManagerWrapper = androidStatusBarManagerWrapper,
-                                    onOpenAppDrawer = currentOnOpenAppDrawer,
+                                    // Callbacks
+                                    onOpenAppDrawer = currentOnOpenAppDrawer
                                 )
                             }
                         }
@@ -150,10 +159,12 @@ internal fun Modifier.swipeGestures(
 }
 
 internal fun Modifier.popup(
+    // Dimensions
     width: Int,
     height: Int,
+    // Position
     x: Int,
-    y: Int,
+    y: Int
 ): Modifier = layout { measurable, constraints ->
     val placeable = measurable.measure(
         constraints.copy(minWidth = 0, minHeight = 0),
@@ -177,10 +188,12 @@ internal fun Modifier.popup(
 
 @Composable
 internal fun Modifier.gridItemSharedElement(
-    enabled: Boolean,
-    sharedElementKey: SharedElementKey,
+    // Transition State
     sharedTransitionScope: SharedTransitionScope,
-    visible: Boolean,
+    sharedElementKey: SharedElementKey,
+    // Visibility Control
+    enabled: Boolean,
+    visible: Boolean
 ): Modifier = if (enabled && visible) {
     with(sharedTransitionScope) {
         sharedElementWithCallerManagedVisibility(

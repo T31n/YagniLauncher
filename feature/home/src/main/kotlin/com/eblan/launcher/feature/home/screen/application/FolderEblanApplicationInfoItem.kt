@@ -93,27 +93,28 @@ import kotlin.uuid.Uuid
 
 @Composable
 internal fun FolderEblanApplicationInfoItem(
-    // Main Data
-    sharedTransitionScope: SharedTransitionScope,
+    // Core Data
     folderEblanApplicationInfo: FolderEblanApplicationInfo,
     appDrawerSettings: AppDrawerSettings,
-    // State & Visibility
-    isVisibleOverlay: Boolean,
-    isVisibleFolderEblanApplicationInfos: Boolean,
-    animations: Boolean,
-    isScrollInProgress: Boolean,
-    isSwiping: Boolean,
-    drag: Drag,
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     folderEblanApplicationInfoEntries: List<FolderEntry>,
     iconPackFilePaths: Map<String, String?>,
-    // Styling & Appearance
+    // Animation and Transition
+    sharedTransitionScope: SharedTransitionScope,
+    animations: Boolean,
+    // Visibility and State
+    isVisibleOverlay: Boolean,
+    isVisibleFolderEblanApplicationInfos: Boolean,
+    isScrollInProgress: Boolean,
+    isSwiping: Boolean,
+    // Styling and Appearance
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
-    // State & Visibility
+    // Interaction
+    drag: Drag,
     modifier: Modifier = Modifier,
     // Callbacks
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
@@ -128,7 +129,7 @@ internal fun FolderEblanApplicationInfoItem(
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
     ) -> Unit,
-    onTapFolderApplicationInfo: (folderEntry: FolderEntry) -> Unit,
+    onTapFolderApplicationInfo: (folderEntry: FolderEntry) -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -142,12 +143,14 @@ internal fun FolderEblanApplicationInfoItem(
     val gridItemSettings = appDrawerSettings.gridItemSettings
 
     val textColor = getTextColorFromBackgroundColor(
+        // Background Color
         backgroundColor = appDrawerSettings.backgroundColor,
         customBackgroundColor = appDrawerSettings.customBackgroundColor,
+        // Text Color
         textColor = gridItemSettings.textColor,
         customTextColor = gridItemSettings.customTextColor,
         systemCustomTextColor = systemCustomTextColor,
-        systemTextColor = systemTextColor,
+        systemTextColor = systemTextColor
     )
 
     val maxLines = if (gridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
@@ -191,16 +194,19 @@ internal fun FolderEblanApplicationInfoItem(
         key2 = isLongPress,
     ) {
         handleDragFolderEblanApplicationInfoItem(
+            // Item Data
             folderEblanApplicationInfo = folderEblanApplicationInfo,
             gridItemSettings = appDrawerSettings.gridItemSettings,
+            // Drag State
             drag = drag,
             isLongPress = isLongPress,
             isSwiping = isSwiping,
+            // Callbacks
             onUpdateIsLongPress = {
                 isLongPress = it
             },
             onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-            onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
+            onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo
         )
     }
 
@@ -259,13 +265,15 @@ internal fun FolderEblanApplicationInfoItem(
             },
         )
         .gridItemSharedElement(
-            enabled = animations,
-            sharedElementKey = sharedElementKey,
+            // Transition State
             sharedTransitionScope = sharedTransitionScope,
+            sharedElementKey = sharedElementKey,
+            // Visibility Control
+            enabled = animations,
             visible = !isSwiping &&
-                !isScrollInProgress &&
-                !isLongPress &&
-                !isVisibleOverlay,
+                    !isScrollInProgress &&
+                    !isLongPress &&
+                    !isVisibleOverlay
         )
         .gridItemScaleAnimation(
             animations = animations,
@@ -304,20 +312,27 @@ internal fun FolderEblanApplicationInfoItem(
                 },
             ) {
                 PreviewFolderGridLayout(
+                    // Data
                     gridItems = folderEblanApplicationInfoPopups[folderEblanApplicationInfo.id]?.previewFolderEblanApplicationInfoGridItems,
+                    // Layout
                     modifier = Modifier.fillMaxSize(),
+                    // Callbacks
                     slotId = { it.id },
                     content = {
                         PreviewFolderEblanApplicationInfoItem(
+                            // Item Data
                             folderEblanApplicationInfoGridItem = it,
+                            // Item Settings
                             gridItemSettings = appDrawerSettings.gridItemSettings,
                             iconPackFilePaths = iconPackFilePaths,
+                            // Folder Colors
                             folderBackgroundColor = folderBackgroundColor,
                             customFolderBackgroundColor = customFolderBackgroundColor,
+                            // Text Colors
                             systemTextColor = systemTextColor,
-                            systemCustomTextColor = systemCustomTextColor,
+                            systemCustomTextColor = systemCustomTextColor
                         )
-                    },
+                    }
                 )
             }
         }
@@ -353,42 +368,51 @@ internal fun FolderEblanApplicationInfoItem(
     }
 
     GridItemLayoutType(
+        // Settings and Modifier
         gridItemSettings = gridItemSettings,
+        modifier = itemModifier,
+        // Alignment and Arrangement
         horizontalAlignment = horizontalAlignment,
         verticalAlignment = verticalAlignment,
         horizontalArrangement = horizontalArrangement,
         verticalArrangement = verticalArrangement,
-        modifier = itemModifier,
+        // Content
         iconContent = iconContent,
         labelContent = labelContent,
-        labelOnlyContent = labelOnlyContent,
+        labelOnlyContent = labelOnlyContent
     )
 }
 
 @Composable
 private fun PreviewFolderEblanApplicationInfoItem(
-    // Content
+    // Item Data
     folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
+    // Item Settings
     gridItemSettings: GridItemSettings,
     iconPackFilePaths: Map<String, String?>,
-    // Appearance
+    // Folder Colors
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
+    // Text Colors
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
-    modifier: Modifier = Modifier,
+    // Layout
+    modifier: Modifier = Modifier
 ) {
     key(folderEblanApplicationInfoGridItem.id) {
         val context = LocalContext.current
 
         val folderIconTint = getTextColorFromBackgroundColor(
+            // Background Color
             backgroundColor = folderBackgroundColor,
             customBackgroundColor = customFolderBackgroundColor,
+            // Text Color
             textColor = gridItemSettings.textColor,
             customTextColor = gridItemSettings.customTextColor,
             systemCustomTextColor = systemCustomTextColor,
             systemTextColor = systemTextColor,
-            defaultColor = MaterialTheme.colorScheme.onSurface,
+            // Default Color
+            defaultColor = MaterialTheme.colorScheme.onSurface
         )
 
         val commonModifier = modifier.padding(1.dp)
@@ -445,11 +469,11 @@ private fun PreviewFolderEblanApplicationInfoItem(
 
 @OptIn(ExperimentalUuidApi::class)
 internal fun handleDragFolderEblanApplicationInfoItem(
-    // Folder
+    // Item Data
     folderEblanApplicationInfo: FolderEblanApplicationInfo,
     gridItemSettings: GridItemSettings,
+    // Drag State
     drag: Drag,
-    // State
     isLongPress: Boolean,
     isSwiping: Boolean,
     // Callbacks
@@ -458,7 +482,7 @@ internal fun handleDragFolderEblanApplicationInfoItem(
     onDragFolderEblanApplicationInfo: (
         folderEblanApplicationInfo: FolderEblanApplicationInfo,
         gridItem: GridItem,
-    ) -> Unit,
+    ) -> Unit
 ) {
     if (!isLongPress) return
 

@@ -46,15 +46,14 @@ import com.eblan.launcher.framework.widgetmanager.AndroidAppWidgetManagerWrapper
 import kotlin.math.roundToInt
 
 internal fun handleEblanAction(
-    // Context
+    // Context and Action
     context: Context,
-    // Action
     eblanAction: EblanAction,
     // System Wrappers
     launcherApps: AndroidLauncherAppsWrapper,
     statusBarManagerWrapper: AndroidStatusBarManagerWrapper,
     // Callbacks
-    onOpenAppDrawer: () -> Unit,
+    onOpenAppDrawer: () -> Unit
 ) {
     when (eblanAction.eblanActionType) {
         EblanActionType.OpenApp -> launcherApps.startMainActivity(
@@ -144,13 +143,12 @@ internal fun updateAppWidgetOptions(
     width: Int,
     height: Int,
     density: Density,
-    // Grid
     columns: Int,
     rows: Int,
     gridWidth: Int,
     gridHeight: Int,
     startColumn: Int,
-    startRow: Int,
+    startRow: Int
 ) {
     val cellWidthPx = gridWidth.toFloat() / columns
     val cellHeightPx = gridHeight.toFloat() / rows
@@ -212,17 +210,17 @@ internal fun updateAppWidgetOptions(
 }
 
 internal fun handleOnUninstall(
-    // Context & System
+    // Android Context and Wrappers
     context: Context,
     launcherApps: AndroidLauncherAppsWrapper,
     userManager: AndroidUserManagerWrapper,
-    // Target Identification
+    // App Target Identification
     serialNumber: Long,
     componentName: String,
     packageName: String,
     // Popup Layout
     popupIntOffset: IntOffset,
-    popupIntSize: IntSize,
+    popupIntSize: IntSize
 ) {
     val userHandle =
         userManager.getUserForSerialNumber(serialNumber = serialNumber) ?: return

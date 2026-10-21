@@ -102,11 +102,10 @@ import kotlinx.coroutines.launch
 
 @Composable
 internal fun InteractiveFolderGridItem(
-    // Item Configuration
+    // Grid Item
     gridItem: GridItem,
     gridItemSettings: GridItemSettings,
     folderGridItemEntries: List<FolderEntry>,
-    // State & Progress
     sharedTransitionScope: SharedTransitionScope,
     drag: Drag,
     hasShortcutHostPermission: Boolean,
@@ -129,7 +128,6 @@ internal fun InteractiveFolderGridItem(
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
-    // Modifier
     modifier: Modifier = Modifier,
     // Callbacks
     onOpenAppDrawer: () -> Unit,
@@ -141,7 +139,7 @@ internal fun InteractiveFolderGridItem(
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
     ) -> Unit,
-    onDragFolderGridItem: () -> Unit,
+    onDragFolderGridItem: () -> Unit
 ) {
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
@@ -156,12 +154,14 @@ internal fun InteractiveFolderGridItem(
     }
 
     val currentTextColor = getTextColorFromBackgroundColor(
+        // Background Color
         backgroundColor = folderBackgroundColor,
         customBackgroundColor = customFolderBackgroundColor,
+        // Text Color
         textColor = currentGridItemSettings.textColor,
         customTextColor = currentGridItemSettings.customTextColor,
         systemCustomTextColor = systemCustomTextColor,
-        systemTextColor = systemTextColor,
+        systemTextColor = systemTextColor
     )
 
     val padding = if (animations) {
@@ -198,13 +198,16 @@ internal fun InteractiveFolderGridItem(
     val hasInteraction = isSelected && isVisibleOverlay
 
     val sourceBounds = getSourceBounds(
+        // Layout
         density = density,
         layoutDirection = layoutDirection,
         paddingValues = paddingValues,
+        // Position
         startColumn = gridItem.startColumn,
         startRow = gridItem.startRow,
+        // Dimensions
         cellWidth = minCellWidthPx,
-        cellHeight = minCellHeightPx,
+        cellHeight = minCellHeightPx
     )
 
     val isVisibleFolder = remember(
@@ -234,9 +237,11 @@ internal fun InteractiveFolderGridItem(
     when (val data = gridItem.data) {
         is GridItemData.ApplicationInfo -> {
             InteractiveApplicationInfoGridItem(
+                // Item Data and Configuration
                 data = data,
                 gridItem = gridItem,
                 gridItemSettings = currentGridItemSettings,
+                // State and Appearance
                 statusBarNotifications = statusBarNotifications,
                 iconPackFilePaths = iconPackFilePaths,
                 isScrollInProgress = isScrollInProgress,
@@ -244,6 +249,7 @@ internal fun InteractiveFolderGridItem(
                 isVisibleOverlay = isVisibleOverlay,
                 isInProgress = isInProgress,
                 animations = animations,
+                // Dimensions and Layout
                 padding = padding,
                 iconSize = iconSize,
                 iconPadding = iconPadding,
@@ -252,29 +258,35 @@ internal fun InteractiveFolderGridItem(
                 verticalArrangement = verticalArrangement,
                 maxLines = maxLines,
                 textColor = currentTextColor,
+                // Transitions and Modifier
                 sharedTransitionScope = sharedTransitionScope,
                 sharedElementKey = sharedElementKey,
                 sourceBounds = sourceBounds,
                 modifier = modifier,
+                // Callbacks
                 onOpenAppDrawer = onOpenAppDrawer,
-                onLongPressFolderGridItem = onLongPressFolderGridItem,
+                onLongPressFolderGridItem = onLongPressFolderGridItem
             )
         }
 
         is GridItemData.ShortcutInfo -> {
             InteractiveShortcutInfoGridItem(
+                // Item Data
                 gridItem = gridItem,
                 data = data,
                 gridItemSettings = currentGridItemSettings,
                 hasShortcutHostPermission = hasShortcutHostPermission,
+                // State
                 isScrollInProgress = isScrollInProgress,
                 isSelected = isSelected,
                 isVisibleOverlay = isVisibleOverlay,
                 isInProgress = isInProgress,
                 animations = animations,
+                // Animation and Layout
                 sharedTransitionScope = sharedTransitionScope,
                 sharedElementKey = sharedElementKey,
                 sourceBounds = sourceBounds,
+                // Styling and Dimensions
                 padding = padding,
                 iconSize = iconSize,
                 textColor = currentTextColor,
@@ -283,22 +295,27 @@ internal fun InteractiveFolderGridItem(
                 maxLines = maxLines,
                 iconPadding = iconPadding,
                 textPadding = textPadding,
+                // Modifier
                 modifier = modifier,
+                // Callbacks
                 onOpenAppDrawer = onOpenAppDrawer,
-                onLongPressFolderGridItem = onLongPressFolderGridItem,
+                onLongPressFolderGridItem = onLongPressFolderGridItem
             )
         }
 
         is GridItemData.ShortcutConfig -> {
             InteractiveShortcutConfigGridItem(
+                // Item Data
                 gridItem = gridItem,
                 data = data,
                 gridItemSettings = currentGridItemSettings,
+                // State
                 isSelected = isSelected,
                 isVisibleOverlay = isVisibleOverlay,
                 isScrollInProgress = isScrollInProgress,
                 isInProgress = isInProgress,
                 animations = animations,
+                // Layout and Sizing
                 padding = padding,
                 iconSize = iconSize,
                 iconPadding = iconPadding,
@@ -307,19 +324,24 @@ internal fun InteractiveFolderGridItem(
                 verticalArrangement = verticalArrangement,
                 maxLines = maxLines,
                 textColor = currentTextColor,
+                // Shared Transition
                 sharedTransitionScope = sharedTransitionScope,
                 sharedElementKey = sharedElementKey,
+                // Modifier
                 modifier = modifier,
+                // Callbacks
                 onOpenAppDrawer = onOpenAppDrawer,
-                onLongPressFolderGridItem = onLongPressFolderGridItem,
+                onLongPressFolderGridItem = onLongPressFolderGridItem
             )
         }
 
         is GridItemData.Folder -> {
             InteractiveNestedFolderGridItem(
+                // Grid Item Data
                 data = data,
                 gridItem = gridItem,
                 gridItemSettings = currentGridItemSettings,
+                // State
                 isScrollInProgress = isScrollInProgress,
                 isSelected = isSelected,
                 isVisibleOverlay = isVisibleOverlay,
@@ -330,6 +352,7 @@ internal fun InteractiveFolderGridItem(
                 animations = animations,
                 isVisibleFolder = isVisibleFolder,
                 sharedTransitionScope = sharedTransitionScope,
+                // Appearance and Styling
                 padding = padding,
                 iconSize = iconSize,
                 iconPackFilePaths = iconPackFilePaths,
@@ -344,10 +367,12 @@ internal fun InteractiveFolderGridItem(
                 systemCustomTextColor = systemCustomTextColor,
                 iconPadding = iconPadding,
                 textPadding = textPadding,
+                // Modifier
                 modifier = modifier,
+                // Callbacks
                 onOpenAppDrawer = onOpenAppDrawer,
                 onUpsertFolderGridItemPopupEntry = onUpsertFolderGridItemPopupEntry,
-                onLongPressFolderGridItem = onLongPressFolderGridItem,
+                onLongPressFolderGridItem = onLongPressFolderGridItem
             )
         }
 
@@ -357,19 +382,19 @@ internal fun InteractiveFolderGridItem(
 
 @Composable
 private fun InteractiveApplicationInfoGridItem(
-    // Data and Configuration
+    // Item Data and Configuration
     data: GridItemData.ApplicationInfo,
     gridItem: GridItem,
     gridItemSettings: GridItemSettings,
+    // State and Appearance
     statusBarNotifications: Map<String, Int>,
     iconPackFilePaths: Map<String, String?>,
-    // State
     isScrollInProgress: Boolean,
     isSelected: Boolean,
     isVisibleOverlay: Boolean,
     isInProgress: Boolean,
     animations: Boolean,
-    // Layout and Sizing
+    // Dimensions and Layout
     padding: Dp,
     iconSize: Dp,
     iconPadding: Dp,
@@ -378,11 +403,10 @@ private fun InteractiveApplicationInfoGridItem(
     verticalArrangement: Arrangement.Vertical,
     maxLines: Int,
     textColor: Color,
-    // Animation and Shared Transition
+    // Transitions and Modifier
     sharedTransitionScope: SharedTransitionScope,
     sharedElementKey: SharedElementKey,
     sourceBounds: Rect,
-    // Modifier
     modifier: Modifier = Modifier,
     // Callbacks
     onOpenAppDrawer: () -> Unit,
@@ -392,7 +416,7 @@ private fun InteractiveApplicationInfoGridItem(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit,
+    ) -> Unit
 ) {
     val launcherApps = LocalLauncherApps.current
     val androidLauncherAppsWrapper = LocalLauncherApps.current
@@ -432,11 +456,14 @@ private fun InteractiveApplicationInfoGridItem(
                             onDoubleTap = if (gridItem.doubleTap.eblanActionType != EblanActionType.None) {
                                 {
                                     handleEblanAction(
+                                        // Context and Action
                                         context = context,
                                         eblanAction = gridItem.doubleTap,
+                                        // System Wrappers
                                         launcherApps = launcherApps,
                                         statusBarManagerWrapper = androidStatusBarManagerWrapper,
-                                        onOpenAppDrawer = onOpenAppDrawer,
+                                        // Callbacks
+                                        onOpenAppDrawer = onOpenAppDrawer
                                     )
                                 }
                             } else {
@@ -467,10 +494,13 @@ private fun InteractiveApplicationInfoGridItem(
                 }
             }
             .swipeGestures(
+                // State
+                enabled = !isInProgress,
+                // Gestures
                 swipeDown = gridItem.swipeDown,
                 swipeUp = gridItem.swipeUp,
-                enabled = !isInProgress,
-                onOpenAppDrawer = onOpenAppDrawer,
+                // Actions
+                onOpenAppDrawer = onOpenAppDrawer
             ),
         horizontalAlignment = horizontalAlignment,
         verticalArrangement = verticalArrangement,
@@ -493,10 +523,12 @@ private fun InteractiveApplicationInfoGridItem(
                         intSize = it.size
                     }
                     .gridItemSharedElement(
-                        enabled = animations && !isInProgress,
-                        sharedElementKey = sharedElementKey,
+                        // Transition State
                         sharedTransitionScope = sharedTransitionScope,
-                        visible = !isScrollInProgress && !hasInteraction,
+                        sharedElementKey = sharedElementKey,
+                        // Visibility Control
+                        enabled = animations && !isInProgress,
+                        visible = !isScrollInProgress && !hasInteraction
                     )
                     .gridItemScaleAnimation(
                         animations = animations,
@@ -540,22 +572,22 @@ private fun InteractiveApplicationInfoGridItem(
 
 @Composable
 private fun InteractiveShortcutInfoGridItem(
-    // Data
+    // Item Data
     gridItem: GridItem,
     data: GridItemData.ShortcutInfo,
     gridItemSettings: GridItemSettings,
-    // State
     hasShortcutHostPermission: Boolean,
+    // State
     isScrollInProgress: Boolean,
     isSelected: Boolean,
     isVisibleOverlay: Boolean,
     isInProgress: Boolean,
     animations: Boolean,
-    // Shared Transition
+    // Animation and Layout
     sharedTransitionScope: SharedTransitionScope,
     sharedElementKey: SharedElementKey,
     sourceBounds: Rect,
-    // Layout and Appearance
+    // Styling and Dimensions
     padding: Dp,
     iconSize: Dp,
     textColor: Color,
@@ -574,7 +606,7 @@ private fun InteractiveShortcutInfoGridItem(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit,
+    ) -> Unit
 ) {
     val androidLauncherAppsWrapper = LocalLauncherApps.current
     val launcherApps = LocalLauncherApps.current
@@ -612,11 +644,14 @@ private fun InteractiveShortcutInfoGridItem(
                             onDoubleTap = if (gridItem.doubleTap.eblanActionType != EblanActionType.None) {
                                 {
                                     handleEblanAction(
+                                        // Context and Action
                                         context = context,
                                         eblanAction = gridItem.doubleTap,
+                                        // System Wrappers
                                         launcherApps = launcherApps,
                                         statusBarManagerWrapper = androidStatusBarManagerWrapper,
-                                        onOpenAppDrawer = onOpenAppDrawer,
+                                        // Callbacks
+                                        onOpenAppDrawer = onOpenAppDrawer
                                     )
                                 }
                             } else {
@@ -654,10 +689,13 @@ private fun InteractiveShortcutInfoGridItem(
                 }
             }
             .swipeGestures(
+                // State
+                enabled = !isInProgress,
+                // Gestures
                 swipeDown = gridItem.swipeDown,
                 swipeUp = gridItem.swipeUp,
-                enabled = !isInProgress,
-                onOpenAppDrawer = onOpenAppDrawer,
+                // Actions
+                onOpenAppDrawer = onOpenAppDrawer
             ),
         horizontalAlignment = horizontalAlignment,
         verticalArrangement = verticalArrangement,
@@ -677,10 +715,12 @@ private fun InteractiveShortcutInfoGridItem(
                         intSize = it.size
                     }
                     .gridItemSharedElement(
-                        enabled = animations && !isInProgress,
-                        sharedElementKey = sharedElementKey,
+                        // Transition State
                         sharedTransitionScope = sharedTransitionScope,
-                        visible = !isScrollInProgress && !hasInteraction,
+                        sharedElementKey = sharedElementKey,
+                        // Visibility Control
+                        enabled = animations && !isInProgress,
+                        visible = !isScrollInProgress && !hasInteraction
                     )
                     .gridItemScaleAnimation(
                         animations = animations,
@@ -727,7 +767,7 @@ private fun InteractiveShortcutInfoGridItem(
 
 @Composable
 private fun InteractiveShortcutConfigGridItem(
-    // Grid Item Data
+    // Item Data
     gridItem: GridItem,
     data: GridItemData.ShortcutConfig,
     gridItemSettings: GridItemSettings,
@@ -745,14 +785,13 @@ private fun InteractiveShortcutConfigGridItem(
     horizontalAlignment: Alignment.Horizontal,
     verticalArrangement: Arrangement.Vertical,
     maxLines: Int,
-    // Styling
     textColor: Color,
-    // Animation and Transition
+    // Shared Transition
     sharedTransitionScope: SharedTransitionScope,
     sharedElementKey: SharedElementKey,
-    // Layout and Sizing
+    // Modifier
     modifier: Modifier = Modifier,
-    // Actions
+    // Callbacks
     onOpenAppDrawer: () -> Unit,
     onLongPressFolderGridItem: (
         gridItem: GridItem,
@@ -760,7 +799,7 @@ private fun InteractiveShortcutConfigGridItem(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit,
+    ) -> Unit
 ) {
     val launcherApps = LocalLauncherApps.current
     val androidStatusBarManagerWrapper = LocalStatusBarManager.current
@@ -806,11 +845,14 @@ private fun InteractiveShortcutConfigGridItem(
                             onDoubleTap = if (gridItem.doubleTap.eblanActionType != EblanActionType.None) {
                                 {
                                     handleEblanAction(
+                                        // Context and Action
                                         context = context,
                                         eblanAction = gridItem.doubleTap,
+                                        // System Wrappers
                                         launcherApps = launcherApps,
                                         statusBarManagerWrapper = androidStatusBarManagerWrapper,
-                                        onOpenAppDrawer = onOpenAppDrawer,
+                                        // Callbacks
+                                        onOpenAppDrawer = onOpenAppDrawer
                                     )
                                 }
                             } else {
@@ -839,10 +881,13 @@ private fun InteractiveShortcutConfigGridItem(
                 }
             }
             .swipeGestures(
+                // State
+                enabled = !isInProgress,
+                // Gestures
                 swipeDown = gridItem.swipeDown,
                 swipeUp = gridItem.swipeUp,
-                enabled = !isInProgress,
-                onOpenAppDrawer = onOpenAppDrawer,
+                // Actions
+                onOpenAppDrawer = onOpenAppDrawer
             ),
         horizontalAlignment = horizontalAlignment,
         verticalArrangement = verticalArrangement,
@@ -860,10 +905,12 @@ private fun InteractiveShortcutConfigGridItem(
                     intSize = it.size
                 }
                 .gridItemSharedElement(
-                    enabled = animations && !isInProgress,
-                    sharedElementKey = sharedElementKey,
+                    // Transition State
                     sharedTransitionScope = sharedTransitionScope,
-                    visible = !isScrollInProgress && !hasInteraction,
+                    sharedElementKey = sharedElementKey,
+                    // Visibility Control
+                    enabled = animations && !isInProgress,
+                    visible = !isScrollInProgress && !hasInteraction
                 )
                 .gridItemScaleAnimation(
                     animations = animations,
@@ -895,10 +942,11 @@ private fun InteractiveShortcutConfigGridItem(
 
 @Composable
 private fun InteractiveNestedFolderGridItem(
-    // Data and State
+    // Grid Item Data
     data: GridItemData.Folder,
     gridItem: GridItem,
     gridItemSettings: GridItemSettings,
+    // State
     isScrollInProgress: Boolean,
     isSelected: Boolean,
     isVisibleOverlay: Boolean,
@@ -908,8 +956,8 @@ private fun InteractiveNestedFolderGridItem(
     isInProgress: Boolean,
     animations: Boolean,
     isVisibleFolder: Boolean,
-    // Layout and Style
     sharedTransitionScope: SharedTransitionScope,
+    // Appearance and Styling
     padding: Dp,
     iconSize: Dp,
     iconPackFilePaths: Map<String, String?>,
@@ -924,6 +972,7 @@ private fun InteractiveNestedFolderGridItem(
     systemCustomTextColor: Int,
     iconPadding: Dp,
     textPadding: Dp,
+    // Modifier
     modifier: Modifier = Modifier,
     // Callbacks
     onOpenAppDrawer: () -> Unit,
@@ -934,7 +983,7 @@ private fun InteractiveNestedFolderGridItem(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit,
+    ) -> Unit
 ) {
     val launcherApps = LocalLauncherApps.current
     val androidStatusBarManagerWrapper = LocalStatusBarManager.current
@@ -967,11 +1016,14 @@ private fun InteractiveNestedFolderGridItem(
                             onDoubleTap = if (gridItem.doubleTap.eblanActionType != EblanActionType.None) {
                                 {
                                     handleEblanAction(
+                                        // Context and Action
                                         context = context,
                                         eblanAction = gridItem.doubleTap,
+                                        // System Wrappers
                                         launcherApps = launcherApps,
                                         statusBarManagerWrapper = androidStatusBarManagerWrapper,
-                                        onOpenAppDrawer = onOpenAppDrawer,
+                                        // Callbacks
+                                        onOpenAppDrawer = onOpenAppDrawer
                                     )
                                 }
                             } else {
@@ -1007,10 +1059,13 @@ private fun InteractiveNestedFolderGridItem(
                 }
             }
             .swipeGestures(
+                // State
+                enabled = !isInProgress,
+                // Gestures
                 swipeDown = gridItem.swipeDown,
                 swipeUp = gridItem.swipeUp,
-                enabled = !isInProgress,
-                onOpenAppDrawer = onOpenAppDrawer,
+                // Actions
+                onOpenAppDrawer = onOpenAppDrawer
             ),
         horizontalAlignment = horizontalAlignment,
         verticalArrangement = verticalArrangement,
@@ -1024,10 +1079,12 @@ private fun InteractiveNestedFolderGridItem(
                 intSize = it.size
             }
             .gridItemSharedElement(
-                enabled = animations && !isInProgress,
-                sharedElementKey = sharedElementKey,
+                // Transition State
                 sharedTransitionScope = sharedTransitionScope,
-                visible = !isScrollInProgress && !hasInteraction,
+                sharedElementKey = sharedElementKey,
+                // Visibility Control
+                enabled = animations && !isInProgress,
+                visible = !isScrollInProgress && !hasInteraction
             )
             .gridItemScaleAnimation(
                 animations = animations,
@@ -1060,22 +1117,28 @@ private fun InteractiveNestedFolderGridItem(
                 },
             ) {
                 PreviewFolderGridLayout(
+                    // Data
                     gridItems = folderPopups[gridItem.id]?.previewFolderGridItems,
+                    // Layout
                     modifier = Modifier.fillMaxSize(),
+                    // Callbacks
                     slotId = { it.id },
                     content = {
                         PreviewNestedFolderGridItem(
+                            // Item Data
                             gridItem = it,
+                            gridItemSettings = gridItemSettings,
+                            // Permissions
                             hasShortcutHostPermission = hasShortcutHostPermission,
+                            // Assets and Styling
                             iconPackFilePaths = iconPackFilePaths,
                             alpha = iconAlpha,
-                            gridItemSettings = gridItemSettings,
                             folderBackgroundColor = folderBackgroundColor,
                             customFolderBackgroundColor = customFolderBackgroundColor,
                             systemTextColor = systemTextColor,
-                            systemCustomTextColor = systemCustomTextColor,
+                            systemCustomTextColor = systemCustomTextColor
                         )
-                    },
+                    }
                 )
             }
         }
@@ -1096,19 +1159,20 @@ private fun InteractiveNestedFolderGridItem(
 
 @Composable
 private fun PreviewNestedFolderGridItem(
-    // Content
+    // Item Data
     gridItem: GridItem,
-    hasShortcutHostPermission: Boolean,
-    iconPackFilePaths: Map<String, String?>,
-    // Appearance
-    alpha: Float,
     gridItemSettings: GridItemSettings,
+    // Permissions
+    hasShortcutHostPermission: Boolean,
+    // Assets and Styling
+    iconPackFilePaths: Map<String, String?>,
+    alpha: Float,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     // Layout
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
 
@@ -1132,13 +1196,16 @@ private fun PreviewNestedFolderGridItem(
         }
 
         val folderIconTint = getTextColorFromBackgroundColor(
+            // Background Color
             backgroundColor = folderBackgroundColor,
             customBackgroundColor = customFolderBackgroundColor,
+            // Text Color
             textColor = currentGridItemSettings.textColor,
             customTextColor = currentGridItemSettings.customTextColor,
             systemCustomTextColor = systemCustomTextColor,
             systemTextColor = systemTextColor,
-            defaultColor = MaterialTheme.colorScheme.onSurface,
+            // Default Color
+            defaultColor = MaterialTheme.colorScheme.onSurface
         )
 
         val commonModifier = modifier
@@ -1207,16 +1274,16 @@ private fun PreviewNestedFolderGridItem(
 }
 
 private fun getSourceBounds(
-    // Layout Context
+    // Layout
     density: Density,
     layoutDirection: LayoutDirection,
     paddingValues: PaddingValues,
-    // Source Position
+    // Position
     startColumn: Int,
     startRow: Int,
-    // Cell Dimensions
+    // Dimensions
     cellWidth: Int,
-    cellHeight: Int,
+    cellHeight: Int
 ): Rect {
     val leftPadding = with(density) {
         paddingValues.calculateLeftPadding(layoutDirection).roundToPx()

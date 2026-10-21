@@ -87,15 +87,16 @@ import com.eblan.launcher.ui.settings.rememberIsDefaultLauncher
 import kotlinx.coroutines.launch
 
 internal fun LazyGridScope.privateSpace(
-    // User and App Data
+    // User and Application Data
     privateEblanUser: EblanUser?,
     privateEblanApplicationInfos: List<EblanApplicationInfo>,
+    // App Drawer and Appearance Settings
     appDrawerSettings: AppDrawerSettings,
     iconPackFilePaths: Map<String, String?>,
-    // State and Visibility
+    // Space State
     isQuietModeEnabled: Boolean,
     isVisibleOverlay: Boolean,
-    // Appearance and Styling
+    // Layout and Colors
     paddingValues: PaddingValues,
     backgroundColor: BackgroundColor,
     customBackgroundColor: Int,
@@ -106,32 +107,37 @@ internal fun LazyGridScope.privateSpace(
         eblanApplicationInfo: EblanApplicationInfo,
         intOffset: IntOffset,
         intSize: IntSize,
-    ) -> Unit,
+    ) -> Unit
 ) {
     if (privateEblanUser == null || privateEblanUser.isPrivateSpaceEntryPointHidden) return
 
     stickyHeader {
         PrivateSpaceStickyHeader(
+            // Device State
             serialNumber = privateEblanUser.serialNumber,
             isQuietModeEnabled = isQuietModeEnabled,
+            // Appearance
             backgroundColor = backgroundColor,
             customBackgroundColor = customBackgroundColor,
             systemTextColor = systemTextColor,
-            systemCustomTextColor = systemCustomTextColor,
+            systemCustomTextColor = systemCustomTextColor
         )
     }
 
     if (!isQuietModeEnabled) {
         items(privateEblanApplicationInfos) { eblanApplicationInfo ->
             PrivateSpaceEblanApplicationInfoItem(
+                // Application Info
                 eblanApplicationInfo = eblanApplicationInfo,
+                // Settings and Styling
                 appDrawerSettings = appDrawerSettings,
                 iconPackFilePaths = iconPackFilePaths,
                 isVisibleOverlay = isVisibleOverlay,
                 systemTextColor = systemTextColor,
                 systemCustomTextColor = systemCustomTextColor,
                 paddingValues = paddingValues,
-                onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
+                // Actions
+                onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem
             )
         }
     }
@@ -139,9 +145,8 @@ internal fun LazyGridScope.privateSpace(
 
 @Composable
 internal fun PrivateSpaceStickyHeader(
-    // Identity
+    // Device State
     serialNumber: Long,
-    // State
     isQuietModeEnabled: Boolean,
     // Appearance
     backgroundColor: BackgroundColor,
@@ -149,7 +154,7 @@ internal fun PrivateSpaceStickyHeader(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     // Layout
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val scope = rememberCoroutineScope()
 
@@ -166,11 +171,14 @@ internal fun PrivateSpaceStickyHeader(
     val isDefaultLauncher by rememberIsDefaultLauncher()
 
     val contentColor = getApplicationScreenTextColor(
+        // Background Colors
         backgroundColor = backgroundColor,
         customBackgroundColor = customBackgroundColor,
+        // Text Colors
         systemTextColor = systemTextColor,
         systemCustomTextColor = systemCustomTextColor,
-        defaultColor = MaterialTheme.colorScheme.onSurface,
+        // Defaults
+        defaultColor = MaterialTheme.colorScheme.onSurface
     )
 
     Row(
@@ -228,24 +236,22 @@ internal fun PrivateSpaceStickyHeader(
 
 @Composable
 internal fun PrivateSpaceEblanApplicationInfoItem(
-    // Application Data
+    // Application Info
     eblanApplicationInfo: EblanApplicationInfo,
+    // Settings and Styling
     appDrawerSettings: AppDrawerSettings,
     iconPackFilePaths: Map<String, String?>,
-    // State
     isVisibleOverlay: Boolean,
-    // Styling
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
-    // Layout
     paddingValues: PaddingValues,
     modifier: Modifier = Modifier,
-    // Callbacks
+    // Actions
     onLongPressPrivateSpaceApplicationInfoItem: (
         eblanApplicationInfo: EblanApplicationInfo,
         intOffset: IntOffset,
         intSize: IntSize,
-    ) -> Unit,
+    ) -> Unit
 ) {
     val context = LocalContext.current
     val density = LocalDensity.current
@@ -258,12 +264,14 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
     val gridItemSettings = appDrawerSettings.gridItemSettings
 
     val textColor = getTextColorFromBackgroundColor(
+        // Background Color
         backgroundColor = appDrawerSettings.backgroundColor,
         customBackgroundColor = appDrawerSettings.customBackgroundColor,
+        // Text Color
         textColor = gridItemSettings.textColor,
         customTextColor = gridItemSettings.customTextColor,
         systemCustomTextColor = systemCustomTextColor,
-        systemTextColor = systemTextColor,
+        systemTextColor = systemTextColor
     )
 
     val appDrawerRowsHeight = appDrawerSettings.appDrawerRowsHeight.dp
@@ -310,14 +318,18 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
                     {
                         scope.launch {
                             handleOnTapEblanApplicationInfoItem(
+                                // Application Info
                                 serialNumber = eblanApplicationInfo.serialNumber,
                                 componentName = eblanApplicationInfo.componentName,
                                 launcherApps = launcherApps,
+                                // Position and Size
                                 intOffset = intOffset,
                                 intSize = intSize,
+                                // Padding
                                 leftPadding = leftPadding,
                                 topPadding = topPadding,
-                                keyboardController = keyboardController,
+                                // Controller
+                                keyboardController = keyboardController
                             )
                         }
                     }
@@ -328,11 +340,15 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
                     {
                         scope.launch {
                             handleOnLongPressPrivateSpaceEblanApplicationInfoItem(
+                                // Application Info
                                 eblanApplicationInfo = eblanApplicationInfo,
+                                // Position and Size
                                 intOffset = intOffset,
                                 intSize = intSize,
+                                // Keyboard
                                 keyboardController = keyboardController,
-                                onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
+                                // Callbacks
+                                onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem
                             )
                         }
                     }
@@ -379,32 +395,35 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
     }
 
     GridItemLayoutType(
+        // Settings and Modifier
         gridItemSettings = gridItemSettings,
+        modifier = itemModifier,
+        // Alignment and Arrangement
         horizontalAlignment = horizontalAlignment,
         verticalAlignment = verticalAlignment,
         horizontalArrangement = horizontalArrangement,
         verticalArrangement = verticalArrangement,
-        modifier = itemModifier,
+        // Content
         iconContent = iconContent,
         labelContent = labelContent,
-        labelOnlyContent = labelContent,
+        labelOnlyContent = labelContent
     )
 }
 
 internal fun handleOnLongPressPrivateSpaceEblanApplicationInfoItem(
-    // Item Information
+    // Application Info
     eblanApplicationInfo: EblanApplicationInfo,
-    // Position and Bounds
+    // Position and Size
     intOffset: IntOffset,
     intSize: IntSize,
-    // Controller
+    // Keyboard
     keyboardController: SoftwareKeyboardController?,
     // Callbacks
     onLongPressPrivateSpaceApplicationInfoItem: (
         eblanApplicationInfo: EblanApplicationInfo,
         intOffset: IntOffset,
         intSize: IntSize,
-    ) -> Unit,
+    ) -> Unit
 ) {
     onLongPressPrivateSpaceApplicationInfoItem(
         eblanApplicationInfo,

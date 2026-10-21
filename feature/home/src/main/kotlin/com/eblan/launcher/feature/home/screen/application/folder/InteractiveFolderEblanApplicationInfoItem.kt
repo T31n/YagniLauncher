@@ -93,30 +93,31 @@ import kotlinx.coroutines.launch
 
 @Composable
 internal fun InteractiveFolderEblanApplicationInfoItem(
-    // Content
+    // Scope and Animation
     sharedTransitionScope: SharedTransitionScope,
+    animations: Boolean,
+    // Folder Item and Content
     folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     folderEblanApplicationInfoEntries: List<FolderEntry>,
-    // Appearance
+    // Styling and Colors
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
-    appDrawerSettings: AppDrawerSettings,
     folderCornerRadius: Int,
+    // Layout and Settings
+    appDrawerSettings: AppDrawerSettings,
     paddingValues: PaddingValues,
     iconPackFilePaths: Map<String, String?>,
-    // State
+    // State and Progress
     isVisibleOverlay: Boolean,
     isScrollInProgress: Boolean,
     isInProgress: Boolean,
-    animations: Boolean,
     progress: Float,
     moveFolderEblanApplicationInfoGridItemResult: MoveFolderEblanApplicationInfoGridItemResult?,
     drag: Drag,
     showFolderEblanApplicationInfoGridItemMenu: Boolean,
-    // Appearance
     modifier: Modifier = Modifier,
     // Callbacks
     onLongPressFolderEblanApplicationInfoGridItem: (
@@ -127,18 +128,20 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
         sharedElementKey: SharedElementKey,
     ) -> Unit,
     onDragFolderEblanApplicationInfoGridItem: () -> Unit,
-    onTapFolderEblanApplicationInfoItem: (FolderEntry) -> Unit,
+    onTapFolderEblanApplicationInfoItem: (FolderEntry) -> Unit
 ) {
     val isSelected =
         moveFolderEblanApplicationInfoGridItemResult != null && moveFolderEblanApplicationInfoGridItemResult.folderEblanApplicationInfoGridItem.id == folderEblanApplicationInfoGridItem.id
 
     val textColor = getTextColorFromBackgroundColor(
+        // Background Color
         backgroundColor = folderBackgroundColor,
         customBackgroundColor = customFolderBackgroundColor,
+        // Text Color
         textColor = appDrawerSettings.gridItemSettings.textColor,
         customTextColor = appDrawerSettings.gridItemSettings.customTextColor,
         systemCustomTextColor = systemCustomTextColor,
-        systemTextColor = systemTextColor,
+        systemTextColor = systemTextColor
     )
 
     val padding = if (animations) {
@@ -206,52 +209,64 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
     when (val data = folderEblanApplicationInfoGridItem.data) {
         is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
             InteractiveEblanApplicationInfoItem(
+                // Scope and Animation
                 sharedTransitionScope = sharedTransitionScope,
+                sharedElementKey = sharedElementKey,
+                animations = animations,
+                // Item and Data
                 folderEblanApplicationInfoGridItem = folderEblanApplicationInfoGridItem,
                 data = data,
                 appDrawerSettings = appDrawerSettings,
+                iconPackFilePaths = iconPackFilePaths,
+                // Layout and Alignment
                 paddingValues = paddingValues,
-                textColor = textColor,
                 horizontalAlignment = horizontalAlignment,
                 verticalArrangement = verticalArrangement,
-                maxLines = maxLines,
                 padding = padding,
                 iconSize = iconSize,
-                iconPackFilePaths = iconPackFilePaths,
                 iconPadding = iconPadding,
                 textPadding = textPadding,
+                // Appearance and Style
+                textColor = textColor,
+                maxLines = maxLines,
+                // State
                 isVisibleOverlay = isVisibleOverlay,
                 isScrollInProgress = isScrollInProgress,
                 isInProgress = isInProgress,
-                animations = animations,
                 hasInteraction = hasInteraction,
-                sharedElementKey = sharedElementKey,
+                // Modifier
                 modifier = modifier,
-                onLongPressFolderEblanApplicationInfoGridItem = onLongPressFolderEblanApplicationInfoGridItem,
+                // Callbacks
+                onLongPressFolderEblanApplicationInfoGridItem = onLongPressFolderEblanApplicationInfoGridItem
             )
         }
 
         is FolderEblanApplicationInfoGridItemData.Folder -> {
             InteractiveNestedFolderEblanApplicationInfoItem(
+                // Data
                 data = data,
                 folderEblanApplicationInfoGridItem = folderEblanApplicationInfoGridItem,
                 folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                 appDrawerSettings = appDrawerSettings,
                 iconPackFilePaths = iconPackFilePaths,
+                // Animation
                 sharedTransitionScope = sharedTransitionScope,
                 sharedElementKey = sharedElementKey,
                 animations = animations,
+                // State
                 isVisibleOverlay = isVisibleOverlay,
                 isScrollInProgress = isScrollInProgress,
                 isInProgress = isInProgress,
                 hasInteraction = hasInteraction,
                 isVisibleFolder = isVisibleFolder,
+                // Appearance
                 customFolderBackgroundColor = customFolderBackgroundColor,
                 folderBackgroundColor = folderBackgroundColor,
                 folderCornerRadius = folderCornerRadius,
                 systemCustomTextColor = systemCustomTextColor,
                 systemTextColor = systemTextColor,
                 textColor = textColor,
+                // Layout
                 horizontalAlignment = horizontalAlignment,
                 verticalArrangement = verticalArrangement,
                 padding = padding,
@@ -259,8 +274,9 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
                 iconPadding = iconPadding,
                 textPadding = textPadding,
                 modifier = modifier,
+                // Callbacks
                 onLongPressFolderEblanApplicationInfoGridItem = onLongPressFolderEblanApplicationInfoGridItem,
-                onTapFolderEblanApplicationInfoItem = onTapFolderEblanApplicationInfoItem,
+                onTapFolderEblanApplicationInfoItem = onTapFolderEblanApplicationInfoItem
             )
         }
     }
@@ -268,39 +284,41 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
 
 @Composable
 private fun InteractiveEblanApplicationInfoItem(
-    // Required Data
+    // Scope and Animation
     sharedTransitionScope: SharedTransitionScope,
+    sharedElementKey: SharedElementKey,
+    animations: Boolean,
+    // Item and Data
     folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
     data: FolderEblanApplicationInfoGridItemData.ApplicationInfo,
     appDrawerSettings: AppDrawerSettings,
-    // Layout & Appearance
+    iconPackFilePaths: Map<String, String?>,
+    // Layout and Alignment
     paddingValues: PaddingValues,
-    textColor: Color,
     horizontalAlignment: Alignment.Horizontal,
     verticalArrangement: Arrangement.Vertical,
-    maxLines: Int,
     padding: Dp,
     iconSize: Dp,
-    iconPackFilePaths: Map<String, String?>,
     iconPadding: Dp,
     textPadding: Dp,
-    // State & Animation
+    // Appearance and Style
+    textColor: Color,
+    maxLines: Int,
+    // State
     isVisibleOverlay: Boolean,
     isScrollInProgress: Boolean,
     isInProgress: Boolean,
-    animations: Boolean,
     hasInteraction: Boolean,
-    sharedElementKey: SharedElementKey,
-    // Layout & Appearance
+    // Modifier
     modifier: Modifier = Modifier,
-    // Interactions
+    // Callbacks
     onLongPressFolderEblanApplicationInfoGridItem: (
         folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
         imageBitmap: ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit,
+    ) -> Unit
 ) {
     val context = LocalContext.current
     val density = LocalDensity.current
@@ -404,10 +422,12 @@ private fun InteractiveEblanApplicationInfoItem(
                     intSize = it.size
                 }
                 .gridItemSharedElement(
-                    enabled = animations && !isInProgress,
-                    sharedElementKey = sharedElementKey,
+                    // Transition State
                     sharedTransitionScope = sharedTransitionScope,
-                    visible = !isScrollInProgress && !hasInteraction,
+                    sharedElementKey = sharedElementKey,
+                    // Visibility Control
+                    enabled = animations && !isInProgress,
+                    visible = !isScrollInProgress && !hasInteraction
                 )
                 .gridItemScaleAnimation(
                     animations = animations,
@@ -439,13 +459,13 @@ private fun InteractiveEblanApplicationInfoItem(
 
 @Composable
 private fun InteractiveNestedFolderEblanApplicationInfoItem(
-    // Data and Content
+    // Data
     data: FolderEblanApplicationInfoGridItemData.Folder,
     folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     appDrawerSettings: AppDrawerSettings,
     iconPackFilePaths: Map<String, String?>,
-    // Transition and Animation
+    // Animation
     sharedTransitionScope: SharedTransitionScope,
     sharedElementKey: SharedElementKey,
     animations: Boolean,
@@ -455,21 +475,20 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
     isInProgress: Boolean,
     hasInteraction: Boolean,
     isVisibleFolder: Boolean,
-    // Appearance and Styling
+    // Appearance
     customFolderBackgroundColor: Int,
     folderBackgroundColor: BackgroundColor,
     folderCornerRadius: Int,
     systemCustomTextColor: Int,
     systemTextColor: TextColor,
     textColor: Color,
-    // Layout and Sizing
+    // Layout
     horizontalAlignment: Alignment.Horizontal,
     verticalArrangement: Arrangement.Vertical,
     padding: Dp,
     iconSize: Dp,
     iconPadding: Dp,
     textPadding: Dp,
-    // Modifier
     modifier: Modifier = Modifier,
     // Callbacks
     onLongPressFolderEblanApplicationInfoGridItem: (
@@ -479,7 +498,7 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
     ) -> Unit,
-    onTapFolderEblanApplicationInfoItem: (FolderEntry) -> Unit,
+    onTapFolderEblanApplicationInfoItem: (FolderEntry) -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -553,10 +572,12 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
                     intSize = it.size
                 }
                 .gridItemSharedElement(
-                    enabled = animations && !isInProgress,
-                    sharedElementKey = sharedElementKey,
+                    // Transition State
                     sharedTransitionScope = sharedTransitionScope,
-                    visible = !isScrollInProgress && !hasInteraction,
+                    sharedElementKey = sharedElementKey,
+                    // Visibility Control
+                    enabled = animations && !isInProgress,
+                    visible = !isScrollInProgress && !hasInteraction
                 )
                 .gridItemScaleAnimation(
                     animations = animations,
@@ -589,21 +610,27 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
                 },
             ) {
                 PreviewFolderGridLayout(
+                    // Data
                     gridItems = folderEblanApplicationInfoPopups[folderEblanApplicationInfoGridItem.id]?.previewFolderEblanApplicationInfoGridItems,
+                    // Layout
                     modifier = Modifier.fillMaxSize(),
+                    // Callbacks
                     slotId = { it.id },
                     content = {
                         PreviewFolderEblanApplicationInfoItem(
+                            // Item Data
                             folderEblanApplicationInfoGridItem = it,
                             gridItemSettings = appDrawerSettings.gridItemSettings,
+                            // Appearance
                             alpha = iconAlpha,
                             folderBackgroundColor = folderBackgroundColor,
                             customFolderBackgroundColor = customFolderBackgroundColor,
                             systemTextColor = systemTextColor,
                             systemCustomTextColor = systemCustomTextColor,
-                            iconPackFilePaths = iconPackFilePaths,
+                            // Icons
+                            iconPackFilePaths = iconPackFilePaths
                         )
-                    },
+                    }
                 )
             }
         }
@@ -627,27 +654,31 @@ private fun PreviewFolderEblanApplicationInfoItem(
     // Item Data
     folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
     gridItemSettings: GridItemSettings,
+    // Appearance
     alpha: Float,
-    // Styling
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
+    // Icons
     iconPackFilePaths: Map<String, String?>,
     // Layout
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     key(folderEblanApplicationInfoGridItem.id) {
         val context = LocalContext.current
 
         val folderIconTint = getTextColorFromBackgroundColor(
+            // Background Color
             backgroundColor = folderBackgroundColor,
             customBackgroundColor = customFolderBackgroundColor,
+            // Text Color
             textColor = gridItemSettings.textColor,
             customTextColor = gridItemSettings.customTextColor,
             systemCustomTextColor = systemCustomTextColor,
             systemTextColor = systemTextColor,
-            defaultColor = MaterialTheme.colorScheme.onSurface,
+            // Default Color
+            defaultColor = MaterialTheme.colorScheme.onSurface
         )
 
         val commonModifier = modifier

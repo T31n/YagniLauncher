@@ -29,10 +29,12 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.unit.Velocity
 @Composable
 internal fun rememberNestedScrollConnectionEffect(
+    // Scroll State
     scrollableState: ScrollableState,
     swipeY: Float,
+    // Drag Callbacks
     onVerticalDrag: (Float) -> Unit,
-    onDragEnd: () -> Unit,
+    onDragEnd: () -> Unit
 ): OffsetNestedScrollConnection {
     val currentOnVerticalDrag by rememberUpdatedState(onVerticalDrag)
     val currentOnDragEnd by rememberUpdatedState(onDragEnd)

@@ -59,30 +59,28 @@ import kotlin.math.roundToInt
 
 @Composable
 internal fun WidgetGridItemResizeOverlay(
-    // Data
+    // Item Data
     data: GridItemData.Widget,
     gridItem: GridItem,
-    // Grid Dimensions
+    // Dimensions
     columns: Int,
     rows: Int,
     gridWidth: Int,
     gridHeight: Int,
-    // Item Dimensions and Position
     width: Int,
     height: Int,
+    // Position and Style
     x: Int,
     y: Int,
-    // Appearance and Behavior
     color: Color,
     lockMovement: Boolean,
-    // Modifier
     modifier: Modifier = Modifier,
-    // Callbacks
+    // Callback
     onResizeWidgetGridItem: (
         gridItem: GridItem,
         columns: Int,
         rows: Int,
-    ) -> Unit,
+    ) -> Unit
 ) {
     val density = LocalDensity.current
 
@@ -147,12 +145,15 @@ internal fun WidgetGridItemResizeOverlay(
     val borderX by remember {
         derivedStateOf {
             getWidgetBorderX(
+                // Position
                 x = x,
                 currentX = currentX.value,
+                // Dimensions
                 width = width,
                 currentWidth = currentWidth.value,
+                // DragHandle
                 dragHandle = dragHandle,
-                dragHandleSizePx = dragHandleSizePx,
+                dragHandleSizePx = dragHandleSizePx
             )
         }
     }
@@ -160,12 +161,15 @@ internal fun WidgetGridItemResizeOverlay(
     val borderY by remember {
         derivedStateOf {
             getWidgetBorderY(
+                // Position
                 y = y,
                 currentY = currentY.value,
+                // Dimensions
                 height = height,
                 currentHeight = currentHeight.value,
+                // Drag Configuration
                 dragHandle = dragHandle,
-                dragHandleSizePx = dragHandleSizePx,
+                dragHandleSizePx = dragHandleSizePx
             )
         }
     }
@@ -175,8 +179,10 @@ internal fun WidgetGridItemResizeOverlay(
         key2 = currentHeight.value,
     ) {
         resizeWidgetGridItem(
+            // Widget Data and Manager
             data = data,
             appWidgetManager = appWidgetManager,
+            // Grid Item and Dimensions
             gridItem = gridItem,
             gridWidth = gridWidth,
             gridHeight = gridHeight,
@@ -186,11 +192,13 @@ internal fun WidgetGridItemResizeOverlay(
             columns = columns,
             width = width,
             height = height,
+            // Interaction and Layout
             dragHandle = dragHandle,
             isResizing = isResizing,
             lockMovement = lockMovement,
             density = density,
-            onResizeWidgetGridItem = onResizeWidgetGridItem,
+            // Callback
+            onResizeWidgetGridItem = onResizeWidgetGridItem
         )
     }
 
@@ -345,9 +353,9 @@ private fun getWidgetBorderX(
     // Dimensions
     width: Int,
     currentWidth: Int,
-    // Drag Handle
+    // DragHandle
     dragHandle: Alignment,
-    dragHandleSizePx: Int,
+    dragHandleSizePx: Int
 ): Int = if (dragHandle == Alignment.CenterStart) {
     if (currentWidth >= dragHandleSizePx) {
         currentX
@@ -365,9 +373,9 @@ private fun getWidgetBorderY(
     // Dimensions
     height: Int,
     currentHeight: Int,
-    // Drag Handle
+    // Drag Configuration
     dragHandle: Alignment,
-    dragHandleSizePx: Int,
+    dragHandleSizePx: Int
 ): Int = if (dragHandle == Alignment.TopCenter) {
     if (currentHeight >= dragHandleSizePx) {
         currentY
@@ -379,10 +387,10 @@ private fun getWidgetBorderY(
 }
 
 private fun resizeWidgetGridItem(
-    // Widget Data
+    // Widget Data and Manager
     data: GridItemData.Widget,
     appWidgetManager: AndroidAppWidgetManagerWrapper,
-    // Grid State
+    // Grid Item and Dimensions
     gridItem: GridItem,
     gridWidth: Int,
     gridHeight: Int,
@@ -390,15 +398,15 @@ private fun resizeWidgetGridItem(
     currentHeight: Int,
     rows: Int,
     columns: Int,
-    // Resize Dimensions
     width: Int,
     height: Int,
+    // Interaction and Layout
     dragHandle: Alignment,
     isResizing: Boolean,
     lockMovement: Boolean,
     density: Density,
     // Callback
-    onResizeWidgetGridItem: (GridItem, Int, Int) -> Unit,
+    onResizeWidgetGridItem: (GridItem, Int, Int) -> Unit
 ) {
     val minResizeWidthPx = with(density) { data.minResizeWidth.dp.roundToPx() }
     val minResizeHeightPx = with(density) { data.minResizeHeight.dp.roundToPx() }
@@ -486,8 +494,11 @@ private fun resizeWidgetGridItem(
         ) && !lockMovement
     ) {
         updateAppWidgetOptions(
+            // Manager
             androidAppWidgetManagerWrapper = appWidgetManager,
+            // Data
             data = data,
+            // Dimensions
             width = allowedWidth,
             height = allowedHeight,
             density = density,
@@ -496,7 +507,7 @@ private fun resizeWidgetGridItem(
             gridWidth = gridWidth,
             gridHeight = gridHeight,
             startColumn = resizingGridItem.startColumn,
-            startRow = resizingGridItem.startRow,
+            startRow = resizingGridItem.startRow
         )
 
         onResizeWidgetGridItem(

@@ -97,31 +97,30 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun VerticalApplicationScreen(
-    // Transition and Layout
+    // Layout and Transition
     sharedTransitionScope: SharedTransitionScope,
     screenHeight: Int,
     paddingValues: PaddingValues,
-    // Application Data
+    modifier: Modifier = Modifier,
+    // Application Info
     eblanApplicationInfoTags: List<EblanApplicationInfoTag>,
     getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
-    // Folder
+    // Folder Configuration
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
     isVisibleFolderEblanApplicationInfos: Boolean,
     folderEblanApplicationInfoEntries: List<FolderEntry>,
-    // Appearance
+    // System and Appearance
     appDrawerSettings: AppDrawerSettings,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     animations: Boolean,
-    // Interaction State
+    // Gesture and Interaction State
     drag: Drag,
     swipeY: Float,
     isVisibleOverlay: Boolean,
-    // Modifier
-    modifier: Modifier = Modifier,
     // Callbacks
     onDismiss: () -> Unit,
     onDragEnd: () -> Unit,
@@ -153,7 +152,7 @@ internal fun VerticalApplicationScreen(
         intOffset: IntOffset,
         intSize: IntSize,
     ) -> Unit,
-    onTapFolderApplicationInfo: (folderEntry: FolderEntry) -> Unit,
+    onTapFolderApplicationInfo: (folderEntry: FolderEntry) -> Unit
 ) {
     val layoutDirection = LocalLayoutDirection.current
 
@@ -176,17 +175,20 @@ internal fun VerticalApplicationScreen(
     val focusRequester = remember { FocusRequester() }
 
     ApplicationScreenEffect(
+        // Pager and Dimensions
         horizontalPagerState = horizontalPagerState,
         screenHeight = screenHeight,
-        selectedEblanApplicationInfoTagId = selectedEblanApplicationInfoTagId,
         swipeY = swipeY,
+        // State and Focus
+        selectedEblanApplicationInfoTagId = selectedEblanApplicationInfoTagId,
         textFieldState = textFieldState,
         showKeyboard = appDrawerSettings.showKeyboard &&
-            appDrawerSettings.searchBarPosition != SearchBarPosition.None,
+                appDrawerSettings.searchBarPosition != SearchBarPosition.None,
         focusRequester = focusRequester,
+        // Callbacks
         onDismiss = onDismiss,
         onGetEblanApplicationInfosByLabel = onGetEblanApplicationInfosByLabel,
-        onGetEblanApplicationInfosByTagId = onGetEblanApplicationInfosByTagId,
+        onGetEblanApplicationInfosByTagId = onGetEblanApplicationInfosByTagId
     )
 
     Column(
@@ -205,23 +207,28 @@ internal fun VerticalApplicationScreen(
         DragHandle(
             modifier = Modifier.align(Alignment.CenterHorizontally),
             color = getApplicationScreenTextColor(
+                // Background Colors
                 backgroundColor = appDrawerSettings.backgroundColor,
                 customBackgroundColor = appDrawerSettings.customBackgroundColor,
+                // Text Colors
                 systemTextColor = systemTextColor,
                 systemCustomTextColor = systemCustomTextColor,
-                defaultColor = MaterialTheme.colorScheme.onSurface,
+                // Defaults
+                defaultColor = MaterialTheme.colorScheme.onSurface
             ),
         )
 
         if (appDrawerSettings.searchBarPosition == SearchBarPosition.Top) {
             ApplicationSearchBar(
+                // State and Focus
                 searchBarState = searchBarState,
                 textFieldState = textFieldState,
                 focusRequester = focusRequester,
+                // Colors
                 backgroundColor = appDrawerSettings.backgroundColor,
                 customBackgroundColor = appDrawerSettings.customBackgroundColor,
                 systemTextColor = systemTextColor,
-                systemCustomTextColor = systemCustomTextColor,
+                systemCustomTextColor = systemCustomTextColor
             )
         }
 
@@ -230,11 +237,13 @@ internal fun VerticalApplicationScreen(
                 LazyRow(modifier = Modifier.fillMaxWidth()) {
                     items(eblanApplicationInfoTags) {
                         TagElevatedFilterChip(
+                            // Data
                             eblanApplicationInfoTag = it,
                             selectedEblanApplicationInfoTag = selectedEblanApplicationInfoTagId,
+                            // Callbacks
                             onUpdateEblanApplicationInfoTag = { id ->
                                 selectedEblanApplicationInfoTagId = id
-                            },
+                            }
                         )
                     }
                 }
@@ -242,14 +251,18 @@ internal fun VerticalApplicationScreen(
 
             if (eblanUserPageKeys.size > 1) {
                 EblanApplicationInfoTabRow(
+                    // Data
                     eblanUserPageKeys = eblanUserPageKeys,
                     eblanApplicationInfos = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos,
+                    // State
                     currentPage = horizontalPagerState.currentPage,
+                    // Appearance
                     backgroundColor = appDrawerSettings.backgroundColor,
                     customBackgroundColor = appDrawerSettings.customBackgroundColor,
                     systemTextColor = systemTextColor,
                     systemCustomTextColor = systemCustomTextColor,
-                    onAnimateScrollToPage = horizontalPagerState::animateScrollToPage,
+                    // Callbacks
+                    onAnimateScrollToPage = horizontalPagerState::animateScrollToPage
                 )
             }
 
@@ -259,46 +272,56 @@ internal fun VerticalApplicationScreen(
                 userScrollEnabled = !isVisibleOverlay,
             ) { index ->
                 EblanApplicationInfosPage(
+                    // Scope and Layout
                     sharedTransitionScope = sharedTransitionScope,
                     paddingValues = paddingValues,
                     screenHeight = screenHeight,
                     index = index,
+                    // Animation and State
                     isVisibleOverlay = isVisibleOverlay,
                     swipeY = swipeY,
                     animations = animations,
                     isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
+                    // Settings and Data
                     appDrawerSettings = appDrawerSettings,
                     getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
                     folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+                    // Folder Appearance
                     folderCornerRadius = folderCornerRadius,
                     folderBackgroundColor = folderBackgroundColor,
                     customFolderBackgroundColor = customFolderBackgroundColor,
                     folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
+                    // System Colors
                     systemTextColor = systemTextColor,
                     systemCustomTextColor = systemCustomTextColor,
+                    // Drag and Drop State
                     drag = drag,
+                    // Drag and Drop Callbacks
                     onDragEnd = onDragEnd,
                     onVerticalDrag = onVerticalDrag,
                     onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                     onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
                     onDragApplicationInfo = onDragApplicationInfo,
+                    // Long Press and Tap Callbacks
                     onLongPressApplicationInfo = onLongPressApplicationInfo,
                     onLongPressFolderApplicationInfo = onLongPressFolderApplicationInfo,
                     onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
-                    onTapFolderApplicationInfo = onTapFolderApplicationInfo,
+                    onTapFolderApplicationInfo = onTapFolderApplicationInfo
                 )
             }
         }
 
         if (appDrawerSettings.searchBarPosition == SearchBarPosition.Bottom) {
             ApplicationSearchBar(
+                // State and Focus
                 searchBarState = searchBarState,
                 textFieldState = textFieldState,
                 focusRequester = focusRequester,
+                // Colors
                 backgroundColor = appDrawerSettings.backgroundColor,
                 customBackgroundColor = appDrawerSettings.customBackgroundColor,
                 systemTextColor = systemTextColor,
-                systemCustomTextColor = systemCustomTextColor,
+                systemCustomTextColor = systemCustomTextColor
             )
         }
     }
@@ -306,32 +329,32 @@ internal fun VerticalApplicationScreen(
 
 @Composable
 private fun EblanApplicationInfosPage(
-    // Layout
+    // Scope and Layout
     sharedTransitionScope: SharedTransitionScope,
     paddingValues: PaddingValues,
     screenHeight: Int,
-    // State
     index: Int,
+    modifier: Modifier = Modifier,
+    // Animation and State
     isVisibleOverlay: Boolean,
     swipeY: Float,
     animations: Boolean,
     isVisibleFolderEblanApplicationInfos: Boolean,
-    // Content & Data
+    // Settings and Data
     appDrawerSettings: AppDrawerSettings,
     getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
+    // Folder Appearance
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
     folderEblanApplicationInfoEntries: List<FolderEntry>,
-    // Styling
+    // System Colors
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
-    // Interactions
+    // Drag and Drop State
     drag: Drag,
-    // Layout
-    modifier: Modifier = Modifier,
-    // Interactions
+    // Drag and Drop Callbacks
     onDragEnd: () -> Unit,
     onVerticalDrag: (Float) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
@@ -340,6 +363,7 @@ private fun EblanApplicationInfosPage(
         movingGridItem: GridItem,
     ) -> Unit,
     onDragApplicationInfo: (GridItem) -> Unit,
+    // Long Press and Tap Callbacks
     onLongPressApplicationInfo: (
         eblanApplicationInfo: EblanApplicationInfo,
         imageBitmap: ImageBitmap,
@@ -359,7 +383,7 @@ private fun EblanApplicationInfosPage(
         intOffset: IntOffset,
         intSize: IntSize,
     ) -> Unit,
-    onTapFolderApplicationInfo: (folderEntry: FolderEntry) -> Unit,
+    onTapFolderApplicationInfo: (folderEntry: FolderEntry) -> Unit
 ) {
     val scope = rememberCoroutineScope()
 
@@ -391,19 +415,24 @@ private fun EblanApplicationInfosPage(
     Box(modifier = modifier.fillMaxSize()) {
         if (isQuietModeEnabled) {
             QuiteModeScreen(
+                // User
                 userHandle = userHandle,
+                // Appearance
                 backgroundColor = appDrawerSettings.backgroundColor,
                 customBackgroundColor = appDrawerSettings.customBackgroundColor,
                 systemTextColor = systemTextColor,
                 systemCustomTextColor = systemCustomTextColor,
+                // Callbacks
                 onDragEnd = onDragEnd,
-                onVerticalDrag = onVerticalDrag,
+                onVerticalDrag = onVerticalDrag
             )
         } else {
             EblanApplicationInfos(
+                // Layout
                 sharedTransitionScope = sharedTransitionScope,
                 paddingValues = paddingValues,
                 screenHeight = screenHeight,
+                // State
                 swipeY = swipeY,
                 animations = animations,
                 appDrawerSettings = appDrawerSettings,
@@ -419,6 +448,7 @@ private fun EblanApplicationInfosPage(
                 isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
                 folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
                 drag = drag,
+                // Callbacks
                 onDragEnd = onDragEnd,
                 onVerticalDrag = onVerticalDrag,
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
@@ -427,7 +457,7 @@ private fun EblanApplicationInfosPage(
                 onLongPressApplicationInfo = onLongPressApplicationInfo,
                 onLongPressFolderApplicationInfo = onLongPressFolderApplicationInfo,
                 onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
-                onTapFolderApplicationInfo = onTapFolderApplicationInfo,
+                onTapFolderApplicationInfo = onTapFolderApplicationInfo
             )
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && isDefaultLauncher &&
@@ -461,31 +491,27 @@ private fun EblanApplicationInfosPage(
 
 @Composable
 private fun EblanApplicationInfos(
-    // Layout & Animation
+    // Layout
     sharedTransitionScope: SharedTransitionScope,
     paddingValues: PaddingValues,
     screenHeight: Int,
+    modifier: Modifier = Modifier,
+    // State
     swipeY: Float,
     animations: Boolean,
-    // Navigation & State
     appDrawerSettings: AppDrawerSettings,
     eblanUserPageKey: EblanUserPageKey,
     getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
     isVisibleOverlay: Boolean,
-    // Theme & Styling
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
-    // Folder & Content
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     isVisibleFolderEblanApplicationInfos: Boolean,
     folderEblanApplicationInfoEntries: List<FolderEntry>,
-    // Interactions
     drag: Drag,
-    // Layout & Animation
-    modifier: Modifier = Modifier,
     // Callbacks
     onDragEnd: () -> Unit,
     onVerticalDrag: (Float) -> Unit,
@@ -514,7 +540,7 @@ private fun EblanApplicationInfos(
         intOffset: IntOffset,
         intSize: IntSize,
     ) -> Unit,
-    onTapFolderApplicationInfo: (folderEntry: FolderEntry) -> Unit,
+    onTapFolderApplicationInfo: (folderEntry: FolderEntry) -> Unit
 ) {
     val lazyGridState = rememberLazyGridState()
 
@@ -525,10 +551,12 @@ private fun EblanApplicationInfos(
     }
 
     val nestedScrollConnection = rememberNestedScrollConnectionEffect(
+        // Scroll State
         scrollableState = lazyGridState,
         swipeY = swipeY,
+        // Drag Callbacks
         onVerticalDrag = onVerticalDrag,
-        onDragEnd = onDragEnd,
+        onDragEnd = onDragEnd
     )
 
     val privateIsQuiteModeEnabled by rememberIsPrivateQuietModeEnabled(eblanUser = getEblanApplicationInfosByLabelAndTag.privateEblanUser)
@@ -569,27 +597,33 @@ private fun EblanApplicationInfos(
                         key = { it.id },
                     ) {
                         FolderEblanApplicationInfoItem(
-                            sharedTransitionScope = sharedTransitionScope,
+                            // Core Data
                             folderEblanApplicationInfo = it,
                             appDrawerSettings = appDrawerSettings,
-                            isVisibleOverlay = isVisibleOverlay,
-                            isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
-                            animations = animations,
-                            isScrollInProgress = lazyGridState.isScrollInProgress,
-                            isSwiping = swipeY > 0f,
-                            drag = drag,
                             folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                             folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
                             iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
+                            // Animation and Transition
+                            sharedTransitionScope = sharedTransitionScope,
+                            animations = animations,
+                            // Visibility and State
+                            isVisibleOverlay = isVisibleOverlay,
+                            isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
+                            isScrollInProgress = lazyGridState.isScrollInProgress,
+                            isSwiping = swipeY > 0f,
+                            // Styling and Appearance
                             systemTextColor = systemTextColor,
                             systemCustomTextColor = systemCustomTextColor,
                             folderCornerRadius = folderCornerRadius,
                             folderBackgroundColor = folderBackgroundColor,
                             customFolderBackgroundColor = customFolderBackgroundColor,
+                            // Interaction
+                            drag = drag,
+                            // Callbacks
                             onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                             onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
                             onLongPressFolderApplicationInfo = onLongPressFolderApplicationInfo,
-                            onTapFolderApplicationInfo = onTapFolderApplicationInfo,
+                            onTapFolderApplicationInfo = onTapFolderApplicationInfo
                         )
                     }
 
@@ -598,38 +632,46 @@ private fun EblanApplicationInfos(
                         key = { it.serialNumber to it.componentName },
                     ) {
                         EblanApplicationInfoItem(
+                            // Application Data and Settings
                             eblanApplicationInfo = it,
+                            appDrawerSettings = appDrawerSettings,
+                            iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
+                            // Layout and UI State
                             sharedTransitionScope = sharedTransitionScope,
                             drag = drag,
                             paddingValues = paddingValues,
                             animations = animations,
-                            appDrawerSettings = appDrawerSettings,
                             isVisibleOverlay = isVisibleOverlay,
                             isScrollInProgress = lazyGridState.isScrollInProgress,
                             isSwiping = swipeY > 0f,
                             systemTextColor = systemTextColor,
                             systemCustomTextColor = systemCustomTextColor,
-                            iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
                             modifier = Modifier.height(appDrawerSettings.appDrawerRowsHeight.dp),
+                            // Callbacks
                             onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                             onDragApplicationInfo = onDragApplicationInfo,
-                            onLongPressApplicationInfo = onLongPressApplicationInfo,
+                            onLongPressApplicationInfo = onLongPressApplicationInfo
                         )
                     }
 
                     privateSpace(
+                        // User and Application Data
                         privateEblanUser = getEblanApplicationInfosByLabelAndTag.privateEblanUser,
                         privateEblanApplicationInfos = getEblanApplicationInfosByLabelAndTag.privateEblanApplicationInfos,
+                        // App Drawer and Appearance Settings
                         appDrawerSettings = appDrawerSettings,
                         iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
+                        // Space State
                         isQuietModeEnabled = privateIsQuiteModeEnabled,
                         isVisibleOverlay = isVisibleOverlay,
+                        // Layout and Colors
                         paddingValues = paddingValues,
                         backgroundColor = appDrawerSettings.backgroundColor,
                         customBackgroundColor = appDrawerSettings.customBackgroundColor,
                         systemTextColor = systemTextColor,
                         systemCustomTextColor = systemCustomTextColor,
-                        onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
+                        // Callbacks
+                        onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem
                     )
                 }
 
@@ -642,22 +684,25 @@ private fun EblanApplicationInfos(
                         },
                     ) {
                         EblanApplicationInfoItem(
+                            // Application Data and Settings
                             eblanApplicationInfo = it,
+                            appDrawerSettings = appDrawerSettings,
+                            iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
+                            // Layout and UI State
                             sharedTransitionScope = sharedTransitionScope,
                             drag = drag,
                             paddingValues = paddingValues,
                             animations = animations,
-                            appDrawerSettings = appDrawerSettings,
                             isVisibleOverlay = isVisibleOverlay,
                             isScrollInProgress = lazyGridState.isScrollInProgress,
                             isSwiping = swipeY > 0f,
                             systemTextColor = systemTextColor,
                             systemCustomTextColor = systemCustomTextColor,
-                            iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
                             modifier = Modifier.height(appDrawerSettings.appDrawerRowsHeight.dp),
+                            // Callbacks
                             onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                             onDragApplicationInfo = onDragApplicationInfo,
-                            onLongPressApplicationInfo = onLongPressApplicationInfo,
+                            onLongPressApplicationInfo = onLongPressApplicationInfo
                         )
                     }
                 }
@@ -665,15 +710,17 @@ private fun EblanApplicationInfos(
         }
 
         ScrollBarType(
+            // Scroll and List
             alphabeticalScrollBarItems = alphabeticalScrollBarItems,
             lazyGridState = lazyGridState,
             canScroll = canScroll,
+            // UI Settings
             appDrawerSettings = appDrawerSettings,
             paddingValues = paddingValues,
             isPrivateSpaceEntryPointHidden = isDefaultLauncher &&
-                eblanUserPageKey.eblanUser.eblanUserType == EblanUserType.Personal &&
-                getEblanApplicationInfosByLabelAndTag.privateEblanUser
-                    ?.isPrivateSpaceEntryPointHidden == false,
+                    eblanUserPageKey.eblanUser.eblanUserType == EblanUserType.Personal &&
+                    getEblanApplicationInfosByLabelAndTag.privateEblanUser
+                        ?.isPrivateSpaceEntryPointHidden == false
         )
     }
 }

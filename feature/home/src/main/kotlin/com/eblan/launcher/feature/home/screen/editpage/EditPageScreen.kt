@@ -90,33 +90,33 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun EditGridPageScreen(
-    // State
+    // Content
     pageItems: List<PageItem>?,
-    hasShortcutHostPermission: Boolean,
-    homeSettings: HomeSettings,
+    folderPopupGridItems: Map<String, FolderPopup>,
+    iconPackFilePaths: Map<String, String?>,
     // Layout
     paddingValues: PaddingValues,
     screenWidth: Int,
     screenHeight: Int,
+    modifier: Modifier = Modifier,
+    // Configuration
+    hasShortcutHostPermission: Boolean,
+    homeSettings: HomeSettings,
+    folderSettings: FolderSettings,
     // Appearance
     textColor: TextColor,
-    folderPopupGridItems: Map<String, FolderPopup>,
-    iconPackFilePaths: Map<String, String?>,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
-    folderSettings: FolderSettings,
-    // Layout
-    modifier: Modifier = Modifier,
-    // Callbacks
+    // Actions
     onSaveEditPage: (
         id: Int,
         pageItems: List<PageItem>,
         pageItemsToDelete: List<PageItem>,
         associate: Associate,
     ) -> Unit,
-    onUpdateScreen: (Screen) -> Unit,
+    onUpdateScreen: (Screen) -> Unit
 ) {
     requireNotNull(pageItems)
 
@@ -208,9 +208,11 @@ internal fun EditGridPageScreen(
                     index = index,
                 ) {
                     GridLayout(
+                        // Grid Properties
                         gridItems = pageItem.gridItems,
                         columns = columns,
                         rows = rows,
+                        // Layout Options
                         animate = false,
                         modifier = Modifier
                             .weight(1f)
@@ -218,21 +220,25 @@ internal fun EditGridPageScreen(
                                 color = MaterialTheme.colorScheme.primary.copy(alpha = 0.25f),
                                 shape = RoundedCornerShape(8.dp),
                             ),
+                        // Content
                         content = {
                             PageGridItem(
+                                // Item and Settings
                                 gridItem = it,
                                 gridItemSettings = homeSettings.gridItemSettings,
                                 folderPopupGridItems = folderPopupGridItems,
                                 hasShortcutHostPermission = hasShortcutHostPermission,
+                                // Colors
                                 textColor = textColor,
                                 systemTextColor = systemTextColor,
                                 systemCustomTextColor = systemCustomTextColor,
                                 folderBackgroundColor = folderBackgroundColor,
                                 customFolderBackgroundColor = customFolderBackgroundColor,
                                 folderCornerRadius = folderSettings.folderCornerRadius,
-                                iconPackFilePaths = iconPackFilePaths,
+                                // Assets and Styling
+                                iconPackFilePaths = iconPackFilePaths
                             )
-                        },
+                        }
                     )
 
                     PageButtons(
@@ -443,28 +449,34 @@ internal fun EditDockGridPageScreen(
                             ),
                     ) {
                         GridLayout(
+                            // Grid Properties
                             gridItems = pageItem.gridItems,
                             columns = columns,
                             rows = rows,
+                            // Layout Options
                             animate = false,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(cardHeight),
+                            // Content
                             content = {
                                 PageGridItem(
+                                    // Item and Settings
                                     gridItem = it,
                                     gridItemSettings = homeSettings.gridItemSettings,
                                     folderPopupGridItems = folderPopupGridItems,
                                     hasShortcutHostPermission = hasShortcutHostPermission,
+                                    // Colors
                                     textColor = textColor,
                                     systemTextColor = systemTextColor,
                                     systemCustomTextColor = systemCustomTextColor,
                                     folderBackgroundColor = folderBackgroundColor,
                                     customFolderBackgroundColor = customFolderBackgroundColor,
                                     folderCornerRadius = folderSettings.folderCornerRadius,
-                                    iconPackFilePaths = iconPackFilePaths,
+                                    // Assets and Styling
+                                    iconPackFilePaths = iconPackFilePaths
                                 )
-                            },
+                            }
                         )
 
                         PageButtons(

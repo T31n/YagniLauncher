@@ -86,22 +86,20 @@ import kotlin.uuid.Uuid
 
 @Composable
 internal fun EblanApplicationInfoItem(
-    // Application Data
+    // Application Data and Settings
     eblanApplicationInfo: EblanApplicationInfo,
-    // Layout and Animation
+    appDrawerSettings: AppDrawerSettings,
+    iconPackFilePaths: Map<String, String?>,
+    // Layout and UI State
     sharedTransitionScope: SharedTransitionScope,
     drag: Drag,
     paddingValues: PaddingValues,
     animations: Boolean,
-    // State
-    appDrawerSettings: AppDrawerSettings,
     isVisibleOverlay: Boolean,
     isScrollInProgress: Boolean,
     isSwiping: Boolean,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
-    iconPackFilePaths: Map<String, String?>,
-    // Modifier
     modifier: Modifier = Modifier,
     // Callbacks
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
@@ -112,7 +110,7 @@ internal fun EblanApplicationInfoItem(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit,
+    ) -> Unit
 ) {
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
@@ -136,12 +134,14 @@ internal fun EblanApplicationInfoItem(
     val gridItemSettings = appDrawerSettings.gridItemSettings
 
     val textColor = getTextColorFromBackgroundColor(
+        // Background Color
         backgroundColor = appDrawerSettings.backgroundColor,
         customBackgroundColor = appDrawerSettings.customBackgroundColor,
+        // Text Color
         textColor = gridItemSettings.textColor,
         customTextColor = gridItemSettings.customTextColor,
         systemCustomTextColor = systemCustomTextColor,
-        systemTextColor = systemTextColor,
+        systemTextColor = systemTextColor
     )
 
     val maxLines = if (gridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
@@ -188,14 +188,17 @@ internal fun EblanApplicationInfoItem(
         key2 = isLongPress,
     ) {
         handleDragEblanApplicationInfoItem(
+            // Application Info
             eblanApplicationInfo = eblanApplicationInfo,
             appDrawerSettings = appDrawerSettings,
+            // Drag State
             drag = drag,
             isLongPress = isLongPress,
             isSwiping = isSwiping,
+            // Callbacks
             onUpdateIsLongPress = { isLongPress = it },
             onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-            onDragApplicationInfo = onDragApplicationInfo,
+            onDragApplicationInfo = onDragApplicationInfo
         )
     }
 
@@ -211,14 +214,18 @@ internal fun EblanApplicationInfoItem(
                     detectTapGestures(
                         onTap = {
                             handleOnTapEblanApplicationInfoItem(
+                                // Application Info
                                 serialNumber = eblanApplicationInfo.serialNumber,
                                 componentName = eblanApplicationInfo.componentName,
                                 launcherApps = launcherApps,
+                                // Position and Size
                                 intOffset = intOffset,
                                 intSize = intSize,
+                                // Padding
                                 leftPadding = leftPadding,
                                 topPadding = topPadding,
-                                keyboardController = keyboardController,
+                                // Controller
+                                keyboardController = keyboardController
                             )
                         },
                         onLongPress = {
@@ -249,13 +256,15 @@ internal fun EblanApplicationInfoItem(
             intSize = it.size
         }
         .gridItemSharedElement(
-            enabled = animations,
-            sharedElementKey = sharedElementKey,
+            // Transition State
             sharedTransitionScope = sharedTransitionScope,
+            sharedElementKey = sharedElementKey,
+            // Visibility Control
+            enabled = animations,
             visible = !isSwiping &&
-                !isScrollInProgress &&
-                !isLongPress &&
-                !isVisibleOverlay,
+                    !isScrollInProgress &&
+                    !isLongPress &&
+                    !isVisibleOverlay
         )
         .gridItemScaleAnimation(
             animations = animations,
@@ -317,15 +326,18 @@ internal fun EblanApplicationInfoItem(
     }
 
     GridItemLayoutType(
+        // Settings and Modifier
         gridItemSettings = gridItemSettings,
+        modifier = itemModifier,
+        // Alignment and Arrangement
         horizontalAlignment = horizontalAlignment,
         verticalAlignment = verticalAlignment,
         horizontalArrangement = horizontalArrangement,
         verticalArrangement = verticalArrangement,
-        modifier = itemModifier,
+        // Content
         iconContent = iconContent,
         labelContent = labelContent,
-        labelOnlyContent = labelOnlyContent,
+        labelOnlyContent = labelOnlyContent
     )
 }
 
@@ -334,13 +346,14 @@ internal fun handleOnTapEblanApplicationInfoItem(
     serialNumber: Long,
     componentName: String,
     launcherApps: AndroidLauncherAppsWrapper,
-    // Position and Layout
+    // Position and Size
     intOffset: IntOffset,
     intSize: IntSize,
+    // Padding
     leftPadding: Int,
     topPadding: Int,
     // Controller
-    keyboardController: SoftwareKeyboardController?,
+    keyboardController: SoftwareKeyboardController?
 ) {
     val left = intOffset.x + leftPadding
     val top = intOffset.y + topPadding
@@ -361,7 +374,7 @@ internal fun handleOnTapEblanApplicationInfoItem(
 
 @OptIn(ExperimentalUuidApi::class)
 internal fun handleDragEblanApplicationInfoItem(
-    // Application Data
+    // Application Info
     eblanApplicationInfo: EblanApplicationInfo,
     appDrawerSettings: AppDrawerSettings,
     // Drag State
@@ -371,7 +384,7 @@ internal fun handleDragEblanApplicationInfoItem(
     // Callbacks
     onUpdateIsLongPress: (Boolean) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
-    onDragApplicationInfo: (GridItem) -> Unit,
+    onDragApplicationInfo: (GridItem) -> Unit
 ) {
     if (!isLongPress) return
 

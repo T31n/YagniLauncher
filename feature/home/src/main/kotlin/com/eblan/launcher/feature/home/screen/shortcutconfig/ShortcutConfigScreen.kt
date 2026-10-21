@@ -106,16 +106,15 @@ internal fun ShortcutConfigScreen(
     // Configuration
     eblanShortcutConfigs: Map<EblanUser, Map<EblanApplicationInfoGroup, List<EblanShortcutConfig>>>,
     gridItemSettings: GridItemSettings,
-    paddingValues: PaddingValues,
     // Layout
+    paddingValues: PaddingValues,
     screenHeight: Int,
-    // Animation and State
+    modifier: Modifier = Modifier,
+    // State
     swipeY: Float,
     alpha: Float,
     isVisibleOverlay: Boolean,
     drag: Drag,
-    // Layout
-    modifier: Modifier = Modifier,
     // Callbacks
     onDismiss: () -> Unit,
     onGetEblanShortcutConfigsByLabel: (String) -> Unit,
@@ -128,7 +127,7 @@ internal fun ShortcutConfigScreen(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit,
+    ) -> Unit
 ) {
     val layoutDirection = LocalLayoutDirection.current
 
@@ -144,14 +143,17 @@ internal fun ShortcutConfigScreen(
     val scope = rememberCoroutineScope()
 
     ScreenEffect(
+        // State and Visibility
         isVisibleOverlay = isVisibleOverlay,
         textFieldState = textFieldState,
+        screenHeight = screenHeight,
+        // Gestures
         drag = drag,
         swipeY = swipeY,
-        screenHeight = screenHeight,
+        // Callbacks
         onDismiss = onDismiss,
         onGetLabel = onGetEblanShortcutConfigsByLabel,
-        onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+        onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay
     )
 
     Surface(
@@ -227,28 +229,34 @@ internal fun ShortcutConfigScreen(
                     state = horizontalPagerState,
                 ) { index ->
                     EblanShortcutConfigsPage(
+                        // Configuration
                         eblanShortcutConfigs = eblanShortcutConfigs,
                         gridItemSettings = gridItemSettings,
+                        // State
                         index = index,
                         paddingValues = paddingValues,
                         swipeY = swipeY,
                         isVisibleOverlay = isVisibleOverlay,
+                        // Callbacks
                         onDragEnd = onDragEnd,
                         onVerticalDrag = onVerticalDrag,
-                        onDragShortcutConfig = onDragShortcutConfig,
+                        onDragShortcutConfig = onDragShortcutConfig
                     )
                 }
             } else {
                 EblanShortcutConfigsPage(
+                    // Configuration
                     eblanShortcutConfigs = eblanShortcutConfigs,
                     gridItemSettings = gridItemSettings,
+                    // State
                     index = 0,
                     paddingValues = paddingValues,
                     swipeY = swipeY,
                     isVisibleOverlay = isVisibleOverlay,
+                    // Callbacks
                     onDragEnd = onDragEnd,
                     onVerticalDrag = onVerticalDrag,
-                    onDragShortcutConfig = onDragShortcutConfig,
+                    onDragShortcutConfig = onDragShortcutConfig
                 )
             }
         }
@@ -285,17 +293,16 @@ private fun EblanShortcutConfigTabRow(
 
 @Composable
 private fun EblanShortcutConfigsPage(
-    // Content
+    // Configuration
     eblanShortcutConfigs: Map<EblanUser, Map<EblanApplicationInfoGroup, List<EblanShortcutConfig>>>,
-    // Layout
     gridItemSettings: GridItemSettings,
+    // State
     index: Int,
     paddingValues: PaddingValues,
     swipeY: Float,
     isVisibleOverlay: Boolean,
-    // Modifier
     modifier: Modifier = Modifier,
-    // Actions
+    // Callbacks
     onDragEnd: () -> Unit,
     onVerticalDrag: (Float) -> Unit,
     onDragShortcutConfig: (
@@ -304,7 +311,7 @@ private fun EblanShortcutConfigsPage(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit,
+    ) -> Unit
 ) {
     val lazyListState = rememberLazyListState()
 
@@ -316,10 +323,12 @@ private fun EblanShortcutConfigsPage(
     )
 
     val nestedScrollConnection = rememberNestedScrollConnectionEffect(
+        // Scroll State
         scrollableState = lazyListState,
         swipeY = swipeY,
+        // Drag Callbacks
         onVerticalDrag = onVerticalDrag,
-        onDragEnd = onDragEnd,
+        onDragEnd = onDragEnd
     )
 
     Box(
@@ -337,12 +346,16 @@ private fun EblanShortcutConfigsPage(
             items(eblanShortcutConfigs[serialNumber].orEmpty().keys.toList()) { eblanApplicationInfoGroup ->
                 key(eblanApplicationInfoGroup.serialNumber, eblanApplicationInfoGroup.packageName) {
                     EblanApplicationInfoItem(
+                        // Application Info
                         eblanApplicationInfoGroup = eblanApplicationInfoGroup,
                         eblanShortcutConfigs = eblanShortcutConfigs[serialNumber].orEmpty(),
+                        // Grid and Visibility
                         gridItemSettings = gridItemSettings,
                         isVisibleOverlay = isVisibleOverlay,
+                        // Layout
                         modifier = modifier,
-                        onDragShortcutConfig = onDragShortcutConfig,
+                        // Actions
+                        onDragShortcutConfig = onDragShortcutConfig
                     )
                 }
             }
@@ -352,21 +365,22 @@ private fun EblanShortcutConfigsPage(
 
 @Composable
 private fun EblanApplicationInfoItem(
-    // Content Data
+    // Application Info
     eblanApplicationInfoGroup: EblanApplicationInfoGroup,
     eblanShortcutConfigs: Map<EblanApplicationInfoGroup, List<EblanShortcutConfig>>,
-    // Appearance and Layout
+    // Grid and Visibility
     gridItemSettings: GridItemSettings,
     isVisibleOverlay: Boolean,
+    // Layout
     modifier: Modifier = Modifier,
-    // Interactions
+    // Actions
     onDragShortcutConfig: (
         gridItem: GridItem,
         imageBitmap: ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit,
+    ) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -413,10 +427,13 @@ private fun EblanApplicationInfoItem(
 
                 eblanShortcutConfigs[eblanApplicationInfoGroup]?.forEach { eblanShortcutConfig ->
                     EblanShortcutConfigItem(
+                        // Shortcut and Grid Configuration
                         eblanShortcutConfig = eblanShortcutConfig,
                         gridItemSettings = gridItemSettings,
+                        // Display Settings
                         isVisibleOverlay = isVisibleOverlay,
-                        onDragShortcutConfig = onDragShortcutConfig,
+                        // Actions
+                        onDragShortcutConfig = onDragShortcutConfig
                     )
                 }
             }
@@ -426,20 +443,20 @@ private fun EblanApplicationInfoItem(
 
 @Composable
 private fun EblanShortcutConfigItem(
-    // Content
+    // Shortcut and Grid Configuration
     eblanShortcutConfig: EblanShortcutConfig,
     gridItemSettings: GridItemSettings,
+    // Display Settings
     isVisibleOverlay: Boolean,
-    // Modifier
     modifier: Modifier = Modifier,
-    // Callbacks
+    // Actions
     onDragShortcutConfig: (
         gridItem: GridItem,
         imageBitmap: ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit,
+    ) -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -462,13 +479,17 @@ private fun EblanShortcutConfigItem(
                     onLongPress = {
                         scope.launch {
                             handleOnLongPress(
+                                // Configuration
                                 eblanShortcutConfig = eblanShortcutConfig,
                                 gridItemSettings = gridItemSettings,
+                                // Layout
                                 intOffset = intOffset,
                                 intSize = intSize,
                                 graphicsLayer = graphicsLayer,
+                                // Controller
                                 keyboardController = keyboardController,
-                                onDragShortcutConfig = onDragShortcutConfig,
+                                // Callbacks
+                                onDragShortcutConfig = onDragShortcutConfig
                             )
                         }
                     },
@@ -508,15 +529,14 @@ private fun EblanShortcutConfigItem(
 
 @OptIn(ExperimentalUuidApi::class)
 private suspend fun handleOnLongPress(
-    // Settings and Configuration
+    // Configuration
     eblanShortcutConfig: EblanShortcutConfig,
     gridItemSettings: GridItemSettings,
-    // Position and Dimensions
+    // Layout
     intOffset: IntOffset,
     intSize: IntSize,
-    // Rendering
     graphicsLayer: GraphicsLayer,
-    // Input Control
+    // Controller
     keyboardController: SoftwareKeyboardController?,
     // Callbacks
     onDragShortcutConfig: (
@@ -525,7 +545,7 @@ private suspend fun handleOnLongPress(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit,
+    ) -> Unit
 ) {
     val id = Uuid.random().toHexString()
 

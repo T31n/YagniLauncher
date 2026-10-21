@@ -73,6 +73,8 @@ internal fun InteractiveGridItem(
     gridItem: GridItem,
     gridItemSettings: GridItemSettings,
     sharedElementKey: SharedElementKey,
+    statusBarNotifications: Map<String, Int>,
+    moveGridItemResult: MoveGridItemResult?,
     // Layout and Dimensions
     cellWidth: Int,
     cellHeight: Int,
@@ -84,23 +86,21 @@ internal fun InteractiveGridItem(
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
     systemCustomTextColor: Int,
-    // Content and State
+    iconPackFilePaths: Map<String, String?>,
+    // Animation and Transition
     sharedTransitionScope: SharedTransitionScope,
+    animations: Boolean,
+    // State and Flags
     drag: Drag,
     hasShortcutHostPermission: Boolean,
     isScrollInProgress: Boolean,
-    statusBarNotifications: Map<String, Int>,
     isVisibleOverlay: Boolean,
     isVisibleFolderGridItems: Boolean,
-    moveGridItemResult: MoveGridItemResult?,
     lockMovement: Boolean,
     isDragging: Boolean,
     showGridItemMenu: Boolean,
     folderPopups: Map<String, FolderPopup>,
-    iconPackFilePaths: Map<String, String?>,
-    animations: Boolean,
     folderGridItemEntries: List<FolderEntry>,
-    // Modifier
     modifier: Modifier = Modifier,
     // Callbacks
     onOpenAppDrawer: () -> Unit,
@@ -117,7 +117,7 @@ internal fun InteractiveGridItem(
         sharedElementKey: SharedElementKey,
     ) -> Unit,
     onTapFolderGridItem: (FolderEntry) -> Unit,
-    onDragGridItem: () -> Unit,
+    onDragGridItem: () -> Unit
 ) {
     val isSelected =
         moveGridItemResult != null && moveGridItemResult.movingGridItem.id == gridItem.id
@@ -129,10 +129,12 @@ internal fun InteractiveGridItem(
     }
 
     val currentTextColor = getGridItemTextColor(
-        gridItemCustomTextColor = currentGridItemSettings.customTextColor,
+        // Grid Item Text Colors
         gridItemTextColor = currentGridItemSettings.textColor,
-        systemCustomTextColor = gridItemSettings.customTextColor,
+        gridItemCustomTextColor = currentGridItemSettings.customTextColor,
+        // System Text Colors
         systemTextColor = textColor,
+        systemCustomTextColor = gridItemSettings.customTextColor
     )
 
     val hasInteraction = isSelected && isVisibleOverlay
@@ -140,11 +142,14 @@ internal fun InteractiveGridItem(
     val isVisibleWhiteBox = hasInteraction && drag == Drag.Dragging
 
     val sourceBounds = getSourceBounds(
+        // Grid Item
         gridItem = gridItem,
+        // Dimensions
         cellWidth = cellWidth,
         cellHeight = cellHeight,
+        // Offsets
         leftPadding = leftPadding,
-        topOffset = topOffset,
+        topOffset = topOffset
     )
 
     val isVisibleFolder = remember(
@@ -182,54 +187,67 @@ internal fun InteractiveGridItem(
     when (val data = gridItem.data) {
         is GridItemData.ApplicationInfo -> {
             InteractiveApplicationInfoGridItem(
+                // Item Data
                 gridItem = gridItem,
                 data = data,
                 gridItemSettings = currentGridItemSettings,
+                // State
                 isScrollInProgress = isScrollInProgress,
                 hasInteraction = hasInteraction,
                 animations = animations,
                 statusBarNotifications = statusBarNotifications,
                 iconPackFilePaths = iconPackFilePaths,
+                // Appearance
                 textColor = currentTextColor,
                 maxLines = maxLines,
                 isVisibleFolders = isVisibleFolderGridItems,
                 isVisibleOverlay = isVisibleOverlay,
                 isVisibleWhiteBox = isVisibleWhiteBox,
+                // Shared Transition
                 sharedTransitionScope = sharedTransitionScope,
                 sharedElementKey = sharedElementKey,
                 sourceBounds = sourceBounds,
+                // Layout
                 horizontalAlignment = horizontalAlignment,
                 verticalArrangement = verticalArrangement,
                 horizontalArrangement = horizontalArrangement,
                 verticalAlignment = verticalAlignment,
                 modifier = modifier,
+                // Callbacks
                 onOpenAppDrawer = onOpenAppDrawer,
-                onLongPressGridItem = onLongPressGridItem,
+                onLongPressGridItem = onLongPressGridItem
             )
         }
 
         is GridItemData.Widget -> {
             InteractiveWidgetGridItem(
+                // Data
                 data = data,
                 gridItem = gridItem,
+                // Transition
                 sharedElementKey = sharedElementKey,
+                sharedTransitionScope = sharedTransitionScope,
+                // State
                 hasInteraction = hasInteraction,
                 isScrollInProgress = isScrollInProgress,
-                sharedTransitionScope = sharedTransitionScope,
+                // Appearance
                 textColor = currentTextColor,
                 isVisibleOverlay = isVisibleOverlay,
                 isVisibleWhiteBox = isVisibleWhiteBox,
                 animations = animations,
                 modifier = modifier,
-                onLongPressGridItem = onLongPressGridItem,
+                // Callback
+                onLongPressGridItem = onLongPressGridItem
             )
         }
 
         is GridItemData.ShortcutInfo -> {
             InteractiveShortcutInfoGridItem(
+                // Data
                 data = data,
                 gridItem = gridItem,
                 gridItemSettings = currentGridItemSettings,
+                // State
                 hasShortcutHostPermission = hasShortcutHostPermission,
                 isScrollInProgress = isScrollInProgress,
                 isVisibleFolders = isVisibleFolderGridItems,
@@ -237,29 +255,39 @@ internal fun InteractiveGridItem(
                 hasInteraction = hasInteraction,
                 isVisibleWhiteBox = isVisibleWhiteBox,
                 animations = animations,
+                // Appearance
                 textColor = currentTextColor,
                 sourceBounds = sourceBounds,
+                // Layout
                 horizontalAlignment = horizontalAlignment,
                 verticalArrangement = verticalArrangement,
                 horizontalArrangement = horizontalArrangement,
                 verticalAlignment = verticalAlignment,
                 maxLines = maxLines,
+                // Animation
                 sharedTransitionScope = sharedTransitionScope,
                 sharedElementKey = sharedElementKey,
+                // Modifier
                 modifier = modifier,
+                // Callbacks
                 onOpenAppDrawer = onOpenAppDrawer,
-                onLongPressGridItem = onLongPressGridItem,
+                onLongPressGridItem = onLongPressGridItem
             )
         }
 
         is GridItemData.Folder -> {
             InteractiveFolderGridItem(
+                // Item Data
                 data = data,
                 gridItem = gridItem,
+                // Transition
                 sharedTransitionScope = sharedTransitionScope,
                 sharedElementKey = sharedElementKey,
+                // Configuration
                 iconPackFilePaths = iconPackFilePaths,
                 folderPopups = folderPopups,
+                gridItemSettings = currentGridItemSettings,
+                // State
                 isScrollInProgress = isScrollInProgress,
                 isVisibleFolder = isVisibleFolder,
                 isVisibleOverlay = isVisibleOverlay,
@@ -271,7 +299,7 @@ internal fun InteractiveGridItem(
                 moveGridItemResult = moveGridItemResult,
                 drag = drag,
                 lockMovement = lockMovement,
-                gridItemSettings = currentGridItemSettings,
+                // Appearance
                 textColor = currentTextColor,
                 folderCornerRadius = folderCornerRadius,
                 folderBackgroundColor = folderBackgroundColor,
@@ -279,41 +307,50 @@ internal fun InteractiveGridItem(
                 systemTextColor = textColor,
                 systemCustomTextColor = systemCustomTextColor,
                 maxLines = maxLines,
+                // Layout
                 horizontalAlignment = horizontalAlignment,
                 verticalArrangement = verticalArrangement,
                 horizontalArrangement = horizontalArrangement,
                 verticalAlignment = verticalAlignment,
                 modifier = modifier,
+                // Callbacks
                 onOpenAppDrawer = onOpenAppDrawer,
                 onShowFolderWhenDragging = onShowFolderWhenDragging,
                 onResetGrid = onResetGrid,
                 onLongPressGridItem = onLongPressGridItem,
-                onTapFolderGridItem = onTapFolderGridItem,
+                onTapFolderGridItem = onTapFolderGridItem
             )
         }
 
         is GridItemData.ShortcutConfig -> {
             InteractiveShortcutConfigGridItem(
-                data = data,
+                // Grid Item Data
                 gridItem = gridItem,
+                data = data,
                 gridItemSettings = currentGridItemSettings,
+                // State Flags
                 isScrollInProgress = isScrollInProgress,
                 isVisibleFolders = isVisibleFolderGridItems,
                 isVisibleOverlay = isVisibleOverlay,
-                textColor = currentTextColor,
                 hasInteraction = hasInteraction,
                 isVisibleWhiteBox = isVisibleWhiteBox,
                 animations = animations,
+                // Appearance and Styling
+                textColor = currentTextColor,
                 maxLines = maxLines,
+                // Shared Transition
                 sharedTransitionScope = sharedTransitionScope,
                 sharedElementKey = sharedElementKey,
+                // Layout and Alignment
                 horizontalAlignment = horizontalAlignment,
                 verticalArrangement = verticalArrangement,
                 horizontalArrangement = horizontalArrangement,
                 verticalAlignment = verticalAlignment,
+                // Modifier
                 modifier = modifier,
+                // Callbacks
                 onOpenAppDrawer = onOpenAppDrawer,
-                onLongPressGridItem = onLongPressGridItem,
+                onLongPressGridItem = onLongPressGridItem
             )
         }
     }
@@ -321,28 +358,29 @@ internal fun InteractiveGridItem(
 
 @Composable
 private fun InteractiveWidgetGridItem(
-    // Data and State
+    // Data
     data: GridItemData.Widget,
     gridItem: GridItem,
+    // Transition
     sharedElementKey: SharedElementKey,
+    sharedTransitionScope: SharedTransitionScope,
+    // State
     hasInteraction: Boolean,
     isScrollInProgress: Boolean,
-    // Appearance and Animation
-    sharedTransitionScope: SharedTransitionScope,
+    // Appearance
     textColor: Color,
     isVisibleOverlay: Boolean,
     isVisibleWhiteBox: Boolean,
     animations: Boolean,
-    // Layout and Behavior
     modifier: Modifier = Modifier,
-    // Callbacks
+    // Callback
     onLongPressGridItem: (
         gridItem: GridItem,
         imageBitmap: ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit,
+    ) -> Unit
 ) {
     val appWidgetHost = LocalAppWidgetHost.current
     val appWidgetManager = LocalAppWidgetManager.current
@@ -373,10 +411,12 @@ private fun InteractiveWidgetGridItem(
                 intSize = it.size
             }
             .gridItemSharedElement(
-                enabled = animations,
-                sharedElementKey = sharedElementKey,
+                // Transition State
                 sharedTransitionScope = sharedTransitionScope,
-                visible = !isScrollInProgress && !hasInteraction,
+                sharedElementKey = sharedElementKey,
+                // Visibility Control
+                enabled = animations,
+                visible = !isScrollInProgress && !hasInteraction
             )
             .gridItemScaleAnimation(
                 animations = animations,
@@ -449,12 +489,12 @@ private fun InteractiveWidgetGridItem(
 private fun getSourceBounds(
     // Grid Item
     gridItem: GridItem,
-    // Cell Dimensions
+    // Dimensions
     cellWidth: Int,
     cellHeight: Int,
-    // Offsets and Padding
+    // Offsets
     leftPadding: Int,
-    topOffset: Int,
+    topOffset: Int
 ): Rect {
     val x = gridItem.startColumn * cellWidth
     val y = gridItem.startRow * cellHeight

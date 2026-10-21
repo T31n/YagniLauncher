@@ -70,21 +70,23 @@ import com.eblan.launcher.ui.local.LocalLauncherApps
 
 @Composable
 internal fun FolderGridItemPopup(
-    // State
+    // Grid Item
     gridItemSettings: GridItemSettings,
+    folderGridItem: GridItem?,
+    // Permission and Visibility
     hasShortcutHostPermission: Boolean,
+    isVisibleOverlay: Boolean,
+    isCloseFolderGridItemPopup: Boolean,
+    // Popup Layout
     popupIntOffset: IntOffset?,
     popupIntSize: IntSize?,
-    folderGridItem: GridItem?,
-    isVisibleOverlay: Boolean,
     paddingValues: PaddingValues,
-    isCloseFolderGridItemPopup: Boolean,
-    // Data
+    // Widget and Shortcut Data
     eblanAppWidgetProviderInfosGroup: Map<String, List<EblanAppWidgetProviderInfo>>,
     eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
     // Modifier
     modifier: Modifier = Modifier,
-    // Callbacks
+    // Actions
     onDeleteGridItem: (GridItem) -> Unit,
     onDismissRequest: () -> Unit,
     onEdit: (String) -> Unit,
@@ -96,7 +98,7 @@ internal fun FolderGridItemPopup(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit,
+    ) -> Unit
 ) {
     requireNotNull(folderGridItem)
 
@@ -175,10 +177,12 @@ internal fun FolderGridItemPopup(
     ) {
         AnimatedVisibility(
             modifier = Modifier.popup(
+                // Dimensions
                 width = popupIntSize.width,
                 height = popupIntSize.height,
+                // Position
                 x = x,
-                y = y,
+                y = y
             ),
             visibleState = transitionState,
             enter = fadeIn(tween()) + scaleIn(
@@ -191,12 +195,16 @@ internal fun FolderGridItemPopup(
             ),
         ) {
             FolderGridItemPopupContent(
+                // Item and Settings
                 folderGridItem = folderGridItem,
                 gridItemSettings = gridItemSettings,
+                // Content Providers
                 eblanAppWidgetProviderInfosGroup = eblanAppWidgetProviderInfosGroup,
                 eblanShortcutInfosGroup = eblanShortcutInfosGroup,
+                // State
                 hasShortcutHostPermission = hasShortcutHostPermission,
                 isVisibleOverlay = isVisibleOverlay,
+                // Actions
                 onDeleteGridItem = onDeleteGridItem,
                 onDismiss = {
                     transitionState.targetState = false
@@ -221,7 +229,7 @@ internal fun FolderGridItemPopup(
                 },
                 onWidgets = onWidgets,
                 onResetFolderGridItemPopupEntries = onResetFolderGridItemPopupEntries,
-                onDragShortcutInfo = onDragShortcutInfo,
+                onDragShortcutInfo = onDragShortcutInfo
             )
         }
     }
@@ -229,16 +237,17 @@ internal fun FolderGridItemPopup(
 
 @Composable
 private fun FolderGridItemPopupContent(
-    // Item and Content Data
+    // Item and Settings
     folderGridItem: GridItem,
     gridItemSettings: GridItemSettings,
+    // Content Providers
     eblanAppWidgetProviderInfosGroup: Map<String, List<EblanAppWidgetProviderInfo>>,
     eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
+    // State
     hasShortcutHostPermission: Boolean,
     isVisibleOverlay: Boolean,
-    // Modifier
     modifier: Modifier = Modifier,
-    // Callbacks
+    // Actions
     onDeleteGridItem: (GridItem) -> Unit,
     onDismiss: () -> Unit,
     onEdit: (String) -> Unit,
@@ -256,7 +265,7 @@ private fun FolderGridItemPopupContent(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit,
+    ) -> Unit
 ) {
     Surface(
         modifier = modifier.width(IntrinsicSize.Max),
@@ -266,8 +275,10 @@ private fun FolderGridItemPopupContent(
             when (val data = folderGridItem.data) {
                 is GridItemData.ApplicationInfo -> {
                     ApplicationInfoFolderGridItemPopupContent(
+                        // Item Details
                         icon = data.icon,
                         gridItemSettings = gridItemSettings,
+                        // App Data
                         eblanAppWidgetProviderInfosByPackageName = eblanAppWidgetProviderInfosGroup[data.packageName],
                         eblanShortcutInfosByPackageName = eblanShortcutInfosGroup[
                             EblanShortcutInfoByGroup(
@@ -275,9 +286,12 @@ private fun FolderGridItemPopupContent(
                                 packageName = data.packageName,
                             ),
                         ],
+                        // Permissions and State
                         hasShortcutHostPermission = hasShortcutHostPermission,
                         isVisibleOverlay = isVisibleOverlay,
+                        // Layout
                         modifier = modifier,
+                        // Actions
                         onDelete = {
                             onDeleteGridItem(folderGridItem)
 
@@ -319,7 +333,7 @@ private fun FolderGridItemPopupContent(
 
                             onDismiss()
                         },
-                        onDragShortcutInfo = onDragShortcutInfo,
+                        onDragShortcutInfo = onDragShortcutInfo
                     )
                 }
 
@@ -351,14 +365,16 @@ private fun FolderGridItemPopupContent(
 
 @Composable
 private fun ApplicationInfoFolderGridItemPopupContent(
-    // Content
+    // Item Details
     icon: String?,
     gridItemSettings: GridItemSettings,
+    // App Data
     eblanAppWidgetProviderInfosByPackageName: List<EblanAppWidgetProviderInfo>?,
     eblanShortcutInfosByPackageName: List<EblanShortcutInfo>?,
+    // Permissions and State
     hasShortcutHostPermission: Boolean,
     isVisibleOverlay: Boolean,
-    // Modifier
+    // Layout
     modifier: Modifier = Modifier,
     // Actions
     onDelete: () -> Unit,
@@ -376,7 +392,7 @@ private fun ApplicationInfoFolderGridItemPopupContent(
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
-    ) -> Unit,
+    ) -> Unit
 ) {
     Surface(
         modifier = modifier.width(IntrinsicSize.Max),
@@ -389,13 +405,16 @@ private fun ApplicationInfoFolderGridItemPopupContent(
             ) {
                 if (hasShortcutHostPermission && !eblanShortcutInfosByPackageName.isNullOrEmpty()) {
                     ShortcutInfoScreen(
+                        // Data
                         eblanShortcutInfosGroup = eblanShortcutInfosByPackageName,
                         gridItemSettings = gridItemSettings,
+                        // Appearance
                         icon = icon,
                         isVisibleOverlay = isVisibleOverlay,
                         modifier = modifier,
+                        // Actions
                         onTapShortcutInfo = onTapShortcutInfo,
-                        onDragShortcutInfo = onDragShortcutInfo,
+                        onDragShortcutInfo = onDragShortcutInfo
                     )
 
                     Spacer(modifier = Modifier.height(5.dp))
