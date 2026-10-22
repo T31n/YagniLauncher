@@ -90,7 +90,7 @@ class ResizeGridItemUseCase @Inject constructor(
     private suspend fun handleConflictsOfGridItemSpan(
         oldGridItem: GridItem,
         conflictingGridItem: GridItem,
-        gridItems: MutableList<GridItem>,
+        gridItems: List<GridItem>,
         resizingGridItem: GridItem,
         columns: Int,
         rows: Int,
@@ -100,7 +100,7 @@ class ResizeGridItemUseCase @Inject constructor(
             other = conflictingGridItem,
         ) ?: return oldGridItem
 
-        val resolvedConflicts = resolveConflicts(
+        val resolvedGridItems = resolveConflicts(
             gridItems = gridItems,
             resolveDirection = resolveDirection,
             movingGridItem = resizingGridItem,
@@ -108,8 +108,8 @@ class ResizeGridItemUseCase @Inject constructor(
             rows = rows,
         )
 
-        return if (resolvedConflicts) {
-            gridRepository.upsertGridItems(gridItems = gridItems)
+        return if (resolvedGridItems != null) {
+            gridRepository.upsertGridItems(gridItems = resolvedGridItems)
 
             resizingGridItem
         } else {

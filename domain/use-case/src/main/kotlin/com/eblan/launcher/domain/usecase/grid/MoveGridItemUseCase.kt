@@ -130,7 +130,7 @@ class MoveGridItemUseCase @Inject constructor(
 
     /** Resolves a pointer hit according to the horizontal section of the conflicting item. */
     private suspend fun handleConflictsOfGridItemCoordinates(
-        gridItems: MutableList<GridItem>,
+        gridItems: List<GridItem>,
         movingGridItem: GridItem,
         conflictingGridItem: GridItem,
         x: Int,
@@ -147,7 +147,7 @@ class MoveGridItemUseCase @Inject constructor(
 
         return when (resolveDirection) {
             ResolveDirection.Left, ResolveDirection.Right -> {
-                val resolvedConflicts = resolveConflicts(
+                val resolvedGridItems = resolveConflicts(
                     gridItems = gridItems,
                     resolveDirection = resolveDirection,
                     movingGridItem = movingGridItem,
@@ -155,12 +155,12 @@ class MoveGridItemUseCase @Inject constructor(
                     rows = rows,
                 )
 
-                if (resolvedConflicts) {
-                    gridRepository.upsertGridItems(gridItems = gridItems)
+                if (resolvedGridItems != null) {
+                    gridRepository.upsertGridItems(gridItems = resolvedGridItems)
                 }
 
                 MoveGridItemResult(
-                    isSuccess = resolvedConflicts,
+                    isSuccess = resolvedGridItems != null,
                     movingGridItem = movingGridItem,
                     conflictingGridItem = null,
                 )
@@ -205,7 +205,7 @@ class MoveGridItemUseCase @Inject constructor(
             conflictingGridItem = null,
         )
 
-        val resolvedConflicts = resolveConflicts(
+        val resolvedGridItems = resolveConflicts(
             gridItems = gridItems,
             resolveDirection = resolveDirection,
             movingGridItem = movingGridItem,
@@ -213,12 +213,12 @@ class MoveGridItemUseCase @Inject constructor(
             rows = rows,
         )
 
-        if (resolvedConflicts) {
-            gridRepository.upsertGridItems(gridItems = gridItems)
+        if (resolvedGridItems != null) {
+            gridRepository.upsertGridItems(gridItems = resolvedGridItems)
         }
 
         return MoveGridItemResult(
-            isSuccess = resolvedConflicts,
+            isSuccess = resolvedGridItems != null,
             movingGridItem = movingGridItem,
             conflictingGridItem = null,
         )
