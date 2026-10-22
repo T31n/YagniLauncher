@@ -51,7 +51,6 @@ suspend fun resolveConflicts(
         currentCoroutineContext().ensureActive()
 
         val currentId = queue.removeFirst()
-
         val currentIndex = resolvedGridItems.indexOfFirst { it.id == currentId }
 
         if (currentIndex == -1) continue
