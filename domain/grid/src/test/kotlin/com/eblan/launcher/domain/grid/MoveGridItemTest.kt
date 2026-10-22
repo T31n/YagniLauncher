@@ -25,13 +25,12 @@ import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.ResolveDirection
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 
 class MoveGridItemTest {
     @Test
-    fun `returns true when there are no conflicts`() {
+    fun `returns unchanged items when there are no conflicts`() {
         val moving = getGridItem(
             id = "moving",
             startColumn = 0,
@@ -60,7 +59,10 @@ class MoveGridItemTest {
             )
         }
 
-        assertTrue(result)
+        assertEquals(
+            listOf(moving, other),
+            result,
+        )
         assertEquals(
             listOf(moving, other),
             gridItems,
@@ -97,13 +99,15 @@ class MoveGridItemTest {
             )
         }
 
-        assertTrue(result)
-
         assertEquals(
             conflicting.copy(
                 startColumn = 1,
                 startRow = 0,
             ),
+            result?.get(1),
+        )
+        assertEquals(
+            conflicting,
             gridItems[1],
         )
     }
@@ -138,19 +142,21 @@ class MoveGridItemTest {
             )
         }
 
-        assertTrue(result)
-
         assertEquals(
             conflicting.copy(
                 startColumn = 1,
                 startRow = 0,
             ),
+            result?.get(1),
+        )
+        assertEquals(
+            conflicting,
             gridItems[1],
         )
     }
 
     @Test
-    fun `returns false when conflicting item cannot move right`() {
+    fun `returns null when conflicting item cannot move right`() {
         val moving = getGridItem(
             id = "moving",
             startColumn = 4,
@@ -179,11 +185,12 @@ class MoveGridItemTest {
             )
         }
 
-        assertFalse(result)
+        assertNull(result)
+        assertEquals(listOf(moving, conflicting), gridItems)
     }
 
     @Test
-    fun `returns false when conflicting item cannot move left`() {
+    fun `returns null when conflicting item cannot move left`() {
         val moving = getGridItem(
             id = "moving",
             startColumn = 0,
@@ -212,7 +219,53 @@ class MoveGridItemTest {
             )
         }
 
-        assertFalse(result)
+        assertNull(result)
+        assertEquals(listOf(moving, conflicting), gridItems)
+    }
+
+    @Test
+    fun `does not change original items when resolution fails after moving a conflict`() {
+        val moving = getGridItem(
+            id = "moving",
+            startColumn = 0,
+            startRow = 0,
+            columnSpan = 1,
+            rowSpan = 1,
+        )
+
+        val firstConflicting = getGridItem(
+            id = "first-conflicting",
+            startColumn = 0,
+            startRow = 0,
+            columnSpan = 1,
+            rowSpan = 1,
+        )
+
+        val secondConflicting = getGridItem(
+            id = "second-conflicting",
+            startColumn = 0,
+            startRow = 1,
+            columnSpan = 1,
+            rowSpan = 1,
+        )
+
+        val gridItems = listOf(moving, firstConflicting, secondConflicting)
+
+        val result = runBlocking {
+            resolveConflicts(
+                gridItems = gridItems,
+                resolveDirection = ResolveDirection.Right,
+                movingGridItem = moving,
+                columns = 1,
+                rows = 2,
+            )
+        }
+
+        assertNull(result)
+        assertEquals(
+            listOf(moving, firstConflicting, secondConflicting),
+            gridItems,
+        )
     }
 
     @Test
@@ -245,13 +298,15 @@ class MoveGridItemTest {
             )
         }
 
-        assertTrue(result)
-
         assertEquals(
             conflicting.copy(
                 startColumn = 0,
                 startRow = 1,
             ),
+            result?.get(1),
+        )
+        assertEquals(
+            conflicting,
             gridItems[1],
         )
     }
@@ -286,13 +341,15 @@ class MoveGridItemTest {
             )
         }
 
-        assertTrue(result)
-
         assertEquals(
             conflicting.copy(
                 startColumn = 4,
                 startRow = 0,
             ),
+            result?.get(1),
+        )
+        assertEquals(
+            conflicting,
             gridItems[1],
         )
     }

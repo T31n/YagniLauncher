@@ -25,23 +25,24 @@ import kotlinx.coroutines.ensureActive
 /**
  * Moves overlapping items according to [resolveDirection], processing any resulting overlaps.
  *
- * This function updates [gridItems] in place. If an item cannot be moved within the grid, it
- * returns `false`; items moved before that point remain updated.
+ * This function resolves conflicts on a copy of [gridItems]. If an item cannot be moved within
+ * the grid, it returns `null` without changing the original list.
  *
- * @param gridItems The mutable items to resolve in place.
+ * @param gridItems The items to resolve.
  * @param resolveDirection The direction used to reposition conflicting items.
  * @param movingGridItem The item whose conflicts are resolved first.
  * @param columns The number of columns in the grid.
  * @param rows The number of rows in the grid.
- * @return `true` if all conflicts are resolved, or `false` if a conflicting item cannot be moved.
+ * @return The resolved items, or `null` if a conflicting item cannot be moved.
  */
 suspend fun resolveConflicts(
-    gridItems: MutableList<GridItem>,
+    gridItems: List<GridItem>,
     resolveDirection: ResolveDirection,
     movingGridItem: GridItem,
     columns: Int,
     rows: Int,
-): Boolean {
+): List<GridItem>? {
+    val resolvedGridItems = gridItems.toMutableList()
     val queue = ArrayDeque<String>()
 
     queue.add(movingGridItem.id)
@@ -50,15 +51,14 @@ suspend fun resolveConflicts(
         currentCoroutineContext().ensureActive()
 
         val currentId = queue.removeFirst()
-
-        val currentIndex = gridItems.indexOfFirst { it.id == currentId }
+        val currentIndex = resolvedGridItems.indexOfFirst { it.id == currentId }
 
         if (currentIndex == -1) continue
 
-        val current = gridItems[currentIndex]
+        val current = resolvedGridItems[currentIndex]
 
-        for (i in gridItems.indices) {
-            val other = gridItems[i]
+        for (i in resolvedGridItems.indices) {
+            val other = resolvedGridItems[i]
 
             if (other.id == current.id) continue
 
@@ -76,15 +76,15 @@ suspend fun resolveConflicts(
                 conflicting = other,
                 columns = columns,
                 rows = rows,
-            ) ?: return false
+            ) ?: return null
 
-            gridItems[i] = movedGridItem
+            resolvedGridItems[i] = movedGridItem
 
             queue.add(movedGridItem.id)
         }
     }
 
-    return true
+    return resolvedGridItems
 }
 
 /**

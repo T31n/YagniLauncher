@@ -58,10 +58,7 @@ class MoveGridItemBenchmark {
     private val rows: Int
         get() = itemCount + 1
 
-    // Template list, built once per trial. Never passed directly to
-    // resolveConflicts — always deep-copied per invocation, since the
-    // function mutates its input and JMH benchmark methods run many
-    // invocations per iteration.
+    // Template list, built once per trial. resolveConflicts does not mutate it.
     private lateinit var template: List<GridItem>
     private lateinit var movingGridItem: GridItem
 
@@ -107,34 +104,28 @@ class MoveGridItemBenchmark {
 
     @Benchmark
     fun resolveConflictsRight(blackhole: Blackhole) = runBlocking {
-        val gridItems = template.map { it.copy() }.toMutableList()
-
-        val result = resolveConflicts(
-            gridItems = gridItems,
+        val resolvedGridItems = resolveConflicts(
+            gridItems = template,
             resolveDirection = ResolveDirection.Right,
             movingGridItem = movingGridItem,
             columns = columns,
             rows = rows,
         )
 
-        blackhole.consume(result)
-        blackhole.consume(gridItems)
+        blackhole.consume(resolvedGridItems)
     }
 
     @Benchmark
     fun resolveConflictsLeft(blackhole: Blackhole) = runBlocking {
-        val gridItems = template.map { it.copy() }.toMutableList()
-
-        val result = resolveConflicts(
-            gridItems = gridItems,
+        val resolvedGridItems = resolveConflicts(
+            gridItems = template,
             resolveDirection = ResolveDirection.Left,
             movingGridItem = movingGridItem,
             columns = columns,
             rows = rows,
         )
 
-        blackhole.consume(result)
-        blackhole.consume(gridItems)
+        blackhole.consume(resolvedGridItems)
     }
 
     private fun getGridItem(
