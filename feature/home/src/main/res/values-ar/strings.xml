@@ -1,3 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="later">لاحقا</string>
+    <string name="shortcuts">الإختصارات</string>
+    <string name="wallpaper">خلفية الشاشة</string>
+    <string name="search_widgets">البحث في التطبيقات المصغرة</string>
+    <string name="request_permissions">طلب أذونات</string>
+    <string name="widgets">التطبيقات المصغرة</string>
+    <string name="allow_permissions_so_we_can_inform_you_about_important_crash_reports_and_make_phone_shortcuts">السماح بالأذونات لإعلامك بتقارير الأعطال المهمة وإنشاء اختصارات للهاتف</string>
+    <string name="personal">شخصي</string>
+    <string name="work">العمل</string>
+    <string name="edit_pages">تعديل الصفحات</string>
+    <string name="work_apps_are_paused">تطبيقات العمل موقوفة مؤقتا</string>
+    <string name="unpause">إلغاء الايقاف الموقت</string>
+    <string name="clone">استنساخ</string>
+    <string name="you_won_t_receive_notifications_from_your_work_apps">لن تتلقى إشعارات من تطبيقات العمل</string>
+    <string name="please_wait_for_the_white_box_indicator">الرجاء الانتظار حتى يظهر الصندوق الابيض</string>
+    <string name="edit_dock_pages">تعديل صفحات شريط التطبيقات السفلي</string>
+    <string name="private_space">مساحة خاصة</string>
 </resources>
