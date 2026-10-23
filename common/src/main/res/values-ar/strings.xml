@@ -1,3 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="save">حفظ</string>
+    <string name="settings">الإعدادات</string>
+    <string name="experimental">المميزات التجريبية</string>
+    <string name="background_color">لون الخلفية</string>
+    <string name="gestures">الإيماءات</string>
+    <string name="update">تحديث</string>
+    <string name="home">الشاشة الرئيسية</string>
+    <string name="system">النظام</string>
+    <string name="add">إضافة</string>
+    <string name="edit">تعديل%1$s</string>
+    <string name="grid">تنسيق الشاشة الرئيسية</string>
+    <string name="general">عام</string>
+    <string name="okay">تأكيد</string>
+    <string name="columns">الأعمدة</string>
+    <string name="columns_is_not_valid">الأعمدة غير صالحة</string>
+    <string name="none">لا شيء</string>
+    <string name="custom_label">تخصيص الإسم</string>
+    <string name="custom_label_is_not_valid">التسمية المخصصة غير صالحة</string>
 </resources>
