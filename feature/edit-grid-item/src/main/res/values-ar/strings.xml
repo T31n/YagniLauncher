@@ -1,3 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="custom_short_label">اسم مخصص قصير</string>
+    <string name="override">استبدال الملف الحالي</string>
+    <string name="override_the_grid_item_settings">استبدال إعدادات تنسيق الشاشة الرئيسية الحاليه</string>
+    <string name="grid_item_actions">إجراءات تنسيق الشاشة الرئيسية</string>
 </resources>
