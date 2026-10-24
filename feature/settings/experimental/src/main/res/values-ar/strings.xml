@@ -1,3 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="sync_data">مزامنة البيانات</string>
+    <string name="enable_or_disable_sync_data">تفعيل أو الغاء تفعيل مزامنة البيانات</string>
+    <string name="lock_movement">قفل تنسيق الشاشة</string>
+    <string name="keep_data_up_to_date">تحديث البيانات</string>
+    <string name="prevent_other_grid_items_from_moving">منع تنسيق الشاشة من الحركة</string>
+    <string name="grid_item_animation">حركة عناصر تنسيق الشاشة</string>
+    <string name="enable_or_disable_animations">تفعيل أو الغاء حركة عناصر تنسيق الشاشة</string>
+    <string name="warning">تنبيه</string>
+    <string name="disable_background_sync_description">يؤدي تعطيل المزامنة في الخلفية إلى توفير قدر بسيط من الذاكرة وتقليل استهلاك الموارد، لكنه يمنع مشغّل Yagni من تحديث التطبيقات أو الأدوات المصغّرة أو الاختصارات تلقائيً.\n\nقد يعرض درج التطبيقات أيقونات قديمة أو أدوات مصغّرة مفقودة أو اختصارات لم تعد تعمل</string>
 </resources>
