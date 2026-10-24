@@ -1,4 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="none">لا شيء</string>
+    <string name="reset">إعادة الضبط</string>
+    <string name="default_icon_pack">الإفتراضي</string>
+    <string name="circle">دائرة</string>
+    <string name="square">مربع</string>
+    <string name="import_icon_pack">استيراد حزمة الايقونات</string>
+    <string name="diamond">معين</string>
+    <string name="icon_shape">شكل الايقونه</string>
+    <string name="shield">درع</string>
+    <string name="fallback_icon_tint">تظليل الايقونه</string>
+    <string name="please_import_an_icon_pack_first">الرجاء استيراد حزمة الايقونات اولا</string>
+    <string name="adapt_colors_to_your_wallpaper_automatically">تكييف الالوان مع خلفية الشاشة</string>
+    <string name="select_icon_pack">اختار حزمة الايقونات</string>
+    <string name="clover">ورقة شجر</string>
+    <string name="flower">وردة</string>
+    <string name="tear_drop">قطرة ماء</string>
+    <string name="icon_tint">تظليل الايقونة</string>
+    <string name="no_icon_packs">لا يوجد حزمة ايقونات</string>
+    <string name="theme">المظهر العام</string>
+    <string name="dynamic_theme">المظهر العام الدايناميكي</string>
+    <string name="notification_dots">نقاط الإشعارات</string>
+    <string name="show_notification_dots">إظهار نقاط الإشعارات</string>
+    <string name="apply_icons_from_supported_icon_packs">تطبيق الأيقونات من حزم الأيقونات المدعومة</string>
+    <string name="use_the_fallback_icon_tint">استخدام لون بديل للايقونات</string>
+    <string name="rounded_square">مربع مستدير</string>
+    <string name="hexagon">سداسي</string>
+    <string name="octagon">ثماني</string>
+    <string name="pentagon">خماسي</string>
+    <string name="cookie">شكل البسكويت</string>
 </resources>
