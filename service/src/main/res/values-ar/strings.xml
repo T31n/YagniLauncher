@@ -1,3 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="accessibility_service_label">مشغل Yagni</string>
+    <string name="accessibility_service_description">إيماءات مشغل Yagni</string>
+    <string name="notification_listener_service">خدمة الاستماع إلى الإشعارات في Yagni</string>
+    <string name="importing_into_cache">جارٍ استيراد %1$s إلى ذاكرة التخزين المؤقت</string>
+    <string name="loading_icons_from_cache_is_faster">تحميل الأيقونات من ذاكرة التخزين المؤقت أسرع</string>
 </resources>
