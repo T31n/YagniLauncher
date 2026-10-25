@@ -1,3 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="dock_grid">Сетка док-панели</string>
+    <string name="dock_columns_is_not_valid">Колонки док-панели неверны</string>
+    <string name="dock_rows_is_not_valid">Строки док-панели неверны</string>
+    <string name="dock_height">Высота док-панели</string>
+    <string name="dock_height_is_not_valid">Высота док-панели неверна</string>
+    <string name="infinite_scrolling">Бесконечная прокрутка</string>
+    <string name="seamless_loop_page_scroll">Бесшовная циклическая прокрутка страницы</string>
+    <string name="wallpaper_scrolling">Прокрутка обоев</string>
+    <string name="scroll_wallpaper_across_pages">Прокрутка обоев при перелистывании страниц</string>
+    <string name="lock_screen_orientation">Блокировка ориентации экрана</string>
+    <string name="add_new_apps">Добавить новые приложения</string>
+    <string name="add_new_apps_to_home_screen">Добавить новые приложения на домашний экран</string>
+    <string name="dock">Док-Панель</string>
+    <string name="dock_infinite_scroll">Бесконечная прокрутка в док-панели</string>
+    <string name="prevent_rotation_when_device_orientation_changes">Предотвращать поворот при изменении ориентации устройства</string>
+    <string name="show_page_indicator">Показывать индикатор страницы</string>
+    <string name="show_an_indicator_for_the_current_page">Отображать индикатор текущей страницы</string>
+    <string name="dock_background_color">Цвет фона док-панели</string>
+    <string name="dock_padding">Отступ док-панели</string>
+    <string name="dock_corner_radius">Радиус скругления угла док-панели</string>
+    <string name="dock_padding_is_not_valid">Отступ док-панели неверен</string>
+    <string name="top_start">Начало верха</string>
+    <string name="top_start_is_not_valid">Начало верха неверно</string>
+    <string name="top_end">Конец верха</string>
+    <string name="top_end_is_not_valid">Конец верха неверен</string>
+    <string name="bottom_start">Начало низа</string>
+    <string name="bottom_start_is_not_valid">Начало низа неверно</string>
+    <string name="bottom_end">Конец низа</string>
+    <string name="bottom_end_is_not_valid">Конец низа неверен</string>
+    <string name="set_the_radius_for_each_dock_corner">Задайте радиус для каждого угла док-панели</string>
+    <string name="add_bottom_padding">Добавить отступ снизу</string>
+    <string name="add_the_bottom_padding_of_the_dock">Добавьте нижний отступ у док-панели</string>
+    <string name="pager_transition_effect">Эффект перехода между страницами</string>
+    <string name="transition_effect_none">Ничего</string>
+    <string name="transition_effect_fade">Затухание</string>
+    <string name="transition_effect_zoom_out">Уменьшение масштаба</string>
+    <string name="transition_effect_depth">Глубина</string>
+    <string name="transition_effect_cube">Куб</string>
+    <string name="transition_effect_flip">Подбросить</string>
+    <string name="transition_effect_parallax">Параллакс (смещение)</string>
+    <string name="transition_effect_stack">Нагромождение</string>
 </resources>
