@@ -1,3 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="custom_short_label">Свой мелкий слой</string>
+    <string name="grid_item_actions">Действия с элементом сетки</string>
+    <string name="override">Перезаписать</string>
+    <string name="override_the_grid_item_settings">Перезаписать настройки элемента сетки</string>
 </resources>
