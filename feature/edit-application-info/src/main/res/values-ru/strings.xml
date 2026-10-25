@@ -1,3 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="add_tag">Добавить метку</string>
+    <string name="tag_is_not_valid">Метка неверна</string>
+    <string name="update_tag">Обновить метку</string>
+    <string name="hide_from_drawer">Скрыть из меню</string>
+    <string name="view_hidden_apps_in_app_drawer_settings">Видеть скрытые приложения в настройках Меню приложений</string>
+    <string name="tags">Метки</string>
 </resources>
