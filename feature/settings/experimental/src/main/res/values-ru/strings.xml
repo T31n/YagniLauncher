@@ -1,3 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="warning">Внимание</string>
+    <string name="disable_background_sync_description">Отключение фоновой синхронизации позволяет немного сэкономить память и сделать работу системы более лёгкой, однако из-за этого Yagni Launcher перестанет автоматически обновлять ваши приложения, виджеты и ярлыки.\n\nВ меню приложений могут отображаться устаревшие значки, отсутствующие виджеты или ярлыки, которые больше не работают.</string>
+    <string name="sync_data">Синхронизировать данные</string>
+    <string name="keep_data_up_to_date">Поддерживать данные актуальными</string>
+    <string name="enable_or_disable_sync_data">Включить или отключить синхронизацию данных</string>
+    <string name="lock_movement">Заблокировать движение</string>
+    <string name="prevent_other_grid_items_from_moving">Не давать другим элементами сетки двигаться</string>
+    <string name="grid_item_animation">Анимация элемента сетки</string>
+    <string name="enable_or_disable_animations">Включить или отключить анимацию элемента сетки</string>
 </resources>
