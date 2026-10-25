@@ -1,3 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="horizontal_grid">Горизонтальная сетка</string>
+    <string name="vertical_grid">Вертикальная сетка</string>
+    <string name="rows_height">Высота строк</string>
+    <string name="rows_height_is_not_valid">Высота строк неверна</string>
+    <string name="hidden_applications">Скрытые приложения</string>
+    <string name="no_hidden_applications">Нет скрытых приложений</string>
+    <string name="app_drawer_type">Тип меню приложений</string>
+    <string name="exclude_tagged_apps">Исключить приложения с метками</string>
+    <string name="hide_selected_apps_from_the_app_drawer">Скрыть выбранные приложения из меню приложений</string>
+    <string name="hide_apps_marked_with_selected_tags">Скрыть приложения помеченные выбранными метками</string>
+    <string name="show_keyboard">Показать клавиатуру</string>
+    <string name="show_keyboard_when_app_drawer_opens">Показывать клавиатуру когда меню приложений открывается</string>
+    <string name="fuzzy_search">Нечеткий поиск</string>
+    <string name="find_apps_even_with_typos_or_accented_characters">Искать приложения с опечатками или символами с диакритическими знаками</string>
+    <string name="blur_behind">Размытие позади</string>
+    <string name="blurs_the_wallpaper_when_app_drawer_opens">Размывать обои когда меню приложений открывается</string>
+    <string name="no_folders">Нет папок</string>
+    <string name="no_tags">Нет меток</string>
+    <string name="manage_tags">Управление метками</string>
+    <string name="sort_update_and_delete_tags">Сортировка, обновление и удаление меток</string>
+    <string name="manage_folders">Управление папками</string>
+    <string name="sort_update_and_delete_folders">Сортировка, обновление и удаление папок</string>
+    <string name="vertical">Вертикально</string>
+    <string name="horizontal">Горизонтально</string>
+    <string name="top">Сверху</string>
+    <string name="bottom">Снизу</string>
+    <string name="scroll_bar">Полоса прокрутки</string>
+    <string name="alphabetical">По алфавиту</string>
+    <string name="search_bar_position">Положение строки поиска</string>
+    <string name="scroll_bar_type">Тип полосы прокрутки</string>
 </resources>
