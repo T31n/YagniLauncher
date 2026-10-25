@@ -1,3 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="folder_cell_dimension">Размер ячейки папки</string>
+    <string name="cell_width">Ширина ячейки</string>
+    <string name="cell_width_is_not_valid">Ширина ячейки неверна</string>
+    <string name="cell_height">Высота ячейки</string>
+    <string name="cell_height_is_not_valid">Высота ячейки неверна</string>
+    <string name="max_columns">Макс. колонок</string>
+    <string name="max_columns_is_not_valid">Максимум колонок неверен</string>
+    <string name="folder_max_grid">Максимальная сетка папок</string>
+    <string name="max_rows">Макс. строк</string>
+    <string name="max_rows_is_not_valid">Максимум строк неверен</string>
+    <string name="folder_corner_radius">Радиус скругления углов папки</string>
+    <string name="folder_background_color">Цвет фона папки</string>
 </resources>
