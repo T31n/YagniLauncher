@@ -1,3 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="personal">Личное</string>
+    <string name="clone">Клонировать</string>
+    <string name="work">Работа</string>
+    <string name="work_apps_are_paused">Рабочие приложения на паузе</string>
+    <string name="you_won_t_receive_notifications_from_your_work_apps">Вы не будете получать уведомления с ваших рабочих приложений</string>
+    <string name="unpause">Возобновить</string>
+    <string name="private_space">Приватное</string>
+    <string name="please_wait_for_the_white_box_indicator">Пожалуйста, дождитесь появления индикатора в виде белого прямоугольника</string>
+    <string name="edit_pages">Изменить страницы</string>
+    <string name="edit_dock_pages">Изменить страницы документов</string>
+    <string name="widgets">Виджеты</string>
+    <string name="shortcuts">Ярлыки</string>
+    <string name="wallpaper">Обои</string>
+    <string name="search_widgets">Поисковые виджеты</string>
+    <string name="request_permissions">Запрос на разрешения</string>
+    <string name="allow_permissions_so_we_can_inform_you_about_important_crash_reports_and_make_phone_shortcuts">Предоставьте разрешения, чтобы мы могли сообщать вам о важных отчетах о сбоях и создавать ярлыки на телефоне</string>
+    <string name="later">Позже</string>
 </resources>
