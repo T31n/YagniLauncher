@@ -1,3 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="import_icon_pack">Импорт пакета иконок</string>
+    <string name="no_icon_packs">Нет пакетов иконок</string>
+    <string name="select_icon_pack">Выбрать пакет иконок</string>
+    <string name="please_import_an_icon_pack_first">Пожалуйста, импортируйте пакет иконок сначала</string>
+    <string name="reset">Сбросить</string>
+    <string name="default_icon_pack">По умолчанию</string>
+    <string name="theme">Тема</string>
+    <string name="dynamic_theme">Динамическая тема</string>
+    <string name="notification_dots">Точки уведомлений</string>
+    <string name="show_notification_dots">Показать точки уведомлений</string>
+    <string name="apply_icons_from_supported_icon_packs">Применить иконки с поддерживаемых пакетов иконок</string>
+    <string name="adapt_colors_to_your_wallpaper_automatically">Адаптировать цвета к вашим обоям автоматически</string>
+    <string name="icon_tint">Оттенок иконки</string>
+    <string name="fallback_icon_tint">Оттенок резервной иконки</string>
+    <string name="use_the_fallback_icon_tint">Использовать оттенок резервной иконки</string>
+    <string name="none">Ничего</string>
+    <string name="circle">Круг</string>
+    <string name="square">Квадрат</string>
+    <string name="rounded_square">Закруг. квадрат</string>
+    <string name="tear_drop">Слезная капля</string>
+    <string name="hexagon">Шестиугольник</string>
+    <string name="octagon">Восьмиугольник</string>
+    <string name="diamond">Алмаз</string>
+    <string name="pentagon">Пятиугольник</string>
+    <string name="clover">Клевер</string>
+    <string name="cookie">Печенье</string>
+    <string name="flower">Цветок</string>
+    <string name="shield">Щит</string>
+    <string name="icon_shape">Форма иконки</string>
 </resources>
