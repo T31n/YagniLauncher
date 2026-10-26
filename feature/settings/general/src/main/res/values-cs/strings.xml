@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~
   ~   Copyright 2023 Einstein Blanco
   ~
@@ -14,8 +15,7 @@
   ~   See the License for the specific language governing permissions and
   ~   limitations under the License.
   ~
-  -->
-<resources>
+  --><resources>
     <string name="import_icon_pack">Importovat balíček ikon</string>
     <string name="no_icon_packs">Žádné balíčky ikon</string>
     <string name="select_icon_pack">Vybrat balíček ikon</string>
@@ -26,7 +26,7 @@
     <string name="dynamic_theme">Dynamický motiv</string>
     <string name="notification_dots">Tečky oznámení</string>
     <string name="show_notification_dots">Zobrazovat tečky oznámení</string>
-    <string name="apply_icons_from_supported_icon_packs">Použít ikony z podporovaných balíčků ikon</string>
+    <string name="apply_icons_from_supported_icon_packs">Použít ikony z podporovaných balíčků ikon</string>
     <string name="adapt_colors_to_your_wallpaper_automatically">Automaticky přizpůsobit barvy tapetě</string>
     <string name="icon_tint">Odstín ikon</string>
     <string name="fallback_icon_tint">Záložní odstín ikon</string>
