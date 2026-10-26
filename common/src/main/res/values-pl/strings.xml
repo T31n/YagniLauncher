@@ -15,4 +15,35 @@
   ~   limitations under the License.
   ~
   -->
+<resources>
+    <string name="save">Zapisz</string>
+    <string name="settings">Ustawienia</string>
+    <string name="experimental">Eksperymentalne</string>
+    <string name="custom_label">Własna etykieta</string>
+    <string name="background_color">Kolor tła</string>
+    <string name="gestures">Gesty</string>
+    <string name="columns_is_not_valid">Nieprawidłowa liczba kolumn</string>
+    <string name="grid">Siatka</string>
+    <string name="columns">Kolumny</string>
+    <string name="update">Aktualizuj</string>
+    <string name="none">Brak</string>
+    <string name="home">Ekran główny</string>
+    <string name="general">Ogólne</string>
+    <string name="system">System</string>
+    <string name="edit">Edytuj %1$s</string>
+    <string name="add">Dodaj</string>
+    <string name="okay">Okej</string>
+    <string name="custom_label_is_not_valid">Nieprawidłowa własna etykieta</string>
+    <string name="rows_is_not_valid">Nieprawidłowa liczba wierszy</string>
+    <string name="search_applications">Szukaj aplikacji</string>
+    <string name="dark">Ciemny</string>
+    <string name="app_drawer">Szuflada aplikacji</string>
+    <string name="rows">Wiersze</string>
+    <string name="light">Jasny</string>
+    <string name="cancel">Anuluj</string>
+    <string name="edit_label">Edytuj etykietę</string>
+    <string name="label">Etykieta</string>
+    <string name="label_is_not_valid">Nieprawidłowa etykieta</string>
+    <string name="folders">Foldery</string>
+    <string name="folder">Folder</string>
 </resources>
