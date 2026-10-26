@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~
+  ~   Copyright 2023 Einstein Blanco
+  ~
+  ~   Licensed under the GNU General Public License v3.0 (the "License");
+  ~   you may not use this file except in compliance with the License.
+  ~   You may obtain a copy of the License at
+  ~
+  ~       https://www.gnu.org/licenses/gpl-3.0
+  ~
+  ~   Unless required by applicable law or agreed to in writing, software
+  ~   distributed under the License is distributed on an "AS IS" BASIS,
+  ~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~   See the License for the specific language governing permissions and
+  ~   limitations under the License.
+  ~
+  -->
+<resources>
+    <string name="top">Сверху</string>
+    <string name="bottom">Снизу</string>
+    <string name="open">Открыть %1$s</string>
+    <string name="app">Приложение</string>
+    <string name="open_app_drawer">Открыть меню приложений</string>
+    <string name="open_notification_panel">Открыть панель уведомлений</string>
+    <string name="lock_screen">Блокировка экрана</string>
+    <string name="open_quick_settings">Открыть быстрые настройки</string>
+    <string name="open_recents">Открыть недавние</string>
+    <string name="enable_the_accessibility_service_permission_to_use_additional_actions">Предоставьте разрешение для службы специальных возможностей, чтобы использовать дополнительные действия</string>
+    <string name="corner_radius">Радиус скругления углов</string>
+    <string name="corner_radius_is_not_valid">Радиус неверен</string>
+    <string name="icon_size">Размер иконок</string>
+    <string name="icon_size_is_not_valid">Размер иконок неверен</string>
+    <string name="padding">Заполнение</string>
+    <string name="padding_is_not_valid">Заполнение неверно</string>
+    <string name="text_size">Размер текста</string>
+    <string name="text_size_is_not_valid">Размер текста неверен</string>
+    <string name="select_application">Выбрать приложение</string>
+    <string name="custom_icon">Своя иконка</string>
+    <string name="gallery">Галерея</string>
+    <string name="pick_icons_from_your_gallery">Выбрать иконки со своей галереи</string>
+    <string name="reset_custom_icon">Сбросить свою иконку</string>
+    <string name="grid_item">Элемент сетки</string>
+    <string name="text_color">Цвет текста</string>
+    <string name="single_line_label">Однострочный слой</string>
+    <string name="horizontal_alignment">Горизонтальное выравнивание</string>
+    <string name="vertical_arrangement">Вертикальное расположение</string>
+    <string name="start">В начале</string>
+    <string name="center_horizontally">Выровнять по горизонтали</string>
+    <string name="end">В конце</string>
+    <string name="center">По центру</string>
+    <string name="double_tap">Двойной тап</string>
+    <string name="swipe_up">Свайп вверх</string>
+    <string name="swipe_down">Свайп вниз</string>
+    <string name="limit_app_names_to_one_line">Ограничьте названия приложений одной строкой</string>
+    <string name="add_folder">Добавить папку</string>
+    <string name="folder_is_not_valid">Папка неверна</string>
+    <string name="center_vertically">Выровнять по вертикали</string>
+    <string name="top_icon_bottom_label">Иконка сверху, надпись снизу</string>
+    <string name="top_label_bottom_icon">Надпись сверху, иконка снизу</string>
+    <string name="start_icon_end_label">Иконка в начале, надпись в конце</string>
+    <string name="start_label_end_icon">Надпись в начале, иконка в конце</string>
+    <string name="icon_only">Только иконка</string>
+    <string name="label_only">Только текст</string>
+    <string name="text_padding">Отступ текста</string>
+    <string name="icon_padding">Отступы для иконки</string>
+    <string name="layout_type">Тип макета</string>
+    <string name="vertical_alignment">Вертикальное выравнивание</string>
+    <string name="horizontal_arrangement">Горизонтальное расположение</string>
+    <string name="open_notification_panel_by_reflection">Открытие панели уведомлений через отражение</string>
+</resources>

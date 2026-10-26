@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~
+  ~   Copyright 2023 Einstein Blanco
+  ~
+  ~   Licensed under the GNU General Public License v3.0 (the "License");
+  ~   you may not use this file except in compliance with the License.
+  ~   You may obtain a copy of the License at
+  ~
+  ~       https://www.gnu.org/licenses/gpl-3.0
+  ~
+  ~   Unless required by applicable law or agreed to in writing, software
+  ~   distributed under the License is distributed on an "AS IS" BASIS,
+  ~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~   See the License for the specific language governing permissions and
+  ~   limitations under the License.
+  ~
+  -->
+<resources>
+    <string name="lock_screen">شاشة القفل</string>
+    <string name="open_app_drawer">فتح درج التطبيقات</string>
+    <string name="open_notification_panel">فتح لوحة التنبيهات</string>
+    <string name="limit_app_names_to_one_line">عرض اسماء التطبيقات في سطر واحد كحد أقصى</string>
+    <string name="open_quick_settings">فتح الإعدادت السريعة</string>
+    <string name="text_size_is_not_valid">حجم الخط غير صالح</string>
+    <string name="top_icon_bottom_label">الأيقونة في الاعلى و الاسم في الاسفل</string>
+    <string name="icon_size_is_not_valid">حجم الأيقونة غير صالح</string>
+    <string name="single_line_label">سطر اسم واحد كحد أقصى</string>
+    <string name="start_label_end_icon">البدء بالأسم و الانتهاء بالأيقونة</string>
+    <string name="open_recents">فتح التطبيقات المستخدمة مؤخرا</string>
+    <string name="open">فتح %1$s</string>
+    <string name="app">التطبيق</string>
+    <string name="icon_only">الايقونات فقط</string>
+    <string name="horizontal_arrangement">ترتيب افقي</string>
+    <string name="bottom">الاسفل</string>
+    <string name="gallery">معرض الصور</string>
+    <string name="open_notification_panel_by_reflection">فتح لوحه الاشعارات العكسي</string>
+    <string name="custom_icon">تخصيص الايقونات</string>
+    <string name="pick_icons_from_your_gallery">اختار ايقونات من معرض الصور</string>
+    <string name="grid_item">عناصر الشاشة الرئيسية</string>
+    <string name="label_only">الاسم فقط</string>
+    <string name="horizontal_alignment">المحاذاة الافقية</string>
+    <string name="center_horizontally">توسيط افقي</string>
+    <string name="icon_padding">اطار الايقونه</string>
+    <string name="add_folder">إضافة ملف</string>
+    <string name="top">الاعلى</string>
+    <string name="enable_the_accessibility_service_permission_to_use_additional_actions">فعّل إذن خدمة تسهيلات الاستخدام لاستخدام إجراءات إضافية</string>
+    <string name="corner_radius">استدارة الزوايا</string>
+    <string name="corner_radius_is_not_valid">استدارة الزوايا غير صالحة</string>
+    <string name="icon_size">حجم الايقونة</string>
+    <string name="padding">حشو</string>
+    <string name="padding_is_not_valid">الحشو غير صالح</string>
+    <string name="text_size">حجم الخط</string>
+    <string name="select_application">اختر التطبيق</string>
+    <string name="reset_custom_icon">إعادة ضبط الايقونة</string>
+    <string name="text_color">لون الخط</string>
+    <string name="vertical_arrangement">ترتيب عمودي</string>
+    <string name="start">بدء</string>
+    <string name="end">إنهاء</string>
+    <string name="center">وسط</string>
+    <string name="double_tap">النقر مرتين</string>
+    <string name="swipe_up">السحب للاعلى</string>
+    <string name="swipe_down">السحب للاسفل</string>
+    <string name="folder_is_not_valid">الملف غير صالح</string>
+    <string name="center_vertically">توسيط عمودي</string>
+    <string name="top_label_bottom_icon">الاسم في الاعلى، الايقونة في الاسفل</string>
+    <string name="start_icon_end_label">بدء بالايقونة، الانتهاء بالاسم</string>
+    <string name="text_padding">حشو الخط</string>
+    <string name="layout_type">نوع تنسيق الشاشة</string>
+    <string name="vertical_alignment">المحاذاة العمودية</string>
+</resources>

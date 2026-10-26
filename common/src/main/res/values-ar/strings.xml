@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~
+  ~   Copyright 2023 Einstein Blanco
+  ~
+  ~   Licensed under the GNU General Public License v3.0 (the "License");
+  ~   you may not use this file except in compliance with the License.
+  ~   You may obtain a copy of the License at
+  ~
+  ~       https://www.gnu.org/licenses/gpl-3.0
+  ~
+  ~   Unless required by applicable law or agreed to in writing, software
+  ~   distributed under the License is distributed on an "AS IS" BASIS,
+  ~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~   See the License for the specific language governing permissions and
+  ~   limitations under the License.
+  ~
+  -->
+<resources>
+    <string name="save">حفظ</string>
+    <string name="settings">الإعدادات</string>
+    <string name="experimental">المميزات التجريبية</string>
+    <string name="background_color">لون الخلفية</string>
+    <string name="gestures">الإيماءات</string>
+    <string name="update">تحديث</string>
+    <string name="home">الشاشة الرئيسية</string>
+    <string name="system">النظام</string>
+    <string name="add">إضافة</string>
+    <string name="edit">تعديل%1$s</string>
+    <string name="grid">تنسيق الشاشة الرئيسية</string>
+    <string name="general">عام</string>
+    <string name="okay">تأكيد</string>
+    <string name="columns">الأعمدة</string>
+    <string name="columns_is_not_valid">الأعمدة غير صالحة</string>
+    <string name="none">لا شيء</string>
+    <string name="custom_label">تخصيص الإسم</string>
+    <string name="custom_label_is_not_valid">التسمية المخصصة غير صالحة</string>
+    <string name="cancel">إلغاء</string>
+    <string name="dark">الداكن</string>
+    <string name="custom">تخصيص</string>
+    <string name="rows">الصفوف</string>
+    <string name="app_drawer">درج التطبيقات</string>
+    <string name="folder">الملف</string>
+    <string name="folders">الملفات</string>
+    <string name="search_applications">البحث عن التطبيقات</string>
+    <string name="light">المضيئ</string>
+    <string name="edit_label">تعديل الإسم</string>
+    <string name="label">الإسم</string>
+    <string name="rows_is_not_valid">الصفوف غير صالحة</string>
+    <string name="label_is_not_valid">الإسم غير صالحة</string>
+</resources>

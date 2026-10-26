@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~
+  ~   Copyright 2023 Einstein Blanco
+  ~
+  ~   Licensed under the GNU General Public License v3.0 (the "License");
+  ~   you may not use this file except in compliance with the License.
+  ~   You may obtain a copy of the License at
+  ~
+  ~       https://www.gnu.org/licenses/gpl-3.0
+  ~
+  ~   Unless required by applicable law or agreed to in writing, software
+  ~   distributed under the License is distributed on an "AS IS" BASIS,
+  ~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~   See the License for the specific language governing permissions and
+  ~   limitations under the License.
+  ~
+  -->
+<resources>
+    <string name="dock_grid">تنسيق شاشة شريط التطبيقات السفلي</string>
+    <string name="dock_columns_is_not_valid">أعمدة شريط التطبيقات غير صالحة</string>
+    <string name="dock_rows_is_not_valid">صفوف شريط التطبيقات السفلي غير صالحة</string>
+    <string name="dock_height">إرتفاع شريط التطبيقات السفلي</string>
+    <string name="dock_height_is_not_valid">إرتفاع شريط التطبيقات السفلي غير صالحة</string>
+    <string name="infinite_scrolling">التمرير الانهائي</string>
+    <string name="seamless_loop_page_scroll">التمرير بين الصفحات بشكل دائري سلس</string>
+    <string name="wallpaper_scrolling">تمرير خلفية الشاشة</string>
+    <string name="scroll_wallpaper_across_pages">تمرير خلفية الشاشة عبر الصفحات</string>
+    <string name="lock_screen_orientation">إقفال تنسيق شاشة القفل</string>
+    <string name="add_new_apps">إضافة تطبيقات جديدة</string>
+    <string name="add_new_apps_to_home_screen">إضافة تطبيقات جديدة للشاشة الرئيسية</string>
+    <string name="dock">شريط التطبيقات السفلي</string>
+    <string name="dock_infinite_scroll">تمرير لانهائي لشريط التطبيقات السفلي</string>
+    <string name="prevent_rotation_when_device_orientation_changes">منع تدوير الشاشة عند تغيير اتجاه الجهاز</string>
+    <string name="show_page_indicator">إظهار مؤشر الصفحات</string>
+    <string name="show_an_indicator_for_the_current_page">إظهار مؤشر الصفحة الحالية</string>
+    <string name="dock_background_color">لون خلفية شريط التطبيقات السفل</string>
+    <string name="dock_padding">الحشو الداخلي لشريط التطبيقات السفلي</string>
+    <string name="dock_corner_radius">استدارة زوايا شريط التطبيقات السفلي</string>
+    <string name="dock_padding_is_not_valid">حشو الداخلي لشريط التطبيقات السفلي غير صالح</string>
+    <string name="top_start">البدء من الاعلى</string>
+    <string name="top_start_is_not_valid">البدء من الاعلى غير صالحة</string>
+    <string name="top_end">الانتهاء من الاعلى</string>
+    <string name="top_end_is_not_valid">الانتهاء من الاعلى غير صالح</string>
+    <string name="bottom_start">البدء من الاسفل</string>
+    <string name="bottom_start_is_not_valid">البدء من الاسفل غير صالح</string>
+    <string name="bottom_end">الانتهاء من الاسفل</string>
+    <string name="bottom_end_is_not_valid">الانتهاء من الاسفل غير صالح</string>
+    <string name="set_the_radius_for_each_dock_corner">إضبط استدارة حواف شريط التطبيقات السفلي</string>
+    <string name="add_bottom_padding">إضافة حشو سفلي للشاشة الرئيسية</string>
+    <string name="add_the_bottom_padding_of_the_dock">إضافة حشو سفلي لشريط التطبيقات السفلي</string>
+    <string name="pager_transition_effect">تأثير البصري للانتقال بين الصفحات</string>
+    <string name="transition_effect_none">لا شيء</string>
+    <string name="transition_effect_fade">تلاشي</string>
+    <string name="transition_effect_zoom_out">تصغير</string>
+    <string name="transition_effect_depth">العمق</string>
+    <string name="transition_effect_cube">مكعب</string>
+    <string name="transition_effect_flip">قلب</string>
+    <string name="transition_effect_parallax">تأثير اختلاف المنظور</string>
+    <string name="transition_effect_stack">مكدس</string>
+</resources>
