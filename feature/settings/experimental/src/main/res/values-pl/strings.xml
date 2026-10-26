@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~
   ~   Copyright 2023 Einstein Blanco
   ~
@@ -14,12 +15,9 @@
   ~   See the License for the specific language governing permissions and
   ~   limitations under the License.
   ~
-  -->
-<resources>
+  --><resources>
     <string name="warning">Ostrzeżenie</string>
-    <string name="disable_background_sync_description">
-    Wyłączenie synchronizacji w tle pozwala zaoszczędzić trochę pamięci i odciążyć system, ale oznacza również, że Yagni Launcher nie będzie automatycznie aktualizować aplikacji, widżetów ani skrótów.\n\nTwoja szuflada aplikacji może wyświetlać nieaktualne ikony, brakujące widżety lub skróty, które już nie działają.
-</string>
+    <string name="disable_background_sync_description">Wyłączenie synchronizacji w tle pozwala zaoszczędzić trochę pamięci i odciążyć system, ale oznacza również, że Yagni Launcher nie będzie automatycznie aktualizować aplikacji, widżetów ani skrótów.\n\nTwoja szuflada aplikacji może wyświetlać nieaktualne ikony, brakujące widżety lub skróty, które już nie działają.</string>
     <string name="sync_data">Synchronizuj dane</string>
     <string name="keep_data_up_to_date">Utrzymuj aktualność danych</string>
     <string name="enable_or_disable_sync_data">Włącz lub wyłącz synchronizację danych</string>
