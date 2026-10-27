@@ -1,3 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="horizontal_grid">Grelha Horizontal</string>
+    <string name="vertical_grid">Grelha Vertical</string>
+    <string name="rows_height">Altura das Linhas</string>
+    <string name="rows_height_is_not_valid">Altura das linhas inválida</string>
+    <string name="hidden_applications">Aplicações Escondidas</string>
+    <string name="no_hidden_applications">Sem aplicações escondidas</string>
+    <string name="app_drawer_type">Tipo de Gaveta de Aplicações</string>
+    <string name="exclude_tagged_apps">Excluir Aplicações Marcadas</string>
+    <string name="hide_selected_apps_from_the_app_drawer">Esconder aplicações selecionadas da gaveta de aplicações</string>
+    <string name="hide_apps_marked_with_selected_tags">Esconder aplicações marcadas com as marcas selecionadas</string>
+    <string name="show_keyboard">Mostrar Teclado</string>
+    <string name="show_keyboard_when_app_drawer_opens">Mostrar teclado quando a gaveta de aplicações abrir</string>
+    <string name="fuzzy_search">Procura Difusa</string>
+    <string name="find_apps_even_with_typos_or_accented_characters">Procurar aplicações mesmo com erros ou assentuadas</string>
+    <string name="blur_behind">Desfocado Atrás</string>
+    <string name="blurs_the_wallpaper_when_app_drawer_opens">Desfocar o papel de parede quando a gaveta de aplicações abrir</string>
+    <string name="no_folders">Sem Pastas</string>
+    <string name="no_tags">Sem Marcas</string>
+    <string name="manage_tags">Gerir Marcas</string>
+    <string name="sort_update_and_delete_tags">Ordenar, atualizar e apagar marcas</string>
+    <string name="manage_folders">Gerir Pastas</string>
+    <string name="sort_update_and_delete_folders">Ordenar, atualizar e apagar pastas</string>
+    <string name="top">Topo</string>
+    <string name="bottom">Fundo</string>
+    <string name="alphabetical">Alfabética</string>
+    <string name="search_bar_position">Posição da Barra de Procura</string>
+    <string name="scroll_bar_type">Tipo de Scroll Bar</string>
 </resources>
