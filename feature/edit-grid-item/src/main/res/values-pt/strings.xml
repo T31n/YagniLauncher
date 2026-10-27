@@ -1,3 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="custom_short_label">Etiqueta Curta Personalizada</string>
+    <string name="grid_item_actions">Ações de Item da Grelha</string>
+    <string name="override">Sobrepor</string>
+    <string name="override_the_grid_item_settings">Sobrepor Configuração de Item da Grelha</string>
 </resources>
