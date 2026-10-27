@@ -1,3 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="personal">Pessoal</string>
+    <string name="clone">Duplicado</string>
+    <string name="work">Trabalho</string>
+    <string name="work_apps_are_paused">Aplicações de trabalho pausadas</string>
+    <string name="you_won_t_receive_notifications_from_your_work_apps">Não receberá notificações das aplicações de trabalho</string>
+    <string name="unpause">Tirar pausa</string>
+    <string name="private_space">Privado</string>
+    <string name="please_wait_for_the_white_box_indicator">Por favor espere pela caixa branca</string>
+    <string name="edit_pages">Editar Páginas</string>
+    <string name="edit_dock_pages">Editar Páginas da Doca</string>
+    <string name="shortcuts">Atalhos</string>
+    <string name="wallpaper">Papel de parede</string>
+    <string name="search_widgets">Procurar Widgets</string>
+    <string name="request_permissions">Pedir Permissões</string>
+    <string name="allow_permissions_so_we_can_inform_you_about_important_crash_reports_and_make_phone_shortcuts">Ative permissões para podermos informá-lo de relatórios importantes e criar atalhos no telefone</string>
+    <string name="later">Mais tarde</string>
 </resources>
