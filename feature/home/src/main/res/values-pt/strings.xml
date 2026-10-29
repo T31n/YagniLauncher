@@ -16,4 +16,5 @@
     <string name="request_permissions">Pedir Permissões</string>
     <string name="allow_permissions_so_we_can_inform_you_about_important_crash_reports_and_make_phone_shortcuts">Ative permissões para podermos informá-lo de relatórios importantes e criar atalhos no telefone</string>
     <string name="later">Mais tarde</string>
+    <string name="widgets">Widgets</string>
 </resources>
