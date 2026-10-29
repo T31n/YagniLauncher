@@ -29,4 +29,6 @@
     <string name="folders">Pastas</string>
     <string name="folder">Pasta</string>
     <string name="custom">Personalizado</string>
+    <string name="save">Gravar</string>
+    <string name="experimental">Experimental</string>
 </resources>
