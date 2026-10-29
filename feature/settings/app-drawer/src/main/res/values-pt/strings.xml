@@ -27,4 +27,7 @@
     <string name="alphabetical">Alfabética</string>
     <string name="search_bar_position">Posição da Barra de Procura</string>
     <string name="scroll_bar_type">Tipo de Scroll Bar</string>
+    <string name="vertical">Vertical</string>
+    <string name="horizontal">Horizontal</string>
+    <string name="scroll_bar">Scroll Bar</string>
 </resources>
