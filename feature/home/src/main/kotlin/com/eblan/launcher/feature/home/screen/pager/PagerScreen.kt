@@ -122,11 +122,11 @@ import com.eblan.launcher.domain.model.userdata.GestureSettings
 import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
-import com.eblan.launcher.feature.home.component.DotsGridLayout
 import com.eblan.launcher.feature.home.component.GridLayout
 import com.eblan.launcher.feature.home.component.HomeHandler
 import com.eblan.launcher.feature.home.component.OVERLAY_SCALE
 import com.eblan.launcher.feature.home.component.PageIndicator
+import com.eblan.launcher.feature.home.component.SparkleGridLayout
 import com.eblan.launcher.feature.home.component.pagerTransitionEffect
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.GridItemSource
@@ -559,7 +559,11 @@ internal fun PagerScreen(
             hasMenuGeometry &&
             moveFolderEblanApplicationInfoGridItemResult != null
 
-    val isVisibleDotsGrid =
+    val isDragOnDock =
+        dockHeightPx > 0 &&
+            (pagerScreenState.dragIntOffset.y - topPadding) > safeDrawingHeight - dockHeightPx
+
+    val isVisibleSparkle =
         moveGridItemResult != null &&
             (
                 pagerScreenState.drag == Drag.Dragging ||
@@ -571,6 +575,10 @@ internal fun PagerScreen(
                 ) &&
             !isVisibleFolderGridItems &&
             !isVisibleFolderEblanApplicationInfos
+
+    val isVisibleSparkleGrid = isVisibleSparkle && !isDragOnDock
+
+    val isVisibleSparkleDockGrid = isVisibleSparkle && isDragOnDock
 
     LaunchedEffect(
         key1 = pinGridItem,
@@ -894,8 +902,8 @@ internal fun PagerScreen(
                 },
         ) {
             Box(modifier = Modifier.weight(1f)) {
-                if (isVisibleDotsGrid) {
-                    DotsGridLayout(
+                if (isVisibleSparkleGrid) {
+                    SparkleGridLayout(
                         // Grid Structure
                         columns = homeSettings.columns,
                         rows = homeSettings.rows,
@@ -1072,8 +1080,8 @@ internal fun PagerScreen(
                         ),
                 )
 
-                if (isVisibleDotsGrid) {
-                    DotsGridLayout(
+                if (isVisibleSparkleDockGrid) {
+                    SparkleGridLayout(
                         // Grid Structure
                         columns = homeSettings.dockColumns,
                         rows = homeSettings.dockRows,
