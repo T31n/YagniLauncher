@@ -678,7 +678,7 @@ private suspend fun resolveApplicationIcon(
         )
 
         if (iconFile.exists()) {
-            getApplicationIcon(componentName = componentName)
+            iconFile.absolutePath
         } else {
             getApplicationIcon(componentName = packageName)
         }
