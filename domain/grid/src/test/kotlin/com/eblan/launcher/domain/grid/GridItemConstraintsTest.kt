@@ -370,7 +370,7 @@ class GridItemConstraintsTest {
 
             assertEquals(
                 ResolveDirection.Right,
-                getResolveDirectionByX(
+                getGridItemSection(
                     gridItem = gridItem,
                     x = 20,
                     columns = 5,
@@ -390,7 +390,7 @@ class GridItemConstraintsTest {
 
             assertEquals(
                 ResolveDirection.Center,
-                getResolveDirectionByX(
+                getGridItemSection(
                     gridItem = gridItem,
                     x = 150,
                     columns = 5,
@@ -410,7 +410,7 @@ class GridItemConstraintsTest {
 
             assertEquals(
                 ResolveDirection.Left,
-                getResolveDirectionByX(
+                getGridItemSection(
                     gridItem = gridItem,
                     x = 280,
                     columns = 5,
@@ -430,7 +430,7 @@ class GridItemConstraintsTest {
 
             assertEquals(
                 ResolveDirection.Center,
-                getResolveDirectionByX(
+                getGridItemSection(
                     gridItem = gridItem,
                     x = 100,
                     columns = 5,
@@ -450,7 +450,7 @@ class GridItemConstraintsTest {
 
             assertEquals(
                 ResolveDirection.Left,
-                getResolveDirectionByX(
+                getGridItemSection(
                     gridItem = gridItem,
                     x = 200,
                     columns = 5,
@@ -470,7 +470,7 @@ class GridItemConstraintsTest {
 
             assertEquals(
                 ResolveDirection.Right,
-                getResolveDirectionByX(
+                getGridItemSection(
                     gridItem = gridItem,
                     x = 210,
                     columns = 5,

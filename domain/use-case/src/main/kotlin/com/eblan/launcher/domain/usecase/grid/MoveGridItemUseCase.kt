@@ -20,12 +20,13 @@ package com.eblan.launcher.domain.usecase.grid
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.grid.getGridItemByCoordinates
+import com.eblan.launcher.domain.grid.getGridItemSection
 import com.eblan.launcher.domain.grid.getRelativeResolveDirection
-import com.eblan.launcher.domain.grid.getResolveDirectionByX
 import com.eblan.launcher.domain.grid.rectanglesOverlap
 import com.eblan.launcher.domain.grid.resolveConflicts
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
+import com.eblan.launcher.domain.model.grid.GridItemSection
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.model.grid.ResolveDirection
 import com.eblan.launcher.domain.repository.GridRepository
@@ -138,18 +139,18 @@ class MoveGridItemUseCase @Inject constructor(
         rows: Int,
         gridWidth: Int,
     ): MoveGridItemResult {
-        val resolveDirection = getResolveDirectionByX(
+        val gridItemSection = getGridItemSection(
             gridItem = conflictingGridItem,
             x = x,
             columns = columns,
             gridWidth = gridWidth,
         )
 
-        return when (resolveDirection) {
-            ResolveDirection.Left, ResolveDirection.Right -> {
+        return when (gridItemSection) {
+            GridItemSection.Left -> {
                 val resolvedGridItems = resolveConflicts(
                     gridItems = gridItems,
-                    resolveDirection = resolveDirection,
+                    resolveDirection = ResolveDirection.Left,
                     movingGridItem = movingGridItem,
                     columns = columns,
                     rows = rows,
@@ -166,7 +167,27 @@ class MoveGridItemUseCase @Inject constructor(
                 )
             }
 
-            ResolveDirection.Center -> {
+            GridItemSection.Right -> {
+                val resolvedGridItems = resolveConflicts(
+                    gridItems = gridItems,
+                    resolveDirection = ResolveDirection.Right,
+                    movingGridItem = movingGridItem,
+                    columns = columns,
+                    rows = rows,
+                )
+
+                if (resolvedGridItems != null) {
+                    gridRepository.upsertGridItems(gridItems = resolvedGridItems)
+                }
+
+                MoveGridItemResult(
+                    isSuccess = resolvedGridItems != null,
+                    movingGridItem = movingGridItem,
+                    conflictingGridItem = null,
+                )
+            }
+
+            GridItemSection.Center -> {
                 if (movingGridItem.data is GridItemData.Widget ||
                     conflictingGridItem.data is GridItemData.Widget
                 ) {

@@ -18,6 +18,7 @@
 package com.eblan.launcher.domain.grid
 
 import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.GridItemSection
 import com.eblan.launcher.domain.model.grid.ResolveDirection
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
@@ -71,8 +72,8 @@ fun rectanglesOverlap(
 /**
  * Chooses a conflict-resolution direction from a horizontal coordinate within the grid.
  *
- * The item's left, middle, and right thirds map to [ResolveDirection.Right],
- * [ResolveDirection.Center], and [ResolveDirection.Left], respectively.
+ * The item's left, middle, and right thirds map to [GridItemSection.Right],
+ * [GridItemSection.Center], and [GridItemSection.Left], respectively.
  *
  * @param gridItem The item whose horizontal span is divided into thirds.
  * @param x The horizontal pixel coordinate, measured from the grid's left edge.
@@ -80,12 +81,12 @@ fun rectanglesOverlap(
  * @param gridWidth The grid width in pixels.
  * @return The direction selected for resolving a conflict.
  */
-fun getResolveDirectionByX(
+fun getGridItemSection(
     gridItem: GridItem,
     x: Int,
     columns: Int,
     gridWidth: Int,
-): ResolveDirection {
+): GridItemSection {
     val cellWidth = gridWidth / columns
 
     val gridItemX = gridItem.startColumn * cellWidth
@@ -95,9 +96,9 @@ fun getResolveDirectionByX(
     val xInGridItem = x - gridItemX
 
     return when {
-        xInGridItem < gridItemWidth / 3 -> ResolveDirection.Right
-        xInGridItem < 2 * gridItemWidth / 3 -> ResolveDirection.Center
-        else -> ResolveDirection.Left
+        xInGridItem < gridItemWidth / 3 -> GridItemSection.Right
+        xInGridItem < 2 * gridItemWidth / 3 -> GridItemSection.Center
+        else -> GridItemSection.Left
     }
 }
 
@@ -125,12 +126,10 @@ fun getGridItemByCoordinates(
     gridHeight: Int,
 ): GridItem? {
     val cellWidth = gridWidth / columns
-
     val cellHeight = gridHeight / rows
 
     return gridItems.find { gridItem ->
         val startColumn = x / cellWidth
-
         val startRow = y / cellHeight
 
         val columnInSpan =
@@ -275,7 +274,6 @@ fun getWidgetGridItemSize(
     targetCellHeight: Int,
 ): Pair<Int, Int> {
     val cellWidth = gridWidth / columns
-
     val cellHeight = gridHeight / rows
 
     val width = if (targetCellWidth > 0) {

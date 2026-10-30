@@ -121,8 +121,6 @@ private fun moveGridItem(
             rows = rows,
         )
     }
-
-    ResolveDirection.Center -> moving
 }
 
 /**
