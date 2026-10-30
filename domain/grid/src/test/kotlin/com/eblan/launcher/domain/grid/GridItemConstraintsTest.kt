@@ -22,6 +22,7 @@ import com.eblan.launcher.domain.model.getGridItemSettings
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
+import com.eblan.launcher.domain.model.grid.GridItemSection
 import com.eblan.launcher.domain.model.grid.ResolveDirection
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -369,7 +370,7 @@ class GridItemConstraintsTest {
             )
 
             assertEquals(
-                ResolveDirection.Right,
+                GridItemSection.Right,
                 getGridItemSection(
                     gridItem = gridItem,
                     x = 20,
@@ -389,7 +390,7 @@ class GridItemConstraintsTest {
             )
 
             assertEquals(
-                ResolveDirection.Center,
+                GridItemSection.Center,
                 getGridItemSection(
                     gridItem = gridItem,
                     x = 150,
@@ -409,7 +410,7 @@ class GridItemConstraintsTest {
             )
 
             assertEquals(
-                ResolveDirection.Left,
+                GridItemSection.Left,
                 getGridItemSection(
                     gridItem = gridItem,
                     x = 280,
@@ -429,7 +430,7 @@ class GridItemConstraintsTest {
             )
 
             assertEquals(
-                ResolveDirection.Center,
+                GridItemSection.Center,
                 getGridItemSection(
                     gridItem = gridItem,
                     x = 100,
@@ -449,7 +450,7 @@ class GridItemConstraintsTest {
             )
 
             assertEquals(
-                ResolveDirection.Left,
+                GridItemSection.Left,
                 getGridItemSection(
                     gridItem = gridItem,
                     x = 200,
@@ -469,7 +470,7 @@ class GridItemConstraintsTest {
             )
 
             assertEquals(
-                ResolveDirection.Right,
+                GridItemSection.Right,
                 getGridItemSection(
                     gridItem = gridItem,
                     x = 210,

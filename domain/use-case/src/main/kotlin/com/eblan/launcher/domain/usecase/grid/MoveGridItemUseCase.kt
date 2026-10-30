@@ -146,46 +146,30 @@ class MoveGridItemUseCase @Inject constructor(
             gridWidth = gridWidth,
         )
 
+        suspend fun getMoveGridItemResult(resolveDirection: ResolveDirection): MoveGridItemResult {
+            val resolvedGridItems = resolveConflicts(
+                gridItems = gridItems,
+                resolveDirection = resolveDirection,
+                movingGridItem = movingGridItem,
+                columns = columns,
+                rows = rows,
+            )
+
+            if (resolvedGridItems != null) {
+                gridRepository.upsertGridItems(gridItems = resolvedGridItems)
+            }
+
+            return MoveGridItemResult(
+                isSuccess = resolvedGridItems != null,
+                movingGridItem = movingGridItem,
+                conflictingGridItem = null,
+            )
+        }
+
         return when (gridItemSection) {
-            GridItemSection.Left -> {
-                val resolvedGridItems = resolveConflicts(
-                    gridItems = gridItems,
-                    resolveDirection = ResolveDirection.Left,
-                    movingGridItem = movingGridItem,
-                    columns = columns,
-                    rows = rows,
-                )
+            GridItemSection.Left -> getMoveGridItemResult(resolveDirection = ResolveDirection.Left)
 
-                if (resolvedGridItems != null) {
-                    gridRepository.upsertGridItems(gridItems = resolvedGridItems)
-                }
-
-                MoveGridItemResult(
-                    isSuccess = resolvedGridItems != null,
-                    movingGridItem = movingGridItem,
-                    conflictingGridItem = null,
-                )
-            }
-
-            GridItemSection.Right -> {
-                val resolvedGridItems = resolveConflicts(
-                    gridItems = gridItems,
-                    resolveDirection = ResolveDirection.Right,
-                    movingGridItem = movingGridItem,
-                    columns = columns,
-                    rows = rows,
-                )
-
-                if (resolvedGridItems != null) {
-                    gridRepository.upsertGridItems(gridItems = resolvedGridItems)
-                }
-
-                MoveGridItemResult(
-                    isSuccess = resolvedGridItems != null,
-                    movingGridItem = movingGridItem,
-                    conflictingGridItem = null,
-                )
-            }
+            GridItemSection.Right -> getMoveGridItemResult(resolveDirection = ResolveDirection.Right)
 
             GridItemSection.Center -> {
                 if (movingGridItem.data is GridItemData.Widget ||
