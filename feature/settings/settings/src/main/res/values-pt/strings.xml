@@ -1,3 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="choose_yagni_launcher">Escolher Yagni Launcher</string>
+    <string name="default_launcher">Launcher por defeito</string>
+    <string name="themes_icon_packs">Temas, conjuntos de icons</string>
+    <string name="grid_icon_dock_and_more">Grelha, icon, doca</string>
+    <string name="columns_and_rows_count">Número de linhas e colunas</string>
+    <string name="swipe_gesture_actions">Ações de deslizamento</string>
+    <string name="advanced_options_for_power_users">Opções avançadas para utilizadores experientes</string>
+    <string name="thank_you_for_using_yagni_launcher_alpha">Obrigado por usar o Yagni Launcher Alfa!</string>
+    <string name="about_development_description">O desenvolvimento começou em Janeiro de 2025 atualizações semanais regulares. Este é o meu projeto mais complexo até agora, e dedico um esforço significante para o seu melhoramento.</string>
+    <string name="support_message">Se acha que a aplicação tem valor para si, o seu suporte seria imensamente apreciado através de uma doação no Ko-fi ou uma avaliação positiva no repositório do GitHub.</string>
+    <string name="support_on_ko_fi">Apoiar no Ko-Fi</string>
+    <string name="star_on_github">Avaliar no GitHub</string>
+    <string name="note_this_informational_card_will_be_removed_in_future_stable_releases">Nota: Este cartão de informação será removido nas futuras versões estáveis</string>
+    <string name="corner_radius_background_color_and_more">Raio dos cantos, cor de fundo</string>
 </resources>
