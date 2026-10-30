@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~
   ~   Copyright 2023 Einstein Blanco
   ~
@@ -14,8 +15,7 @@
   ~   See the License for the specific language governing permissions and
   ~   limitations under the License.
   ~
-  -->
-<resources>
+  --><resources>
     <string name="open">Otevřít %1$s</string>
     <string name="app">Aplikace</string>
     <string name="open_app_drawer">Otevřít nabídku aplikací</string>
@@ -35,7 +35,7 @@
     <string name="select_application">Vybrat aplikaci</string>
     <string name="custom_icon">Vlastní ikona</string>
     <string name="gallery">Galerie</string>
-    <string name="pick_icons_from_your_gallery">Vyberte ikony z vaší galerie</string>
+    <string name="pick_icons_from_your_gallery">Vyberte ikony z vaší galerie</string>
     <string name="reset_custom_icon">Resetovat vlastní ikonu</string>
     <string name="grid_item">Položka mřížky</string>
     <string name="text_color">Barva textu</string>

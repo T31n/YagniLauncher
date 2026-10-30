@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~
   ~   Copyright 2023 Einstein Blanco
   ~
@@ -14,12 +15,9 @@
   ~   See the License for the specific language governing permissions and
   ~   limitations under the License.
   ~
-  -->
-<resources>
+  --><resources>
     <string name="warning">Varování</string>
-    <string name="disable_background_sync_description">
-    Zakázání synchronizace na pozadí pomáhá ušetřit trochu paměti a zjednodušuje práci, ale také to znamená, že Yagni spouštěč nebude automaticky aktualizovat vaše aplikace, widgety ani zkratky.\n\nV nabídce aplikací se mohou zobrazovat zastaralé ikony, chybějící widgety nebo zkratky, které již nefungují.
-</string>
+    <string name="disable_background_sync_description">Zakázání synchronizace na pozadí pomáhá ušetřit trochu paměti a zjednodušuje práci, ale také to znamená, že Yagni spouštěč nebude automaticky aktualizovat vaše aplikace, widgety ani zkratky.\n\nV nabídce aplikací se mohou zobrazovat zastaralé ikony, chybějící widgety nebo zkratky, které již nefungují.</string>
     <string name="sync_data">Synchronizovat data</string>
     <string name="keep_data_up_to_date">Udržovat data aktuální</string>
     <string name="enable_or_disable_sync_data">Povolit nebo zakázat synchronizaci dat</string>
