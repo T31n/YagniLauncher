@@ -26,9 +26,33 @@ import com.eblan.launcher.domain.model.grid.ResolveDirection
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 
 class MoveGridItemTest {
+    @Test
+    fun `throws when resolve direction is center`() {
+        val moving = getGridItem(
+            id = "moving",
+            startColumn = 0,
+            startRow = 0,
+            columnSpan = 1,
+            rowSpan = 1,
+        )
+
+        assertThrows(IllegalStateException::class.java) {
+            runBlocking {
+                resolveConflicts(
+                    gridItems = listOf(moving),
+                    resolveDirection = ResolveDirection.Center,
+                    movingGridItem = moving,
+                    columns = 5,
+                    rows = 4,
+                )
+            }
+        }
+    }
+
     @Test
     fun `returns unchanged items when there are no conflicts`() {
         val moving = getGridItem(

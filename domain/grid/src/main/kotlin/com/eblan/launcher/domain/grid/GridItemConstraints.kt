@@ -125,12 +125,10 @@ fun getGridItemByCoordinates(
     gridHeight: Int,
 ): GridItem? {
     val cellWidth = gridWidth / columns
-
     val cellHeight = gridHeight / rows
 
     return gridItems.find { gridItem ->
         val startColumn = x / cellWidth
-
         val startRow = y / cellHeight
 
         val columnInSpan =
@@ -275,7 +273,6 @@ fun getWidgetGridItemSize(
     targetCellHeight: Int,
 ): Pair<Int, Int> {
     val cellWidth = gridWidth / columns
-
     val cellHeight = gridHeight / rows
 
     val width = if (targetCellWidth > 0) {
