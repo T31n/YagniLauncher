@@ -1097,6 +1097,7 @@ internal fun PagerScreen(
                             .padding(
                                 start = paddingValues.calculateStartPadding(layoutDirection),
                                 end = paddingValues.calculateEndPadding(layoutDirection),
+                                bottom = paddingValues.calculateBottomPadding(),
                             ),
                     )
                 }
