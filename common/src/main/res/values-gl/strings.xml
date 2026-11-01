@@ -1,34 +1,3 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="edit_label"></string>
-    <string name="save"></string>
-    <string name="label_is_not_valid"></string>
-    <string name="columns_is_not_valid"></string>
-    <string name="edit"></string>
-    <string name="none"></string>
-    <string name="rows_is_not_valid"></string>
-    <string name="update"></string>
-    <string name="search_applications"></string>
-    <string name="custom_label"></string>
-    <string name="folder"></string>
-    <string name="background_color"></string>
-    <string name="light"></string>
-    <string name="folders"></string>
-    <string name="columns"></string>
-    <string name="app_drawer"></string>
-    <string name="rows"></string>
-    <string name="custom_label_is_not_valid"></string>
-    <string name="dark"></string>
-    <string name="home"></string>
-    <string name="cancel"></string>
-    <string name="experimental"></string>
-    <string name="general"></string>
-    <string name="okay"></string>
-    <string name="label"></string>
-    <string name="grid"></string>
-    <string name="settings"></string>
-    <string name="gestures"></string>
-    <string name="system"></string>
-    <string name="add"></string>
-    <string name="custom"></string>
-</resources>
+    </resources>
