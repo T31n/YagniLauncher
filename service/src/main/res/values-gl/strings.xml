@@ -1,8 +1,3 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="notification_listener_service"></string>
-    <string name="accessibility_service_label"></string>
-    <string name="importing_into_cache"></string>
-    <string name="loading_icons_from_cache_is_faster"></string>
-    <string name="accessibility_service_description"></string>
-</resources>
+    </resources>
