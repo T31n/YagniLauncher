@@ -78,7 +78,6 @@ import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.GridItemLayoutType
 import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
-import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
@@ -274,10 +273,6 @@ internal fun FolderEblanApplicationInfoItem(
                 !isScrollInProgress &&
                 !isLongPress &&
                 !isVisibleOverlay,
-        )
-        .gridItemScaleAnimation(
-            animations = animations,
-            hasInteraction = isLongPress,
         )
         .drawWithContent {
             graphicsLayer.record {

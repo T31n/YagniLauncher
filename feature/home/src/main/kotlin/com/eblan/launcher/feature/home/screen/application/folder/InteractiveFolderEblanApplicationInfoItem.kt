@@ -81,7 +81,6 @@ import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_COLUMNS
 import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_ROWS
 import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
-import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
@@ -429,10 +428,6 @@ private fun InteractiveEblanApplicationInfoItem(
                     enabled = animations && !isInProgress,
                     visible = !isScrollInProgress && !hasInteraction,
                 )
-                .gridItemScaleAnimation(
-                    animations = animations,
-                    hasInteraction = hasInteraction,
-                )
                 .drawWithContent {
                     graphicsLayer.record {
                         this@drawWithContent.drawContent()
@@ -578,10 +573,6 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
                     // Visibility Control
                     enabled = animations && !isInProgress,
                     visible = !isScrollInProgress && !hasInteraction,
-                )
-                .gridItemScaleAnimation(
-                    animations = animations,
-                    hasInteraction = hasInteraction,
                 )
                 .drawWithContent {
                     graphicsLayer.record {

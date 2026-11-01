@@ -73,7 +73,6 @@ import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.GridItemLayoutType
 import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
-import com.eblan.launcher.feature.home.component.gridItemScaleAnimation
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.component.swipeGestures
 import com.eblan.launcher.feature.home.component.whiteBox
@@ -269,10 +268,6 @@ internal fun InteractiveFolderGridItem(
             // Visibility Control
             enabled = animations,
             visible = !isScrollInProgress && !hasInteraction,
-        )
-        .gridItemScaleAnimation(
-            animations = animations,
-            hasInteraction = hasInteraction,
         )
         .drawWithContent {
             graphicsLayer.record {
@@ -473,10 +468,6 @@ private fun PreviewFolderGridItem(
                 // Visibility Control
                 enabled = animations,
                 visible = !isScrollInProgress && !hasInteraction,
-            )
-            .gridItemScaleAnimation(
-                animations = animations,
-                hasInteraction = hasInteraction,
             )
             .alpha(alpha)
 

@@ -36,7 +36,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.draganddrop.dragAndDropTarget
@@ -75,7 +74,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draganddrop.mimeTypes
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
@@ -124,7 +122,6 @@ import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
 import com.eblan.launcher.feature.home.component.GridLayout
 import com.eblan.launcher.feature.home.component.HomeHandler
-import com.eblan.launcher.feature.home.component.OVERLAY_SCALE
 import com.eblan.launcher.feature.home.component.PageIndicator
 import com.eblan.launcher.feature.home.component.SparkleGridLayout
 import com.eblan.launcher.feature.home.component.pagerTransitionEffect
@@ -1897,14 +1894,8 @@ private fun SharedTransitionScope.OverlayImage(
         DpSize(width = overlayIntSize.width.toDp(), height = overlayIntSize.height.toDp())
     }
 
-    val scale = remember { Animatable(1f) }
-
     LaunchedEffect(key1 = isVisibleOverlay) {
-        if (isVisibleOverlay && animations) {
-            scale.animateTo(OVERLAY_SCALE)
-        } else if (isVisibleOverlay) {
-            scale.snapTo(OVERLAY_SCALE)
-        } else {
+        if (!isVisibleOverlay) {
             onResetOverlay()
         }
     }
@@ -1931,8 +1922,7 @@ private fun SharedTransitionScope.OverlayImage(
                 } else {
                     this
                 }
-            }
-            .scale(scale.value),
+            },
         bitmap = overlayImageBitmap,
         contentDescription = null,
     )
