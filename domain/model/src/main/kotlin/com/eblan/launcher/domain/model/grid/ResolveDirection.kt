@@ -19,6 +19,5 @@ package com.eblan.launcher.domain.model.grid
 
 enum class ResolveDirection {
     Left,
-    Center,
     Right,
 }

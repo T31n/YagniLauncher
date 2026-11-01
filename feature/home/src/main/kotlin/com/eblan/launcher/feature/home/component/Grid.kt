@@ -32,6 +32,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.layout.ParentDataModifier
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -95,7 +97,7 @@ internal fun GridLayout(
 }
 
 @Composable
-internal fun DotsGridLayout(
+internal fun SparkleGridLayout(
     // Grid Structure
     columns: Int,
     rows: Int,
@@ -138,64 +140,48 @@ internal fun DotsGridLayout(
         )
         val fadeRadius = maxOf(cellWidth, cellHeight) * 2.5f
 
-        fun drawDot(center: Offset, radius: Float) {
+        fun fadeAlpha(center: Offset): Float {
             val distance = hypot(
                 x = (center.x - dragPosition.x).toDouble(),
                 y = (center.y - dragPosition.y).toDouble(),
             ).toFloat()
-            val alpha = (1f - distance / fadeRadius).coerceIn(0f, 1f) * 0.85f
+
+            return (1f - distance / fadeRadius).coerceIn(0f, 1f) * 0.85f
+        }
+
+        val sparkleRadius = 8.dp.toPx()
+        val sparkleInset = sparkleRadius * 0.2f
+        // Control points near the center pull each side inward, giving the sparkle its concave arms.
+        val sparklePath = Path().apply {
+            moveTo(0f, -sparkleRadius)
+            quadraticTo(sparkleInset, -sparkleInset, sparkleRadius, 0f)
+            quadraticTo(sparkleInset, sparkleInset, 0f, sparkleRadius)
+            quadraticTo(-sparkleInset, sparkleInset, -sparkleRadius, 0f)
+            quadraticTo(-sparkleInset, -sparkleInset, 0f, -sparkleRadius)
+            close()
+        }
+
+        fun drawSparkle(center: Offset) {
+            val alpha = fadeAlpha(center = center)
 
             if (alpha == 0f) return
 
-            drawCircle(
-                color = currentTextColor,
-                radius = radius,
-                center = center,
-                alpha = alpha,
-            )
-            drawCircle(
-                color = currentTextColor,
-                radius = radius * 0.55f,
-                center = center,
-                alpha = alpha,
-            )
-        }
-
-        val cornerRadius = 4.dp.toPx()
-        val midpointRadius = 2.5.dp.toPx()
-
-        for (row in 0..rows) {
-            for (column in 0..columns) {
-                drawDot(
-                    center = Offset(
-                        x = column * cellWidth,
-                        y = row * cellHeight,
-                    ),
-                    radius = cornerRadius,
+            translate(left = center.x, top = center.y) {
+                drawPath(
+                    path = sparklePath,
+                    color = currentTextColor,
+                    alpha = alpha,
                 )
             }
         }
 
         for (row in 0..rows) {
-            for (column in 0 until columns) {
-                drawDot(
-                    center = Offset(
-                        x = (column + 0.5f) * cellWidth,
-                        y = row * cellHeight,
-                    ),
-                    radius = midpointRadius,
-                )
-            }
-        }
-
-        for (row in 0 until rows) {
             for (column in 0..columns) {
-                drawDot(
+                drawSparkle(
                     center = Offset(
                         x = column * cellWidth,
-                        y = (row + 0.5f) * cellHeight,
+                        y = row * cellHeight,
                     ),
-                    radius = midpointRadius,
                 )
             }
         }

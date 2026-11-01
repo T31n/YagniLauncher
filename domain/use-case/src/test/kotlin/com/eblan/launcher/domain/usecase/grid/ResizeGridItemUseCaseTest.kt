@@ -30,7 +30,6 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class ResizeGridItemUseCaseTest {
     private val dispatcher = StandardTestDispatcher()
 

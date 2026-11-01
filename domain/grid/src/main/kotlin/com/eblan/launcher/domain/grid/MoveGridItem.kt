@@ -121,8 +121,7 @@ private fun moveGridItem(
             columns = columns,
             rows = rows,
         )
-
-    ResolveDirection.Center -> error("Center direction is not supported for conflict resolution.")
+    }
 }
 
 /**

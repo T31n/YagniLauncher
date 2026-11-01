@@ -22,6 +22,7 @@ import com.eblan.launcher.domain.model.getGridItemSettings
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
+import com.eblan.launcher.domain.model.grid.GridItemSection
 import com.eblan.launcher.domain.model.grid.ResolveDirection
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -369,8 +370,8 @@ class GridItemConstraintsTest {
             )
 
             assertEquals(
-                ResolveDirection.Right,
-                getResolveDirectionByX(
+                GridItemSection.Right,
+                getGridItemSection(
                     gridItem = gridItem,
                     x = 20,
                     columns = 5,
@@ -389,8 +390,8 @@ class GridItemConstraintsTest {
             )
 
             assertEquals(
-                ResolveDirection.Center,
-                getResolveDirectionByX(
+                GridItemSection.Center,
+                getGridItemSection(
                     gridItem = gridItem,
                     x = 150,
                     columns = 5,
@@ -409,8 +410,8 @@ class GridItemConstraintsTest {
             )
 
             assertEquals(
-                ResolveDirection.Left,
-                getResolveDirectionByX(
+                GridItemSection.Left,
+                getGridItemSection(
                     gridItem = gridItem,
                     x = 280,
                     columns = 5,
@@ -429,8 +430,8 @@ class GridItemConstraintsTest {
             )
 
             assertEquals(
-                ResolveDirection.Center,
-                getResolveDirectionByX(
+                GridItemSection.Center,
+                getGridItemSection(
                     gridItem = gridItem,
                     x = 100,
                     columns = 5,
@@ -449,8 +450,8 @@ class GridItemConstraintsTest {
             )
 
             assertEquals(
-                ResolveDirection.Left,
-                getResolveDirectionByX(
+                GridItemSection.Left,
+                getGridItemSection(
                     gridItem = gridItem,
                     x = 200,
                     columns = 5,
@@ -469,8 +470,8 @@ class GridItemConstraintsTest {
             )
 
             assertEquals(
-                ResolveDirection.Right,
-                getResolveDirectionByX(
+                GridItemSection.Right,
+                getGridItemSection(
                     gridItem = gridItem,
                     x = 210,
                     columns = 5,
