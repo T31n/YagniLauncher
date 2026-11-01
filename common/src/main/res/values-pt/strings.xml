@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings">Configuração</string>
+    <string name="custom_label">Etiqueta Personalizada</string>
+    <string name="background_color">Cor de Fundo</string>
+    <string name="gestures">Gestos</string>
+    <string name="columns_is_not_valid">Colunas inválidas</string>
+    <string name="grid">Grelha</string>
+    <string name="columns">Colunas</string>
+    <string name="update">Actualizar</string>
+    <string name="none">Nada</string>
+    <string name="home">Início</string>
+    <string name="general">Geral</string>
+    <string name="system">Sistema</string>
+    <string name="edit">Editar %1$s</string>
+    <string name="add">Acrescentar</string>
+    <string name="okay">Ok</string>
+    <string name="custom_label_is_not_valid">Etiqueta personalizada inválida</string>
+    <string name="rows_is_not_valid">Linhas inválidas</string>
+    <string name="search_applications">Procurar Aplicações</string>
+    <string name="dark">Escuro</string>
+    <string name="app_drawer">Gaveta de Aplicações</string>
+    <string name="rows">Linhas</string>
+    <string name="light">Claro</string>
+    <string name="cancel">Cancelar</string>
+    <string name="edit_label">Editar Etiqueta</string>
+    <string name="label">Etiqueta</string>
+    <string name="label_is_not_valid">Etiqueta inválida</string>
+    <string name="folders">Pastas</string>
+    <string name="folder">Pasta</string>
+    <string name="custom">Personalizado</string>
+    <string name="save">Gravar</string>
+    <string name="experimental">Experimental</string>
+</resources>

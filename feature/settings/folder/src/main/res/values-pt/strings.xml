@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="folder_cell_dimension">Dimensão das células da pasta</string>
+    <string name="cell_width">Comprimento da Célula</string>
+    <string name="cell_width_is_not_valid">Comprimento da célula inválido</string>
+    <string name="cell_height">Altura da Célula</string>
+    <string name="cell_height_is_not_valid">Altura da célula inválida</string>
+    <string name="max_columns">Máximo de Colunas</string>
+    <string name="max_columns_is_not_valid">Máximo de colunas inválido</string>
+    <string name="folder_max_grid">Grelha Máxima da Pasta</string>
+    <string name="max_rows">Máximo de Linhas</string>
+    <string name="max_rows_is_not_valid">Máximo de linhas inválido</string>
+    <string name="folder_corner_radius">Raio dos Cantos da Pasta</string>
+    <string name="folder_background_color">Cor de Fundo da Pasta</string>
+</resources>

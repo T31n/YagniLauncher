@@ -42,6 +42,8 @@ suspend fun resolveConflicts(
     columns: Int,
     rows: Int,
 ): List<GridItem>? {
+    check(resolveDirection != ResolveDirection.Center)
+
     val resolvedGridItems = gridItems.toMutableList()
     val queue = ArrayDeque<String>()
 
@@ -104,16 +106,15 @@ private fun moveGridItem(
     columns: Int,
     rows: Int,
 ): GridItem? = when (resolveDirection) {
-    ResolveDirection.Left -> {
+    ResolveDirection.Left ->
         moveGridItemToLeft(
             moving = moving,
             conflicting = conflicting,
             columns = columns,
             rows = rows,
         )
-    }
 
-    ResolveDirection.Right -> {
+    ResolveDirection.Right ->
         moveGridItemToRight(
             moving = moving,
             conflicting = conflicting,

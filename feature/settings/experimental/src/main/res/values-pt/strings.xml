@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="warning">Aviso</string>
+    <string name="disable_background_sync_description">Desligar a sincronização ajuda a poupar um bocado de memória e mantém as coisas leves, mas também significa que o Yagni Launcher não atualiza automaticamente as aplicações, os widgets, ou os atalhos.\n\nA gaveta de aplicações pode mostrar icons desatualizados, widgets inexistentes, ou atalhos que já não funcionam.</string>
+    <string name="sync_data">Sincronizar Dados</string>
+    <string name="keep_data_up_to_date">Manter dados atualizados</string>
+    <string name="enable_or_disable_sync_data">Ligar ou desligar a sincronização</string>
+    <string name="lock_movement">Travar Movimento</string>
+    <string name="prevent_other_grid_items_from_moving">Previne que outros items da grelha se movam</string>
+    <string name="grid_item_animation">Animação de items da grelha</string>
+    <string name="enable_or_disable_animations">Liga ou desliga animação de items</string>
+</resources>

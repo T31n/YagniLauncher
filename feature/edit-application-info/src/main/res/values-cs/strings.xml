@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~
   ~   Copyright 2023 Einstein Blanco
   ~
@@ -14,12 +15,11 @@
   ~   See the License for the specific language governing permissions and
   ~   limitations under the License.
   ~
-  -->
-<resources>
+  --><resources>
     <string name="add_tag">Přidat štítek</string>
     <string name="tag_is_not_valid">Štítek není platný</string>
     <string name="update_tag">Použít štítek</string>
-    <string name="hide_from_drawer">Skrýt z nabídky</string>
-    <string name="view_hidden_apps_in_app_drawer_settings">Zobrazit skryté aplikace v nastavení nabídky aplikací</string>
+    <string name="hide_from_drawer">Skrýt z nabídky</string>
+    <string name="view_hidden_apps_in_app_drawer_settings">Zobrazit skryté aplikace v nastavení nabídky aplikací</string>
     <string name="tags">Štítky</string>
 </resources>

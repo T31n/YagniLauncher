@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_service_label">Yagni Launcher</string>
+    <string name="accessibility_service_description">Ações de gestos do Yagni Launcher</string>
+    <string name="notification_listener_service">Serviço de Receção de Notificações</string>
+    <string name="importing_into_cache">A importar %1$s para a cache</string>
+    <string name="loading_icons_from_cache_is_faster">Carregar icons da cache é mais rápido</string>
+</resources>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dock_grid">Grelha da Doca</string>
+    <string name="dock_columns_is_not_valid">Colunas da doca inválidas</string>
+    <string name="dock_rows_is_not_valid">Linhas da doca inválidas</string>
+    <string name="dock_height">Altura da Doca</string>
+    <string name="dock_height_is_not_valid">Altura da doca inválida</string>
+    <string name="infinite_scrolling">Scroll Infinito</string>
+    <string name="seamless_loop_page_scroll">Scroll de página contínuo</string>
+    <string name="wallpaper_scrolling">Scroll do Papel de Parede</string>
+    <string name="scroll_wallpaper_across_pages">Scroll papel de parede pelas páginas</string>
+    <string name="lock_screen_orientation">Fixar Orientação do Ecran</string>
+    <string name="add_new_apps">Acrescentar Novas Aplicações</string>
+    <string name="add_new_apps_to_home_screen">Acrescentar aplicações novas ao ecran principal</string>
+    <string name="dock">Doca</string>
+    <string name="dock_infinite_scroll">Scroll Infinito da Doca</string>
+    <string name="prevent_rotation_when_device_orientation_changes">Não rodar quando a orientação do aparelho mudar</string>
+    <string name="show_page_indicator">Mostrar Indicador de Página</string>
+    <string name="show_an_indicator_for_the_current_page">Motrar um indicador para a página corrente</string>
+    <string name="dock_background_color">Cor de Fundo da Doca</string>
+    <string name="dock_padding">Enchimento da Doca</string>
+    <string name="dock_corner_radius">Raio dos Cantos da Doca</string>
+    <string name="dock_padding_is_not_valid">Enchimento da doca inválido</string>
+    <string name="top_start">Início do Topo</string>
+    <string name="top_start_is_not_valid">Início do topo inválido</string>
+    <string name="top_end">Fim do Topo</string>
+    <string name="top_end_is_not_valid">Fim do topo inválido</string>
+    <string name="bottom_start">Início do Fundo</string>
+    <string name="bottom_start_is_not_valid">Início do fundo inválido</string>
+    <string name="bottom_end">Fim do Fundo</string>
+    <string name="bottom_end_is_not_valid">Fim do fundo inválido</string>
+    <string name="set_the_radius_for_each_dock_corner">Definir o raio para cada canto da doca</string>
+    <string name="add_bottom_padding">Criar Enchimento do Fundo</string>
+    <string name="add_the_bottom_padding_of_the_dock">Criar o enchimento do fundo da doca</string>
+    <string name="pager_transition_effect">Efeito de Transição de Página</string>
+    <string name="transition_effect_none">Nenhum</string>
+    <string name="transition_effect_fade">Desvanecer</string>
+    <string name="transition_effect_zoom_out">Diminuir</string>
+    <string name="transition_effect_depth">Profundidade</string>
+    <string name="transition_effect_cube">Cubo</string>
+    <string name="transition_effect_flip">Virar</string>
+    <string name="transition_effect_parallax">Paralaxe</string>
+    <string name="transition_effect_stack">Pilha</string>
+</resources>

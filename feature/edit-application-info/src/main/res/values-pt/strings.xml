@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_tag">Criar Marca</string>
+    <string name="tag_is_not_valid">Marca inválida</string>
+    <string name="update_tag">Atualizar Marca</string>
+    <string name="hide_from_drawer">Não Mostrar na Gaveta</string>
+    <string name="view_hidden_apps_in_app_drawer_settings">Configurar aplicações visíveis na Gaveta</string>
+    <string name="tags">Marcas</string>
+</resources>
