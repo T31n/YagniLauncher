@@ -1,12 +1,3 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="enable_or_disable_animations"></string>
-    <string name="disable_background_sync_description"></string>
-    <string name="warning"></string>
-    <string name="grid_item_animation"></string>
-    <string name="prevent_other_grid_items_from_moving"></string>
-    <string name="keep_data_up_to_date"></string>
-    <string name="sync_data"></string>
-    <string name="enable_or_disable_sync_data"></string>
-    <string name="lock_movement"></string>
-</resources>
+    </resources>
