@@ -125,7 +125,7 @@ private fun Success(
         modifier = modifier
             .verticalScroll(rememberScrollState())
             .fillMaxSize()
-            .padding(10.dp),
+            .padding(15.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         SettingsItems(items = items)

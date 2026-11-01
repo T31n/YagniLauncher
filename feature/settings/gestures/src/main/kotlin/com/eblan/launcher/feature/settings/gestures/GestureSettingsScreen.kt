@@ -89,7 +89,7 @@ private fun GestureSettingsScreen(
             if (gesturesSettingsUiState is GesturesSettingsUiState.Success) {
                 EblanActionSettings(
                     // Modifier
-                    modifier = Modifier.padding(10.dp),
+                    modifier = Modifier.padding(15.dp),
                     // Actions
                     doubleTap = gesturesSettingsUiState.gestureSettings.doubleTap,
                     swipeUp = gesturesSettingsUiState.gestureSettings.swipeUp,

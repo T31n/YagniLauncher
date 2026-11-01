@@ -40,6 +40,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -212,7 +213,7 @@ private fun PopupMenuRow(
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(5.dp),
+                .padding(horizontal = 15.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
@@ -222,7 +223,10 @@ private fun PopupMenuRow(
 
             Spacer(modifier = Modifier.width(10.dp))
 
-            Text(text = title)
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyMedium,
+            )
         }
     }
 }
