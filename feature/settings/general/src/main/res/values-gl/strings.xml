@@ -1,3 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="dynamic_theme"></string>
+    <string name="rounded_square"></string>
+    <string name="reset"></string>
+    <string name="hexagon"></string>
+    <string name="cookie"></string>
+    <string name="notification_dots"></string>
+    <string name="show_notification_dots"></string>
+    <string name="none"></string>
+    <string name="octagon"></string>
+    <string name="icon_tint"></string>
+    <string name="theme"></string>
+    <string name="no_icon_packs"></string>
+    <string name="circle"></string>
+    <string name="square"></string>
+    <string name="import_icon_pack"></string>
+    <string name="diamond"></string>
+    <string name="icon_shape"></string>
+    <string name="shield"></string>
+    <string name="fallback_icon_tint"></string>
+    <string name="please_import_an_icon_pack_first"></string>
+    <string name="adapt_colors_to_your_wallpaper_automatically"></string>
+    <string name="use_the_fallback_icon_tint"></string>
+    <string name="select_icon_pack"></string>
+    <string name="clover"></string>
+    <string name="flower"></string>
+    <string name="default_icon_pack"></string>
+    <string name="tear_drop"></string>
+    <string name="apply_icons_from_supported_icon_packs"></string>
+    <string name="pentagon"></string>
 </resources>
