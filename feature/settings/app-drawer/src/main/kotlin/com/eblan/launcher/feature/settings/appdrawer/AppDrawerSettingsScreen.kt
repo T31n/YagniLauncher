@@ -180,27 +180,36 @@ private fun Success(
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         SettingsColumnItem(
+            // Content
             title = stringResource(R.string.manage_tags),
             subtitle = stringResource(R.string.sort_update_and_delete_tags),
+            // Layout
             shape = settingsFirstItemShape,
+            // Actions
             onClick = {
                 showManageTagsDialog = true
             },
         )
 
         SettingsColumnItem(
+            // Content
             title = stringResource(R.string.manage_folders),
             subtitle = stringResource(R.string.sort_update_and_delete_folders),
+            // Layout
             shape = settingsMiddleItemShape,
+            // Actions
             onClick = {
                 showManageFoldersDialog = true
             },
         )
 
         SettingsColumnItem(
+            // Content
             title = stringResource(R.string.app_drawer_type),
             subtitle = appDrawerSettings.appDrawerType.getTitle(),
+            // Layout
             shape = settingsMiddleItemShape,
+            // Actions
             onClick = {
                 showAppDrawerTypeDialog = true
             },
@@ -208,18 +217,24 @@ private fun Success(
 
         when (appDrawerSettings.appDrawerType) {
             AppDrawerType.Vertical -> SettingsColumnItem(
+                // Content
                 title = stringResource(commonR.string.grid),
                 subtitle = "${appDrawerSettings.appDrawerColumns}x${appDrawerSettings.appDrawerRowsHeight}",
+                // Layout
                 shape = settingsMiddleItemShape,
+                // Actions
                 onClick = {
                     showVerticalGridDialog = true
                 },
             )
 
             AppDrawerType.Horizontal -> SettingsColumnItem(
+                // Content
                 title = stringResource(commonR.string.grid),
                 subtitle = "${appDrawerSettings.horizontalAppDrawerColumns}x${appDrawerSettings.horizontalAppDrawerRows}",
+                // Layout
                 shape = settingsMiddleItemShape,
+                // Actions
                 onClick = {
                     showHorizontalGridDialog = true
                 },
@@ -227,28 +242,38 @@ private fun Success(
         }
 
         SettingsColumnItem(
+            // Content
             title = stringResource(commonR.string.background_color),
             subtitle = appDrawerSettings.backgroundColor.getTitle(),
+            // Layout
             shape = settingsMiddleItemShape,
+            // Actions
             onClick = {
                 showBackgroundColorDialog = true
             },
         )
 
         SettingsColumnItem(
+            // Content
             title = stringResource(R.string.hidden_applications),
             subtitle = stringResource(R.string.hide_selected_apps_from_the_app_drawer),
+            // Layout
             shape = settingsMiddleItemShape,
+            // Actions
             onClick = {
                 showHiddenEblanApplicationInfosDialog = true
             },
         )
 
         SettingsSwitchItem(
+            // Content
             title = stringResource(R.string.exclude_tagged_apps),
             subtitle = stringResource(R.string.hide_apps_marked_with_selected_tags),
+            // State
             checked = appDrawerSettings.excludeTaggedApps,
+            // Appearance
             shape = settingsMiddleItemShape,
+            // Callbacks
             onCheckedChange = {
                 onUpdateAppDrawerSettings(
                     appDrawerSettings.copy(
@@ -259,10 +284,14 @@ private fun Success(
         )
 
         SettingsSwitchItem(
+            // Content
             title = stringResource(R.string.show_keyboard),
             subtitle = stringResource(R.string.show_keyboard_when_app_drawer_opens),
+            // State
             checked = appDrawerSettings.showKeyboard,
+            // Appearance
             shape = settingsMiddleItemShape,
+            // Callbacks
             onCheckedChange = {
                 onUpdateAppDrawerSettings(
                     appDrawerSettings.copy(
@@ -273,10 +302,14 @@ private fun Success(
         )
 
         SettingsSwitchItem(
+            // Content
             title = stringResource(R.string.fuzzy_search),
             subtitle = stringResource(R.string.find_apps_even_with_typos_or_accented_characters),
+            // State
             checked = appDrawerSettings.fuzzySearch,
+            // Appearance
             shape = settingsMiddleItemShape,
+            // Callbacks
             onCheckedChange = {
                 onUpdateAppDrawerSettings(
                     appDrawerSettings.copy(
@@ -288,10 +321,14 @@ private fun Success(
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             SettingsSwitchItem(
+                // Content
                 title = stringResource(R.string.blur_behind),
                 subtitle = stringResource(R.string.blurs_the_wallpaper_when_app_drawer_opens),
+                // State
                 checked = appDrawerSettings.blurBehind,
+                // Appearance
                 shape = settingsMiddleItemShape,
+                // Callbacks
                 onCheckedChange = {
                     onUpdateAppDrawerSettings(
                         appDrawerSettings.copy(
@@ -303,18 +340,24 @@ private fun Success(
         }
 
         SettingsColumnItem(
+            // Content
             title = stringResource(R.string.search_bar_position),
             subtitle = appDrawerSettings.searchBarPosition.getTitle(),
+            // Layout
             shape = settingsMiddleItemShape,
+            // Actions
             onClick = {
                 showSearchBarPositionDialog = true
             },
         )
 
         SettingsColumnItem(
+            // Content
             title = stringResource(R.string.scroll_bar_type),
             subtitle = appDrawerSettings.scrollBarType.getTitle(),
+            // Layout
             shape = settingsLastItemShape,
+            // Actions
             onClick = {
                 showScrollBarTypeDialog = true
             },

@@ -133,36 +133,48 @@ private fun Success(
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         SettingsColumnItem(
+            // Content
             title = stringResource(R.string.folder_cell_dimension),
             subtitle = "${folderSettings.folderCellWidth}x${folderSettings.folderCellHeight}",
+            // Layout
             shape = settingsFirstItemShape,
+            // Actions
             onClick = {
                 showFolderCellDimensionDialog = true
             },
         )
 
         SettingsColumnItem(
+            // Content
             title = stringResource(R.string.folder_max_grid),
             subtitle = "${folderSettings.maxFolderColumns}x${folderSettings.maxFolderRows}",
+            // Layout
             shape = settingsMiddleItemShape,
+            // Actions
             onClick = {
                 showFolderMaxGridDialog = true
             },
         )
 
         SettingsColumnItem(
+            // Content
             title = stringResource(R.string.folder_corner_radius),
             subtitle = "${folderSettings.folderCornerRadius}",
+            // Layout
             shape = settingsMiddleItemShape,
+            // Actions
             onClick = {
                 showFolderCornerRadiusGridDialog = true
             },
         )
 
         SettingsColumnItem(
+            // Content
             title = stringResource(R.string.folder_background_color),
             subtitle = folderSettings.folderBackgroundColor.getTitle(),
+            // Layout
             shape = settingsLastItemShape,
+            // Actions
             onClick = {
                 showFolderBackgroundColorDialog = true
             },

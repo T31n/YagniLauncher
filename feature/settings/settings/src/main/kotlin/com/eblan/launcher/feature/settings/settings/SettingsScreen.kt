@@ -143,10 +143,13 @@ internal fun SettingsScreen(
 
                 if (!isDefaultLauncher) {
                     SettingsRowItem(
+                        // Content
                         title = stringResource(R.string.default_launcher),
                         subtitle = stringResource(R.string.choose_yagni_launcher),
                         imageVector = EblanLauncherIcons.Info,
+                        // Appearance
                         shape = settingsFirstItemShape,
+                        // Action
                         onClick = {
                             context.startActivity(Intent(ACTION_HOME_SETTINGS))
                         },
@@ -154,50 +157,68 @@ internal fun SettingsScreen(
                 }
 
                 SettingsRowItem(
+                    // Content
                     title = stringResource(commonR.string.general),
                     subtitle = stringResource(R.string.themes_icon_packs),
                     imageVector = EblanLauncherIcons.Settings,
+                    // Appearance
                     shape = if (!isDefaultLauncher) settingsMiddleItemShape else settingsFirstItemShape,
+                    // Action
                     onClick = onGeneral,
                 )
 
                 SettingsRowItem(
+                    // Content
                     title = stringResource(commonR.string.home),
                     subtitle = stringResource(R.string.grid_icon_dock_and_more),
                     imageVector = EblanLauncherIcons.Home,
+                    // Appearance
                     shape = settingsMiddleItemShape,
+                    // Action
                     onClick = onHome,
                 )
 
                 SettingsRowItem(
+                    // Content
                     title = stringResource(commonR.string.folder),
                     subtitle = stringResource(R.string.corner_radius_background_color_and_more),
                     imageVector = EblanLauncherIcons.Folder,
+                    // Appearance
                     shape = settingsMiddleItemShape,
+                    // Action
                     onClick = onFolder,
                 )
 
                 SettingsRowItem(
+                    // Content
                     title = stringResource(commonR.string.app_drawer),
                     subtitle = stringResource(R.string.columns_and_rows_count),
                     imageVector = EblanLauncherIcons.Apps,
+                    // Appearance
                     shape = settingsMiddleItemShape,
+                    // Action
                     onClick = onAppDrawer,
                 )
 
                 SettingsRowItem(
+                    // Content
                     title = stringResource(commonR.string.gestures),
                     subtitle = stringResource(R.string.swipe_gesture_actions),
                     imageVector = EblanLauncherIcons.Gesture,
+                    // Appearance
                     shape = settingsMiddleItemShape,
+                    // Action
                     onClick = onGestures,
                 )
 
                 SettingsRowItem(
+                    // Content
                     title = stringResource(commonR.string.experimental),
                     subtitle = stringResource(R.string.advanced_options_for_power_users),
                     imageVector = EblanLauncherIcons.DeveloperMode,
+                    // Appearance
                     shape = settingsLastItemShape,
+                    // Action
                     onClick = onExperimental,
                 )
             }

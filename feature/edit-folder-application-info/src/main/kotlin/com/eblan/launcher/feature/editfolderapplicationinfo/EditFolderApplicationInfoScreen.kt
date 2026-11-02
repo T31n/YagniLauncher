@@ -251,9 +251,12 @@ internal fun Success(
         )
 
         SettingsColumnItem(
+            // Content
             title = stringResource(commonR.string.edit_label),
             subtitle = folderEblanApplicationInfo.label,
+            // Layout
             shape = settingsLastItemShape,
+            // Actions
             onClick = {
                 showEditLabelDialog = true
             },

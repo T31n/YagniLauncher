@@ -296,20 +296,27 @@ private fun Success(
         )
 
         SettingsColumnItem(
+            // Content
             title = stringResource(custom_label),
             subtitle = eblanApplicationInfo.customLabel
                 ?: stringResource(none),
+            // Layout
             shape = settingsMiddleItemShape,
+            // Actions
             onClick = {
                 showCustomLabelDialog = true
             },
         )
 
         SettingsSwitchItem(
+            // Content
             title = stringResource(hide_from_drawer),
             subtitle = stringResource(view_hidden_apps_in_app_drawer_settings),
+            // State
             checked = eblanApplicationInfo.isHidden,
+            // Appearance
             shape = settingsLastItemShape,
+            // Callbacks
             onCheckedChange = {
                 onUpdateEblanApplicationInfo(
                     eblanApplicationInfo.copy(

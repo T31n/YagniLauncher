@@ -82,36 +82,48 @@ fun GridItemSettings(
         SettingsCategoryText(text = stringResource(R.string.grid_item))
 
         SettingsColumnItem(
+            // Content
             title = stringResource(R.string.layout_type),
             subtitle = gridItemSettings.layoutType.getSubtitle(),
+            // Layout
             shape = settingsFirstItemShape,
+            // Actions
             onClick = {
                 showLayoutType = true
             },
         )
 
         SettingsColumnItem(
+            // Content
             title = stringResource(R.string.icon_size),
             subtitle = "${gridItemSettings.iconSize}",
+            // Layout
             shape = settingsMiddleItemShape,
+            // Actions
             onClick = {
                 showIconSizeDialog = true
             },
         )
 
         SettingsColumnItem(
+            // Content
             title = stringResource(R.string.text_color),
             subtitle = gridItemSettings.textColor.getSubtitle(),
+            // Layout
             shape = settingsMiddleItemShape,
+            // Actions
             onClick = {
                 showTextColorDialog = true
             },
         )
 
         SettingsColumnItem(
+            // Content
             title = stringResource(R.string.text_size),
             subtitle = "${gridItemSettings.textSize}",
+            // Layout
             shape = settingsMiddleItemShape,
+            // Actions
             onClick = {
                 showTextSizeDialog = true
             },
@@ -127,28 +139,38 @@ fun GridItemSettings(
         )
 
         SettingsColumnItem(
+            // Content
             title = stringResource(R.string.padding),
             subtitle = "${gridItemSettings.padding}",
+            // Layout
             shape = settingsMiddleItemShape,
+            // Actions
             onClick = {
                 showPaddingDialog = true
             },
         )
 
         SettingsColumnItem(
+            // Content
             title = stringResource(R.string.corner_radius),
             subtitle = "${gridItemSettings.cornerRadius}",
+            // Layout
             shape = settingsMiddleItemShape,
+            // Actions
             onClick = {
                 showCornerRadiusDialog = true
             },
         )
 
         SettingsSwitchItem(
+            // Content
             title = stringResource(R.string.single_line_label),
             subtitle = stringResource(R.string.limit_app_names_to_one_line),
+            // State
             checked = gridItemSettings.singleLineLabel,
+            // Appearance
             shape = settingsMiddleItemShape,
+            // Callbacks
             onCheckedChange = {
                 onUpdateGridItemSettings(
                     gridItemSettings.copy(singleLineLabel = it),
@@ -157,54 +179,72 @@ fun GridItemSettings(
         )
 
         SettingsColumnItem(
+            // Content
             title = stringResource(R.string.horizontal_alignment),
             subtitle = gridItemSettings.horizontalAlignment.getSubtitle(),
+            // Layout
             shape = settingsMiddleItemShape,
+            // Actions
             onClick = {
                 showHorizontalAlignment = true
             },
         )
 
         SettingsColumnItem(
+            // Content
             title = stringResource(R.string.vertical_arrangement),
             subtitle = gridItemSettings.verticalArrangement.getSubtitle(),
+            // Layout
             shape = settingsMiddleItemShape,
+            // Actions
             onClick = {
                 showVerticalArrangement = true
             },
         )
 
         SettingsColumnItem(
+            // Content
             title = stringResource(R.string.horizontal_arrangement),
             subtitle = gridItemSettings.horizontalArrangement.getSubtitle(),
+            // Layout
             shape = settingsMiddleItemShape,
+            // Actions
             onClick = {
                 showHorizontalArrangement = true
             },
         )
 
         SettingsColumnItem(
+            // Content
             title = stringResource(R.string.vertical_alignment),
             subtitle = gridItemSettings.verticalAlignment.getSubtitle(),
+            // Layout
             shape = settingsMiddleItemShape,
+            // Actions
             onClick = {
                 showVerticalAlignment = true
             },
         )
 
         SettingsColumnItem(
+            // Content
             title = stringResource(R.string.icon_padding),
             subtitle = "${gridItemSettings.iconPadding}",
+            // Layout
             shape = settingsMiddleItemShape,
+            // Actions
             onClick = {
                 showIconPaddingDialog = true
             },
         )
 
         SettingsColumnItem(
+            // Content
             title = stringResource(R.string.text_padding),
             subtitle = "${gridItemSettings.textPadding}",
+            // Layout
             shape = settingsLastItemShape,
+            // Actions
             onClick = {
                 showTextPaddingDialog = true
             },
@@ -476,9 +516,11 @@ fun CustomBackgroundColor(
     onClick: () -> Unit,
 ) {
     SettingsItemCard(
-        shape = shape,
-        horizontalArrangement = Arrangement.SpaceBetween,
+        // Modifier and Layout
         modifier = modifier,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        shape = shape,
+        // Actions and Content
         onClick = onClick,
     ) {
         Text(

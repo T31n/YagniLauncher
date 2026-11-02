@@ -124,19 +124,26 @@ private fun Success(
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         SettingsColumnItem(
+            // Content
             title = stringResource(R.string.sync_data),
             subtitle = stringResource(R.string.enable_or_disable_sync_data),
+            // Layout
             shape = settingsFirstItemShape,
+            // Actions
             onClick = {
                 showSyncDataDialog = true
             },
         )
 
         SettingsSwitchItem(
+            // Content
             title = stringResource(R.string.lock_movement),
             subtitle = stringResource(R.string.prevent_other_grid_items_from_moving),
+            // State
             checked = experimentalSettings.lockMovement,
+            // Appearance
             shape = settingsMiddleItemShape,
+            // Callbacks
             onCheckedChange = {
                 onUpdateExperimentalSettings(
                     experimentalSettings.copy(
@@ -147,10 +154,14 @@ private fun Success(
         )
 
         SettingsSwitchItem(
+            // Content
             title = stringResource(R.string.grid_item_animation),
             subtitle = stringResource(R.string.enable_or_disable_animations),
+            // State
             checked = experimentalSettings.gridItemAnimation,
+            // Appearance
             shape = settingsLastItemShape,
+            // Callbacks
             onCheckedChange = {
                 onUpdateExperimentalSettings(
                     experimentalSettings.copy(

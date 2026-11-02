@@ -65,36 +65,45 @@ fun EblanActionSettings(
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         SettingsColumnItem(
+            // Content
             title = stringResource(R.string.double_tap),
             subtitle = doubleTap.eblanActionType.getEblanActionTypeSubtitle(
                 context = context,
                 componentName = doubleTap.componentName,
             ),
+            // Layout
             shape = settingsFirstItemShape,
+            // Actions
             onClick = {
                 showDoubleTapDialog = true
             },
         )
 
         SettingsColumnItem(
+            // Content
             title = stringResource(R.string.swipe_up),
             subtitle = swipeUp.eblanActionType.getEblanActionTypeSubtitle(
                 context = context,
                 componentName = swipeUp.componentName,
             ),
+            // Layout
             shape = settingsMiddleItemShape,
+            // Actions
             onClick = {
                 showSwipeUpDialog = true
             },
         )
 
         SettingsColumnItem(
+            // Content
             title = stringResource(R.string.swipe_down),
             subtitle = swipeDown.eblanActionType.getEblanActionTypeSubtitle(
                 context = context,
                 componentName = swipeDown.componentName,
             ),
+            // Layout
             shape = settingsLastItemShape,
+            // Actions
             onClick = {
                 showSwipeDownDialog = true
             },

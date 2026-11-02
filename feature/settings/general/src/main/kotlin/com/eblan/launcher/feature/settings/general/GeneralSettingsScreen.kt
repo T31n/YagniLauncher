@@ -174,38 +174,50 @@ private fun Success(
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         SettingsColumnItem(
+            // Content
             title = stringResource(R.string.import_icon_pack),
             subtitle = stringResource(R.string.apply_icons_from_supported_icon_packs),
+            // Layout
             shape = settingsFirstItemShape,
+            // Actions
             onClick = {
                 showImportIconPackDialog = true
             },
         )
 
         SettingsColumnItem(
+            // Content
             title = stringResource(R.string.select_icon_pack),
             subtitle = generalSettings.iconPackPackageName.ifEmpty {
                 stringResource(R.string.default_icon_pack)
             },
+            // Layout
             shape = settingsMiddleItemShape,
+            // Actions
             onClick = {
                 selectIconPackDialog = true
             },
         )
 
         SettingsColumnItem(
+            // Content
             title = stringResource(R.string.theme),
             subtitle = generalSettings.theme.getTitle(),
+            // Layout
             shape = settingsMiddleItemShape,
+            // Actions
             onClick = {
                 showThemeDialog = true
             },
         )
 
         SettingsColumnItem(
+            // Content
             title = stringResource(R.string.icon_tint),
             subtitle = generalSettings.iconTint.getTitle(),
+            // Layout
             shape = settingsMiddleItemShape,
+            // Actions
             onClick = {
                 showIconTintDialog = true
             },
@@ -216,10 +228,14 @@ private fun Success(
             IconTint.Custom,
             -> {
                 SettingsSwitchItem(
+                    // Content
                     title = stringResource(R.string.fallback_icon_tint),
                     subtitle = stringResource(R.string.use_the_fallback_icon_tint),
+                    // State
                     checked = generalSettings.fallbackIconTint,
+                    // Appearance
                     shape = settingsMiddleItemShape,
+                    // Callbacks
                     onCheckedChange = {
                         onUpdateGeneralSettings(generalSettings.copy(fallbackIconTint = it))
                     },
@@ -230,13 +246,16 @@ private fun Success(
         }
 
         SettingsColumnItem(
+            // Content
             title = stringResource(R.string.icon_shape),
             subtitle = generalSettings.iconShape.getTitle(),
+            // Layout
             shape = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S || !isNotificationAccessGranted) {
                 settingsMiddleItemShape
             } else {
                 settingsLastItemShape
             },
+            // Actions
             onClick = {
                 showIconShapeDialog = true
             },
@@ -244,14 +263,18 @@ private fun Success(
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             SettingsSwitchItem(
+                // Content
                 title = stringResource(R.string.dynamic_theme),
                 subtitle = stringResource(R.string.adapt_colors_to_your_wallpaper_automatically),
+                // State
                 checked = generalSettings.dynamicTheme,
+                // Appearance
                 shape = if (!isNotificationAccessGranted) {
                     settingsMiddleItemShape
                 } else {
                     settingsLastItemShape
                 },
+                // Callbacks
                 onCheckedChange = {
                     onUpdateGeneralSettings(generalSettings.copy(dynamicTheme = it))
                 },
@@ -260,9 +283,12 @@ private fun Success(
 
         if (!isNotificationAccessGranted) {
             SettingsColumnItem(
+                // Content
                 title = stringResource(R.string.notification_dots),
                 subtitle = stringResource(R.string.show_notification_dots),
+                // Layout
                 shape = settingsLastItemShape,
+                // Actions
                 onClick = {
                     context.startActivity(
                         Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)

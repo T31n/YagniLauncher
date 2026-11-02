@@ -107,9 +107,11 @@ fun SettingsSwitch(
 
 @Composable
 internal fun SettingsItemCard(
-    shape: Shape,
-    horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
+    // Modifier and Layout
     modifier: Modifier = Modifier,
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
+    shape: Shape,
+    // Actions and Content
     onClick: () -> Unit,
     content: @Composable RowScope.() -> Unit,
 ) {
@@ -131,15 +133,20 @@ internal fun SettingsItemCard(
 
 @Composable
 fun SettingsColumnItem(
+    // Content
     title: String,
     subtitle: String,
+    // Layout
     shape: Shape,
     modifier: Modifier = Modifier,
+    // Actions
     onClick: () -> Unit,
 ) {
     SettingsItemCard(
-        shape = shape,
+        // Modifier and Layout
         modifier = modifier,
+        shape = shape,
+        // Actions and Content
         onClick = onClick,
     ) {
         Column(modifier = Modifier.weight(1f)) {
@@ -153,16 +160,21 @@ fun SettingsColumnItem(
 
 @Composable
 fun SettingsRowItem(
+    // Content
     title: String,
     subtitle: String,
     imageVector: ImageVector,
+    // Appearance
     shape: Shape,
     modifier: Modifier = Modifier,
+    // Action
     onClick: () -> Unit,
 ) {
     SettingsItemCard(
-        shape = shape,
+        // Modifier and Layout
         modifier = modifier,
+        shape = shape,
+        // Actions and Content
         onClick = onClick,
     ) {
         Icon(
@@ -183,16 +195,22 @@ fun SettingsRowItem(
 
 @Composable
 fun SettingsSwitchItem(
+    // Content
     title: String,
     subtitle: String,
+    // State
     checked: Boolean,
+    // Appearance
     shape: Shape,
     modifier: Modifier = Modifier,
+    // Callbacks
     onCheckedChange: (Boolean) -> Unit,
 ) {
     SettingsItemCard(
-        shape = shape,
+        // Modifier and Layout
         modifier = modifier,
+        shape = shape,
+        // Actions and Content
         onClick = { onCheckedChange(!checked) },
     ) {
         Column(modifier = Modifier.weight(1f)) {

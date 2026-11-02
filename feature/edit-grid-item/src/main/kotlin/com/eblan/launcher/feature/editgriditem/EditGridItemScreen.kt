@@ -341,10 +341,13 @@ private fun EditApplicationInfo(
     )
 
     SettingsColumnItem(
+        // Content
         title = stringResource(commonR.string.custom_label),
         subtitle = data.customLabel ?: stringResource(commonR.string.none),
+        // Layout
         shape = settingsMiddleItemShape,
         modifier = modifier,
+        // Actions
         onClick = {
             showCustomLabelDialog = true
         },
@@ -410,10 +413,13 @@ private fun EditFolder(
     )
 
     SettingsColumnItem(
+        // Content
         title = stringResource(commonR.string.edit_label),
         subtitle = data.label,
+        // Layout
         shape = settingsMiddleItemShape,
         modifier = modifier,
+        // Actions
         onClick = {
             showEditLabelDialog = true
         },
@@ -477,10 +483,13 @@ private fun EditShortcutInfo(
     )
 
     SettingsColumnItem(
+        // Content
         title = stringResource(R.string.custom_short_label),
         subtitle = data.customShortLabel ?: stringResource(commonR.string.none),
+        // Layout
         shape = settingsMiddleItemShape,
         modifier = modifier,
+        // Actions
         onClick = {
             showCustomShortLabelDialog = true
         },
@@ -547,10 +556,13 @@ private fun EditShortcutConfig(
     )
 
     SettingsColumnItem(
+        // Content
         title = stringResource(commonR.string.custom_label),
         subtitle = data.customLabel ?: stringResource(commonR.string.none),
+        // Layout
         shape = settingsMiddleItemShape,
         modifier = modifier,
+        // Actions
         onClick = {
             showCustomLabelDialog = true
         },
@@ -654,11 +666,15 @@ private fun EditOverrideSwitch(
     onUpdateGridItem: (GridItem) -> Unit,
 ) {
     SettingsSwitchItem(
+        // Content
         title = stringResource(R.string.override),
         subtitle = stringResource(R.string.override_the_grid_item_settings),
+        // State
         checked = gridItem.override,
+        // Appearance
         shape = settingsLastItemShape,
         modifier = modifier,
+        // Callbacks
         onCheckedChange = {
             onUpdateGridItem(
                 gridItem.copy(
