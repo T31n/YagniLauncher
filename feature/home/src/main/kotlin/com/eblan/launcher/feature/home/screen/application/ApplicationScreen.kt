@@ -506,8 +506,10 @@ internal fun ApplicationScreenEffect(
     textFieldState: TextFieldState,
     showKeyboard: Boolean,
     focusRequester: FocusRequester,
+    isSearchOverlayVisible: Boolean,
     // Callbacks
     onDismiss: () -> Unit,
+    onDismissSearch: () -> Unit,
     onGetEblanApplicationInfosByLabel: (String) -> Unit,
     onGetEblanApplicationInfosByTagId: (Long?) -> Unit,
 ) {
@@ -525,7 +527,7 @@ internal fun ApplicationScreenEffect(
         onGetEblanApplicationInfosByTagId(selectedEblanApplicationInfoTagId)
     }
 
-    LaunchedEffect(key1 = swipeY) {
+    LaunchedEffect(key1 = swipeY, key2 = showKeyboard) {
         when (swipeY) {
             screenHeight.toFloat() -> {
                 textFieldState.clearText()
@@ -546,7 +548,15 @@ internal fun ApplicationScreenEffect(
     }
 
     BackHandler(enabled = swipeY < screenHeight.toFloat()) {
-        onDismiss()
+        if (isSearchOverlayVisible) {
+            focusManager.clearFocus()
+
+            keyboardController?.hide()
+
+            onDismissSearch()
+        } else {
+            onDismiss()
+        }
     }
 
     HomeHandler(enabled = swipeY < screenHeight.toFloat()) {

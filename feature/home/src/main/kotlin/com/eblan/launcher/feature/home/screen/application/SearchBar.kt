@@ -17,6 +17,7 @@
  */
 package com.eblan.launcher.feature.home.screen.application
 
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.input.TextFieldState
@@ -33,10 +34,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
@@ -59,9 +63,12 @@ internal fun ApplicationSearchBar(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     // Layout
+    onDismiss: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     val searchBarColors =
         getSearchBarColors(
@@ -91,17 +98,36 @@ internal fun ApplicationSearchBar(
                         contentDescription = null,
                     )
                 },
-                trailingIcon = if (textFieldState.text.isNotEmpty()) {
+                trailingIcon = if (textFieldState.text.isNotEmpty() || onDismiss != null) {
                     {
-                        IconButton(
-                            onClick = {
-                                textFieldState.clearText()
-                            },
-                        ) {
-                            Icon(
-                                imageVector = EblanLauncherIcons.Close,
-                                contentDescription = null,
-                            )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            if (textFieldState.text.isNotEmpty()) {
+                                IconButton(
+                                    onClick = {
+                                        textFieldState.clearText()
+                                    },
+                                ) {
+                                    Icon(
+                                        imageVector = EblanLauncherIcons.Close,
+                                        contentDescription = null,
+                                    )
+                                }
+                            }
+
+                            onDismiss?.let { dismiss ->
+                                IconButton(
+                                    onClick = {
+                                        focusManager.clearFocus()
+                                        keyboardController?.hide()
+                                        dismiss()
+                                    },
+                                ) {
+                                    Icon(
+                                        imageVector = EblanLauncherIcons.Close,
+                                        contentDescription = stringResource(commonR.string.cancel),
+                                    )
+                                }
+                            }
                         }
                     }
                 } else {
