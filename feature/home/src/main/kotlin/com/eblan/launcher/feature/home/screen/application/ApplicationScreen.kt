@@ -446,6 +446,17 @@ internal fun EblanApplicationInfoTabRow(
         defaultColor = MaterialTheme.colorScheme.onSurface,
     )
 
+    val secondaryIndicatorContentColor = getApplicationScreenTextColor(
+        // Background Colors
+        backgroundColor = backgroundColor,
+        customBackgroundColor = customBackgroundColor,
+        // Text Colors
+        systemTextColor = systemTextColor,
+        systemCustomTextColor = systemCustomTextColor,
+        // Defaults
+        defaultColor = MaterialTheme.colorScheme.primary,
+    )
+
     SecondaryTabRow(
         modifier = modifier,
         selectedTabIndex = selectedTabIndex,
@@ -454,7 +465,7 @@ internal fun EblanApplicationInfoTabRow(
         indicator = {
             TabRowDefaults.SecondaryIndicator(
                 modifier = Modifier.tabIndicatorOffset(selectedTabIndex),
-                color = contentColor,
+                color = secondaryIndicatorContentColor,
             )
         },
     ) {
