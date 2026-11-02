@@ -35,7 +35,6 @@ import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.ui.R
 import com.eblan.launcher.ui.dialog.EblanActionDialog
-import com.eblan.launcher.ui.model.SettingsItem
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -61,30 +60,45 @@ fun EblanActionSettings(
 
     var showSwipeDownDialog by remember { mutableStateOf(false) }
 
-    val items = buildEblanActionSettingsItems(
-        // Context
-        context = context,
-        // Actions
-        doubleTap = doubleTap,
-        swipeUp = swipeUp,
-        swipeDown = swipeDown,
-        // Callbacks
-        onDoubleTapClick = {
-            showDoubleTapDialog = true
-        },
-        onSwipeUpClick = {
-            showSwipeUpDialog = true
-        },
-        onSwipeDownClick = {
-            showSwipeDownDialog = true
-        },
-    )
-
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        SettingsItems(items = items)
+        SettingsColumnItem(
+            title = stringResource(R.string.double_tap),
+            subtitle = doubleTap.eblanActionType.getEblanActionTypeSubtitle(
+                context = context,
+                componentName = doubleTap.componentName,
+            ),
+            shape = settingsFirstItemShape,
+            onClick = {
+                showDoubleTapDialog = true
+            },
+        )
+
+        SettingsColumnItem(
+            title = stringResource(R.string.swipe_up),
+            subtitle = swipeUp.eblanActionType.getEblanActionTypeSubtitle(
+                context = context,
+                componentName = swipeUp.componentName,
+            ),
+            shape = settingsMiddleItemShape,
+            onClick = {
+                showSwipeUpDialog = true
+            },
+        )
+
+        SettingsColumnItem(
+            title = stringResource(R.string.swipe_down),
+            subtitle = swipeDown.eblanActionType.getEblanActionTypeSubtitle(
+                context = context,
+                componentName = swipeDown.componentName,
+            ),
+            shape = settingsLastItemShape,
+            onClick = {
+                showSwipeDownDialog = true
+            },
+        )
     }
 
     if (showDoubleTapDialog) {
@@ -140,53 +154,6 @@ fun EblanActionSettings(
             },
         )
     }
-}
-
-@Composable
-private fun buildEblanActionSettingsItems(
-    // Context
-    context: Context,
-    // Actions
-    doubleTap: EblanAction,
-    swipeUp: EblanAction,
-    swipeDown: EblanAction,
-    // Callbacks
-    onDoubleTapClick: () -> Unit,
-    onSwipeUpClick: () -> Unit,
-    onSwipeDownClick: () -> Unit,
-): List<SettingsItem> = buildList {
-    add(
-        SettingsItem.Column(
-            title = stringResource(R.string.double_tap),
-            subtitle = doubleTap.eblanActionType.getEblanActionTypeSubtitle(
-                context = context,
-                componentName = doubleTap.componentName,
-            ),
-            onClick = onDoubleTapClick,
-        ),
-    )
-
-    add(
-        SettingsItem.Column(
-            title = stringResource(R.string.swipe_up),
-            subtitle = swipeUp.eblanActionType.getEblanActionTypeSubtitle(
-                context = context,
-                componentName = swipeUp.componentName,
-            ),
-            onClick = onSwipeUpClick,
-        ),
-    )
-
-    add(
-        SettingsItem.Column(
-            title = stringResource(R.string.swipe_down),
-            subtitle = swipeDown.eblanActionType.getEblanActionTypeSubtitle(
-                context = context,
-                componentName = swipeDown.componentName,
-            ),
-            onClick = onSwipeDownClick,
-        ),
-    )
 }
 
 fun EblanActionType.getEblanActionTypeSubtitle(

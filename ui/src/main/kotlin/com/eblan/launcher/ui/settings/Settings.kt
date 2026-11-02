@@ -22,8 +22,10 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -63,7 +65,6 @@ import com.eblan.launcher.ui.R
 import com.eblan.launcher.ui.local.LocalAccessibilityManager
 import com.eblan.launcher.ui.local.LocalPackageManager
 import com.eblan.launcher.ui.local.LocalSettings
-import com.eblan.launcher.ui.model.SettingsItem
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -90,16 +91,10 @@ fun SettingsSwitch(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-            )
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Text(
-                text = subtitle,
-                style = MaterialTheme.typography.bodyMedium,
+            SettingsItemText(
+                title = title,
+                subtitle = subtitle,
+                spacing = 4.dp,
             )
         }
 
@@ -111,143 +106,127 @@ fun SettingsSwitch(
 }
 
 @Composable
-fun SettingsSwitch(
-    // Content
-    title: String,
-    subtitle: String,
-    // State
-    checked: Boolean,
-    // Layout
-    index: Int,
-    size: Int,
+internal fun SettingsItemCard(
+    shape: Shape,
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
     modifier: Modifier = Modifier,
-    // Actions
     onClick: () -> Unit,
-    onCheckedChange: (Boolean) -> Unit,
+    content: @Composable RowScope.() -> Unit,
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = settingsItemShape(
-            index = index,
-            size = size,
-        ),
+        shape = shape,
         onClick = onClick,
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(15.dp),
+            horizontalArrangement = horizontalArrangement,
             verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleMedium,
-                )
+            content = content,
+        )
+    }
+}
 
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
-
-            Switch(
-                checked = checked,
-                onCheckedChange = onCheckedChange,
+@Composable
+fun SettingsColumnItem(
+    title: String,
+    subtitle: String,
+    shape: Shape,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    SettingsItemCard(
+        shape = shape,
+        modifier = modifier,
+        onClick = onClick,
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            SettingsItemText(
+                title = title,
+                subtitle = subtitle,
             )
         }
     }
 }
 
 @Composable
-fun SettingsItems(
+fun SettingsRowItem(
+    title: String,
+    subtitle: String,
+    imageVector: ImageVector,
+    shape: Shape,
     modifier: Modifier = Modifier,
-    items: List<SettingsItem>,
+    onClick: () -> Unit,
 ) {
-    items.forEachIndexed { index, settingsItem ->
-        when (settingsItem) {
-            is SettingsItem.Column -> {
-                SettingsColumn(
-                    // Content
-                    title = settingsItem.title,
-                    subtitle = settingsItem.subtitle,
-                    // Layout
-                    index = index,
-                    size = items.size,
-                    modifier = modifier,
-                    // Actions
-                    onClick = settingsItem.onClick,
-                )
-            }
+    SettingsItemCard(
+        shape = shape,
+        modifier = modifier,
+        onClick = onClick,
+    ) {
+        Icon(
+            imageVector = imageVector,
+            contentDescription = null,
+        )
 
-            is SettingsItem.Switch -> {
-                SettingsSwitch(
-                    // Content
-                    title = settingsItem.title,
-                    subtitle = settingsItem.subtitle,
-                    // State
-                    checked = settingsItem.checked,
-                    // Layout
-                    index = index,
-                    size = items.size,
-                    modifier = modifier,
-                    // Actions
-                    onClick = settingsItem.onClick,
-                    onCheckedChange = settingsItem.onCheckedChange,
-                )
-            }
+        Spacer(modifier = Modifier.width(20.dp))
 
-            is SettingsItem.CustomBackgroundColor,
-            -> {
-                CustomBackgroundColor(
-                    // Item Data
-                    index = index,
-                    size = items.size,
-                    title = settingsItem.title,
-                    // Appearance
-                    customBackgroundColor = settingsItem.customBackgroundColor,
-                    // Layout
-                    modifier = modifier,
-                    // Actions
-                    onClick = settingsItem.onClick,
-                )
-            }
-
-            is SettingsItem.Row -> {
-                SettingsRow(
-                    // Content
-                    title = settingsItem.title,
-                    subtitle = settingsItem.subtitle,
-                    imageVector = settingsItem.imageVector,
-                    // Dimensions
-                    index = index,
-                    size = items.size,
-                    // Layout
-                    modifier = modifier,
-                    // Actions
-                    onClick = settingsItem.onClick,
-                )
-            }
-
-            is SettingsItem.CustomIcon -> {
-                CustomIcon(
-                    // Icon Data
-                    customIcon = settingsItem.customIcon,
-                    index = index,
-                    size = items.size,
-                    packageManagerIconPacks = settingsItem.packageManagerIconPacks,
-                    // Layout
-                    modifier = modifier,
-                    // Callbacks
-                    onUpdateIconPackPackageName = settingsItem.onUpdateIconPackPackageName,
-                    onUpdateUri = settingsItem.onUpdateUri,
-                    onResetCustomIcon = settingsItem.onResetCustomIcon,
-                )
-            }
+        Column {
+            SettingsItemText(
+                title = title,
+                subtitle = subtitle,
+            )
         }
     }
+}
+
+@Composable
+fun SettingsSwitchItem(
+    title: String,
+    subtitle: String,
+    checked: Boolean,
+    shape: Shape,
+    modifier: Modifier = Modifier,
+    onCheckedChange: (Boolean) -> Unit,
+) {
+    SettingsItemCard(
+        shape = shape,
+        modifier = modifier,
+        onClick = { onCheckedChange(!checked) },
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            SettingsItemText(
+                title = title,
+                subtitle = subtitle,
+                spacing = 4.dp,
+            )
+        }
+
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+        )
+    }
+}
+
+@Composable
+private fun SettingsItemText(
+    title: String,
+    subtitle: String,
+    spacing: Dp = 5.dp,
+) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.titleMedium,
+    )
+
+    Spacer(modifier = Modifier.height(spacing))
+
+    Text(
+        text = subtitle,
+        style = MaterialTheme.typography.bodyMedium,
+    )
 }
 
 @Composable
@@ -313,76 +292,27 @@ fun rememberIsAccessibilityServiceEnabled(): State<Boolean> {
     }
 }
 
-fun settingsItemShape(
-    index: Int,
-    size: Int,
-    radius: Dp = 16.dp,
-): Shape = when {
-    size == 1 -> RoundedCornerShape(size = radius)
+val settingsFirstItemShape: Shape = RoundedCornerShape(
+    topStart = 16.dp,
+    topEnd = 16.dp,
+    bottomStart = 8.dp,
+    bottomEnd = 8.dp,
+)
 
-    index == 0 -> RoundedCornerShape(
-        topStart = radius,
-        topEnd = radius,
-        bottomStart = radius / 2,
-        bottomEnd = radius / 2,
-    )
+val settingsMiddleItemShape: Shape = RoundedCornerShape(size = 8.dp)
 
-    index == size - 1 -> RoundedCornerShape(
-        topStart = radius / 2,
-        topEnd = radius / 2,
-        bottomStart = radius,
-        bottomEnd = radius,
-    )
-
-    else -> RoundedCornerShape(size = radius / 2)
-}
+val settingsLastItemShape: Shape = RoundedCornerShape(
+    topStart = 8.dp,
+    topEnd = 8.dp,
+    bottomStart = 16.dp,
+    bottomEnd = 16.dp,
+)
 
 @Composable
-private fun SettingsColumn(
-    // Content
-    title: String,
-    subtitle: String,
-    // Layout
-    index: Int,
-    size: Int,
-    modifier: Modifier = Modifier,
-    // Actions
-    onClick: () -> Unit,
-) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        shape = settingsItemShape(
-            index = index,
-            size = size,
-        ),
-        onClick = onClick,
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(15.dp),
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-            )
-
-            Spacer(modifier = Modifier.height(5.dp))
-
-            Text(
-                text = subtitle,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-    }
-}
-
-@Composable
-private fun CustomIcon(
+fun CustomIcon(
     // Icon Data
     customIcon: String?,
-    index: Int,
-    size: Int,
+    shape: Shape,
     packageManagerIconPacks: List<PackageManagerIconPack>,
     // Layout
     modifier: Modifier = Modifier,
@@ -411,10 +341,7 @@ private fun CustomIcon(
 
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = settingsItemShape(
-            index = index,
-            size = size,
-        ),
+        shape = shape,
     ) {
         Column(modifier = modifier.fillMaxWidth()) {
             Row(
@@ -522,16 +449,9 @@ private fun SettingsColumn(
             .fillMaxWidth()
             .padding(15.dp),
     ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium,
-        )
-
-        Spacer(modifier = Modifier.height(5.dp))
-
-        Text(
-            text = subtitle,
-            style = MaterialTheme.typography.bodyMedium,
+        SettingsItemText(
+            title = title,
+            subtitle = subtitle,
         )
     }
 }
@@ -563,69 +483,10 @@ private fun IconPackItem(
         Spacer(modifier = Modifier.width(20.dp))
 
         Column {
-            Text(
-                text = label.toString(),
-                style = MaterialTheme.typography.titleMedium,
+            SettingsItemText(
+                title = label.toString(),
+                subtitle = packageName,
             )
-
-            Spacer(modifier = Modifier.height(5.dp))
-
-            Text(
-                text = packageName,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-    }
-}
-
-@Composable
-private fun SettingsRow(
-    // Content
-    title: String,
-    subtitle: String,
-    imageVector: ImageVector,
-    // Dimensions
-    index: Int,
-    size: Int,
-    // Layout
-    modifier: Modifier = Modifier,
-    // Actions
-    onClick: () -> Unit,
-) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        shape = settingsItemShape(
-            index = index,
-            size = size,
-        ),
-        onClick = onClick,
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(15.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                imageVector = imageVector,
-                contentDescription = null,
-            )
-
-            Spacer(modifier = Modifier.width(20.dp))
-
-            Column {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleMedium,
-                )
-
-                Spacer(modifier = Modifier.height(5.dp))
-
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
         }
     }
 }

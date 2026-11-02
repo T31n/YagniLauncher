@@ -68,11 +68,13 @@ import com.eblan.launcher.feature.editapplicationinfo.model.EditApplicationInfoU
 import com.eblan.launcher.ui.dialog.AddFolderDialog
 import com.eblan.launcher.ui.dialog.EditCustomLabelDialog
 import com.eblan.launcher.ui.dialog.IconPackInfoFilesDialog
-import com.eblan.launcher.ui.model.SettingsItem.Column
-import com.eblan.launcher.ui.model.SettingsItem.CustomIcon
-import com.eblan.launcher.ui.model.SettingsItem.Switch
+import com.eblan.launcher.ui.settings.CustomIcon
 import com.eblan.launcher.ui.settings.SettingsCategoryText
-import com.eblan.launcher.ui.settings.SettingsItems
+import com.eblan.launcher.ui.settings.SettingsColumnItem
+import com.eblan.launcher.ui.settings.SettingsSwitchItem
+import com.eblan.launcher.ui.settings.settingsFirstItemShape
+import com.eblan.launcher.ui.settings.settingsLastItemShape
+import com.eblan.launcher.ui.settings.settingsMiddleItemShape
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -241,60 +243,6 @@ private fun Success(
     var iconPackPackageName by remember { mutableStateOf<String?>(null) }
     var iconPackInfoLabel by remember { mutableStateOf<String?>(null) }
 
-    val items = buildList {
-        add(
-            CustomIcon(
-                customIcon = eblanApplicationInfo.customIcon,
-                packageManagerIconPacks = packageManagerIconPacks,
-                onUpdateIconPackPackageName = { packageName, label ->
-                    iconPackPackageName = packageName
-                    iconPackInfoLabel = label
-                    showCustomIconDialog = true
-                    onUpdateIconPackPackageName(packageName)
-                },
-                onUpdateUri = {
-                    onUpdateEblanApplicationInfoCustomIcon(eblanApplicationInfo, it)
-                },
-                onResetCustomIcon = {
-                    onResetEblanApplicationInfoCustomIcon(eblanApplicationInfo)
-                },
-            ),
-        )
-
-        add(
-            Column(
-                title = stringResource(custom_label),
-                subtitle = eblanApplicationInfo.customLabel
-                    ?: stringResource(none),
-                onClick = {
-                    showCustomLabelDialog = true
-                },
-            ),
-        )
-
-        add(
-            Switch(
-                checked = eblanApplicationInfo.isHidden,
-                title = stringResource(hide_from_drawer),
-                subtitle = stringResource(view_hidden_apps_in_app_drawer_settings),
-                onClick = {
-                    onUpdateEblanApplicationInfo(
-                        eblanApplicationInfo.copy(
-                            isHidden = !eblanApplicationInfo.isHidden,
-                        ),
-                    )
-                },
-                onCheckedChange = {
-                    onUpdateEblanApplicationInfo(
-                        eblanApplicationInfo.copy(
-                            isHidden = it,
-                        ),
-                    )
-                },
-            ),
-        )
-    }
-
     Column(
         modifier = modifier
             .verticalScroll(rememberScrollState())
@@ -329,7 +277,47 @@ private fun Success(
             onAddFolderEblanApplicationInfo = onAddFolderEblanApplicationInfo,
         )
 
-        SettingsItems(items = items)
+        CustomIcon(
+            customIcon = eblanApplicationInfo.customIcon,
+            shape = settingsFirstItemShape,
+            packageManagerIconPacks = packageManagerIconPacks,
+            onUpdateIconPackPackageName = { packageName, label ->
+                iconPackPackageName = packageName
+                iconPackInfoLabel = label
+                showCustomIconDialog = true
+                onUpdateIconPackPackageName(packageName)
+            },
+            onUpdateUri = {
+                onUpdateEblanApplicationInfoCustomIcon(eblanApplicationInfo, it)
+            },
+            onResetCustomIcon = {
+                onResetEblanApplicationInfoCustomIcon(eblanApplicationInfo)
+            },
+        )
+
+        SettingsColumnItem(
+            title = stringResource(custom_label),
+            subtitle = eblanApplicationInfo.customLabel
+                ?: stringResource(none),
+            shape = settingsMiddleItemShape,
+            onClick = {
+                showCustomLabelDialog = true
+            },
+        )
+
+        SettingsSwitchItem(
+            title = stringResource(hide_from_drawer),
+            subtitle = stringResource(view_hidden_apps_in_app_drawer_settings),
+            checked = eblanApplicationInfo.isHidden,
+            shape = settingsLastItemShape,
+            onCheckedChange = {
+                onUpdateEblanApplicationInfo(
+                    eblanApplicationInfo.copy(
+                        isHidden = it,
+                    ),
+                )
+            },
+        )
     }
 
     if (showCustomIconDialog) {

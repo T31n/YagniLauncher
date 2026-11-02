@@ -59,9 +59,11 @@ import com.eblan.launcher.feature.editfolderapplicationinfo.dialog.EditFolderLab
 import com.eblan.launcher.feature.editfolderapplicationinfo.model.EditFolderApplicationInfoUiState
 import com.eblan.launcher.ui.dialog.AddFolderDialog
 import com.eblan.launcher.ui.dialog.IconPackInfoFilesDialog
-import com.eblan.launcher.ui.model.SettingsItem
+import com.eblan.launcher.ui.settings.CustomIcon
 import com.eblan.launcher.ui.settings.SettingsCategoryText
-import com.eblan.launcher.ui.settings.SettingsItems
+import com.eblan.launcher.ui.settings.SettingsColumnItem
+import com.eblan.launcher.ui.settings.settingsFirstItemShape
+import com.eblan.launcher.ui.settings.settingsLastItemShape
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -204,43 +206,6 @@ internal fun Success(
     var iconPackPackageName by remember { mutableStateOf<String?>(null) }
     var iconPackInfoLabel by remember { mutableStateOf<String?>(null) }
 
-    val items = buildList {
-        add(
-            SettingsItem.CustomIcon(
-                customIcon = folderEblanApplicationInfo.icon,
-                packageManagerIconPacks = packageManagerIconPacks,
-                onUpdateIconPackPackageName = { packageName, label ->
-                    iconPackPackageName = packageName
-                    iconPackInfoLabel = label
-                    showCustomIconDialog = true
-
-                    onUpdateIconPackPackageName(packageName)
-                },
-                onUpdateUri = {
-                    onUpdateFolderEblanApplicationInfoCustomIcon(
-                        folderEblanApplicationInfo,
-                        it,
-                    )
-                },
-                onResetCustomIcon = {
-                    onResetFolderEblanApplicationInfoCustomIcon(
-                        folderEblanApplicationInfo,
-                    )
-                },
-            ),
-        )
-
-        add(
-            SettingsItem.Column(
-                title = stringResource(commonR.string.edit_label),
-                subtitle = folderEblanApplicationInfo.label,
-                onClick = {
-                    showEditLabelDialog = true
-                },
-            ),
-        )
-    }
-
     Column(
         modifier = modifier
             .verticalScroll(rememberScrollState())
@@ -261,7 +226,38 @@ internal fun Success(
             onAddFolderEblanApplicationInfo = onAddFolderEblanApplicationInfo,
         )
 
-        SettingsItems(items = items)
+        CustomIcon(
+            customIcon = folderEblanApplicationInfo.icon,
+            shape = settingsFirstItemShape,
+            packageManagerIconPacks = packageManagerIconPacks,
+            onUpdateIconPackPackageName = { packageName, label ->
+                iconPackPackageName = packageName
+                iconPackInfoLabel = label
+                showCustomIconDialog = true
+
+                onUpdateIconPackPackageName(packageName)
+            },
+            onUpdateUri = {
+                onUpdateFolderEblanApplicationInfoCustomIcon(
+                    folderEblanApplicationInfo,
+                    it,
+                )
+            },
+            onResetCustomIcon = {
+                onResetFolderEblanApplicationInfoCustomIcon(
+                    folderEblanApplicationInfo,
+                )
+            },
+        )
+
+        SettingsColumnItem(
+            title = stringResource(commonR.string.edit_label),
+            subtitle = folderEblanApplicationInfo.label,
+            shape = settingsLastItemShape,
+            onClick = {
+                showEditLabelDialog = true
+            },
+        )
 
         if (showCustomIconDialog) {
             IconPackInfoFilesDialog(
