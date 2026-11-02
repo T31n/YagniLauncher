@@ -48,8 +48,10 @@ import com.eblan.launcher.feature.settings.folder.model.FolderSettingsUiState
 import com.eblan.launcher.ui.dialog.BackgroundColorDialog
 import com.eblan.launcher.ui.dialog.EditCornerRadiusDialog
 import com.eblan.launcher.ui.dialog.getTitle
-import com.eblan.launcher.ui.model.SettingsItem
-import com.eblan.launcher.ui.settings.SettingsItems
+import com.eblan.launcher.ui.settings.SettingsColumnItem
+import com.eblan.launcher.ui.settings.settingsFirstItemShape
+import com.eblan.launcher.ui.settings.settingsLastItemShape
+import com.eblan.launcher.ui.settings.settingsMiddleItemShape
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -123,24 +125,6 @@ private fun Success(
 
     var showFolderBackgroundColorDialog by remember { mutableStateOf(false) }
 
-    val folderHomeSettingsItems = buildFolderHomeSettingsItems(
-        // Settings
-        folderSettings = folderSettings,
-        // Callbacks
-        onFolderCellDimensionClick = {
-            showFolderCellDimensionDialog = true
-        },
-        onFolderMaxGridClick = {
-            showFolderMaxGridDialog = true
-        },
-        onFolderCornerRadiusClick = {
-            showFolderCornerRadiusGridDialog = true
-        },
-        onFolderBackgroundColorClick = {
-            showFolderBackgroundColorDialog = true
-        },
-    )
-
     Column(
         modifier = modifier
             .verticalScroll(rememberScrollState())
@@ -148,7 +132,53 @@ private fun Success(
             .padding(15.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        SettingsItems(items = folderHomeSettingsItems)
+        SettingsColumnItem(
+            // Content
+            title = stringResource(R.string.folder_cell_dimension),
+            subtitle = "${folderSettings.folderCellWidth}x${folderSettings.folderCellHeight}",
+            // Layout
+            shape = settingsFirstItemShape,
+            // Actions
+            onClick = {
+                showFolderCellDimensionDialog = true
+            },
+        )
+
+        SettingsColumnItem(
+            // Content
+            title = stringResource(R.string.folder_max_grid),
+            subtitle = "${folderSettings.maxFolderColumns}x${folderSettings.maxFolderRows}",
+            // Layout
+            shape = settingsMiddleItemShape,
+            // Actions
+            onClick = {
+                showFolderMaxGridDialog = true
+            },
+        )
+
+        SettingsColumnItem(
+            // Content
+            title = stringResource(R.string.folder_corner_radius),
+            subtitle = "${folderSettings.folderCornerRadius}",
+            // Layout
+            shape = settingsMiddleItemShape,
+            // Actions
+            onClick = {
+                showFolderCornerRadiusGridDialog = true
+            },
+        )
+
+        SettingsColumnItem(
+            // Content
+            title = stringResource(R.string.folder_background_color),
+            subtitle = folderSettings.folderBackgroundColor.getTitle(),
+            // Layout
+            shape = settingsLastItemShape,
+            // Actions
+            onClick = {
+                showFolderBackgroundColorDialog = true
+            },
+        )
     }
 
     if (showFolderCellDimensionDialog) {
@@ -230,47 +260,4 @@ private fun Success(
             },
         )
     }
-}
-
-@Composable
-private fun buildFolderHomeSettingsItems(
-    // Settings
-    folderSettings: FolderSettings,
-    // Callbacks
-    onFolderCellDimensionClick: () -> Unit,
-    onFolderMaxGridClick: () -> Unit,
-    onFolderCornerRadiusClick: () -> Unit,
-    onFolderBackgroundColorClick: () -> Unit,
-): List<SettingsItem> = buildList {
-    add(
-        SettingsItem.Column(
-            title = stringResource(R.string.folder_cell_dimension),
-            subtitle = "${folderSettings.folderCellWidth}x${folderSettings.folderCellHeight}",
-            onClick = onFolderCellDimensionClick,
-        ),
-    )
-
-    add(
-        SettingsItem.Column(
-            title = stringResource(R.string.folder_max_grid),
-            subtitle = "${folderSettings.maxFolderColumns}x${folderSettings.maxFolderRows}",
-            onClick = onFolderMaxGridClick,
-        ),
-    )
-
-    add(
-        SettingsItem.Column(
-            title = stringResource(R.string.folder_corner_radius),
-            subtitle = "${folderSettings.folderCornerRadius}",
-            onClick = onFolderCornerRadiusClick,
-        ),
-    )
-
-    add(
-        SettingsItem.Column(
-            title = stringResource(R.string.folder_background_color),
-            subtitle = folderSettings.folderBackgroundColor.getTitle(),
-            onClick = onFolderBackgroundColorClick,
-        ),
-    )
 }

@@ -51,10 +51,14 @@ import com.eblan.launcher.feature.settings.home.dialog.EditGridDialog
 import com.eblan.launcher.feature.settings.home.model.HomeSettingsUiState
 import com.eblan.launcher.ui.dialog.ColorPickerDialog
 import com.eblan.launcher.ui.dialog.RadioOptionsDialog
-import com.eblan.launcher.ui.model.SettingsItem
+import com.eblan.launcher.ui.settings.CustomBackgroundColor
 import com.eblan.launcher.ui.settings.GridItemSettings
 import com.eblan.launcher.ui.settings.SettingsCategoryText
-import com.eblan.launcher.ui.settings.SettingsItems
+import com.eblan.launcher.ui.settings.SettingsColumnItem
+import com.eblan.launcher.ui.settings.SettingsSwitchItem
+import com.eblan.launcher.ui.settings.settingsFirstItemShape
+import com.eblan.launcher.ui.settings.settingsLastItemShape
+import com.eblan.launcher.ui.settings.settingsMiddleItemShape
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -128,39 +132,6 @@ private fun Success(
     var showDockCornerRadiusDialog by remember { mutableStateOf(false) }
     var showPagerTransitionEffectDialog by remember { mutableStateOf(false) }
 
-    val homeSettingsItems = buildHomeSettingsItems(
-        homeSettings = homeSettings,
-        onGridClick = {
-            showGridDialog = true
-        },
-        onPagerTransitionEffectClick = {
-            showPagerTransitionEffectDialog = true
-        },
-        onUpdateHomeSettings = onUpdateHomeSettings,
-    )
-
-    val dockHomeSettingsItems = buildDockHomeSettingsItems(
-        // Settings
-        homeSettings = homeSettings,
-        // Actions
-        onDockGridClick = {
-            showDockGridDialog = true
-        },
-        onDockHeightClick = {
-            showDockHeightDialog = true
-        },
-        onDockCustomBackgroundColorClick = {
-            showDockCustomBackgroundColorDialog = true
-        },
-        onDockPaddingClick = {
-            showDockPaddingDialog = true
-        },
-        onDockCornerRadiusClick = {
-            showDockCornerRadiusDialog = true
-        },
-        onUpdateHomeSettings = onUpdateHomeSettings,
-    )
-
     Column(
         modifier = modifier
             .verticalScroll(rememberScrollState())
@@ -168,11 +139,200 @@ private fun Success(
             .padding(15.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        SettingsItems(items = homeSettingsItems)
+        SettingsColumnItem(
+            // Content
+            title = stringResource(commonR.string.grid),
+            subtitle = "${homeSettings.columns}x${homeSettings.rows}",
+            // Layout
+            shape = settingsFirstItemShape,
+            // Actions
+            onClick = {
+                showGridDialog = true
+            },
+        )
+
+        SettingsColumnItem(
+            // Content
+            title = stringResource(R.string.pager_transition_effect),
+            subtitle = homeSettings.pagerTransitionEffect.getTitle(),
+            // Layout
+            shape = settingsMiddleItemShape,
+            // Actions
+            onClick = {
+                showPagerTransitionEffectDialog = true
+            },
+        )
+
+        SettingsSwitchItem(
+            // Content
+            title = stringResource(R.string.infinite_scrolling),
+            subtitle = stringResource(R.string.seamless_loop_page_scroll),
+            // State
+            checked = homeSettings.infiniteScroll,
+            // Appearance
+            shape = settingsMiddleItemShape,
+            // Callbacks
+            onCheckedChange = {
+                onUpdateHomeSettings(
+                    homeSettings.copy(infiniteScroll = it),
+                )
+            },
+        )
+
+        SettingsSwitchItem(
+            // Content
+            title = stringResource(R.string.wallpaper_scrolling),
+            subtitle = stringResource(R.string.scroll_wallpaper_across_pages),
+            // State
+            checked = homeSettings.wallpaperScroll,
+            // Appearance
+            shape = settingsMiddleItemShape,
+            // Callbacks
+            onCheckedChange = {
+                onUpdateHomeSettings(
+                    homeSettings.copy(wallpaperScroll = it),
+                )
+            },
+        )
+
+        SettingsSwitchItem(
+            // Content
+            title = stringResource(R.string.lock_screen_orientation),
+            subtitle = stringResource(R.string.prevent_rotation_when_device_orientation_changes),
+            // State
+            checked = homeSettings.lockScreenOrientation,
+            // Appearance
+            shape = settingsMiddleItemShape,
+            // Callbacks
+            onCheckedChange = {
+                onUpdateHomeSettings(
+                    homeSettings.copy(lockScreenOrientation = it),
+                )
+            },
+        )
+
+        SettingsSwitchItem(
+            // Content
+            title = stringResource(R.string.add_new_apps),
+            subtitle = stringResource(R.string.add_new_apps_to_home_screen),
+            // State
+            checked = homeSettings.addNewAppsToHomeScreen,
+            // Appearance
+            shape = settingsMiddleItemShape,
+            // Callbacks
+            onCheckedChange = {
+                onUpdateHomeSettings(
+                    homeSettings.copy(addNewAppsToHomeScreen = it),
+                )
+            },
+        )
+
+        SettingsSwitchItem(
+            // Content
+            title = stringResource(R.string.show_page_indicator),
+            subtitle = stringResource(R.string.show_an_indicator_for_the_current_page),
+            // State
+            checked = homeSettings.showPageIndicator,
+            // Appearance
+            shape = settingsLastItemShape,
+            // Callbacks
+            onCheckedChange = {
+                onUpdateHomeSettings(
+                    homeSettings.copy(showPageIndicator = it),
+                )
+            },
+        )
 
         SettingsCategoryText(text = stringResource(R.string.dock))
 
-        SettingsItems(items = dockHomeSettingsItems)
+        SettingsColumnItem(
+            // Content
+            title = stringResource(R.string.dock_grid),
+            subtitle = "${homeSettings.dockColumns}x${homeSettings.dockRows}",
+            // Layout
+            shape = settingsFirstItemShape,
+            // Actions
+            onClick = {
+                showDockGridDialog = true
+            },
+        )
+
+        SettingsColumnItem(
+            // Content
+            title = stringResource(R.string.dock_height),
+            subtitle = "${homeSettings.dockHeight}",
+            // Layout
+            shape = settingsMiddleItemShape,
+            // Actions
+            onClick = {
+                showDockHeightDialog = true
+            },
+        )
+
+        SettingsSwitchItem(
+            // Content
+            title = stringResource(R.string.dock_infinite_scroll),
+            subtitle = stringResource(R.string.seamless_loop_page_scroll),
+            // State
+            checked = homeSettings.dockInfiniteScroll,
+            // Appearance
+            shape = settingsMiddleItemShape,
+            // Callbacks
+            onCheckedChange = {
+                onUpdateHomeSettings(
+                    homeSettings.copy(dockInfiniteScroll = it),
+                )
+            },
+        )
+
+        CustomBackgroundColor(
+            title = stringResource(R.string.dock_background_color),
+            customBackgroundColor = homeSettings.dockCustomBackgroundColor,
+            shape = settingsMiddleItemShape,
+            onClick = {
+                showDockCustomBackgroundColorDialog = true
+            },
+        )
+
+        SettingsColumnItem(
+            // Content
+            title = stringResource(R.string.dock_padding),
+            subtitle = "${homeSettings.dockPadding}",
+            // Layout
+            shape = settingsMiddleItemShape,
+            // Actions
+            onClick = {
+                showDockPaddingDialog = true
+            },
+        )
+
+        SettingsColumnItem(
+            // Content
+            title = stringResource(R.string.dock_corner_radius),
+            subtitle = stringResource(R.string.set_the_radius_for_each_dock_corner),
+            // Layout
+            shape = settingsMiddleItemShape,
+            // Actions
+            onClick = {
+                showDockCornerRadiusDialog = true
+            },
+        )
+
+        SettingsSwitchItem(
+            // Content
+            title = stringResource(R.string.add_bottom_padding),
+            subtitle = stringResource(R.string.add_the_bottom_padding_of_the_dock),
+            // State
+            checked = homeSettings.addDockBottomPadding,
+            // Appearance
+            shape = settingsLastItemShape,
+            // Callbacks
+            onCheckedChange = {
+                onUpdateHomeSettings(
+                    homeSettings.copy(addDockBottomPadding = it),
+                )
+            },
+        )
 
         GridItemSettings(
             // Grid item
@@ -319,209 +479,6 @@ private fun Success(
             },
         )
     }
-}
-
-@Composable
-private fun buildHomeSettingsItems(
-    homeSettings: HomeSettings,
-    onGridClick: () -> Unit,
-    onPagerTransitionEffectClick: () -> Unit,
-    onUpdateHomeSettings: (HomeSettings) -> Unit,
-): List<SettingsItem> = buildList {
-    add(
-        SettingsItem.Column(
-            title = stringResource(commonR.string.grid),
-            subtitle = "${homeSettings.columns}x${homeSettings.rows}",
-            onClick = onGridClick,
-        ),
-    )
-
-    add(
-        SettingsItem.Column(
-            title = stringResource(R.string.pager_transition_effect),
-            subtitle = homeSettings.pagerTransitionEffect.getTitle(),
-            onClick = onPagerTransitionEffectClick,
-        ),
-    )
-
-    add(
-        SettingsItem.Switch(
-            checked = homeSettings.infiniteScroll,
-            title = stringResource(R.string.infinite_scrolling),
-            subtitle = stringResource(R.string.seamless_loop_page_scroll),
-            onClick = {
-                onUpdateHomeSettings(
-                    homeSettings.copy(infiniteScroll = !homeSettings.infiniteScroll),
-                )
-            },
-            onCheckedChange = {
-                onUpdateHomeSettings(
-                    homeSettings.copy(infiniteScroll = it),
-                )
-            },
-        ),
-    )
-
-    add(
-        SettingsItem.Switch(
-            checked = homeSettings.wallpaperScroll,
-            title = stringResource(R.string.wallpaper_scrolling),
-            subtitle = stringResource(R.string.scroll_wallpaper_across_pages),
-            onClick = {
-                onUpdateHomeSettings(
-                    homeSettings.copy(wallpaperScroll = !homeSettings.wallpaperScroll),
-                )
-            },
-            onCheckedChange = {
-                onUpdateHomeSettings(
-                    homeSettings.copy(wallpaperScroll = it),
-                )
-            },
-        ),
-    )
-
-    add(
-        SettingsItem.Switch(
-            checked = homeSettings.lockScreenOrientation,
-            title = stringResource(R.string.lock_screen_orientation),
-            subtitle = stringResource(R.string.prevent_rotation_when_device_orientation_changes),
-            onClick = {
-                onUpdateHomeSettings(
-                    homeSettings.copy(lockScreenOrientation = !homeSettings.lockScreenOrientation),
-                )
-            },
-            onCheckedChange = {
-                onUpdateHomeSettings(
-                    homeSettings.copy(lockScreenOrientation = it),
-                )
-            },
-        ),
-    )
-
-    add(
-        SettingsItem.Switch(
-            checked = homeSettings.addNewAppsToHomeScreen,
-            title = stringResource(R.string.add_new_apps),
-            subtitle = stringResource(R.string.add_new_apps_to_home_screen),
-            onClick = {
-                onUpdateHomeSettings(
-                    homeSettings.copy(addNewAppsToHomeScreen = !homeSettings.addNewAppsToHomeScreen),
-                )
-            },
-            onCheckedChange = {
-                onUpdateHomeSettings(
-                    homeSettings.copy(addNewAppsToHomeScreen = it),
-                )
-            },
-        ),
-    )
-
-    add(
-        SettingsItem.Switch(
-            checked = homeSettings.showPageIndicator,
-            title = stringResource(R.string.show_page_indicator),
-            subtitle = stringResource(R.string.show_an_indicator_for_the_current_page),
-            onClick = {
-                onUpdateHomeSettings(
-                    homeSettings.copy(showPageIndicator = !homeSettings.showPageIndicator),
-                )
-            },
-            onCheckedChange = {
-                onUpdateHomeSettings(
-                    homeSettings.copy(showPageIndicator = it),
-                )
-            },
-        ),
-    )
-}
-
-@Composable
-private fun buildDockHomeSettingsItems(
-    // Settings
-    homeSettings: HomeSettings,
-    // Actions
-    onDockGridClick: () -> Unit,
-    onDockHeightClick: () -> Unit,
-    onDockCustomBackgroundColorClick: () -> Unit,
-    onDockPaddingClick: () -> Unit,
-    onDockCornerRadiusClick: () -> Unit,
-    onUpdateHomeSettings: (HomeSettings) -> Unit,
-): List<SettingsItem> = buildList {
-    add(
-        SettingsItem.Column(
-            title = stringResource(R.string.dock_grid),
-            subtitle = "${homeSettings.dockColumns}x${homeSettings.dockRows}",
-            onClick = onDockGridClick,
-        ),
-    )
-
-    add(
-        SettingsItem.Column(
-            title = stringResource(R.string.dock_height),
-            subtitle = "${homeSettings.dockHeight}",
-            onClick = onDockHeightClick,
-        ),
-    )
-
-    add(
-        SettingsItem.Switch(
-            checked = homeSettings.dockInfiniteScroll,
-            title = stringResource(R.string.dock_infinite_scroll),
-            subtitle = stringResource(R.string.seamless_loop_page_scroll),
-            onClick = {
-                onUpdateHomeSettings(
-                    homeSettings.copy(dockInfiniteScroll = !homeSettings.dockInfiniteScroll),
-                )
-            },
-            onCheckedChange = {
-                onUpdateHomeSettings(
-                    homeSettings.copy(dockInfiniteScroll = it),
-                )
-            },
-        ),
-    )
-
-    add(
-        SettingsItem.CustomBackgroundColor(
-            title = stringResource(R.string.dock_background_color),
-            customBackgroundColor = homeSettings.dockCustomBackgroundColor,
-            onClick = onDockCustomBackgroundColorClick,
-        ),
-    )
-
-    add(
-        SettingsItem.Column(
-            title = stringResource(R.string.dock_padding),
-            subtitle = "${homeSettings.dockPadding}",
-            onClick = onDockPaddingClick,
-        ),
-    )
-
-    add(
-        SettingsItem.Column(
-            title = stringResource(R.string.dock_corner_radius),
-            subtitle = stringResource(R.string.set_the_radius_for_each_dock_corner),
-            onClick = onDockCornerRadiusClick,
-        ),
-    )
-
-    add(
-        SettingsItem.Switch(
-            checked = homeSettings.addDockBottomPadding,
-            title = stringResource(R.string.add_bottom_padding),
-            subtitle = stringResource(R.string.add_the_bottom_padding_of_the_dock),
-            onClick = {
-                onUpdateHomeSettings(
-                    homeSettings.copy(addDockBottomPadding = !homeSettings.addDockBottomPadding),
-                )
-            },
-            onCheckedChange = {
-                onUpdateHomeSettings(
-                    homeSettings.copy(addDockBottomPadding = it),
-                )
-            },
-        ),
-    )
 }
 
 @Composable

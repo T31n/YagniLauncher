@@ -58,9 +58,12 @@ import com.eblan.launcher.feature.settings.appdrawer.model.AppDrawerSettingsUiSt
 import com.eblan.launcher.ui.dialog.BackgroundColorDialog
 import com.eblan.launcher.ui.dialog.RadioOptionsDialog
 import com.eblan.launcher.ui.dialog.getTitle
-import com.eblan.launcher.ui.model.SettingsItem
 import com.eblan.launcher.ui.settings.GridItemSettings
-import com.eblan.launcher.ui.settings.SettingsItems
+import com.eblan.launcher.ui.settings.SettingsColumnItem
+import com.eblan.launcher.ui.settings.SettingsSwitchItem
+import com.eblan.launcher.ui.settings.settingsFirstItemShape
+import com.eblan.launcher.ui.settings.settingsLastItemShape
+import com.eblan.launcher.ui.settings.settingsMiddleItemShape
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -169,40 +172,6 @@ private fun Success(
     var showSearchBarPositionDialog by remember { mutableStateOf(false) }
     var showScrollBarTypeDialog by remember { mutableStateOf(false) }
 
-    val items = buildAppDrawerSettingsItems(
-        // Settings
-        appDrawerSettings = appDrawerSettings,
-        // Actions
-        onAppDrawerTypeClick = {
-            showAppDrawerTypeDialog = true
-        },
-        onVerticalGridClick = {
-            showVerticalGridDialog = true
-        },
-        onHorizontalGridClick = {
-            showHorizontalGridDialog = true
-        },
-        onBackgroundColorClick = {
-            showBackgroundColorDialog = true
-        },
-        onHiddenApplicationsClick = {
-            showHiddenEblanApplicationInfosDialog = true
-        },
-        onUpdateAppDrawerSettings = onUpdateAppDrawerSettings,
-        onManageTags = {
-            showManageTagsDialog = true
-        },
-        onManageFolders = {
-            showManageFoldersDialog = true
-        },
-        onSearchBarPositionClick = {
-            showSearchBarPositionDialog = true
-        },
-        onScrollBarTypeClick = {
-            showScrollBarTypeDialog = true
-        },
-    )
-
     Column(
         modifier = modifier
             .verticalScroll(rememberScrollState())
@@ -210,7 +179,189 @@ private fun Success(
             .padding(15.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        SettingsItems(items = items)
+        SettingsColumnItem(
+            // Content
+            title = stringResource(R.string.manage_tags),
+            subtitle = stringResource(R.string.sort_update_and_delete_tags),
+            // Layout
+            shape = settingsFirstItemShape,
+            // Actions
+            onClick = {
+                showManageTagsDialog = true
+            },
+        )
+
+        SettingsColumnItem(
+            // Content
+            title = stringResource(R.string.manage_folders),
+            subtitle = stringResource(R.string.sort_update_and_delete_folders),
+            // Layout
+            shape = settingsMiddleItemShape,
+            // Actions
+            onClick = {
+                showManageFoldersDialog = true
+            },
+        )
+
+        SettingsColumnItem(
+            // Content
+            title = stringResource(R.string.app_drawer_type),
+            subtitle = appDrawerSettings.appDrawerType.getTitle(),
+            // Layout
+            shape = settingsMiddleItemShape,
+            // Actions
+            onClick = {
+                showAppDrawerTypeDialog = true
+            },
+        )
+
+        when (appDrawerSettings.appDrawerType) {
+            AppDrawerType.Vertical -> SettingsColumnItem(
+                // Content
+                title = stringResource(commonR.string.grid),
+                subtitle = "${appDrawerSettings.appDrawerColumns}x${appDrawerSettings.appDrawerRowsHeight}",
+                // Layout
+                shape = settingsMiddleItemShape,
+                // Actions
+                onClick = {
+                    showVerticalGridDialog = true
+                },
+            )
+
+            AppDrawerType.Horizontal -> SettingsColumnItem(
+                // Content
+                title = stringResource(commonR.string.grid),
+                subtitle = "${appDrawerSettings.horizontalAppDrawerColumns}x${appDrawerSettings.horizontalAppDrawerRows}",
+                // Layout
+                shape = settingsMiddleItemShape,
+                // Actions
+                onClick = {
+                    showHorizontalGridDialog = true
+                },
+            )
+        }
+
+        SettingsColumnItem(
+            // Content
+            title = stringResource(commonR.string.background_color),
+            subtitle = appDrawerSettings.backgroundColor.getTitle(),
+            // Layout
+            shape = settingsMiddleItemShape,
+            // Actions
+            onClick = {
+                showBackgroundColorDialog = true
+            },
+        )
+
+        SettingsColumnItem(
+            // Content
+            title = stringResource(R.string.hidden_applications),
+            subtitle = stringResource(R.string.hide_selected_apps_from_the_app_drawer),
+            // Layout
+            shape = settingsMiddleItemShape,
+            // Actions
+            onClick = {
+                showHiddenEblanApplicationInfosDialog = true
+            },
+        )
+
+        SettingsSwitchItem(
+            // Content
+            title = stringResource(R.string.exclude_tagged_apps),
+            subtitle = stringResource(R.string.hide_apps_marked_with_selected_tags),
+            // State
+            checked = appDrawerSettings.excludeTaggedApps,
+            // Appearance
+            shape = settingsMiddleItemShape,
+            // Callbacks
+            onCheckedChange = {
+                onUpdateAppDrawerSettings(
+                    appDrawerSettings.copy(
+                        excludeTaggedApps = it,
+                    ),
+                )
+            },
+        )
+
+        SettingsSwitchItem(
+            // Content
+            title = stringResource(R.string.show_keyboard),
+            subtitle = stringResource(R.string.show_keyboard_when_app_drawer_opens),
+            // State
+            checked = appDrawerSettings.showKeyboard,
+            // Appearance
+            shape = settingsMiddleItemShape,
+            // Callbacks
+            onCheckedChange = {
+                onUpdateAppDrawerSettings(
+                    appDrawerSettings.copy(
+                        showKeyboard = it,
+                    ),
+                )
+            },
+        )
+
+        SettingsSwitchItem(
+            // Content
+            title = stringResource(R.string.fuzzy_search),
+            subtitle = stringResource(R.string.find_apps_even_with_typos_or_accented_characters),
+            // State
+            checked = appDrawerSettings.fuzzySearch,
+            // Appearance
+            shape = settingsMiddleItemShape,
+            // Callbacks
+            onCheckedChange = {
+                onUpdateAppDrawerSettings(
+                    appDrawerSettings.copy(
+                        fuzzySearch = it,
+                    ),
+                )
+            },
+        )
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            SettingsSwitchItem(
+                // Content
+                title = stringResource(R.string.blur_behind),
+                subtitle = stringResource(R.string.blurs_the_wallpaper_when_app_drawer_opens),
+                // State
+                checked = appDrawerSettings.blurBehind,
+                // Appearance
+                shape = settingsMiddleItemShape,
+                // Callbacks
+                onCheckedChange = {
+                    onUpdateAppDrawerSettings(
+                        appDrawerSettings.copy(
+                            blurBehind = it,
+                        ),
+                    )
+                },
+            )
+        }
+
+        SettingsColumnItem(
+            // Content
+            title = stringResource(R.string.search_bar_position),
+            subtitle = appDrawerSettings.searchBarPosition.getTitle(),
+            // Layout
+            shape = settingsMiddleItemShape,
+            // Actions
+            onClick = {
+                showSearchBarPositionDialog = true
+            },
+        )
+
+        SettingsColumnItem(
+            // Content
+            title = stringResource(R.string.scroll_bar_type),
+            subtitle = appDrawerSettings.scrollBarType.getTitle(),
+            // Layout
+            shape = settingsLastItemShape,
+            // Actions
+            onClick = {
+                showScrollBarTypeDialog = true
+            },
+        )
 
         GridItemSettings(
             // Grid item
@@ -380,187 +531,6 @@ private fun Success(
             },
         )
     }
-}
-
-@Composable
-private fun buildAppDrawerSettingsItems(
-    // Settings
-    appDrawerSettings: AppDrawerSettings,
-    // Actions
-    onAppDrawerTypeClick: () -> Unit,
-    onVerticalGridClick: () -> Unit,
-    onHorizontalGridClick: () -> Unit,
-    onBackgroundColorClick: () -> Unit,
-    onHiddenApplicationsClick: () -> Unit,
-    onUpdateAppDrawerSettings: (AppDrawerSettings) -> Unit,
-    onManageTags: () -> Unit,
-    onManageFolders: () -> Unit,
-    onSearchBarPositionClick: () -> Unit,
-    onScrollBarTypeClick: () -> Unit,
-): List<SettingsItem> = buildList {
-    add(
-        SettingsItem.Column(
-            title = stringResource(R.string.manage_tags),
-            subtitle = stringResource(R.string.sort_update_and_delete_tags),
-            onClick = onManageTags,
-        ),
-    )
-
-    add(
-        SettingsItem.Column(
-            title = stringResource(R.string.manage_folders),
-            subtitle = stringResource(R.string.sort_update_and_delete_folders),
-            onClick = onManageFolders,
-        ),
-    )
-
-    add(
-        SettingsItem.Column(
-            title = stringResource(R.string.app_drawer_type),
-            subtitle = appDrawerSettings.appDrawerType.getTitle(),
-            onClick = onAppDrawerTypeClick,
-        ),
-    )
-
-    when (appDrawerSettings.appDrawerType) {
-        AppDrawerType.Vertical -> add(
-            SettingsItem.Column(
-                title = stringResource(commonR.string.grid),
-                subtitle = "${appDrawerSettings.appDrawerColumns}x${appDrawerSettings.appDrawerRowsHeight}",
-                onClick = onVerticalGridClick,
-            ),
-        )
-
-        AppDrawerType.Horizontal -> add(
-            SettingsItem.Column(
-                title = stringResource(commonR.string.grid),
-                subtitle = "${appDrawerSettings.horizontalAppDrawerColumns}x${appDrawerSettings.horizontalAppDrawerRows}",
-                onClick = onHorizontalGridClick,
-            ),
-        )
-    }
-
-    add(
-        SettingsItem.Column(
-            title = stringResource(commonR.string.background_color),
-            subtitle = appDrawerSettings.backgroundColor.getTitle(),
-            onClick = onBackgroundColorClick,
-        ),
-    )
-
-    add(
-        SettingsItem.Column(
-            title = stringResource(R.string.hidden_applications),
-            subtitle = stringResource(R.string.hide_selected_apps_from_the_app_drawer),
-            onClick = onHiddenApplicationsClick,
-        ),
-    )
-
-    add(
-        SettingsItem.Switch(
-            checked = appDrawerSettings.excludeTaggedApps,
-            title = stringResource(R.string.exclude_tagged_apps),
-            subtitle = stringResource(R.string.hide_apps_marked_with_selected_tags),
-            onClick = {
-                onUpdateAppDrawerSettings(
-                    appDrawerSettings.copy(
-                        excludeTaggedApps = !appDrawerSettings.excludeTaggedApps,
-                    ),
-                )
-            },
-            onCheckedChange = {
-                onUpdateAppDrawerSettings(
-                    appDrawerSettings.copy(
-                        excludeTaggedApps = it,
-                    ),
-                )
-            },
-        ),
-    )
-
-    add(
-        SettingsItem.Switch(
-            checked = appDrawerSettings.showKeyboard,
-            title = stringResource(R.string.show_keyboard),
-            subtitle = stringResource(R.string.show_keyboard_when_app_drawer_opens),
-            onClick = {
-                onUpdateAppDrawerSettings(
-                    appDrawerSettings.copy(
-                        showKeyboard = !appDrawerSettings.showKeyboard,
-                    ),
-                )
-            },
-            onCheckedChange = {
-                onUpdateAppDrawerSettings(
-                    appDrawerSettings.copy(
-                        showKeyboard = it,
-                    ),
-                )
-            },
-        ),
-    )
-
-    add(
-        SettingsItem.Switch(
-            checked = appDrawerSettings.fuzzySearch,
-            title = stringResource(R.string.fuzzy_search),
-            subtitle = stringResource(R.string.find_apps_even_with_typos_or_accented_characters),
-            onClick = {
-                onUpdateAppDrawerSettings(
-                    appDrawerSettings.copy(
-                        fuzzySearch = !appDrawerSettings.fuzzySearch,
-                    ),
-                )
-            },
-            onCheckedChange = {
-                onUpdateAppDrawerSettings(
-                    appDrawerSettings.copy(
-                        fuzzySearch = it,
-                    ),
-                )
-            },
-        ),
-    )
-
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        add(
-            SettingsItem.Switch(
-                checked = appDrawerSettings.blurBehind,
-                title = stringResource(R.string.blur_behind),
-                subtitle = stringResource(R.string.blurs_the_wallpaper_when_app_drawer_opens),
-                onClick = {
-                    onUpdateAppDrawerSettings(
-                        appDrawerSettings.copy(
-                            blurBehind = !appDrawerSettings.blurBehind,
-                        ),
-                    )
-                },
-                onCheckedChange = {
-                    onUpdateAppDrawerSettings(
-                        appDrawerSettings.copy(
-                            blurBehind = it,
-                        ),
-                    )
-                },
-            ),
-        )
-    }
-
-    add(
-        SettingsItem.Column(
-            title = stringResource(R.string.search_bar_position),
-            subtitle = appDrawerSettings.searchBarPosition.getTitle(),
-            onClick = onSearchBarPositionClick,
-        ),
-    )
-
-    add(
-        SettingsItem.Column(
-            title = stringResource(R.string.scroll_bar_type),
-            subtitle = appDrawerSettings.scrollBarType.getTitle(),
-            onClick = onScrollBarTypeClick,
-        ),
-    )
 }
 
 @Composable

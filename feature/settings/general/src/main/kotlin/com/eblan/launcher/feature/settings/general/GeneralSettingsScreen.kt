@@ -58,9 +58,12 @@ import com.eblan.launcher.service.IconPackService
 import com.eblan.launcher.ui.dialog.IconTintDialog
 import com.eblan.launcher.ui.dialog.RadioOptionsDialog
 import com.eblan.launcher.ui.dialog.getTitle
-import com.eblan.launcher.ui.model.SettingsItem
-import com.eblan.launcher.ui.settings.SettingsItems
+import com.eblan.launcher.ui.settings.SettingsColumnItem
+import com.eblan.launcher.ui.settings.SettingsSwitchItem
 import com.eblan.launcher.ui.settings.rememberIsNotificationAccessGranted
+import com.eblan.launcher.ui.settings.settingsFirstItemShape
+import com.eblan.launcher.ui.settings.settingsLastItemShape
+import com.eblan.launcher.ui.settings.settingsMiddleItemShape
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -155,30 +158,13 @@ private fun Success(
 ) {
     val context = LocalContext.current
 
+    val isNotificationAccessGranted by rememberIsNotificationAccessGranted()
+
     var showThemeDialog by remember { mutableStateOf(false) }
     var showImportIconPackDialog by remember { mutableStateOf(false) }
     var selectIconPackDialog by remember { mutableStateOf(false) }
     var showIconTintDialog by remember { mutableStateOf(false) }
     var showIconShapeDialog by remember { mutableStateOf(false) }
-
-    val items = buildGeneralSettingsItems(
-        // Settings
-        generalSettings = generalSettings,
-        // Actions
-        onImportIconPackClick = { showImportIconPackDialog = true },
-        onSelectIconPackClick = { selectIconPackDialog = true },
-        onThemeClick = { showThemeDialog = true },
-        onIconColorClick = { showIconTintDialog = true },
-        onDynamicThemeChange = {
-            onUpdateGeneralSettings(generalSettings.copy(dynamicTheme = it))
-        },
-        onEnforceThemedIconsChanged = {
-            onUpdateGeneralSettings(generalSettings.copy(fallbackIconTint = it))
-        },
-        onIconShapeClick = {
-            showIconShapeDialog = true
-        },
-    )
 
     Column(
         modifier = modifier
@@ -187,7 +173,130 @@ private fun Success(
             .padding(15.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        SettingsItems(items = items)
+        SettingsColumnItem(
+            // Content
+            title = stringResource(R.string.import_icon_pack),
+            subtitle = stringResource(R.string.apply_icons_from_supported_icon_packs),
+            // Layout
+            shape = settingsFirstItemShape,
+            // Actions
+            onClick = {
+                showImportIconPackDialog = true
+            },
+        )
+
+        SettingsColumnItem(
+            // Content
+            title = stringResource(R.string.select_icon_pack),
+            subtitle = generalSettings.iconPackPackageName.ifEmpty {
+                stringResource(R.string.default_icon_pack)
+            },
+            // Layout
+            shape = settingsMiddleItemShape,
+            // Actions
+            onClick = {
+                selectIconPackDialog = true
+            },
+        )
+
+        SettingsColumnItem(
+            // Content
+            title = stringResource(R.string.theme),
+            subtitle = generalSettings.theme.getTitle(),
+            // Layout
+            shape = settingsMiddleItemShape,
+            // Actions
+            onClick = {
+                showThemeDialog = true
+            },
+        )
+
+        SettingsColumnItem(
+            // Content
+            title = stringResource(R.string.icon_tint),
+            subtitle = generalSettings.iconTint.getTitle(),
+            // Layout
+            shape = settingsMiddleItemShape,
+            // Actions
+            onClick = {
+                showIconTintDialog = true
+            },
+        )
+
+        when (generalSettings.iconTint) {
+            IconTint.System,
+            IconTint.Custom,
+            -> {
+                SettingsSwitchItem(
+                    // Content
+                    title = stringResource(R.string.fallback_icon_tint),
+                    subtitle = stringResource(R.string.use_the_fallback_icon_tint),
+                    // State
+                    checked = generalSettings.fallbackIconTint,
+                    // Appearance
+                    shape = settingsMiddleItemShape,
+                    // Callbacks
+                    onCheckedChange = {
+                        onUpdateGeneralSettings(generalSettings.copy(fallbackIconTint = it))
+                    },
+                )
+            }
+
+            else -> Unit
+        }
+
+        SettingsColumnItem(
+            // Content
+            title = stringResource(R.string.icon_shape),
+            subtitle = generalSettings.iconShape.getTitle(),
+            // Layout
+            shape = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S || !isNotificationAccessGranted) {
+                settingsMiddleItemShape
+            } else {
+                settingsLastItemShape
+            },
+            // Actions
+            onClick = {
+                showIconShapeDialog = true
+            },
+        )
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            SettingsSwitchItem(
+                // Content
+                title = stringResource(R.string.dynamic_theme),
+                subtitle = stringResource(R.string.adapt_colors_to_your_wallpaper_automatically),
+                // State
+                checked = generalSettings.dynamicTheme,
+                // Appearance
+                shape = if (!isNotificationAccessGranted) {
+                    settingsMiddleItemShape
+                } else {
+                    settingsLastItemShape
+                },
+                // Callbacks
+                onCheckedChange = {
+                    onUpdateGeneralSettings(generalSettings.copy(dynamicTheme = it))
+                },
+            )
+        }
+
+        if (!isNotificationAccessGranted) {
+            SettingsColumnItem(
+                // Content
+                title = stringResource(R.string.notification_dots),
+                subtitle = stringResource(R.string.show_notification_dots),
+                // Layout
+                shape = settingsLastItemShape,
+                // Actions
+                onClick = {
+                    context.startActivity(
+                        Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                    )
+                },
+            )
+        }
     }
 
     if (showThemeDialog) {
@@ -290,117 +399,6 @@ private fun Success(
                 onUpdateGeneralSettings(generalSettings.copy(iconShape = it))
             },
         )
-    }
-}
-
-@Composable
-private fun buildGeneralSettingsItems(
-    // Settings
-    generalSettings: GeneralSettings,
-    // Actions
-    onImportIconPackClick: () -> Unit,
-    onSelectIconPackClick: () -> Unit,
-    onThemeClick: () -> Unit,
-    onIconColorClick: () -> Unit,
-    onDynamicThemeChange: (Boolean) -> Unit,
-    onEnforceThemedIconsChanged: (Boolean) -> Unit,
-    onIconShapeClick: () -> Unit,
-): List<SettingsItem> {
-    val context = LocalContext.current
-
-    val isNotificationAccessGranted by rememberIsNotificationAccessGranted()
-
-    return buildList {
-        add(
-            SettingsItem.Column(
-                title = stringResource(R.string.import_icon_pack),
-                subtitle = stringResource(R.string.apply_icons_from_supported_icon_packs),
-                onClick = onImportIconPackClick,
-            ),
-        )
-
-        add(
-            SettingsItem.Column(
-                title = stringResource(R.string.select_icon_pack),
-                subtitle = generalSettings.iconPackPackageName.ifEmpty {
-                    stringResource(R.string.default_icon_pack)
-                },
-                onClick = onSelectIconPackClick,
-            ),
-        )
-
-        add(
-            SettingsItem.Column(
-                title = stringResource(R.string.theme),
-                subtitle = generalSettings.theme.getTitle(),
-                onClick = onThemeClick,
-            ),
-        )
-
-        add(
-            SettingsItem.Column(
-                title = stringResource(R.string.icon_tint),
-                subtitle = generalSettings.iconTint.getTitle(),
-                onClick = onIconColorClick,
-            ),
-        )
-
-        when (generalSettings.iconTint) {
-            IconTint.System,
-            IconTint.Custom,
-            -> {
-                add(
-                    SettingsItem.Switch(
-                        checked = generalSettings.fallbackIconTint,
-                        title = stringResource(R.string.fallback_icon_tint),
-                        subtitle = stringResource(R.string.use_the_fallback_icon_tint),
-                        onClick = {
-                            onEnforceThemedIconsChanged(!generalSettings.fallbackIconTint)
-                        },
-                        onCheckedChange = onEnforceThemedIconsChanged,
-                    ),
-                )
-            }
-
-            else -> Unit
-        }
-
-        add(
-            SettingsItem.Column(
-                title = stringResource(R.string.icon_shape),
-                subtitle = generalSettings.iconShape.getTitle(),
-                onClick = onIconShapeClick,
-            ),
-        )
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            add(
-                SettingsItem.Switch(
-                    checked = generalSettings.dynamicTheme,
-                    title = stringResource(R.string.dynamic_theme),
-                    subtitle = stringResource(R.string.adapt_colors_to_your_wallpaper_automatically),
-                    onClick = {
-                        onDynamicThemeChange(!generalSettings.dynamicTheme)
-                    },
-                    onCheckedChange = onDynamicThemeChange,
-                ),
-            )
-        }
-
-        if (!isNotificationAccessGranted) {
-            add(
-                SettingsItem.Column(
-                    title = stringResource(R.string.notification_dots),
-                    subtitle = stringResource(R.string.show_notification_dots),
-                    onClick = {
-                        context.startActivity(
-                            Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
-                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
-                        )
-                    },
-                ),
-            )
-        }
     }
 }
 

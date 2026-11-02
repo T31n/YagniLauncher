@@ -47,6 +47,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -58,8 +59,9 @@ import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.feature.home.R
 import com.eblan.launcher.feature.home.component.HomeHandler
-import com.eblan.launcher.feature.home.model.SettingsMenuItem
-import com.eblan.launcher.ui.settings.settingsItemShape
+import com.eblan.launcher.ui.settings.settingsFirstItemShape
+import com.eblan.launcher.ui.settings.settingsLastItemShape
+import com.eblan.launcher.ui.settings.settingsMiddleItemShape
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -89,51 +91,9 @@ internal fun SettingsPopup(
         }
     }
 
-    val items = buildSettingsMenuItems(
-        // Features
-        hasSystemFeatureAppWidgets = hasSystemFeatureAppWidgets,
-        // Callbacks
-        onSettingsClick = {
-            onSettings()
-
-            transitionState.targetState = false
-        },
-        onEditPageClick = {
-            onEditPage(
-                gridItems,
-                Associate.Grid,
-            )
-
-            transitionState.targetState = false
-        },
-        onEditDockPageClick = {
-            onEditPage(
-                gridItems,
-                Associate.Dock,
-            )
-
-            transitionState.targetState = false
-        },
-        onWidgetsClick = {
-            onWidgets()
-
-            transitionState.targetState = false
-        },
-        onShortcutConfigActivitiesClick = {
-            onShortcutConfigActivities()
-
-            transitionState.targetState = false
-        },
-        onWallpaperClick = {
-            val intent = Intent(ACTION_SET_WALLPAPER)
-
-            val chooser = createChooser(intent, "Set Wallpaper")
-
-            context.startActivity(chooser)
-
-            transitionState.targetState = false
-        },
-    )
+    val dismiss = {
+        transitionState.targetState = false
+    }
 
     LaunchedEffect(
         key1 = transitionState.targetState,
@@ -145,11 +105,11 @@ internal fun SettingsPopup(
     }
 
     BackHandler(enabled = transitionState.targetState) {
-        transitionState.targetState = false
+        dismiss()
     }
 
     HomeHandler(enabled = transitionState.targetState) {
-        transitionState.targetState = false
+        dismiss()
     }
 
     Popup(
@@ -157,9 +117,7 @@ internal fun SettingsPopup(
             x = popupSettingsIntOffset.x,
             y = popupSettingsIntOffset.y,
         ),
-        onDismissRequest = {
-            transitionState.targetState = false
-        },
+        onDismissRequest = dismiss,
     ) {
         AnimatedVisibility(
             visibleState = transitionState,
@@ -170,18 +128,83 @@ internal fun SettingsPopup(
                 modifier = Modifier.width(IntrinsicSize.Max),
                 verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
-                items.forEachIndexed { index, settingsMenuItem ->
+                PopupMenuRow(
+                    title = stringResource(commonR.string.settings),
+                    imageVector = EblanLauncherIcons.Settings,
+                    shape = settingsFirstItemShape,
+                    onClick = {
+                        onSettings()
+
+                        dismiss()
+                    },
+                )
+
+                PopupMenuRow(
+                    title = stringResource(R.string.edit_pages),
+                    imageVector = EblanLauncherIcons.Pages,
+                    shape = settingsMiddleItemShape,
+                    onClick = {
+                        onEditPage(
+                            gridItems,
+                            Associate.Grid,
+                        )
+
+                        dismiss()
+                    },
+                )
+
+                PopupMenuRow(
+                    title = stringResource(R.string.edit_dock_pages),
+                    imageVector = EblanLauncherIcons.Pages,
+                    shape = settingsMiddleItemShape,
+                    onClick = {
+                        onEditPage(
+                            gridItems,
+                            Associate.Dock,
+                        )
+
+                        dismiss()
+                    },
+                )
+
+                if (hasSystemFeatureAppWidgets) {
                     PopupMenuRow(
-                        // Content
-                        title = settingsMenuItem.title,
-                        imageVector = settingsMenuItem.imageVector,
-                        // Index and Size
-                        index = index,
-                        size = items.size,
-                        // Action
-                        onClick = settingsMenuItem.onClick,
+                        title = stringResource(R.string.widgets),
+                        imageVector = EblanLauncherIcons.Widgets,
+                        shape = settingsMiddleItemShape,
+                        onClick = {
+                            onWidgets()
+
+                            dismiss()
+                        },
                     )
                 }
+
+                PopupMenuRow(
+                    title = stringResource(R.string.shortcuts),
+                    imageVector = EblanLauncherIcons.Shortcut,
+                    shape = settingsMiddleItemShape,
+                    onClick = {
+                        onShortcutConfigActivities()
+
+                        dismiss()
+                    },
+                )
+
+                PopupMenuRow(
+                    title = stringResource(R.string.wallpaper),
+                    imageVector = EblanLauncherIcons.Image,
+                    shape = settingsLastItemShape,
+                    onClick = {
+                        val intent = Intent(ACTION_SET_WALLPAPER)
+
+                        val chooser = createChooser(intent, "Set Wallpaper")
+
+                        context.startActivity(chooser)
+
+                        dismiss()
+                    },
+                )
             }
         }
     }
@@ -192,10 +215,8 @@ private fun PopupMenuRow(
     // Content
     title: String,
     imageVector: ImageVector,
-    // Index and Size
-    index: Int,
-    size: Int,
     // Layout
+    shape: Shape,
     modifier: Modifier = Modifier,
     // Action
     onClick: () -> Unit,
@@ -204,10 +225,7 @@ private fun PopupMenuRow(
         modifier = modifier
             .fillMaxWidth()
             .height(IntrinsicSize.Max),
-        shape = settingsItemShape(
-            index = index,
-            size = size,
-        ),
+        shape = shape,
         onClick = onClick,
     ) {
         Row(
@@ -229,67 +247,4 @@ private fun PopupMenuRow(
             )
         }
     }
-}
-
-@Composable
-private fun buildSettingsMenuItems(
-    // Features
-    hasSystemFeatureAppWidgets: Boolean,
-    // Callbacks
-    onSettingsClick: () -> Unit,
-    onEditPageClick: () -> Unit,
-    onEditDockPageClick: () -> Unit,
-    onWidgetsClick: () -> Unit,
-    onShortcutConfigActivitiesClick: () -> Unit,
-    onWallpaperClick: () -> Unit,
-): List<SettingsMenuItem> = buildList {
-    add(
-        SettingsMenuItem(
-            imageVector = EblanLauncherIcons.Settings,
-            title = stringResource(commonR.string.settings),
-            onClick = onSettingsClick,
-        ),
-    )
-
-    add(
-        SettingsMenuItem(
-            imageVector = EblanLauncherIcons.Pages,
-            title = stringResource(R.string.edit_pages),
-            onClick = onEditPageClick,
-        ),
-    )
-
-    add(
-        SettingsMenuItem(
-            imageVector = EblanLauncherIcons.Pages,
-            title = stringResource(R.string.edit_dock_pages),
-            onClick = onEditDockPageClick,
-        ),
-    )
-
-    if (hasSystemFeatureAppWidgets) {
-        add(
-            SettingsMenuItem(
-                imageVector = EblanLauncherIcons.Widgets,
-                title = stringResource(R.string.widgets),
-                onClick = onWidgetsClick,
-            ),
-        )
-    }
-
-    add(
-        SettingsMenuItem(
-            imageVector = EblanLauncherIcons.Shortcut,
-            title = stringResource(R.string.shortcuts),
-            onClick = onShortcutConfigActivitiesClick,
-        ),
-    )
-
-    add(
-        SettingsMenuItem(
-            imageVector = EblanLauncherIcons.Image,
-            title = stringResource(R.string.wallpaper),
-            onClick = onWallpaperClick,
-        ),
-    )
 }

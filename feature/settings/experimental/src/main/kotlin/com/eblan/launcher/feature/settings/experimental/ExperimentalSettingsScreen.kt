@@ -44,8 +44,11 @@ import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
 import com.eblan.launcher.feature.settings.experimental.dialog.SyncDataDialog
 import com.eblan.launcher.feature.settings.experimental.model.ExperimentalSettingsUiState
-import com.eblan.launcher.ui.model.SettingsItem
-import com.eblan.launcher.ui.settings.SettingsItems
+import com.eblan.launcher.ui.settings.SettingsColumnItem
+import com.eblan.launcher.ui.settings.SettingsSwitchItem
+import com.eblan.launcher.ui.settings.settingsFirstItemShape
+import com.eblan.launcher.ui.settings.settingsLastItemShape
+import com.eblan.launcher.ui.settings.settingsMiddleItemShape
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -113,14 +116,6 @@ private fun Success(
 ) {
     var showSyncDataDialog by remember { mutableStateOf(false) }
 
-    val items = buildExperimentalSettingsItems(
-        experimentalSettings = experimentalSettings,
-        onSyncDataClick = {
-            showSyncDataDialog = true
-        },
-        onUpdateExperimentalSettings = onUpdateExperimentalSettings,
-    )
-
     Column(
         modifier = modifier
             .verticalScroll(rememberScrollState())
@@ -128,7 +123,53 @@ private fun Success(
             .padding(15.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        SettingsItems(items = items)
+        SettingsColumnItem(
+            // Content
+            title = stringResource(R.string.sync_data),
+            subtitle = stringResource(R.string.enable_or_disable_sync_data),
+            // Layout
+            shape = settingsFirstItemShape,
+            // Actions
+            onClick = {
+                showSyncDataDialog = true
+            },
+        )
+
+        SettingsSwitchItem(
+            // Content
+            title = stringResource(R.string.lock_movement),
+            subtitle = stringResource(R.string.prevent_other_grid_items_from_moving),
+            // State
+            checked = experimentalSettings.lockMovement,
+            // Appearance
+            shape = settingsMiddleItemShape,
+            // Callbacks
+            onCheckedChange = {
+                onUpdateExperimentalSettings(
+                    experimentalSettings.copy(
+                        lockMovement = it,
+                    ),
+                )
+            },
+        )
+
+        SettingsSwitchItem(
+            // Content
+            title = stringResource(R.string.grid_item_animation),
+            subtitle = stringResource(R.string.enable_or_disable_animations),
+            // State
+            checked = experimentalSettings.gridItemAnimation,
+            // Appearance
+            shape = settingsLastItemShape,
+            // Callbacks
+            onCheckedChange = {
+                onUpdateExperimentalSettings(
+                    experimentalSettings.copy(
+                        gridItemAnimation = it,
+                    ),
+                )
+            },
+        )
     }
 
     if (showSyncDataDialog) {
@@ -144,63 +185,4 @@ private fun Success(
             },
         )
     }
-}
-
-@Composable
-private fun buildExperimentalSettingsItems(
-    experimentalSettings: ExperimentalSettings,
-    onSyncDataClick: () -> Unit,
-    onUpdateExperimentalSettings: (ExperimentalSettings) -> Unit,
-): List<SettingsItem> = buildList {
-    add(
-        SettingsItem.Column(
-            title = stringResource(R.string.sync_data),
-            subtitle = stringResource(R.string.enable_or_disable_sync_data),
-            onClick = onSyncDataClick,
-        ),
-    )
-
-    add(
-        SettingsItem.Switch(
-            checked = experimentalSettings.lockMovement,
-            title = stringResource(R.string.lock_movement),
-            subtitle = stringResource(R.string.prevent_other_grid_items_from_moving),
-            onClick = {
-                onUpdateExperimentalSettings(
-                    experimentalSettings.copy(
-                        lockMovement = !experimentalSettings.lockMovement,
-                    ),
-                )
-            },
-            onCheckedChange = {
-                onUpdateExperimentalSettings(
-                    experimentalSettings.copy(
-                        lockMovement = it,
-                    ),
-                )
-            },
-        ),
-    )
-
-    add(
-        SettingsItem.Switch(
-            checked = experimentalSettings.gridItemAnimation,
-            title = stringResource(R.string.grid_item_animation),
-            subtitle = stringResource(R.string.enable_or_disable_animations),
-            onClick = {
-                onUpdateExperimentalSettings(
-                    experimentalSettings.copy(
-                        gridItemAnimation = !experimentalSettings.gridItemAnimation,
-                    ),
-                )
-            },
-            onCheckedChange = {
-                onUpdateExperimentalSettings(
-                    experimentalSettings.copy(
-                        gridItemAnimation = it,
-                    ),
-                )
-            },
-        ),
-    )
 }
