@@ -39,6 +39,7 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.BottomSheetDefaults.DragHandle
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -97,6 +98,7 @@ import com.eblan.launcher.ui.local.LocalUserManager
 import com.eblan.launcher.ui.settings.rememberIsDefaultLauncher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 import com.eblan.launcher.common.R as commonR
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -203,14 +205,19 @@ internal fun VerticalApplicationScreen(
     val onDismissSearch: () -> Unit = {
         isBottomSearchOverlayVisible = false
         isKeyboardRequestedBySearchFab = false
-        searchCoroutineScope.launch { searchBarState.animateToCollapsed() }
+
+        textFieldState.clearText()
+
+        searchCoroutineScope.launch {
+            searchBarState.animateToCollapsed()
+        }
     }
 
     LaunchedEffect(key1 = isScrolling) {
         if (isScrolling) {
             isSearchFabVisible = false
         } else if (!isSearchFabVisible) {
-            delay(2_000L)
+            delay(1000L.milliseconds)
             isSearchFabVisible = true
         }
     }
@@ -249,11 +256,6 @@ internal fun VerticalApplicationScreen(
             .padding(
                 start = paddingValues.calculateStartPadding(layoutDirection),
                 end = paddingValues.calculateEndPadding(layoutDirection),
-                bottom = if (appDrawerSettings.searchBarPosition == SearchBarPosition.Bottom) {
-                    paddingValues.calculateBottomPadding()
-                } else {
-                    0.dp
-                },
             ),
     ) {
         DragHandle(
@@ -377,8 +379,9 @@ internal fun VerticalApplicationScreen(
                         isSearchFabVisible -> false
                         else -> null
                     },
-                    modifier = Modifier.align(Alignment.BottomEnd),
-                    label = "bottomSearchOverlay",
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(bottom = paddingValues.calculateBottomPadding()),
                 ) { showOverlay ->
                     if (showOverlay == true) {
                         ApplicationSearchBar(
@@ -643,7 +646,10 @@ private fun EblanApplicationInfos(
 ) {
     val lazyGridState = rememberLazyGridState()
 
-    LaunchedEffect(lazyGridState.isScrollInProgress, isCurrentPage) {
+    LaunchedEffect(
+        key1 = lazyGridState.isScrollInProgress,
+        key2 = isCurrentPage,
+    ) {
         if (isCurrentPage) {
             onGridScrollInProgressChanged(lazyGridState.isScrollInProgress)
         }

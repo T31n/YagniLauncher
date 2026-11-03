@@ -34,6 +34,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.BottomSheetDefaults.DragHandle
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -171,14 +172,19 @@ internal fun HorizontalApplicationScreen(
     val onDismissSearch: () -> Unit = {
         isBottomSearchOverlayVisible = false
         isKeyboardRequestedBySearchFab = false
-        searchCoroutineScope.launch { searchBarState.animateToCollapsed() }
+
+        textFieldState.clearText()
+
+        searchCoroutineScope.launch {
+            searchBarState.animateToCollapsed()
+        }
     }
 
     LaunchedEffect(key1 = horizontalPagerState.isScrollInProgress) {
         if (horizontalPagerState.isScrollInProgress) {
             isSearchFabVisible = false
         } else if (!isSearchFabVisible) {
-            delay(2_000L.milliseconds)
+            delay(1000L.milliseconds)
             isSearchFabVisible = true
         }
     }
@@ -216,11 +222,6 @@ internal fun HorizontalApplicationScreen(
             .padding(
                 start = paddingValues.calculateStartPadding(layoutDirection),
                 end = paddingValues.calculateEndPadding(layoutDirection),
-                bottom = if (appDrawerSettings.searchBarPosition == SearchBarPosition.Bottom) {
-                    paddingValues.calculateBottomPadding()
-                } else {
-                    0.dp
-                },
             )
             .pointerInput(
                 key1 = onVerticalDrag,
@@ -343,8 +344,9 @@ internal fun HorizontalApplicationScreen(
                         isSearchFabVisible -> false
                         else -> null
                     },
-                    modifier = Modifier.align(Alignment.BottomEnd),
-                    label = "bottomSearchOverlay",
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(bottom = paddingValues.calculateBottomPadding()),
                 ) { showOverlay ->
                     if (showOverlay == true) {
                         ApplicationSearchBar(
