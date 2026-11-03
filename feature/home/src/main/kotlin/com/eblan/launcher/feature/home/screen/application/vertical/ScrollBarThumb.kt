@@ -65,7 +65,6 @@ internal fun ScrollBarThumb(
     // Privacy and Modifiers
     isPrivateSpaceEntryPointHidden: Boolean,
     modifier: Modifier = Modifier,
-    // Callbacks
 ) {
     val density = LocalDensity.current
 

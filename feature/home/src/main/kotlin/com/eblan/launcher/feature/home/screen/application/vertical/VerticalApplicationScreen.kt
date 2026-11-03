@@ -36,8 +36,8 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.BottomSheetDefaults.DragHandle
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -48,10 +48,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -78,7 +76,6 @@ import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.rememberNestedScrollConnectionEffect
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
-import com.eblan.launcher.feature.home.screen.application.ApplicationScreenEffect
 import com.eblan.launcher.feature.home.screen.application.ApplicationSearchBar
 import com.eblan.launcher.feature.home.screen.application.EblanApplicationInfoItem
 import com.eblan.launcher.feature.home.screen.application.EblanApplicationInfoTabRow
@@ -104,6 +101,10 @@ internal fun VerticalApplicationScreen(
     // Application Info
     eblanApplicationInfoTags: List<EblanApplicationInfoTag>,
     getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
+    horizontalPagerState: PagerState,
+    textFieldState: TextFieldState,
+    selectedEblanApplicationInfoTagId: Long?,
+    focusRequester: FocusRequester,
     // Folder Configuration
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     folderCornerRadius: Int,
@@ -121,10 +122,8 @@ internal fun VerticalApplicationScreen(
     swipeY: Float,
     isVisibleOverlay: Boolean,
     // Callbacks
-    onDismiss: () -> Unit,
     onDragEnd: () -> Unit,
-    onGetEblanApplicationInfosByLabel: (String) -> Unit,
-    onGetEblanApplicationInfosByTagId: (Long?) -> Unit,
+    onUpdateSelectedEblanApplicationInfoTagId: (Long?) -> Unit,
     onVerticalDrag: (Float) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onDragFolderEblanApplicationInfo: (
@@ -155,39 +154,12 @@ internal fun VerticalApplicationScreen(
 ) {
     val layoutDirection = LocalLayoutDirection.current
 
-    val horizontalPagerState = rememberPagerState(
-        pageCount = {
-            getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos.keys.size
-        },
-    )
-
     val searchBarState = rememberSearchBarState()
-    val textFieldState = rememberTextFieldState()
-
-    var selectedEblanApplicationInfoTagId by remember { mutableStateOf<Long?>(null) }
 
     val eblanUserPageKeys =
         remember(key1 = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos) {
             getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos.keys.distinctBy { it.eblanUser.serialNumber }
         }
-
-    val focusRequester = remember { FocusRequester() }
-
-    ApplicationScreenEffect(
-        // Pager and Dimensions
-        horizontalPagerState = horizontalPagerState,
-        screenHeight = screenHeight,
-        swipeY = swipeY,
-        // State and Focus
-        selectedEblanApplicationInfoTagId = selectedEblanApplicationInfoTagId,
-        textFieldState = textFieldState,
-        showKeyboard = appDrawerSettings.showKeyboard,
-        focusRequester = focusRequester,
-        // Callbacks
-        onDismiss = onDismiss,
-        onGetEblanApplicationInfosByLabel = onGetEblanApplicationInfosByLabel,
-        onGetEblanApplicationInfosByTagId = onGetEblanApplicationInfosByTagId,
-    )
 
     Column(
         modifier = modifier
@@ -232,9 +204,7 @@ internal fun VerticalApplicationScreen(
                         eblanApplicationInfoTag = it,
                         selectedEblanApplicationInfoTag = selectedEblanApplicationInfoTagId,
                         // Callbacks
-                        onUpdateEblanApplicationInfoTag = { id ->
-                            selectedEblanApplicationInfoTagId = id
-                        },
+                        onUpdateEblanApplicationInfoTag = onUpdateSelectedEblanApplicationInfoTagId,
                     )
                 }
             }

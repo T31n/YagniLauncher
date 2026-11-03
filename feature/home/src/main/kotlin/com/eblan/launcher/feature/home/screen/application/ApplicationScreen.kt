@@ -37,16 +37,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.ElevatedFilterChip
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.SearchBarState
 import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
@@ -58,9 +58,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -170,12 +172,40 @@ internal fun ApplicationScreen(
     ) -> Unit,
     onTapFolderApplicationInfo: (folderEntry: FolderEntry) -> Unit,
 ) {
+    val horizontalPagerState = rememberPagerState(
+        pageCount = {
+            getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos.keys.size
+        },
+    )
+
+    val textFieldState = rememberTextFieldState()
+
+    val focusRequester = remember { FocusRequester() }
+
+    var selectedEblanApplicationInfoTagId by remember { mutableStateOf<Long?>(null) }
+
     BlurBehindEffect(
         // Effect
         blurBehind = appDrawerSettings.blurBehind,
         // Layout
         screenHeight = screenHeight,
         swipeY = swipeY,
+    )
+
+    ApplicationScreenEffect(
+        // Pager and Dimensions
+        horizontalPagerState = horizontalPagerState,
+        screenHeight = screenHeight,
+        swipeY = swipeY,
+        // State and Focus
+        selectedEblanApplicationInfoTagId = selectedEblanApplicationInfoTagId,
+        textFieldState = textFieldState,
+        showKeyboard = appDrawerSettings.showKeyboard,
+        focusRequester = focusRequester,
+        // Callbacks
+        onDismiss = onDismiss,
+        onGetEblanApplicationInfosByLabel = onGetEblanApplicationInfosByLabel,
+        onGetEblanApplicationInfosByTagId = onGetEblanApplicationInfosByTagId,
     )
 
     Surface(
@@ -223,6 +253,10 @@ internal fun ApplicationScreen(
                     // Application Info
                     eblanApplicationInfoTags = eblanApplicationInfoTags,
                     getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
+                    horizontalPagerState = horizontalPagerState,
+                    textFieldState = textFieldState,
+                    selectedEblanApplicationInfoTagId = selectedEblanApplicationInfoTagId,
+                    focusRequester = focusRequester,
                     // Folder Configuration
                     folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                     folderCornerRadius = folderCornerRadius,
@@ -240,10 +274,10 @@ internal fun ApplicationScreen(
                     swipeY = swipeY,
                     isVisibleOverlay = isVisibleOverlay,
                     // Callbacks
-                    onDismiss = onDismiss,
                     onDragEnd = onDragEnd,
-                    onGetEblanApplicationInfosByLabel = onGetEblanApplicationInfosByLabel,
-                    onGetEblanApplicationInfosByTagId = onGetEblanApplicationInfosByTagId,
+                    onUpdateSelectedEblanApplicationInfoTagId = {
+                        selectedEblanApplicationInfoTagId = it
+                    },
                     onVerticalDrag = onVerticalDrag,
                     onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                     onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
@@ -264,8 +298,10 @@ internal fun ApplicationScreen(
                     // Application Info and Data
                     eblanApplicationInfoTags = eblanApplicationInfoTags,
                     getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
-                    onGetEblanApplicationInfosByLabel = onGetEblanApplicationInfosByLabel,
-                    onGetEblanApplicationInfosByTagId = onGetEblanApplicationInfosByTagId,
+                    horizontalPagerState = horizontalPagerState,
+                    textFieldState = textFieldState,
+                    selectedEblanApplicationInfoTagId = selectedEblanApplicationInfoTagId,
+                    focusRequester = focusRequester,
                     // Theme and Appearance
                     systemTextColor = systemTextColor,
                     systemCustomTextColor = systemCustomTextColor,
@@ -275,7 +311,9 @@ internal fun ApplicationScreen(
                     drag = drag,
                     swipeY = swipeY,
                     isVisibleOverlay = isVisibleOverlay,
-                    onDismiss = onDismiss,
+                    onUpdateSelectedEblanApplicationInfoTagId = {
+                        selectedEblanApplicationInfoTagId = it
+                    },
                     onVerticalDrag = onVerticalDrag,
                     onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                     onDragEnd = onDragEnd,
