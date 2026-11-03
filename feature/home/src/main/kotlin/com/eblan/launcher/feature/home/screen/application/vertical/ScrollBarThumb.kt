@@ -22,12 +22,10 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.LazyGridState
@@ -62,7 +60,6 @@ import androidx.compose.ui.unit.sp
 import com.eblan.launcher.domain.model.application.AlphabeticalScrollBarItem
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.ScrollBarType
-import com.eblan.launcher.domain.model.userdata.SearchBarPosition
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filterNotNull
@@ -80,7 +77,6 @@ internal fun ScrollBarType(
     canScroll: Boolean,
     // UI Settings
     appDrawerSettings: AppDrawerSettings,
-    paddingValues: PaddingValues,
     isPrivateSpaceEntryPointHidden: Boolean,
     modifier: Modifier = Modifier,
 ) {
@@ -96,28 +92,23 @@ internal fun ScrollBarType(
                     canScroll = canScroll,
                     // Layout Configuration
                     appDrawerColumns = appDrawerSettings.appDrawerColumns,
-                    paddingValues = paddingValues,
-                    searchBarPosition = appDrawerSettings.searchBarPosition,
                     // Privacy and Modifiers
                     isPrivateSpaceEntryPointHidden = isPrivateSpaceEntryPointHidden,
                     // Callbacks
-                    onScrollToItem = lazyGridState::scrollToItem,
+                    onScrollToItem = { index, scrollOffset ->
+                        lazyGridState.scrollToItem(index, scrollOffset)
+                    },
                 )
             }
 
             ScrollBarType.Alphabetical -> {
-                if (alphabeticalScrollBarItems.isNotEmpty()) {
-                    AlphabeticalScrollBar(
-                        // Content and Layout
-                        alphabeticalScrollBarItems = alphabeticalScrollBarItems,
-                        paddingValues = paddingValues,
-                        // Configuration
-                        searchBarPosition = appDrawerSettings.searchBarPosition,
-                        canScroll = canScroll,
-                        // Actions
-                        onScrollToItem = lazyGridState::scrollToItem,
-                    )
-                }
+                AlphabeticalScrollBar(
+                    // Content and Layout
+                    alphabeticalScrollBarItems = alphabeticalScrollBarItems,
+                    canScroll = canScroll,
+                    // Actions
+                    onScrollToItem = lazyGridState::scrollToItem,
+                )
             }
 
             ScrollBarType.None -> Unit
@@ -129,16 +120,11 @@ internal fun ScrollBarType(
 internal fun AlphabeticalScrollBar(
     // Content and Layout
     alphabeticalScrollBarItems: List<AlphabeticalScrollBarItem>,
-    paddingValues: PaddingValues,
-    // Configuration
-    searchBarPosition: SearchBarPosition,
     canScroll: Boolean,
     modifier: Modifier = Modifier,
     // Actions
     onScrollToItem: suspend (Int) -> Unit,
 ) {
-    if (!canScroll) return
-
     val scope = rememberCoroutineScope()
 
     val density = LocalDensity.current
@@ -157,12 +143,6 @@ internal fun AlphabeticalScrollBar(
 
             selectedLetter = null
         }
-    }
-
-    val bottomPadding = if (searchBarPosition == SearchBarPosition.Bottom) {
-        0.dp
-    } else {
-        paddingValues.calculateBottomPadding()
     }
 
     fun selectItem(item: AlphabeticalScrollBarItem) {
@@ -186,73 +166,79 @@ internal fun AlphabeticalScrollBar(
         selectItem(alphabeticalScrollBarItems[target.index])
     }
 
-    LazyColumn(
-        state = listState,
+    Box(
         modifier = modifier
             .width(28.dp)
-            .fillMaxHeight()
-            .pointerInput(alphabeticalScrollBarItems) {
-                detectTapGestures(
-                    onTap = { selectItemAt(it.y) },
-                )
-            }
-            .pointerInput(alphabeticalScrollBarItems) {
-                detectDragGestures(
-                    onDragStart = { selectItemAt(it.y) },
-                    onDrag = { change, dragAmount ->
-                        val viewportHeight = listState.layoutInfo.viewportSize.height
-                        val edgeScroll = when {
-                            change.position.y < edgeThreshold &&
-                                dragAmount.y < 0f -> dragAmount.y
-
-                            change.position.y > viewportHeight - edgeThreshold &&
-                                dragAmount.y > 0f -> dragAmount.y
-
-                            else -> 0f
-                        }
-
-                        scope.launch {
-                            if (edgeScroll != 0f) {
-                                listState.scrollBy(edgeScroll)
-                            }
-
-                            selectItemAt(change.position.y)
-                        }
-                    },
-                )
-            },
-        contentPadding = PaddingValues(bottom = bottomPadding),
-        userScrollEnabled = false,
+            .fillMaxHeight(),
     ) {
-        items(
-            items = alphabeticalScrollBarItems,
-            key = { it.letter },
-        ) { item ->
-            Box(
+        if (canScroll && alphabeticalScrollBarItems.isNotEmpty()) {
+            LazyColumn(
+                state = listState,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(28.dp)
-                    .background(
-                        color = if (selectedLetter == item.letter) {
-                            MaterialTheme.colorScheme.primary
-                        } else {
-                            MaterialTheme.colorScheme.surface
-                        },
-                        shape = RoundedCornerShape(14.dp),
-                    ),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    text = item.letter.toString(),
-                    modifier = Modifier.fillMaxWidth(),
-                    color = if (selectedLetter == item.letter) {
-                        MaterialTheme.colorScheme.onPrimary
-                    } else {
-                        MaterialTheme.colorScheme.onSurface
+                    .matchParentSize()
+                    .pointerInput(alphabeticalScrollBarItems) {
+                        detectTapGestures(
+                            onTap = { selectItemAt(it.y) },
+                        )
+                    }
+                    .pointerInput(alphabeticalScrollBarItems) {
+                        detectDragGestures(
+                            onDragStart = { selectItemAt(it.y) },
+                            onDrag = { change, dragAmount ->
+                                val viewportHeight = listState.layoutInfo.viewportSize.height
+                                val edgeScroll = when {
+                                    change.position.y < edgeThreshold &&
+                                        dragAmount.y < 0f -> dragAmount.y
+
+                                    change.position.y > viewportHeight - edgeThreshold &&
+                                        dragAmount.y > 0f -> dragAmount.y
+
+                                    else -> 0f
+                                }
+
+                                scope.launch {
+                                    if (edgeScroll != 0f) {
+                                        listState.scrollBy(edgeScroll)
+                                    }
+
+                                    selectItemAt(change.position.y)
+                                }
+                            },
+                        )
                     },
-                    fontSize = 12.sp,
-                    textAlign = TextAlign.Center,
-                )
+                userScrollEnabled = false,
+            ) {
+                items(
+                    items = alphabeticalScrollBarItems,
+                    key = { it.letter },
+                ) { item ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(28.dp)
+                            .background(
+                                color = if (selectedLetter == item.letter) {
+                                    MaterialTheme.colorScheme.primary
+                                } else {
+                                    MaterialTheme.colorScheme.surface
+                                },
+                                shape = RoundedCornerShape(14.dp),
+                            ),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(
+                            text = item.letter.toString(),
+                            modifier = Modifier.fillMaxWidth(),
+                            color = if (selectedLetter == item.letter) {
+                                MaterialTheme.colorScheme.onPrimary
+                            } else {
+                                MaterialTheme.colorScheme.onSurface
+                            },
+                            fontSize = 12.sp,
+                            textAlign = TextAlign.Center,
+                        )
+                    }
+                }
             }
         }
     }
@@ -265,29 +251,15 @@ private fun ScrollBarThumb(
     canScroll: Boolean,
     // Layout Configuration
     appDrawerColumns: Int,
-    paddingValues: PaddingValues,
-    searchBarPosition: SearchBarPosition,
     // Privacy and Modifiers
     isPrivateSpaceEntryPointHidden: Boolean,
     modifier: Modifier = Modifier,
     // Callbacks
-    onScrollToItem: suspend (Int) -> Unit,
+    onScrollToItem: suspend (Int, Int) -> Unit,
 ) {
-    if (!canScroll) return
-
     val density = LocalDensity.current
 
     val scope = rememberCoroutineScope()
-
-    val bottomPadding = if (searchBarPosition == SearchBarPosition.Bottom) {
-        0.dp
-    } else {
-        paddingValues.calculateBottomPadding()
-    }
-
-    val bottomPaddingPx = with(density) {
-        bottomPadding.roundToPx()
-    }
 
     val thumbHeight by remember(lazyGridState) {
         derivedStateOf {
@@ -312,7 +284,6 @@ private fun ScrollBarThumb(
                 // Layout Dimensions
                 appDrawerColumns = appDrawerColumns,
                 headerHeightPx = headerHeightPx,
-                bottomPadding = bottomPaddingPx,
                 thumbHeight = thumbHeight,
                 // Display Metrics
                 density = density,
@@ -333,85 +304,89 @@ private fun ScrollBarThumb(
     Box(
         modifier = modifier
             .width(10.dp)
-            .fillMaxHeight()
-            .padding(bottom = bottomPadding)
-            .background(
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
-                shape = RoundedCornerShape(10.dp),
-            )
-            .pointerInput(lazyGridState) {
-                detectTapGestures(
-                    onTap = {
-                        scrollToTap(
-                            // State and Scope
-                            lazyGridState = lazyGridState,
-                            scope = scope,
-                            // Layout and Dimensions
-                            appDrawerColumns = appDrawerColumns,
-                            bottomPaddingPx = bottomPaddingPx,
-                            density = density,
-                            thumbHeight = thumbHeight,
-                            // Target
-                            offset = it,
-                            // Action
-                            onScrollToItem = onScrollToItem,
-                        )
-                    },
-                )
-            },
-        contentAlignment = Alignment.TopCenter,
+            .fillMaxHeight(),
     ) {
+        if (!canScroll) return@Box
+
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(thumbHeight)
-                .offset {
-                    IntOffset(
-                        x = 0,
-                        y = animatedThumbY.roundToInt(),
-                    )
-                }
+                .matchParentSize()
                 .background(
-                    color = MaterialTheme.colorScheme.primary,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
                     shape = RoundedCornerShape(10.dp),
                 )
-                .pointerInput(key1 = lazyGridState) {
-                    detectDragGestures(
-                        onDragStart = {
-                            thumbY = viewPortThumbY
-
-                            isDraggingThumb = true
-                        },
-                        onDrag = { _, dragAmount ->
-                            scrollToDrag(
+                .pointerInput(lazyGridState) {
+                    detectTapGestures(
+                        onTap = {
+                            scrollToTap(
                                 // State and Scope
                                 lazyGridState = lazyGridState,
                                 scope = scope,
                                 // Layout and Dimensions
                                 appDrawerColumns = appDrawerColumns,
-                                headerHeightPx = headerHeightPx,
-                                bottomPaddingPx = bottomPaddingPx,
-                                thumbHeight = thumbHeight,
                                 density = density,
-                                // Scroll and Position
-                                deltaY = dragAmount.y,
-                                thumbY = thumbY,
-                                // Callbacks
+                                thumbHeight = thumbHeight,
+                                // Target
+                                offset = it,
+                                // Action
                                 onScrollToItem = onScrollToItem,
-                                onUpdateThumbY = {
-                                    thumbY = it
-                                },
                             )
-                        },
-                        onDragEnd = {
-                            isDraggingThumb = false
-                        },
-                        onDragCancel = {
-                            isDraggingThumb = false
                         },
                     )
                 },
-        )
+            contentAlignment = Alignment.TopCenter,
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(thumbHeight)
+                    .offset {
+                        IntOffset(
+                            x = 0,
+                            y = animatedThumbY.roundToInt(),
+                        )
+                    }
+                    .background(
+                        color = MaterialTheme.colorScheme.primary,
+                        shape = RoundedCornerShape(10.dp),
+                    )
+                    .pointerInput(key1 = lazyGridState) {
+                        detectDragGestures(
+                            onDragStart = {
+                                thumbY = viewPortThumbY
+
+                                isDraggingThumb = true
+                            },
+                            onDrag = { _, dragAmount ->
+                                scrollToDrag(
+                                    // State and Scope
+                                    lazyGridState = lazyGridState,
+                                    scope = scope,
+                                    // Layout and Dimensions
+                                    appDrawerColumns = appDrawerColumns,
+                                    headerHeightPx = headerHeightPx,
+                                    thumbHeight = thumbHeight,
+                                    density = density,
+                                    // Scroll and Position
+                                    deltaY = dragAmount.y,
+                                    thumbY = thumbY,
+                                    // Callbacks
+                                    onScrollToItem = onScrollToItem,
+                                    onUpdateThumbY = {
+                                        thumbY = it
+                                    },
+                                )
+                            },
+                            onDragEnd = {
+                                isDraggingThumb = false
+                            },
+                            onDragCancel = {
+                                isDraggingThumb = false
+                            },
+                        )
+                    },
+            )
+        }
     }
 }
 
@@ -446,15 +421,14 @@ private fun scrollToTap(
     scope: CoroutineScope,
     // Layout and Dimensions
     appDrawerColumns: Int,
-    bottomPaddingPx: Int,
     density: Density,
     thumbHeight: Dp,
     // Target
     offset: Offset,
     // Action
-    onScrollToItem: suspend (Int) -> Unit,
+    onScrollToItem: suspend (Int, Int) -> Unit,
 ) {
-    val viewportHeight = lazyGridState.layoutInfo.viewportSize.height - bottomPaddingPx
+    val viewportHeight = lazyGridState.layoutInfo.viewportSize.height
 
     val thumbHeightPx = with(density) { thumbHeight.roundToPx() }
 
@@ -473,7 +447,7 @@ private fun scrollToTap(
         .coerceAtMost(lazyGridState.layoutInfo.totalItemsCount - 1)
 
     scope.launch {
-        onScrollToItem(targetIndex)
+        onScrollToItem(targetIndex, 0)
     }
 }
 
@@ -484,14 +458,13 @@ private fun scrollToDrag(
     // Layout and Dimensions
     appDrawerColumns: Int,
     headerHeightPx: Int,
-    bottomPaddingPx: Int,
     thumbHeight: Dp,
     density: Density,
     // Scroll and Position
     deltaY: Float,
     thumbY: Float,
     // Callbacks
-    onScrollToItem: suspend (Int) -> Unit,
+    onScrollToItem: suspend (Int, Int) -> Unit,
     onUpdateThumbY: (Float) -> Unit,
 ) {
     if (deltaY == 0f) return
@@ -520,35 +493,39 @@ private fun scrollToDrag(
 
     val thumbHeightPx = with(density) { thumbHeight.toPx() }
 
-    val availableHeight = (viewportHeight - thumbHeightPx - bottomPaddingPx).coerceAtLeast(0f)
+    val availableHeight = (viewportHeight - thumbHeightPx).coerceAtLeast(0f)
 
     val newThumbY = (thumbY + deltaY).coerceIn(0f, availableHeight)
 
     val progress = if (availableHeight > 0f) newThumbY / availableHeight else 0f
 
-    val totalContentHeight = headerHeightPx + appRows * avgItemHeight
+    val totalContentHeight = headerHeightPx + appRows * avgItemHeight + layoutInfo.afterContentPadding
 
     val scrollableHeight = (
-        totalContentHeight - (viewportHeight - bottomPaddingPx)
+        totalContentHeight - viewportHeight
         ).coerceAtLeast(0f)
     val targetScrollY = (progress * scrollableHeight).coerceIn(0f, scrollableHeight)
 
-    val targetIndex = if (hasHeader && targetScrollY >= headerHeightPx) {
+    val (targetIndex, targetScrollOffset) = if (hasHeader && targetScrollY >= headerHeightPx) {
         val targetRow = ((targetScrollY - headerHeightPx) / avgItemHeight)
             .coerceIn(0f, (appRows - 1).coerceAtLeast(0).toFloat())
-        (1 + targetRow.toInt() * appDrawerColumns).coerceIn(1, totalItems - 1)
+        val rowIndex = targetRow.toInt()
+        val targetScrollOffset = ((targetRow - rowIndex) * avgItemHeight).toInt()
+        (1 + rowIndex * appDrawerColumns).coerceIn(1, totalItems - 1) to targetScrollOffset
     } else if (hasHeader) {
-        0
+        0 to targetScrollY.toInt()
     } else {
         val targetRow = (targetScrollY / avgItemHeight)
             .coerceIn(0f, (appRows - 1).coerceAtLeast(0).toFloat())
-        (targetRow.toInt() * appDrawerColumns).coerceIn(0, totalItems - 1)
+        val rowIndex = targetRow.toInt()
+        val targetScrollOffset = ((targetRow - rowIndex) * avgItemHeight).toInt()
+        (rowIndex * appDrawerColumns).coerceIn(0, totalItems - 1) to targetScrollOffset
     }
 
     onUpdateThumbY(newThumbY)
 
     scope.launch {
-        onScrollToItem(targetIndex)
+        onScrollToItem(targetIndex, targetScrollOffset)
     }
 }
 
@@ -558,7 +535,6 @@ private fun getViewPortThumbY(
     // Layout Dimensions
     appDrawerColumns: Int,
     headerHeightPx: Int,
-    bottomPadding: Int,
     thumbHeight: Dp,
     // Display Metrics
     density: Density,
@@ -584,7 +560,7 @@ private fun getViewPortThumbY(
 
     val viewportHeight = layoutInfo.viewportSize.height.toFloat()
 
-    val totalContentHeight = headerHeightPx + appRows * avgItemHeight
+    val totalContentHeight = headerHeightPx + appRows * avgItemHeight + layoutInfo.afterContentPadding
 
     val firstItem = appItems.firstOrNull()
 
@@ -599,7 +575,7 @@ private fun getViewPortThumbY(
     }
 
     val scrollableHeight = (
-        totalContentHeight - (viewportHeight - bottomPadding)
+        totalContentHeight - viewportHeight
         ).coerceAtLeast(0f)
 
     val progress = if (scrollableHeight > 0f) {
@@ -610,7 +586,7 @@ private fun getViewPortThumbY(
 
     val thumbHeightPx = with(density) { thumbHeight.toPx() }
 
-    val availableHeight = (viewportHeight - thumbHeightPx - bottomPadding)
+    val availableHeight = (viewportHeight - thumbHeightPx)
         .coerceAtLeast(0f)
 
     return (progress * availableHeight)

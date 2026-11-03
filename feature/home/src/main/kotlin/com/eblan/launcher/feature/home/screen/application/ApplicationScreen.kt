@@ -41,10 +41,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.material3.ElevatedFilterChip
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SearchBarState
 import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
@@ -90,6 +92,7 @@ import com.eblan.launcher.domain.model.launcherapps.EblanUserType
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.AppDrawerType
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
+import com.eblan.launcher.domain.model.userdata.SearchBarPosition
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.R
 import com.eblan.launcher.feature.home.component.HomeHandler
@@ -494,7 +497,7 @@ internal fun EblanApplicationInfoTabRow(
     }
 }
 
-@OptIn(FlowPreview::class)
+@OptIn(ExperimentalMaterial3Api::class, FlowPreview::class)
 @Composable
 internal fun ApplicationScreenEffect(
     // Pager and Dimensions
@@ -504,16 +507,22 @@ internal fun ApplicationScreenEffect(
     // State and Focus
     selectedEblanApplicationInfoTagId: Long?,
     textFieldState: TextFieldState,
+    searchBarState: SearchBarState,
+    searchBarPosition: SearchBarPosition,
     showKeyboard: Boolean,
     focusRequester: FocusRequester,
+    isSearchOverlayVisible: Boolean,
     // Callbacks
     onDismiss: () -> Unit,
+    onUpdateIsBottomSearchOverlayVisible: (Boolean) -> Unit,
+    onUpdateIsKeyboardRequestedBySearchFab: (Boolean) -> Unit,
     onGetEblanApplicationInfosByLabel: (String) -> Unit,
     onGetEblanApplicationInfosByTagId: (Long?) -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val focusManager = LocalFocusManager.current
+    val searchCoroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = textFieldState) {
         snapshotFlow { textFieldState.text }.debounce(500L.milliseconds).onEach {
@@ -525,7 +534,7 @@ internal fun ApplicationScreenEffect(
         onGetEblanApplicationInfosByTagId(selectedEblanApplicationInfoTagId)
     }
 
-    LaunchedEffect(key1 = swipeY) {
+    LaunchedEffect(key1 = swipeY, key2 = showKeyboard) {
         when (swipeY) {
             screenHeight.toFloat() -> {
                 textFieldState.clearText()
@@ -546,7 +555,24 @@ internal fun ApplicationScreenEffect(
     }
 
     BackHandler(enabled = swipeY < screenHeight.toFloat()) {
-        onDismiss()
+        if (isSearchOverlayVisible) {
+            focusManager.clearFocus()
+
+            keyboardController?.hide()
+
+            if (searchBarPosition == SearchBarPosition.Bottom) {
+                onUpdateIsBottomSearchOverlayVisible(false)
+                onUpdateIsKeyboardRequestedBySearchFab(false)
+            }
+
+            textFieldState.clearText()
+
+            searchCoroutineScope.launch {
+                searchBarState.animateToCollapsed()
+            }
+        } else {
+            onDismiss()
+        }
     }
 
     HomeHandler(enabled = swipeY < screenHeight.toFloat()) {

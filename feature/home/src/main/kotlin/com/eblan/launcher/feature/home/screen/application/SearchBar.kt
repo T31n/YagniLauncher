@@ -49,11 +49,12 @@ import com.eblan.launcher.common.R as commonR
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ApplicationSearchBar(
-    // State and Focus
+    // State
     searchBarState: SearchBarState,
     textFieldState: TextFieldState,
+    // Focus
     focusRequester: FocusRequester,
-    // Colors
+    // Appearance
     backgroundColor: BackgroundColor,
     customBackgroundColor: Int,
     systemTextColor: TextColor,
@@ -94,9 +95,7 @@ internal fun ApplicationSearchBar(
                 trailingIcon = if (textFieldState.text.isNotEmpty()) {
                     {
                         IconButton(
-                            onClick = {
-                                textFieldState.clearText()
-                            },
+                            onClick = textFieldState::clearText,
                         ) {
                             Icon(
                                 imageVector = EblanLauncherIcons.Close,
