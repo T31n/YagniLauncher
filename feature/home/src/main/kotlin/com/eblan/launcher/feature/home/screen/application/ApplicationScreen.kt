@@ -537,66 +537,6 @@ internal fun EblanApplicationInfoTabRow(
     }
 }
 
-@OptIn(FlowPreview::class)
-@Composable
-internal fun ApplicationScreenEffect(
-    // Pager and Dimensions
-    horizontalPagerState: PagerState,
-    screenHeight: Int,
-    swipeY: Float,
-    // State and Focus
-    selectedEblanApplicationInfoTagId: Long?,
-    textFieldState: TextFieldState,
-    showKeyboard: Boolean,
-    focusRequester: FocusRequester,
-    // Callbacks
-    onDismiss: () -> Unit,
-    onGetEblanApplicationInfosByLabel: (String) -> Unit,
-    onGetEblanApplicationInfosByTagId: (Long?) -> Unit,
-) {
-    val keyboardController = LocalSoftwareKeyboardController.current
-
-    val focusManager = LocalFocusManager.current
-
-    LaunchedEffect(key1 = textFieldState) {
-        snapshotFlow { textFieldState.text }.debounce(500L.milliseconds).onEach {
-            onGetEblanApplicationInfosByLabel(it.toString())
-        }.collect()
-    }
-
-    LaunchedEffect(key1 = selectedEblanApplicationInfoTagId) {
-        onGetEblanApplicationInfosByTagId(selectedEblanApplicationInfoTagId)
-    }
-
-    LaunchedEffect(key1 = swipeY, key2 = showKeyboard) {
-        when (swipeY) {
-            screenHeight.toFloat() -> {
-                textFieldState.clearText()
-
-                horizontalPagerState.scrollToPage(0)
-
-                focusManager.clearFocus()
-
-                keyboardController?.hide()
-            }
-
-            0f if showKeyboard -> {
-                focusRequester.requestFocus()
-
-                keyboardController?.show()
-            }
-        }
-    }
-
-    BackHandler(enabled = swipeY < screenHeight.toFloat()) {
-        onDismiss()
-    }
-
-    HomeHandler(enabled = swipeY < screenHeight.toFloat()) {
-        onDismiss()
-    }
-}
-
 @SuppressLint("WrongConstant")
 @Composable
 internal fun rememberIsQuietModeEnabled(userHandle: UserHandle?): State<Boolean> {
@@ -771,6 +711,66 @@ private fun BlurBehindEffect(
                 blurBehindRadius = radius
             }
         }
+    }
+}
+
+@OptIn(FlowPreview::class)
+@Composable
+private fun ApplicationScreenEffect(
+    // Pager and Dimensions
+    horizontalPagerState: PagerState,
+    screenHeight: Int,
+    swipeY: Float,
+    // State and Focus
+    selectedEblanApplicationInfoTagId: Long?,
+    textFieldState: TextFieldState,
+    showKeyboard: Boolean,
+    focusRequester: FocusRequester,
+    // Callbacks
+    onDismiss: () -> Unit,
+    onGetEblanApplicationInfosByLabel: (String) -> Unit,
+    onGetEblanApplicationInfosByTagId: (Long?) -> Unit,
+) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(key1 = textFieldState) {
+        snapshotFlow { textFieldState.text }.debounce(500L.milliseconds).onEach {
+            onGetEblanApplicationInfosByLabel(it.toString())
+        }.collect()
+    }
+
+    LaunchedEffect(key1 = selectedEblanApplicationInfoTagId) {
+        onGetEblanApplicationInfosByTagId(selectedEblanApplicationInfoTagId)
+    }
+
+    LaunchedEffect(key1 = swipeY, key2 = showKeyboard) {
+        when (swipeY) {
+            screenHeight.toFloat() -> {
+                textFieldState.clearText()
+
+                horizontalPagerState.scrollToPage(0)
+
+                focusManager.clearFocus()
+
+                keyboardController?.hide()
+            }
+
+            0f if showKeyboard -> {
+                focusRequester.requestFocus()
+
+                keyboardController?.show()
+            }
+        }
+    }
+
+    BackHandler(enabled = swipeY < screenHeight.toFloat()) {
+        onDismiss()
+    }
+
+    HomeHandler(enabled = swipeY < screenHeight.toFloat()) {
+        onDismiss()
     }
 }
 
