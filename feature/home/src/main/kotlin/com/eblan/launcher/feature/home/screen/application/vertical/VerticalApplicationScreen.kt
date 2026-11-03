@@ -665,12 +665,6 @@ private fun EblanApplicationInfos(
 
     val privateIsQuiteModeEnabled by rememberIsPrivateQuietModeEnabled(eblanUser = getEblanApplicationInfosByLabelAndTag.privateEblanUser)
 
-    val bottomPadding = if (appDrawerSettings.searchBarPosition == SearchBarPosition.Bottom) {
-        0.dp
-    } else {
-        paddingValues.calculateBottomPadding()
-    }
-
     val alphabeticalScrollBarItems =
         getEblanApplicationInfosByLabelAndTag.alphabeticalScrollBarItems[eblanUserPageKey].orEmpty()
 
@@ -691,7 +685,7 @@ private fun EblanApplicationInfos(
             columns = GridCells.Fixed(count = appDrawerSettings.appDrawerColumns),
             state = lazyGridState,
             modifier = Modifier.weight(1f),
-            contentPadding = PaddingValues(bottom = bottomPadding),
+            contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
             userScrollEnabled = !isVisibleOverlay,
         ) {
             when (eblanUserPageKey.eblanUser.eblanUserType) {
@@ -820,7 +814,6 @@ private fun EblanApplicationInfos(
             canScroll = canScroll,
             // UI Settings
             appDrawerSettings = appDrawerSettings,
-            paddingValues = paddingValues,
             isPrivateSpaceEntryPointHidden = isDefaultLauncher &&
                 eblanUserPageKey.eblanUser.eblanUserType == EblanUserType.Personal &&
                 getEblanApplicationInfosByLabelAndTag.privateEblanUser
