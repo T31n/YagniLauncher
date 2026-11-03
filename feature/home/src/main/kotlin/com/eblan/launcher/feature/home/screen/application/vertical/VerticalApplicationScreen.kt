@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -380,8 +381,9 @@ internal fun VerticalApplicationScreen(
                         else -> null
                     },
                     modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(bottom = paddingValues.calculateBottomPadding()),
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = paddingValues.calculateBottomPadding())
+                        .consumeWindowInsets(PaddingValues(bottom = paddingValues.calculateBottomPadding())),
                 ) { showOverlay ->
                     if (showOverlay == true) {
                         ApplicationSearchBar(
