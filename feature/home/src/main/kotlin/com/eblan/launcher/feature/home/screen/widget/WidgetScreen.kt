@@ -164,7 +164,10 @@ internal fun WidgetScreen(
                 translationY = swipeY
                 this.alpha = alpha
                 clip = true
-                shape = RoundedCornerShape(20.dp)
+                shape = RoundedCornerShape(
+                    topStart = 20.dp,
+                    topEnd = 20.dp,
+                )
             }
             .run {
                 if (!isVisibleOverlay) {

@@ -169,7 +169,6 @@ internal class HomeViewModel @Inject constructor(
             privateEblanApplicationInfos = emptyList(),
             iconPackFilePaths = emptyMap(),
             folderEblanApplicationInfos = emptyList(),
-            alphabeticalScrollBarItems = emptyMap(),
         ),
     )
 

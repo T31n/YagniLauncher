@@ -40,10 +40,4 @@
     <string name="sort_update_and_delete_folders">Сортировка, обновление и удаление папок</string>
     <string name="vertical">Вертикально</string>
     <string name="horizontal">Горизонтально</string>
-    <string name="top">Сверху</string>
-    <string name="bottom">Снизу</string>
-    <string name="scroll_bar">Полоса прокрутки</string>
-    <string name="alphabetical">По алфавиту</string>
-    <string name="search_bar_position">Положение строки поиска</string>
-    <string name="scroll_bar_type">Тип полосы прокрутки</string>
 </resources>

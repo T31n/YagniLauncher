@@ -92,7 +92,6 @@ import com.eblan.launcher.domain.model.launcherapps.EblanUserType
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.AppDrawerType
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
-import com.eblan.launcher.domain.model.userdata.SearchBarPosition
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.R
 import com.eblan.launcher.feature.home.component.HomeHandler
@@ -187,7 +186,10 @@ internal fun ApplicationScreen(
                 translationY = swipeY
                 this.alpha = alpha
                 clip = true
-                shape = RoundedCornerShape(20.dp)
+                shape = RoundedCornerShape(
+                    topStart = 20.dp,
+                    topEnd = 20.dp,
+                )
             }
             .run {
                 if (!isVisibleOverlay) {
@@ -497,7 +499,7 @@ internal fun EblanApplicationInfoTabRow(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, FlowPreview::class)
+@OptIn(FlowPreview::class)
 @Composable
 internal fun ApplicationScreenEffect(
     // Pager and Dimensions
@@ -507,22 +509,16 @@ internal fun ApplicationScreenEffect(
     // State and Focus
     selectedEblanApplicationInfoTagId: Long?,
     textFieldState: TextFieldState,
-    searchBarState: SearchBarState,
-    searchBarPosition: SearchBarPosition,
     showKeyboard: Boolean,
     focusRequester: FocusRequester,
-    isSearchOverlayVisible: Boolean,
     // Callbacks
     onDismiss: () -> Unit,
-    onUpdateIsBottomSearchOverlayVisible: (Boolean) -> Unit,
-    onUpdateIsKeyboardRequestedBySearchFab: (Boolean) -> Unit,
     onGetEblanApplicationInfosByLabel: (String) -> Unit,
     onGetEblanApplicationInfosByTagId: (Long?) -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val focusManager = LocalFocusManager.current
-    val searchCoroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = textFieldState) {
         snapshotFlow { textFieldState.text }.debounce(500L.milliseconds).onEach {
@@ -555,24 +551,7 @@ internal fun ApplicationScreenEffect(
     }
 
     BackHandler(enabled = swipeY < screenHeight.toFloat()) {
-        if (isSearchOverlayVisible) {
-            focusManager.clearFocus()
-
-            keyboardController?.hide()
-
-            if (searchBarPosition == SearchBarPosition.Bottom) {
-                onUpdateIsBottomSearchOverlayVisible(false)
-                onUpdateIsKeyboardRequestedBySearchFab(false)
-            }
-
-            textFieldState.clearText()
-
-            searchCoroutineScope.launch {
-                searchBarState.animateToCollapsed()
-            }
-        } else {
-            onDismiss()
-        }
+        onDismiss()
     }
 
     HomeHandler(enabled = swipeY < screenHeight.toFloat()) {

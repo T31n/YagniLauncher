@@ -20,13 +20,9 @@
     <string name="hidden_applications">التطبيقات المخفية</string>
     <string name="sort_update_and_delete_folders">فرز و تعديل و حذف الملفات</string>
     <string name="horizontal">الأفقي</string>
-    <string name="bottom">الاسفل</string>
-    <string name="search_bar_position">موضع شريط البحث</string>
     <string name="show_keyboard">إظهار لوحة المفاتيح</string>
     <string name="vertical_grid">تنسيق الشاشة الرئيسية العمودي</string>
     <string name="app_drawer_type">نوع درج التطبيقات</string>
-    <string name="scroll_bar_type">نوع شريط التمرير</string>
-    <string name="scroll_bar">شريط التمرير</string>
     <string name="no_hidden_applications">لا يوجد تطبيقات مخفية</string>
     <string name="fuzzy_search">البحث التقريبي</string>
     <string name="hide_selected_apps_from_the_app_drawer">إخفاء التطبيقات المحددة من درج التطبيقات</string>
@@ -44,6 +40,4 @@
     <string name="exclude_tagged_apps">استبعاد المجلدات المصنفة</string>
     <string name="sort_update_and_delete_tags">ترتيب التصنيفات وتحديثها وحذفها</string>
     <string name="no_folders">لا يوجد ملفات</string>
-    <string name="top">الاعلى</string>
-    <string name="alphabetical">الترتيب الابجدي للحروف</string>
 </resources>

@@ -32,6 +32,4 @@ data class AppDrawerSettings(
     val showKeyboard: Boolean,
     val fuzzySearch: Boolean,
     val blurBehind: Boolean,
-    val searchBarPosition: SearchBarPosition,
-    val scrollBarType: ScrollBarType,
 )

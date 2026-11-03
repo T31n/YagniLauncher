@@ -40,10 +40,4 @@
     <string name="sort_update_and_delete_folders">Sortuj, aktualizuj i usuwaj foldery</string>
     <string name="vertical">Pionowo</string>
     <string name="horizontal">Poziomo</string>
-    <string name="top">Góra</string>
-    <string name="bottom">Dół</string>
-    <string name="scroll_bar">Pasek przewijania</string>
-    <string name="alphabetical">Alfabetycznie</string>
-    <string name="search_bar_position">Pozycja paska wyszukiwania</string>
-    <string name="scroll_bar_type">Typ paska przewijania</string>
 </resources>

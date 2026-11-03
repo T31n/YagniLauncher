@@ -47,8 +47,6 @@ import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.AppDrawerType
-import com.eblan.launcher.domain.model.userdata.ScrollBarType
-import com.eblan.launcher.domain.model.userdata.SearchBarPosition
 import com.eblan.launcher.feature.settings.appdrawer.dialog.EditHorizontalGridDialog
 import com.eblan.launcher.feature.settings.appdrawer.dialog.EditVerticalGridDialog
 import com.eblan.launcher.feature.settings.appdrawer.dialog.HiddenEblanApplicationInfosDialog
@@ -62,7 +60,6 @@ import com.eblan.launcher.ui.settings.GridItemSettings
 import com.eblan.launcher.ui.settings.SettingsColumnItem
 import com.eblan.launcher.ui.settings.SettingsSwitchItem
 import com.eblan.launcher.ui.settings.settingsFirstItemShape
-import com.eblan.launcher.ui.settings.settingsLastItemShape
 import com.eblan.launcher.ui.settings.settingsMiddleItemShape
 import com.eblan.launcher.common.R as commonR
 
@@ -169,8 +166,6 @@ private fun Success(
     var showBackgroundColorDialog by remember { mutableStateOf(false) }
     var showManageTagsDialog by remember { mutableStateOf(false) }
     var showManageFoldersDialog by remember { mutableStateOf(false) }
-    var showSearchBarPositionDialog by remember { mutableStateOf(false) }
-    var showScrollBarTypeDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -339,30 +334,6 @@ private fun Success(
             )
         }
 
-        SettingsColumnItem(
-            // Content
-            title = stringResource(R.string.search_bar_position),
-            subtitle = appDrawerSettings.searchBarPosition.getTitle(),
-            // Layout
-            shape = settingsMiddleItemShape,
-            // Actions
-            onClick = {
-                showSearchBarPositionDialog = true
-            },
-        )
-
-        SettingsColumnItem(
-            // Content
-            title = stringResource(R.string.scroll_bar_type),
-            subtitle = appDrawerSettings.scrollBarType.getTitle(),
-            // Layout
-            shape = settingsLastItemShape,
-            // Actions
-            onClick = {
-                showScrollBarTypeDialog = true
-            },
-        )
-
         GridItemSettings(
             // Grid item
             gridItemSettings = appDrawerSettings.gridItemSettings,
@@ -493,62 +464,10 @@ private fun Success(
             },
         )
     }
-
-    if (showSearchBarPositionDialog) {
-        RadioOptionsDialog(
-            // Dialog Content
-            title = stringResource(R.string.search_bar_position),
-            options = SearchBarPosition.entries,
-            selected = appDrawerSettings.searchBarPosition,
-            // Callbacks
-            label = {
-                it.getTitle()
-            },
-            onDismissRequest = {
-                showSearchBarPositionDialog = false
-            },
-            onUpdateClick = {
-                onUpdateAppDrawerSettings(appDrawerSettings.copy(searchBarPosition = it))
-            },
-        )
-    }
-
-    if (showScrollBarTypeDialog) {
-        RadioOptionsDialog(
-            // Dialog Content
-            title = stringResource(R.string.scroll_bar_type),
-            options = ScrollBarType.entries,
-            selected = appDrawerSettings.scrollBarType,
-            // Callbacks
-            label = {
-                it.getTitle()
-            },
-            onDismissRequest = {
-                showScrollBarTypeDialog = false
-            },
-            onUpdateClick = {
-                onUpdateAppDrawerSettings(appDrawerSettings.copy(scrollBarType = it))
-            },
-        )
-    }
 }
 
 @Composable
 private fun AppDrawerType.getTitle(): String = when (this) {
     AppDrawerType.Vertical -> stringResource(R.string.vertical)
     AppDrawerType.Horizontal -> stringResource(R.string.horizontal)
-}
-
-@Composable
-private fun SearchBarPosition.getTitle(): String = when (this) {
-    SearchBarPosition.Top -> stringResource(R.string.top)
-    SearchBarPosition.Bottom -> stringResource(R.string.bottom)
-    SearchBarPosition.None -> stringResource(commonR.string.none)
-}
-
-@Composable
-private fun ScrollBarType.getTitle(): String = when (this) {
-    ScrollBarType.ScrollBar -> stringResource(R.string.scroll_bar)
-    ScrollBarType.Alphabetical -> stringResource(R.string.alphabetical)
-    ScrollBarType.None -> stringResource(commonR.string.none)
 }

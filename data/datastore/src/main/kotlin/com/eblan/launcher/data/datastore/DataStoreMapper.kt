@@ -19,8 +19,6 @@ package com.eblan.launcher.data.datastore
 
 import com.eblan.launcher.data.datastore.proto.appdrawer.AppDrawerSettingsProto
 import com.eblan.launcher.data.datastore.proto.appdrawer.AppDrawerTypeProto
-import com.eblan.launcher.data.datastore.proto.appdrawer.ScrollBarTypeProto
-import com.eblan.launcher.data.datastore.proto.appdrawer.SearchBarPositionProto
 import com.eblan.launcher.data.datastore.proto.experimental.ExperimentalSettingsProto
 import com.eblan.launcher.data.datastore.proto.folder.FolderSettingsProto
 import com.eblan.launcher.data.datastore.proto.general.GeneralSettingsProto
@@ -59,8 +57,6 @@ import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.IconTint
 import com.eblan.launcher.domain.model.userdata.PagerTransitionEffect
-import com.eblan.launcher.domain.model.userdata.ScrollBarType
-import com.eblan.launcher.domain.model.userdata.SearchBarPosition
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.domain.model.userdata.Theme
 
@@ -104,8 +100,6 @@ internal fun AppDrawerSettingsProto.toAppDrawerSettings(): AppDrawerSettings = A
     showKeyboard = showKeyboard,
     fuzzySearch = fuzzySearch,
     blurBehind = blurBehind,
-    searchBarPosition = searchBarPositionProto.toSearchBarPosition(),
-    scrollBarType = scrollBarTypeProto.toScrollBarType(),
 )
 
 internal fun GridItemSettingsProto.toGridItemSettings(): GridItemSettings = GridItemSettings(
@@ -194,8 +188,6 @@ internal fun AppDrawerSettings.toAppDrawerSettingsProto(): AppDrawerSettingsProt
     builder.showKeyboard = showKeyboard
     builder.fuzzySearch = fuzzySearch
     builder.blurBehind = blurBehind
-    builder.searchBarPositionProto = searchBarPosition.toSearchBarPositionProto()
-    builder.scrollBarTypeProto = scrollBarType.toScrollBarTypeProto()
 }.build()
 
 internal fun GeneralSettings.toGeneralSettingsProto(): GeneralSettingsProto = GeneralSettingsProto.newBuilder().also { builder ->
@@ -391,30 +383,6 @@ private fun AppDrawerType.toAppDrawerTypeProto(): AppDrawerTypeProto = when (thi
 private fun AppDrawerTypeProto.toAppDrawerType(): AppDrawerType = when (this) {
     AppDrawerTypeProto.Vertical, AppDrawerTypeProto.UNRECOGNIZED -> AppDrawerType.Vertical
     AppDrawerTypeProto.Horizontal -> AppDrawerType.Horizontal
-}
-
-private fun SearchBarPositionProto.toSearchBarPosition(): SearchBarPosition = when (this) {
-    SearchBarPositionProto.SearchBarPositionTop, SearchBarPositionProto.UNRECOGNIZED -> SearchBarPosition.Top
-    SearchBarPositionProto.SearchBarPositionBottom -> SearchBarPosition.Bottom
-    SearchBarPositionProto.SearchBarPositionNone -> SearchBarPosition.None
-}
-
-private fun ScrollBarTypeProto.toScrollBarType(): ScrollBarType = when (this) {
-    ScrollBarTypeProto.ScrollBarTypeScrollBar, ScrollBarTypeProto.UNRECOGNIZED -> ScrollBarType.ScrollBar
-    ScrollBarTypeProto.ScrollBarTypeAlphabetical -> ScrollBarType.Alphabetical
-    ScrollBarTypeProto.ScrollBarTypeNone -> ScrollBarType.None
-}
-
-private fun SearchBarPosition.toSearchBarPositionProto(): SearchBarPositionProto = when (this) {
-    SearchBarPosition.Top -> SearchBarPositionProto.SearchBarPositionTop
-    SearchBarPosition.Bottom -> SearchBarPositionProto.SearchBarPositionBottom
-    SearchBarPosition.None -> SearchBarPositionProto.SearchBarPositionNone
-}
-
-private fun ScrollBarType.toScrollBarTypeProto(): ScrollBarTypeProto = when (this) {
-    ScrollBarType.ScrollBar -> ScrollBarTypeProto.ScrollBarTypeScrollBar
-    ScrollBarType.Alphabetical -> ScrollBarTypeProto.ScrollBarTypeAlphabetical
-    ScrollBarType.None -> ScrollBarTypeProto.ScrollBarTypeNone
 }
 
 private fun LayoutType.toLayoutTypeProto(): LayoutTypeProto = when (this) {
