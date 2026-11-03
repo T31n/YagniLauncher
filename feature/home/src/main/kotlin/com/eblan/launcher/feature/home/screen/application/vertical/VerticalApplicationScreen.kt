@@ -40,7 +40,6 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.BottomSheetDefaults.DragHandle
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -201,19 +200,6 @@ internal fun VerticalApplicationScreen(
     val showKeyboard = appDrawerSettings.searchBarPosition != SearchBarPosition.None &&
         ((appDrawerSettings.showKeyboard && isSearchBarVisible) || isKeyboardRequestedBySearchFab)
     val isScrolling = horizontalPagerState.isScrollInProgress || isGridScrollInProgress
-    val searchCoroutineScope = rememberCoroutineScope()
-
-    val onDismissSearch: () -> Unit = {
-        isBottomSearchOverlayVisible = false
-        isKeyboardRequestedBySearchFab = false
-
-        textFieldState.clearText()
-
-        searchCoroutineScope.launch {
-            searchBarState.animateToCollapsed()
-        }
-    }
-
     LaunchedEffect(key1 = isScrolling) {
         if (isScrolling) {
             isSearchFabVisible = false
@@ -241,12 +227,15 @@ internal fun VerticalApplicationScreen(
         // State and Focus
         selectedEblanApplicationInfoTagId = selectedEblanApplicationInfoTagId,
         textFieldState = textFieldState,
+        searchBarState = searchBarState,
+        searchBarPosition = appDrawerSettings.searchBarPosition,
         showKeyboard = showKeyboard,
         focusRequester = focusRequester,
         isSearchOverlayVisible = isSearchOverlayVisible,
         // Callbacks
         onDismiss = onDismiss,
-        onDismissSearch = onDismissSearch,
+        onUpdateIsBottomSearchOverlayVisible = { isBottomSearchOverlayVisible = it },
+        onUpdateIsKeyboardRequestedBySearchFab = { isKeyboardRequestedBySearchFab = it },
         onGetEblanApplicationInfosByLabel = onGetEblanApplicationInfosByLabel,
         onGetEblanApplicationInfosByTagId = onGetEblanApplicationInfosByTagId,
     )
@@ -275,11 +264,12 @@ internal fun VerticalApplicationScreen(
 
         if (appDrawerSettings.searchBarPosition == SearchBarPosition.Top) {
             ApplicationSearchBar(
-                // State and Focus
+                // State
                 searchBarState = searchBarState,
                 textFieldState = textFieldState,
+                // Focus
                 focusRequester = focusRequester,
-                // Colors
+                // Appearance
                 backgroundColor = appDrawerSettings.backgroundColor,
                 customBackgroundColor = appDrawerSettings.customBackgroundColor,
                 systemTextColor = systemTextColor,
@@ -387,17 +377,18 @@ internal fun VerticalApplicationScreen(
                 ) { showOverlay ->
                     if (showOverlay == true) {
                         ApplicationSearchBar(
-                            modifier = Modifier.imePadding(),
-                            // State and Focus
+                            // State
                             searchBarState = searchBarState,
                             textFieldState = textFieldState,
+                            // Focus
                             focusRequester = focusRequester,
-                            // Colors
+                            // Appearance
                             backgroundColor = appDrawerSettings.backgroundColor,
                             customBackgroundColor = appDrawerSettings.customBackgroundColor,
                             systemTextColor = systemTextColor,
                             systemCustomTextColor = systemCustomTextColor,
-                            onDismiss = onDismissSearch,
+                            // Layout
+                            modifier = Modifier.imePadding(),
                         )
                     } else if (showOverlay == false) {
                         FloatingActionButton(
