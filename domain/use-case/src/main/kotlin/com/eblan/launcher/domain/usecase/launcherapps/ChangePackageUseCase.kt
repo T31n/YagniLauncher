@@ -37,6 +37,7 @@ import com.eblan.launcher.domain.repository.ShortcutConfigGridItemRepository
 import com.eblan.launcher.domain.repository.ShortcutInfoGridItemRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.repository.WidgetGridItemRepository
+import com.eblan.launcher.domain.usecase.iconpack.UpdateIconPacksUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
@@ -60,6 +61,7 @@ class ChangePackageUseCase @Inject constructor(
     private val widgetGridItemRepository: WidgetGridItemRepository,
     private val iconKeyGenerator: IconKeyGenerator,
     private val userDataRepository: UserDataRepository,
+    private val updateIconPacksUseCase: UpdateIconPacksUseCase,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     /**
@@ -72,9 +74,9 @@ class ChangePackageUseCase @Inject constructor(
         serialNumber: Long,
         packageName: String,
     ) {
-        val userData = userDataRepository.userDataFlow.first()
-
         withContext(ioDispatcher) {
+            val userData = userDataRepository.userDataFlow.first()
+
             updateEblanApplicationInfo(
                 packageName = packageName,
                 serialNumber = serialNumber,
@@ -93,6 +95,10 @@ class ChangePackageUseCase @Inject constructor(
             updateEblanShortcutInfo(
                 serialNumber = serialNumber,
                 packageName = packageName,
+            )
+
+            updateIconPacksUseCase(
+                iconPackPackageName = userData.generalSettings.iconPackPackageName,
             )
         }
     }

@@ -53,7 +53,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.uuid.ExperimentalUuidApi
@@ -85,24 +84,20 @@ class SyncDataUseCase @Inject constructor(
         withContext(ioDispatcher) {
             val userData = userDataRepository.userDataFlow.first()
 
-            launch {
-                updateEblanApplicationInfos(
-                    experimentalSettings = userData.experimentalSettings,
-                    homeSettings = userData.homeSettings,
-                    folderSettings = userData.folderSettings,
-                    generalSettings = userData.generalSettings,
-                )
+            updateEblanApplicationInfos(
+                experimentalSettings = userData.experimentalSettings,
+                homeSettings = userData.homeSettings,
+                folderSettings = userData.folderSettings,
+                generalSettings = userData.generalSettings,
+            )
 
-                updateAppWidgetProviderInfos()
+            updateAppWidgetProviderInfos()
 
-                updateEblanLauncherShortcutInfos()
-            }
+            updateEblanLauncherShortcutInfos()
 
-            launch {
-                updateIconPacksUseCase(
-                    iconPackPackageName = userData.generalSettings.iconPackPackageName,
-                )
-            }
+            updateIconPacksUseCase(
+                iconPackPackageName = userData.generalSettings.iconPackPackageName,
+            )
         }
     }
 
