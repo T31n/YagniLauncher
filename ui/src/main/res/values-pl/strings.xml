@@ -52,7 +52,6 @@
     <string name="swipe_up">Przesunięcie w górę</string>
     <string name="swipe_down">Przesunięcie w dół</string>
     <string name="limit_app_names_to_one_line">Ogranicz nazwy aplikacji do jednej linii</string>
-    <string name="custom">Własny</string>
     <string name="add_folder">Dodaj folder</string>
     <string name="folder_is_not_valid">Nieprawidłowy folder</string>
     <string name="center_vertically">Środkuj w pionie</string>

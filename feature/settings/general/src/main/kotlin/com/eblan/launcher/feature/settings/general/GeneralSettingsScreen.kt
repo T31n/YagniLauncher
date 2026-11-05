@@ -59,6 +59,7 @@ import com.eblan.launcher.ui.dialog.IconTintDialog
 import com.eblan.launcher.ui.dialog.RadioOptionsDialog
 import com.eblan.launcher.ui.dialog.getTitle
 import com.eblan.launcher.ui.settings.SettingsColumnItem
+import com.eblan.launcher.ui.settings.SettingsDropdownItem
 import com.eblan.launcher.ui.settings.SettingsSwitchItem
 import com.eblan.launcher.ui.settings.rememberIsNotificationAccessGranted
 import com.eblan.launcher.ui.settings.settingsFirstItemShape
@@ -160,7 +161,6 @@ private fun Success(
 
     val isNotificationAccessGranted by rememberIsNotificationAccessGranted()
 
-    var showThemeDialog by remember { mutableStateOf(false) }
     var showImportIconPackDialog by remember { mutableStateOf(false) }
     var selectIconPackDialog by remember { mutableStateOf(false) }
     var showIconTintDialog by remember { mutableStateOf(false) }
@@ -199,15 +199,19 @@ private fun Success(
             },
         )
 
-        SettingsColumnItem(
+        SettingsDropdownItem(
             // Content
             title = stringResource(R.string.theme),
-            subtitle = generalSettings.theme.getTitle(),
+            options = Theme.entries,
+            selected = generalSettings.theme,
+            label = {
+                it.getTitle()
+            },
             // Layout
             shape = settingsMiddleItemShape,
             // Actions
-            onClick = {
-                showThemeDialog = true
+            onSelectedChange = {
+                onUpdateGeneralSettings(generalSettings.copy(theme = it))
             },
         )
 
@@ -297,25 +301,6 @@ private fun Success(
                 },
             )
         }
-    }
-
-    if (showThemeDialog) {
-        RadioOptionsDialog(
-            // Dialog Content
-            title = stringResource(R.string.theme),
-            options = Theme.entries,
-            selected = generalSettings.theme,
-            // Callbacks
-            label = {
-                it.getTitle()
-            },
-            onDismissRequest = {
-                showThemeDialog = false
-            },
-            onUpdateClick = {
-                onUpdateGeneralSettings(generalSettings.copy(theme = it))
-            },
-        )
     }
 
     if (showImportIconPackDialog) {

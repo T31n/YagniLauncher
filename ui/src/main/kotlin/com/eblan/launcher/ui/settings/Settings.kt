@@ -21,8 +21,10 @@ import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -34,6 +36,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -49,6 +53,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -189,6 +194,77 @@ fun SettingsRowItem(
                 title = title,
                 subtitle = subtitle,
             )
+        }
+    }
+}
+
+@Composable
+fun <T> SettingsDropdownItem(
+    // Content
+    title: String,
+    options: List<T>,
+    selected: T,
+    label: @Composable (T) -> String,
+    // Layout
+    shape: Shape,
+    modifier: Modifier = Modifier,
+    // Actions
+    onSelectedChange: (T) -> Unit,
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    SettingsItemCard(
+        // Modifier and Layout
+        modifier = modifier,
+        shape = shape,
+        // Actions and Content
+        onClick = {
+            expanded = true
+        },
+    ) {
+        Text(
+            modifier = Modifier.weight(1f),
+            text = title,
+        )
+
+        Spacer(modifier = Modifier.width(10.dp))
+
+        Box {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(text = label(selected))
+
+                val iconRotation by animateFloatAsState(
+                    targetValue = if (expanded) 180f else 0f,
+                    label = "dropdownIconRotation",
+                )
+
+                Icon(
+                    modifier = Modifier.graphicsLayer {
+                        rotationZ = iconRotation
+                    },
+                    imageVector = EblanLauncherIcons.ArrowDropDown,
+                    contentDescription = null,
+                )
+            }
+
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = {
+                    expanded = false
+                },
+            ) {
+                options.forEach { option ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(text = label(option))
+                        },
+                        onClick = {
+                            expanded = false
+                            onSelectedChange(option)
+                        },
+                    )
+                }
+            }
         }
     }
 }

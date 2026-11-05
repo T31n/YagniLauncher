@@ -159,21 +159,20 @@ private fun Success(
                     }
                     .fillMaxWidth()
                     .padding(10.dp),
-                headlineContent = {
-                    Text(
-                        text = eblanActionType.getEblanActionTypeSubtitle(
-                            context = context,
-                            componentName = "",
-                        ),
-                    )
-                },
                 leadingContent = {
                     Icon(
                         imageVector = ImageVector.vectorResource(eblanActionType.getResId()),
                         contentDescription = null,
                     )
                 },
-            )
+            ) {
+                Text(
+                    text = eblanActionType.getEblanActionTypeSubtitle(
+                        context = context,
+                        componentName = "",
+                    ),
+                )
+            }
         }
     }
 

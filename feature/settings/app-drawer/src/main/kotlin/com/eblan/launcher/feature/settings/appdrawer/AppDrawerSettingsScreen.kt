@@ -54,10 +54,10 @@ import com.eblan.launcher.feature.settings.appdrawer.dialog.ManageFoldersDialog
 import com.eblan.launcher.feature.settings.appdrawer.dialog.ManageTagsDialog
 import com.eblan.launcher.feature.settings.appdrawer.model.AppDrawerSettingsUiState
 import com.eblan.launcher.ui.dialog.BackgroundColorDialog
-import com.eblan.launcher.ui.dialog.RadioOptionsDialog
 import com.eblan.launcher.ui.dialog.getTitle
 import com.eblan.launcher.ui.settings.GridItemSettings
 import com.eblan.launcher.ui.settings.SettingsColumnItem
+import com.eblan.launcher.ui.settings.SettingsDropdownItem
 import com.eblan.launcher.ui.settings.SettingsSwitchItem
 import com.eblan.launcher.ui.settings.settingsFirstItemShape
 import com.eblan.launcher.ui.settings.settingsMiddleItemShape
@@ -159,7 +159,6 @@ private fun Success(
     onUpdateEblanApplicationInfoTags: (List<EblanApplicationInfoTag>) -> Unit,
     onUpdateFolderEblanApplicationInfos: (List<FolderEblanApplicationInfo>) -> Unit,
 ) {
-    var showAppDrawerTypeDialog by remember { mutableStateOf(false) }
     var showVerticalGridDialog by remember { mutableStateOf(false) }
     var showHorizontalGridDialog by remember { mutableStateOf(false) }
     var showHiddenEblanApplicationInfosDialog by remember { mutableStateOf(false) }
@@ -198,15 +197,19 @@ private fun Success(
             },
         )
 
-        SettingsColumnItem(
+        SettingsDropdownItem(
             // Content
             title = stringResource(R.string.app_drawer_type),
-            subtitle = appDrawerSettings.appDrawerType.getTitle(),
+            options = AppDrawerType.entries,
+            selected = appDrawerSettings.appDrawerType,
+            label = {
+                it.getTitle()
+            },
             // Layout
             shape = settingsMiddleItemShape,
             // Actions
-            onClick = {
-                showAppDrawerTypeDialog = true
+            onSelectedChange = {
+                onUpdateAppDrawerSettings(appDrawerSettings.copy(appDrawerType = it))
             },
         )
 
@@ -344,25 +347,6 @@ private fun Success(
                         gridItemSettings = it,
                     ),
                 )
-            },
-        )
-    }
-
-    if (showAppDrawerTypeDialog) {
-        RadioOptionsDialog(
-            // Dialog Content
-            title = stringResource(R.string.app_drawer_type),
-            options = AppDrawerType.entries,
-            selected = appDrawerSettings.appDrawerType,
-            // Callbacks
-            label = {
-                it.getTitle()
-            },
-            onDismissRequest = {
-                showAppDrawerTypeDialog = false
-            },
-            onUpdateClick = {
-                onUpdateAppDrawerSettings(appDrawerSettings.copy(appDrawerType = it))
             },
         )
     }
