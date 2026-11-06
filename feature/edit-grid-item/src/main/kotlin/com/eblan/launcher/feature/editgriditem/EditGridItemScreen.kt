@@ -53,7 +53,7 @@ import com.eblan.launcher.feature.editgriditem.model.EditGridItemUiState
 import com.eblan.launcher.ui.dialog.EditCustomLabelDialog
 import com.eblan.launcher.ui.dialog.IconPackInfoFilesDialog
 import com.eblan.launcher.ui.settings.CustomIcon
-import com.eblan.launcher.ui.settings.EblanActionSettings
+import com.eblan.launcher.ui.settings.GridItemActionSettings
 import com.eblan.launcher.ui.settings.GridItemSettings
 import com.eblan.launcher.ui.settings.SettingsColumnItem
 import com.eblan.launcher.ui.settings.SettingsSwitchItem
@@ -282,7 +282,7 @@ private fun Success(
             style = MaterialTheme.typography.bodySmall,
         )
 
-        EblanActionSettings(
+        GridItemActionSettings(
             // Actions
             doubleTap = gridItem.doubleTap,
             swipeUp = gridItem.swipeUp,

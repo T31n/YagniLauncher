@@ -40,8 +40,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.userdata.GestureSettings
 import com.eblan.launcher.feature.settings.gestures.model.GesturesSettingsUiState
-import com.eblan.launcher.ui.settings.EblanActionSettings
-import com.eblan.launcher.ui.settings.GestureActionSettings
+import com.eblan.launcher.ui.settings.GridActionSettings
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -99,38 +98,7 @@ private fun GestureSettingsScreen(
                         .padding(15.dp),
                     verticalArrangement = Arrangement.spacedBy(15.dp),
                 ) {
-                    EblanActionSettings(
-                        // Actions
-                        doubleTap = gesturesSettingsUiState.gestureSettings.doubleTap,
-                        swipeUp = gesturesSettingsUiState.gestureSettings.swipeUp,
-                        swipeDown = gesturesSettingsUiState.gestureSettings.swipeDown,
-                        // Application Info
-                        eblanApplicationInfos = gesturesSettingsUiState.eblanApplicationInfos,
-                        // Action Callbacks
-                        onUpdateDoubleTap = {
-                            onUpdateGestureSettings(
-                                gesturesSettingsUiState.gestureSettings.copy(
-                                    doubleTap = it,
-                                ),
-                            )
-                        },
-                        onUpdateSwipeUp = {
-                            onUpdateGestureSettings(
-                                gesturesSettingsUiState.gestureSettings.copy(
-                                    swipeUp = it,
-                                ),
-                            )
-                        },
-                        onUpdateSwipeDown = {
-                            onUpdateGestureSettings(
-                                gesturesSettingsUiState.gestureSettings.copy(
-                                    swipeDown = it,
-                                ),
-                            )
-                        },
-                    )
-
-                    GestureActionSettings(
+                    GridActionSettings(
                         // Settings
                         gestureSettings = gesturesSettingsUiState.gestureSettings,
                         // Application Info
