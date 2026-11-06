@@ -55,7 +55,7 @@ import com.eblan.launcher.feature.settings.general.dialog.ImportIconPackInfoDial
 import com.eblan.launcher.feature.settings.general.dialog.SelectIconPackInfoDialog
 import com.eblan.launcher.feature.settings.general.model.GeneralSettingsUiState
 import com.eblan.launcher.service.IconPackService
-import com.eblan.launcher.ui.dialog.IconTintDialog
+import com.eblan.launcher.ui.dialog.ColorPickerDialog
 import com.eblan.launcher.ui.dialog.RadioOptionsDialog
 import com.eblan.launcher.ui.dialog.getTitle
 import com.eblan.launcher.ui.settings.SettingsColumnItem
@@ -163,7 +163,7 @@ private fun Success(
 
     var showImportIconPackDialog by remember { mutableStateOf(false) }
     var selectIconPackDialog by remember { mutableStateOf(false) }
-    var showIconTintDialog by remember { mutableStateOf(false) }
+    var showIconTintPickerDialog by remember { mutableStateOf(false) }
     var showIconShapeDialog by remember { mutableStateOf(false) }
 
     Column(
@@ -228,7 +228,7 @@ private fun Success(
             // Actions
             onSelectedChange = {
                 if (it == IconTint.Custom) {
-                    showIconTintDialog = true
+                    showIconTintPickerDialog = true
                 } else {
                     onUpdateGeneralSettings(generalSettings.copy(iconTint = it))
                 }
@@ -353,22 +353,20 @@ private fun Success(
         )
     }
 
-    if (showIconTintDialog) {
-        IconTintDialog(
+    if (showIconTintPickerDialog) {
+        ColorPickerDialog(
             // Content
             title = stringResource(R.string.icon_tint),
-            // State
-            iconTint = generalSettings.iconTint,
-            customIconTint = generalSettings.customIconTint,
-            // Actions
+            customColor = generalSettings.customIconTint,
+            // Callbacks
             onDismissRequest = {
-                showIconTintDialog = false
+                showIconTintPickerDialog = false
             },
-            onUpdateClick = { iconTint, customIconTint ->
+            onSelectColor = {
                 onUpdateGeneralSettings(
                     generalSettings.copy(
-                        iconTint = iconTint,
-                        customIconTint = customIconTint,
+                        iconTint = IconTint.Custom,
+                        customIconTint = it,
                     ),
                 )
             },

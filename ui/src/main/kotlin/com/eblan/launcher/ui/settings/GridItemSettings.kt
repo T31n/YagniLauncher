@@ -49,7 +49,6 @@ import com.eblan.launcher.ui.dialog.EditIconSizeDialog
 import com.eblan.launcher.ui.dialog.EditPaddingDialog
 import com.eblan.launcher.ui.dialog.EditTextSizeDialog
 import com.eblan.launcher.ui.dialog.RadioOptionsDialog
-import com.eblan.launcher.ui.dialog.TextColorDialog
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -62,7 +61,7 @@ fun GridItemSettings(
     onUpdateGridItemSettings: (GridItemSettings) -> Unit,
 ) {
     var showIconSizeDialog by remember { mutableStateOf(false) }
-    var showTextColorDialog by remember { mutableStateOf(false) }
+    var showTextColorPickerDialog by remember { mutableStateOf(false) }
     var showTextSizeDialog by remember { mutableStateOf(false) }
     var showBackgroundColorDialog by remember { mutableStateOf(false) }
     var showPaddingDialog by remember { mutableStateOf(false) }
@@ -101,15 +100,23 @@ fun GridItemSettings(
             },
         )
 
-        SettingsColumnItem(
+        SettingsDropdownItem(
             // Content
             title = stringResource(R.string.text_color),
-            subtitle = gridItemSettings.textColor.getSubtitle(),
+            options = TextColor.entries,
+            selected = gridItemSettings.textColor,
+            label = {
+                it.getSubtitle()
+            },
             // Layout
             shape = settingsMiddleItemShape,
             // Actions
-            onClick = {
-                showTextColorDialog = true
+            onSelectedChange = {
+                if (it == TextColor.Custom) {
+                    showTextColorPickerDialog = true
+                } else {
+                    onUpdateGridItemSettings(gridItemSettings.copy(textColor = it))
+                }
             },
         )
 
@@ -281,22 +288,20 @@ fun GridItemSettings(
         )
     }
 
-    if (showTextColorDialog) {
-        TextColorDialog(
+    if (showTextColorPickerDialog) {
+        ColorPickerDialog(
             // Content
             title = stringResource(R.string.text_color),
-            // State
-            textColor = gridItemSettings.textColor,
-            customTextColor = gridItemSettings.customTextColor,
-            // Actions
+            customColor = gridItemSettings.customTextColor,
+            // Callbacks
             onDismissRequest = {
-                showTextColorDialog = false
+                showTextColorPickerDialog = false
             },
-            onUpdateClick = { textColor, customTextColor ->
+            onSelectColor = {
                 onUpdateGridItemSettings(
                     gridItemSettings.copy(
-                        textColor = textColor,
-                        customTextColor = customTextColor,
+                        textColor = TextColor.Custom,
+                        customTextColor = it,
                     ),
                 )
             },

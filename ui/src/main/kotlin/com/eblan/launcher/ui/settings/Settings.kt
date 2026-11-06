@@ -229,7 +229,10 @@ fun <T> SettingsDropdownItem(
 
         Box {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = label(selected))
+                Text(
+                    text = label(selected),
+                    style = MaterialTheme.typography.bodySmall,
+                )
 
                 Icon(
                     imageVector = EblanLauncherIcons.ArrowDropDown,

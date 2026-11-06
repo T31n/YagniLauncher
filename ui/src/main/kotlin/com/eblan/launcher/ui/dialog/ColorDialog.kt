@@ -33,44 +33,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import com.eblan.launcher.common.R.string.cancel
+import com.eblan.launcher.common.R.string.update
 import com.eblan.launcher.designsystem.component.EblanDialog
 import com.eblan.launcher.designsystem.component.EblanRadioButton
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.IconTint
-import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.common.R as commonR
-
-@Composable
-fun TextColorDialog(
-    // Content
-    title: String,
-    // State
-    textColor: TextColor,
-    customTextColor: Int,
-    // Layout
-    modifier: Modifier = Modifier,
-    // Actions
-    onDismissRequest: () -> Unit,
-    onUpdateClick: (
-        textColor: TextColor,
-        customColor: Int,
-    ) -> Unit,
-) {
-    ColorDialog(
-        // Content
-        title = title,
-        color = textColor,
-        customColor = customTextColor,
-        entries = TextColor.entries,
-        customEntry = TextColor.Custom,
-        // Layout
-        modifier = modifier,
-        // Callbacks
-        getTitle = { it.getTitle() },
-        onDismissRequest = onDismissRequest,
-        onUpdateClick = onUpdateClick,
-    )
-}
 
 @Composable
 fun BackgroundColorDialog(
@@ -88,60 +57,79 @@ fun BackgroundColorDialog(
         customColor: Int,
     ) -> Unit,
 ) {
-    ColorDialog(
-        // Content
-        title = title,
-        color = backgroundColor,
-        customColor = customBackgroundColor,
-        entries = BackgroundColor.entries,
-        customEntry = BackgroundColor.Custom,
-        // Layout
-        modifier = modifier,
-        // Callbacks
-        getTitle = { it.getTitle() },
-        onDismissRequest = onDismissRequest,
-        onUpdateClick = onUpdateClick,
-    )
-}
+    var selectedColor by remember { mutableStateOf(value = backgroundColor) }
+    var selectedCustomColor by remember { mutableIntStateOf(value = customBackgroundColor) }
+    var showColorPickerDialog by remember { mutableStateOf(false) }
 
-@Composable
-fun IconTintDialog(
-    // Content
-    title: String,
-    // State
-    iconTint: IconTint,
-    customIconTint: Int,
-    // Layout
-    modifier: Modifier = Modifier,
-    // Actions
-    onDismissRequest: () -> Unit,
-    onUpdateClick: (
-        iconTint: IconTint,
-        customColor: Int,
-    ) -> Unit,
-) {
-    ColorDialog(
-        // Content
-        title = title,
-        color = iconTint,
-        customColor = customIconTint,
-        entries = IconTint.entries,
-        customEntry = IconTint.Custom,
-        // Layout
+    EblanDialog(
         modifier = modifier,
-        // Callbacks
-        getTitle = { it.getTitle() },
         onDismissRequest = onDismissRequest,
-        onUpdateClick = onUpdateClick,
-    )
-}
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleLarge,
+        )
 
-@Composable
-fun TextColor.getTitle() = when (this) {
-    TextColor.System -> stringResource(commonR.string.system)
-    TextColor.Light -> stringResource(commonR.string.light)
-    TextColor.Dark -> stringResource(commonR.string.dark)
-    TextColor.Custom -> stringResource(commonR.string.custom)
+        Column(
+            modifier = Modifier
+                .selectableGroup()
+                .fillMaxWidth(),
+        ) {
+            BackgroundColor.entries.forEach { entry ->
+                EblanRadioButton(
+                    selected = selectedColor == entry,
+                    text = entry.getTitle(),
+                    onClick = {
+                        if (entry == BackgroundColor.Custom) {
+                            showColorPickerDialog = true
+                        } else {
+                            selectedColor = entry
+                        }
+                    },
+                )
+            }
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End,
+        ) {
+            TextButton(
+                onClick = onDismissRequest,
+            ) {
+                Text(text = stringResource(cancel))
+            }
+
+            TextButton(
+                onClick = {
+                    onUpdateClick(
+                        selectedColor,
+                        selectedCustomColor,
+                    )
+
+                    onDismissRequest()
+                },
+            ) {
+                Text(text = stringResource(update))
+            }
+        }
+    }
+
+    if (showColorPickerDialog) {
+        ColorPickerDialog(
+            // Content
+            title = title,
+            customColor = customBackgroundColor,
+            // Callbacks
+            onDismissRequest = {
+                showColorPickerDialog = false
+            },
+            onSelectColor = {
+                selectedColor = BackgroundColor.Custom
+                selectedCustomColor = it
+            },
+        )
+    }
 }
 
 @Composable
@@ -157,91 +145,4 @@ fun IconTint.getTitle() = when (this) {
     IconTint.None -> stringResource(commonR.string.none)
     IconTint.System -> stringResource(commonR.string.system)
     IconTint.Custom -> stringResource(commonR.string.custom)
-}
-
-@Composable
-private fun <T : Enum<T>> ColorDialog(
-    // Content
-    title: String,
-    color: T,
-    customColor: Int,
-    entries: List<T>,
-    customEntry: T,
-    // Layout
-    modifier: Modifier = Modifier,
-    // Callbacks
-    getTitle: @Composable (T) -> String,
-    onDismissRequest: () -> Unit,
-    onUpdateClick: (color: T, customColor: Int) -> Unit,
-) {
-    var selectedColor by remember { mutableStateOf(color) }
-    var selectedCustomColor by remember { mutableIntStateOf(customColor) }
-    var showColorPickerDialog by remember { mutableStateOf(false) }
-
-    EblanDialog(
-        modifier = modifier,
-        onDismissRequest = onDismissRequest,
-    ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleLarge,
-        )
-        Column(
-            modifier = Modifier
-                .selectableGroup()
-                .fillMaxWidth(),
-        ) {
-            entries.forEach { entry ->
-                EblanRadioButton(
-                    selected = selectedColor == entry,
-                    text = getTitle(entry),
-                    onClick = {
-                        if (entry == customEntry) {
-                            showColorPickerDialog = true
-                        } else {
-                            selectedColor = entry
-                        }
-                    },
-                )
-            }
-        }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End,
-        ) {
-            TextButton(
-                onClick = onDismissRequest,
-            ) {
-                Text(text = stringResource(commonR.string.cancel))
-            }
-            TextButton(
-                onClick = {
-                    onUpdateClick(
-                        selectedColor,
-                        selectedCustomColor,
-                    )
-
-                    onDismissRequest()
-                },
-            ) {
-                Text(text = stringResource(commonR.string.update))
-            }
-        }
-    }
-
-    if (showColorPickerDialog) {
-        ColorPickerDialog(
-            // Content
-            title = title,
-            customColor = customColor,
-            // Callbacks
-            onDismissRequest = {
-                showColorPickerDialog = false
-            },
-            onSelectColor = {
-                selectedColor = customEntry
-                selectedCustomColor = it
-            },
-        )
-    }
 }
