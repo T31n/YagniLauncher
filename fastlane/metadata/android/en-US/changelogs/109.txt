@@ -1,0 +1,4 @@
+- Revamped some UI components
+- Removed bottom search bar and scroll bar type temporarily due to problems
+- Do not resize layout when keyboard is shown
+- Bug fixes and stability improvements
