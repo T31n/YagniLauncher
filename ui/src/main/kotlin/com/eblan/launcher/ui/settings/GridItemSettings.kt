@@ -67,10 +67,6 @@ fun GridItemSettings(
     var showBackgroundColorDialog by remember { mutableStateOf(false) }
     var showPaddingDialog by remember { mutableStateOf(false) }
     var showCornerRadiusDialog by remember { mutableStateOf(false) }
-    var showHorizontalAlignment by remember { mutableStateOf(false) }
-    var showVerticalArrangement by remember { mutableStateOf(false) }
-    var showHorizontalArrangement by remember { mutableStateOf(false) }
-    var showVerticalAlignment by remember { mutableStateOf(false) }
     var showLayoutType by remember { mutableStateOf(false) }
     var showIconPaddingDialog by remember { mutableStateOf(false) }
     var showTextPaddingDialog by remember { mutableStateOf(false) }
@@ -178,51 +174,67 @@ fun GridItemSettings(
             },
         )
 
-        SettingsColumnItem(
+        SettingsDropdownItem(
             // Content
             title = stringResource(R.string.horizontal_alignment),
-            subtitle = gridItemSettings.horizontalAlignment.getSubtitle(),
+            options = HorizontalAlignment.entries,
+            selected = gridItemSettings.horizontalAlignment,
+            label = {
+                it.getSubtitle()
+            },
             // Layout
             shape = settingsMiddleItemShape,
             // Actions
-            onClick = {
-                showHorizontalAlignment = true
+            onSelectedChange = {
+                onUpdateGridItemSettings(gridItemSettings.copy(horizontalAlignment = it))
             },
         )
 
-        SettingsColumnItem(
+        SettingsDropdownItem(
             // Content
             title = stringResource(R.string.vertical_arrangement),
-            subtitle = gridItemSettings.verticalArrangement.getSubtitle(),
+            options = VerticalArrangement.entries,
+            selected = gridItemSettings.verticalArrangement,
+            label = {
+                it.getSubtitle()
+            },
             // Layout
             shape = settingsMiddleItemShape,
             // Actions
-            onClick = {
-                showVerticalArrangement = true
+            onSelectedChange = {
+                onUpdateGridItemSettings(gridItemSettings.copy(verticalArrangement = it))
             },
         )
 
-        SettingsColumnItem(
+        SettingsDropdownItem(
             // Content
             title = stringResource(R.string.horizontal_arrangement),
-            subtitle = gridItemSettings.horizontalArrangement.getSubtitle(),
+            options = HorizontalArrangement.entries,
+            selected = gridItemSettings.horizontalArrangement,
+            label = {
+                it.getSubtitle()
+            },
             // Layout
             shape = settingsMiddleItemShape,
             // Actions
-            onClick = {
-                showHorizontalArrangement = true
+            onSelectedChange = {
+                onUpdateGridItemSettings(gridItemSettings.copy(horizontalArrangement = it))
             },
         )
 
-        SettingsColumnItem(
+        SettingsDropdownItem(
             // Content
             title = stringResource(R.string.vertical_alignment),
-            subtitle = gridItemSettings.verticalAlignment.getSubtitle(),
+            options = VerticalAlignment.entries,
+            selected = gridItemSettings.verticalAlignment,
+            label = {
+                it.getSubtitle()
+            },
             // Layout
             shape = settingsMiddleItemShape,
             // Actions
-            onClick = {
-                showVerticalAlignment = true
+            onSelectedChange = {
+                onUpdateGridItemSettings(gridItemSettings.copy(verticalAlignment = it))
             },
         )
 
@@ -357,82 +369,6 @@ fun GridItemSettings(
                         cornerRadius = it,
                     ),
                 )
-            },
-        )
-    }
-
-    if (showHorizontalAlignment) {
-        RadioOptionsDialog(
-            // Dialog Content
-            title = stringResource(R.string.horizontal_alignment),
-            options = HorizontalAlignment.entries,
-            selected = gridItemSettings.horizontalAlignment,
-            // Callbacks
-            label = {
-                it.getSubtitle()
-            },
-            onDismissRequest = {
-                showHorizontalAlignment = false
-            },
-            onUpdateClick = {
-                onUpdateGridItemSettings(gridItemSettings.copy(horizontalAlignment = it))
-            },
-        )
-    }
-
-    if (showVerticalArrangement) {
-        RadioOptionsDialog(
-            // Dialog Content
-            title = stringResource(R.string.vertical_arrangement),
-            options = VerticalArrangement.entries,
-            selected = gridItemSettings.verticalArrangement,
-            // Callbacks
-            label = {
-                it.getSubtitle()
-            },
-            onDismissRequest = {
-                showVerticalArrangement = false
-            },
-            onUpdateClick = {
-                onUpdateGridItemSettings(gridItemSettings.copy(verticalArrangement = it))
-            },
-        )
-    }
-
-    if (showHorizontalArrangement) {
-        RadioOptionsDialog(
-            // Dialog Content
-            title = "Horizontal Arrangement",
-            options = HorizontalArrangement.entries,
-            selected = gridItemSettings.horizontalArrangement,
-            // Callbacks
-            label = {
-                it.getSubtitle()
-            },
-            onDismissRequest = {
-                showHorizontalArrangement = false
-            },
-            onUpdateClick = {
-                onUpdateGridItemSettings(gridItemSettings.copy(horizontalArrangement = it))
-            },
-        )
-    }
-
-    if (showVerticalAlignment) {
-        RadioOptionsDialog(
-            // Dialog Content
-            title = "Vertical Alignment",
-            options = VerticalAlignment.entries,
-            selected = gridItemSettings.verticalAlignment,
-            // Callbacks
-            label = {
-                it.getSubtitle()
-            },
-            onDismissRequest = {
-                showVerticalAlignment = false
-            },
-            onUpdateClick = {
-                onUpdateGridItemSettings(gridItemSettings.copy(verticalAlignment = it))
             },
         )
     }

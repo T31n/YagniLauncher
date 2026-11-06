@@ -23,6 +23,7 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -34,6 +35,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -189,6 +192,70 @@ fun SettingsRowItem(
                 title = title,
                 subtitle = subtitle,
             )
+        }
+    }
+}
+
+@Composable
+fun <T> SettingsDropdownItem(
+    // Content
+    title: String,
+    options: List<T>,
+    selected: T,
+    label: @Composable (T) -> String,
+    // Layout
+    shape: Shape,
+    modifier: Modifier = Modifier,
+    // Actions
+    onSelectedChange: (T) -> Unit,
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    SettingsItemCard(
+        // Modifier and Layout
+        modifier = modifier,
+        shape = shape,
+        // Actions and Content
+        onClick = {
+            expanded = true
+        },
+    ) {
+        Text(
+            modifier = Modifier.weight(1f),
+            text = title,
+        )
+
+        Spacer(modifier = Modifier.width(10.dp))
+
+        Box {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(text = label(selected))
+
+                Icon(
+                    imageVector = EblanLauncherIcons.ArrowDropDown,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+            }
+
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = {
+                    expanded = false
+                },
+            ) {
+                options.forEach { option ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(text = label(option))
+                        },
+                        onClick = {
+                            expanded = false
+                            onSelectedChange(option)
+                        },
+                    )
+                }
+            }
         }
     }
 }
