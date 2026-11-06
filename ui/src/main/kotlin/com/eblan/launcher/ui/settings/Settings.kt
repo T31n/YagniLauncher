@@ -234,7 +234,6 @@ fun <T> SettingsDropdownItem(
                 Icon(
                     imageVector = EblanLauncherIcons.ArrowDropDown,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
                 )
             }
 
