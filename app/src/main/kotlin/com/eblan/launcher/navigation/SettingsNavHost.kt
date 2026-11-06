@@ -17,10 +17,11 @@
  */
 package com.eblan.launcher.navigation
 
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.IntOffset
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.eblan.launcher.feature.settings.appdrawer.navigation.appDrawerSettingsScreen
@@ -43,13 +44,15 @@ fun SettingsNavHost(
     navController: NavHostController,
     onFinish: () -> Unit,
 ) {
+    val spatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntOffset>()
+
     NavHost(
         navController = navController,
         startDestination = SettingsRouteData::class,
-        enterTransition = { slideInHorizontally(initialOffsetX = { it }, animationSpec = tween()) },
-        exitTransition = { slideOutHorizontally(targetOffsetX = { -it }, animationSpec = tween()) },
-        popEnterTransition = { slideInHorizontally(initialOffsetX = { -it }, animationSpec = tween()) },
-        popExitTransition = { slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween()) },
+        enterTransition = { slideInHorizontally(initialOffsetX = { it }, animationSpec = spatialSpec) },
+        exitTransition = { slideOutHorizontally(targetOffsetX = { -it }, animationSpec = spatialSpec) },
+        popEnterTransition = { slideInHorizontally(initialOffsetX = { -it }, animationSpec = spatialSpec) },
+        popExitTransition = { slideOutHorizontally(targetOffsetX = { it }, animationSpec = spatialSpec) },
     ) {
         settingsScreen(
             onAppDrawer = navController::navigateToAppDrawerSettings,

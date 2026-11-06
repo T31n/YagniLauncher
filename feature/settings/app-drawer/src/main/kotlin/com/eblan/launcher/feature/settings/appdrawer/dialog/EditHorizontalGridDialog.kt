@@ -64,7 +64,7 @@ internal fun EditHorizontalGridDialog(
     ) {
         Text(
             text = stringResource(R.string.horizontal_grid),
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleLargeEmphasized,
         )
 
         Row(

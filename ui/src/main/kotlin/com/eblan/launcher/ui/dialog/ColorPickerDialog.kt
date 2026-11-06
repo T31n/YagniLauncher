@@ -88,7 +88,7 @@ fun ColorPickerDialog(
     ) {
         Text(
             text = title,
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleLargeEmphasized,
         )
 
         ColorPicker(

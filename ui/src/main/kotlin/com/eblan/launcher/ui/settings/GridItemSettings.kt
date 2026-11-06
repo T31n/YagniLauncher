@@ -461,7 +461,7 @@ fun CustomBackgroundColor(
     ) {
         Text(
             text = title,
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.titleMediumEmphasized,
         )
 
         Box(

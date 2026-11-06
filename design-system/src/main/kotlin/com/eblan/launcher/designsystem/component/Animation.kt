@@ -19,13 +19,14 @@ package com.eblan.launcher.designsystem.component
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.IntSize
 
 @Composable
 fun VerticalSlideReveal(
@@ -34,15 +35,17 @@ fun VerticalSlideReveal(
     label: String = "AnimatedVisibility",
     content: @Composable (AnimatedVisibilityScope.() -> Unit),
 ) {
+    val motionScheme = MaterialTheme.motionScheme
+
     AnimatedVisibility(
         modifier = modifier,
         visible = visible,
         enter = expandVertically(
-            animationSpec = tween(),
-        ) + fadeIn(animationSpec = tween()),
+            animationSpec = motionScheme.defaultSpatialSpec<IntSize>(),
+        ) + fadeIn(animationSpec = motionScheme.defaultEffectsSpec<Float>()),
         exit = shrinkVertically(
-            animationSpec = tween(),
-        ) + fadeOut(animationSpec = tween()),
+            animationSpec = motionScheme.defaultSpatialSpec<IntSize>(),
+        ) + fadeOut(animationSpec = motionScheme.defaultEffectsSpec<Float>()),
         label = label,
         content = content,
     )

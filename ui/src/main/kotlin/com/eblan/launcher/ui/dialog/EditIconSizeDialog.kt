@@ -57,7 +57,7 @@ internal fun EditIconSizeDialog(
     ) {
         Text(
             text = stringResource(R.string.icon_size),
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleLargeEmphasized,
         )
 
         TextField(

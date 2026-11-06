@@ -57,7 +57,7 @@ internal fun EditDockPaddingDialog(
     ) {
         Text(
             text = stringResource(R.string.dock_padding),
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleLargeEmphasized,
         )
 
         TextField(

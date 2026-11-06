@@ -72,7 +72,7 @@ internal fun EditDockCornerRadiusDialog(
     ) {
         Text(
             text = stringResource(R.string.dock_corner_radius),
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleLargeEmphasized,
         )
 
         Row(

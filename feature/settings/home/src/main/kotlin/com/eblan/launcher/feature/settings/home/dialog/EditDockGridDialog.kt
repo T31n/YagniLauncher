@@ -64,7 +64,7 @@ internal fun EditDockGridDialog(
     ) {
         Text(
             text = stringResource(R.string.dock_grid),
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleLargeEmphasized,
         )
 
         Row(

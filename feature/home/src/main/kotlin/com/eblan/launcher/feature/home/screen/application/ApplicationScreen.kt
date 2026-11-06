@@ -375,7 +375,7 @@ internal fun QuiteModeScreen(
         Text(
             text = stringResource(R.string.work_apps_are_paused),
             color = textColor,
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleLargeEmphasized,
         )
 
         Spacer(modifier = Modifier.height(10.dp))

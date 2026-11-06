@@ -67,7 +67,7 @@ internal fun AddTagDialog(
     ) {
         Text(
             text = stringResource(R.string.add_tag),
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleLargeEmphasized,
         )
 
         TextField(
@@ -147,7 +147,7 @@ internal fun UpdateTagDialog(
         ) {
             Text(
                 text = stringResource(R.string.update_tag),
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.titleLargeEmphasized,
             )
 
             IconButton(

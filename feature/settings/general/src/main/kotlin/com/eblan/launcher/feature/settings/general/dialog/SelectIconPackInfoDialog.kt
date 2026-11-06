@@ -60,7 +60,7 @@ internal fun SelectIconPackInfoDialog(
     ) {
         Text(
             text = stringResource(R.string.select_icon_pack),
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleLargeEmphasized,
         )
 
         when {
@@ -79,9 +79,6 @@ internal fun SelectIconPackInfoDialog(
                 ) {
                     items(eblanIconPackInfos) { eblanIconPackInfo ->
                         ListItem(
-                            headlineContent = {
-                                Text(text = eblanIconPackInfo.label.toString())
-                            },
                             leadingContent = {
                                 AsyncImage(
                                     model = eblanIconPackInfo.icon,
@@ -113,7 +110,9 @@ internal fun SelectIconPackInfoDialog(
                                     onDismissRequest()
                                 }
                                 .fillMaxWidth(),
-                        )
+                        ) {
+                            Text(text = eblanIconPackInfo.label.toString())
+                        }
                     }
                 }
             }

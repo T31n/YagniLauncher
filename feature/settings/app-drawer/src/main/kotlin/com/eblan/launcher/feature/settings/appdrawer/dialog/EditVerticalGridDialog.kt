@@ -64,7 +64,7 @@ internal fun EditVerticalGridDialog(
     ) {
         Text(
             text = stringResource(R.string.vertical_grid),
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleLargeEmphasized,
         )
 
         Row(

@@ -241,13 +241,18 @@ internal fun FolderApplicationScreen(
         rememberUpdatedState(moveFolderEblanApplicationInfoGridItemResult)
     val currentLockMovement = rememberUpdatedState(lockMovement)
 
+    val openSpec = MaterialTheme.motionScheme.fastSpatialSpec<Float>()
+
+    // Overshoot above 1f during the open bounce still counts as in progress
     val isInProgress by remember {
-        derivedStateOf { progress.value < 1f }
+        derivedStateOf {
+            progress.value < 1f || (progress.isRunning && progress.targetValue == 1f)
+        }
     }
 
     LaunchedEffect(key1 = animations) {
         if (animations) {
-            progress.animateTo(targetValue = 1f)
+            progress.animateTo(targetValue = 1f, animationSpec = openSpec)
         } else {
             progress.snapTo(targetValue = 1f)
         }

@@ -56,7 +56,7 @@ internal fun EditDockHeightDialog(
     ) {
         Text(
             text = stringResource(R.string.dock_height),
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleLargeEmphasized,
         )
 
         TextField(

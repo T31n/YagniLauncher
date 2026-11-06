@@ -57,7 +57,7 @@ internal fun EditTextSizeDialog(
     ) {
         Text(
             text = stringResource(R.string.text_size),
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleLargeEmphasized,
         )
 
         TextField(

@@ -77,7 +77,7 @@ internal fun ManageFoldersDialog(
     ) {
         Text(
             text = stringResource(R.string.manage_folders),
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleLargeEmphasized,
         )
 
         when {

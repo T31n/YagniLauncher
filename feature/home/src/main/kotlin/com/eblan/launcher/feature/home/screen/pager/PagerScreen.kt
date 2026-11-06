@@ -34,8 +34,12 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.draganddrop.dragAndDropTarget
@@ -57,6 +61,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -1040,6 +1045,7 @@ internal fun PagerScreen(
                 showPageIndicator = homeSettings.showPageIndicator,
                 // Scroll Behavior
                 infiniteScroll = homeSettings.infiniteScroll,
+                initialPage = homeSettings.initialPage,
                 swipeUp = gestureSettings.swipeUp,
                 swipeDown = gestureSettings.swipeDown,
                 // Layout
@@ -2034,6 +2040,7 @@ private fun GridPagerIndicator(
     showPageIndicator: Boolean,
     // Scroll Behavior
     infiniteScroll: Boolean,
+    initialPage: Int,
     swipeUp: EblanAction,
     swipeDown: EblanAction,
     // Layout
@@ -2054,27 +2061,38 @@ private fun GridPagerIndicator(
         modifier = modifier,
         contentAlignment = Alignment.Center,
     ) {
-        if (isScrollInProgress) {
-            PageIndicator(
-                // Pager State and Pagination
-                gridHorizontalPagerState = gridHorizontalPagerState,
-                pageCount = pageCount,
-                infiniteScroll = infiniteScroll,
-                // Appearance and Layout
-                color = color,
-            )
-        } else if (swipeUp.eblanActionType == EblanActionType.OpenAppDrawer) {
-            Image(
-                imageVector = EblanLauncherIcons.KeyboardArrowUp,
-                contentDescription = null,
-                colorFilter = ColorFilter.tint(color = color),
-            )
-        } else if (swipeDown.eblanActionType == EblanActionType.OpenAppDrawer) {
-            Image(
-                imageVector = EblanLauncherIcons.KeyboardArrowDown,
-                contentDescription = null,
-                colorFilter = ColorFilter.tint(color = color),
-            )
+        val effectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
+
+        AnimatedContent(
+            targetState = isScrollInProgress,
+            transitionSpec = {
+                fadeIn(animationSpec = effectsSpec) togetherWith fadeOut(animationSpec = effectsSpec)
+            },
+            label = "gridPagerIndicator",
+        ) { scrolling ->
+            if (scrolling) {
+                PageIndicator(
+                    // Pager State and Pagination
+                    gridHorizontalPagerState = gridHorizontalPagerState,
+                    pageCount = pageCount,
+                    infiniteScroll = infiniteScroll,
+                    initialPage = initialPage,
+                    // Appearance and Layout
+                    color = color,
+                )
+            } else if (swipeUp.eblanActionType == EblanActionType.OpenAppDrawer) {
+                Image(
+                    imageVector = EblanLauncherIcons.KeyboardArrowUp,
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(color = color),
+                )
+            } else if (swipeDown.eblanActionType == EblanActionType.OpenAppDrawer) {
+                Image(
+                    imageVector = EblanLauncherIcons.KeyboardArrowDown,
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(color = color),
+                )
+            }
         }
     }
 }

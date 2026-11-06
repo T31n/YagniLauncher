@@ -55,7 +55,7 @@ internal fun EditFolderLabelDialog(
     ) {
         Text(
             text = stringResource(commonR.string.label),
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleLargeEmphasized,
         )
 
         TextField(

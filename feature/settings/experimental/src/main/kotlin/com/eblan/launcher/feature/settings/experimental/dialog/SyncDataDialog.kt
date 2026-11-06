@@ -51,7 +51,7 @@ internal fun SyncDataDialog(
     ) {
         Text(
             text = stringResource(R.string.warning),
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleLargeEmphasized,
         )
 
         Column(

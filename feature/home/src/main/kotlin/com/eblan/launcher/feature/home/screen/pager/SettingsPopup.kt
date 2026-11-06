@@ -23,7 +23,6 @@ import android.content.Intent.createChooser
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -121,8 +120,8 @@ internal fun SettingsPopup(
     ) {
         AnimatedVisibility(
             visibleState = transitionState,
-            enter = fadeIn(tween()) + scaleIn(initialScale = 0.8f, animationSpec = tween()),
-            exit = fadeOut(tween()) + scaleOut(targetScale = 0.8f, animationSpec = tween()),
+            enter = fadeIn(MaterialTheme.motionScheme.defaultEffectsSpec<Float>()) + scaleIn(initialScale = 0.8f, animationSpec = MaterialTheme.motionScheme.fastSpatialSpec<Float>()),
+            exit = fadeOut(MaterialTheme.motionScheme.defaultEffectsSpec<Float>()) + scaleOut(targetScale = 0.8f, animationSpec = MaterialTheme.motionScheme.fastSpatialSpec<Float>()),
         ) {
             Column(
                 modifier = Modifier.width(IntrinsicSize.Max),

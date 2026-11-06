@@ -23,7 +23,6 @@ import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -40,6 +39,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -182,8 +182,8 @@ internal fun GridItemPopup(
                 y = y,
             ),
             visibleState = transitionState,
-            enter = fadeIn(tween()) + scaleIn(initialScale = 0.8f, animationSpec = tween()),
-            exit = fadeOut(tween()) + scaleOut(targetScale = 0.8f, animationSpec = tween()),
+            enter = fadeIn(MaterialTheme.motionScheme.defaultEffectsSpec<Float>()) + scaleIn(initialScale = 0.8f, animationSpec = MaterialTheme.motionScheme.fastSpatialSpec<Float>()),
+            exit = fadeOut(MaterialTheme.motionScheme.defaultEffectsSpec<Float>()) + scaleOut(targetScale = 0.8f, animationSpec = MaterialTheme.motionScheme.fastSpatialSpec<Float>()),
         ) {
             GridItemPopupContent(
                 // Item Details

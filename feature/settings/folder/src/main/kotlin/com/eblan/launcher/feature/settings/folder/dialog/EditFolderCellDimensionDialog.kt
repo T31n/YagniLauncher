@@ -64,7 +64,7 @@ internal fun EditFolderCellDimensionDialog(
     ) {
         Text(
             text = stringResource(R.string.folder_cell_dimension),
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleLargeEmphasized,
         )
 
         Row(

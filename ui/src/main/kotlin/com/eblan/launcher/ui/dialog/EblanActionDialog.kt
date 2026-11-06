@@ -82,7 +82,7 @@ internal fun EblanActionDialog(
     ) {
         Text(
             text = title,
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleLargeEmphasized,
         )
 
         AccessibilityServiceCard()

@@ -164,19 +164,19 @@ internal fun InteractiveFolderGridItem(
     )
 
     val padding = if (animations) {
-        lerp(1.dp, currentGridItemSettings.padding.dp, progress)
+        lerp(1.dp, currentGridItemSettings.padding.dp, progress).coerceAtLeast(0.dp)
     } else {
         currentGridItemSettings.padding.dp
     }
 
     val iconPadding = if (animations) {
-        lerp(0.dp, currentGridItemSettings.iconPadding.dp, progress)
+        lerp(0.dp, currentGridItemSettings.iconPadding.dp, progress).coerceAtLeast(0.dp)
     } else {
         currentGridItemSettings.iconPadding.dp
     }
 
     val textPadding = if (animations) {
-        lerp(0.dp, currentGridItemSettings.textPadding.dp, progress)
+        lerp(0.dp, currentGridItemSettings.textPadding.dp, progress).coerceAtLeast(0.dp)
     } else {
         currentGridItemSettings.textPadding.dp
     }

@@ -244,7 +244,7 @@ private fun AlphaWarningCard(modifier: Modifier = Modifier) {
         ) {
             Text(
                 text = stringResource(R.string.thank_you_for_using_yagni_launcher_alpha),
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.titleMediumEmphasized,
                 textAlign = TextAlign.Center,
             )
 

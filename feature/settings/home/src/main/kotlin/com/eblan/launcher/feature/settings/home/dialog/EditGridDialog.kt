@@ -63,7 +63,7 @@ internal fun EditGridDialog(
     ) {
         Text(
             text = stringResource(commonR.string.grid),
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleLargeEmphasized,
         )
 
         Row(

@@ -23,9 +23,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -36,6 +38,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.unit.dp
+import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.feature.home.util.calculatePage
 import kotlin.math.abs
 
@@ -45,11 +48,20 @@ internal fun PageIndicator(
     gridHorizontalPagerState: PagerState,
     pageCount: Int,
     infiniteScroll: Boolean,
+    initialPage: Int? = null,
     // Appearance and Layout
     color: Color,
     modifier: Modifier = Modifier,
 ) {
     if (pageCount < 1) return
+
+    val defaultPage = initialPage?.let { page ->
+        calculatePage(
+            index = page,
+            infiniteScroll = infiniteScroll,
+            pageCount = pageCount,
+        )
+    }
 
     Row(
         modifier = modifier,
@@ -63,6 +75,7 @@ internal fun PageIndicator(
                 index = index,
                 pageCount = pageCount,
                 infiniteScroll = infiniteScroll,
+                isDefaultPage = index == defaultPage,
                 // Styling
                 color = color,
                 modifier = modifier,
@@ -78,6 +91,7 @@ private fun PageIndicatorContent(
     index: Int,
     pageCount: Int,
     infiniteScroll: Boolean,
+    isDefaultPage: Boolean,
     // Styling
     color: Color,
     modifier: Modifier = Modifier,
@@ -112,18 +126,35 @@ private fun PageIndicatorContent(
         }
     }
 
-    Box(
-        modifier = modifier
-            .padding(3.dp)
-            .width(width)
-            .height(baseHeight)
-            .clip(CircleShape)
-            .background(
-                color = lerp(
-                    start = color.copy(alpha = 0.5f),
-                    stop = color,
-                    fraction = 1f - abs(distance).coerceIn(0f, 1f),
-                ),
-            ),
+    val indicatorColor = lerp(
+        start = color.copy(alpha = 0.5f),
+        stop = color,
+        fraction = 1f - abs(distance).coerceIn(0f, 1f),
     )
+
+    if (isDefaultPage) {
+        Box(
+            modifier = modifier
+                .padding(3.dp)
+                .width(width)
+                .height(baseHeight),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                imageVector = EblanLauncherIcons.Home,
+                contentDescription = null,
+                modifier = Modifier.size(12.dp),
+                tint = indicatorColor,
+            )
+        }
+    } else {
+        Box(
+            modifier = modifier
+                .padding(3.dp)
+                .width(width)
+                .height(baseHeight)
+                .clip(CircleShape)
+                .background(color = indicatorColor),
+        )
+    }
 }

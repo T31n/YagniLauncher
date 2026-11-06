@@ -63,7 +63,7 @@ fun AddFolderDialog(
     ) {
         Text(
             text = stringResource(R.string.add_folder),
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleLargeEmphasized,
         )
 
         TextField(

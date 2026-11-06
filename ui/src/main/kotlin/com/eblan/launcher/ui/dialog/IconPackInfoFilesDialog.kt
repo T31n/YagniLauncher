@@ -110,7 +110,7 @@ fun IconPackInfoFilesDialog(
     ) {
         Text(
             text = iconPackInfoLabel,
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleLargeEmphasized,
         )
 
         SearchBar(

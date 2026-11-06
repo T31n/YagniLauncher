@@ -17,19 +17,23 @@
  */
 package com.eblan.launcher.feature.home.screen.application.vertical
 
-import androidx.compose.foundation.background
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.LazyGridState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -43,6 +47,10 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
@@ -52,8 +60,10 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
+import kotlin.math.PI
 import kotlin.math.ceil
 import kotlin.math.roundToInt
+import kotlin.math.sin
 
 @Composable
 internal fun ScrollBarThumb(
@@ -110,6 +120,35 @@ internal fun ScrollBarThumb(
         }
     }
 
+    val thumbWidth = 10.dp
+
+    val isThumbMoving = isDraggingThumb || lazyGridState.isScrollInProgress
+
+    val thumbColor = MaterialTheme.colorScheme.primary
+
+    val trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+
+    val waveLength = 40.dp
+
+    val waveAmplitude by animateDpAsState(
+        targetValue = if (isThumbMoving) 2.dp else 0.dp,
+        animationSpec = MaterialTheme.motionScheme.fastSpatialSpec(),
+        label = "scrollBarThumbWaveAmplitude",
+    )
+
+    val wavePhase = remember { Animatable(0f) }
+
+    LaunchedEffect(isThumbMoving) {
+        if (isThumbMoving) {
+            wavePhase.animateTo(
+                targetValue = wavePhase.value + 2 * PI.toFloat(),
+                animationSpec = infiniteRepeatable(
+                    animation = tween(durationMillis = 900, easing = LinearEasing),
+                ),
+            )
+        }
+    }
+
     Box(
         modifier = modifier
             .width(10.dp)
@@ -120,10 +159,6 @@ internal fun ScrollBarThumb(
         Box(
             modifier = Modifier
                 .matchParentSize()
-                .background(
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
-                    shape = RoundedCornerShape(10.dp),
-                )
                 .pointerInput(lazyGridState) {
                     detectTapGestures(
                         onTap = {
@@ -144,9 +179,29 @@ internal fun ScrollBarThumb(
                 },
             contentAlignment = Alignment.TopCenter,
         ) {
-            Box(
+            Canvas(
+                modifier = Modifier.matchParentSize(),
+                onDraw = {
+                    val path = buildWavePath(
+                        fromY = thumbWidth.toPx() / 2f,
+                        toY = size.height - thumbWidth.toPx() / 2f,
+                        originY = 0f,
+                        amplitudePx = waveAmplitude.toPx(),
+                        wavelengthPx = waveLength.toPx(),
+                        phase = wavePhase.value,
+                    )
+
+                    drawPath(
+                        path = path,
+                        color = trackColor,
+                        style = Stroke(width = thumbWidth.toPx(), cap = StrokeCap.Round),
+                    )
+                },
+            )
+
+            Canvas(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .width(thumbWidth)
                     .height(thumbHeight)
                     .offset {
                         IntOffset(
@@ -154,10 +209,6 @@ internal fun ScrollBarThumb(
                             y = animatedThumbY.roundToInt(),
                         )
                     }
-                    .background(
-                        color = MaterialTheme.colorScheme.primary,
-                        shape = RoundedCornerShape(10.dp),
-                    )
                     .pointerInput(key1 = lazyGridState) {
                         detectDragGestures(
                             onDragStart = {
@@ -192,6 +243,22 @@ internal fun ScrollBarThumb(
                             },
                         )
                     },
+                onDraw = {
+                    val path = buildWavePath(
+                        fromY = thumbWidth.toPx() / 2f,
+                        toY = size.height - thumbWidth.toPx() / 2f,
+                        originY = animatedThumbY.roundToInt().toFloat(),
+                        amplitudePx = waveAmplitude.toPx(),
+                        wavelengthPx = waveLength.toPx(),
+                        phase = wavePhase.value,
+                    )
+
+                    drawPath(
+                        path = path,
+                        color = thumbColor,
+                        style = Stroke(width = thumbWidth.toPx(), cap = StrokeCap.Round),
+                    )
+                },
             )
         }
     }
@@ -220,6 +287,35 @@ private fun rememberHasPrivateSpaceStickyHeader(
     } else {
         value = 0
     }
+}
+
+/**
+ * Builds the snake path in track coordinates. [originY] is the track y of the path's origin,
+ * so the thumb and track share the same wave at the same screen position.
+ */
+private fun DrawScope.buildWavePath(
+    fromY: Float,
+    toY: Float,
+    originY: Float,
+    amplitudePx: Float,
+    wavelengthPx: Float,
+    phase: Float,
+): Path {
+    val stepPx = 4.dp.toPx()
+    val centerX = size.width / 2f
+    val steps = ceil((toY - fromY) / stepPx).toInt().coerceAtLeast(1)
+
+    val path = Path()
+
+    for (i in 0..steps) {
+        val y = (fromY + i * stepPx).coerceAtMost(toY)
+        val x = centerX + amplitudePx *
+            sin(2f * PI.toFloat() * (originY + y) / wavelengthPx + phase)
+
+        if (i == 0) path.moveTo(x, y) else path.lineTo(x, y)
+    }
+
+    return path
 }
 
 private fun scrollToTap(

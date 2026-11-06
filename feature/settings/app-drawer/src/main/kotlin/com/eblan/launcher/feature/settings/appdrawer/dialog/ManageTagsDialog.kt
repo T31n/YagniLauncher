@@ -76,7 +76,7 @@ internal fun ManageTagsDialog(
     ) {
         Text(
             text = stringResource(R.string.manage_tags),
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleLargeEmphasized,
         )
 
         when {

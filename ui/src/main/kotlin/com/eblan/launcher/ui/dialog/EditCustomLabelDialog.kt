@@ -63,7 +63,7 @@ fun EditCustomLabelDialog(
         ) {
             Text(
                 text = stringResource(commonR.string.custom_label),
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.titleLargeEmphasized,
             )
 
             IconButton(

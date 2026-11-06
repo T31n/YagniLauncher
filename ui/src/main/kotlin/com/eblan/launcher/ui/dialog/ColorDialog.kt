@@ -184,7 +184,7 @@ private fun <T : Enum<T>> ColorDialog(
     ) {
         Text(
             text = title,
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleLargeEmphasized,
         )
         Column(
             modifier = Modifier

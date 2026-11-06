@@ -312,7 +312,7 @@ private fun SettingsItemText(
 ) {
     Text(
         text = title,
-        style = MaterialTheme.typography.titleMedium,
+        style = MaterialTheme.typography.titleMediumEmphasized,
     )
 
     Spacer(modifier = Modifier.height(spacing))

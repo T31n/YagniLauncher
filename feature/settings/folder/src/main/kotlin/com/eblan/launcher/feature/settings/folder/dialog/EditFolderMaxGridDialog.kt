@@ -64,7 +64,7 @@ internal fun EditFolderMaxGridDialog(
     ) {
         Text(
             text = stringResource(R.string.folder_max_grid),
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleLargeEmphasized,
         )
 
         Row(

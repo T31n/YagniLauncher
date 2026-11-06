@@ -57,7 +57,7 @@ internal fun ImportIconPackInfoDialog(
     ) {
         Text(
             text = stringResource(R.string.import_icon_pack),
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleLargeEmphasized,
         )
 
         when {
@@ -76,9 +76,6 @@ internal fun ImportIconPackInfoDialog(
                 ) {
                     items(packageManagerIconPacks) {
                         ListItem(
-                            headlineContent = {
-                                Text(text = it.label)
-                            },
                             leadingContent = {
                                 AsyncImage(
                                     model = it.icon,
@@ -96,7 +93,9 @@ internal fun ImportIconPackInfoDialog(
                                     onDismissRequest()
                                 }
                                 .fillMaxWidth(),
-                        )
+                        ) {
+                            Text(text = it.label)
+                        }
                     }
                 }
             }

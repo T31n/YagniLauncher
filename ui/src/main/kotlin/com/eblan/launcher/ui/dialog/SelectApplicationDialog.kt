@@ -55,7 +55,7 @@ fun SelectApplicationDialog(
     ) {
         Text(
             text = stringResource(R.string.select_application),
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleLargeEmphasized,
         )
 
         EblanApplicationInfosPage(
@@ -86,7 +86,6 @@ private fun EblanApplicationInfosPage(
     LazyColumn(modifier = modifier) {
         items(eblanApplicationInfos) { eblanApplicationInfo ->
             ListItem(
-                headlineContent = { Text(text = eblanApplicationInfo.label) },
                 leadingContent = {
                     AsyncImage(
                         model = eblanApplicationInfo.icon,
@@ -100,7 +99,9 @@ private fun EblanApplicationInfosPage(
                     }
                     .fillMaxWidth()
                     .padding(10.dp),
-            )
+            ) {
+                Text(text = eblanApplicationInfo.label)
+            }
         }
     }
 }

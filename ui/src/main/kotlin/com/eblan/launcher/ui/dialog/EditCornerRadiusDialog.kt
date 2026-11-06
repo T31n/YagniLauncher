@@ -57,7 +57,7 @@ fun EditCornerRadiusDialog(
     ) {
         Text(
             text = stringResource(R.string.corner_radius),
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleLargeEmphasized,
         )
 
         TextField(

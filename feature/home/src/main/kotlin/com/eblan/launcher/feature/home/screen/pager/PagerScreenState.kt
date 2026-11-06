@@ -26,11 +26,8 @@ import android.os.IBinder
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.material3.MotionScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -340,6 +337,8 @@ internal class PagerScreenState(
 
     private var accumulatedDragOffset by mutableStateOf(Offset.Zero)
 
+    private val spatialSpec = MotionScheme.expressive().defaultSpatialSpec<Float>()
+
     suspend fun handlePinGridItemEffect(
         // Item
         pinGridItem: GridItem?,
@@ -355,9 +354,7 @@ internal class PagerScreenState(
         if (isApplicationScreenVisible) {
             applicationScreenSwipeY.animateTo(
                 targetValue = screenHeight.toFloat(),
-                animationSpec = tween(
-                    easing = FastOutSlowInEasing,
-                ),
+                animationSpec = spatialSpec,
             )
         }
 
@@ -550,9 +547,7 @@ internal class PagerScreenState(
 
             swipeY.animateTo(
                 targetValue = targetValue,
-                animationSpec = tween(
-                    easing = FastOutSlowInEasing,
-                ),
+                animationSpec = spatialSpec,
             )
         }
 
@@ -625,10 +620,7 @@ internal class PagerScreenState(
 
             applicationScreenSwipeY.animateTo(
                 targetValue = 0f,
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioNoBouncy,
-                    stiffness = Spring.StiffnessLow,
-                ),
+                animationSpec = spatialSpec,
             )
         }
     }
@@ -637,9 +629,7 @@ internal class PagerScreenState(
         scope.launch {
             applicationScreenSwipeY.animateTo(
                 targetValue = screenHeight.toFloat(),
-                animationSpec = tween(
-                    easing = FastOutSlowInEasing,
-                ),
+                animationSpec = spatialSpec,
             )
 
             showApplicationScreen = false
@@ -663,9 +653,7 @@ internal class PagerScreenState(
 
             widgetScreenSwipeY.animateTo(
                 targetValue = 0f,
-                animationSpec = tween(
-                    easing = FastOutSlowInEasing,
-                ),
+                animationSpec = spatialSpec,
             )
         }
     }
@@ -674,9 +662,7 @@ internal class PagerScreenState(
         scope.launch {
             widgetScreenSwipeY.animateTo(
                 targetValue = screenHeight.toFloat(),
-                animationSpec = tween(
-                    easing = FastOutSlowInEasing,
-                ),
+                animationSpec = spatialSpec,
             )
 
             showWidgetScreen = false
@@ -711,9 +697,7 @@ internal class PagerScreenState(
 
             shortcutConfigScreenSwipeY.animateTo(
                 targetValue = 0f,
-                animationSpec = tween(
-                    easing = FastOutSlowInEasing,
-                ),
+                animationSpec = spatialSpec,
             )
         }
     }
@@ -722,9 +706,7 @@ internal class PagerScreenState(
         scope.launch {
             shortcutConfigScreenSwipeY.animateTo(
                 targetValue = screenHeight.toFloat(),
-                animationSpec = tween(
-                    easing = FastOutSlowInEasing,
-                ),
+                animationSpec = spatialSpec,
             )
 
             showShortcutConfigScreen = false
@@ -735,9 +717,7 @@ internal class PagerScreenState(
         scope.launch {
             appWidgetScreenSwipeY.animateTo(
                 targetValue = screenHeight.toFloat(),
-                animationSpec = tween(
-                    easing = FastOutSlowInEasing,
-                ),
+                animationSpec = spatialSpec,
             )
 
             eblanApplicationInfoGroup = null
@@ -760,9 +740,7 @@ internal class PagerScreenState(
 
             appWidgetScreenSwipeY.animateTo(
                 targetValue = 0f,
-                animationSpec = tween(
-                    easing = FastOutSlowInEasing,
-                ),
+                animationSpec = spatialSpec,
             )
         }
     }
@@ -918,17 +896,14 @@ internal class PagerScreenState(
             if (applicationScreenSwipeY.value > 200f) {
                 applicationScreenSwipeY.animateTo(
                     targetValue = screenHeight.toFloat(),
-                    animationSpec = tween(easing = FastOutSlowInEasing),
+                    animationSpec = spatialSpec,
                 )
 
                 showApplicationScreen = false
             } else {
                 applicationScreenSwipeY.animateTo(
                     targetValue = 0f,
-                    animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioNoBouncy,
-                        stiffness = Spring.StiffnessLow,
-                    ),
+                    animationSpec = spatialSpec,
                 )
             }
         }
@@ -939,17 +914,14 @@ internal class PagerScreenState(
             if (widgetScreenSwipeY.value > 200f) {
                 widgetScreenSwipeY.animateTo(
                     targetValue = screenHeight.toFloat(),
-                    animationSpec = tween(easing = FastOutSlowInEasing),
+                    animationSpec = spatialSpec,
                 )
 
                 showWidgetScreen = false
             } else {
                 widgetScreenSwipeY.animateTo(
                     targetValue = 0f,
-                    animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioNoBouncy,
-                        stiffness = Spring.StiffnessLow,
-                    ),
+                    animationSpec = spatialSpec,
                 )
             }
         }
@@ -960,17 +932,14 @@ internal class PagerScreenState(
             if (shortcutConfigScreenSwipeY.value > 200f) {
                 shortcutConfigScreenSwipeY.animateTo(
                     targetValue = screenHeight.toFloat(),
-                    animationSpec = tween(easing = FastOutSlowInEasing),
+                    animationSpec = spatialSpec,
                 )
 
                 showShortcutConfigScreen = false
             } else {
                 shortcutConfigScreenSwipeY.animateTo(
                     targetValue = 0f,
-                    animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioNoBouncy,
-                        stiffness = Spring.StiffnessLow,
-                    ),
+                    animationSpec = spatialSpec,
                 )
             }
         }
@@ -983,7 +952,7 @@ internal class PagerScreenState(
             } else {
                 appWidgetScreenSwipeY.animateTo(
                     targetValue = 0f,
-                    animationSpec = tween(easing = FastOutSlowInEasing),
+                    animationSpec = spatialSpec,
                 )
             }
         }

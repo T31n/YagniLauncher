@@ -56,7 +56,7 @@ internal fun HiddenEblanApplicationInfosDialog(
     ) {
         Text(
             text = stringResource(R.string.hidden_applications),
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleLargeEmphasized,
         )
 
         when {
@@ -75,9 +75,6 @@ internal fun HiddenEblanApplicationInfosDialog(
                 ) {
                     items(eblanApplicationInfos) { eblanApplicationInfo ->
                         ListItem(
-                            headlineContent = {
-                                Text(text = eblanApplicationInfo.label)
-                            },
                             leadingContent = {
                                 AsyncImage(
                                     model = eblanApplicationInfo.icon,
@@ -102,7 +99,9 @@ internal fun HiddenEblanApplicationInfosDialog(
                                 }
                             },
                             modifier = Modifier.fillMaxWidth(),
-                        )
+                        ) {
+                            Text(text = eblanApplicationInfo.label)
+                        }
                     }
                 }
             }
