@@ -60,6 +60,16 @@
     <string name="double_tap">النقر مرتين</string>
     <string name="swipe_up">السحب للاعلى</string>
     <string name="swipe_down">السحب للاسفل</string>
+    <string name="swipe_left">السحب لليسار</string>
+    <string name="swipe_right">السحب لليمين</string>
+    <string name="double_tap_swipe_up">النقر مرتين + السحب للاعلى</string>
+    <string name="double_tap_swipe_down">النقر مرتين + السحب للاسفل</string>
+    <string name="two_finger_swipe_up">سحب بإصبعين للاعلى</string>
+    <string name="two_finger_swipe_down">سحب بإصبعين للاسفل</string>
+    <string name="pinch_in">تقريب الإصبعين</string>
+    <string name="pinch_out">تباعد الإصبعين</string>
+    <string name="rotate_counter_clockwise">تدوير بإصبعين (عكس اتجاه عقارب الساعة)</string>
+    <string name="rotate_clockwise">تدوير بإصبعين (باتجاه عقارب الساعة)</string>
     <string name="folder_is_not_valid">الملف غير صالح</string>
     <string name="center_vertically">توسيط عمودي</string>
     <string name="top_label_bottom_icon">الاسم في الاعلى، الايقونة في الاسفل</string>

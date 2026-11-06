@@ -51,6 +51,16 @@
     <string name="double_tap">Poklepání</string>
     <string name="swipe_up">Přejetí prstem nahoru</string>
     <string name="swipe_down">Přejetí prstem dolů</string>
+    <string name="swipe_left">Přejetí prstem doleva</string>
+    <string name="swipe_right">Přejetí prstem doprava</string>
+    <string name="double_tap_swipe_up">Poklepání + přejetí prstem nahoru</string>
+    <string name="double_tap_swipe_down">Poklepání + přejetí prstem dolů</string>
+    <string name="two_finger_swipe_up">Přejetí dvěma prsty nahoru</string>
+    <string name="two_finger_swipe_down">Přejetí dvěma prsty dolů</string>
+    <string name="pinch_in">Stažení prstů</string>
+    <string name="pinch_out">Roztažení prstů</string>
+    <string name="rotate_counter_clockwise">Otočení dvěma prsty (proti směru hodinových ručiček)</string>
+    <string name="rotate_clockwise">Otočení dvěma prsty (po směru hodinových ručiček)</string>
     <string name="limit_app_names_to_one_line">Omezit názvy aplikací na jeden řádek</string>
     <string name="add_folder">Přidat složku</string>
     <string name="folder_is_not_valid">Složka není platná</string>

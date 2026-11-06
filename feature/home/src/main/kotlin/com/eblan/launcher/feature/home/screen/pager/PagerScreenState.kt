@@ -70,6 +70,7 @@ import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
 import com.eblan.launcher.domain.model.userdata.GestureSettings
 import com.eblan.launcher.domain.model.userdata.HomeSettings
+import com.eblan.launcher.feature.home.component.HomeGesture
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.GridItemSource
 import com.eblan.launcher.feature.home.model.PageDirection
@@ -393,6 +394,32 @@ internal class PagerScreenState(
         )
 
         hasDoubleTap = false
+    }
+
+    fun handleGesture(gesture: HomeGesture) {
+        val eblanAction = when (gesture) {
+            HomeGesture.SwipeLeft -> gestureSettings.swipeLeft
+            HomeGesture.SwipeRight -> gestureSettings.swipeRight
+            HomeGesture.DoubleTapSwipeUp -> gestureSettings.doubleTapSwipeUp
+            HomeGesture.DoubleTapSwipeDown -> gestureSettings.doubleTapSwipeDown
+            HomeGesture.TwoFingerSwipeUp -> gestureSettings.twoFingerSwipeUp
+            HomeGesture.TwoFingerSwipeDown -> gestureSettings.twoFingerSwipeDown
+            HomeGesture.PinchIn -> gestureSettings.pinchIn
+            HomeGesture.PinchOut -> gestureSettings.pinchOut
+            HomeGesture.RotateCounterClockwise -> gestureSettings.rotateCounterClockwise
+            HomeGesture.RotateClockwise -> gestureSettings.rotateClockwise
+        }
+
+        handleEblanAction(
+            // Context and Action
+            context = context,
+            eblanAction = eblanAction,
+            // System Wrappers
+            launcherApps = androidLauncherAppsWrapper,
+            statusBarManagerWrapper = androidStatusBarManagerWrapper,
+            // Callbacks
+            onOpenAppDrawer = ::openApplicationScreen,
+        )
     }
 
     fun dragStart(offset: Offset) {

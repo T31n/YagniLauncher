@@ -51,6 +51,16 @@
     <string name="double_tap">Dwukrotne dotknięcie</string>
     <string name="swipe_up">Przesunięcie w górę</string>
     <string name="swipe_down">Przesunięcie w dół</string>
+    <string name="swipe_left">Przesunięcie w lewo</string>
+    <string name="swipe_right">Przesunięcie w prawo</string>
+    <string name="double_tap_swipe_up">Dwukrotne dotknięcie + przesunięcie w górę</string>
+    <string name="double_tap_swipe_down">Dwukrotne dotknięcie + przesunięcie w dół</string>
+    <string name="two_finger_swipe_up">Przesunięcie dwoma palcami w górę</string>
+    <string name="two_finger_swipe_down">Przesunięcie dwoma palcami w dół</string>
+    <string name="pinch_in">Ściśnięcie palcami</string>
+    <string name="pinch_out">Rozciągnięcie palcami</string>
+    <string name="rotate_counter_clockwise">Obrót dwoma palcami (przeciwnie do ruchu wskazówek zegara)</string>
+    <string name="rotate_clockwise">Obrót dwoma palcami (zgodnie z ruchem wskazówek zegara)</string>
     <string name="limit_app_names_to_one_line">Ogranicz nazwy aplikacji do jednej linii</string>
     <string name="add_folder">Dodaj folder</string>
     <string name="folder_is_not_valid">Nieprawidłowy folder</string>

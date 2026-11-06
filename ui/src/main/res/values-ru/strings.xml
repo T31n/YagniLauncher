@@ -51,6 +51,16 @@
     <string name="double_tap">Двойной тап</string>
     <string name="swipe_up">Свайп вверх</string>
     <string name="swipe_down">Свайп вниз</string>
+    <string name="swipe_left">Свайп влево</string>
+    <string name="swipe_right">Свайп вправо</string>
+    <string name="double_tap_swipe_up">Двойной тап + свайп вверх</string>
+    <string name="double_tap_swipe_down">Двойной тап + свайп вниз</string>
+    <string name="two_finger_swipe_up">Свайп двумя пальцами вверх</string>
+    <string name="two_finger_swipe_down">Свайп двумя пальцами вниз</string>
+    <string name="pinch_in">Сведение пальцев</string>
+    <string name="pinch_out">Разведение пальцев</string>
+    <string name="rotate_counter_clockwise">Поворот двумя пальцами (против часовой стрелки)</string>
+    <string name="rotate_clockwise">Поворот двумя пальцами (по часовой стрелке)</string>
     <string name="limit_app_names_to_one_line">Ограничьте названия приложений одной строкой</string>
     <string name="add_folder">Добавить папку</string>
     <string name="folder_is_not_valid">Папка неверна</string>

@@ -41,7 +41,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.draganddrop.dragAndDropTarget
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -124,6 +123,7 @@ import com.eblan.launcher.feature.home.component.GridLayout
 import com.eblan.launcher.feature.home.component.HomeHandler
 import com.eblan.launcher.feature.home.component.PageIndicator
 import com.eblan.launcher.feature.home.component.SparkleGridLayout
+import com.eblan.launcher.feature.home.component.homeGestures
 import com.eblan.launcher.feature.home.component.pagerTransitionEffect
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.GridItemSource
@@ -872,26 +872,19 @@ internal fun PagerScreen(
                 .fillMaxSize()
                 .padding(top = paddingValues.calculateTopPadding())
                 .alpha(pagerScreenState.pagerScreenAlpha)
-                .pointerInput(
-                    key1 = isVisibleOverlay,
-                    key2 = pagerScreenState,
-                ) {
-                    detectVerticalDragGestures(
-                        onDragStart = {
-                            pagerScreenState.verticalDragStart()
-                        },
-                        onVerticalDrag = { _, dragAmount ->
-                            pagerScreenState.verticalDrag(dragAmount = dragAmount)
-                        },
-                        onDragEnd = pagerScreenState::verticalDragEnd,
-                        onDragCancel = pagerScreenState::verticalDragCancel,
-                    )
-                }
+                .homeGestures(
+                    pagerState = gridHorizontalPagerState,
+                    onVerticalDragStart = pagerScreenState::verticalDragStart,
+                    onVerticalDrag = pagerScreenState::verticalDrag,
+                    onVerticalDragEnd = pagerScreenState::verticalDragEnd,
+                    onVerticalDragCancel = pagerScreenState::verticalDragCancel,
+                    onDoubleTap = {
+                        pagerScreenState.updateHasDoubleTap(value = true)
+                    },
+                    onGesture = pagerScreenState::handleGesture,
+                )
                 .pointerInput(key1 = pagerScreenState) {
                     detectTapGestures(
-                        onDoubleTap = {
-                            pagerScreenState.updateHasDoubleTap(value = true)
-                        },
                         onLongPress = {
                             pagerScreenState.showSettingsMenu(offset = it)
                         },

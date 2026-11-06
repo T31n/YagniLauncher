@@ -9,4 +9,14 @@ message GestureSettingsProto {
   EblanActionProto doubleTapProto = 1;
   EblanActionProto swipeUpProto = 2;
   EblanActionProto swipeDownProto = 3;
+  EblanActionProto swipeLeftProto = 4;
+  EblanActionProto swipeRightProto = 5;
+  EblanActionProto doubleTapSwipeUpProto = 6;
+  EblanActionProto doubleTapSwipeDownProto = 7;
+  EblanActionProto twoFingerSwipeUpProto = 8;
+  EblanActionProto twoFingerSwipeDownProto = 9;
+  EblanActionProto pinchInProto = 10;
+  EblanActionProto pinchOutProto = 11;
+  EblanActionProto rotateCounterClockwiseProto = 12;
+  EblanActionProto rotateClockwiseProto = 13;
 }

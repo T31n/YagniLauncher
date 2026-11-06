@@ -204,6 +204,16 @@ internal fun GestureSettings.toGestureSettingsProto(): GestureSettingsProto = Ge
     builder.doubleTapProto = doubleTap.toEblanActionProto()
     builder.swipeUpProto = swipeUp.toEblanActionProto()
     builder.swipeDownProto = swipeDown.toEblanActionProto()
+    builder.swipeLeftProto = swipeLeft.toEblanActionProto()
+    builder.swipeRightProto = swipeRight.toEblanActionProto()
+    builder.doubleTapSwipeUpProto = doubleTapSwipeUp.toEblanActionProto()
+    builder.doubleTapSwipeDownProto = doubleTapSwipeDown.toEblanActionProto()
+    builder.twoFingerSwipeUpProto = twoFingerSwipeUp.toEblanActionProto()
+    builder.twoFingerSwipeDownProto = twoFingerSwipeDown.toEblanActionProto()
+    builder.pinchInProto = pinchIn.toEblanActionProto()
+    builder.pinchOutProto = pinchOut.toEblanActionProto()
+    builder.rotateCounterClockwiseProto = rotateCounterClockwise.toEblanActionProto()
+    builder.rotateClockwiseProto = rotateClockwise.toEblanActionProto()
 }.build()
 
 internal fun ExperimentalSettings.toExperimentalSettingsProto(): ExperimentalSettingsProto = ExperimentalSettingsProto.newBuilder().also { builder ->
@@ -250,6 +260,16 @@ internal fun GestureSettingsProto.toGestureSettings(): GestureSettings = Gesture
     doubleTap = doubleTapProto.toEblanAction(),
     swipeUp = swipeUpProto.toEblanAction(),
     swipeDown = swipeDownProto.toEblanAction(),
+    swipeLeft = swipeLeftProto.toEblanAction(),
+    swipeRight = swipeRightProto.toEblanAction(),
+    doubleTapSwipeUp = doubleTapSwipeUpProto.toEblanAction(),
+    doubleTapSwipeDown = doubleTapSwipeDownProto.toEblanAction(),
+    twoFingerSwipeUp = twoFingerSwipeUpProto.toEblanAction(),
+    twoFingerSwipeDown = twoFingerSwipeDownProto.toEblanAction(),
+    pinchIn = pinchInProto.toEblanAction(),
+    pinchOut = pinchOutProto.toEblanAction(),
+    rotateCounterClockwise = rotateCounterClockwiseProto.toEblanAction(),
+    rotateClockwise = rotateClockwiseProto.toEblanAction(),
 )
 
 internal fun EblanActionProto.toEblanAction(): EblanAction = EblanAction(

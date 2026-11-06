@@ -51,6 +51,16 @@
     <string name="double_tap">Double Tap</string>
     <string name="swipe_up">Swipe Up</string>
     <string name="swipe_down">Swipe Down</string>
+    <string name="swipe_left">Swipe Left</string>
+    <string name="swipe_right">Swipe Right</string>
+    <string name="double_tap_swipe_up">Double Tap + Swipe Up</string>
+    <string name="double_tap_swipe_down">Double Tap + Swipe Down</string>
+    <string name="two_finger_swipe_up">Two Finger Swipe Up</string>
+    <string name="two_finger_swipe_down">Two Finger Swipe Down</string>
+    <string name="pinch_in">Pinch In</string>
+    <string name="pinch_out">Pinch Out</string>
+    <string name="rotate_counter_clockwise">Two Finger Rotation (Counter Clockwise)</string>
+    <string name="rotate_clockwise">Two Finger Rotation (Clockwise)</string>
     <string name="limit_app_names_to_one_line">Limit app names to one line</string>
     <string name="add_folder">Add Folder</string>
     <string name="folder_is_not_valid">Folder is not valid</string>
