@@ -17,7 +17,6 @@
  */
 package com.eblan.launcher.feature.editapplicationinfo
 
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,13 +27,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -382,7 +382,11 @@ private fun Tags(
         mutableStateOf<EblanApplicationInfoTagUi?>(null)
     }
 
-    FlowRow(modifier = modifier.fillMaxWidth()) {
+    FlowRow(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
         eblanApplicationInfoTagsUi.forEach { eblanApplicationInfoTagUi ->
             EblanApplicationInfoTagItem(
                 // Content
@@ -440,39 +444,46 @@ private fun EblanApplicationInfoTagItem(
     onDeleteEblanApplicationInfoCrossRef: (Long) -> Unit,
     onShowUpdateTagDialog: (EblanApplicationInfoTagUi) -> Unit,
 ) {
-    Card(
-        modifier = modifier.padding(5.dp),
-        shape = RoundedCornerShape(16.dp),
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            modifier = Modifier
-                .combinedClickable(
-                    onClick = {
-                        if (eblanApplicationInfoTagUi.selected) {
-                            onDeleteEblanApplicationInfoCrossRef(eblanApplicationInfoTagUi.id)
-                        } else {
-                            onAddEblanApplicationInfoCrossRef(eblanApplicationInfoTagUi.id)
-                        }
-                    },
-                    onLongClick = {
-                        onShowUpdateTagDialog(eblanApplicationInfoTagUi)
-                    },
-                )
-                .padding(10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            if (eblanApplicationInfoTagUi.selected) {
-                Icon(
-                    imageVector = EblanLauncherIcons.Done,
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp),
-                )
-            }
+        FilterChip(
+            selected = eblanApplicationInfoTagUi.selected,
+            onClick = {
+                if (eblanApplicationInfoTagUi.selected) {
+                    onDeleteEblanApplicationInfoCrossRef(eblanApplicationInfoTagUi.id)
+                } else {
+                    onAddEblanApplicationInfoCrossRef(eblanApplicationInfoTagUi.id)
+                }
+            },
+            label = {
+                Text(text = eblanApplicationInfoTagUi.name)
+            },
+            leadingIcon = if (eblanApplicationInfoTagUi.selected) {
+                {
+                    Icon(
+                        imageVector = EblanLauncherIcons.Done,
+                        contentDescription = null,
+                        modifier = Modifier.size(FilterChipDefaults.IconSize),
+                    )
+                }
+            } else {
+                null
+            },
+        )
 
-            Text(
-                text = eblanApplicationInfoTagUi.name,
-                style = MaterialTheme.typography.bodyMedium,
+        IconButton(
+            onClick = {
+                onShowUpdateTagDialog(eblanApplicationInfoTagUi)
+            },
+        ) {
+            Icon(
+                imageVector = EblanLauncherIcons.Edit,
+                contentDescription = stringResource(
+                    commonR.string.edit,
+                    eblanApplicationInfoTagUi.name,
+                ),
             )
         }
     }
@@ -483,29 +494,20 @@ private fun AddTag(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
-    Card(
-        modifier = modifier.padding(5.dp),
-        shape = RoundedCornerShape(16.dp),
-    ) {
-        Row(
-            modifier = Modifier
-                .combinedClickable(onClick = onClick)
-                .padding(10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
+    AssistChip(
+        modifier = modifier,
+        onClick = onClick,
+        label = {
+            Text(text = stringResource(commonR.string.add))
+        },
+        leadingIcon = {
             Icon(
                 imageVector = EblanLauncherIcons.Add,
                 contentDescription = null,
-                modifier = Modifier.size(20.dp),
+                modifier = Modifier.size(AssistChipDefaults.IconSize),
             )
-
-            Text(
-                text = stringResource(commonR.string.add),
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-    }
+        },
+    )
 }
 
 @Composable
@@ -524,7 +526,11 @@ private fun Folders(
 ) {
     var showAddFolderDialog by remember { mutableStateOf(false) }
 
-    FlowRow(modifier = modifier.fillMaxWidth()) {
+    FlowRow(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
         folderEblanApplicationInfos.forEach {
             FolderEblanApplicationInfoItem(
                 // Application Info
@@ -579,44 +585,38 @@ private fun FolderEblanApplicationInfoItem(
         } ?: 0
     }
 
-    Card(
-        modifier = modifier.padding(5.dp),
-        shape = RoundedCornerShape(16.dp),
-    ) {
-        Row(
-            modifier = Modifier
-                .combinedClickable(
-                    onClick = {
-                        if (folderEblanApplicationInfo.id == eblanApplicationInfo.folderId) {
-                            onUpdateEblanApplicationInfo(eblanApplicationInfo.copy(folderId = null))
-                        } else {
-                            onUpdateEblanApplicationInfo(
-                                eblanApplicationInfo.copy(
-                                    folderIndex = folderIndex,
-                                    folderId = folderEblanApplicationInfo.id,
-                                ),
-                            )
-                        }
-                    },
+    val selected = folderEblanApplicationInfo.id == eblanApplicationInfo.folderId
+
+    FilterChip(
+        modifier = modifier,
+        selected = selected,
+        onClick = {
+            if (selected) {
+                onUpdateEblanApplicationInfo(eblanApplicationInfo.copy(folderId = null))
+            } else {
+                onUpdateEblanApplicationInfo(
+                    eblanApplicationInfo.copy(
+                        folderIndex = folderIndex,
+                        folderId = folderEblanApplicationInfo.id,
+                    ),
                 )
-                .padding(10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            if (folderEblanApplicationInfo.id == eblanApplicationInfo.folderId) {
+            }
+        },
+        label = {
+            Text(text = folderEblanApplicationInfo.label)
+        },
+        leadingIcon = if (selected) {
+            {
                 Icon(
                     imageVector = EblanLauncherIcons.Done,
                     contentDescription = null,
-                    modifier = Modifier.size(20.dp),
+                    modifier = Modifier.size(FilterChipDefaults.IconSize),
                 )
             }
-
-            Text(
-                text = folderEblanApplicationInfo.label,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-    }
+        } else {
+            null
+        },
+    )
 }
 
 @Composable
@@ -624,29 +624,18 @@ private fun AddFolder(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
-    Card(
-        modifier = modifier.padding(5.dp),
-        shape = RoundedCornerShape(16.dp),
-    ) {
-        Row(
-            modifier = Modifier
-                .combinedClickable(
-                    onClick = onClick,
-                )
-                .padding(10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
+    AssistChip(
+        modifier = modifier,
+        onClick = onClick,
+        label = {
+            Text(text = stringResource(commonR.string.add))
+        },
+        leadingIcon = {
             Icon(
                 imageVector = EblanLauncherIcons.Add,
                 contentDescription = null,
-                modifier = Modifier.size(20.dp),
+                modifier = Modifier.size(AssistChipDefaults.IconSize),
             )
-
-            Text(
-                text = stringResource(commonR.string.add),
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-    }
+        },
+    )
 }
