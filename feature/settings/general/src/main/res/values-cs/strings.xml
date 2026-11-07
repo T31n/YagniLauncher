@@ -23,6 +23,7 @@
     <string name="reset">Resetovat</string>
     <string name="default_icon_pack">Výchozí</string>
     <string name="theme">Motiv</string>
+    <string name="system_bars_theme">Motiv systémových lišt</string>
     <string name="dynamic_theme">Dynamický motiv</string>
     <string name="notification_dots">Tečky oznámení</string>
     <string name="show_notification_dots">Zobrazovat tečky oznámení</string>

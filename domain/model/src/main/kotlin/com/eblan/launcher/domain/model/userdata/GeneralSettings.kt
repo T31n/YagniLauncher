@@ -19,6 +19,7 @@ package com.eblan.launcher.domain.model.userdata
 
 data class GeneralSettings(
     val theme: Theme,
+    val systemBarsTheme: Theme,
     val dynamicTheme: Boolean,
     val iconPackPackageName: String,
     val iconTint: IconTint,

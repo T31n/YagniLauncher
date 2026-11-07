@@ -234,11 +234,43 @@ private fun Success(
             // State
             checked = homeSettings.showPageIndicator,
             // Appearance
-            shape = settingsLastItemShape,
+            shape = settingsMiddleItemShape,
             // Callbacks
             onCheckedChange = {
                 onUpdateHomeSettings(
                     homeSettings.copy(showPageIndicator = it),
+                )
+            },
+        )
+
+        SettingsSwitchItem(
+            // Content
+            title = stringResource(R.string.show_status_bar),
+            subtitle = stringResource(R.string.show_the_status_bar_on_the_home_screen),
+            // State
+            checked = homeSettings.showStatusBar,
+            // Appearance
+            shape = settingsMiddleItemShape,
+            // Callbacks
+            onCheckedChange = {
+                onUpdateHomeSettings(
+                    homeSettings.copy(showStatusBar = it),
+                )
+            },
+        )
+
+        SettingsSwitchItem(
+            // Content
+            title = stringResource(R.string.show_navigation_bar),
+            subtitle = stringResource(R.string.show_the_navigation_bar_on_the_home_screen),
+            // State
+            checked = homeSettings.showNavigationBar,
+            // Appearance
+            shape = settingsLastItemShape,
+            // Callbacks
+            onCheckedChange = {
+                onUpdateHomeSettings(
+                    homeSettings.copy(showNavigationBar = it),
                 )
             },
         )

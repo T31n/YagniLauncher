@@ -32,6 +32,10 @@
     <string name="dock_infinite_scroll">تمرير لانهائي لشريط التطبيقات السفلي</string>
     <string name="prevent_rotation_when_device_orientation_changes">منع تدوير الشاشة عند تغيير اتجاه الجهاز</string>
     <string name="show_page_indicator">إظهار مؤشر الصفحات</string>
+    <string name="show_status_bar">إظهار شريط الحالة</string>
+    <string name="show_the_status_bar_on_the_home_screen">إظهار شريط الحالة على الشاشة الرئيسية</string>
+    <string name="show_navigation_bar">إظهار شريط التنقل</string>
+    <string name="show_the_navigation_bar_on_the_home_screen">إظهار شريط التنقل على الشاشة الرئيسية</string>
     <string name="show_an_indicator_for_the_current_page">إظهار مؤشر الصفحة الحالية</string>
     <string name="dock_background_color">لون خلفية شريط التطبيقات السفل</string>
     <string name="dock_padding">الحشو الداخلي لشريط التطبيقات السفلي</string>

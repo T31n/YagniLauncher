@@ -15,4 +15,5 @@ message GeneralSettingsProto {
   optional int32 customIconTint = 6;
   optional bool fallbackIconTint = 7;
   optional IconShapeProto iconShapeProto = 8;
+  optional ThemeProto systemBarsThemeProto = 9;
 }

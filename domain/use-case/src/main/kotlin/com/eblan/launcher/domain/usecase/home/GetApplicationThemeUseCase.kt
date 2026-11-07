@@ -46,12 +46,14 @@ class GetApplicationThemeUseCase @Inject constructor(
                 getApplicationThemeByColorHints(
                     colorHints = colorHints,
                     dynamicTheme = userData.generalSettings.dynamicTheme,
+                    systemBarsTheme = userData.generalSettings.systemBarsTheme,
                 )
             }
 
             Theme.Light, Theme.Dark -> {
                 ApplicationTheme(
                     theme = userData.generalSettings.theme,
+                    systemBarsTheme = userData.generalSettings.systemBarsTheme,
                     dynamicTheme = userData.generalSettings.dynamicTheme,
                 )
             }
@@ -62,6 +64,7 @@ class GetApplicationThemeUseCase @Inject constructor(
     private fun getApplicationThemeByColorHints(
         colorHints: Int?,
         dynamicTheme: Boolean,
+        systemBarsTheme: Theme,
     ): ApplicationTheme = if (colorHints != null) {
         val hintSupportsDarkTheme =
             colorHints and wallpaperManagerWrapper.hintSupportsDarkTheme != 0
@@ -69,11 +72,13 @@ class GetApplicationThemeUseCase @Inject constructor(
         if (hintSupportsDarkTheme) {
             ApplicationTheme(
                 theme = Theme.Dark,
+                systemBarsTheme = systemBarsTheme,
                 dynamicTheme = dynamicTheme,
             )
         } else {
             ApplicationTheme(
                 theme = Theme.Light,
+                systemBarsTheme = systemBarsTheme,
                 dynamicTheme = dynamicTheme,
             )
         }
@@ -84,6 +89,7 @@ class GetApplicationThemeUseCase @Inject constructor(
             } else {
                 Theme.Light
             },
+            systemBarsTheme = systemBarsTheme,
             dynamicTheme = dynamicTheme,
         )
     }

@@ -36,6 +36,7 @@ class SettingsActivityViewModel @Inject constructor(
         ActivityUiState.Success(
             applicationTheme = ApplicationTheme(
                 theme = userData.generalSettings.theme,
+                systemBarsTheme = userData.generalSettings.systemBarsTheme,
                 dynamicTheme = userData.generalSettings.dynamicTheme,
             ),
         )

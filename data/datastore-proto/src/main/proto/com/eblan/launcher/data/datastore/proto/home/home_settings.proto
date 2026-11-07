@@ -31,4 +31,6 @@ message HomeSettingsProto {
   optional int32 dockBottomEndCornerRadius = 28;
   optional bool addDockBottomPadding = 29;
   optional PagerTransitionEffectProto pagerTransitionEffectProto = 30;
+  optional bool showStatusBar = 31;
+  optional bool showNavigationBar = 32;
 }

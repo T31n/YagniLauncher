@@ -25,6 +25,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.common.AndroidImageSerializer
@@ -46,6 +47,7 @@ import com.eblan.launcher.ui.local.LocalImageSerializer
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import com.eblan.launcher.ui.local.LocalPinItemRequest
 import com.eblan.launcher.ui.local.LocalUserManager
+import com.eblan.launcher.util.handleEdgeToEdge
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -107,6 +109,10 @@ class PinActivity : ComponentActivity() {
                         ActivityUiState.Loading -> {}
 
                         is ActivityUiState.Success -> {
+                            SideEffect {
+                                handleEdgeToEdge(theme = state.applicationTheme.systemBarsTheme)
+                            }
+
                             EblanLauncherTheme(
                                 theme = state.applicationTheme.theme,
                                 dynamicTheme = state.applicationTheme.dynamicTheme,

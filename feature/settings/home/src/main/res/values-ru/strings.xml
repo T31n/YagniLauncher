@@ -32,6 +32,10 @@
     <string name="dock_infinite_scroll">Бесконечная прокрутка в док-панели</string>
     <string name="prevent_rotation_when_device_orientation_changes">Предотвращать поворот при изменении ориентации устройства</string>
     <string name="show_page_indicator">Показывать индикатор страницы</string>
+    <string name="show_status_bar">Показывать строку состояния</string>
+    <string name="show_the_status_bar_on_the_home_screen">Показывать строку состояния на главном экране</string>
+    <string name="show_navigation_bar">Показывать панель навигации</string>
+    <string name="show_the_navigation_bar_on_the_home_screen">Показывать панель навигации на главном экране</string>
     <string name="show_an_indicator_for_the_current_page">Отображать индикатор текущей страницы</string>
     <string name="dock_background_color">Цвет фона док-панели</string>
     <string name="dock_padding">Отступ док-панели</string>

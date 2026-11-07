@@ -23,6 +23,7 @@
     <string name="reset">Resetuj</string>
     <string name="default_icon_pack">Domyślny</string>
     <string name="theme">Motyw</string>
+    <string name="system_bars_theme">Motyw pasków systemowych</string>
     <string name="dynamic_theme">Motyw dynamiczny</string>
     <string name="notification_dots">Kropki powiadomień</string>
     <string name="show_notification_dots">Pokazuj kropki powiadomień</string>

@@ -47,6 +47,7 @@ import javax.inject.Inject
 class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
     private val defaultGeneralSettingsProto = GeneralSettingsProto.newBuilder().apply {
         themeProto = ThemeProto.ThemeSystem
+        systemBarsThemeProto = ThemeProto.ThemeSystem
         dynamicTheme = false
         iconPackPackageName = ""
         iconTintProto = IconTintProto.IconTintNone
@@ -95,6 +96,8 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
         dockBottomEndCornerRadius = 0
         addDockBottomPadding = true
         pagerTransitionEffectProto = PagerTransitionEffectProto.PagerTransitionEffectNone
+        showStatusBar = true
+        showNavigationBar = true
     }.build()
 
     private val defaultAppDrawerSettingsProto = AppDrawerSettingsProto.newBuilder().apply {
