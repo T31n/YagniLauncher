@@ -13,4 +13,6 @@ message FolderSettingsProto {
   optional int32 folderCornerRadius = 5;
   optional BackgroundColorProto folderBackgroundColorProto = 6;
   optional int32 customFolderBackgroundColor = 7;
+  optional int32 customFolderBorderColor = 8;
+  optional int32 borderWidth = 9;
 }

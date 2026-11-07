@@ -30,6 +30,8 @@
     <string name="icon_size_is_not_valid">Icon Size is not valid</string>
     <string name="padding">Padding</string>
     <string name="padding_is_not_valid">Padding is not valid</string>
+    <string name="border_width">Border Width</string>
+    <string name="border_width_is_not_valid">Border width is not valid</string>
     <string name="text_size">Text Size</string>
     <string name="text_size_is_not_valid">Text Size is not valid</string>
     <string name="select_application">Select Application</string>

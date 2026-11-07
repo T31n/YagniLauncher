@@ -776,6 +776,8 @@ private fun Success(
                     textColor = textColor,
                     folderBackgroundColor = homeData.userData.folderSettings.folderBackgroundColor,
                     customFolderBackgroundColor = homeData.userData.folderSettings.customFolderBackgroundColor,
+                    customFolderBorderColor = homeData.userData.folderSettings.customFolderBorderColor,
+                    folderBorderWidth = homeData.userData.folderSettings.borderWidth,
                     systemTextColor = textColor,
                     systemCustomTextColor = homeData.userData.homeSettings.gridItemSettings.customTextColor,
                     // Actions
@@ -799,6 +801,8 @@ private fun Success(
                     systemCustomTextColor = homeData.userData.homeSettings.gridItemSettings.customTextColor,
                     folderBackgroundColor = homeData.userData.folderSettings.folderBackgroundColor,
                     customFolderBackgroundColor = homeData.userData.folderSettings.customFolderBackgroundColor,
+                    customFolderBorderColor = homeData.userData.folderSettings.customFolderBorderColor,
+                    folderBorderWidth = homeData.userData.folderSettings.borderWidth,
                     iconPackFilePaths = homeData.iconPackFilePaths,
                     // Layout
                     paddingValues = paddingValues,

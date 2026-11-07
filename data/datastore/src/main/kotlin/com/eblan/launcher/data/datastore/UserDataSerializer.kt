@@ -150,6 +150,8 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
         folderCornerRadius = 5
         folderBackgroundColorProto = BackgroundColorProto.BackgroundColorSystem
         customFolderBackgroundColor = 0x00000000
+        customFolderBorderColor = 0x00000000
+        borderWidth = 0
     }.build()
 
     override val defaultValue: UserDataProto = UserDataProto.newBuilder().apply {

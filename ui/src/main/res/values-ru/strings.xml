@@ -32,6 +32,8 @@
     <string name="icon_size_is_not_valid">Размер иконок неверен</string>
     <string name="padding">Заполнение</string>
     <string name="padding_is_not_valid">Заполнение неверно</string>
+    <string name="border_width">Ширина границы</string>
+    <string name="border_width_is_not_valid">Ширина границы неверна</string>
     <string name="text_size">Размер текста</string>
     <string name="text_size_is_not_valid">Размер текста неверен</string>
     <string name="select_application">Выбрать приложение</string>

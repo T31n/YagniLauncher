@@ -28,4 +28,6 @@
     <string name="max_rows_is_not_valid">Nieprawidłowa maksymalna liczba wierszy</string>
     <string name="folder_corner_radius">Promień zaokrąglenia rogów folderu</string>
     <string name="folder_background_color">Kolor tła folderu</string>
+    <string name="folder_border_color">Kolor obramowania folderu</string>
+    <string name="folder_border_width">Szerokość obramowania folderu</string>
 </resources>

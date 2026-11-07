@@ -971,6 +971,8 @@ internal fun PagerScreen(
                                 folderCornerRadius = folderSettings.folderCornerRadius,
                                 folderBackgroundColor = folderSettings.folderBackgroundColor,
                                 customFolderBackgroundColor = folderSettings.customFolderBackgroundColor,
+                                customFolderBorderColor = folderSettings.customFolderBorderColor,
+                                folderBorderWidth = folderSettings.borderWidth,
                                 systemCustomTextColor = homeSettings.gridItemSettings.customTextColor,
                                 iconPackFilePaths = iconPackFilePaths,
                                 // Animation and Transition
@@ -1154,6 +1156,8 @@ internal fun PagerScreen(
                                 folderCornerRadius = folderSettings.folderCornerRadius,
                                 folderBackgroundColor = folderSettings.folderBackgroundColor,
                                 customFolderBackgroundColor = folderSettings.customFolderBackgroundColor,
+                                customFolderBorderColor = folderSettings.customFolderBorderColor,
+                                folderBorderWidth = folderSettings.borderWidth,
                                 systemCustomTextColor = homeSettings.gridItemSettings.customTextColor,
                                 iconPackFilePaths = iconPackFilePaths,
                                 // Animation and Transition
@@ -1297,6 +1301,8 @@ internal fun PagerScreen(
                     folderBackgroundColor = folderSettings.folderBackgroundColor,
                     folderCornerRadius = folderSettings.folderCornerRadius,
                     customFolderBackgroundColor = folderSettings.customFolderBackgroundColor,
+                    customFolderBorderColor = folderSettings.customFolderBorderColor,
+                    folderBorderWidth = folderSettings.borderWidth,
                     // Drag and Drop State
                     drag = pagerScreenState.drag,
                     moveGridItemResult = moveGridItemResult,
@@ -1422,6 +1428,8 @@ internal fun PagerScreen(
                 folderCornerRadius = folderSettings.folderCornerRadius,
                 folderBackgroundColor = folderSettings.folderBackgroundColor,
                 customFolderBackgroundColor = folderSettings.customFolderBackgroundColor,
+                customFolderBorderColor = folderSettings.customFolderBorderColor,
+                folderBorderWidth = folderSettings.borderWidth,
                 isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
                 folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
                 // Gesture and State
@@ -1717,6 +1725,8 @@ internal fun PagerScreen(
                     folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                     folderBackgroundColor = folderSettings.folderBackgroundColor,
                     customFolderBackgroundColor = folderSettings.customFolderBackgroundColor,
+                    customFolderBorderColor = folderSettings.customFolderBorderColor,
+                    folderBorderWidth = folderSettings.borderWidth,
                     appDrawerSettings = appDrawerSettings,
                     folderCornerRadius = folderSettings.folderCornerRadius,
                     folderCellWidth = folderSettings.folderCellWidth,

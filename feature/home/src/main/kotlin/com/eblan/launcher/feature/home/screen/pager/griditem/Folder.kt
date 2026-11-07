@@ -18,6 +18,7 @@
 package com.eblan.launcher.feature.home.screen.pager.griditem
 
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -114,6 +115,8 @@ internal fun InteractiveFolderGridItem(
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
+    customFolderBorderColor: Int,
+    folderBorderWidth: Int,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     maxLines: Int,
@@ -293,6 +296,7 @@ internal fun InteractiveFolderGridItem(
             Surface(
                 modifier = commonModifier,
                 shape = RoundedCornerShape(folderCornerRadius.dp),
+                border = BorderStroke(width = folderBorderWidth.dp, color = Color(customFolderBorderColor)),
                 color = when (folderBackgroundColor) {
                     BackgroundColor.System -> MaterialTheme.colorScheme.surface
                     BackgroundColor.Light -> Color.White

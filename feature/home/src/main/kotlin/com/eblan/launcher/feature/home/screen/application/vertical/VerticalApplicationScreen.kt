@@ -110,6 +110,8 @@ internal fun VerticalApplicationScreen(
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
+    customFolderBorderColor: Int,
+    folderBorderWidth: Int,
     isVisibleFolderEblanApplicationInfos: Boolean,
     folderEblanApplicationInfoEntries: List<FolderEntry>,
     // System and Appearance
@@ -251,6 +253,8 @@ internal fun VerticalApplicationScreen(
                 folderCornerRadius = folderCornerRadius,
                 folderBackgroundColor = folderBackgroundColor,
                 customFolderBackgroundColor = customFolderBackgroundColor,
+                customFolderBorderColor = customFolderBorderColor,
+                folderBorderWidth = folderBorderWidth,
                 folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
                 // System Colors
                 systemTextColor = systemTextColor,
@@ -294,6 +298,8 @@ private fun EblanApplicationInfosPage(
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
+    customFolderBorderColor: Int,
+    folderBorderWidth: Int,
     folderEblanApplicationInfoEntries: List<FolderEntry>,
     // System Colors
     systemTextColor: TextColor,
@@ -390,6 +396,8 @@ private fun EblanApplicationInfosPage(
                 folderCornerRadius = folderCornerRadius,
                 folderBackgroundColor = folderBackgroundColor,
                 customFolderBackgroundColor = customFolderBackgroundColor,
+                customFolderBorderColor = customFolderBorderColor,
+                folderBorderWidth = folderBorderWidth,
                 folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                 isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
                 folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
@@ -454,6 +462,8 @@ private fun EblanApplicationInfos(
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
+    customFolderBorderColor: Int,
+    folderBorderWidth: Int,
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     isVisibleFolderEblanApplicationInfos: Boolean,
     folderEblanApplicationInfoEntries: List<FolderEntry>,
@@ -554,6 +564,8 @@ private fun EblanApplicationInfos(
                             folderCornerRadius = folderCornerRadius,
                             folderBackgroundColor = folderBackgroundColor,
                             customFolderBackgroundColor = customFolderBackgroundColor,
+                            customFolderBorderColor = customFolderBorderColor,
+                            folderBorderWidth = folderBorderWidth,
                             // Interaction
                             drag = drag,
                             // Callbacks

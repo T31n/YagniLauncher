@@ -21,6 +21,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -101,6 +102,8 @@ internal fun FolderScreen(
     folderBackgroundColor: BackgroundColor,
     folderCornerRadius: Int,
     customFolderBackgroundColor: Int,
+    customFolderBorderColor: Int,
+    folderBorderWidth: Int,
     // Drag and Drop State
     drag: Drag,
     moveGridItemResult: MoveGridItemResult?,
@@ -449,6 +452,7 @@ internal fun FolderScreen(
                 BackgroundColor.Custom -> Color(customFolderBackgroundColor)
             },
             shadowElevation = 2.dp,
+            border = BorderStroke(width = folderBorderWidth.dp, color = Color(customFolderBorderColor)),
         ) {
             Column(
                 modifier = Modifier.size(
@@ -504,6 +508,8 @@ internal fun FolderScreen(
                                 folderCornerRadius = folderCornerRadius,
                                 folderBackgroundColor = folderBackgroundColor,
                                 customFolderBackgroundColor = customFolderBackgroundColor,
+                                customFolderBorderColor = customFolderBorderColor,
+                                folderBorderWidth = folderBorderWidth,
                                 // Callbacks
                                 onOpenAppDrawer = onOpenAppDrawer,
                                 onUpsertFolderGridItemPopupEntry = onUpsertFolderGridItemPopupEntry,

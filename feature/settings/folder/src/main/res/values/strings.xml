@@ -28,4 +28,6 @@
     <string name="max_rows_is_not_valid">Max rows is not valid</string>
     <string name="folder_corner_radius">Folder Corner Radius</string>
     <string name="folder_background_color">Folder Background Color</string>
+    <string name="folder_border_color">Folder Border Color</string>
+    <string name="folder_border_width">Folder Border Width</string>
 </resources>

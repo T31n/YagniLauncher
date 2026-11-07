@@ -84,6 +84,8 @@ internal fun InteractiveGridItem(
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
+    customFolderBorderColor: Int,
+    folderBorderWidth: Int,
     systemCustomTextColor: Int,
     iconPackFilePaths: Map<String, String?>,
     // Animation and Transition
@@ -303,6 +305,8 @@ internal fun InteractiveGridItem(
                 folderCornerRadius = folderCornerRadius,
                 folderBackgroundColor = folderBackgroundColor,
                 customFolderBackgroundColor = customFolderBackgroundColor,
+                customFolderBorderColor = customFolderBorderColor,
+                folderBorderWidth = folderBorderWidth,
                 systemTextColor = textColor,
                 systemCustomTextColor = systemCustomTextColor,
                 maxLines = maxLines,

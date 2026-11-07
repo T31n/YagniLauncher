@@ -21,6 +21,7 @@ import android.content.Intent.parseUri
 import android.graphics.Rect
 import android.os.Build
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -127,6 +128,8 @@ internal fun InteractiveFolderGridItem(
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
+    customFolderBorderColor: Int,
+    folderBorderWidth: Int,
     modifier: Modifier = Modifier,
     // Callbacks
     onOpenAppDrawer: () -> Unit,
@@ -359,6 +362,8 @@ internal fun InteractiveFolderGridItem(
                 folderCornerRadius = folderCornerRadius,
                 folderBackgroundColor = folderBackgroundColor,
                 customFolderBackgroundColor = customFolderBackgroundColor,
+                customFolderBorderColor = customFolderBorderColor,
+                folderBorderWidth = folderBorderWidth,
                 horizontalAlignment = horizontalAlignment,
                 verticalArrangement = verticalArrangement,
                 maxLines = maxLines,
@@ -952,6 +957,8 @@ private fun InteractiveNestedFolderGridItem(
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
+    customFolderBorderColor: Int,
+    folderBorderWidth: Int,
     horizontalAlignment: Alignment.Horizontal,
     verticalArrangement: Arrangement.Vertical,
     maxLines: Int,
@@ -1092,6 +1099,7 @@ private fun InteractiveNestedFolderGridItem(
             Surface(
                 modifier = commonModifier,
                 shape = RoundedCornerShape(folderCornerRadius.dp),
+                border = BorderStroke(width = folderBorderWidth.dp, color = Color(customFolderBorderColor)),
                 color = when (folderBackgroundColor) {
                     BackgroundColor.System -> MaterialTheme.colorScheme.surface
                     BackgroundColor.Light -> Color.White

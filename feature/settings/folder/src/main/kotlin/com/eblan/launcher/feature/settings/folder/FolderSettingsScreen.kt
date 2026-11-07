@@ -17,16 +17,20 @@
  */
 package com.eblan.launcher.feature.settings.folder
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -36,6 +40,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -46,9 +52,12 @@ import com.eblan.launcher.feature.settings.folder.dialog.EditFolderCellDimension
 import com.eblan.launcher.feature.settings.folder.dialog.EditFolderMaxGridDialog
 import com.eblan.launcher.feature.settings.folder.model.FolderSettingsUiState
 import com.eblan.launcher.ui.dialog.BackgroundColorDialog
+import com.eblan.launcher.ui.dialog.ColorPickerDialog
+import com.eblan.launcher.ui.dialog.EditBorderWidthDialog
 import com.eblan.launcher.ui.dialog.EditCornerRadiusDialog
 import com.eblan.launcher.ui.dialog.getTitle
 import com.eblan.launcher.ui.settings.SettingsColumnItem
+import com.eblan.launcher.ui.settings.SettingsItemCard
 import com.eblan.launcher.ui.settings.settingsFirstItemShape
 import com.eblan.launcher.ui.settings.settingsLastItemShape
 import com.eblan.launcher.ui.settings.settingsMiddleItemShape
@@ -125,6 +134,10 @@ private fun Success(
 
     var showFolderBackgroundColorDialog by remember { mutableStateOf(false) }
 
+    var showFolderBorderColorDialog by remember { mutableStateOf(false) }
+
+    var showFolderBorderWidthDialog by remember { mutableStateOf(false) }
+
     Column(
         modifier = modifier
             .verticalScroll(rememberScrollState())
@@ -173,10 +186,35 @@ private fun Success(
             title = stringResource(R.string.folder_background_color),
             subtitle = folderSettings.folderBackgroundColor.getTitle(),
             // Layout
-            shape = settingsLastItemShape,
+            shape = settingsMiddleItemShape,
             // Actions
             onClick = {
                 showFolderBackgroundColorDialog = true
+            },
+        )
+
+        SettingsColumnItem(
+            // Content
+            title = stringResource(R.string.folder_border_width),
+            subtitle = "${folderSettings.borderWidth}",
+            // Layout
+            shape = settingsMiddleItemShape,
+            // Actions
+            onClick = {
+                showFolderBorderWidthDialog = true
+            },
+        )
+
+        CustomBorderColor(
+            // Content
+            title = stringResource(R.string.folder_border_color),
+            // Appearance
+            customBorderColor = folderSettings.customFolderBorderColor,
+            // Layout
+            shape = settingsLastItemShape,
+            // Actions
+            onClick = {
+                showFolderBorderColorDialog = true
             },
         )
     }
@@ -258,6 +296,82 @@ private fun Success(
                     ),
                 )
             },
+        )
+    }
+
+    if (showFolderBorderColorDialog) {
+        ColorPickerDialog(
+            // Content
+            title = stringResource(R.string.folder_border_color),
+            // State
+            customColor = folderSettings.customFolderBorderColor,
+            // Callbacks
+            onDismissRequest = {
+                showFolderBorderColorDialog = false
+            },
+            onSelectColor = {
+                onUpdateFolderSettings(
+                    folderSettings.copy(
+                        customFolderBorderColor = it,
+                    ),
+                )
+            },
+        )
+    }
+
+    if (showFolderBorderWidthDialog) {
+        EditBorderWidthDialog(
+            // Content
+            title = stringResource(R.string.folder_border_width),
+            // State
+            borderWidth = folderSettings.borderWidth,
+            // Callbacks
+            onDismissRequest = {
+                showFolderBorderWidthDialog = false
+            },
+            onUpdateBorderWidth = {
+                onUpdateFolderSettings(
+                    folderSettings.copy(
+                        borderWidth = it,
+                    ),
+                )
+            },
+        )
+    }
+}
+
+@Composable
+private fun CustomBorderColor(
+    // Item Data
+    title: String,
+    // Appearance
+    customBorderColor: Int,
+    shape: Shape,
+    // Layout
+    modifier: Modifier = Modifier,
+    // Actions
+    onClick: () -> Unit,
+) {
+    SettingsItemCard(
+        // Modifier and Layout
+        modifier = modifier,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        shape = shape,
+        // Actions and Content
+        onClick = onClick,
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+        )
+
+        Box(
+            modifier = Modifier
+                .size(40.dp)
+                .background(
+                    color = Color(customBorderColor),
+                    shape = CircleShape,
+                ),
         )
     }
 }
