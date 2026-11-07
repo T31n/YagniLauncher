@@ -23,6 +23,7 @@
     <string name="reset">Reset</string>
     <string name="default_icon_pack">Default</string>
     <string name="theme">Theme</string>
+    <string name="system_bars_theme">System Bars Theme</string>
     <string name="dynamic_theme">Dynamic Theme</string>
     <string name="notification_dots">Notification Dots</string>
     <string name="show_notification_dots">Show notification dots</string>

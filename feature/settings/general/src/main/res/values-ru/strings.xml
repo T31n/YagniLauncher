@@ -23,6 +23,7 @@
     <string name="reset">Сбросить</string>
     <string name="default_icon_pack">По умолчанию</string>
     <string name="theme">Тема</string>
+    <string name="system_bars_theme">Тема системных панелей</string>
     <string name="dynamic_theme">Динамическая тема</string>
     <string name="notification_dots">Точки уведомлений</string>
     <string name="show_notification_dots">Показать точки уведомлений</string>

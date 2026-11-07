@@ -85,6 +85,8 @@ internal fun HomeSettingsProto.toHomeSettings(): HomeSettings = HomeSettings(
     dockBottomEndCornerRadius = dockBottomEndCornerRadius,
     addDockBottomPadding = addDockBottomPadding,
     pagerTransitionEffect = pagerTransitionEffectProto.toPagerTransitionEffect(),
+    showStatusBar = showStatusBar,
+    showNavigationBar = showNavigationBar,
 )
 
 internal fun AppDrawerSettingsProto.toAppDrawerSettings(): AppDrawerSettings = AppDrawerSettings(
@@ -122,6 +124,7 @@ internal fun GridItemSettingsProto.toGridItemSettings(): GridItemSettings = Grid
 
 internal fun GeneralSettingsProto.toGeneralSettings(): GeneralSettings = GeneralSettings(
     theme = themeProto.toTheme(),
+    systemBarsTheme = systemBarsThemeProto.toTheme(),
     dynamicTheme = dynamicTheme,
     iconPackPackageName = iconPackPackageName,
     iconTint = iconTintProto.toIconTint(),
@@ -173,6 +176,8 @@ internal fun HomeSettings.toHomeSettingsProto(): HomeSettingsProto = HomeSetting
     builder.dockBottomEndCornerRadius = dockBottomEndCornerRadius
     builder.addDockBottomPadding = addDockBottomPadding
     builder.pagerTransitionEffectProto = pagerTransitionEffect.toPagerTransitionEffectProto()
+    builder.showStatusBar = showStatusBar
+    builder.showNavigationBar = showNavigationBar
 }.build()
 
 internal fun AppDrawerSettings.toAppDrawerSettingsProto(): AppDrawerSettingsProto = AppDrawerSettingsProto.newBuilder().also { builder ->
@@ -192,6 +197,7 @@ internal fun AppDrawerSettings.toAppDrawerSettingsProto(): AppDrawerSettingsProt
 
 internal fun GeneralSettings.toGeneralSettingsProto(): GeneralSettingsProto = GeneralSettingsProto.newBuilder().also { builder ->
     builder.themeProto = theme.toThemeProto()
+    builder.systemBarsThemeProto = systemBarsTheme.toThemeProto()
     builder.dynamicTheme = dynamicTheme
     builder.iconPackPackageName = iconPackPackageName
     builder.iconTintProto = iconTint.toIconTintProto()

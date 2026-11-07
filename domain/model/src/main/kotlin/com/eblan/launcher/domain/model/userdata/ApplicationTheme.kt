@@ -19,5 +19,6 @@ package com.eblan.launcher.domain.model.userdata
 
 data class ApplicationTheme(
     val theme: Theme,
+    val systemBarsTheme: Theme,
     val dynamicTheme: Boolean,
 )

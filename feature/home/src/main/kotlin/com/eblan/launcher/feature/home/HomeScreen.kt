@@ -19,6 +19,7 @@ package com.eblan.launcher.feature.home
 
 import android.Manifest
 import android.os.Build
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -29,6 +30,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,6 +40,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntSize
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
@@ -619,6 +624,36 @@ private fun Success(
         moveGridItemResult: MoveGridItemResult,
     ) -> Unit,
 ) {
+    val activity = LocalActivity.current
+    val homeSettings = homeData.userData.homeSettings
+
+    DisposableEffect(
+        key1 = activity,
+        key2 = homeSettings.showStatusBar,
+        key3 = homeSettings.showNavigationBar,
+    ) {
+        val window = activity?.window ?: return@DisposableEffect onDispose {}
+
+        val insetsController = WindowCompat.getInsetsController(window, window.decorView)
+
+        val allBars = WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars()
+
+        val hiddenBars = (if (!homeSettings.showStatusBar) WindowInsetsCompat.Type.statusBars() else 0) or
+            (if (!homeSettings.showNavigationBar) WindowInsetsCompat.Type.navigationBars() else 0)
+
+        if (hiddenBars != 0) {
+            insetsController.systemBarsBehavior =
+                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            insetsController.hide(hiddenBars)
+        } else {
+            insetsController.show(allBars)
+        }
+
+        onDispose {
+            insetsController.show(allBars)
+        }
+    }
+
     AnimatedContent(
         modifier = modifier,
         targetState = screen,

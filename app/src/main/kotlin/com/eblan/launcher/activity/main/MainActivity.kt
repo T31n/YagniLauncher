@@ -143,7 +143,7 @@ class MainActivity : ComponentActivity() {
 
                     is ActivityUiState.Success -> {
                         SideEffect {
-                            handleEdgeToEdge(theme = state.applicationTheme.theme)
+                            handleEdgeToEdge(theme = state.applicationTheme.systemBarsTheme)
                         }
 
                         EblanLauncherTheme(

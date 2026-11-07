@@ -35,6 +35,7 @@
     <string name="icon_tint">تظليل الايقونة</string>
     <string name="no_icon_packs">لا يوجد حزمة ايقونات</string>
     <string name="theme">المظهر العام</string>
+    <string name="system_bars_theme">مظهر أشرطة النظام</string>
     <string name="dynamic_theme">المظهر العام الدايناميكي</string>
     <string name="notification_dots">نقاط الإشعارات</string>
     <string name="show_notification_dots">إظهار نقاط الإشعارات</string>

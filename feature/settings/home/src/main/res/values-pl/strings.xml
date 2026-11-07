@@ -32,6 +32,10 @@
     <string name="dock_infinite_scroll">Nieskończone przewijanie doku</string>
     <string name="prevent_rotation_when_device_orientation_changes">Zapobiegaj obracaniu ekranu przy zmianie orientacji urządzenia</string>
     <string name="show_page_indicator">Pokaż wskaźnik stron</string>
+    <string name="show_status_bar">Pokaż pasek stanu</string>
+    <string name="show_the_status_bar_on_the_home_screen">Pokaż pasek stanu na ekranie głównym</string>
+    <string name="show_navigation_bar">Pokaż pasek nawigacji</string>
+    <string name="show_the_navigation_bar_on_the_home_screen">Pokaż pasek nawigacji na ekranie głównym</string>
     <string name="show_an_indicator_for_the_current_page">Pokazuj wskaźnik bieżącej strony</string>
     <string name="dock_background_color">Kolor tła doku</string>
     <string name="dock_padding">Margines wewnętrzny doku</string>

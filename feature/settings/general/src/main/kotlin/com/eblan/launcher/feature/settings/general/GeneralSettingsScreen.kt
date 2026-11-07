@@ -217,6 +217,22 @@ private fun Success(
 
         SettingsDropdownItem(
             // Content
+            title = stringResource(R.string.system_bars_theme),
+            options = Theme.entries,
+            selected = generalSettings.systemBarsTheme,
+            label = {
+                it.getTitle()
+            },
+            // Layout
+            shape = settingsMiddleItemShape,
+            // Actions
+            onSelectedChange = {
+                onUpdateGeneralSettings(generalSettings.copy(systemBarsTheme = it))
+            },
+        )
+
+        SettingsDropdownItem(
+            // Content
             title = stringResource(R.string.icon_tint),
             options = IconTint.entries,
             selected = generalSettings.iconTint,
