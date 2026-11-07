@@ -45,6 +45,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
@@ -52,6 +53,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.component.EblanDialog
+import kotlin.math.ceil
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -186,6 +188,7 @@ private fun ColorPicker(
             Spacer(Modifier.height(16.dp))
 
             AlphaCanvas(
+                color = Color.hsv(hue, saturation, value),
                 alpha = alpha,
                 onAlphaSelected = onAlphaSelected,
                 modifier = Modifier
@@ -209,9 +212,7 @@ private fun SaturationValueCanvas(
     onValueSelected: (Float) -> Unit,
 ) {
     Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(300.dp),
+        modifier = modifier.fillMaxWidth(),
     ) {
         Canvas(
             modifier = Modifier
@@ -258,16 +259,16 @@ private fun SaturationValueCanvas(
 
             drawCircle(
                 color = Color.Black,
-                radius = 5.dp.toPx(),
+                radius = 7.dp.toPx(),
                 center = Offset(indicatorX, indicatorY),
-                style = Stroke(width = 3.dp.toPx()),
+                style = Stroke(width = 2.dp.toPx()),
             )
 
             drawCircle(
                 color = Color.White,
                 radius = 5.dp.toPx(),
                 center = Offset(indicatorX, indicatorY),
-                style = Stroke(width = 3.dp.toPx()),
+                style = Stroke(width = 2.dp.toPx()),
             )
         }
     }
@@ -296,7 +297,6 @@ private fun HueCanvas(
                 )
             }
             .fillMaxWidth()
-            .height(20.dp)
             .clip(RoundedCornerShape(5.dp)),
     ) {
         val hueColors = listOf(
@@ -314,28 +314,14 @@ private fun HueCanvas(
             size = size,
         )
 
-        val indicatorSize = 5.dp.toPx()
-
-        val indicatorX = ((hue / 360f) * size.width).coerceIn(0f..size.width - indicatorSize)
-
-        drawRect(
-            color = Color.White,
-            topLeft = Offset(indicatorX, 0f),
-            size = Size(indicatorSize, size.height),
-        )
-
-        drawRect(
-            color = Color.Black.copy(alpha = 0.4f),
-            topLeft = Offset(indicatorX, 0f),
-            size = Size(indicatorSize, size.height),
-            style = Stroke(width = Dp.Hairline.toPx()),
-        )
+        drawSliderIndicator((hue / 360f) * size.width)
     }
 }
 
 @Composable
 private fun AlphaCanvas(
     modifier: Modifier = Modifier,
+    color: Color,
     alpha: Float,
     onAlphaSelected: (Float) -> Unit,
 ) {
@@ -352,25 +338,19 @@ private fun AlphaCanvas(
                 }
             }
             .fillMaxWidth()
-            .height(20.dp)
             .clip(RoundedCornerShape(5.dp)),
     ) {
         val squareSize = size.height / 2
 
-        val columns = kotlin.math.ceil(size.width / squareSize).toInt()
-        val rows = kotlin.math.ceil(size.height / squareSize).toInt()
+        val columns = ceil(size.width / squareSize).toInt()
+        val rows = ceil(size.height / squareSize).toInt()
 
         for (column in 0 until columns) {
-            val columnAlpha = (1f - (column * squareSize) / size.width).coerceIn(0f, 1f)
-
-            val black = Color.Black.copy(alpha = 0.4f * columnAlpha)
-            val white = Color.White.copy(alpha = 0.4f * columnAlpha)
-
             for (row in 0 until rows) {
                 val isBlack = (row + column) % 2 == 0
 
                 drawRect(
-                    color = if (isBlack) black else white,
+                    color = if (isBlack) Color.Black.copy(alpha = 0.4f) else Color.White.copy(alpha = 0.4f),
                     topLeft = Offset(
                         x = column * squareSize,
                         y = row * squareSize,
@@ -380,21 +360,31 @@ private fun AlphaCanvas(
             }
         }
 
-        val indicatorSize = 5.dp.toPx()
-
-        val indicatorX = (alpha * size.width).coerceIn(0f..size.width - indicatorSize)
-
         drawRect(
-            color = Color.White,
-            topLeft = Offset(indicatorX, 0f),
-            size = Size(indicatorSize, size.height),
+            brush = Brush.horizontalGradient(
+                colors = listOf(color.copy(alpha = 0f), color),
+            ),
         )
 
-        drawRect(
-            color = Color.Black.copy(alpha = 0.4f),
-            topLeft = Offset(indicatorX, 0f),
-            size = Size(indicatorSize, size.height),
-            style = Stroke(width = Dp.Hairline.toPx()),
-        )
+        drawSliderIndicator(alpha * size.width)
     }
+}
+
+private fun DrawScope.drawSliderIndicator(x: Float) {
+    val indicatorSize = 5.dp.toPx()
+
+    val indicatorX = x.coerceIn(0f, size.width - indicatorSize)
+
+    drawRect(
+        color = Color.White,
+        topLeft = Offset(indicatorX, 0f),
+        size = Size(indicatorSize, size.height),
+    )
+
+    drawRect(
+        color = Color.Black.copy(alpha = 0.4f),
+        topLeft = Offset(indicatorX, 0f),
+        size = Size(indicatorSize, size.height),
+        style = Stroke(width = Dp.Hairline.toPx()),
+    )
 }
