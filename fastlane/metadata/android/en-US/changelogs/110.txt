@@ -1,0 +1,5 @@
+- Folder border and ColorPicker improvements (#1105)
+- System bars theme support and settings (#1103)
+- Pager transition effects with improved offset calculations
+- Switch component with custom thumb icon
+- Color dialogs replaced by a unified ColorPickerDialog
