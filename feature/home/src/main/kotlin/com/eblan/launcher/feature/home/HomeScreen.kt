@@ -636,21 +636,21 @@ private fun Success(
 
         val insetsController = WindowCompat.getInsetsController(window, window.decorView)
 
-        val allBars = WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars()
+        val systemBars = WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars()
 
-        val hiddenBars = (if (!homeSettings.showStatusBar) WindowInsetsCompat.Type.statusBars() else 0) or
+        val hiddenSystemBars = (if (!homeSettings.showStatusBar) WindowInsetsCompat.Type.statusBars() else 0) or
             (if (!homeSettings.showNavigationBar) WindowInsetsCompat.Type.navigationBars() else 0)
 
-        if (hiddenBars != 0) {
+        if (hiddenSystemBars != 0) {
             insetsController.systemBarsBehavior =
                 WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            insetsController.hide(hiddenBars)
+            insetsController.hide(hiddenSystemBars)
         } else {
-            insetsController.show(allBars)
+            insetsController.show(systemBars)
         }
 
         onDispose {
-            insetsController.show(allBars)
+            insetsController.show(systemBars)
         }
     }
 
