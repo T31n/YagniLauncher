@@ -22,33 +22,33 @@ jobs:
           # Full history so the tag commit can be compared with the default branch tip
           fetch-depth: 0
 
-      - name: Grant execute permission to Gradle wrapper
+      - name: Make Gradle wrapper executable
         run: chmod +x ./gradlew
 
-      - name: Validate Gradle Wrapper
+      - name: Validate Gradle wrapper
         uses: gradle/actions/wrapper-validation@v3
 
-      - name: Copy CI gradle.properties
+      - name: Apply CI Gradle properties
         run: mkdir -p ~/.gradle ; cp .github/ci-gradle.properties ~/.gradle/gradle.properties
 
-      - name: Setup JDK 17
+      - name: Set up JDK 17
         uses: actions/setup-java@v6
         with:
           distribution: 'zulu'
           java-version: 17
 
-      - name: Setup Gradle
+      - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v5
         with:
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
-      - name: Setup Android SDK
+      - name: Set up Android SDK
         uses: android-actions/setup-android@v4
 
-      - name: Accept licenses
+      - name: Accept SDK licenses
         run: yes | sdkmanager --licenses || true
 
-      - name: Read version info from build.gradle.kts
+      - name: Read version from build.gradle.kts
         id: version
         run: |
           VERSION_NAME=$(sed -n 's/.*versionName *= *"\(.*\)".*/\1/p' app/build.gradle.kts)
@@ -93,7 +93,7 @@ jobs:
 
           echo "✅ ${GITHUB_REF_NAME} matches versionName and points to the latest ${DEFAULT_BRANCH} commit"
 
-      - name: Check if metadata file exists
+      - name: Check changelog exists
         env:
           VERSION_CODE: ${{ steps.version.outputs.version_code }}
         run: |
@@ -105,7 +105,7 @@ jobs:
           fi
            echo "✅ Found metadata file: $FILE_PATH"
 
-      - name: Build release
+      - name: Build release APK
         run: ./gradlew :app:assembleRelease
 
       - name: Upload mapping file
@@ -126,12 +126,11 @@ jobs:
         env:
           BUILD_TOOLS_VERSION: "34.0.0"
 
-      - name: Rename signed files
+      - name: Rename signed APK
         run: |
           mv ${{steps.sign_release_apk.outputs.signedReleaseFile}} app/build/outputs/apk/release/YagniLauncher-${{ github.ref_name }}.apk
 
-      - name: Release
-        uses: softprops/action-gh-release@v2
+      - name: Publish GitHub release
         if: startsWith(github.ref, 'refs/tags/')
         with:
           prerelease: true
