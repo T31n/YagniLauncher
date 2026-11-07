@@ -46,6 +46,8 @@ internal fun PageGridItem(
     systemCustomTextColor: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
+    customFolderBorderColor: Int,
+    folderBorderWidth: Int,
     folderCornerRadius: Int,
     // Assets and Styling
     iconPackFilePaths: Map<String, String?>,
@@ -133,6 +135,8 @@ internal fun PageGridItem(
                 textColor = currentTextColor,
                 folderBackgroundColor = folderBackgroundColor,
                 customFolderBackgroundColor = customFolderBackgroundColor,
+                customFolderBorderColor = customFolderBorderColor,
+                folderBorderWidth = folderBorderWidth,
                 systemTextColor = systemTextColor,
                 systemCustomTextColor = systemCustomTextColor,
                 folderCornerRadius = folderCornerRadius,

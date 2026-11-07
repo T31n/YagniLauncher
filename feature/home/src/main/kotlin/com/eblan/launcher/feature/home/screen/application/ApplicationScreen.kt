@@ -133,6 +133,8 @@ internal fun ApplicationScreen(
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
+    customFolderBorderColor: Int,
+    folderBorderWidth: Int,
     isVisibleFolderEblanApplicationInfos: Boolean,
     folderEblanApplicationInfoEntries: List<FolderEntry>,
     // Gesture and State
@@ -262,6 +264,8 @@ internal fun ApplicationScreen(
                     folderCornerRadius = folderCornerRadius,
                     folderBackgroundColor = folderBackgroundColor,
                     customFolderBackgroundColor = customFolderBackgroundColor,
+                    customFolderBorderColor = customFolderBorderColor,
+                    folderBorderWidth = folderBorderWidth,
                     isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
                     folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
                     // System and Appearance

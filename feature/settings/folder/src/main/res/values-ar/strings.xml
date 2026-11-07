@@ -20,6 +20,8 @@
     <string name="cell_width">عرض الخلية</string>
     <string name="max_rows">الحد الأقصى للصفوف</string>
     <string name="folder_background_color">لون خلفية الملف</string>
+    <string name="folder_border_color">لون حدود الملف</string>
+    <string name="folder_border_width">عرض حدود الملف</string>
     <string name="max_columns">الحد الأقصى للأعمدة</string>
     <string name="folder_max_grid">الحد الأقصى لشبكة الملف</string>
     <string name="cell_width_is_not_valid">عرض الايقونة غير صالح</string>

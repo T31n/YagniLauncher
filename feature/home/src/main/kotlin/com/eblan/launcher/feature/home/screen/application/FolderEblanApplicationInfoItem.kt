@@ -18,6 +18,7 @@
 package com.eblan.launcher.feature.home.screen.application
 
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.fillMaxSize
@@ -112,6 +113,8 @@ internal fun FolderEblanApplicationInfoItem(
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
+    customFolderBorderColor: Int,
+    folderBorderWidth: Int,
     // Interaction
     drag: Drag,
     modifier: Modifier = Modifier,
@@ -299,6 +302,7 @@ internal fun FolderEblanApplicationInfoItem(
             Surface(
                 modifier = commonModifier,
                 shape = RoundedCornerShape(folderCornerRadius.dp),
+                border = BorderStroke(width = folderBorderWidth.dp, color = Color(customFolderBorderColor)),
                 color = when (folderBackgroundColor) {
                     BackgroundColor.System -> MaterialTheme.colorScheme.surface
                     BackgroundColor.Light -> Color.White

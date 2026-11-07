@@ -21,6 +21,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -102,6 +103,8 @@ internal fun FolderApplicationScreen(
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
+    customFolderBorderColor: Int,
+    folderBorderWidth: Int,
     appDrawerSettings: AppDrawerSettings,
     folderCornerRadius: Int,
     folderCellWidth: Int,
@@ -450,6 +453,7 @@ internal fun FolderApplicationScreen(
                 BackgroundColor.Custom -> Color(customFolderBackgroundColor)
             },
             shadowElevation = 2.dp,
+            border = BorderStroke(width = folderBorderWidth.dp, color = Color(customFolderBorderColor)),
         ) {
             Column(
                 modifier = Modifier.size(
@@ -486,6 +490,8 @@ internal fun FolderApplicationScreen(
                                 // Styling and Colors
                                 folderBackgroundColor = folderBackgroundColor,
                                 customFolderBackgroundColor = customFolderBackgroundColor,
+                                customFolderBorderColor = customFolderBorderColor,
+                                folderBorderWidth = folderBorderWidth,
                                 systemTextColor = systemTextColor,
                                 systemCustomTextColor = systemCustomTextColor,
                                 folderCornerRadius = folderCornerRadius,

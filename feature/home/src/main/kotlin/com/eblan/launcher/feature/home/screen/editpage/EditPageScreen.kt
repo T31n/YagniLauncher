@@ -107,6 +107,8 @@ internal fun EditGridPageScreen(
     textColor: TextColor,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
+    customFolderBorderColor: Int,
+    folderBorderWidth: Int,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     // Actions
@@ -234,6 +236,8 @@ internal fun EditGridPageScreen(
                                 systemCustomTextColor = systemCustomTextColor,
                                 folderBackgroundColor = folderBackgroundColor,
                                 customFolderBackgroundColor = customFolderBackgroundColor,
+                                customFolderBorderColor = customFolderBorderColor,
+                                folderBorderWidth = folderBorderWidth,
                                 folderCornerRadius = folderSettings.folderCornerRadius,
                                 // Assets and Styling
                                 iconPackFilePaths = iconPackFilePaths,
@@ -350,6 +354,8 @@ internal fun EditDockGridPageScreen(
     systemCustomTextColor: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
+    customFolderBorderColor: Int,
+    folderBorderWidth: Int,
     iconPackFilePaths: Map<String, String?>,
     // Layout
     paddingValues: PaddingValues,
@@ -472,6 +478,8 @@ internal fun EditDockGridPageScreen(
                                     systemCustomTextColor = systemCustomTextColor,
                                     folderBackgroundColor = folderBackgroundColor,
                                     customFolderBackgroundColor = customFolderBackgroundColor,
+                                    customFolderBorderColor = customFolderBorderColor,
+                                    folderBorderWidth = folderBorderWidth,
                                     folderCornerRadius = folderSettings.folderCornerRadius,
                                     // Assets and Styling
                                     iconPackFilePaths = iconPackFilePaths,

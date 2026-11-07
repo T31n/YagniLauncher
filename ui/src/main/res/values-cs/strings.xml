@@ -30,6 +30,8 @@
     <string name="icon_size_is_not_valid">Velikost ikon není platná</string>
     <string name="padding">Odsazení</string>
     <string name="padding_is_not_valid">Odsazení není platné</string>
+    <string name="border_width">Šířka ohraničení</string>
+    <string name="border_width_is_not_valid">Šířka ohraničení není platná</string>
     <string name="text_size">Velikost textu</string>
     <string name="text_size_is_not_valid">Velikost textu není platná</string>
     <string name="select_application">Vybrat aplikaci</string>

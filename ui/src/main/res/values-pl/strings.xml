@@ -30,6 +30,8 @@
     <string name="icon_size_is_not_valid">Nieprawidłowy rozmiar ikon</string>
     <string name="padding">Margines wewnętrzny</string>
     <string name="padding_is_not_valid">Nieprawidłowy margines wewnętrzny</string>
+    <string name="border_width">Szerokość obramowania</string>
+    <string name="border_width_is_not_valid">Nieprawidłowa szerokość obramowania</string>
     <string name="text_size">Rozmiar tekstu</string>
     <string name="text_size_is_not_valid">Nieprawidłowy rozmiar tekstu</string>
     <string name="select_application">Wybierz aplikację</string>

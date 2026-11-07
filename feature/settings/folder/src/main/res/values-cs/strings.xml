@@ -28,4 +28,6 @@
     <string name="max_rows_is_not_valid">Maximální počet řádků není platný</string>
     <string name="folder_corner_radius">Zaoblení rohů složky</string>
     <string name="folder_background_color">Barva pozadí složky</string>
+    <string name="folder_border_color">Barva okraje složky</string>
+    <string name="folder_border_width">Šířka okraje složky</string>
 </resources>

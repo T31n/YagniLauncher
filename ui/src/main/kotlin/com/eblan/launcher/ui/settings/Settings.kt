@@ -111,7 +111,7 @@ fun SettingsSwitch(
 }
 
 @Composable
-internal fun SettingsItemCard(
+fun SettingsItemCard(
     // Modifier and Layout
     modifier: Modifier = Modifier,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,

@@ -19,6 +19,7 @@ package com.eblan.launcher.feature.home.screen.application.folder
 
 import android.graphics.Rect
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -102,6 +103,8 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
     // Styling and Colors
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
+    customFolderBorderColor: Int,
+    folderBorderWidth: Int,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     folderCornerRadius: Int,
@@ -260,6 +263,8 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
                 isVisibleFolder = isVisibleFolder,
                 // Appearance
                 customFolderBackgroundColor = customFolderBackgroundColor,
+                customFolderBorderColor = customFolderBorderColor,
+                folderBorderWidth = folderBorderWidth,
                 folderBackgroundColor = folderBackgroundColor,
                 folderCornerRadius = folderCornerRadius,
                 systemCustomTextColor = systemCustomTextColor,
@@ -472,6 +477,8 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
     isVisibleFolder: Boolean,
     // Appearance
     customFolderBackgroundColor: Int,
+    customFolderBorderColor: Int,
+    folderBorderWidth: Int,
     folderBackgroundColor: BackgroundColor,
     folderCornerRadius: Int,
     systemCustomTextColor: Int,
@@ -593,6 +600,7 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
             Surface(
                 modifier = commonModifier,
                 shape = RoundedCornerShape(folderCornerRadius.dp),
+                border = BorderStroke(width = folderBorderWidth.dp, color = Color(customFolderBorderColor)),
                 color = when (folderBackgroundColor) {
                     BackgroundColor.System -> MaterialTheme.colorScheme.surface
                     BackgroundColor.Light -> Color.White

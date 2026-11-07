@@ -17,6 +17,7 @@
  */
 package com.eblan.launcher.feature.home.screen.editpage.griditem
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
@@ -69,6 +70,8 @@ internal fun FolderGridItem(
     textColor: Color,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
+    customFolderBorderColor: Int,
+    folderBorderWidth: Int,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     folderCornerRadius: Int,
@@ -111,6 +114,7 @@ internal fun FolderGridItem(
             Surface(
                 modifier = commonModifier,
                 shape = RoundedCornerShape(folderCornerRadius.dp),
+                border = BorderStroke(width = folderBorderWidth.dp, color = Color(customFolderBorderColor)),
                 color = when (folderBackgroundColor) {
                     BackgroundColor.System -> MaterialTheme.colorScheme.surface
                     BackgroundColor.Light -> Color.White

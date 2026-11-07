@@ -49,6 +49,8 @@
     <string name="icon_size">حجم الايقونة</string>
     <string name="padding">حشو</string>
     <string name="padding_is_not_valid">الحشو غير صالح</string>
+    <string name="border_width">عرض الحد</string>
+    <string name="border_width_is_not_valid">عرض الحد غير صالح</string>
     <string name="text_size">حجم الخط</string>
     <string name="select_application">اختر التطبيق</string>
     <string name="reset_custom_icon">إعادة ضبط الايقونة</string>

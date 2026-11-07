@@ -234,6 +234,8 @@ internal fun FolderSettingsProto.toFolderSettings(): FolderSettings = FolderSett
     folderCornerRadius = folderCornerRadius,
     folderBackgroundColor = folderBackgroundColorProto.toBackgroundColor(),
     customFolderBackgroundColor = customFolderBackgroundColor,
+    customFolderBorderColor = customFolderBorderColor,
+    borderWidth = borderWidth,
 )
 
 internal fun FolderSettings.toFolderSettingsProto(): FolderSettingsProto = FolderSettingsProto.newBuilder().also { builder ->
@@ -244,6 +246,8 @@ internal fun FolderSettings.toFolderSettingsProto(): FolderSettingsProto = Folde
     builder.folderCornerRadius = folderCornerRadius
     builder.folderBackgroundColorProto = folderBackgroundColor.toBackgroundColorProto()
     builder.customFolderBackgroundColor = customFolderBackgroundColor
+    builder.customFolderBorderColor = customFolderBorderColor
+    builder.borderWidth = borderWidth
 }.build()
 
 internal fun EblanAction.toEblanActionProto(): EblanActionProto = EblanActionProto.newBuilder().also { builder ->
