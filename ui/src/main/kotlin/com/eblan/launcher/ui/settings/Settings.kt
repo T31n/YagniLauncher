@@ -41,6 +41,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
@@ -104,6 +105,7 @@ fun SettingsSwitch(
         Switch(
             checked = checked,
             onCheckedChange = onCheckedChange,
+            thumbContent = { SettingsSwitchThumbIcon(checked = checked) },
         )
     }
 }
@@ -293,8 +295,18 @@ fun SettingsSwitchItem(
         Switch(
             checked = checked,
             onCheckedChange = onCheckedChange,
+            thumbContent = { SettingsSwitchThumbIcon(checked = checked) },
         )
     }
+}
+
+@Composable
+private fun SettingsSwitchThumbIcon(checked: Boolean) {
+    Icon(
+        imageVector = if (checked) EblanLauncherIcons.Done else EblanLauncherIcons.Close,
+        contentDescription = null,
+        modifier = Modifier.size(SwitchDefaults.IconSize),
+    )
 }
 
 @Composable
