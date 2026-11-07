@@ -74,6 +74,7 @@ jobs:
     needs: run-benchmarks
     if: ${{ needs.run-benchmarks.result == 'success' && github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: read
       pull-requests: write
@@ -91,7 +92,7 @@ jobs:
           echo "" >> benchmark-comment.md
           echo "| Module | Benchmark | itemCount | Score | Error | Unit |" >> benchmark-comment.md
           echo "|---|---|---|---|---|---|" >> benchmark-comment.md
-          for f in $(find benchmark-results -name "benchmark.json"); do
+          find benchmark-results -name "benchmark.json" | while IFS= read -r f; do
             module=$(echo "$f" | sed -E 's|^benchmark-results/([^/]+(/[^/]+)*)/build/reports/benchmarks/.*|\1|')
             jq -r --arg module "$module" '.[] | "| \($module) | \(.benchmark | split(".") | last) | \(.params.itemCount) | \(.primaryMetric.score | (. * 1000 | round) / 1000) | ±\(.primaryMetric.scoreError | (. * 1000 | round) / 1000) | \(.primaryMetric.scoreUnit) |"' "$f" >> benchmark-comment.md
           done
