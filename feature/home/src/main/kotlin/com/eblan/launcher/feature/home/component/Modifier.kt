@@ -243,14 +243,18 @@ internal fun Modifier.pagerTransitionEffect(
     page: Int,
     effect: PagerTransitionEffect,
 ): Modifier = graphicsLayer {
-    val pageOffset = (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
+    val pageOffset = pagerState.pageOffsetFor(page)
     val absoluteOffset = abs(pageOffset).coerceIn(0f, 1f)
+    val clampedOffset = pageOffset.coerceIn(-1f, 1f)
     val pageWidth = size.width
+    val perspective = maxOf(pageWidth * 1.1f, 12f * density)
 
     when (effect) {
         PagerTransitionEffect.None -> Unit
 
         PagerTransitionEffect.Fade -> {
+            // Pages cross-fade in place instead of sliding past each other.
+            translationX = clampedOffset * pageWidth
             alpha = 1f - absoluteOffset
         }
 
@@ -262,41 +266,55 @@ internal fun Modifier.pagerTransitionEffect(
         }
 
         PagerTransitionEffect.Depth -> {
+            // Shrinks toward the shared seam so neighbouring pages stay touching.
             val scale = 1f - (0.2f * absoluteOffset)
             scaleX = scale
             scaleY = scale
             alpha = 1f - (0.5f * absoluteOffset)
-            translationX = -pageOffset * pageWidth * 0.25f
+            transformOrigin = seamTransformOrigin(pageOffset)
         }
 
         PagerTransitionEffect.Cube -> {
-            rotationY = -90f * pageOffset
-            transformOrigin = TransformOrigin(
-                pivotFractionX = if (pageOffset > 0f) 0f else 1f,
-                pivotFractionY = 0.5f,
-            )
-            cameraDistance = maxOf(size.width * 1.1f, 12f * density)
+            // Shrinks while turning so the whole cube stays on screen.
+            val scale = 1f - (0.15f * absoluteOffset)
+            scaleX = scale
+            scaleY = scale
+            rotationY = -90f * clampedOffset
+            transformOrigin = seamTransformOrigin(pageOffset)
+            cameraDistance = perspective
         }
 
         PagerTransitionEffect.Flip -> {
-            rotationY = -180f * pageOffset
-            alpha = 1f - (0.2f * absoluteOffset)
-            cameraDistance = maxOf(size.width * 1.1f, 12f * density)
+            rotationY = -180f * clampedOffset
+            // Hidden once past edge-on so the mirrored back face never shows.
+            alpha = if (absoluteOffset < 0.5f) 1f else 0f
+            cameraDistance = perspective
         }
 
         PagerTransitionEffect.Parallax -> {
-            translationX = -pageOffset * pageWidth * 0.35f
+            // The left page lags behind the scroll, so the incoming page slides over it.
+            if (pageOffset > 0f) translationX = pageOffset * pageWidth * 0.35f
         }
 
         PagerTransitionEffect.Stack -> {
-            val scale = 1f - (0.12f * absoluteOffset)
-            scaleX = scale
-            scaleY = scale
-            translationX = -pageOffset * pageWidth * 0.2f
-            alpha = 1f - (0.25f * absoluteOffset)
+            if (pageOffset > 0f) {
+                // The left page stays in place and recedes while the incoming page slides over it.
+                translationX = minOf(pageOffset, 1f) * pageWidth
+                val scale = 1f - (0.12f * absoluteOffset)
+                scaleX = scale
+                scaleY = scale
+                alpha = 1f - (0.25f * absoluteOffset)
+            }
         }
     }
 }
+
+private fun PagerState.pageOffsetFor(page: Int): Float = (currentPage - page) + currentPageOffsetFraction
+
+private fun seamTransformOrigin(pageOffset: Float): TransformOrigin = TransformOrigin(
+    pivotFractionX = if (pageOffset > 0f) 1f else 0f,
+    pivotFractionY = 0.5f,
+)
 
 @Composable
 internal fun Modifier.resizeHandleModifier(color: Color): Modifier = size(DRAG_HANDLE_SIZE)
