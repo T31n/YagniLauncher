@@ -19,12 +19,13 @@ package com.eblan.launcher.feature.settings.aiorganizer
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.eblan.launcher.domain.model.aiorganizer.AiOrganizerFile
+import com.eblan.launcher.domain.model.aiorganizer.AiOrganizerStatus
 import com.eblan.launcher.domain.model.aiorganizer.ApplyAiOrganizationResult
 import com.eblan.launcher.domain.model.userdata.AiOrganizerSettings
+import com.eblan.launcher.domain.repository.AiOrganizerRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
-import com.eblan.launcher.domain.usecase.aiorganizer.AiOrganizerStatus
 import com.eblan.launcher.domain.usecase.aiorganizer.ApplyAiOrganizationUseCase
-import com.eblan.launcher.domain.usecase.aiorganizer.GetAiOrganizerStatusUseCase
 import com.eblan.launcher.feature.settings.aiorganizer.model.AiOrganizerSettingsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,7 +38,7 @@ import javax.inject.Inject
 @HiltViewModel
 internal class AiOrganizerSettingsViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository,
-    private val getAiOrganizerStatusUseCase: GetAiOrganizerStatusUseCase,
+    private val aiOrganizerRepository: AiOrganizerRepository,
     private val applyAiOrganizationUseCase: ApplyAiOrganizationUseCase,
 ) : ViewModel() {
     private val status = MutableStateFlow(AiOrganizerStatus(hasNewHome = false, hasLastHome = false))
@@ -66,7 +67,10 @@ internal class AiOrganizerSettingsViewModel @Inject constructor(
 
     fun refreshStatus() {
         viewModelScope.launch {
-            status.value = getAiOrganizerStatusUseCase()
+            status.value = AiOrganizerStatus(
+                hasNewHome = aiOrganizerRepository.fileExists(AiOrganizerFile.NEW_HOME),
+                hasLastHome = aiOrganizerRepository.fileExists(AiOrganizerFile.LAST_HOME),
+            )
         }
     }
 
@@ -80,7 +84,7 @@ internal class AiOrganizerSettingsViewModel @Inject constructor(
         viewModelScope.launch {
             applyResult.value = applyAiOrganizationUseCase(restore = restore)
 
-            status.value = getAiOrganizerStatusUseCase()
+            refreshStatus()
         }
     }
 }

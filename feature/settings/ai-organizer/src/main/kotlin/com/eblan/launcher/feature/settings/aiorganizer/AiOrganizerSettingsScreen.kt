@@ -50,11 +50,11 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.aiorganizer.AiOrganizerDefaults
+import com.eblan.launcher.domain.model.aiorganizer.AiOrganizerStatus
 import com.eblan.launcher.domain.model.aiorganizer.ApplyAiOrganizationResult
 import com.eblan.launcher.domain.model.userdata.AiOrganizerSettings
-import com.eblan.launcher.domain.usecase.aiorganizer.AiOrganizerStatus
 import com.eblan.launcher.feature.settings.aiorganizer.model.AiOrganizerSettingsUiState
+import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun AiOrganizerSettingsRoute(
@@ -192,7 +192,7 @@ private fun Success(
             value = systemInstructions,
             onValueChange = { systemInstructions = it },
             label = { Text(text = stringResource(R.string.ai_organizer_system_instructions)) },
-            supportingText = { Text(text = AiOrganizerDefaults.SYSTEM_INSTRUCTIONS) },
+            supportingText = { Text(text = stringResource(commonR.string.ai_organizer_default_system_instructions)) },
         )
 
         Button(

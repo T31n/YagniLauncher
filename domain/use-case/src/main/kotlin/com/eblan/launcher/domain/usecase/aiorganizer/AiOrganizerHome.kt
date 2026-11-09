@@ -192,7 +192,7 @@ internal fun parseAiOrganizerHome(raw: String): AiOrganizerHomeDto {
     val start = trimmed.indexOf('{')
     val end = trimmed.lastIndexOf('}')
 
-    require(start >= 0 && end > start) { "The AI response does not contain a JSON object" }
+    require(start in 0..<end) { "The AI response does not contain a JSON object" }
 
     return aiOrganizerJson.decodeFromString<AiOrganizerHomeDto>(trimmed.substring(start, end + 1))
 }

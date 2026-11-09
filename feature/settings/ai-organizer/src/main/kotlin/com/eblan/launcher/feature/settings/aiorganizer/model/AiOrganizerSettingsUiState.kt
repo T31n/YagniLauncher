@@ -17,9 +17,9 @@
  */
 package com.eblan.launcher.feature.settings.aiorganizer.model
 
+import com.eblan.launcher.domain.model.aiorganizer.AiOrganizerStatus
 import com.eblan.launcher.domain.model.aiorganizer.ApplyAiOrganizationResult
 import com.eblan.launcher.domain.model.userdata.AiOrganizerSettings
-import com.eblan.launcher.domain.usecase.aiorganizer.AiOrganizerStatus
 
 internal sealed interface AiOrganizerSettingsUiState {
     data object Loading : AiOrganizerSettingsUiState

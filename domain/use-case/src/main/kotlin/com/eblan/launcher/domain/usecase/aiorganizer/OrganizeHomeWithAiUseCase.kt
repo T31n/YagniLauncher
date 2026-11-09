@@ -19,7 +19,6 @@ package com.eblan.launcher.domain.usecase.aiorganizer
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
-import com.eblan.launcher.domain.model.aiorganizer.AiOrganizerDefaults
 import com.eblan.launcher.domain.model.aiorganizer.AiOrganizerFile
 import com.eblan.launcher.domain.model.aiorganizer.OrganizeHomeWithAiResult
 import com.eblan.launcher.domain.repository.AiOrganizerRepository
@@ -46,9 +45,11 @@ class OrganizeHomeWithAiUseCase @Inject constructor(
     /**
      * Returns [OrganizeHomeWithAiResult.Ready] once `new_home.json` is written. Other results describe why it was not.
      */
-    suspend operator fun invoke(): OrganizeHomeWithAiResult = withContext(defaultDispatcher) {
+    suspend operator fun invoke(
+        systemInstructions: String,
+    ): OrganizeHomeWithAiResult = withContext(defaultDispatcher) {
         try {
-            organize()
+            organize(systemInstructions = systemInstructions)
         } catch (exception: CancellationException) {
             throw exception
         } catch (_: Exception) {
@@ -56,7 +57,9 @@ class OrganizeHomeWithAiUseCase @Inject constructor(
         }
     }
 
-    private suspend fun organize(): OrganizeHomeWithAiResult {
+    private suspend fun organize(
+        systemInstructions: String,
+    ): OrganizeHomeWithAiResult {
         val userData = userDataRepository.userDataFlow.first()
         val settings = userData.aiOrganizerSettings
 
@@ -79,7 +82,7 @@ class OrganizeHomeWithAiUseCase @Inject constructor(
         val response = try {
             aiOrganizerRepository.complete(
                 settings = settings,
-                systemPrompt = settings.systemInstructions.ifBlank { AiOrganizerDefaults.SYSTEM_INSTRUCTIONS },
+                systemPrompt = systemInstructions,
                 userPrompt = request,
             )
         } catch (exception: CancellationException) {

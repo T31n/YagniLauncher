@@ -24,6 +24,7 @@ import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.eblan.launcher.domain.model.aiorganizer.OrganizeHomeWithAiResult
+import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.aiorganizer.OrganizeHomeWithAiUseCase
 import com.eblan.launcher.framework.notificationmanager.AndroidNotificationManagerWrapper
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,8 +33,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.eblan.launcher.common.R as commonR
 
 /**
  * Runs the AI organization in the foreground. Starting it while a run is active cancels the
@@ -43,6 +46,9 @@ import javax.inject.Inject
 class AiOrganizerService : Service() {
     @Inject
     lateinit var organizeHomeWithAiUseCase: OrganizeHomeWithAiUseCase
+
+    @Inject
+    lateinit var userDataRepository: UserDataRepository
 
     @Inject
     lateinit var notificationManagerWrapper: AndroidNotificationManagerWrapper
@@ -79,27 +85,34 @@ class AiOrganizerService : Service() {
         }
 
         organizeJob = serviceScope.launch {
-            try {
-                when (val result = organizeHomeWithAiUseCase()) {
-                    OrganizeHomeWithAiResult.Ready -> notify(
-                        id = AndroidNotificationManagerWrapper.AI_ORGANIZER_READY_NOTIFICATION_ID,
-                        title = getString(R.string.ai_organizer_ready_title),
-                        text = getString(R.string.ai_organizer_ready_text),
-                    )
-
-                    else -> notify(
-                        id = AndroidNotificationManagerWrapper.AI_ORGANIZER_ERROR_NOTIFICATION_ID,
-                        title = getString(R.string.ai_organizer_failed_title),
-                        text = result.messageText(),
-                    )
-                }
-            } finally {
-                if (organizeJob === coroutineContext[Job]) {
-                    stopForeground(STOP_FOREGROUND_REMOVE)
-
-                    stopSelf()
-                }
+            val defaultSystemInstructions = getString(commonR.string.ai_organizer_default_system_instructions)
+            val customSystemInstructions = userDataRepository.userDataFlow.first()
+                .aiOrganizerSettings.systemInstructions.trim()
+            val systemInstructions = if (customSystemInstructions.isBlank()) {
+                defaultSystemInstructions
+            } else {
+                "$defaultSystemInstructions\n\n$customSystemInstructions"
             }
+
+            when (
+                val result = organizeHomeWithAiUseCase(systemInstructions = systemInstructions)
+            ) {
+                OrganizeHomeWithAiResult.Ready -> notify(
+                    id = AndroidNotificationManagerWrapper.AI_ORGANIZER_READY_NOTIFICATION_ID,
+                    title = getString(R.string.ai_organizer_ready_title),
+                    text = getString(R.string.ai_organizer_ready_text),
+                )
+
+                else -> notify(
+                    id = AndroidNotificationManagerWrapper.AI_ORGANIZER_ERROR_NOTIFICATION_ID,
+                    title = getString(R.string.ai_organizer_failed_title),
+                    text = result.messageText(),
+                )
+            }
+
+            stopForeground(STOP_FOREGROUND_REMOVE)
+
+            stopSelf()
         }
 
         return START_NOT_STICKY
