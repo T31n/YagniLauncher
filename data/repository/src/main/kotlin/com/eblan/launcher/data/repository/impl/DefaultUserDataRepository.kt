@@ -18,6 +18,7 @@
 package com.eblan.launcher.data.repository.impl
 
 import com.eblan.launcher.data.datastore.UserDataStore
+import com.eblan.launcher.domain.model.userdata.AiOrganizerSettings
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
 import com.eblan.launcher.domain.model.userdata.FolderSettings
@@ -52,5 +53,9 @@ internal class DefaultUserDataRepository @Inject constructor(private val userDat
 
     override suspend fun updateFolderSettings(folderSettings: FolderSettings) {
         userDataStore.updateFolderSettings(folderSettings = folderSettings)
+    }
+
+    override suspend fun updateAiOrganizerSettings(aiOrganizerSettings: AiOrganizerSettings) {
+        userDataStore.updateAiOrganizerSettings(aiOrganizerSettings = aiOrganizerSettings)
     }
 }

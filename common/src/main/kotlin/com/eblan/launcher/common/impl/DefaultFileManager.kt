@@ -47,7 +47,7 @@ internal class DefaultFileManager @Inject constructor(
     ): String? = withContext(ioDispatcher) {
         val file = File(directory, name)
 
-        val oldFile = readFileBytes(file = file)
+        val oldFile = readFileBytes(directory = directory, name = name)
 
         if (oldFile.contentEquals(byteArray)) {
             file.absolutePath
@@ -64,15 +64,22 @@ internal class DefaultFileManager @Inject constructor(
         }
     }
 
-    private fun readFileBytes(file: File): ByteArray? = if (file.exists()) {
-        try {
-            FileInputStream(file).use { fis ->
-                fis.readBytes()
+    override suspend fun readFileBytes(
+        directory: File,
+        name: String,
+    ): ByteArray? = withContext(ioDispatcher) {
+        val file = File(directory, name)
+
+        if (file.exists()) {
+            try {
+                FileInputStream(file).use { fis ->
+                    fis.readBytes()
+                }
+            } catch (_: IOException) {
+                null
             }
-        } catch (_: IOException) {
+        } else {
             null
         }
-    } else {
-        null
     }
 }

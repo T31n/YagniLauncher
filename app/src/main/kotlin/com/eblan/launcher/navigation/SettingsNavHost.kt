@@ -23,6 +23,8 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.eblan.launcher.feature.settings.aiorganizer.navigation.aiOrganizerSettingsScreen
+import com.eblan.launcher.feature.settings.aiorganizer.navigation.navigateToAiOrganizerSettings
 import com.eblan.launcher.feature.settings.appdrawer.navigation.appDrawerSettingsScreen
 import com.eblan.launcher.feature.settings.appdrawer.navigation.navigateToAppDrawerSettings
 import com.eblan.launcher.feature.settings.experimental.navigation.experimentalSettingsScreen
@@ -53,6 +55,7 @@ fun SettingsNavHost(
     ) {
         settingsScreen(
             onAppDrawer = navController::navigateToAppDrawerSettings,
+            onAiOrganizer = navController::navigateToAiOrganizerSettings,
             onExperimental = navController::navigateToExperimentalSettings,
             onFinish = onFinish,
             onGeneral = navController::navigateToGeneralSettings,
@@ -70,6 +73,8 @@ fun SettingsNavHost(
         gesturesSettingsScreen(onNavigateUp = navController::navigateUp)
 
         generalSettingsScreen(onNavigateUp = navController::navigateUp)
+
+        aiOrganizerSettingsScreen(onNavigateUp = navController::navigateUp)
 
         experimentalSettingsScreen(onNavigateUp = navController::navigateUp)
     }

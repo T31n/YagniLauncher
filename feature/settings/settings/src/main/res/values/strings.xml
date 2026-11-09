@@ -23,6 +23,8 @@
     <string name="columns_and_rows_count">Columns and rows count</string>
     <string name="swipe_gesture_actions">Swipe gesture actions</string>
     <string name="advanced_options_for_power_users">Advanced options for power users</string>
+    <string name="ai_organizer_title">AI Organizer</string>
+    <string name="ai_organizer_subtitle">Organize your home screen and app drawer with an AI provider</string>
     <string name="thank_you_for_using_yagni_launcher_alpha">Thank you for using Yagni Launcher Alpha!</string>
     <string name="about_development_description">
     Development began in January 2025 with regular weekly updates. This is my most complex project to date, and I dedicate significant effort to its improvement.

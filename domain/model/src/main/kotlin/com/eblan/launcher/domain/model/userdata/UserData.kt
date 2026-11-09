@@ -24,4 +24,5 @@ data class UserData(
     val generalSettings: GeneralSettings,
     val experimentalSettings: ExperimentalSettings,
     val folderSettings: FolderSettings,
+    val aiOrganizerSettings: AiOrganizerSettings,
 )

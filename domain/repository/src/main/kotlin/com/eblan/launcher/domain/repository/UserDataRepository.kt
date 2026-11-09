@@ -17,6 +17,7 @@
  */
 package com.eblan.launcher.domain.repository
 
+import com.eblan.launcher.domain.model.userdata.AiOrganizerSettings
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
 import com.eblan.launcher.domain.model.userdata.FolderSettings
@@ -40,4 +41,6 @@ interface UserDataRepository {
     suspend fun updateExperimentalSettings(experimentalSettings: ExperimentalSettings)
 
     suspend fun updateFolderSettings(folderSettings: FolderSettings)
+
+    suspend fun updateAiOrganizerSettings(aiOrganizerSettings: AiOrganizerSettings)
 }

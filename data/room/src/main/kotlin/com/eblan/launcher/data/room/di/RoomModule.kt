@@ -22,6 +22,8 @@ import androidx.room.Room
 import com.eblan.launcher.data.room.EblanDatabase
 import com.eblan.launcher.data.room.dao.ApplicationInfoGridItemDao
 import com.eblan.launcher.data.room.dao.EblanApplicationInfoDao
+import com.eblan.launcher.data.room.dao.EblanApplicationInfoTagCrossRefDao
+import com.eblan.launcher.data.room.dao.EblanApplicationInfoTagDao
 import com.eblan.launcher.data.room.dao.FolderEblanApplicationInfoDao
 import com.eblan.launcher.data.room.dao.FolderGridItemDao
 import com.eblan.launcher.data.room.dao.ShortcutConfigGridItemDao
@@ -36,8 +38,10 @@ import com.eblan.launcher.data.room.migration.Migration19To20
 import com.eblan.launcher.data.room.migration.Migration20To21
 import com.eblan.launcher.data.room.migration.Migration3To4
 import com.eblan.launcher.data.room.migration.Migration7To8
+import com.eblan.launcher.data.room.transaction.DefaultEblanApplicationInfoTagEntityTransaction
 import com.eblan.launcher.data.room.transaction.DefaultFolderGridItemEntityTransaction
 import com.eblan.launcher.data.room.transaction.DefaultGridItemEntityTransaction
+import com.eblan.launcher.data.room.transaction.EblanApplicationInfoTagEntityTransaction
 import com.eblan.launcher.data.room.transaction.FolderGridItemEntityTransaction
 import com.eblan.launcher.data.room.transaction.GridItemEntityTransaction
 import dagger.Module
@@ -105,5 +109,17 @@ internal object RoomModule {
         eblanDatabase = eblanDatabase,
         eblanApplicationInfoDao = eblanApplicationInfoDao,
         folderEblanApplicationInfoDao = folderEblanApplicationInfoDao,
+    )
+
+    @Singleton
+    @Provides
+    fun eblanApplicationInfoTagEntityTransaction(
+        eblanDatabase: EblanDatabase,
+        eblanApplicationInfoTagDao: EblanApplicationInfoTagDao,
+        eblanApplicationInfoTagCrossRefDao: EblanApplicationInfoTagCrossRefDao,
+    ): EblanApplicationInfoTagEntityTransaction = DefaultEblanApplicationInfoTagEntityTransaction(
+        eblanDatabase = eblanDatabase,
+        eblanApplicationInfoTagDao = eblanApplicationInfoTagDao,
+        eblanApplicationInfoTagCrossRefDao = eblanApplicationInfoTagCrossRefDao,
     )
 }

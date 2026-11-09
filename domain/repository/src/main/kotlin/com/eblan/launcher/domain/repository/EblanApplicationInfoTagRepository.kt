@@ -18,6 +18,7 @@
 package com.eblan.launcher.domain.repository
 
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
+import com.eblan.launcher.domain.model.application.EblanApplicationInfoTagCrossRef
 import kotlinx.coroutines.flow.Flow
 
 interface EblanApplicationInfoTagRepository {
@@ -30,4 +31,12 @@ interface EblanApplicationInfoTagRepository {
     suspend fun deleteEblanApplicationInfoTag(eblanApplicationInfoTag: EblanApplicationInfoTag)
 
     suspend fun updateEblanApplicationInfoTags(eblanApplicationInfoTags: List<EblanApplicationInfoTag>)
+
+    /**
+     * Atomically replaces every tag and tag cross reference.
+     */
+    suspend fun replaceEblanApplicationInfoTags(
+        eblanApplicationInfoTags: List<EblanApplicationInfoTag>,
+        eblanApplicationInfoTagCrossRefs: List<EblanApplicationInfoTagCrossRef>,
+    )
 }

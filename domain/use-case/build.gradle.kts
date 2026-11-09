@@ -18,6 +18,7 @@
 
 plugins {
     alias(libs.plugins.com.eblan.launcher.jvmLibrary)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 dependencies {
@@ -28,6 +29,7 @@ dependencies {
     implementation(projects.domain.grid)
     implementation(projects.domain.repository)
     implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.serialization.json)
 
     testImplementation(testFixtures(projects.domain.model))
     testImplementation(testFixtures(projects.domain.repository))

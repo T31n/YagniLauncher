@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~
+  ~   Copyright 2023 Einstein Blanco
+  ~
+  ~   Licensed under the GNU General Public License v3.0 (the "License");
+  ~   you may not use this file except in compliance with the License.
+  ~   You may obtain a copy of the License at
+  ~
+  ~       https://www.gnu.org/licenses/gpl-3.0
+  ~
+  ~   Unless required by applicable law or agreed to in writing, software
+  ~   distributed under the License is distributed on an "AS IS" BASIS,
+  ~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~   See the License for the specific language governing permissions and
+  ~   limitations under the License.
+  ~
+  -->
+<resources>
+    <string name="ai_organizer">AI Organizer</string>
+    <string name="ai_organizer_data_disclosure">When you organize, the launcher sends your home screen grid items (component name, package name, label, page and position), your app drawer applications (package name, component name, serial number and label), and the page count, columns and rows to the endpoint below. Your API key is sent as a bearer token and your system instructions are sent as the system message.</string>
+    <string name="ai_organizer_endpoint">Endpoint URL</string>
+    <string name="ai_organizer_api_key">API key</string>
+    <string name="ai_organizer_model">Model</string>
+    <string name="ai_organizer_system_instructions">System instructions</string>
+    <string name="ai_organizer_save">Save</string>
+    <string name="ai_organizer_organize">Organize</string>
+    <string name="ai_organizer_new_home_available">A new organization is ready to apply.</string>
+    <string name="ai_organizer_no_new_home">No new organization is ready.</string>
+    <string name="ai_organizer_apply">Apply</string>
+    <string name="ai_organizer_last_home_available">A previous organization is available to restore.</string>
+    <string name="ai_organizer_no_last_home">No previous organization to restore.</string>
+    <string name="ai_organizer_restore">Restore</string>
+    <string name="ai_organizer_apply_missing_file">No organization is ready to apply.</string>
+    <string name="ai_organizer_apply_invalid_file">The organization does not match the current home screen. Organize again.</string>
+    <string name="ai_organizer_apply_failed">Applying the organization failed.</string>
+</resources>

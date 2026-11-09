@@ -41,4 +41,7 @@ interface EblanApplicationInfoTagDao {
 
     @Update
     suspend fun updateEblanApplicationInfoTagEntities(entities: List<EblanApplicationInfoTagEntity>)
+
+    @Query("DELETE FROM EblanApplicationInfoTagEntity")
+    suspend fun deleteAllEblanApplicationInfoTagEntities()
 }

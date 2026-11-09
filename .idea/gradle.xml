@@ -28,6 +28,7 @@
             <option value="$PROJECT_DIR$/data" />
             <option value="$PROJECT_DIR$/data/datastore" />
             <option value="$PROJECT_DIR$/data/datastore-proto" />
+            <option value="$PROJECT_DIR$/data/network" />
             <option value="$PROJECT_DIR$/data/repository" />
             <option value="$PROJECT_DIR$/data/room" />
             <option value="$PROJECT_DIR$/design-system" />
@@ -46,6 +47,7 @@
             <option value="$PROJECT_DIR$/feature/home" />
             <option value="$PROJECT_DIR$/feature/pin" />
             <option value="$PROJECT_DIR$/feature/settings" />
+            <option value="$PROJECT_DIR$/feature/settings/ai-organizer" />
             <option value="$PROJECT_DIR$/feature/settings/app-drawer" />
             <option value="$PROJECT_DIR$/feature/settings/experimental" />
             <option value="$PROJECT_DIR$/feature/settings/folder" />

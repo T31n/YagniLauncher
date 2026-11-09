@@ -20,6 +20,7 @@ package com.eblan.launcher.data.datastore
 import androidx.datastore.core.DataStore
 import com.eblan.launcher.data.datastore.proto.UserDataProto
 import com.eblan.launcher.data.datastore.proto.copy
+import com.eblan.launcher.domain.model.userdata.AiOrganizerSettings
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
 import com.eblan.launcher.domain.model.userdata.FolderSettings
@@ -39,7 +40,16 @@ class UserDataStore @Inject constructor(private val dataStore: DataStore<UserDat
             generalSettings = it.generalSettingsProto.toGeneralSettings(),
             experimentalSettings = it.experimentalSettingsProto.toExperimentalSettings(),
             folderSettings = it.folderSettingsProto.toFolderSettings(),
+            aiOrganizerSettings = it.aiOrganizerSettingsProto.toAiOrganizerSettings(),
         )
+    }
+
+    suspend fun updateAiOrganizerSettings(aiOrganizerSettings: AiOrganizerSettings) {
+        dataStore.updateData {
+            it.copy {
+                aiOrganizerSettingsProto = aiOrganizerSettings.toAiOrganizerSettingsProto()
+            }
+        }
     }
 
     suspend fun updateGeneralSettings(generalSettings: GeneralSettings) {

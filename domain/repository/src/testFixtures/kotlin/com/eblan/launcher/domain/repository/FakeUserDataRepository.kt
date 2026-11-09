@@ -17,6 +17,7 @@
  */
 package com.eblan.launcher.domain.repository
 
+import com.eblan.launcher.domain.model.userdata.AiOrganizerSettings
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
 import com.eblan.launcher.domain.model.userdata.FolderSettings
@@ -78,6 +79,14 @@ class FakeUserDataRepository(initialUserData: UserData) : UserDataRepository {
         _userDataFlow.update {
             it.copy(
                 folderSettings = folderSettings,
+            )
+        }
+    }
+
+    override suspend fun updateAiOrganizerSettings(aiOrganizerSettings: AiOrganizerSettings) {
+        _userDataFlow.update {
+            it.copy(
+                aiOrganizerSettings = aiOrganizerSettings,
             )
         }
     }

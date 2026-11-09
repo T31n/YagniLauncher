@@ -21,4 +21,14 @@
     <string name="notification_listener_service">Služba naslouchání oznámením Yagni</string>
     <string name="importing_into_cache">Importování %1$s do keše</string>
     <string name="loading_icons_from_cache_is_faster">Načítání ikon z keše je rychlejší</string>
+    <string name="ai_organizer_organizing_title">Organizace pomocí AI</string>
+    <string name="ai_organizer_organizing_text">Vytváření nového rozložení plochy</string>
+    <string name="ai_organizer_ready_title">Organizace pomocí AI je připravena</string>
+    <string name="ai_organizer_ready_text">Otevřete nastavení AI Organizeru a použijte nové rozložení</string>
+    <string name="ai_organizer_failed_title">Organizace pomocí AI selhala</string>
+    <string name="ai_organizer_endpoint_not_set_text">Nastavte koncový bod AI v nastavení AI Organizeru</string>
+    <string name="ai_organizer_model_not_set_text">Nastavte model AI v nastavení AI Organizeru</string>
+    <string name="ai_organizer_request_failed_text">Požadavek na koncový bod AI selhal</string>
+    <string name="ai_organizer_invalid_response_text">Odpověď AI neodpovídá očekávanému rozložení</string>
+    <string name="ai_organizer_unexpected_error_text">Došlo k neočekávané chybě</string>
 </resources>

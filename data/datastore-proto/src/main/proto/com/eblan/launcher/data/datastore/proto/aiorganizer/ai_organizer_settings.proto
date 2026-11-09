@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+option java_package = "com.eblan.launcher.data.datastore.proto.aiorganizer";
+option java_multiple_files = true;
+
+message AiOrganizerSettingsProto {
+  optional string endpoint = 1;
+  optional string apiKey = 2;
+  optional string model = 3;
+  optional string systemInstructions = 4;
+}

@@ -64,6 +64,7 @@ internal fun SettingsRoute(
     modifier: Modifier = Modifier,
     // Navigation Actions
     onAppDrawer: () -> Unit,
+    onAiOrganizer: () -> Unit,
     onExperimental: () -> Unit,
     onFinish: () -> Unit,
     onGeneral: () -> Unit,
@@ -76,6 +77,7 @@ internal fun SettingsRoute(
         modifier = modifier,
         // Navigation Actions
         onAppDrawer = onAppDrawer,
+        onAiOrganizer = onAiOrganizer,
         onExperimental = onExperimental,
         onFinish = onFinish,
         onGeneral = onGeneral,
@@ -92,6 +94,7 @@ internal fun SettingsScreen(
     modifier: Modifier = Modifier,
     // Navigation Actions
     onAppDrawer: () -> Unit,
+    onAiOrganizer: () -> Unit,
     onExperimental: () -> Unit,
     onFinish: () -> Unit,
     onGeneral: () -> Unit,
@@ -209,6 +212,17 @@ internal fun SettingsScreen(
                     shape = settingsMiddleItemShape,
                     // Action
                     onClick = onGestures,
+                )
+
+                SettingsRowItem(
+                    // Content
+                    title = stringResource(R.string.ai_organizer_title),
+                    subtitle = stringResource(R.string.ai_organizer_subtitle),
+                    imageVector = EblanLauncherIcons.Home,
+                    // Appearance
+                    shape = settingsMiddleItemShape,
+                    // Action
+                    onClick = onAiOrganizer,
                 )
 
                 SettingsRowItem(

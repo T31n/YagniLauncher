@@ -28,7 +28,13 @@ interface FileManager {
         byteArray: ByteArray,
     ): String?
 
+    suspend fun readFileBytes(
+        directory: File,
+        name: String,
+    ): ByteArray?
+
     companion object {
+        const val HOME_DIR = "home"
         const val ICONS_DIR = "icons"
         const val TINTED_ICONS_DIR = "tinted_icons"
         const val SHAPED_ICONS_DIR = "shaped_icons"

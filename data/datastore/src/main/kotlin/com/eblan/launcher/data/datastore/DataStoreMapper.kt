@@ -17,6 +17,7 @@
  */
 package com.eblan.launcher.data.datastore
 
+import com.eblan.launcher.data.datastore.proto.aiorganizer.AiOrganizerSettingsProto
 import com.eblan.launcher.data.datastore.proto.appdrawer.AppDrawerSettingsProto
 import com.eblan.launcher.data.datastore.proto.appdrawer.AppDrawerTypeProto
 import com.eblan.launcher.data.datastore.proto.experimental.ExperimentalSettingsProto
@@ -44,6 +45,7 @@ import com.eblan.launcher.domain.model.grid.HorizontalArrangement
 import com.eblan.launcher.domain.model.grid.LayoutType
 import com.eblan.launcher.domain.model.grid.VerticalAlignment
 import com.eblan.launcher.domain.model.grid.VerticalArrangement
+import com.eblan.launcher.domain.model.userdata.AiOrganizerSettings
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.AppDrawerType
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
@@ -224,6 +226,20 @@ internal fun ExperimentalSettingsProto.toExperimentalSettings(): ExperimentalSet
     firstLaunch = firstLaunch,
     lockMovement = lockMovement,
     gridItemAnimation = gridItemAnimation,
+)
+
+internal fun AiOrganizerSettings.toAiOrganizerSettingsProto(): AiOrganizerSettingsProto = AiOrganizerSettingsProto.newBuilder().also { builder ->
+    builder.endpoint = endpoint
+    builder.apiKey = apiKey
+    builder.model = model
+    builder.systemInstructions = systemInstructions
+}.build()
+
+internal fun AiOrganizerSettingsProto.toAiOrganizerSettings(): AiOrganizerSettings = AiOrganizerSettings(
+    endpoint = endpoint,
+    apiKey = apiKey,
+    model = model,
+    systemInstructions = systemInstructions,
 )
 
 internal fun FolderSettingsProto.toFolderSettings(): FolderSettings = FolderSettings(

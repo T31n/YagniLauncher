@@ -21,4 +21,14 @@
     <string name="notification_listener_service">Служба прослушивания уведомлений Yagni</string>
     <string name="importing_into_cache">Импорт %1$s в кэш</string>
     <string name="loading_icons_from_cache_is_faster">Загрузка иконок с кэша быстрее</string>
+    <string name="ai_organizer_organizing_title">Организация с помощью ИИ</string>
+    <string name="ai_organizer_organizing_text">Создание нового макета главного экрана</string>
+    <string name="ai_organizer_ready_title">Организация ИИ готова</string>
+    <string name="ai_organizer_ready_text">Откройте настройки AI Organizer, чтобы применить новый макет</string>
+    <string name="ai_organizer_failed_title">Организация ИИ не удалась</string>
+    <string name="ai_organizer_endpoint_not_set_text">Укажите конечную точку ИИ в настройках AI Organizer</string>
+    <string name="ai_organizer_model_not_set_text">Укажите модель ИИ в настройках AI Organizer</string>
+    <string name="ai_organizer_request_failed_text">Запрос к конечной точке ИИ не выполнен</string>
+    <string name="ai_organizer_invalid_response_text">Ответ ИИ не соответствует ожидаемому макету</string>
+    <string name="ai_organizer_unexpected_error_text">Произошла непредвиденная ошибка</string>
 </resources>

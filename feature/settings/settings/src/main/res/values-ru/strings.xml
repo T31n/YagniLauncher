@@ -30,4 +30,6 @@
     <string name="star_on_github">Звезда на GitHub</string>
     <string name="note_this_informational_card_will_be_removed_in_future_stable_releases">Примечание: эта информационная карточка будет удалена в будущих стабильных выпусках</string>
     <string name="corner_radius_background_color_and_more">Радиус скругления, цвет фона</string>
+    <string name="ai_organizer_title">AI Organizer</string>
+    <string name="ai_organizer_subtitle">Упорядочивайте главный экран и список приложений с помощью провайдера ИИ</string>
 </resources>

@@ -21,4 +21,14 @@
     <string name="notification_listener_service">خدمة الاستماع إلى الإشعارات في Yagni</string>
     <string name="importing_into_cache">جارٍ استيراد %1$s إلى ذاكرة التخزين المؤقت</string>
     <string name="loading_icons_from_cache_is_faster">تحميل الأيقونات من ذاكرة التخزين المؤقت أسرع</string>
+    <string name="ai_organizer_organizing_title">التنظيم باستخدام الذكاء الاصطناعي</string>
+    <string name="ai_organizer_organizing_text">جارٍ إنشاء تخطيط جديد للشاشة الرئيسية</string>
+    <string name="ai_organizer_ready_title">تم تجهيز تنظيم الذكاء الاصطناعي</string>
+    <string name="ai_organizer_ready_text">افتح إعدادات منظّم الذكاء الاصطناعي لتطبيق التخطيط الجديد</string>
+    <string name="ai_organizer_failed_title">فشل تنظيم الذكاء الاصطناعي</string>
+    <string name="ai_organizer_endpoint_not_set_text">عيّن نقطة نهاية الذكاء الاصطناعي في إعدادات منظّم الذكاء الاصطناعي</string>
+    <string name="ai_organizer_model_not_set_text">عيّن نموذج الذكاء الاصطناعي في إعدادات منظّم الذكاء الاصطناعي</string>
+    <string name="ai_organizer_request_failed_text">فشل طلب نقطة نهاية الذكاء الاصطناعي</string>
+    <string name="ai_organizer_invalid_response_text">استجابة الذكاء الاصطناعي لا تطابق التخطيط المتوقع</string>
+    <string name="ai_organizer_unexpected_error_text">حدث خطأ غير متوقع</string>
 </resources>

@@ -34,4 +34,6 @@
     <string name="star_on_github">Hvězdička na GitHubu</string>
     <string name="note_this_informational_card_will_be_removed_in_future_stable_releases">Poznámka: Tato informační karta bude odstraněna v budoucích stabilních vydáních</string>
     <string name="corner_radius_background_color_and_more">Zaoblení rohů, barva pozadí</string>
+    <string name="ai_organizer_title">AI Organizer</string>
+    <string name="ai_organizer_subtitle">Uspořádejte plochu a seznam aplikací pomocí poskytovatele AI</string>
 </resources>

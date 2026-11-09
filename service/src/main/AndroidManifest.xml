@@ -27,6 +27,11 @@
             android:foregroundServiceType="dataSync" />
 
         <service
+            android:name=".AiOrganizerService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+
+        <service
             android:name=".EblanAccessibilityService"
             android:exported="false"
             android:label="@string/accessibility_service_label"

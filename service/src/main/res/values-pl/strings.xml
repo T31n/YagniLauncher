@@ -21,4 +21,14 @@
     <string name="notification_listener_service">Usługa nasłuchiwania powiadomień Yagni</string>
     <string name="importing_into_cache">Importowanie %1$s do pamięci podręcznej</string>
     <string name="loading_icons_from_cache_is_faster">Wczytywanie ikon z pamięci podręcznej jest szybsze</string>
+    <string name="ai_organizer_organizing_title">Organizowanie z AI</string>
+    <string name="ai_organizer_organizing_text">Generowanie nowego układu ekranu głównego</string>
+    <string name="ai_organizer_ready_title">Organizacja AI gotowa</string>
+    <string name="ai_organizer_ready_text">Otwórz ustawienia AI Organizera, aby zastosować nowy układ</string>
+    <string name="ai_organizer_failed_title">Organizacja AI nie powiodła się</string>
+    <string name="ai_organizer_endpoint_not_set_text">Ustaw endpoint AI w ustawieniach AI Organizera</string>
+    <string name="ai_organizer_model_not_set_text">Ustaw model AI w ustawieniach AI Organizera</string>
+    <string name="ai_organizer_request_failed_text">Żądanie do endpointu AI nie powiodło się</string>
+    <string name="ai_organizer_invalid_response_text">Odpowiedź AI nie odpowiada oczekiwanemu układowi</string>
+    <string name="ai_organizer_unexpected_error_text">Wystąpił nieoczekiwany błąd</string>
 </resources>

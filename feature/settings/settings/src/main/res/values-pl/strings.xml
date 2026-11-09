@@ -34,4 +34,6 @@
     <string name="star_on_github">Dodaj gwiazdkę na GitHubie</string>
     <string name="note_this_informational_card_will_be_removed_in_future_stable_releases">Uwaga: Ta karta informacyjna zostanie usunięta w przyszłych wersjach stabilnych</string>
     <string name="corner_radius_background_color_and_more">Promień zaokrąglenia narożników, kolor tła</string>
+    <string name="ai_organizer_title">AI Organizer</string>
+    <string name="ai_organizer_subtitle">Organizuj ekran główny i szufladę aplikacji za pomocą dostawcy AI</string>
 </resources>

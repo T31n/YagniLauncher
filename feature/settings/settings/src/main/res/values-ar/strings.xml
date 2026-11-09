@@ -30,4 +30,6 @@
     <string name="star_on_github">ضع نجمة في GutHub</string>
     <string name="note_this_informational_card_will_be_removed_in_future_stable_releases">ملاحظة: ستتم إزالة بطاقة المعلومات هذه في الإصدارات المستقرة القادمة</string>
     <string name="corner_radius_background_color_and_more">استدارة الزوايا، لون الخلفية</string>
+    <string name="ai_organizer_title">منظّم الذكاء الاصطناعي</string>
+    <string name="ai_organizer_subtitle">نظّم الشاشة الرئيسية وقائمة التطبيقات باستخدام مزوّد ذكاء اصطناعي</string>
 </resources>

@@ -18,13 +18,19 @@
 package com.eblan.launcher.data.repository.impl
 
 import com.eblan.launcher.data.room.dao.EblanApplicationInfoTagDao
+import com.eblan.launcher.data.room.entity.EblanApplicationInfoTagCrossRefEntity
 import com.eblan.launcher.data.room.entity.EblanApplicationInfoTagEntity
+import com.eblan.launcher.data.room.transaction.EblanApplicationInfoTagEntityTransaction
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
+import com.eblan.launcher.domain.model.application.EblanApplicationInfoTagCrossRef
 import com.eblan.launcher.domain.repository.EblanApplicationInfoTagRepository
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-internal class DefaultEblanApplicationInfoTagRepository @Inject constructor(private val eblanApplicationInfoTagDao: EblanApplicationInfoTagDao) : EblanApplicationInfoTagRepository {
+internal class DefaultEblanApplicationInfoTagRepository @Inject constructor(
+    private val eblanApplicationInfoTagDao: EblanApplicationInfoTagDao,
+    private val eblanApplicationInfoTagEntityTransaction: EblanApplicationInfoTagEntityTransaction,
+) : EblanApplicationInfoTagRepository {
     override val eblanApplicationInfoTagsFlow =
         eblanApplicationInfoTagDao.getEblanApplicationInfoTagEntitiesFlow().map { entities ->
             entities.map {
@@ -50,6 +56,22 @@ internal class DefaultEblanApplicationInfoTagRepository @Inject constructor(priv
         }
 
         eblanApplicationInfoTagDao.updateEblanApplicationInfoTagEntities(entities = entities)
+    }
+
+    override suspend fun replaceEblanApplicationInfoTags(
+        eblanApplicationInfoTags: List<EblanApplicationInfoTag>,
+        eblanApplicationInfoTagCrossRefs: List<EblanApplicationInfoTagCrossRef>,
+    ) {
+        eblanApplicationInfoTagEntityTransaction.replaceEblanApplicationInfoTagEntitiesTransaction(
+            eblanApplicationInfoTagEntities = eblanApplicationInfoTags.map { it.asEntity() },
+            eblanApplicationInfoTagCrossRefEntities = eblanApplicationInfoTagCrossRefs.map {
+                EblanApplicationInfoTagCrossRefEntity(
+                    componentName = it.componentName,
+                    serialNumber = it.serialNumber,
+                    id = it.id,
+                )
+            },
+        )
     }
 
     private fun EblanApplicationInfoTagEntity.asModel(): EblanApplicationInfoTag = EblanApplicationInfoTag(

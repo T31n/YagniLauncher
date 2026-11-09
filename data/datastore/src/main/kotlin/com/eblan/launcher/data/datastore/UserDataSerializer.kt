@@ -20,6 +20,7 @@ package com.eblan.launcher.data.datastore
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer
 import com.eblan.launcher.data.datastore.proto.UserDataProto
+import com.eblan.launcher.data.datastore.proto.aiorganizer.AiOrganizerSettingsProto
 import com.eblan.launcher.data.datastore.proto.appdrawer.AppDrawerSettingsProto
 import com.eblan.launcher.data.datastore.proto.appdrawer.AppDrawerTypeProto
 import com.eblan.launcher.data.datastore.proto.experimental.ExperimentalSettingsProto
@@ -154,6 +155,13 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
         borderWidth = 0
     }.build()
 
+    private val defaultAiOrganizerSettingsProto = AiOrganizerSettingsProto.newBuilder().apply {
+        endpoint = ""
+        apiKey = ""
+        model = ""
+        systemInstructions = ""
+    }.build()
+
     override val defaultValue: UserDataProto = UserDataProto.newBuilder().apply {
         homeSettingsProto = defaultHomeSettingsProto
         appDrawerSettingsProto = defaultAppDrawerSettingsProto
@@ -161,6 +169,7 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
         generalSettingsProto = defaultGeneralSettingsProto
         experimentalSettingsProto = defaultExperimentalSettings
         folderSettingsProto = defaultFolderSettingsProto
+        aiOrganizerSettingsProto = defaultAiOrganizerSettingsProto
     }.build()
 
     override suspend fun readFrom(input: InputStream): UserDataProto = try {

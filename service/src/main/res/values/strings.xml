@@ -21,4 +21,15 @@
     <string name="notification_listener_service">Yagni Notification Listener Service</string>
     <string name="importing_into_cache">Importing %1$s into cache</string>
     <string name="loading_icons_from_cache_is_faster">Loading icons from cache is faster</string>
+    <string name="ai_organizer_organizing_title">Organizing with AI</string>
+    <string name="ai_organizer_organizing_text">Generating a new home screen layout</string>
+    <string name="ai_organizer_ready_title">AI organization ready</string>
+    <string name="ai_organizer_ready_text">Open AI Organizer settings to apply the new layout</string>
+    <string name="ai_organizer_failed_title">AI organization failed</string>
+    <string name="ai_organizer_endpoint_not_set_text">Set an AI endpoint in AI Organizer settings</string>
+    <string name="ai_organizer_model_not_set_text">Set an AI model in AI Organizer settings</string>
+    <string name="ai_organizer_request_failed_text">The AI endpoint request failed</string>
+    <string name="ai_organizer_invalid_response_text">The AI response did not match the expected layout</string>
+    <string name="ai_organizer_unexpected_error_text">An unexpected error occurred</string>
+
 </resources>
