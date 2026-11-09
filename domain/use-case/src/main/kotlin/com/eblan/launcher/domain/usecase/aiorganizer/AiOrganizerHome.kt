@@ -137,6 +137,9 @@ internal fun AiOrganizerHomeContext.toRequestDto(pageCount: Int): AiOrganizerReq
         pageCount = pageCount,
         columns = columns,
         rows = rows,
+        occupiedPositions = occupiedPositions
+            .map { (page, positions) -> AiOccupiedPageDto(page = page, positions = positions.sorted()) }
+            .sortedBy { it.page },
     ),
 )
 

@@ -27,8 +27,9 @@ object AiOrganizerDefaults {
         The user message is a JSON object with:
         - "gridItems": apps on the home screen grid, each with componentName, packageName, label, page, position.
         - "appDrawer": all apps, each with packageName, componentName, serialNumber, label.
-        - "settings": pageCount, columns and rows of the home grid.
+        - "settings": pageCount, columns and rows of the home grid, and occupiedPositions.
         A grid position is a cell index: position = row * columns + column, where 0 <= position < columns * rows.
+        occupiedPositions lists, per page, the cells already used by widgets, folders or shortcuts. Never place an app on them.
 
         Respond with ONLY one JSON object, without markdown, using this shape:
         {
@@ -41,7 +42,7 @@ object AiOrganizerDefaults {
 
         Rules:
         - Place every gridItems entry exactly once, using its exact componentName. Do not invent apps.
-        - Each (page, position) pair must be unique. page must be >= 0 and < settings.pageCount.
+        - Each (page, position) pair must be unique and must not be listed in settings.occupiedPositions. page must be >= 0 and < settings.pageCount.
         - Group related apps on the same page close together.
         - Group appDrawer apps with tags. Tag ids must be positive and unique. An app may have several tags.
         - tagCrossRefs may only reference componentName and serialNumber pairs from appDrawer, and tag ids from tags.

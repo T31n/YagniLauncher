@@ -210,8 +210,7 @@ private fun Success(
             value = systemInstructions,
             onValueChange = { systemInstructions = it },
             label = { Text(text = stringResource(R.string.ai_organizer_system_instructions)) },
-            placeholder = { Text(text = AiOrganizerDefaults.SYSTEM_INSTRUCTIONS) },
-            minLines = 5,
+            supportingText = { Text(text = AiOrganizerDefaults.SYSTEM_INSTRUCTIONS) },
         )
 
         Button(

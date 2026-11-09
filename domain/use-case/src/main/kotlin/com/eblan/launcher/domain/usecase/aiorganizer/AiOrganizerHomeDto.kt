@@ -63,6 +63,13 @@ internal data class AiRequestSettingsDto(
     val pageCount: Int,
     val columns: Int,
     val rows: Int,
+    val occupiedPositions: List<AiOccupiedPageDto> = emptyList(),
+)
+
+@Serializable
+internal data class AiOccupiedPageDto(
+    val page: Int,
+    val positions: List<Int>,
 )
 
 @Serializable

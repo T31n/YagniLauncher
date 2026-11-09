@@ -81,7 +81,7 @@ class AiOrganizerService : Service() {
         organizeJob = serviceScope.launch {
             try {
                 when (val result = organizeHomeWithAiUseCase()) {
-                    OrganizeHomeWithAiResult.READY -> notify(
+                    OrganizeHomeWithAiResult.Ready -> notify(
                         id = AndroidNotificationManagerWrapper.AI_ORGANIZER_READY_NOTIFICATION_ID,
                         title = getString(R.string.ai_organizer_ready_title),
                         text = getString(R.string.ai_organizer_ready_text),
@@ -90,7 +90,7 @@ class AiOrganizerService : Service() {
                     else -> notify(
                         id = AndroidNotificationManagerWrapper.AI_ORGANIZER_ERROR_NOTIFICATION_ID,
                         title = getString(R.string.ai_organizer_failed_title),
-                        text = getString(result.messageRes()),
+                        text = result.messageText(),
                     )
                 }
             } finally {
@@ -105,13 +105,13 @@ class AiOrganizerService : Service() {
         return START_NOT_STICKY
     }
 
-    private fun OrganizeHomeWithAiResult.messageRes(): Int = when (this) {
-        OrganizeHomeWithAiResult.READY -> R.string.ai_organizer_ready_text
-        OrganizeHomeWithAiResult.ENDPOINT_NOT_SET -> R.string.ai_organizer_endpoint_not_set_text
-        OrganizeHomeWithAiResult.MODEL_NOT_SET -> R.string.ai_organizer_model_not_set_text
-        OrganizeHomeWithAiResult.REQUEST_FAILED -> R.string.ai_organizer_request_failed_text
-        OrganizeHomeWithAiResult.INVALID_RESPONSE -> R.string.ai_organizer_invalid_response_text
-        OrganizeHomeWithAiResult.FAILED -> R.string.ai_organizer_unexpected_error_text
+    private fun OrganizeHomeWithAiResult.messageText(): String = when (this) {
+        OrganizeHomeWithAiResult.Ready -> getString(R.string.ai_organizer_ready_text)
+        OrganizeHomeWithAiResult.EndpointNotSet -> getString(R.string.ai_organizer_endpoint_not_set_text)
+        OrganizeHomeWithAiResult.ModelNotSet -> getString(R.string.ai_organizer_model_not_set_text)
+        is OrganizeHomeWithAiResult.RequestFailed -> "${getString(R.string.ai_organizer_request_failed_text)}: $detail"
+        is OrganizeHomeWithAiResult.InvalidResponse -> "${getString(R.string.ai_organizer_invalid_response_text)}: $detail"
+        OrganizeHomeWithAiResult.Failed -> getString(R.string.ai_organizer_unexpected_error_text)
     }
 
     private fun notify(id: Int, title: String, text: String) {
