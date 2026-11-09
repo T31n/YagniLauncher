@@ -17,7 +17,6 @@
  */
 package com.eblan.launcher.domain.repository
 
-import com.eblan.launcher.domain.model.aiorganizer.AiOrganizerFile
 import com.eblan.launcher.domain.model.userdata.AiOrganizerSettings
 
 interface AiOrganizerRepository {
@@ -26,15 +25,4 @@ interface AiOrganizerRepository {
         systemPrompt: String,
         userPrompt: String,
     ): String
-
-    suspend fun readFile(file: AiOrganizerFile): ByteArray?
-
-    suspend fun writeFile(
-        file: AiOrganizerFile,
-        content: ByteArray,
-    )
-
-    suspend fun deleteFile(file: AiOrganizerFile): Boolean
-
-    suspend fun fileExists(file: AiOrganizerFile): Boolean
 }

@@ -35,4 +35,6 @@
     <string name="ai_organizer_apply_missing_file">No organization is ready to apply.</string>
     <string name="ai_organizer_apply_invalid_file">The organization does not match the current home screen. Organize again.</string>
     <string name="ai_organizer_apply_failed">Applying the organization failed.</string>
+    <string name="ai_organizer_backup_saved">Current home backed up.</string>
+    <string name="ai_organizer_settings_saved">Settings saved.</string>
 </resources>

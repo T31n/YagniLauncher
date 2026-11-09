@@ -34,9 +34,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,6 +57,7 @@ import com.eblan.launcher.domain.model.aiorganizer.AiOrganizerStatus
 import com.eblan.launcher.domain.model.aiorganizer.ApplyAiOrganizationResult
 import com.eblan.launcher.domain.model.userdata.AiOrganizerSettings
 import com.eblan.launcher.feature.settings.aiorganizer.model.AiOrganizerSettingsUiState
+import kotlinx.coroutines.flow.Flow
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -73,6 +77,7 @@ internal fun AiOrganizerSettingsRoute(
     AiOrganizerSettingsScreen(
         modifier = modifier,
         aiOrganizerSettingsUiState = aiOrganizerSettingsUiState,
+        messages = viewModel.messages,
         onNavigateUp = onNavigateUp,
         onSave = viewModel::updateAiOrganizerSettings,
         onApply = {
@@ -90,12 +95,31 @@ internal fun AiOrganizerSettingsRoute(
 internal fun AiOrganizerSettingsScreen(
     modifier: Modifier = Modifier,
     aiOrganizerSettingsUiState: AiOrganizerSettingsUiState,
+    messages: Flow<AiOrganizerSettingsMessage>,
     onNavigateUp: () -> Unit,
     onSave: (AiOrganizerSettings) -> Unit,
     onApply: () -> Unit,
     onRestore: () -> Unit,
     onBackup: () -> Unit,
 ) {
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    val backupSavedMessage = stringResource(R.string.ai_organizer_backup_saved)
+    val settingsSavedMessage = stringResource(R.string.ai_organizer_settings_saved)
+
+    LaunchedEffect(Unit) {
+        messages.collect { message ->
+            snackbarHostState.currentSnackbarData?.dismiss()
+
+            snackbarHostState.showSnackbar(
+                message = when (message) {
+                    AiOrganizerSettingsMessage.SettingsSaved -> settingsSavedMessage
+                    AiOrganizerSettingsMessage.BackupSaved -> backupSavedMessage
+                },
+            )
+        }
+    }
+
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -113,6 +137,9 @@ internal fun AiOrganizerSettingsScreen(
                 },
             )
         },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
     ) { paddingValues ->
         Box(
             modifier = Modifier
@@ -124,6 +151,7 @@ internal fun AiOrganizerSettingsScreen(
                     aiOrganizerSettings = aiOrganizerSettingsUiState.aiOrganizerSettings,
                     status = aiOrganizerSettingsUiState.status,
                     applyResult = aiOrganizerSettingsUiState.applyResult,
+                    isBusy = aiOrganizerSettingsUiState.isBusy,
                     onSave = onSave,
                     onApply = onApply,
                     onRestore = onRestore,
@@ -140,6 +168,7 @@ private fun Success(
     aiOrganizerSettings: AiOrganizerSettings,
     status: AiOrganizerStatus,
     applyResult: ApplyAiOrganizationResult?,
+    isBusy: Boolean,
     onSave: (AiOrganizerSettings) -> Unit,
     onApply: () -> Unit,
     onRestore: () -> Unit,
@@ -249,7 +278,7 @@ private fun Success(
         OutlinedButton(
             modifier = Modifier.fillMaxWidth(),
             onClick = onApply,
-            enabled = status.hasNewHome && status.hasBackup,
+            enabled = !isBusy && status.hasNewHome && status.hasBackup,
         ) {
             Text(text = stringResource(R.string.ai_organizer_apply))
         }
@@ -266,6 +295,7 @@ private fun Success(
         OutlinedButton(
             modifier = Modifier.fillMaxWidth(),
             onClick = onBackup,
+            enabled = !isBusy,
         ) {
             Text(text = stringResource(R.string.ai_organizer_backup))
         }
@@ -273,7 +303,7 @@ private fun Success(
         OutlinedButton(
             modifier = Modifier.fillMaxWidth(),
             onClick = onRestore,
-            enabled = status.hasBackup,
+            enabled = !isBusy && status.hasBackup,
         ) {
             Text(text = stringResource(R.string.ai_organizer_restore))
         }

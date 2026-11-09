@@ -30,14 +30,28 @@ import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
 import com.eblan.launcher.domain.usecase.util.toGridItems
-import kotlinx.coroutines.sync.Mutex
+import java.io.File
+import java.io.IOException
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 internal const val MAX_AI_PAGE_COUNT = 100
 
-/** Serializes applies and backups so a backup never snapshots a partially applied home. */
-internal val aiOrganizerHomeMutex = Mutex()
+/** Writes via a temp file and rename so a reader never sees a partially written home file. */
+internal fun writeHomeFile(directory: File, name: String, content: ByteArray) {
+    val target = File(directory, name)
+    val temp = File(directory, "$name.tmp")
+
+    try {
+        temp.writeBytes(content)
+
+        if (!temp.renameTo(target)) {
+            throw IOException("Unable to move ${temp.name} to ${target.name}")
+        }
+    } finally {
+        temp.delete()
+    }
+}
 
 /**
  * Describes the current home state that an AI organization must be consistent with.
@@ -190,7 +204,8 @@ internal fun AiOrganizerHomeContext.toRequestDto(pageCount: Int): AiOrganizerReq
 )
 
 /**
- * Builds the same document format as the AI response from the current home state.
+ * Serializes the current home so it can be applied later with the same validation as a generated
+ * organization. The app drawer is omitted because it is derived from the device on apply.
  */
 internal fun AiOrganizerHomeContext.toSnapshotDto(
     pageCount: Int,
@@ -211,20 +226,15 @@ internal fun AiOrganizerHomeContext.toSnapshotDto(
             folderId = item.data.parentFolderId(),
         )
     },
-    appDrawer = apps.map { it.toAiAppDto() },
     tags = tags.map { AiTagDto(id = it.id, name = it.name, index = it.index) },
     tagCrossRefs = tagCrossRefs.map {
-        AiTagCrossRefDto(
-            componentName = it.componentName,
-            serialNumber = it.serialNumber,
-            id = it.id,
-        )
+        AiTagCrossRefDto(componentName = it.componentName, serialNumber = it.serialNumber, id = it.id)
     },
     settings = AiHomeSettingsDto(pageCount = pageCount),
 )
 
 /**
- * Extracts the JSON document from a model response, tolerating surrounding markdown code fences.
+ * Extracts the JSON document from a model response, tolerating surrounding Markdown code fences.
  */
 internal fun parseAiOrganizerHome(raw: String): AiOrganizerHomeDto {
     val trimmed = raw.trim()
@@ -368,20 +378,17 @@ internal fun AiOrganizerHomeDto.validate(context: AiOrganizerHomeContext): List<
         val finalFolderId = item.folderId?.let { finalIds.getValue(it) }
         val managed = managedById[item.id]
 
-        if (managed != null) {
-            managed.copy(
-                page = item.page,
-                startColumn = item.position % columns,
-                startRow = item.position / columns,
-                data = managed.data.withFolderId(finalFolderId),
-            )
-        } else {
-            item.toNewGridItem(
+        managed?.copy(
+            page = item.page,
+            startColumn = item.position % columns,
+            startRow = item.position / columns,
+            data = managed.data.withFolderId(finalFolderId),
+        )
+            ?: item.toNewGridItem(
                 id = finalIds.getValue(item.id),
                 folderId = finalFolderId,
                 context = context,
             )
-        }
     } + fixedWidgets
 
     val applicationKeys = finalItems.mapNotNull { item ->

@@ -19,37 +19,52 @@ package com.eblan.launcher.feature.settings.aiorganizer
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.eblan.launcher.domain.model.aiorganizer.AiOrganizerFile
+import com.eblan.launcher.domain.common.HomeOperationLock
 import com.eblan.launcher.domain.model.aiorganizer.AiOrganizerStatus
 import com.eblan.launcher.domain.model.aiorganizer.ApplyAiOrganizationResult
 import com.eblan.launcher.domain.model.userdata.AiOrganizerSettings
-import com.eblan.launcher.domain.repository.AiOrganizerRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.aiorganizer.ApplyAiOrganizationUseCase
 import com.eblan.launcher.domain.usecase.aiorganizer.BackupAiOrganizationUseCase
+import com.eblan.launcher.domain.usecase.aiorganizer.GetAiOrganizerStatusUseCase
 import com.eblan.launcher.feature.settings.aiorganizer.model.AiOrganizerSettingsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+internal enum class AiOrganizerSettingsMessage {
+    SettingsSaved,
+    BackupSaved,
+}
+
 @HiltViewModel
 internal class AiOrganizerSettingsViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository,
-    private val aiOrganizerRepository: AiOrganizerRepository,
     private val applyAiOrganizationUseCase: ApplyAiOrganizationUseCase,
     private val backupAiOrganizationUseCase: BackupAiOrganizationUseCase,
+    private val getAiOrganizerStatusUseCase: GetAiOrganizerStatusUseCase,
+    homeOperationLock: HomeOperationLock,
 ) : ViewModel() {
     private val status = MutableStateFlow(AiOrganizerStatus(hasNewHome = false, hasBackup = false))
 
     private val applyResult = MutableStateFlow<ApplyAiOrganizationResult?>(null)
 
+    private val _messages = MutableSharedFlow<AiOrganizerSettingsMessage>(extraBufferCapacity = 1)
+
+    val messages: SharedFlow<AiOrganizerSettingsMessage> = _messages.asSharedFlow()
+
     private var applyJob: Job? = null
+
+    private var backupJob: Job? = null
 
     private val applyExceptionHandler = CoroutineExceptionHandler { _, _ ->
         applyResult.value = ApplyAiOrganizationResult.FAILED
@@ -65,11 +80,13 @@ internal class AiOrganizerSettingsViewModel @Inject constructor(
         userDataRepository.userDataFlow,
         status,
         applyResult,
-    ) { userData, status, applyResult ->
+        homeOperationLock.isBusy,
+    ) { userData, status, applyResult, isBusy ->
         AiOrganizerSettingsUiState.Success(
             aiOrganizerSettings = userData.aiOrganizerSettings,
             status = status,
             applyResult = applyResult,
+            isBusy = isBusy,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -83,16 +100,15 @@ internal class AiOrganizerSettingsViewModel @Inject constructor(
 
     fun refreshStatus() {
         viewModelScope.launch {
-            status.value = AiOrganizerStatus(
-                hasNewHome = aiOrganizerRepository.fileExists(AiOrganizerFile.NEW_HOME),
-                hasBackup = aiOrganizerRepository.fileExists(AiOrganizerFile.HOME_BACKUP),
-            )
+            status.value = getAiOrganizerStatusUseCase()
         }
     }
 
     fun updateAiOrganizerSettings(aiOrganizerSettings: AiOrganizerSettings) {
         viewModelScope.launch {
             userDataRepository.updateAiOrganizerSettings(aiOrganizerSettings = aiOrganizerSettings)
+
+            _messages.emit(AiOrganizerSettingsMessage.SettingsSaved)
         }
     }
 
@@ -107,10 +123,14 @@ internal class AiOrganizerSettingsViewModel @Inject constructor(
     }
 
     fun backupAiOrganization() {
-        viewModelScope.launch(backupExceptionHandler) {
+        if (backupJob?.isActive == true) return
+
+        backupJob = viewModelScope.launch(backupExceptionHandler) {
             backupAiOrganizationUseCase()
 
             refreshStatus()
+
+            _messages.emit(AiOrganizerSettingsMessage.BackupSaved)
         }
     }
 }

@@ -18,18 +18,11 @@
 package com.eblan.launcher.data.repository.impl
 
 import com.eblan.launcher.data.network.AiChatClient
-import com.eblan.launcher.domain.common.FileManager
-import com.eblan.launcher.domain.model.aiorganizer.AiOrganizerFile
 import com.eblan.launcher.domain.model.userdata.AiOrganizerSettings
 import com.eblan.launcher.domain.repository.AiOrganizerRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import java.io.File
-import java.io.IOException
 import javax.inject.Inject
 
 internal class DefaultAiOrganizerRepository @Inject constructor(
-    private val fileManager: FileManager,
     private val aiChatClient: AiChatClient,
 ) : AiOrganizerRepository {
     override suspend fun complete(
@@ -43,38 +36,4 @@ internal class DefaultAiOrganizerRepository @Inject constructor(
         systemPrompt = systemPrompt,
         userPrompt = userPrompt,
     )
-
-    override suspend fun readFile(file: AiOrganizerFile): ByteArray? = fileManager.readFileBytes(
-        directory = homeDirectory(),
-        name = file.fileName,
-    )
-
-    override suspend fun writeFile(
-        file: AiOrganizerFile,
-        content: ByteArray,
-    ): Unit = withContext(Dispatchers.IO) {
-        val directory = homeDirectory()
-        val target = File(directory, file.fileName)
-        val temp = File(directory, "${file.fileName}.tmp")
-
-        try {
-            temp.writeBytes(content)
-
-            if (!temp.renameTo(target)) {
-                throw IOException("Unable to move ${temp.name} to ${target.name}")
-            }
-        } finally {
-            temp.delete()
-        }
-    }
-
-    override suspend fun deleteFile(file: AiOrganizerFile): Boolean {
-        val target = File(homeDirectory(), file.fileName)
-
-        return !target.exists() || target.delete()
-    }
-
-    override suspend fun fileExists(file: AiOrganizerFile): Boolean = File(homeDirectory(), file.fileName).exists()
-
-    private suspend fun homeDirectory(): File = fileManager.getFilesDirectory(FileManager.HOME_DIR)
 }

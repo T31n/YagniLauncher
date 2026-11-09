@@ -28,5 +28,6 @@ internal sealed interface AiOrganizerSettingsUiState {
         val aiOrganizerSettings: AiOrganizerSettings,
         val status: AiOrganizerStatus,
         val applyResult: ApplyAiOrganizationResult?,
+        val isBusy: Boolean,
     ) : AiOrganizerSettingsUiState
 }

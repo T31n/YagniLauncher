@@ -24,12 +24,22 @@ import com.eblan.launcher.common.impl.DefaultFileManager
 import com.eblan.launcher.common.impl.DefaultIconKeyGenerator
 import com.eblan.launcher.common.impl.DefaultImageSerializer
 import com.eblan.launcher.domain.common.FileManager
+import com.eblan.launcher.domain.common.HomeOperationLock
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
+
+@Module
+@InstallIn(SingletonComponent::class)
+internal object HomeOperationLockModule {
+    @Provides
+    @Singleton
+    fun homeOperationLock(): HomeOperationLock = HomeOperationLock()
+}
 
 @Module
 @InstallIn(SingletonComponent::class)
