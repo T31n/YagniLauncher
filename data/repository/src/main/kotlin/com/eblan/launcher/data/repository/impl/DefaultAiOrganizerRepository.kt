@@ -26,8 +26,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
-import java.nio.file.Files
-import java.nio.file.StandardCopyOption
 import javax.inject.Inject
 
 internal class DefaultAiOrganizerRepository @Inject constructor(
@@ -61,12 +59,10 @@ internal class DefaultAiOrganizerRepository @Inject constructor(
 
         try {
             temp.writeBytes(content)
-            Files.move(
-                temp.toPath(),
-                target.toPath(),
-                StandardCopyOption.REPLACE_EXISTING,
-                StandardCopyOption.ATOMIC_MOVE,
-            )
+
+            if (!temp.renameTo(target)) {
+                throw IOException("Unable to move ${temp.name} to ${target.name}")
+            }
         } catch (exception: IOException) {
             temp.delete()
 

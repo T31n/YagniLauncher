@@ -69,8 +69,7 @@ class OrganizeHomeWithAiUseCase @Inject constructor(
         val homeSettings = userData.homeSettings
 
         val context = buildAiOrganizerHomeContext(
-            columns = homeSettings.columns,
-            rows = homeSettings.rows,
+            homeSettings = homeSettings,
             gridItems = gridRepository.getGridItems(),
             apps = eblanApplicationInfoRepository.getEblanApplicationInfos(),
         )

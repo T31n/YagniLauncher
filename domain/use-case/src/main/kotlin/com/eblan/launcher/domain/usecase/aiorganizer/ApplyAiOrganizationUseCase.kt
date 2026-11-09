@@ -19,19 +19,21 @@ package com.eblan.launcher.domain.usecase.aiorganizer
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
+import com.eblan.launcher.domain.framework.AppWidgetHostWrapper
+import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.model.aiorganizer.AiOrganizerFile
 import com.eblan.launcher.domain.model.aiorganizer.ApplyAiOrganizationResult
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTagCrossRef
-import com.eblan.launcher.domain.model.grid.ApplicationInfoGridItem
+import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.domain.repository.AiOrganizerRepository
-import com.eblan.launcher.domain.repository.ApplicationInfoGridItemRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoTagRepository
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
+import com.eblan.launcher.domain.usecase.util.deleteGridItemData
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.NonCancellable
@@ -56,7 +58,8 @@ class ApplyAiOrganizationUseCase @Inject constructor(
     private val gridRepository: GridRepository,
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
     private val eblanApplicationInfoTagRepository: EblanApplicationInfoTagRepository,
-    private val applicationInfoGridItemRepository: ApplicationInfoGridItemRepository,
+    private val appWidgetHostWrapper: AppWidgetHostWrapper,
+    private val launcherAppsWrapper: LauncherAppsWrapper,
     private val aiOrganizerRepository: AiOrganizerRepository,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
@@ -86,14 +89,16 @@ class ApplyAiOrganizationUseCase @Inject constructor(
         val homeSettings = userData.homeSettings
 
         val context = buildAiOrganizerHomeContext(
-            columns = homeSettings.columns,
-            rows = homeSettings.rows,
+            homeSettings = homeSettings,
             gridItems = gridRepository.getGridItems(),
             apps = eblanApplicationInfoRepository.getEblanApplicationInfos(),
         )
 
-        val home = try {
-            parseAiOrganizerHome(content.decodeToString()).also { it.validate(context) }
+        val (home, finalGridItems) = try {
+            val parsed = parseAiOrganizerHome(content.decodeToString())
+            val document = if (restore) parsed.withoutUnrecoverableItems(context) else parsed
+
+            document to document.validate(context)
         } catch (_: IllegalArgumentException) {
             return ApplyAiOrganizationResult.INVALID_FILE
         }
@@ -114,22 +119,25 @@ class ApplyAiOrganizationUseCase @Inject constructor(
             )
         }
 
-        val previousGridItems = context.organizableItems
+        val previousGridItems = context.gridItems
+        val finalIds = finalGridItems.map { it.id }.toSet()
+        val previousIds = previousGridItems.map { it.id }.toSet()
+        val omittedGridItems = previousGridItems.filter { it.id !in finalIds }
+        val createdGridItems = finalGridItems.filter { it.id !in previousIds }
 
         try {
-            val organizableItemsByComponentName = previousGridItems.associateBy { it.componentName }
+            gridRepository.upsertGridItems(finalGridItems)
 
-            home.gridItems.forEach { placed ->
-                val item = organizableItemsByComponentName.getValue(placed.componentName)
-
-                applicationInfoGridItemRepository.updateApplicationInfoGridItem(
-                    item.copy(
-                        page = placed.page,
-                        startColumn = placed.position % homeSettings.columns,
-                        startRow = placed.position / homeSettings.columns,
-                    ),
+            omittedGridItems.forEach {
+                deleteGridItemData(
+                    gridItem = it,
+                    folderPopupGridItems = emptyMap(),
+                    appWidgetHostWrapper = appWidgetHostWrapper,
+                    launcherAppsWrapper = launcherAppsWrapper,
                 )
             }
+
+            gridRepository.deleteGridItems(omittedGridItems)
 
             userDataRepository.updateHomeSettings(
                 homeSettings.copy(pageCount = home.settings.pageCount),
@@ -158,6 +166,7 @@ class ApplyAiOrganizationUseCase @Inject constructor(
         } catch (exception: Exception) {
             rollback(
                 previousGridItems = previousGridItems,
+                createdGridItems = createdGridItems,
                 previousHomeSettings = homeSettings,
                 previousTags = previousTags,
                 previousTagCrossRefs = previousTagCrossRefs,
@@ -241,14 +250,17 @@ class ApplyAiOrganizationUseCase @Inject constructor(
      * skip the rest.
      */
     private suspend fun rollback(
-        previousGridItems: List<ApplicationInfoGridItem>,
+        previousGridItems: List<GridItem>,
+        createdGridItems: List<GridItem>,
         previousHomeSettings: HomeSettings,
         previousTags: List<EblanApplicationInfoTag>,
         previousTagCrossRefs: List<EblanApplicationInfoTagCrossRef>,
     ) = withContext(NonCancellable) {
-        previousGridItems.forEach { item ->
-            runCatching { applicationInfoGridItemRepository.updateApplicationInfoGridItem(item) }
+        if (createdGridItems.isNotEmpty()) {
+            runCatching { gridRepository.deleteGridItems(createdGridItems) }
         }
+
+        runCatching { gridRepository.upsertGridItems(previousGridItems) }
 
         runCatching { userDataRepository.updateHomeSettings(previousHomeSettings) }
 
