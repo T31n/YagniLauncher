@@ -75,6 +75,8 @@ internal data class AiOccupiedPageDto(
 @Serializable
 internal data class AiHomeSettingsDto(
     val pageCount: Int,
+    val columns: Int? = null,
+    val rows: Int? = null,
 )
 
 @Serializable

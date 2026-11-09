@@ -87,20 +87,24 @@ class AiChatClient @Inject constructor(private val okHttpClient: OkHttpClient) {
                 }
 
                 override fun onResponse(call: Call, response: Response) {
-                    response.use {
-                        val content = it.body.string()
-                        if (it.isSuccessful) {
-                            if (continuation.isActive) {
-                                continuation.resumeWith(
-                                    Result.success(
-                                        content,
-                                    ),
+                    // Body reads can throw after onResponse, where OkHttp does not call onFailure.
+                    // Catch here so the continuation is always resumed.
+                    try {
+                        response.use {
+                            val content = it.body.string()
+                            if (it.isSuccessful) {
+                                if (continuation.isActive) {
+                                    continuation.resumeWith(Result.success(content))
+                                }
+                            } else {
+                                continuation.resumeWithException(
+                                    IOException("HTTP ${it.code}: ${content.take(300)}"),
                                 )
                             }
-                        } else {
-                            continuation.resumeWithException(
-                                IOException("HTTP ${it.code}: ${content.take(300)}"),
-                            )
+                        }
+                    } catch (e: IOException) {
+                        if (continuation.isActive) {
+                            continuation.resumeWithException(e)
                         }
                     }
                 }

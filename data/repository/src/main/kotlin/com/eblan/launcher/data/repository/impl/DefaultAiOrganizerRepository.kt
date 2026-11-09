@@ -22,7 +22,12 @@ import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.model.aiorganizer.AiOrganizerFile
 import com.eblan.launcher.domain.model.userdata.AiOrganizerSettings
 import com.eblan.launcher.domain.repository.AiOrganizerRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.IOException
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 import javax.inject.Inject
 
 internal class DefaultAiOrganizerRepository @Inject constructor(
@@ -49,15 +54,23 @@ internal class DefaultAiOrganizerRepository @Inject constructor(
     override suspend fun writeFile(
         file: AiOrganizerFile,
         content: ByteArray,
-    ) {
-        checkNotNull(
-            fileManager.updateAndGetFilePath(
-                directory = homeDirectory(),
-                name = file.fileName,
-                byteArray = content,
-            ),
-        ) {
-            "Unable to write ${file.fileName}"
+    ): Unit = withContext(Dispatchers.IO) {
+        val directory = homeDirectory()
+        val target = File(directory, file.fileName)
+        val temp = File(directory, "${file.fileName}.tmp")
+
+        try {
+            temp.writeBytes(content)
+            Files.move(
+                temp.toPath(),
+                target.toPath(),
+                StandardCopyOption.REPLACE_EXISTING,
+                StandardCopyOption.ATOMIC_MOVE,
+            )
+        } catch (exception: IOException) {
+            temp.delete()
+
+            throw IOException("Unable to write ${file.fileName}", exception)
         }
     }
 

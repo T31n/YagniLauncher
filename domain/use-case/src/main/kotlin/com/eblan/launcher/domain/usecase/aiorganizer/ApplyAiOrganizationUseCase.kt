@@ -21,8 +21,11 @@ import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.model.aiorganizer.AiOrganizerFile
 import com.eblan.launcher.domain.model.aiorganizer.ApplyAiOrganizationResult
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTagCrossRef
+import com.eblan.launcher.domain.model.grid.ApplicationInfoGridItem
+import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.domain.repository.AiOrganizerRepository
 import com.eblan.launcher.domain.repository.ApplicationInfoGridItemRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
@@ -31,7 +34,10 @@ import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -40,6 +46,10 @@ import javax.inject.Inject
  *
  * Applying snapshots the current organization to `last_home.json` before changing anything, then
  * deletes `new_home.json`. Restoring applies `last_home.json` and keeps it on disk.
+ *
+ * Writes to the home are not transactional across Room and DataStore, so a failed apply rolls back
+ * the in-memory previous state on a best-effort basis. Applies and restores are serialized so a
+ * second run cannot snapshot a partially applied home.
  */
 class ApplyAiOrganizationUseCase @Inject constructor(
     private val userDataRepository: UserDataRepository,
@@ -55,12 +65,14 @@ class ApplyAiOrganizationUseCase @Inject constructor(
      * Returns the outcome, including why the file could not be applied.
      */
     suspend operator fun invoke(restore: Boolean): ApplyAiOrganizationResult = withContext(defaultDispatcher) {
-        try {
-            apply(restore)
-        } catch (exception: CancellationException) {
-            throw exception
-        } catch (_: Exception) {
-            ApplyAiOrganizationResult.FAILED
+        applyMutex.withLock {
+            try {
+                apply(restore)
+            } catch (exception: CancellationException) {
+                throw exception
+            } catch (_: Exception) {
+                ApplyAiOrganizationResult.FAILED
+            }
         }
     }
 
@@ -86,23 +98,14 @@ class ApplyAiOrganizationUseCase @Inject constructor(
             return ApplyAiOrganizationResult.INVALID_FILE
         }
 
+        val previousTags = eblanApplicationInfoTagRepository.eblanApplicationInfoTagsFlow.first()
+        val previousTagCrossRefs = getTagCrossRefs(previousTags)
+
         if (!restore) {
-            val tags = eblanApplicationInfoTagRepository.eblanApplicationInfoTagsFlow.first()
-
-            val tagCrossRefs = tags.flatMap { tag ->
-                eblanApplicationInfoRepository.getEblanApplicationInfosByTagId(tag.id).map {
-                    EblanApplicationInfoTagCrossRef(
-                        componentName = it.componentName,
-                        serialNumber = it.serialNumber,
-                        id = tag.id,
-                    )
-                }
-            }
-
             val snapshot = context.toSnapshotDto(
                 pageCount = homeSettings.pageCount,
-                tags = tags,
-                tagCrossRefs = tagCrossRefs,
+                tags = previousTags,
+                tagCrossRefs = previousTagCrossRefs,
             )
 
             aiOrganizerRepository.writeFile(
@@ -111,36 +114,57 @@ class ApplyAiOrganizationUseCase @Inject constructor(
             )
         }
 
-        val organizableItemsByComponentName = context.organizableItems.associateBy { it.componentName }
+        val previousGridItems = context.organizableItems
 
-        home.gridItems.forEach { placed ->
-            val item = organizableItemsByComponentName.getValue(placed.componentName)
+        try {
+            val organizableItemsByComponentName = previousGridItems.associateBy { it.componentName }
 
-            applicationInfoGridItemRepository.updateApplicationInfoGridItem(
-                item.copy(
-                    page = placed.page,
-                    startColumn = placed.position % homeSettings.columns,
-                    startRow = placed.position / homeSettings.columns,
-                ),
-            )
-        }
+            home.gridItems.forEach { placed ->
+                val item = organizableItemsByComponentName.getValue(placed.componentName)
 
-        userDataRepository.updateHomeSettings(
-            homeSettings.copy(pageCount = home.settings.pageCount),
-        )
-
-        eblanApplicationInfoTagRepository.replaceEblanApplicationInfoTags(
-            eblanApplicationInfoTags = home.tags.map {
-                EblanApplicationInfoTag(id = it.id, name = it.name, index = it.index)
-            },
-            eblanApplicationInfoTagCrossRefs = home.tagCrossRefs.map {
-                EblanApplicationInfoTagCrossRef(
-                    componentName = it.componentName,
-                    serialNumber = it.serialNumber,
-                    id = it.id,
+                applicationInfoGridItemRepository.updateApplicationInfoGridItem(
+                    item.copy(
+                        page = placed.page,
+                        startColumn = placed.position % homeSettings.columns,
+                        startRow = placed.position / homeSettings.columns,
+                    ),
                 )
-            },
-        )
+            }
+
+            userDataRepository.updateHomeSettings(
+                homeSettings.copy(pageCount = home.settings.pageCount),
+            )
+
+            val (tags, tagCrossRefs) = withHiddenAppTags(
+                hiddenApps = context.apps.filter { it.isHidden },
+                proposedTags = home.tags.map {
+                    EblanApplicationInfoTag(id = it.id, name = it.name, index = it.index)
+                },
+                proposedTagCrossRefs = home.tagCrossRefs.map {
+                    EblanApplicationInfoTagCrossRef(
+                        componentName = it.componentName,
+                        serialNumber = it.serialNumber,
+                        id = it.id,
+                    )
+                },
+                previousTags = previousTags,
+                previousTagCrossRefs = previousTagCrossRefs,
+            )
+
+            eblanApplicationInfoTagRepository.replaceEblanApplicationInfoTags(
+                eblanApplicationInfoTags = tags,
+                eblanApplicationInfoTagCrossRefs = tagCrossRefs,
+            )
+        } catch (exception: Exception) {
+            rollback(
+                previousGridItems = previousGridItems,
+                previousHomeSettings = homeSettings,
+                previousTags = previousTags,
+                previousTagCrossRefs = previousTagCrossRefs,
+            )
+
+            throw exception
+        }
 
         if (!restore) {
             aiOrganizerRepository.deleteFile(AiOrganizerFile.NEW_HOME)
@@ -148,5 +172,96 @@ class ApplyAiOrganizationUseCase @Inject constructor(
         }
 
         return ApplyAiOrganizationResult.RESTORED
+    }
+
+    private suspend fun getTagCrossRefs(
+        tags: List<EblanApplicationInfoTag>,
+    ): List<EblanApplicationInfoTagCrossRef> = tags.flatMap { tag ->
+        eblanApplicationInfoRepository.getEblanApplicationInfosByTagId(tag.id).map {
+            EblanApplicationInfoTagCrossRef(
+                componentName = it.componentName,
+                serialNumber = it.serialNumber,
+                id = tag.id,
+            )
+        }
+    }
+
+    /**
+     * The proposal omits hidden apps, so their existing tag memberships are carried over. A
+     * preserved tag whose id collides with a proposed tag is given a fresh id, and its memberships
+     * are rewritten to match.
+     */
+    private fun withHiddenAppTags(
+        hiddenApps: List<EblanApplicationInfo>,
+        proposedTags: List<EblanApplicationInfoTag>,
+        proposedTagCrossRefs: List<EblanApplicationInfoTagCrossRef>,
+        previousTags: List<EblanApplicationInfoTag>,
+        previousTagCrossRefs: List<EblanApplicationInfoTagCrossRef>,
+    ): Pair<List<EblanApplicationInfoTag>, List<EblanApplicationInfoTagCrossRef>> {
+        val hiddenKeys = hiddenApps.map { it.componentName to it.serialNumber }.toSet()
+
+        val preservedCrossRefs = previousTagCrossRefs.filter {
+            (it.componentName to it.serialNumber) in hiddenKeys
+        }
+
+        if (preservedCrossRefs.isEmpty()) {
+            return proposedTags to proposedTagCrossRefs
+        }
+
+        val proposedTagIds = proposedTags.map { it.id }.toSet()
+        var nextId = (proposedTagIds + previousTags.map { it.id }).maxOrNull() ?: 0L
+        val remappedIds = mutableMapOf<Long, Long>()
+
+        val preservedTagIds = preservedCrossRefs.map { it.id }.toSet()
+
+        val preservedTags = previousTags.filter { it.id in preservedTagIds }.map { tag ->
+            if (tag.id in proposedTagIds) {
+                nextId += 1
+                remappedIds[tag.id] = nextId
+                tag.copy(id = nextId)
+            } else {
+                tag
+            }
+        }
+
+        val tags = proposedTags + preservedTags
+
+        val crossRefs = proposedTagCrossRefs.filter {
+            (it.componentName to it.serialNumber) !in hiddenKeys
+        } + preservedCrossRefs.map {
+            it.copy(id = remappedIds[it.id] ?: it.id)
+        }
+
+        return tags to crossRefs
+    }
+
+    /**
+     * Best-effort restore of the state captured before a failed apply. Runs non-cancellable so a
+     * cancelled apply still attempts to roll back. Each step is isolated so one failure does not
+     * skip the rest.
+     */
+    private suspend fun rollback(
+        previousGridItems: List<ApplicationInfoGridItem>,
+        previousHomeSettings: HomeSettings,
+        previousTags: List<EblanApplicationInfoTag>,
+        previousTagCrossRefs: List<EblanApplicationInfoTagCrossRef>,
+    ) = withContext(NonCancellable) {
+        previousGridItems.forEach { item ->
+            runCatching { applicationInfoGridItemRepository.updateApplicationInfoGridItem(item) }
+        }
+
+        runCatching { userDataRepository.updateHomeSettings(previousHomeSettings) }
+
+        runCatching {
+            eblanApplicationInfoTagRepository.replaceEblanApplicationInfoTags(
+                eblanApplicationInfoTags = previousTags,
+                eblanApplicationInfoTagCrossRefs = previousTagCrossRefs,
+            )
+        }
+    }
+
+    private companion object {
+        /** Shared across instances so concurrent callers cannot interleave applies. */
+        val applyMutex = Mutex()
     }
 }

@@ -167,6 +167,11 @@ private fun Success(
             label = { Text(text = stringResource(R.string.ai_organizer_endpoint)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
+            supportingText = if (endpoint.trim().startsWith("http://", ignoreCase = true)) {
+                { Text(text = stringResource(R.string.ai_organizer_cleartext_warning)) }
+            } else {
+                null
+            },
         )
 
         OutlinedTextField(

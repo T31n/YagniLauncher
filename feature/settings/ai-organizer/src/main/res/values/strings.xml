@@ -19,6 +19,7 @@
     <string name="ai_organizer">AI Organizer</string>
     <string name="ai_organizer_data_disclosure">When you organize, the launcher sends your home screen grid items (component name, package name, label, page and position), your app drawer applications (package name, component name, serial number and label), and the page count, columns and rows to the endpoint below. Your API key is sent as a bearer token and your system instructions are sent as the system message.</string>
     <string name="ai_organizer_endpoint">Endpoint URL</string>
+    <string name="ai_organizer_cleartext_warning">This endpoint uses unencrypted HTTP. Your API key and home screen data can be read by anyone on the network path. Use HTTPS unless the server is on this device.</string>
     <string name="ai_organizer_api_key">API key</string>
     <string name="ai_organizer_model">Model</string>
     <string name="ai_organizer_system_instructions">System instructions</string>

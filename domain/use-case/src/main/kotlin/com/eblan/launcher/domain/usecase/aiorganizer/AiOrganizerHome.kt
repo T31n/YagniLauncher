@@ -176,7 +176,7 @@ internal fun AiOrganizerHomeContext.toSnapshotDto(
             id = it.id,
         )
     },
-    settings = AiHomeSettingsDto(pageCount = pageCount),
+    settings = AiHomeSettingsDto(pageCount = pageCount, columns = columns, rows = rows),
 )
 
 /**
@@ -209,6 +209,13 @@ internal fun AiOrganizerHomeDto.validate(context: AiOrganizerHomeContext) {
         "pageCount must be between ${context.minPageCount} and $MAX_AI_PAGE_COUNT"
     }
 
+    settings.columns?.let {
+        require(it == context.columns) { "settings.columns $it does not match the current layout (${context.columns})" }
+    }
+    settings.rows?.let {
+        require(it == context.rows) { "settings.rows $it does not match the current layout (${context.rows})" }
+    }
+
     val organizableNames = context.organizableItems.map { it.componentName }.toSet()
     val placedNames = gridItems.map { it.componentName }
 
@@ -231,10 +238,6 @@ internal fun AiOrganizerHomeDto.validate(context: AiOrganizerHomeContext) {
     }
 
     val appKeys = context.apps.map { it.componentName to it.serialNumber }.toSet()
-    val drawerKeys = appDrawer.map { it.componentName to it.serialNumber }
-
-    require(drawerKeys.size == drawerKeys.toSet().size) { "Duplicate applications in appDrawer" }
-    require(drawerKeys.all { it in appKeys }) { "appDrawer references an unknown application" }
 
     val tagIds = tags.map { it.id }
 
@@ -242,9 +245,9 @@ internal fun AiOrganizerHomeDto.validate(context: AiOrganizerHomeContext) {
     require(tagIds.size == tagIds.toSet().size) { "Duplicate tag ids" }
     require(tags.all { it.name.isNotBlank() }) { "Tag names must not be blank" }
 
-    val crossRefKeys = tagCrossRefs.map { it.componentName to it.serialNumber }
+    val membershipKeys = tagCrossRefs.map { Triple(it.componentName, it.serialNumber, it.id) }
 
-    require(crossRefKeys.size == crossRefKeys.toSet().size) { "Application assigned to a tag more than once" }
-    require(crossRefKeys.all { it in appKeys }) { "tagCrossRefs references an unknown application" }
+    require(membershipKeys.size == membershipKeys.toSet().size) { "Duplicate tag assignment" }
+    require(tagCrossRefs.all { it.componentName to it.serialNumber in appKeys }) { "tagCrossRefs references an unknown application" }
     require(tagCrossRefs.all { it.id in tagIds }) { "tagCrossRefs references an unknown tag" }
 }

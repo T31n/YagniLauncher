@@ -28,6 +28,7 @@ import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.aiorganizer.ApplyAiOrganizationUseCase
 import com.eblan.launcher.feature.settings.aiorganizer.model.AiOrganizerSettingsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -44,6 +45,8 @@ internal class AiOrganizerSettingsViewModel @Inject constructor(
     private val status = MutableStateFlow(AiOrganizerStatus(hasNewHome = false, hasLastHome = false))
 
     private val applyResult = MutableStateFlow<ApplyAiOrganizationResult?>(null)
+
+    private var applyJob: Job? = null
 
     val aiOrganizerSettingsUiState = combine(
         userDataRepository.userDataFlow,
@@ -81,7 +84,9 @@ internal class AiOrganizerSettingsViewModel @Inject constructor(
     }
 
     fun applyAiOrganization(restore: Boolean) {
-        viewModelScope.launch {
+        if (applyJob?.isActive == true) return
+
+        applyJob = viewModelScope.launch {
             applyResult.value = applyAiOrganizationUseCase(restore = restore)
 
             refreshStatus()
