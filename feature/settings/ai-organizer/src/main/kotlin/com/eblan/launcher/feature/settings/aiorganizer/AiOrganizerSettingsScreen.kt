@@ -145,12 +145,21 @@ private fun Success(
     onRestore: () -> Unit,
     onBackup: () -> Unit,
 ) {
-    var endpoint by remember(aiOrganizerSettings) { mutableStateOf(aiOrganizerSettings.endpoint) }
-    var apiKey by remember(aiOrganizerSettings) { mutableStateOf(aiOrganizerSettings.apiKey) }
-    var model by remember(aiOrganizerSettings) { mutableStateOf(aiOrganizerSettings.model) }
-    var systemInstructions by remember(aiOrganizerSettings) {
-        mutableStateOf(aiOrganizerSettings.systemInstructions)
-    }
+    var endpoint by remember(key1 = aiOrganizerSettings) { mutableStateOf(aiOrganizerSettings.endpoint) }
+    var apiKey by remember(key1 = aiOrganizerSettings) { mutableStateOf(aiOrganizerSettings.apiKey) }
+    var model by remember(key1 = aiOrganizerSettings) { mutableStateOf(aiOrganizerSettings.model) }
+    var systemInstructions by remember(key1 = aiOrganizerSettings) { mutableStateOf(aiOrganizerSettings.systemInstructions) }
+
+    val hasChanges = endpoint.trim() != aiOrganizerSettings.endpoint ||
+        apiKey.trim() != aiOrganizerSettings.apiKey ||
+        model.trim() != aiOrganizerSettings.model ||
+        systemInstructions.trim() != aiOrganizerSettings.systemInstructions
+
+    // System instructions may be blank because the default instructions are used instead.
+    val canSave = hasChanges &&
+        endpoint.isNotBlank() &&
+        apiKey.isNotBlank() &&
+        model.isNotBlank()
 
     Column(
         modifier = modifier
@@ -206,6 +215,7 @@ private fun Success(
 
         Button(
             modifier = Modifier.fillMaxWidth(),
+            enabled = canSave,
             onClick = {
                 onSave(
                     AiOrganizerSettings(
