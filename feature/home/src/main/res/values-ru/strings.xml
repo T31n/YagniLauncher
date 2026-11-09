@@ -29,6 +29,7 @@
     <string name="widgets">Виджеты</string>
     <string name="shortcuts">Ярлыки</string>
     <string name="wallpaper">Обои</string>
+    <string name="ai_organize">Упорядочить с помощью ИИ</string>
     <string name="search_widgets">Поисковые виджеты</string>
     <string name="request_permissions">Запрос на разрешения</string>
     <string name="allow_permissions_so_we_can_inform_you_about_important_crash_reports_and_make_phone_shortcuts">Предоставьте разрешения, чтобы мы могли сообщать вам о важных отчетах о сбоях и создавать ярлыки на телефоне</string>

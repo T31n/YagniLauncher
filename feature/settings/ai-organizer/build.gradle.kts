@@ -30,5 +30,4 @@ dependencies {
     implementation(projects.domain.model)
     implementation(projects.domain.repository)
     implementation(projects.domain.useCase)
-    implementation(projects.service)
 }

@@ -29,6 +29,7 @@
     <string name="widgets">Widgety</string>
     <string name="shortcuts">Zkratky</string>
     <string name="wallpaper">Tapeta</string>
+    <string name="ai_organize">Uspořádat pomocí AI</string>
     <string name="search_widgets">Hledat widgety</string>
     <string name="request_permissions">Žádost o oprávnění</string>
     <string name="allow_permissions_so_we_can_inform_you_about_important_crash_reports_and_make_phone_shortcuts">Povolit oprávnění, abychom vás mohli informovat o důležitých hlášeních o selháních a vytvářet zkratky telefonu</string>

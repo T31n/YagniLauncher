@@ -20,6 +20,7 @@ package com.eblan.launcher.feature.home.screen.pager
 import android.content.Intent
 import android.content.Intent.ACTION_SET_WALLPAPER
 import android.content.Intent.createChooser
+import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
@@ -59,6 +60,7 @@ import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.feature.home.R
 import com.eblan.launcher.feature.home.component.HomeHandler
+import com.eblan.launcher.service.AiOrganizerService
 import com.eblan.launcher.ui.settings.settingsFirstItemShape
 import com.eblan.launcher.ui.settings.settingsLastItemShape
 import com.eblan.launcher.ui.settings.settingsMiddleItemShape
@@ -186,6 +188,23 @@ internal fun SettingsPopup(
                     shape = settingsMiddleItemShape,
                     onClick = {
                         onShortcutConfigActivities()
+
+                        dismiss()
+                    },
+                )
+
+                PopupMenuRow(
+                    title = stringResource(R.string.ai_organize),
+                    imageVector = EblanLauncherIcons.AutoAwesome,
+                    shape = settingsMiddleItemShape,
+                    onClick = {
+                        val intent = Intent(context, AiOrganizerService::class.java)
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            context.startForegroundService(intent)
+                        } else {
+                            context.startService(intent)
+                        }
 
                         dismiss()
                     },

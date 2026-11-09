@@ -23,7 +23,6 @@
     <string name="ai_organizer_model">Model</string>
     <string name="ai_organizer_system_instructions">System instructions</string>
     <string name="ai_organizer_save">Save</string>
-    <string name="ai_organizer_organize">Organize</string>
     <string name="ai_organizer_new_home_available">A new organization is ready to apply.</string>
     <string name="ai_organizer_no_new_home">No new organization is ready.</string>
     <string name="ai_organizer_apply">Apply</string>

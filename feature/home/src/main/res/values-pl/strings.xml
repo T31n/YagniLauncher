@@ -29,6 +29,7 @@
     <string name="widgets">Widżety</string>
     <string name="shortcuts">Skróty</string>
     <string name="wallpaper">Tapeta</string>
+    <string name="ai_organize">Uporządkuj z AI</string>
     <string name="search_widgets">Wyszukaj widżety</string>
     <string name="request_permissions">Nadaj uprawnienia</string>
     <string name="allow_permissions_so_we_can_inform_you_about_important_crash_reports_and_make_phone_shortcuts">Udziel uprawnień, abyśmy mogli informować Cię o ważnych raportach o awariach oraz tworzyć skróty do funkcji telefonu</string>

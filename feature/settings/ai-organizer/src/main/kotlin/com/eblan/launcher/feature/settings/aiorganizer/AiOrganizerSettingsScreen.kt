@@ -17,8 +17,6 @@
  */
 package com.eblan.launcher.feature.settings.aiorganizer
 
-import android.content.Intent
-import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,7 +42,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -58,7 +55,6 @@ import com.eblan.launcher.domain.model.aiorganizer.ApplyAiOrganizationResult
 import com.eblan.launcher.domain.model.userdata.AiOrganizerSettings
 import com.eblan.launcher.domain.usecase.aiorganizer.AiOrganizerStatus
 import com.eblan.launcher.feature.settings.aiorganizer.model.AiOrganizerSettingsUiState
-import com.eblan.launcher.service.AiOrganizerService
 
 @Composable
 internal fun AiOrganizerSettingsRoute(
@@ -67,8 +63,6 @@ internal fun AiOrganizerSettingsRoute(
     onNavigateUp: () -> Unit,
 ) {
     val aiOrganizerSettingsUiState by viewModel.aiOrganizerSettingsUiState.collectAsStateWithLifecycle()
-
-    val context = LocalContext.current
 
     LifecycleResumeEffect(Unit) {
         viewModel.refreshStatus()
@@ -81,15 +75,6 @@ internal fun AiOrganizerSettingsRoute(
         aiOrganizerSettingsUiState = aiOrganizerSettingsUiState,
         onNavigateUp = onNavigateUp,
         onSave = viewModel::updateAiOrganizerSettings,
-        onOrganize = {
-            val intent = Intent(context, AiOrganizerService::class.java)
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(intent)
-            } else {
-                context.startService(intent)
-            }
-        },
         onApply = {
             viewModel.applyAiOrganization(restore = false)
         },
@@ -106,7 +91,6 @@ internal fun AiOrganizerSettingsScreen(
     aiOrganizerSettingsUiState: AiOrganizerSettingsUiState,
     onNavigateUp: () -> Unit,
     onSave: (AiOrganizerSettings) -> Unit,
-    onOrganize: () -> Unit,
     onApply: () -> Unit,
     onRestore: () -> Unit,
 ) {
@@ -139,7 +123,6 @@ internal fun AiOrganizerSettingsScreen(
                     status = aiOrganizerSettingsUiState.status,
                     applyResult = aiOrganizerSettingsUiState.applyResult,
                     onSave = onSave,
-                    onOrganize = onOrganize,
                     onApply = onApply,
                     onRestore = onRestore,
                 )
@@ -155,7 +138,6 @@ private fun Success(
     status: AiOrganizerStatus,
     applyResult: ApplyAiOrganizationResult?,
     onSave: (AiOrganizerSettings) -> Unit,
-    onOrganize: () -> Unit,
     onApply: () -> Unit,
     onRestore: () -> Unit,
 ) {
@@ -227,13 +209,6 @@ private fun Success(
             },
         ) {
             Text(text = stringResource(R.string.ai_organizer_save))
-        }
-
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = onOrganize,
-        ) {
-            Text(text = stringResource(R.string.ai_organizer_organize))
         }
 
         Text(
