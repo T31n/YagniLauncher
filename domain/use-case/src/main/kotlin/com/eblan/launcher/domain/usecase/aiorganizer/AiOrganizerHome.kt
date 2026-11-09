@@ -327,15 +327,26 @@ internal fun AiOrganizerHomeDto.validate(context: AiOrganizerHomeContext): List<
     val managedById = context.gridItems.associateBy { it.id }
     val responseById = gridItems.associateBy { it.id }
 
+    val parentIdById = gridItems.associate { it.id to it.folderId }
+
     gridItems.forEach { item ->
-        if (item.type == AiGridItemType.Widget || item.type == AiGridItemType.Folder) {
-            require(item.folderId == null) { "${item.type} ${item.id} cannot be inside a folder" }
+        if (item.type == AiGridItemType.Widget) {
+            require(item.folderId == null) { "Widget ${item.id} cannot be inside a folder" }
         }
 
         item.folderId?.let { parentId ->
             require(responseById[parentId]?.type == AiGridItemType.Folder) {
                 "folderId of ${item.id} must reference a folder"
             }
+        }
+
+        val visited = mutableSetOf(item.id)
+        var ancestorId = item.folderId
+
+        while (ancestorId != null) {
+            require(visited.add(ancestorId)) { "Folder cycle involving ${item.id}" }
+
+            ancestorId = parentIdById[ancestorId]
         }
     }
 
