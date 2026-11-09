@@ -88,7 +88,7 @@ class AiChatClient @Inject constructor(private val okHttpClient: OkHttpClient) {
 
                 override fun onResponse(call: Call, response: Response) {
                     response.use {
-                        val content = it.body?.string().orEmpty()
+                        val content = it.body.string()
                         if (it.isSuccessful) {
                             if (continuation.isActive) {
                                 continuation.resumeWith(
