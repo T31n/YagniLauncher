@@ -25,10 +25,10 @@ import com.eblan.launcher.domain.repository.AiOrganizerRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
+import java.io.IOException
 import javax.inject.Inject
 
 /**
@@ -48,23 +48,11 @@ class OrganizeHomeWithAiUseCase @Inject constructor(
     suspend operator fun invoke(
         systemInstructions: String,
     ): OrganizeHomeWithAiResult = withContext(defaultDispatcher) {
-        try {
-            organize(systemInstructions = systemInstructions)
-        } catch (exception: CancellationException) {
-            throw exception
-        } catch (_: Exception) {
-            OrganizeHomeWithAiResult.Failed
-        }
-    }
-
-    private suspend fun organize(
-        systemInstructions: String,
-    ): OrganizeHomeWithAiResult {
         val userData = userDataRepository.userDataFlow.first()
         val settings = userData.aiOrganizerSettings
 
-        if (settings.endpoint.isBlank()) return OrganizeHomeWithAiResult.EndpointNotSet
-        if (settings.model.isBlank()) return OrganizeHomeWithAiResult.ModelNotSet
+        if (settings.endpoint.isBlank()) return@withContext OrganizeHomeWithAiResult.EndpointNotSet
+        if (settings.model.isBlank()) return@withContext OrganizeHomeWithAiResult.ModelNotSet
 
         val homeSettings = userData.homeSettings
 
@@ -84,19 +72,17 @@ class OrganizeHomeWithAiUseCase @Inject constructor(
                 systemPrompt = systemInstructions,
                 userPrompt = request,
             )
-        } catch (exception: CancellationException) {
-            throw exception
-        } catch (exception: Exception) {
-            return OrganizeHomeWithAiResult.RequestFailed(
+        } catch (exception: IOException) {
+            return@withContext OrganizeHomeWithAiResult.RequestFailed(
                 detail = exception.message ?: exception.javaClass.simpleName,
             )
         }
 
-        val home = try {
+        val home = runCatching {
             parseAiOrganizerHome(response).also { it.validate(context) }
-        } catch (exception: IllegalArgumentException) {
-            return OrganizeHomeWithAiResult.InvalidResponse(
-                detail = exception.message ?: exception.javaClass.simpleName,
+        }.getOrElse {
+            return@withContext OrganizeHomeWithAiResult.InvalidResponse(
+                detail = it.message ?: it.javaClass.simpleName,
             )
         }
 
@@ -105,6 +91,6 @@ class OrganizeHomeWithAiUseCase @Inject constructor(
             content = aiOrganizerJson.encodeToString(home).toByteArray(),
         )
 
-        return OrganizeHomeWithAiResult.Ready
+        OrganizeHomeWithAiResult.Ready
     }
 }

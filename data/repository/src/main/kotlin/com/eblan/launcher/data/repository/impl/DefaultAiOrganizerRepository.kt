@@ -63,10 +63,8 @@ internal class DefaultAiOrganizerRepository @Inject constructor(
             if (!temp.renameTo(target)) {
                 throw IOException("Unable to move ${temp.name} to ${target.name}")
             }
-        } catch (exception: IOException) {
+        } finally {
             temp.delete()
-
-            throw IOException("Unable to write ${file.fileName}", exception)
         }
     }
 

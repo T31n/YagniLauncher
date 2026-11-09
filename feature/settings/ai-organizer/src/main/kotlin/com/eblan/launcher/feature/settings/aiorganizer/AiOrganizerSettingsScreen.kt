@@ -81,6 +81,7 @@ internal fun AiOrganizerSettingsRoute(
         onRestore = {
             viewModel.applyAiOrganization(restore = true)
         },
+        onBackup = viewModel::backupAiOrganization,
     )
 }
 
@@ -93,6 +94,7 @@ internal fun AiOrganizerSettingsScreen(
     onSave: (AiOrganizerSettings) -> Unit,
     onApply: () -> Unit,
     onRestore: () -> Unit,
+    onBackup: () -> Unit,
 ) {
     Scaffold(
         modifier = modifier,
@@ -125,6 +127,7 @@ internal fun AiOrganizerSettingsScreen(
                     onSave = onSave,
                     onApply = onApply,
                     onRestore = onRestore,
+                    onBackup = onBackup,
                 )
             }
         }
@@ -140,6 +143,7 @@ private fun Success(
     onSave: (AiOrganizerSettings) -> Unit,
     onApply: () -> Unit,
     onRestore: () -> Unit,
+    onBackup: () -> Unit,
 ) {
     var endpoint by remember(aiOrganizerSettings) { mutableStateOf(aiOrganizerSettings.endpoint) }
     var apiKey by remember(aiOrganizerSettings) { mutableStateOf(aiOrganizerSettings.apiKey) }
@@ -225,27 +229,41 @@ private fun Success(
             style = MaterialTheme.typography.bodyMedium,
         )
 
+        if (!status.hasBackup) {
+            Text(
+                text = stringResource(R.string.ai_organizer_backup_required),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+
         OutlinedButton(
             modifier = Modifier.fillMaxWidth(),
             onClick = onApply,
-            enabled = status.hasNewHome,
+            enabled = status.hasNewHome && status.hasBackup,
         ) {
             Text(text = stringResource(R.string.ai_organizer_apply))
         }
 
         Text(
-            text = if (status.hasLastHome) {
-                stringResource(R.string.ai_organizer_last_home_available)
+            text = if (status.hasBackup) {
+                stringResource(R.string.ai_organizer_backup_available)
             } else {
-                stringResource(R.string.ai_organizer_no_last_home)
+                stringResource(R.string.ai_organizer_no_backup)
             },
             style = MaterialTheme.typography.bodyMedium,
         )
 
         OutlinedButton(
             modifier = Modifier.fillMaxWidth(),
+            onClick = onBackup,
+        ) {
+            Text(text = stringResource(R.string.ai_organizer_backup))
+        }
+
+        OutlinedButton(
+            modifier = Modifier.fillMaxWidth(),
             onClick = onRestore,
-            enabled = status.hasLastHome,
+            enabled = status.hasBackup,
         ) {
             Text(text = stringResource(R.string.ai_organizer_restore))
         }

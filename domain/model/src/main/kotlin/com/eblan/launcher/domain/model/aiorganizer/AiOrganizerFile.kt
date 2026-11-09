@@ -21,6 +21,6 @@ enum class AiOrganizerFile(val fileName: String) {
     /** Generated organization waiting to be applied. */
     NEW_HOME("new_home.json"),
 
-    /** Organization that was active before the last apply, used for restore. */
-    LAST_HOME("last_home.json"),
+    /** Manual backup of the home organization, used for restore. */
+    HOME_BACKUP("home.json"),
 }

@@ -34,24 +34,22 @@ import com.eblan.launcher.domain.repository.EblanApplicationInfoTagRepository
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.util.deleteGridItemData
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 /**
- * Applies a generated organization, or restores the previous one.
+ * Applies a generated organization, or restores the manual backup.
  *
- * Applying snapshots the current organization to `last_home.json` before changing anything, then
- * deletes `new_home.json`. Restoring applies `last_home.json` and keeps it on disk.
+ * Applying deletes `new_home.json` after the new organization is in place. Restoring applies
+ * `home.json` and keeps it on disk. Backups are created separately by [BackupAiOrganizationUseCase].
  *
  * Writes to the home are not transactional across Room and DataStore, so a failed apply rolls back
- * the in-memory previous state on a best-effort basis. Applies and restores are serialized so a
- * second run cannot snapshot a partially applied home.
+ * the in-memory previous state on a best-effort basis. Applies and backups are serialized so a
+ * backup cannot snapshot a partially applied home.
  */
 class ApplyAiOrganizationUseCase @Inject constructor(
     private val userDataRepository: UserDataRepository,
@@ -64,134 +62,101 @@ class ApplyAiOrganizationUseCase @Inject constructor(
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     /**
-     * @param restore When true, applies `last_home.json`. Otherwise applies `new_home.json`.
+     * @param restore When true, applies `home.json`. Otherwise applies `new_home.json`.
      * Returns the outcome, including why the file could not be applied.
      */
     suspend operator fun invoke(restore: Boolean): ApplyAiOrganizationResult = withContext(defaultDispatcher) {
-        applyMutex.withLock {
+        aiOrganizerHomeMutex.withLock {
+            val sourceFile = if (restore) AiOrganizerFile.HOME_BACKUP else AiOrganizerFile.NEW_HOME
+
+            val content = aiOrganizerRepository.readFile(sourceFile)
+                ?: return@withContext ApplyAiOrganizationResult.MISSING_FILE
+
+            val userData = userDataRepository.userDataFlow.first()
+            val homeSettings = userData.homeSettings
+
+            val context = buildAiOrganizerHomeContext(
+                homeSettings = homeSettings,
+                gridItems = gridRepository.getGridItems(),
+                apps = eblanApplicationInfoRepository.getEblanApplicationInfos(),
+            )
+
+            val (home, finalGridItems) = runCatching {
+                val parsed = parseAiOrganizerHome(content.decodeToString())
+                val document = if (restore) parsed.withoutUnrecoverableItems(context) else parsed
+
+                document to document.validate(context)
+            }.getOrElse { return@withContext ApplyAiOrganizationResult.INVALID_FILE }
+
+            val previousTags = eblanApplicationInfoTagRepository.eblanApplicationInfoTagsFlow.first()
+            val previousTagCrossRefs = eblanApplicationInfoRepository.getTagCrossRefs(previousTags)
+
+            val previousGridItems = context.gridItems
+            val finalIds = finalGridItems.map { it.id }.toSet()
+            val previousIds = previousGridItems.map { it.id }.toSet()
+            val omittedGridItems = previousGridItems.filter { it.id !in finalIds }
+            val createdGridItems = finalGridItems.filter { it.id !in previousIds }
+
+            var applied = false
+
             try {
-                apply(restore)
-            } catch (exception: CancellationException) {
-                throw exception
-            } catch (_: Exception) {
-                ApplyAiOrganizationResult.FAILED
-            }
-        }
-    }
+                gridRepository.upsertGridItems(finalGridItems)
 
-    private suspend fun apply(restore: Boolean): ApplyAiOrganizationResult {
-        val sourceFile = if (restore) AiOrganizerFile.LAST_HOME else AiOrganizerFile.NEW_HOME
-
-        val content = aiOrganizerRepository.readFile(sourceFile)
-            ?: return ApplyAiOrganizationResult.MISSING_FILE
-
-        val userData = userDataRepository.userDataFlow.first()
-        val homeSettings = userData.homeSettings
-
-        val context = buildAiOrganizerHomeContext(
-            homeSettings = homeSettings,
-            gridItems = gridRepository.getGridItems(),
-            apps = eblanApplicationInfoRepository.getEblanApplicationInfos(),
-        )
-
-        val (home, finalGridItems) = try {
-            val parsed = parseAiOrganizerHome(content.decodeToString())
-            val document = if (restore) parsed.withoutUnrecoverableItems(context) else parsed
-
-            document to document.validate(context)
-        } catch (_: IllegalArgumentException) {
-            return ApplyAiOrganizationResult.INVALID_FILE
-        }
-
-        val previousTags = eblanApplicationInfoTagRepository.eblanApplicationInfoTagsFlow.first()
-        val previousTagCrossRefs = getTagCrossRefs(previousTags)
-
-        if (!restore) {
-            val snapshot = context.toSnapshotDto(
-                pageCount = homeSettings.pageCount,
-                tags = previousTags,
-                tagCrossRefs = previousTagCrossRefs,
-            )
-
-            aiOrganizerRepository.writeFile(
-                file = AiOrganizerFile.LAST_HOME,
-                content = aiOrganizerJson.encodeToString(snapshot).toByteArray(),
-            )
-        }
-
-        val previousGridItems = context.gridItems
-        val finalIds = finalGridItems.map { it.id }.toSet()
-        val previousIds = previousGridItems.map { it.id }.toSet()
-        val omittedGridItems = previousGridItems.filter { it.id !in finalIds }
-        val createdGridItems = finalGridItems.filter { it.id !in previousIds }
-
-        try {
-            gridRepository.upsertGridItems(finalGridItems)
-
-            omittedGridItems.forEach {
-                deleteGridItemData(
-                    gridItem = it,
-                    folderPopupGridItems = emptyMap(),
-                    appWidgetHostWrapper = appWidgetHostWrapper,
-                    launcherAppsWrapper = launcherAppsWrapper,
-                )
-            }
-
-            gridRepository.deleteGridItems(omittedGridItems)
-
-            userDataRepository.updateHomeSettings(
-                homeSettings.copy(pageCount = home.settings.pageCount),
-            )
-
-            val (tags, tagCrossRefs) = withHiddenAppTags(
-                hiddenApps = context.apps.filter { it.isHidden },
-                proposedTags = home.tags.map {
-                    EblanApplicationInfoTag(id = it.id, name = it.name, index = it.index)
-                },
-                proposedTagCrossRefs = home.tagCrossRefs.map {
-                    EblanApplicationInfoTagCrossRef(
-                        componentName = it.componentName,
-                        serialNumber = it.serialNumber,
-                        id = it.id,
+                omittedGridItems.forEach {
+                    deleteGridItemData(
+                        gridItem = it,
+                        folderPopupGridItems = emptyMap(),
+                        appWidgetHostWrapper = appWidgetHostWrapper,
+                        launcherAppsWrapper = launcherAppsWrapper,
                     )
-                },
-                previousTags = previousTags,
-                previousTagCrossRefs = previousTagCrossRefs,
-            )
+                }
 
-            eblanApplicationInfoTagRepository.replaceEblanApplicationInfoTags(
-                eblanApplicationInfoTags = tags,
-                eblanApplicationInfoTagCrossRefs = tagCrossRefs,
-            )
-        } catch (exception: Exception) {
-            rollback(
-                previousGridItems = previousGridItems,
-                createdGridItems = createdGridItems,
-                previousHomeSettings = homeSettings,
-                previousTags = previousTags,
-                previousTagCrossRefs = previousTagCrossRefs,
-            )
+                gridRepository.deleteGridItems(omittedGridItems)
 
-            throw exception
-        }
+                userDataRepository.updateHomeSettings(
+                    homeSettings.copy(pageCount = home.settings.pageCount),
+                )
 
-        if (!restore) {
-            aiOrganizerRepository.deleteFile(AiOrganizerFile.NEW_HOME)
-            return ApplyAiOrganizationResult.APPLIED
-        }
+                val (tags, tagCrossRefs) = withHiddenAppTags(
+                    hiddenApps = context.apps.filter { it.isHidden },
+                    proposedTags = home.tags.map {
+                        EblanApplicationInfoTag(id = it.id, name = it.name, index = it.index)
+                    },
+                    proposedTagCrossRefs = home.tagCrossRefs.map {
+                        EblanApplicationInfoTagCrossRef(
+                            componentName = it.componentName,
+                            serialNumber = it.serialNumber,
+                            id = it.id,
+                        )
+                    },
+                    previousTags = previousTags,
+                    previousTagCrossRefs = previousTagCrossRefs,
+                )
 
-        return ApplyAiOrganizationResult.RESTORED
-    }
+                eblanApplicationInfoTagRepository.replaceEblanApplicationInfoTags(
+                    eblanApplicationInfoTags = tags,
+                    eblanApplicationInfoTagCrossRefs = tagCrossRefs,
+                )
 
-    private suspend fun getTagCrossRefs(
-        tags: List<EblanApplicationInfoTag>,
-    ): List<EblanApplicationInfoTagCrossRef> = tags.flatMap { tag ->
-        eblanApplicationInfoRepository.getEblanApplicationInfosByTagId(tag.id).map {
-            EblanApplicationInfoTagCrossRef(
-                componentName = it.componentName,
-                serialNumber = it.serialNumber,
-                id = tag.id,
-            )
+                applied = true
+            } finally {
+                if (!applied) {
+                    rollback(
+                        previousGridItems = previousGridItems,
+                        createdGridItems = createdGridItems,
+                        previousHomeSettings = homeSettings,
+                        previousTags = previousTags,
+                        previousTagCrossRefs = previousTagCrossRefs,
+                    )
+                }
+            }
+
+            if (!restore) {
+                aiOrganizerRepository.deleteFile(AiOrganizerFile.NEW_HOME)
+                ApplyAiOrganizationResult.APPLIED
+            } else {
+                ApplyAiOrganizationResult.RESTORED
+            }
         }
     }
 
@@ -270,10 +235,5 @@ class ApplyAiOrganizationUseCase @Inject constructor(
                 eblanApplicationInfoTagCrossRefs = previousTagCrossRefs,
             )
         }
-    }
-
-    private companion object {
-        /** Shared across instances so concurrent callers cannot interleave applies. */
-        val applyMutex = Mutex()
     }
 }

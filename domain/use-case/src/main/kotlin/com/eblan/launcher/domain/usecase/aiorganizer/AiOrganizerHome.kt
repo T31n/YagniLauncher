@@ -28,11 +28,16 @@ import com.eblan.launcher.domain.model.grid.GridItems
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.domain.model.userdata.HomeSettings
+import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
 import com.eblan.launcher.domain.usecase.util.toGridItems
+import kotlinx.coroutines.sync.Mutex
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 internal const val MAX_AI_PAGE_COUNT = 100
+
+/** Serializes applies and backups so a backup never snapshots a partially applied home. */
+internal val aiOrganizerHomeMutex = Mutex()
 
 /**
  * Describes the current home state that an AI organization must be consistent with.
@@ -62,6 +67,18 @@ internal fun buildAiOrganizerHomeContext(
     gridItems = gridItems.toGridItems().filter { it.associate == Associate.Grid },
     apps = apps,
 )
+
+internal suspend fun EblanApplicationInfoRepository.getTagCrossRefs(
+    tags: List<EblanApplicationInfoTag>,
+): List<EblanApplicationInfoTagCrossRef> = tags.flatMap { tag ->
+    getEblanApplicationInfosByTagId(tag.id).map {
+        EblanApplicationInfoTagCrossRef(
+            componentName = it.componentName,
+            serialNumber = it.serialNumber,
+            id = tag.id,
+        )
+    }
+}
 
 private data class AiItemFields(
     val type: AiGridItemType,

@@ -28,6 +28,7 @@ import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.aiorganizer.OrganizeHomeWithAiUseCase
 import com.eblan.launcher.framework.notificationmanager.AndroidNotificationManagerWrapper
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -54,6 +55,10 @@ class AiOrganizerService : Service() {
     lateinit var notificationManagerWrapper: AndroidNotificationManagerWrapper
 
     private val serviceScope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
+
+    private val exceptionHandler = CoroutineExceptionHandler { _, _ ->
+        finish(OrganizeHomeWithAiResult.Failed)
+    }
 
     private var organizeJob: Job? = null
 
@@ -84,7 +89,7 @@ class AiOrganizerService : Service() {
             )
         }
 
-        organizeJob = serviceScope.launch {
+        organizeJob = serviceScope.launch(exceptionHandler) {
             val defaultSystemInstructions = getString(commonR.string.ai_organizer_default_system_instructions)
             val customSystemInstructions = userDataRepository.userDataFlow.first()
                 .aiOrganizerSettings.systemInstructions.trim()
@@ -94,28 +99,30 @@ class AiOrganizerService : Service() {
                 "$defaultSystemInstructions\n\n$customSystemInstructions"
             }
 
-            when (
-                val result = organizeHomeWithAiUseCase(systemInstructions = systemInstructions)
-            ) {
-                OrganizeHomeWithAiResult.Ready -> notify(
-                    id = AndroidNotificationManagerWrapper.AI_ORGANIZER_READY_NOTIFICATION_ID,
-                    title = getString(R.string.ai_organizer_ready_title),
-                    text = getString(R.string.ai_organizer_ready_text),
-                )
-
-                else -> notify(
-                    id = AndroidNotificationManagerWrapper.AI_ORGANIZER_ERROR_NOTIFICATION_ID,
-                    title = getString(R.string.ai_organizer_failed_title),
-                    text = result.messageText(),
-                )
-            }
-
-            stopForeground(STOP_FOREGROUND_REMOVE)
-
-            stopSelf()
+            finish(organizeHomeWithAiUseCase(systemInstructions = systemInstructions))
         }
 
         return START_NOT_STICKY
+    }
+
+    private fun finish(result: OrganizeHomeWithAiResult) {
+        when (result) {
+            OrganizeHomeWithAiResult.Ready -> notify(
+                id = AndroidNotificationManagerWrapper.AI_ORGANIZER_READY_NOTIFICATION_ID,
+                title = getString(R.string.ai_organizer_ready_title),
+                text = getString(R.string.ai_organizer_ready_text),
+            )
+
+            else -> notify(
+                id = AndroidNotificationManagerWrapper.AI_ORGANIZER_ERROR_NOTIFICATION_ID,
+                title = getString(R.string.ai_organizer_failed_title),
+                text = result.messageText(),
+            )
+        }
+
+        stopForeground(STOP_FOREGROUND_REMOVE)
+
+        stopSelf()
     }
 
     private fun OrganizeHomeWithAiResult.messageText(): String = when (this) {

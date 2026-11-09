@@ -26,8 +26,10 @@ import com.eblan.launcher.domain.model.userdata.AiOrganizerSettings
 import com.eblan.launcher.domain.repository.AiOrganizerRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.aiorganizer.ApplyAiOrganizationUseCase
+import com.eblan.launcher.domain.usecase.aiorganizer.BackupAiOrganizationUseCase
 import com.eblan.launcher.feature.settings.aiorganizer.model.AiOrganizerSettingsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -41,12 +43,23 @@ internal class AiOrganizerSettingsViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository,
     private val aiOrganizerRepository: AiOrganizerRepository,
     private val applyAiOrganizationUseCase: ApplyAiOrganizationUseCase,
+    private val backupAiOrganizationUseCase: BackupAiOrganizationUseCase,
 ) : ViewModel() {
-    private val status = MutableStateFlow(AiOrganizerStatus(hasNewHome = false, hasLastHome = false))
+    private val status = MutableStateFlow(AiOrganizerStatus(hasNewHome = false, hasBackup = false))
 
     private val applyResult = MutableStateFlow<ApplyAiOrganizationResult?>(null)
 
     private var applyJob: Job? = null
+
+    private val applyExceptionHandler = CoroutineExceptionHandler { _, _ ->
+        applyResult.value = ApplyAiOrganizationResult.FAILED
+
+        refreshStatus()
+    }
+
+    private val backupExceptionHandler = CoroutineExceptionHandler { _, _ ->
+        refreshStatus()
+    }
 
     val aiOrganizerSettingsUiState = combine(
         userDataRepository.userDataFlow,
@@ -72,7 +85,7 @@ internal class AiOrganizerSettingsViewModel @Inject constructor(
         viewModelScope.launch {
             status.value = AiOrganizerStatus(
                 hasNewHome = aiOrganizerRepository.fileExists(AiOrganizerFile.NEW_HOME),
-                hasLastHome = aiOrganizerRepository.fileExists(AiOrganizerFile.LAST_HOME),
+                hasBackup = aiOrganizerRepository.fileExists(AiOrganizerFile.HOME_BACKUP),
             )
         }
     }
@@ -86,8 +99,16 @@ internal class AiOrganizerSettingsViewModel @Inject constructor(
     fun applyAiOrganization(restore: Boolean) {
         if (applyJob?.isActive == true) return
 
-        applyJob = viewModelScope.launch {
+        applyJob = viewModelScope.launch(applyExceptionHandler) {
             applyResult.value = applyAiOrganizationUseCase(restore = restore)
+
+            refreshStatus()
+        }
+    }
+
+    fun backupAiOrganization() {
+        viewModelScope.launch(backupExceptionHandler) {
+            backupAiOrganizationUseCase()
 
             refreshStatus()
         }
