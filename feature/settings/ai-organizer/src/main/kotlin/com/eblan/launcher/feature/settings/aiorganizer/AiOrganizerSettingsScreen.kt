@@ -308,25 +308,27 @@ private fun Success(
             Text(text = stringResource(R.string.ai_organizer_restore))
         }
 
-        val applyErrorRes = applyResult?.errorMessageRes()
-        if (applyErrorRes != null) {
+        val applyMessageRes = applyResult?.messageRes()
+        if (applyMessageRes != null) {
             Text(
-                text = stringResource(applyErrorRes),
-                color = MaterialTheme.colorScheme.error,
+                text = stringResource(applyMessageRes),
+                color = if (applyResult == ApplyAiOrganizationResult.RESTORED ||
+                    applyResult == ApplyAiOrganizationResult.APPLIED
+                ) {
+                    MaterialTheme.colorScheme.onSurface
+                } else {
+                    MaterialTheme.colorScheme.error
+                },
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
     }
 }
 
-private fun ApplyAiOrganizationResult.errorMessageRes(): Int? = when (this) {
-    ApplyAiOrganizationResult.APPLIED,
-    ApplyAiOrganizationResult.RESTORED,
-    -> null
-
+private fun ApplyAiOrganizationResult.messageRes(): Int? = when (this) {
+    ApplyAiOrganizationResult.APPLIED -> R.string.ai_organizer_applied
+    ApplyAiOrganizationResult.RESTORED -> R.string.ai_organizer_restored
     ApplyAiOrganizationResult.MISSING_FILE -> R.string.ai_organizer_apply_missing_file
-
     ApplyAiOrganizationResult.INVALID_FILE -> R.string.ai_organizer_apply_invalid_file
-
     ApplyAiOrganizationResult.FAILED -> R.string.ai_organizer_apply_failed
 }
