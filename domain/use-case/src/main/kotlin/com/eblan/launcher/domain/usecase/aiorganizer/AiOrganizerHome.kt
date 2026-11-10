@@ -57,19 +57,35 @@ internal fun writeHomeFile(directory: File, name: String, content: ByteArray) {
 /**
  * Describes the current home state that an AI organization must be consistent with.
  *
- * @property columns Columns per page.
- * @property rows Rows per page.
+ * @property columns Columns per grid page.
+ * @property rows Rows per grid page.
+ * @property dockPageCount Number of dock pages, which the AI cannot change.
+ * @property dockColumns Columns per dock page.
+ * @property dockRows Rows per dock page.
  * @property gridItemSettings Settings applied to newly created grid items.
- * @property gridItems Grid items associated with the home screen, including folder children.
+ * @property gridItems Grid and dock items, including folder children.
  * @property apps All installed applications, including hidden ones that may still be tagged.
  */
 internal data class AiOrganizerHomeContext(
     val columns: Int,
     val rows: Int,
+    val dockPageCount: Int,
+    val dockColumns: Int,
+    val dockRows: Int,
     val gridItemSettings: GridItemSettings,
     val gridItems: List<GridItem>,
     val apps: List<EblanApplicationInfo>,
-)
+) {
+    fun columnsOf(associate: Associate): Int = if (associate == Associate.Dock) dockColumns else columns
+
+    fun rowsOf(associate: Associate): Int = if (associate == Associate.Dock) dockRows else rows
+
+    fun pageCountOf(associate: Associate, gridPageCount: Int): Int = if (associate == Associate.Dock) {
+        dockPageCount
+    } else {
+        gridPageCount
+    }
+}
 
 internal fun buildAiOrganizerHomeContext(
     homeSettings: HomeSettings,
@@ -78,8 +94,11 @@ internal fun buildAiOrganizerHomeContext(
 ): AiOrganizerHomeContext = AiOrganizerHomeContext(
     columns = homeSettings.columns,
     rows = homeSettings.rows,
+    dockPageCount = homeSettings.dockPageCount,
+    dockColumns = homeSettings.dockColumns,
+    dockRows = homeSettings.dockRows,
     gridItemSettings = homeSettings.gridItemSettings,
-    gridItems = gridItems.toGridItems().filter { it.associate == Associate.Grid },
+    gridItems = gridItems.toGridItems(),
     apps = apps,
 )
 
@@ -169,7 +188,7 @@ private fun AiGridItemType.matches(data: GridItemData): Boolean = when (data) {
     is GridItemData.ShortcutConfig -> this == AiGridItemType.ShortcutConfig
 }
 
-private fun GridItem.position(columns: Int): Int = startRow * columns + startColumn
+private fun GridItem.position(context: AiOrganizerHomeContext): Int = startRow * context.columnsOf(associate) + startColumn
 
 private fun EblanApplicationInfo.toAiAppDto(folderId: String? = null): AiAppDto = AiAppDto(
     componentName = componentName,
@@ -179,31 +198,52 @@ private fun EblanApplicationInfo.toAiAppDto(folderId: String? = null): AiAppDto 
     folderId = folderId,
 )
 
-internal fun AiOrganizerHomeContext.toRequestDto(pageCount: Int): AiOrganizerRequestDto = AiOrganizerRequestDto(
-    gridItems = gridItems.map { item ->
-        val fields = item.data.toAiItemFields()
+private fun GridItem.toAiRequestGridItemDto(context: AiOrganizerHomeContext): AiRequestGridItemDto {
+    val fields = data.toAiItemFields()
 
-        AiRequestGridItemDto(
-            id = item.id,
-            type = fields.type,
-            componentName = fields.componentName,
-            packageName = fields.packageName,
-            serialNumber = fields.serialNumber,
-            label = fields.label,
-            page = item.page,
-            position = item.position(columns),
-            columnSpan = item.columnSpan,
-            rowSpan = item.rowSpan,
-            folderId = item.data.parentFolderId(),
-        )
-    },
+    return AiRequestGridItemDto(
+        id = id,
+        type = fields.type,
+        componentName = fields.componentName,
+        packageName = fields.packageName,
+        serialNumber = fields.serialNumber,
+        label = fields.label,
+        page = page,
+        position = position(context),
+        columnSpan = columnSpan,
+        rowSpan = rowSpan,
+        folderId = data.parentFolderId(),
+    )
+}
+
+internal fun AiOrganizerHomeContext.toRequestDto(pageCount: Int): AiOrganizerRequestDto = AiOrganizerRequestDto(
+    gridItems = gridItems.filter { it.associate == Associate.Grid }.map { it.toAiRequestGridItemDto(this) },
+    dockGridItems = gridItems.filter { it.associate == Associate.Dock }.map { it.toAiRequestGridItemDto(this) },
     appDrawer = apps.filter { !it.isHidden }.map { it.toAiAppDto() },
     settings = AiRequestSettingsDto(
         pageCount = pageCount,
         columns = columns,
         rows = rows,
+        dockPageCount = dockPageCount,
+        dockColumns = dockColumns,
+        dockRows = dockRows,
     ),
 )
+
+private fun GridItem.toAiGridItemDto(context: AiOrganizerHomeContext): AiGridItemDto {
+    val fields = data.toAiItemFields()
+
+    return AiGridItemDto(
+        id = id,
+        type = fields.type,
+        componentName = fields.componentName,
+        serialNumber = fields.serialNumber,
+        label = fields.label,
+        page = page,
+        position = position(context),
+        folderId = data.parentFolderId(),
+    )
+}
 
 /**
  * Serializes the current home so it can be applied later with the same validation as a generated
@@ -222,20 +262,8 @@ internal fun AiOrganizerHomeContext.toSnapshotDto(
     val folderIdsWithApps = folderApps.mapNotNull { it.folderId }.toSet()
 
     return AiOrganizerHomeDto(
-        gridItems = gridItems.map { item ->
-            val fields = item.data.toAiItemFields()
-
-            AiGridItemDto(
-                id = item.id,
-                type = fields.type,
-                componentName = fields.componentName,
-                serialNumber = fields.serialNumber,
-                label = fields.label,
-                page = item.page,
-                position = item.position(columns),
-                folderId = item.data.parentFolderId(),
-            )
-        },
+        gridItems = gridItems.filter { it.associate == Associate.Grid }.map { it.toAiGridItemDto(this) },
+        dockGridItems = gridItems.filter { it.associate == Associate.Dock }.map { it.toAiGridItemDto(this) },
         appDrawer = folderApps.map { it.toAiAppDto(folderId = it.folderId) },
         appDrawerFolders = appDrawerFolders
             .filter { it.id in folderIdsWithApps }
@@ -278,32 +306,37 @@ internal fun AiOrganizerHomeDto.withoutUnrecoverableItems(context: AiOrganizerHo
         .map { it.componentName to it.serialNumber }
         .toSet()
 
-    var kept = gridItems.filter { item ->
-        item.id in managedIds || when (item.type) {
-            AiGridItemType.Application -> item.appKey()?.let { it in installedAppKeys } == true
-            AiGridItemType.Folder -> true
-            else -> false
-        }
-    }
-
-    while (true) {
-        val keptIds = kept.map { it.id }.toSet()
-        val parentFolderIds = kept.mapNotNull { it.folderId }.toSet()
-
-        val next = kept.filter { item ->
-            val parentKept = item.folderId == null || item.folderId in keptIds
-            val folderHasChildren = item.type != AiGridItemType.Folder || item.id in parentFolderIds
-
-            parentKept && folderHasChildren
+    fun List<AiGridItemDto>.withoutUnrecoverable(): List<AiGridItemDto> {
+        var kept = filter { item ->
+            item.id in managedIds || when (item.type) {
+                AiGridItemType.Application -> item.appKey()?.let { it in installedAppKeys } == true
+                AiGridItemType.Folder -> true
+                else -> false
+            }
         }
 
-        if (next.size == kept.size) break
+        while (true) {
+            val keptIds = kept.map { it.id }.toSet()
+            val parentFolderIds = kept.mapNotNull { it.folderId }.toSet()
 
-        kept = next
+            val next = kept.filter { item ->
+                val parentKept = item.folderId == null || item.folderId in keptIds
+                val folderHasChildren = item.type != AiGridItemType.Folder || item.id in parentFolderIds
+
+                parentKept && folderHasChildren
+            }
+
+            if (next.size == kept.size) break
+
+            kept = next
+        }
+
+        return kept
     }
 
     return copy(
-        gridItems = kept,
+        gridItems = gridItems.withoutUnrecoverable(),
+        dockGridItems = dockGridItems?.withoutUnrecoverable(),
         appDrawer = appDrawer.filter { (it.componentName to it.serialNumber) in installedAppKeys },
     )
 }
@@ -372,28 +405,44 @@ private fun AiGridItemDto.appKey(): Pair<String, Long>? = if (componentName != n
 @OptIn(ExperimentalUuidApi::class)
 internal fun AiOrganizerHomeDto.validate(context: AiOrganizerHomeContext): List<GridItem> {
     val pageCount = settings.pageCount
-    val columns = context.columns
-    val rows = context.rows
 
     require(pageCount in 1..MAX_AI_PAGE_COUNT) {
         "pageCount must be between 1 and $MAX_AI_PAGE_COUNT"
     }
 
-    require(gridItems.map { it.id }.toSet().size == gridItems.size) { "Duplicate ids in gridItems" }
+    // A missing dockGridItems array keeps the current dock untouched.
+    val dockDtos = dockGridItems ?: context.gridItems
+        .filter { it.associate == Associate.Dock }
+        .map { it.toAiGridItemDto(context) }
 
-    val totalPositions = columns * rows
+    val surfaceItems = gridItems.map { it to Associate.Grid } + dockDtos.map { it to Associate.Dock }
+    val responseItems = surfaceItems.map { it.first }
 
-    gridItems.forEach {
-        require(it.page in 0 until pageCount) { "Invalid page ${it.page} for item ${it.id}" }
-        require(it.position in 0 until totalPositions) { "Invalid position ${it.position} for item ${it.id}" }
+    require(responseItems.map { it.id }.toSet().size == responseItems.size) {
+        "Duplicate ids in gridItems and dockGridItems"
+    }
+
+    surfaceItems.forEach { (item, surface) ->
+        require(item.page in 0 until context.pageCountOf(surface, pageCount)) {
+            "Invalid page ${item.page} for item ${item.id}"
+        }
+        require(item.position in 0 until context.columnsOf(surface) * context.rowsOf(surface)) {
+            "Invalid position ${item.position} for item ${item.id}"
+        }
     }
 
     val managedById = context.gridItems.associateBy { it.id }
-    val responseById = gridItems.associateBy { it.id }
+    val responseById = responseItems.associateBy { it.id }
+    val surfaceById = surfaceItems.associate { (item, surface) -> item.id to surface }
+    val parentIdById = responseItems.associate { it.id to it.folderId }
 
-    val parentIdById = gridItems.associate { it.id to it.folderId }
+    surfaceItems.forEach { (item, surface) ->
+        val managed = managedById[item.id]
 
-    gridItems.forEach { item ->
+        require(managed == null || managed.associate == surface) {
+            "Item ${item.id} cannot move between grid and dock"
+        }
+
         if (item.type == AiGridItemType.Widget) {
             require(item.folderId == null) { "Widget ${item.id} cannot be inside a folder" }
         }
@@ -401,6 +450,9 @@ internal fun AiOrganizerHomeDto.validate(context: AiOrganizerHomeContext): List<
         item.folderId?.let { parentId ->
             require(responseById[parentId]?.type == AiGridItemType.Folder) {
                 "folderId of ${item.id} must reference a folder"
+            }
+            require(surfaceById[parentId] == surface) {
+                "folderId of ${item.id} must stay on the same surface"
             }
         }
 
@@ -414,20 +466,20 @@ internal fun AiOrganizerHomeDto.validate(context: AiOrganizerHomeContext): List<
         }
     }
 
-    gridItems.filter { it.type == AiGridItemType.Widget }.forEach { item ->
+    surfaceItems.filter { it.first.type == AiGridItemType.Widget }.forEach { (item, surface) ->
         val managed = managedById[item.id]
 
         require(managed != null && managed.data is GridItemData.Widget) {
             "Widget ${item.id} must be an existing widget"
         }
-        require(item.page == managed.page && item.position == managed.position(columns)) {
+        require(item.page == managed.page && item.position == managed.position(context)) {
             "Widget ${item.id} is fixed and cannot be moved"
         }
     }
 
     val fixedWidgets = context.gridItems.filter { it.data is GridItemData.Widget }
 
-    val finalIds = gridItems.associate { item ->
+    val finalIds = responseItems.associate { item ->
         val managed = managedById[item.id]
 
         if (managed != null) {
@@ -443,25 +495,26 @@ internal fun AiOrganizerHomeDto.validate(context: AiOrganizerHomeContext): List<
         }
     }
 
-    val childCounts = gridItems.mapNotNull { it.folderId }.groupingBy { it }.eachCount()
+    val childCounts = responseItems.mapNotNull { it.folderId }.groupingBy { it }.eachCount()
 
-    gridItems.filter { it.type == AiGridItemType.Folder }.forEach { folder ->
+    responseItems.filter { it.type == AiGridItemType.Folder }.forEach { folder ->
         require(folder.id in childCounts) { "Folder ${folder.id} must contain at least one item" }
     }
 
-    val finalItems = gridItems.filter { it.type != AiGridItemType.Widget }.map { item ->
+    val finalItems = surfaceItems.filter { it.first.type != AiGridItemType.Widget }.map { (item, surface) ->
         val finalFolderId = item.folderId?.let { finalIds.getValue(it) }
         val managed = managedById[item.id]
 
         managed?.copy(
             page = item.page,
-            startColumn = item.position % columns,
-            startRow = item.position / columns,
+            startColumn = item.position % context.columnsOf(surface),
+            startRow = item.position / context.columnsOf(surface),
             data = managed.data.withFolderId(finalFolderId),
         )
             ?: item.toNewGridItem(
                 id = finalIds.getValue(item.id),
                 folderId = finalFolderId,
+                surface = surface,
                 context = context,
             )
     } + fixedWidgets
@@ -472,16 +525,20 @@ internal fun AiOrganizerHomeDto.validate(context: AiOrganizerHomeContext): List<
 
     require(applicationKeys.size == applicationKeys.toSet().size) { "Each application may appear only once" }
 
-    val occupiedCells = mutableSetOf<Triple<Int, Int, Int>>()
+    val occupiedCells = mutableSetOf<Pair<Associate, Triple<Int, Int, Int>>>()
 
     finalItems.filter { it.data.parentFolderId() == null }.forEach { item ->
-        require(item.startColumn + item.columnSpan <= columns) { "Item ${item.id} exceeds the column count" }
-        require(item.startRow + item.rowSpan <= rows) { "Item ${item.id} exceeds the row count" }
+        require(item.startColumn + item.columnSpan <= context.columnsOf(item.associate)) {
+            "Item ${item.id} exceeds the column count"
+        }
+        require(item.startRow + item.rowSpan <= context.rowsOf(item.associate)) {
+            "Item ${item.id} exceeds the row count"
+        }
 
         for (row in item.startRow until item.startRow + item.rowSpan) {
             for (column in item.startColumn until item.startColumn + item.columnSpan) {
-                require(occupiedCells.add(Triple(item.page, row, column))) {
-                    "Conflicting placement at page ${item.page}, row $row, column $column"
+                require(occupiedCells.add(item.associate to Triple(item.page, row, column))) {
+                    "Conflicting placement at ${item.associate} page ${item.page}, row $row, column $column"
                 }
             }
         }
@@ -510,6 +567,7 @@ internal fun AiOrganizerHomeDto.validate(context: AiOrganizerHomeContext): List<
 private fun AiGridItemDto.toNewGridItem(
     id: String,
     folderId: String?,
+    surface: Associate,
     context: AiOrganizerHomeContext,
 ): GridItem {
     val emptyAction = EblanAction(
@@ -555,12 +613,12 @@ private fun AiGridItemDto.toNewGridItem(
     return GridItem(
         id = id,
         page = page,
-        startColumn = position % context.columns,
-        startRow = position / context.columns,
+        startColumn = position % context.columnsOf(surface),
+        startRow = position / context.columnsOf(surface),
         columnSpan = 1,
         rowSpan = 1,
         data = data,
-        associate = Associate.Grid,
+        associate = surface,
         override = false,
         gridItemSettings = context.gridItemSettings,
         doubleTap = emptyAction,

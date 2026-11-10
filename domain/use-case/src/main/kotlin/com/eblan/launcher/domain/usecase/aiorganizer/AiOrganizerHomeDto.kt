@@ -30,6 +30,7 @@ internal val aiOrganizerJson = Json {
 @Serializable
 internal data class AiOrganizerRequestDto(
     val gridItems: List<AiRequestGridItemDto>,
+    val dockGridItems: List<AiRequestGridItemDto>,
     val appDrawer: List<AiAppDto>,
     val settings: AiRequestSettingsDto,
 )
@@ -37,6 +38,7 @@ internal data class AiOrganizerRequestDto(
 @Serializable
 internal data class AiOrganizerHomeDto(
     val gridItems: List<AiGridItemDto>,
+    val dockGridItems: List<AiGridItemDto>? = null,
     val appDrawer: List<AiAppDto> = emptyList(),
     val appDrawerFolders: List<AiAppDrawerFolderDto> = emptyList(),
     val tags: List<AiTagDto> = emptyList(),
@@ -109,6 +111,9 @@ internal data class AiRequestSettingsDto(
     val pageCount: Int,
     val columns: Int,
     val rows: Int,
+    val dockPageCount: Int,
+    val dockColumns: Int,
+    val dockRows: Int,
 )
 
 @Serializable
