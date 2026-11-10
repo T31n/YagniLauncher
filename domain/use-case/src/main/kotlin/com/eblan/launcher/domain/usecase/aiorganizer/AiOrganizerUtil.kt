@@ -247,42 +247,6 @@ private fun GridItem.toAiGridItemDto(context: AiOrganizerHomeContext): AiGridIte
 }
 
 /**
- * Serializes the current home so it can be applied later with the same validation as a generated
- * organization. Only visible apps inside app drawer folders are listed, since every other visible
- * app is top-level on apply. Folders with no visible members are omitted.
- */
-internal fun AiOrganizerHomeContext.toSnapshotDto(
-    pageCount: Int,
-    tags: List<EblanApplicationInfoTag>,
-    tagCrossRefs: List<EblanApplicationInfoTagCrossRef>,
-    appDrawerFolders: List<FolderEblanApplicationInfo>,
-): AiOrganizerHomeDto {
-    val folderApps = apps
-        .filter { !it.isHidden && it.folderId != null }
-        .sortedBy { it.folderIndex }
-    val folderIdsWithApps = folderApps.mapNotNull { it.folderId }.toSet()
-
-    return AiOrganizerHomeDto(
-        gridItems = gridItems
-            .filter { it.associate == Associate.Grid && it.data !is GridItemData.Widget }
-            .map { it.toAiGridItemDto(this) },
-        dockGridItems = gridItems
-            .filter { it.associate == Associate.Dock && it.data !is GridItemData.Widget }
-            .map { it.toAiGridItemDto(this) },
-        appDrawer = folderApps.map { it.toAiAppDto(folderId = it.folderId) },
-        appDrawerFolders = appDrawerFolders
-            .filter { it.id in folderIdsWithApps }
-            .sortedBy { it.index }
-            .map { AiAppDrawerFolderDto(id = it.id, label = it.label) },
-        tags = tags.map { AiTagDto(id = it.id, name = it.name, index = it.index) },
-        tagCrossRefs = tagCrossRefs.map {
-            AiTagCrossRefDto(componentName = it.componentName, serialNumber = it.serialNumber, id = it.id)
-        },
-        settings = AiHomeSettingsDto(pageCount = pageCount),
-    )
-}
-
-/**
  * Extracts the JSON document from a model response, tolerating surrounding Markdown code fences.
  */
 internal fun parseAiOrganizerHome(raw: String): AiOrganizerHomeDto {
@@ -299,56 +263,6 @@ internal fun parseAiOrganizerHome(raw: String): AiOrganizerHomeDto {
 
     return aiOrganizerJson.decodeFromString<AiOrganizerHomeDto>(
         trimmedRawResponse.substring(jsonStartIndex, jsonEndIndex + 1),
-    )
-}
-
-/**
- * Drops items that cannot be restored, such as widgets and shortcuts whose bindings were released,
- * and any folder or child left without a valid parent or children.
- */
-internal fun AiOrganizerHomeDto.withoutUnrecoverableItems(context: AiOrganizerHomeContext): AiOrganizerHomeDto {
-    val managedIds = context.gridItems.map { it.id }.toSet()
-    val installedAppKeys = context.apps
-        .filter { !it.isHidden }
-        .map { it.componentName to it.serialNumber }
-        .toSet()
-    val allInstalledAppKeys = context.apps
-        .map { it.componentName to it.serialNumber }
-        .toSet()
-
-    fun List<AiGridItemDto>.withoutUnrecoverable(): List<AiGridItemDto> {
-        var keptGridItems = filter { item ->
-            item.id in managedIds || when (item.type) {
-                AiGridItemType.Application -> item.appKey()?.let { it in installedAppKeys } == true
-                AiGridItemType.Folder -> true
-                else -> false
-            }
-        }
-
-        while (true) {
-            val keptGridItemIds = keptGridItems.map { it.id }.toSet()
-            val parentFolderIds = keptGridItems.mapNotNull { it.folderId }.toSet()
-
-            val nextGridItems = keptGridItems.filter { item ->
-                val parentKept = item.folderId == null || item.folderId in keptGridItemIds
-                val folderHasChildren = item.type != AiGridItemType.Folder || item.id in parentFolderIds
-
-                parentKept && folderHasChildren
-            }
-
-            if (nextGridItems.size == keptGridItems.size) break
-
-            keptGridItems = nextGridItems
-        }
-
-        return keptGridItems
-    }
-
-    return copy(
-        gridItems = gridItems.withoutUnrecoverable(),
-        dockGridItems = dockGridItems?.withoutUnrecoverable(),
-        appDrawer = appDrawer.filter { (it.componentName to it.serialNumber) in installedAppKeys },
-        tagCrossRefs = tagCrossRefs.filter { (it.componentName to it.serialNumber) in allInstalledAppKeys },
     )
 }
 
@@ -410,7 +324,8 @@ private fun AiGridItemDto.appKey(): Pair<String, Long>? = if (componentName != n
 /**
  * Validates a home document against the current home state and converts it into grid items.
  *
- * Items with an id from the current home keep that id and type. New items may only be applications or folders.
+ * Items with an id from the current home keep that id and type. Every current non-widget item must be returned, so none is removed silently.
+ * New items may only be applications or folders.
  * Widgets are fixed: they must keep their current page and position, and any omitted widget is kept in place.
  * Items that share a top-level cell are rejected, while folder children may overlap.
  *
@@ -444,6 +359,17 @@ internal fun AiOrganizerHomeDto.validate(context: AiOrganizerHomeContext): List<
     }
 
     val managedById = context.gridItems.associateBy { it.id }
+    val responseIds = responseItems.map { it.id }.toSet()
+
+    // Every current non-widget item must be returned, so apply never removes items silently. Widgets are always kept in place.
+    val missingManagedIds = context.gridItems
+        .filter { it.data !is GridItemData.Widget && it.id !in responseIds }
+        .map { it.id }
+
+    require(missingManagedIds.isEmpty()) {
+        "Current items missing from the response: ${missingManagedIds.joinToString()}"
+    }
+
     val responseById = responseItems.associateBy { it.id }
     val surfaceByItemId = surfaceItems.associate { (item, surface) -> item.id to surface }
     val parentIdById = responseItems.associate { it.id to it.folderId }

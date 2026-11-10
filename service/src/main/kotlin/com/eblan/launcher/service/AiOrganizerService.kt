@@ -37,7 +37,6 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import com.eblan.launcher.common.R as commonR
 
 /**
  * Runs the AI organization in the foreground. Starting it while a run is active cancels the
@@ -90,7 +89,7 @@ class AiOrganizerService : Service() {
         }
 
         organizeJob = serviceScope.launch(exceptionHandler) {
-            val defaultSystemInstructions = getString(commonR.string.ai_organizer_default_system_instructions)
+            val defaultSystemInstructions = getString(R.string.ai_organizer_default_system_instructions)
             val customSystemInstructions = userDataRepository.userDataFlow.first()
                 .aiOrganizerSettings.systemInstructions.trim()
             val systemInstructions = if (customSystemInstructions.isBlank()) {

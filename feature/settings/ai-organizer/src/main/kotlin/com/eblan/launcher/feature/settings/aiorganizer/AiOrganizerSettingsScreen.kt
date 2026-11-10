@@ -58,7 +58,6 @@ import com.eblan.launcher.domain.model.userdata.AiOrganizerSettings
 import com.eblan.launcher.feature.settings.aiorganizer.model.AiOrganizerSettingsUiState
 import com.eblan.launcher.feature.settings.aiorganizer.model.AiOrganizerStatus
 import kotlinx.coroutines.flow.Flow
-import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun AiOrganizerSettingsRoute(
@@ -81,12 +80,8 @@ internal fun AiOrganizerSettingsRoute(
         onNavigateUp = onNavigateUp,
         onSave = viewModel::updateAiOrganizerSettings,
         onApply = {
-            viewModel.applyAiOrganization(restore = false)
+            viewModel.applyAiOrganization()
         },
-        onRestore = {
-            viewModel.applyAiOrganization(restore = true)
-        },
-        onBackup = viewModel::backupAiOrganization,
     )
 }
 
@@ -99,13 +94,9 @@ internal fun AiOrganizerSettingsScreen(
     onNavigateUp: () -> Unit,
     onSave: (AiOrganizerSettings) -> Unit,
     onApply: () -> Unit,
-    onRestore: () -> Unit,
-    onBackup: () -> Unit,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
-    val backupSavedMessage = stringResource(R.string.ai_organizer_backup_saved)
-    val backupFailedMessage = stringResource(R.string.ai_organizer_backup_failed)
     val settingsSavedMessage = stringResource(R.string.ai_organizer_settings_saved)
     val settingsSaveFailedMessage = stringResource(R.string.ai_organizer_settings_save_failed)
 
@@ -117,8 +108,6 @@ internal fun AiOrganizerSettingsScreen(
                 message = when (message) {
                     AiOrganizerSettingsMessage.SettingsSaved -> settingsSavedMessage
                     AiOrganizerSettingsMessage.SettingsSaveFailed -> settingsSaveFailedMessage
-                    AiOrganizerSettingsMessage.BackupSaved -> backupSavedMessage
-                    AiOrganizerSettingsMessage.BackupFailed -> backupFailedMessage
                 },
             )
         }
@@ -158,8 +147,6 @@ internal fun AiOrganizerSettingsScreen(
                     isBusy = aiOrganizerSettingsUiState.isBusy,
                     onSave = onSave,
                     onApply = onApply,
-                    onRestore = onRestore,
-                    onBackup = onBackup,
                 )
             }
         }
@@ -175,8 +162,6 @@ private fun Success(
     isBusy: Boolean,
     onSave: (AiOrganizerSettings) -> Unit,
     onApply: () -> Unit,
-    onRestore: () -> Unit,
-    onBackup: () -> Unit,
 ) {
     var endpoint by remember(key1 = aiOrganizerSettings) { mutableStateOf(aiOrganizerSettings.endpoint) }
     var apiKey by remember(key1 = aiOrganizerSettings) { mutableStateOf(aiOrganizerSettings.apiKey) }
@@ -243,7 +228,6 @@ private fun Success(
             value = systemInstructions,
             onValueChange = { systemInstructions = it },
             label = { Text(text = stringResource(R.string.ai_organizer_system_instructions)) },
-            supportingText = { Text(text = stringResource(commonR.string.ai_organizer_default_system_instructions)) },
         )
 
         Button(
@@ -272,9 +256,10 @@ private fun Success(
             style = MaterialTheme.typography.bodyMedium,
         )
 
-        if (!status.hasBackup) {
+        if (status.hasNewHome) {
             Text(
-                text = stringResource(R.string.ai_organizer_backup_required),
+                text = stringResource(R.string.ai_organizer_apply_warning),
+                color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
@@ -282,43 +267,16 @@ private fun Success(
         OutlinedButton(
             modifier = Modifier.fillMaxWidth(),
             onClick = onApply,
-            enabled = !isBusy && status.hasNewHome && status.hasBackup,
+            enabled = !isBusy && status.hasNewHome,
         ) {
             Text(text = stringResource(R.string.ai_organizer_apply))
-        }
-
-        Text(
-            text = if (status.hasBackup) {
-                stringResource(R.string.ai_organizer_backup_available)
-            } else {
-                stringResource(R.string.ai_organizer_no_backup)
-            },
-            style = MaterialTheme.typography.bodyMedium,
-        )
-
-        OutlinedButton(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = onBackup,
-            enabled = !isBusy,
-        ) {
-            Text(text = stringResource(R.string.ai_organizer_backup))
-        }
-
-        OutlinedButton(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = onRestore,
-            enabled = !isBusy && status.hasBackup,
-        ) {
-            Text(text = stringResource(R.string.ai_organizer_restore))
         }
 
         val applyMessageRes = applyResult?.messageRes()
         if (applyMessageRes != null) {
             Text(
                 text = stringResource(applyMessageRes),
-                color = if (applyResult == ApplyAiOrganizationResult.RESTORED ||
-                    applyResult == ApplyAiOrganizationResult.APPLIED
-                ) {
+                color = if (applyResult == ApplyAiOrganizationResult.APPLIED) {
                     MaterialTheme.colorScheme.onSurface
                 } else {
                     MaterialTheme.colorScheme.error
@@ -331,7 +289,6 @@ private fun Success(
 
 private fun ApplyAiOrganizationResult.messageRes(): Int? = when (this) {
     ApplyAiOrganizationResult.APPLIED -> R.string.ai_organizer_applied
-    ApplyAiOrganizationResult.RESTORED -> R.string.ai_organizer_restored
     ApplyAiOrganizationResult.MISSING_FILE -> R.string.ai_organizer_apply_missing_file
     ApplyAiOrganizationResult.INVALID_FILE -> R.string.ai_organizer_apply_invalid_file
     ApplyAiOrganizationResult.FAILED -> R.string.ai_organizer_apply_failed

@@ -61,7 +61,7 @@ class OrganizeHomeWithAiUseCase @Inject constructor(
 
         val homeSettings = userData.homeSettings
 
-        // The snapshot must not be read while Apply or Backup is rewriting the home.
+        // The snapshot must not be read while Apply is rewriting the home.
         val context = homeOperationLock.runExclusively {
             buildAiOrganizerHomeContext(
                 homeSettings = homeSettings,

@@ -20,7 +20,4 @@ package com.eblan.launcher.domain.model.aiorganizer
 enum class AiOrganizerFile(val fileName: String) {
     /** Generated organization waiting to be applied. */
     NEW_HOME("new_home.json"),
-
-    /** Manual backup of the home organization, used for restore. */
-    HOME_BACKUP("home.json"),
 }

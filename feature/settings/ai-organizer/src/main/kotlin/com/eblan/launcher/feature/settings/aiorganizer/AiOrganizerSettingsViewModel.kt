@@ -28,7 +28,6 @@ import com.eblan.launcher.domain.model.aiorganizer.ApplyAiOrganizationResult
 import com.eblan.launcher.domain.model.userdata.AiOrganizerSettings
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.aiorganizer.ApplyAiOrganizationUseCase
-import com.eblan.launcher.domain.usecase.aiorganizer.BackupAiOrganizationUseCase
 import com.eblan.launcher.feature.settings.aiorganizer.model.AiOrganizerSettingsUiState
 import com.eblan.launcher.feature.settings.aiorganizer.model.AiOrganizerStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -50,20 +49,17 @@ import javax.inject.Inject
 internal enum class AiOrganizerSettingsMessage {
     SettingsSaved,
     SettingsSaveFailed,
-    BackupSaved,
-    BackupFailed,
 }
 
 @HiltViewModel
 internal class AiOrganizerSettingsViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository,
     private val applyAiOrganizationUseCase: ApplyAiOrganizationUseCase,
-    private val backupAiOrganizationUseCase: BackupAiOrganizationUseCase,
     private val fileManager: FileManager,
     private val homeOperationLock: HomeOperationLock,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
-    private val hasNewHomeStatus = MutableStateFlow(AiOrganizerStatus(hasNewHome = false, hasBackup = false))
+    private val hasNewHomeStatus = MutableStateFlow(AiOrganizerStatus(hasNewHome = false))
 
     private val applyResult = MutableStateFlow<ApplyAiOrganizationResult?>(null)
 
@@ -73,18 +69,10 @@ internal class AiOrganizerSettingsViewModel @Inject constructor(
 
     private var applyJob: Job? = null
 
-    private var backupJob: Job? = null
-
     private val applyExceptionHandler = CoroutineExceptionHandler { _, _ ->
         applyResult.value = ApplyAiOrganizationResult.FAILED
 
         refreshStatus()
-    }
-
-    private val backupExceptionHandler = CoroutineExceptionHandler { _, _ ->
-        refreshStatus()
-
-        _messages.tryEmit(AiOrganizerSettingsMessage.BackupFailed)
     }
 
     val aiOrganizerSettingsUiState = combine(
@@ -122,7 +110,6 @@ internal class AiOrganizerSettingsViewModel @Inject constructor(
 
                 AiOrganizerStatus(
                     hasNewHome = File(directory, AiOrganizerFile.NEW_HOME.fileName).exists(),
-                    hasBackup = File(directory, AiOrganizerFile.HOME_BACKUP.fileName).exists(),
                 )
             }
         }
@@ -142,25 +129,13 @@ internal class AiOrganizerSettingsViewModel @Inject constructor(
         }
     }
 
-    fun applyAiOrganization(restore: Boolean) {
+    fun applyAiOrganization() {
         if (applyJob?.isActive == true) return
 
         applyJob = viewModelScope.launch(applyExceptionHandler) {
-            applyResult.value = applyAiOrganizationUseCase(restore = restore)
+            applyResult.value = applyAiOrganizationUseCase()
 
             refreshStatus()
-        }
-    }
-
-    fun backupAiOrganization() {
-        if (backupJob?.isActive == true) return
-
-        backupJob = viewModelScope.launch(backupExceptionHandler) {
-            backupAiOrganizationUseCase()
-
-            refreshStatus()
-
-            _messages.emit(AiOrganizerSettingsMessage.BackupSaved)
         }
     }
 }

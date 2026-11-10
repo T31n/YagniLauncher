@@ -27,18 +27,11 @@
     <string name="ai_organizer_new_home_available">A new organization is ready to apply.</string>
     <string name="ai_organizer_no_new_home">No new organization is ready.</string>
     <string name="ai_organizer_apply">Apply</string>
-    <string name="ai_organizer_backup_available">A backup is available to restore.</string>
-    <string name="ai_organizer_no_backup">No backup to restore.</string>
-    <string name="ai_organizer_backup">Back up current home</string>
-    <string name="ai_organizer_backup_required">Back up your current home before applying a new organization.</string>
-    <string name="ai_organizer_restore">Restore</string>
+    <string name="ai_organizer_apply_warning">Applying will replace your current home screen layout.</string>
     <string name="ai_organizer_apply_missing_file">No organization is ready to apply.</string>
     <string name="ai_organizer_apply_invalid_file">The organization does not match the current home screen. Organize again.</string>
     <string name="ai_organizer_apply_failed">Applying the organization failed.</string>
-    <string name="ai_organizer_restored">Previous organization restored.</string>
     <string name="ai_organizer_applied">New organization applied.</string>
-    <string name="ai_organizer_backup_saved">Current home backed up.</string>
-    <string name="ai_organizer_backup_failed">Backing up the current home failed.</string>
     <string name="ai_organizer_settings_saved">Settings saved.</string>
     <string name="ai_organizer_settings_save_failed">Saving settings failed.</string>
 </resources>

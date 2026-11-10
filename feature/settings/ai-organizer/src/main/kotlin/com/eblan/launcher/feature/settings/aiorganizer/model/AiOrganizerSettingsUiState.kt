@@ -22,7 +22,6 @@ import com.eblan.launcher.domain.model.userdata.AiOrganizerSettings
 
 internal data class AiOrganizerStatus(
     val hasNewHome: Boolean,
-    val hasBackup: Boolean,
 )
 
 internal sealed interface AiOrganizerSettingsUiState {

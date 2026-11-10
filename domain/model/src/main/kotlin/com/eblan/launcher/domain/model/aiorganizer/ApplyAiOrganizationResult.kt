@@ -19,7 +19,6 @@ package com.eblan.launcher.domain.model.aiorganizer
 
 enum class ApplyAiOrganizationResult {
     APPLIED,
-    RESTORED,
     MISSING_FILE,
     INVALID_FILE,
     FAILED,

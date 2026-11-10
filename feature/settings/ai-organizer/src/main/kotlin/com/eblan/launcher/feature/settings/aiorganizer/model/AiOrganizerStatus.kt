@@ -19,5 +19,4 @@ package com.eblan.launcher.feature.settings.aiorganizer.model
 
 internal data class AiOrganizerStatus(
     val hasNewHome: Boolean,
-    val hasBackup: Boolean,
 )

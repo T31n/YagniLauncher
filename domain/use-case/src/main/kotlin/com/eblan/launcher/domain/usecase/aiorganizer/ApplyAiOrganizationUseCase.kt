@@ -45,13 +45,10 @@ import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 /**
- * Applies a generated organization, or restores the manual backup.
+ * Applies the generated organization in `new_home.json`, then deletes that file.
  *
- * Applying deletes `new_home.json` after the new organization is in place. Restoring applies
- * `home.json` and keeps it on disk. Backups are created separately by [BackupAiOrganizationUseCase].
- *
- * Applies and backups are serialized through [HomeOperationLock] so a backup cannot snapshot a
- * partially applied home.
+ * Applies are serialized through [HomeOperationLock] so the home is never read while partially
+ * written.
  */
 class ApplyAiOrganizationUseCase @Inject constructor(
     private val userDataRepository: UserDataRepository,
@@ -65,18 +62,14 @@ class ApplyAiOrganizationUseCase @Inject constructor(
     private val fileManager: FileManager,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
-    /**
-     * @param restore When true, applies `home.json`. Otherwise applies `new_home.json`.
-     * Returns the outcome, including why the file could not be applied.
-     */
-    suspend operator fun invoke(restore: Boolean): ApplyAiOrganizationResult = withContext(defaultDispatcher) {
+    /** Returns the outcome, including why the file could not be applied. */
+    suspend operator fun invoke(): ApplyAiOrganizationResult = withContext(defaultDispatcher) {
         homeOperationLock.runExclusively {
             val homeDirectory = fileManager.getFilesDirectory(FileManager.HOME_DIR)
-            val sourceFile = if (restore) AiOrganizerFile.HOME_BACKUP else AiOrganizerFile.NEW_HOME
 
             val homeFileBytes = fileManager.readFileBytes(
                 directory = homeDirectory,
-                name = sourceFile.fileName,
+                name = AiOrganizerFile.NEW_HOME.fileName,
             ) ?: return@runExclusively ApplyAiOrganizationResult.MISSING_FILE
 
             val homeSettings = userDataRepository.userDataFlow.first().homeSettings
@@ -93,8 +86,7 @@ class ApplyAiOrganizationUseCase @Inject constructor(
             try {
                 val parsed = parseAiOrganizerHome(homeFileBytes.decodeToString())
 
-                home = (if (restore) parsed.withoutUnrecoverableItems(context) else parsed)
-                    .withoutEmptyAppDrawerFolders()
+                home = parsed.withoutEmptyAppDrawerFolders()
                 finalGridItems = home.validate(context)
             } catch (_: Exception) {
                 return@runExclusively ApplyAiOrganizationResult.INVALID_FILE
@@ -113,13 +105,9 @@ class ApplyAiOrganizationUseCase @Inject constructor(
                 appDrawerPlan = planAppDrawerFolders(home, context, previousFolders),
             )
 
-            if (restore) {
-                ApplyAiOrganizationResult.RESTORED
-            } else {
-                File(homeDirectory, AiOrganizerFile.NEW_HOME.fileName).delete()
+            File(homeDirectory, AiOrganizerFile.NEW_HOME.fileName).delete()
 
-                ApplyAiOrganizationResult.APPLIED
-            }
+            ApplyAiOrganizationResult.APPLIED
         }
     }
 
@@ -200,7 +188,7 @@ class ApplyAiOrganizationUseCase @Inject constructor(
             .filter { it in hiddenKeys }
             .toSet()
 
-        // A proposed membership for a hidden app, such as a restored snapshot, replaces the current one.
+        // A proposed membership for a hidden app replaces the current one.
         val preservedCrossRefs = previousTagCrossRefs.filter {
             val hiddenAppKey = it.componentName to it.serialNumber
             hiddenAppKey in hiddenKeys && hiddenAppKey !in proposedHiddenKeys
