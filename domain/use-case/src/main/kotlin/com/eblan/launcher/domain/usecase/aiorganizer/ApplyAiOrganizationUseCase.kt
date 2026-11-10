@@ -86,7 +86,7 @@ class ApplyAiOrganizationUseCase @Inject constructor(
                 val parsed = parseAiOrganizerHome(homeFileBytes.decodeToString())
 
                 home = parsed.withoutEmptyAppDrawerFolders()
-                finalGridItems = validateAiOrganizerHome(home, context)
+                finalGridItems = validateAiOrganizerHome(home = home, context = context)
             } catch (_: Exception) {
                 return@runExclusively ApplyAiOrganizationResult.INVALID_FILE
             }
@@ -101,7 +101,11 @@ class ApplyAiOrganizationUseCase @Inject constructor(
                 context = context,
                 previousTags = previousTags,
                 previousTagCrossRefs = previousTagCrossRefs,
-                appDrawerPlan = planAppDrawerFolders(home, context, previousFolders),
+                appDrawerPlan = planAppDrawerFolders(
+                    home = home,
+                    context = context,
+                    previousFolders = previousFolders,
+                ),
             )
 
             File(homeDirectory, FileManager.HOME_FILE_NAME).delete()

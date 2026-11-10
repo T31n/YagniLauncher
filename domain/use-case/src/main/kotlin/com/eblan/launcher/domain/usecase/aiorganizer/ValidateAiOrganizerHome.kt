@@ -37,26 +37,31 @@ import kotlin.uuid.Uuid
  * @throws IllegalArgumentException when the document cannot be applied safely.
  */
 internal fun validateAiOrganizerHome(home: AiOrganizerHomeDto, context: AiOrganizerHomeContext): List<GridItem> {
-    val surfaceItems = toSurfaceItems(home, context)
+    val surfaceItems = toSurfaceItems(home = home, context = context)
     val responseItems = surfaceItems.map { it.first }
     val managedById = context.gridItems.associateBy { it.id }
 
-    requireUniqueResponseIds(responseItems)
-    requireItemsWithinBounds(surfaceItems, context)
-    requireCurrentItemsReturned(responseItems, context)
-    requireValidItemPlacements(surfaceItems, responseItems, managedById)
-    requireWidgetsFixed(surfaceItems, managedById, context)
+    requireUniqueResponseIds(responseItems = responseItems)
+    requireItemsWithinBounds(surfaceItems = surfaceItems, context = context)
+    requireCurrentItemsReturned(responseItems = responseItems, context = context)
+    requireValidItemPlacements(surfaceItems = surfaceItems, responseItems = responseItems, managedById = managedById)
+    requireWidgetsFixed(surfaceItems = surfaceItems, managedById = managedById, context = context)
 
-    val finalIds = assignFinalIds(responseItems, managedById)
+    val finalIds = assignFinalIds(responseItems = responseItems, managedById = managedById)
 
-    requireFoldersNotEmpty(responseItems)
+    requireFoldersNotEmpty(responseItems = responseItems)
 
-    val finalItems = buildFinalItems(surfaceItems, managedById, finalIds, context)
+    val finalItems = buildFinalItems(
+        surfaceItems = surfaceItems,
+        managedById = managedById,
+        finalIds = finalIds,
+        context = context,
+    )
 
-    requireNewApplicationsUnique(finalItems, managedById)
-    requireNoOverlappingTopLevelItems(finalItems, context)
-    validateAppDrawer(home, context)
-    requireValidTags(home, context)
+    requireNewApplicationsUnique(finalItems = finalItems, managedById = managedById)
+    requireNoOverlappingTopLevelItems(finalItems = finalItems, context = context)
+    validateAppDrawer(home = home, context = context)
+    requireValidTags(home = home, context = context)
 
     return finalItems
 }
@@ -84,10 +89,10 @@ private fun requireItemsWithinBounds(
     context: AiOrganizerHomeContext,
 ) {
     surfaceItems.forEach { (item, surface) ->
-        require(item.page in 0 until context.pageCountOf(surface, context.pageCount)) {
+        require(item.page in 0 until context.pageCountOf(associate = surface, gridPageCount = context.pageCount)) {
             "Invalid page ${item.page} for item ${item.id}"
         }
-        require(item.position in 0 until context.columnsOf(surface) * context.rowsOf(surface)) {
+        require(item.position in 0 until context.columnsOf(associate = surface) * context.rowsOf(associate = surface)) {
             "Invalid position ${item.position} for item ${item.id}"
         }
     }
@@ -205,8 +210,8 @@ private fun buildFinalItems(
 
         managedGridItem?.copy(
             page = item.page,
-            startColumn = item.position % context.columnsOf(surface),
-            startRow = item.position / context.columnsOf(surface),
+            startColumn = item.position % context.columnsOf(associate = surface),
+            startRow = item.position / context.columnsOf(associate = surface),
             data = managedGridItem.data.withFolderId(finalFolderId),
         )
             ?: item.toNewGridItem(
