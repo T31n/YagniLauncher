@@ -86,7 +86,7 @@ class OrganizeHomeWithAiUseCase @Inject constructor(
         }
 
         val home = try {
-            parseAiOrganizerHome(response).also { it.validate(context) }
+            parseAiOrganizerHome(response).also { validateAiOrganizerHome(it, context) }
         } catch (exception: Exception) {
             return@withContext OrganizeHomeWithAiResult.InvalidResponse(
                 detail = exception.message ?: exception.javaClass.simpleName,

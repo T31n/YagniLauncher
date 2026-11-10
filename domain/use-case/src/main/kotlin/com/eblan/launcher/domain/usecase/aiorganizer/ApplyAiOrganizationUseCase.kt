@@ -86,7 +86,7 @@ class ApplyAiOrganizationUseCase @Inject constructor(
                 val parsed = parseAiOrganizerHome(homeFileBytes.decodeToString())
 
                 home = parsed.withoutEmptyAppDrawerFolders()
-                finalGridItems = home.validate(context)
+                finalGridItems = validateAiOrganizerHome(home, context)
             } catch (_: Exception) {
                 return@runExclusively ApplyAiOrganizationResult.INVALID_FILE
             }
