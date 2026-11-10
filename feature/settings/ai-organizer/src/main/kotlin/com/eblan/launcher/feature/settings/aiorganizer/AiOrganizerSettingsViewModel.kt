@@ -130,13 +130,15 @@ internal class AiOrganizerSettingsViewModel @Inject constructor(
 
     fun updateAiOrganizerSettings(aiOrganizerSettings: AiOrganizerSettings) {
         viewModelScope.launch {
-            runCatching {
+            try {
                 userDataRepository.updateAiOrganizerSettings(aiOrganizerSettings = aiOrganizerSettings)
-            }.onSuccess {
-                _messages.emit(AiOrganizerSettingsMessage.SettingsSaved)
-            }.onFailure {
+            } catch (exception: Exception) {
                 _messages.emit(AiOrganizerSettingsMessage.SettingsSaveFailed)
+
+                return@launch
             }
+
+            _messages.emit(AiOrganizerSettingsMessage.SettingsSaved)
         }
     }
 
