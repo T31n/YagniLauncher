@@ -32,6 +32,4 @@
     <string name="ai_organizer_apply_invalid_file">The organization does not match the current home screen. Organize again.</string>
     <string name="ai_organizer_apply_failed">Applying the organization failed.</string>
     <string name="ai_organizer_applied">New organization applied.</string>
-    <string name="ai_organizer_settings_saved">Settings saved.</string>
-    <string name="ai_organizer_settings_save_failed">Saving settings failed.</string>
 </resources>

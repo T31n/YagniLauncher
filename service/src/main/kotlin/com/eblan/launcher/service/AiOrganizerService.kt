@@ -23,29 +23,44 @@ import android.content.pm.ServiceInfo
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
+import com.eblan.launcher.domain.framework.AiOrganizerOperationState
+import com.eblan.launcher.domain.model.aiorganizer.AiOrganizerOperation
+import com.eblan.launcher.domain.model.aiorganizer.ApplyAiOrganizationResult
 import com.eblan.launcher.domain.model.aiorganizer.OrganizeHomeWithAiResult
 import com.eblan.launcher.domain.repository.UserDataRepository
+import com.eblan.launcher.domain.usecase.aiorganizer.ApplyAiOrganizationUseCase
 import com.eblan.launcher.domain.usecase.aiorganizer.OrganizeHomeWithAiUseCase
 import com.eblan.launcher.framework.notificationmanager.AndroidNotificationManagerWrapper
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
- * Runs the AI organization in the foreground. Starting it while a run is active cancels the
- * previous run and starts a new one.
+ * Runs AI organize and apply in the foreground. Only one operation runs at a time:
+ * - Organize is rejected while an apply is running.
+ * - Apply cancels a running organize, then runs to completion without being cancelled by organize.
  */
 @AndroidEntryPoint
 class AiOrganizerService : Service() {
+    companion object {
+        const val ACTION_ORGANIZE = "com.eblan.launcher.service.action.ORGANIZE"
+        const val ACTION_APPLY = "com.eblan.launcher.service.action.APPLY"
+    }
+
     @Inject
     lateinit var organizeHomeWithAiUseCase: OrganizeHomeWithAiUseCase
+
+    @Inject
+    lateinit var applyAiOrganizationUseCase: ApplyAiOrganizationUseCase
 
     @Inject
     lateinit var userDataRepository: UserDataRepository
@@ -53,24 +68,123 @@ class AiOrganizerService : Service() {
     @Inject
     lateinit var notificationManagerWrapper: AndroidNotificationManagerWrapper
 
+    @Inject
+    lateinit var aiOrganizerOperationState: AiOrganizerOperationState
+
     private val serviceScope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
 
-    private val exceptionHandler = CoroutineExceptionHandler { _, _ ->
-        finish(OrganizeHomeWithAiResult.Failed)
-    }
-
     private var organizeJob: Job? = null
+
+    private var applyJob: Job? = null
 
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        when (intent?.action) {
+            ACTION_APPLY -> startApply()
+            else -> startOrganize()
+        }
+
+        return START_NOT_STICKY
+    }
+
+    private fun startOrganize() {
+        if (applyJob?.isActive == true) {
+            promoteToForeground(
+                title = getString(R.string.ai_organizer_applying_title),
+                text = getString(R.string.ai_organizer_applying_text),
+            )
+
+            return
+        }
+
+        promoteToForeground(
+            title = getString(R.string.ai_organizer_organizing_title),
+            text = getString(R.string.ai_organizer_organizing_text),
+        )
+
         organizeJob?.cancel()
 
+        aiOrganizerOperationState.setOperation(AiOrganizerOperation.ORGANIZING)
+
+        val job = serviceScope.launch(start = CoroutineStart.LAZY) {
+            val result = try {
+                val defaultSystemInstructions = getString(R.string.ai_organizer_default_system_instructions)
+                val customSystemInstructions = userDataRepository.userDataFlow.first()
+                    .aiOrganizerSettings.systemInstructions.trim()
+                val systemInstructions = if (customSystemInstructions.isBlank()) {
+                    defaultSystemInstructions
+                } else {
+                    "$defaultSystemInstructions\n\n$customSystemInstructions"
+                }
+
+                organizeHomeWithAiUseCase(systemInstructions = systemInstructions)
+            } catch (exception: CancellationException) {
+                throw exception
+            } catch (_: Exception) {
+                OrganizeHomeWithAiResult.Failed
+            }
+
+            // A cancelled or superseded organize must not stop the service.
+            if (organizeJob === coroutineContext[Job]) {
+                organizeJob = null
+
+                finishOrganize(result)
+            }
+        }
+
+        organizeJob = job
+
+        job.start()
+    }
+
+    private fun startApply() {
+        if (applyJob?.isActive == true) {
+            promoteToForeground(
+                title = getString(R.string.ai_organizer_applying_title),
+                text = getString(R.string.ai_organizer_applying_text),
+            )
+
+            return
+        }
+
+        promoteToForeground(
+            title = getString(R.string.ai_organizer_applying_title),
+            text = getString(R.string.ai_organizer_applying_text),
+        )
+
+        // Detached before joining so the cancelled organize cannot stop the service.
+        val organizeToCancel = organizeJob
+        organizeJob = null
+
+        applyJob = serviceScope.launch(start = CoroutineStart.LAZY) {
+            organizeToCancel?.cancelAndJoin()
+
+            aiOrganizerOperationState.setApplyResult(null)
+            aiOrganizerOperationState.setOperation(AiOrganizerOperation.APPLYING)
+
+            try {
+                aiOrganizerOperationState.setApplyResult(applyAiOrganizationUseCase())
+            } catch (exception: CancellationException) {
+                throw exception
+            } catch (_: Exception) {
+                aiOrganizerOperationState.setApplyResult(ApplyAiOrganizationResult.FAILED)
+            } finally {
+                aiOrganizerOperationState.setOperation(null)
+
+                stopForegroundAndSelf()
+            }
+        }
+
+        applyJob?.start()
+    }
+
+    private fun promoteToForeground(title: String, text: String) {
         val notification =
             NotificationCompat.Builder(this, AndroidNotificationManagerWrapper.CHANNEL_ID)
                 .setSmallIcon(R.drawable.baseline_import_export_24)
-                .setContentTitle(getString(R.string.ai_organizer_organizing_title))
-                .setContentText(getString(R.string.ai_organizer_organizing_text))
+                .setContentTitle(title)
+                .setContentText(text)
                 .setOngoing(true)
                 .setProgress(0, 0, true)
                 .build()
@@ -87,24 +201,11 @@ class AiOrganizerService : Service() {
                 notification,
             )
         }
-
-        organizeJob = serviceScope.launch(exceptionHandler) {
-            val defaultSystemInstructions = getString(R.string.ai_organizer_default_system_instructions)
-            val customSystemInstructions = userDataRepository.userDataFlow.first()
-                .aiOrganizerSettings.systemInstructions.trim()
-            val systemInstructions = if (customSystemInstructions.isBlank()) {
-                defaultSystemInstructions
-            } else {
-                "$defaultSystemInstructions\n\n$customSystemInstructions"
-            }
-
-            finish(organizeHomeWithAiUseCase(systemInstructions = systemInstructions))
-        }
-
-        return START_NOT_STICKY
     }
 
-    private fun finish(result: OrganizeHomeWithAiResult) {
+    private fun finishOrganize(result: OrganizeHomeWithAiResult) {
+        aiOrganizerOperationState.setOperation(null)
+
         when (result) {
             OrganizeHomeWithAiResult.Ready -> notify(
                 notificationId = AndroidNotificationManagerWrapper.AI_ORGANIZER_READY_NOTIFICATION_ID,
@@ -119,9 +220,7 @@ class AiOrganizerService : Service() {
             )
         }
 
-        stopForeground(STOP_FOREGROUND_REMOVE)
-
-        stopSelf()
+        stopForegroundAndSelf()
     }
 
     private fun OrganizeHomeWithAiResult.messageText(): String = when (this) {
@@ -148,9 +247,17 @@ class AiOrganizerService : Service() {
         )
     }
 
+    private fun stopForegroundAndSelf() {
+        stopForeground(STOP_FOREGROUND_REMOVE)
+
+        stopSelf()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
 
         serviceScope.cancel()
+
+        aiOrganizerOperationState.setOperation(null)
     }
 }

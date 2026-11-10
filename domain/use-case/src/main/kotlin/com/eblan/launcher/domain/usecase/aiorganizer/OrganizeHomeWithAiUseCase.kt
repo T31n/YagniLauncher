@@ -20,7 +20,6 @@ package com.eblan.launcher.domain.usecase.aiorganizer
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.common.FileManager
-import com.eblan.launcher.domain.common.HomeOperationLock
 import com.eblan.launcher.domain.model.aiorganizer.OrganizeHomeWithAiResult
 import com.eblan.launcher.domain.repository.AiOrganizerRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
@@ -41,7 +40,6 @@ class OrganizeHomeWithAiUseCase @Inject constructor(
     private val gridRepository: GridRepository,
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
     private val aiOrganizerRepository: AiOrganizerRepository,
-    private val homeOperationLock: HomeOperationLock,
     private val fileManager: FileManager,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
@@ -60,14 +58,11 @@ class OrganizeHomeWithAiUseCase @Inject constructor(
 
         val homeSettings = userData.homeSettings
 
-        // The snapshot must not be read while Apply is rewriting the home.
-        val context = homeOperationLock.runExclusively {
-            buildAiOrganizerHomeContext(
-                homeSettings = homeSettings,
-                gridItems = gridRepository.getGridItems(),
-                apps = eblanApplicationInfoRepository.getEblanApplicationInfos(),
-            )
-        }
+        val context = buildAiOrganizerHomeContext(
+            homeSettings = homeSettings,
+            gridItems = gridRepository.getGridItems(),
+            apps = eblanApplicationInfoRepository.getEblanApplicationInfos(),
+        )
 
         val requestJson = aiOrganizerJson.encodeToString(
             context.toRequestDto(pageCount = homeSettings.pageCount),
@@ -95,14 +90,12 @@ class OrganizeHomeWithAiUseCase @Inject constructor(
 
         val homeFileBytes = aiOrganizerJson.encodeToString(home).toByteArray()
 
-        homeOperationLock.runExclusively {
-            withContext(ioDispatcher) {
-                writeHomeFile(
-                    directory = fileManager.getFilesRootDirectory(),
-                    name = FileManager.HOME_FILE_NAME,
-                    content = homeFileBytes,
-                )
-            }
+        withContext(ioDispatcher) {
+            writeHomeFile(
+                directory = fileManager.getFilesRootDirectory(),
+                name = FileManager.HOME_FILE_NAME,
+                content = homeFileBytes,
+            )
         }
 
         OrganizeHomeWithAiResult.Ready

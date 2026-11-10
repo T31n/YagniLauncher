@@ -23,6 +23,8 @@
     <string name="loading_icons_from_cache_is_faster">Loading icons from cache is faster</string>
     <string name="ai_organizer_organizing_title">Organizing with AI</string>
     <string name="ai_organizer_organizing_text">Generating a new home screen layout</string>
+    <string name="ai_organizer_applying_title">Applying AI layout</string>
+    <string name="ai_organizer_applying_text">Updating the home screen</string>
     <string name="ai_organizer_ready_title">AI organization ready</string>
     <string name="ai_organizer_ready_text">Open AI Organizer settings to apply the new layout</string>
     <string name="ai_organizer_failed_title">AI organization failed</string>

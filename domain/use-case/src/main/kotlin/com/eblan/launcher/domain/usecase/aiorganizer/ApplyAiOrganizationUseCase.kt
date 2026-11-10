@@ -20,7 +20,6 @@ package com.eblan.launcher.domain.usecase.aiorganizer
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.common.FileManager
-import com.eblan.launcher.domain.common.HomeOperationLock
 import com.eblan.launcher.domain.framework.AppWidgetHostWrapper
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.model.aiorganizer.ApplyAiOrganizationResult
@@ -46,8 +45,8 @@ import kotlin.uuid.Uuid
 /**
  * Applies the generated organization in `home.json`, then deletes that file.
  *
- * Applies are serialized through [HomeOperationLock] so the home is never read while partially
- * written.
+ * Callers must not run this concurrently with [OrganizeHomeWithAiUseCase]; `AiOrganizerService`
+ * enforces that.
  */
 class ApplyAiOrganizationUseCase @Inject constructor(
     private val userDataRepository: UserDataRepository,
@@ -57,61 +56,58 @@ class ApplyAiOrganizationUseCase @Inject constructor(
     private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
     private val appWidgetHostWrapper: AppWidgetHostWrapper,
     private val launcherAppsWrapper: LauncherAppsWrapper,
-    private val homeOperationLock: HomeOperationLock,
     private val fileManager: FileManager,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     /** Returns the outcome, including why the file could not be applied. */
     suspend operator fun invoke(): ApplyAiOrganizationResult = withContext(defaultDispatcher) {
-        homeOperationLock.runExclusively {
-            val homeDirectory = fileManager.getFilesRootDirectory()
+        val homeDirectory = fileManager.getFilesRootDirectory()
 
-            val homeFileBytes = fileManager.readFileBytes(
-                directory = homeDirectory,
-                name = FileManager.HOME_FILE_NAME,
-            ) ?: return@runExclusively ApplyAiOrganizationResult.MISSING_FILE
+        val homeFileBytes = fileManager.readFileBytes(
+            directory = homeDirectory,
+            name = FileManager.HOME_FILE_NAME,
+        ) ?: return@withContext ApplyAiOrganizationResult.MISSING_FILE
 
-            val homeSettings = userDataRepository.userDataFlow.first().homeSettings
+        val homeSettings = userDataRepository.userDataFlow.first().homeSettings
 
-            val context = buildAiOrganizerHomeContext(
-                homeSettings = homeSettings,
-                gridItems = gridRepository.getGridItems(),
-                apps = eblanApplicationInfoRepository.getEblanApplicationInfos(),
-            )
+        val context = buildAiOrganizerHomeContext(
+            homeSettings = homeSettings,
+            gridItems = gridRepository.getGridItems(),
+            apps = eblanApplicationInfoRepository.getEblanApplicationInfos(),
+        )
 
-            val home: AiOrganizerHomeDto
-            val finalGridItems: List<GridItem>
+        val home: AiOrganizerHomeDto
+        val finalGridItems: List<GridItem>
 
-            try {
-                val parsed = parseAiOrganizerHome(homeFileBytes.decodeToString())
+        try {
+            val parsed = parseAiOrganizerHome(homeFileBytes.decodeToString())
 
-                home = parsed.withoutEmptyAppDrawerFolders()
-                finalGridItems = validateAiOrganizerHome(home = home, context = context)
-            } catch (_: Exception) {
-                return@runExclusively ApplyAiOrganizationResult.INVALID_FILE
-            }
-
-            val previousTags = eblanApplicationInfoTagRepository.eblanApplicationInfoTagsFlow.first()
-            val previousTagCrossRefs = eblanApplicationInfoRepository.getTagCrossRefs(previousTags)
-            val previousFolders = folderEblanApplicationInfoRepository.getFolderEblanApplicationInfos()
-
-            replaceHome(
-                home = home,
-                finalGridItems = finalGridItems,
-                context = context,
-                previousTags = previousTags,
-                previousTagCrossRefs = previousTagCrossRefs,
-                appDrawerPlan = planAppDrawerFolders(
-                    home = home,
-                    context = context,
-                    previousFolders = previousFolders,
-                ),
-            )
-
-            File(homeDirectory, FileManager.HOME_FILE_NAME).delete()
-
-            ApplyAiOrganizationResult.APPLIED
+            home = parsed.withoutEmptyAppDrawerFolders()
+            finalGridItems = validateAiOrganizerHome(home = home, context = context)
+        } catch (_: Exception) {
+            return@withContext ApplyAiOrganizationResult.INVALID_FILE
         }
+
+        val previousTags = eblanApplicationInfoTagRepository.eblanApplicationInfoTagsFlow.first()
+        val previousTagCrossRefs = eblanApplicationInfoRepository.getTagCrossRefs(previousTags)
+        val previousFolders = folderEblanApplicationInfoRepository.getFolderEblanApplicationInfos()
+
+        replaceHome(
+            home = home,
+            finalGridItems = finalGridItems,
+            context = context,
+            previousTags = previousTags,
+            previousTagCrossRefs = previousTagCrossRefs,
+            appDrawerPlan = planAppDrawerFolders(
+                home = home,
+                context = context,
+                previousFolders = previousFolders,
+            ),
+        )
+
+        File(homeDirectory, FileManager.HOME_FILE_NAME).delete()
+
+        ApplyAiOrganizationResult.APPLIED
     }
 
     /** Writes the validated organization in order. */

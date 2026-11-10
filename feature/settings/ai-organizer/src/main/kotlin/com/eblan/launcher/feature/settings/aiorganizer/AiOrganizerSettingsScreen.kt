@@ -17,6 +17,8 @@
  */
 package com.eblan.launcher.feature.settings.aiorganizer
 
+import android.content.Intent
+import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,30 +36,27 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.aiorganizer.ApplyAiOrganizationResult
 import com.eblan.launcher.domain.model.userdata.AiOrganizerSettings
 import com.eblan.launcher.feature.settings.aiorganizer.model.AiOrganizerSettingsUiState
 import com.eblan.launcher.feature.settings.aiorganizer.model.AiOrganizerStatus
-import kotlinx.coroutines.flow.Flow
+import com.eblan.launcher.service.AiOrganizerService
 
 @Composable
 internal fun AiOrganizerSettingsRoute(
@@ -67,21 +66,11 @@ internal fun AiOrganizerSettingsRoute(
 ) {
     val aiOrganizerSettingsUiState by viewModel.aiOrganizerSettingsUiState.collectAsStateWithLifecycle()
 
-    LifecycleResumeEffect(Unit) {
-        viewModel.refreshStatus()
-
-        onPauseOrDispose {}
-    }
-
     AiOrganizerSettingsScreen(
         modifier = modifier,
         aiOrganizerSettingsUiState = aiOrganizerSettingsUiState,
-        messages = viewModel.messages,
         onNavigateUp = onNavigateUp,
         onSave = viewModel::updateAiOrganizerSettings,
-        onApply = {
-            viewModel.applyAiOrganization()
-        },
     )
 }
 
@@ -90,29 +79,9 @@ internal fun AiOrganizerSettingsRoute(
 internal fun AiOrganizerSettingsScreen(
     modifier: Modifier = Modifier,
     aiOrganizerSettingsUiState: AiOrganizerSettingsUiState,
-    messages: Flow<AiOrganizerSettingsMessage>,
     onNavigateUp: () -> Unit,
     onSave: (AiOrganizerSettings) -> Unit,
-    onApply: () -> Unit,
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
-
-    val settingsSavedMessage = stringResource(R.string.ai_organizer_settings_saved)
-    val settingsSaveFailedMessage = stringResource(R.string.ai_organizer_settings_save_failed)
-
-    LaunchedEffect(Unit) {
-        messages.collect { message ->
-            snackbarHostState.currentSnackbarData?.dismiss()
-
-            snackbarHostState.showSnackbar(
-                message = when (message) {
-                    AiOrganizerSettingsMessage.SettingsSaved -> settingsSavedMessage
-                    AiOrganizerSettingsMessage.SettingsSaveFailed -> settingsSaveFailedMessage
-                },
-            )
-        }
-    }
-
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -130,9 +99,6 @@ internal fun AiOrganizerSettingsScreen(
                 },
             )
         },
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
-        },
     ) { paddingValues ->
         Box(
             modifier = Modifier
@@ -146,7 +112,6 @@ internal fun AiOrganizerSettingsScreen(
                     applyResult = aiOrganizerSettingsUiState.applyResult,
                     isBusy = aiOrganizerSettingsUiState.isBusy,
                     onSave = onSave,
-                    onApply = onApply,
                 )
             }
         }
@@ -161,8 +126,9 @@ private fun Success(
     applyResult: ApplyAiOrganizationResult?,
     isBusy: Boolean,
     onSave: (AiOrganizerSettings) -> Unit,
-    onApply: () -> Unit,
 ) {
+    val context = LocalContext.current
+
     var endpoint by remember(key1 = aiOrganizerSettings) { mutableStateOf(aiOrganizerSettings.endpoint) }
     var apiKey by remember(key1 = aiOrganizerSettings) { mutableStateOf(aiOrganizerSettings.apiKey) }
     var model by remember(key1 = aiOrganizerSettings) { mutableStateOf(aiOrganizerSettings.model) }
@@ -266,7 +232,15 @@ private fun Success(
 
         OutlinedButton(
             modifier = Modifier.fillMaxWidth(),
-            onClick = onApply,
+            onClick = {
+                val intent = Intent(context, AiOrganizerService::class.java).setAction(AiOrganizerService.ACTION_APPLY)
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    context.startForegroundService(intent)
+                } else {
+                    context.startService(intent)
+                }
+            },
             enabled = !isBusy && status.hasNewHome,
         ) {
             Text(text = stringResource(R.string.ai_organizer_apply))

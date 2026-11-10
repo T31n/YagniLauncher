@@ -22,63 +22,54 @@ import androidx.lifecycle.viewModelScope
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.common.FileManager
-import com.eblan.launcher.domain.common.HomeOperationLock
-import com.eblan.launcher.domain.model.aiorganizer.ApplyAiOrganizationResult
+import com.eblan.launcher.domain.framework.AiOrganizerOperationState
 import com.eblan.launcher.domain.model.userdata.AiOrganizerSettings
 import com.eblan.launcher.domain.repository.UserDataRepository
-import com.eblan.launcher.domain.usecase.aiorganizer.ApplyAiOrganizationUseCase
 import com.eblan.launcher.feature.settings.aiorganizer.model.AiOrganizerSettingsUiState
 import com.eblan.launcher.feature.settings.aiorganizer.model.AiOrganizerStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
-
-internal enum class AiOrganizerSettingsMessage {
-    SettingsSaved,
-    SettingsSaveFailed,
-}
 
 @HiltViewModel
 internal class AiOrganizerSettingsViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository,
-    private val applyAiOrganizationUseCase: ApplyAiOrganizationUseCase,
     private val fileManager: FileManager,
-    private val homeOperationLock: HomeOperationLock,
+    private val aiOrganizerOperationState: AiOrganizerOperationState,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
-    private val hasNewHomeStatus = MutableStateFlow(AiOrganizerStatus(hasNewHome = false))
+    private val hasNewHomeStatus = aiOrganizerOperationState.operation
+        .map { operation -> operation == null }
+        .distinctUntilChanged()
+        .filter { isIdle -> isIdle }
+        .map {
+            val directory = fileManager.getFilesRootDirectory()
 
-    private val applyResult = MutableStateFlow<ApplyAiOrganizationResult?>(null)
-
-    private val _messages = MutableSharedFlow<AiOrganizerSettingsMessage>(extraBufferCapacity = 1)
-
-    val messages: SharedFlow<AiOrganizerSettingsMessage> = _messages.asSharedFlow()
-
-    private var applyJob: Job? = null
-
-    private val applyExceptionHandler = CoroutineExceptionHandler { _, _ ->
-        applyResult.value = ApplyAiOrganizationResult.FAILED
-
-        refreshStatus()
-    }
+            AiOrganizerStatus(
+                hasNewHome = File(directory, FileManager.HOME_FILE_NAME).exists(),
+            )
+        }
+        .flowOn(ioDispatcher)
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = AiOrganizerStatus(hasNewHome = false),
+        )
 
     val aiOrganizerSettingsUiState = combine(
         userDataRepository.userDataFlow,
         hasNewHomeStatus,
-        applyResult,
-        homeOperationLock.isBusy,
+        aiOrganizerOperationState.applyResult,
+        aiOrganizerOperationState.operation.map { it != null }.distinctUntilChanged(),
     ) { userData, aiOrganizerStatus, applyResult, isBusy ->
         AiOrganizerSettingsUiState.Success(
             aiOrganizerSettings = userData.aiOrganizerSettings,
@@ -92,49 +83,9 @@ internal class AiOrganizerSettingsViewModel @Inject constructor(
         initialValue = AiOrganizerSettingsUiState.Loading,
     )
 
-    init {
-        refreshStatus()
-
-        viewModelScope.launch {
-            homeOperationLock.isBusy.collect { busy ->
-                if (!busy) refreshStatus()
-            }
-        }
-    }
-
-    fun refreshStatus() {
-        viewModelScope.launch {
-            hasNewHomeStatus.value = withContext(ioDispatcher) {
-                val directory = fileManager.getFilesRootDirectory()
-
-                AiOrganizerStatus(
-                    hasNewHome = File(directory, FileManager.HOME_FILE_NAME).exists(),
-                )
-            }
-        }
-    }
-
     fun updateAiOrganizerSettings(aiOrganizerSettings: AiOrganizerSettings) {
         viewModelScope.launch {
-            try {
-                userDataRepository.updateAiOrganizerSettings(aiOrganizerSettings = aiOrganizerSettings)
-            } catch (exception: Exception) {
-                _messages.emit(AiOrganizerSettingsMessage.SettingsSaveFailed)
-
-                return@launch
-            }
-
-            _messages.emit(AiOrganizerSettingsMessage.SettingsSaved)
-        }
-    }
-
-    fun applyAiOrganization() {
-        if (applyJob?.isActive == true) return
-
-        applyJob = viewModelScope.launch(applyExceptionHandler) {
-            applyResult.value = applyAiOrganizationUseCase()
-
-            refreshStatus()
+            userDataRepository.updateAiOrganizerSettings(aiOrganizerSettings = aiOrganizerSettings)
         }
     }
 }

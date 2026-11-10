@@ -20,10 +20,6 @@ package com.eblan.launcher.feature.settings.aiorganizer.model
 import com.eblan.launcher.domain.model.aiorganizer.ApplyAiOrganizationResult
 import com.eblan.launcher.domain.model.userdata.AiOrganizerSettings
 
-internal data class AiOrganizerStatus(
-    val hasNewHome: Boolean,
-)
-
 internal sealed interface AiOrganizerSettingsUiState {
     data object Loading : AiOrganizerSettingsUiState
 
