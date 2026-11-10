@@ -22,6 +22,8 @@ import java.io.File
 interface FileManager {
     suspend fun getFilesDirectory(name: String): File
 
+    suspend fun getFilesRootDirectory(): File
+
     suspend fun updateAndGetFilePath(
         directory: File,
         name: String,
@@ -34,7 +36,7 @@ interface FileManager {
     ): ByteArray?
 
     companion object {
-        const val HOME_DIR = "home"
+        const val HOME_FILE_NAME = "home.json"
         const val ICONS_DIR = "icons"
         const val TINTED_ICONS_DIR = "tinted_icons"
         const val SHAPED_ICONS_DIR = "shaped_icons"

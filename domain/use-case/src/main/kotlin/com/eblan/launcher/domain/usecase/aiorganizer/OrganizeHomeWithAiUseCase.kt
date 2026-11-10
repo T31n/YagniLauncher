@@ -21,7 +21,6 @@ import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.HomeOperationLock
-import com.eblan.launcher.domain.model.aiorganizer.AiOrganizerFile
 import com.eblan.launcher.domain.model.aiorganizer.OrganizeHomeWithAiResult
 import com.eblan.launcher.domain.repository.AiOrganizerRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
@@ -35,7 +34,7 @@ import javax.inject.Inject
 
 /**
  * Sends the current home screen and app drawer to the configured AI endpoint and caches the
- * validated result as `new_home.json`. Nothing is applied until the user chooses to apply it.
+ * validated result as `home.json`. Nothing is applied until the user chooses to apply it.
  */
 class OrganizeHomeWithAiUseCase @Inject constructor(
     private val userDataRepository: UserDataRepository,
@@ -48,7 +47,7 @@ class OrganizeHomeWithAiUseCase @Inject constructor(
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     /**
-     * Returns [OrganizeHomeWithAiResult.Ready] once `new_home.json` is written. Other results describe why it was not.
+     * Returns [OrganizeHomeWithAiResult.Ready] once `home.json` is written. Other results describe why it was not.
      */
     suspend operator fun invoke(
         systemInstructions: String,
@@ -99,8 +98,8 @@ class OrganizeHomeWithAiUseCase @Inject constructor(
         homeOperationLock.runExclusively {
             withContext(ioDispatcher) {
                 writeHomeFile(
-                    directory = fileManager.getFilesDirectory(FileManager.HOME_DIR),
-                    name = AiOrganizerFile.NEW_HOME.fileName,
+                    directory = fileManager.getFilesRootDirectory(),
+                    name = FileManager.HOME_FILE_NAME,
                     content = homeFileBytes,
                 )
             }

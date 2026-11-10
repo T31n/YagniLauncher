@@ -23,7 +23,6 @@ import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.HomeOperationLock
-import com.eblan.launcher.domain.model.aiorganizer.AiOrganizerFile
 import com.eblan.launcher.domain.model.aiorganizer.ApplyAiOrganizationResult
 import com.eblan.launcher.domain.model.userdata.AiOrganizerSettings
 import com.eblan.launcher.domain.repository.UserDataRepository
@@ -106,10 +105,10 @@ internal class AiOrganizerSettingsViewModel @Inject constructor(
     fun refreshStatus() {
         viewModelScope.launch {
             hasNewHomeStatus.value = withContext(ioDispatcher) {
-                val directory = fileManager.getFilesDirectory(FileManager.HOME_DIR)
+                val directory = fileManager.getFilesRootDirectory()
 
                 AiOrganizerStatus(
-                    hasNewHome = File(directory, AiOrganizerFile.NEW_HOME.fileName).exists(),
+                    hasNewHome = File(directory, FileManager.HOME_FILE_NAME).exists(),
                 )
             }
         }

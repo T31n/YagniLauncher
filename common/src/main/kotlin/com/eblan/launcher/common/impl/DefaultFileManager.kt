@@ -40,6 +40,10 @@ internal class DefaultFileManager @Inject constructor(
         }
     }
 
+    override suspend fun getFilesRootDirectory(): File = withContext(ioDispatcher) {
+        context.filesDir
+    }
+
     override suspend fun updateAndGetFilePath(
         directory: File,
         name: String,

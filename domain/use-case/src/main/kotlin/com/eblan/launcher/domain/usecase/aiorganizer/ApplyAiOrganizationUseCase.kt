@@ -23,7 +23,6 @@ import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.HomeOperationLock
 import com.eblan.launcher.domain.framework.AppWidgetHostWrapper
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
-import com.eblan.launcher.domain.model.aiorganizer.AiOrganizerFile
 import com.eblan.launcher.domain.model.aiorganizer.ApplyAiOrganizationResult
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
@@ -45,7 +44,7 @@ import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 /**
- * Applies the generated organization in `new_home.json`, then deletes that file.
+ * Applies the generated organization in `home.json`, then deletes that file.
  *
  * Applies are serialized through [HomeOperationLock] so the home is never read while partially
  * written.
@@ -65,11 +64,11 @@ class ApplyAiOrganizationUseCase @Inject constructor(
     /** Returns the outcome, including why the file could not be applied. */
     suspend operator fun invoke(): ApplyAiOrganizationResult = withContext(defaultDispatcher) {
         homeOperationLock.runExclusively {
-            val homeDirectory = fileManager.getFilesDirectory(FileManager.HOME_DIR)
+            val homeDirectory = fileManager.getFilesRootDirectory()
 
             val homeFileBytes = fileManager.readFileBytes(
                 directory = homeDirectory,
-                name = AiOrganizerFile.NEW_HOME.fileName,
+                name = FileManager.HOME_FILE_NAME,
             ) ?: return@runExclusively ApplyAiOrganizationResult.MISSING_FILE
 
             val homeSettings = userDataRepository.userDataFlow.first().homeSettings
@@ -105,7 +104,7 @@ class ApplyAiOrganizationUseCase @Inject constructor(
                 appDrawerPlan = planAppDrawerFolders(home, context, previousFolders),
             )
 
-            File(homeDirectory, AiOrganizerFile.NEW_HOME.fileName).delete()
+            File(homeDirectory, FileManager.HOME_FILE_NAME).delete()
 
             ApplyAiOrganizationResult.APPLIED
         }
