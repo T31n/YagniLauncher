@@ -53,10 +53,10 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.aiorganizer.AiOrganizerStatus
 import com.eblan.launcher.domain.model.aiorganizer.ApplyAiOrganizationResult
 import com.eblan.launcher.domain.model.userdata.AiOrganizerSettings
 import com.eblan.launcher.feature.settings.aiorganizer.model.AiOrganizerSettingsUiState
+import com.eblan.launcher.feature.settings.aiorganizer.model.AiOrganizerStatus
 import kotlinx.coroutines.flow.Flow
 import com.eblan.launcher.common.R as commonR
 

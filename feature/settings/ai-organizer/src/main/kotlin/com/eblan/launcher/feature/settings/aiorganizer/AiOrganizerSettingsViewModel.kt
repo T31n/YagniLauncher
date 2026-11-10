@@ -19,16 +19,20 @@ package com.eblan.launcher.feature.settings.aiorganizer
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.eblan.launcher.domain.common.Dispatcher
+import com.eblan.launcher.domain.common.EblanDispatchers
+import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.HomeOperationLock
-import com.eblan.launcher.domain.model.aiorganizer.AiOrganizerStatus
+import com.eblan.launcher.domain.model.aiorganizer.AiOrganizerFile
 import com.eblan.launcher.domain.model.aiorganizer.ApplyAiOrganizationResult
 import com.eblan.launcher.domain.model.userdata.AiOrganizerSettings
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.aiorganizer.ApplyAiOrganizationUseCase
 import com.eblan.launcher.domain.usecase.aiorganizer.BackupAiOrganizationUseCase
-import com.eblan.launcher.domain.usecase.aiorganizer.GetAiOrganizerStatusUseCase
 import com.eblan.launcher.feature.settings.aiorganizer.model.AiOrganizerSettingsUiState
+import com.eblan.launcher.feature.settings.aiorganizer.model.AiOrganizerStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -39,6 +43,8 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 import javax.inject.Inject
 
 internal enum class AiOrganizerSettingsMessage {
@@ -53,8 +59,9 @@ internal class AiOrganizerSettingsViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository,
     private val applyAiOrganizationUseCase: ApplyAiOrganizationUseCase,
     private val backupAiOrganizationUseCase: BackupAiOrganizationUseCase,
-    private val getAiOrganizerStatusUseCase: GetAiOrganizerStatusUseCase,
+    private val fileManager: FileManager,
     private val homeOperationLock: HomeOperationLock,
+    @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
     private val hasNewHomeStatus = MutableStateFlow(AiOrganizerStatus(hasNewHome = false, hasBackup = false))
 
@@ -110,7 +117,14 @@ internal class AiOrganizerSettingsViewModel @Inject constructor(
 
     fun refreshStatus() {
         viewModelScope.launch {
-            hasNewHomeStatus.value = getAiOrganizerStatusUseCase()
+            hasNewHomeStatus.value = withContext(ioDispatcher) {
+                val directory = fileManager.getFilesDirectory(FileManager.HOME_DIR)
+
+                AiOrganizerStatus(
+                    hasNewHome = File(directory, AiOrganizerFile.NEW_HOME.fileName).exists(),
+                    hasBackup = File(directory, AiOrganizerFile.HOME_BACKUP.fileName).exists(),
+                )
+            }
         }
     }
 

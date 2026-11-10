@@ -480,7 +480,7 @@ internal fun AiOrganizerHomeDto.validate(context: AiOrganizerHomeContext): List<
         }
     }
 
-    surfaceItems.filter { it.first.type == AiGridItemType.Widget }.forEach { (item, surface) ->
+    surfaceItems.filter { it.first.type == AiGridItemType.Widget }.forEach { (item, _) ->
         val managedGridItem = managedById[item.id]
 
         require(managedGridItem != null && managedGridItem.data is GridItemData.Widget) {

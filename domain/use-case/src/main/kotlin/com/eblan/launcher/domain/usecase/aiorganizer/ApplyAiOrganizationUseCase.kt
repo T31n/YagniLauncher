@@ -37,7 +37,6 @@ import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.util.deleteGridItemData
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -51,9 +50,8 @@ import kotlin.uuid.Uuid
  * Applying deletes `new_home.json` after the new organization is in place. Restoring applies
  * `home.json` and keeps it on disk. Backups are created separately by [BackupAiOrganizationUseCase].
  *
- * Writes to the home are not transactional across Room and DataStore, so a failed apply rolls back
- * the in-memory previous state on a best-effort basis. Applies and backups are serialized so a
- * backup cannot snapshot a partially applied home.
+ * Applies and backups are serialized through [HomeOperationLock] so a backup cannot snapshot a
+ * partially applied home.
  */
 class ApplyAiOrganizationUseCase @Inject constructor(
     private val userDataRepository: UserDataRepository,
@@ -89,13 +87,18 @@ class ApplyAiOrganizationUseCase @Inject constructor(
                 apps = eblanApplicationInfoRepository.getEblanApplicationInfos(),
             )
 
-            val (home, finalGridItems) = runCatching {
-                val parsed = parseAiOrganizerHome(homeFileBytes.decodeToString())
-                val document = (if (restore) parsed.withoutUnrecoverableItems(context) else parsed)
-                    .withoutEmptyAppDrawerFolders()
+            val home: AiOrganizerHomeDto
+            val finalGridItems: List<GridItem>
 
-                document to document.validate(context)
-            }.getOrElse { return@runExclusively ApplyAiOrganizationResult.INVALID_FILE }
+            try {
+                val parsed = parseAiOrganizerHome(homeFileBytes.decodeToString())
+
+                home = (if (restore) parsed.withoutUnrecoverableItems(context) else parsed)
+                    .withoutEmptyAppDrawerFolders()
+                finalGridItems = home.validate(context)
+            } catch (_: Exception) {
+                return@runExclusively ApplyAiOrganizationResult.INVALID_FILE
+            }
 
             val previousTags = eblanApplicationInfoTagRepository.eblanApplicationInfoTagsFlow.first()
             val previousTagCrossRefs = eblanApplicationInfoRepository.getTagCrossRefs(previousTags)
@@ -105,10 +108,8 @@ class ApplyAiOrganizationUseCase @Inject constructor(
                 home = home,
                 finalGridItems = finalGridItems,
                 context = context,
-                previousPageCount = homeSettings.pageCount,
                 previousTags = previousTags,
                 previousTagCrossRefs = previousTagCrossRefs,
-                previousFolders = previousFolders,
                 appDrawerPlan = planAppDrawerFolders(home, context, previousFolders),
             )
 
@@ -122,93 +123,64 @@ class ApplyAiOrganizationUseCase @Inject constructor(
         }
     }
 
-    /**
-     * Writes the validated organization. If any step fails, the previous state is restored.
-     */
+    /** Writes the validated organization in order. */
     private suspend fun replaceHome(
         home: AiOrganizerHomeDto,
         finalGridItems: List<GridItem>,
         context: AiOrganizerHomeContext,
-        previousPageCount: Int,
         previousTags: List<EblanApplicationInfoTag>,
         previousTagCrossRefs: List<EblanApplicationInfoTagCrossRef>,
-        previousFolders: List<FolderEblanApplicationInfo>,
         appDrawerPlan: AppDrawerPlan,
     ) {
-        val previousGridItems = context.gridItems
         val finalIds = finalGridItems.map { it.id }.toSet()
-        val previousIds = previousGridItems.map { it.id }.toSet()
-        val omittedGridItems = previousGridItems.filter { it.id !in finalIds }
-        val createdGridItems = finalGridItems.filter { it.id !in previousIds }
+        val omittedGridItems = context.gridItems.filter { it.id !in finalIds }
 
-        var applied = false
+        gridRepository.upsertGridItems(finalGridItems)
 
-        try {
-            gridRepository.upsertGridItems(finalGridItems)
+        gridRepository.deleteGridItems(omittedGridItems)
 
-            gridRepository.deleteGridItems(omittedGridItems)
+        updatePageCount(home.settings.pageCount)
 
-            updatePageCount(home.settings.pageCount)
-
-            val (tags, tagCrossRefs) = withHiddenAppTags(
-                hiddenApps = context.apps.filter { it.isHidden },
-                proposedTags = home.tags.map {
-                    EblanApplicationInfoTag(id = it.id, name = it.name, index = it.index)
-                },
-                proposedTagCrossRefs = home.tagCrossRefs.map {
-                    EblanApplicationInfoTagCrossRef(
-                        componentName = it.componentName,
-                        serialNumber = it.serialNumber,
-                        id = it.id,
-                    )
-                },
-                previousTags = previousTags,
-                previousTagCrossRefs = previousTagCrossRefs,
-            )
-
-            eblanApplicationInfoTagRepository.replaceEblanApplicationInfoTags(
-                eblanApplicationInfoTags = tags,
-                eblanApplicationInfoTagCrossRefs = tagCrossRefs,
-            )
-
-            eblanApplicationInfoRepository.updateEblanApplicationInfos(appDrawerPlan.clearedApps)
-
-            appDrawerPlan.removedFolders.forEach {
-                folderEblanApplicationInfoRepository.deleteFolderEblanApplicationInfoById(it.id)
-            }
-
-            appDrawerPlan.newFolders.forEach {
-                folderEblanApplicationInfoRepository.upsertFolderEblanApplicationInfo(it)
-            }
-
-            eblanApplicationInfoRepository.updateEblanApplicationInfos(appDrawerPlan.assignedApps)
-
-            applied = true
-        } finally {
-            if (!applied) {
-                rollback(
-                    previousGridItems = previousGridItems,
-                    createdGridItems = createdGridItems,
-                    previousPageCount = previousPageCount,
-                    previousTags = previousTags,
-                    previousTagCrossRefs = previousTagCrossRefs,
-                    previousApps = context.apps,
-                    previousFolders = previousFolders,
-                    createdFolders = appDrawerPlan.newFolders,
+        val (tags, tagCrossRefs) = withHiddenAppTags(
+            hiddenApps = context.apps.filter { it.isHidden },
+            proposedTags = home.tags.map {
+                EblanApplicationInfoTag(id = it.id, name = it.name, index = it.index)
+            },
+            proposedTagCrossRefs = home.tagCrossRefs.map {
+                EblanApplicationInfoTagCrossRef(
+                    componentName = it.componentName,
+                    serialNumber = it.serialNumber,
+                    id = it.id,
                 )
-            }
+            },
+            previousTags = previousTags,
+            previousTagCrossRefs = previousTagCrossRefs,
+        )
+
+        eblanApplicationInfoTagRepository.replaceEblanApplicationInfoTags(
+            eblanApplicationInfoTags = tags,
+            eblanApplicationInfoTagCrossRefs = tagCrossRefs,
+        )
+
+        eblanApplicationInfoRepository.updateEblanApplicationInfos(appDrawerPlan.clearedApps)
+
+        appDrawerPlan.removedFolders.forEach {
+            folderEblanApplicationInfoRepository.deleteFolderEblanApplicationInfoById(it.id)
         }
 
-        // Bindings are released only after the apply commits, so a rollback keeps them valid.
+        appDrawerPlan.newFolders.forEach {
+            folderEblanApplicationInfoRepository.upsertFolderEblanApplicationInfo(it)
+        }
+
+        eblanApplicationInfoRepository.updateEblanApplicationInfos(appDrawerPlan.assignedApps)
+
         omittedGridItems.forEach {
-            runCatching {
-                deleteGridItemData(
-                    gridItem = it,
-                    folderPopupGridItems = emptyMap(),
-                    appWidgetHostWrapper = appWidgetHostWrapper,
-                    launcherAppsWrapper = launcherAppsWrapper,
-                )
-            }
+            deleteGridItemData(
+                gridItem = it,
+                folderPopupGridItems = emptyMap(),
+                appWidgetHostWrapper = appWidgetHostWrapper,
+                launcherAppsWrapper = launcherAppsWrapper,
+            )
         }
     }
 
@@ -270,54 +242,6 @@ class ApplyAiOrganizationUseCase @Inject constructor(
         }
 
         return tags to crossRefs
-    }
-
-    /**
-     * Best-effort restore of the state captured before a failed apply. Runs non-cancellable so a
-     * cancelled apply still attempts to roll back. Each step is isolated so one failure does not
-     * skip the rest.
-     */
-    private suspend fun rollback(
-        previousGridItems: List<GridItem>,
-        createdGridItems: List<GridItem>,
-        previousPageCount: Int,
-        previousTags: List<EblanApplicationInfoTag>,
-        previousTagCrossRefs: List<EblanApplicationInfoTagCrossRef>,
-        previousApps: List<EblanApplicationInfo>,
-        previousFolders: List<FolderEblanApplicationInfo>,
-        createdFolders: List<FolderEblanApplicationInfo>,
-    ) = withContext(NonCancellable) {
-        if (createdGridItems.isNotEmpty()) {
-            runCatching { gridRepository.deleteGridItems(createdGridItems) }
-        }
-
-        runCatching { gridRepository.upsertGridItems(previousGridItems) }
-
-        runCatching { updatePageCount(previousPageCount) }
-
-        runCatching {
-            eblanApplicationInfoTagRepository.replaceEblanApplicationInfoTags(
-                eblanApplicationInfoTags = previousTags,
-                eblanApplicationInfoTagCrossRefs = previousTagCrossRefs,
-            )
-        }
-
-        // Visible apps are unlinked first, so deleting the created folders does not cascade to them.
-        runCatching {
-            eblanApplicationInfoRepository.updateEblanApplicationInfos(
-                previousApps.filter { !it.isHidden }.map { it.copy(folderId = null, folderIndex = -1) },
-            )
-        }
-
-        createdFolders.forEach {
-            runCatching { folderEblanApplicationInfoRepository.deleteFolderEblanApplicationInfoById(it.id) }
-        }
-
-        previousFolders.forEach {
-            runCatching { folderEblanApplicationInfoRepository.upsertFolderEblanApplicationInfo(it) }
-        }
-
-        runCatching { eblanApplicationInfoRepository.updateEblanApplicationInfos(previousApps) }
     }
 }
 

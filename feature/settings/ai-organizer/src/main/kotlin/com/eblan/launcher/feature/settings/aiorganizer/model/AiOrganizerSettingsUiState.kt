@@ -17,7 +17,6 @@
  */
 package com.eblan.launcher.feature.settings.aiorganizer.model
 
-import com.eblan.launcher.domain.model.aiorganizer.AiOrganizerStatus
 import com.eblan.launcher.domain.model.aiorganizer.ApplyAiOrganizationResult
 import com.eblan.launcher.domain.model.userdata.AiOrganizerSettings
 
