@@ -24,6 +24,7 @@ import com.eblan.launcher.domain.common.HomeOperationLock
 import com.eblan.launcher.domain.model.aiorganizer.AiOrganizerFile
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoTagRepository
+import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -41,6 +42,7 @@ class BackupAiOrganizationUseCase @Inject constructor(
     private val gridRepository: GridRepository,
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
     private val eblanApplicationInfoTagRepository: EblanApplicationInfoTagRepository,
+    private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
     private val homeOperationLock: HomeOperationLock,
     private val fileManager: FileManager,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
@@ -62,6 +64,7 @@ class BackupAiOrganizationUseCase @Inject constructor(
                 pageCount = homeSettings.pageCount,
                 tags = tags,
                 tagCrossRefs = eblanApplicationInfoRepository.getTagCrossRefs(tags),
+                appDrawerFolders = folderEblanApplicationInfoRepository.getFolderEblanApplicationInfos(),
             )
 
             val content = aiOrganizerJson.encodeToString(snapshot).toByteArray()

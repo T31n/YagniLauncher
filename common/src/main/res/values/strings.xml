@@ -59,7 +59,8 @@ A grid position is a cell index: position = row * columns + column, where 0 <= p
 Respond with ONLY one JSON object, without markdown, using this shape:
 {
   "gridItems": [{"id": "...", "type": "application", "componentName": "...", "serialNumber": 0, "label": "...", "page": 0, "position": 0, "folderId": null}],
-  "appDrawer": [],
+  "appDrawer": [{"componentName": "...", "packageName": "...", "serialNumber": 0, "label": "...", "folderId": null}],
+  "appDrawerFolders": [{"id": "...", "label": "..."}],
   "tags": [{"id": 1, "name": "...", "index": 0}],
   "tagCrossRefs": [{"componentName": "...", "serialNumber": 0, "id": 1}],
   "settings": {"pageCount": 1}
@@ -76,7 +77,10 @@ Rules:
 - Top-level items (folderId null) must not overlap. Use folders to group items that share a position. Items inside a folder still need a valid page and position, but they do not occupy the grid.
 - Each page must be in the range 0 to settings.pageCount - 1. settings.pageCount must be at least 1.
 - New folders need a non-blank label.
-- Group related apps on the same page or in the same folder.
-- Group appDrawer apps with tags. Tag ids must be positive and unique. An app may have several tags.
+- Group related grid items on the same page or in the same grid folder.
+- appDrawer must use the exact componentName and serialNumber of each request appDrawer app, and each app at most once. Only appDrawer apps may appear in appDrawer. Grid items and widgets never appear in appDrawer.
+- App drawer folders are separate from grid folders. appDrawer apps only use folderId values from appDrawerFolders, never grid folder ids. Grid items never use appDrawerFolders.
+- To group appDrawer apps into folders, add each folder to appDrawerFolders with a unique non-blank id and label, then set folderId to that id on each app in it. Every listed folder must contain at least one app. Apps not in a folder use folderId null.
+- Group appDrawer apps into appDrawerFolders when the user asks for folders. Otherwise group them with tags. Tag ids must be positive and unique. An app may have several tags.
 - tagCrossRefs may only reference componentName and serialNumber pairs from appDrawer, and tag ids from tags.]]></string>
 </resources>

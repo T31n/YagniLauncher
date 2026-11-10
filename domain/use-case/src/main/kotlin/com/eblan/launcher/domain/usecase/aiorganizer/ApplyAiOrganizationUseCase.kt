@@ -28,10 +28,12 @@ import com.eblan.launcher.domain.model.aiorganizer.ApplyAiOrganizationResult
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTagCrossRef
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoTagRepository
+import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.util.deleteGridItemData
@@ -41,6 +43,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 /**
  * Applies a generated organization, or restores the manual backup.
@@ -57,6 +61,7 @@ class ApplyAiOrganizationUseCase @Inject constructor(
     private val gridRepository: GridRepository,
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
     private val eblanApplicationInfoTagRepository: EblanApplicationInfoTagRepository,
+    private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
     private val appWidgetHostWrapper: AppWidgetHostWrapper,
     private val launcherAppsWrapper: LauncherAppsWrapper,
     private val homeOperationLock: HomeOperationLock,
@@ -87,13 +92,15 @@ class ApplyAiOrganizationUseCase @Inject constructor(
 
             val (home, finalGridItems) = runCatching {
                 val parsed = parseAiOrganizerHome(content.decodeToString())
-                val document = if (restore) parsed.withoutUnrecoverableItems(context) else parsed
+                val document = (if (restore) parsed.withoutUnrecoverableItems(context) else parsed)
+                    .withoutEmptyAppDrawerFolders()
 
                 document to document.validate(context)
             }.getOrElse { return@runExclusively ApplyAiOrganizationResult.INVALID_FILE }
 
             val previousTags = eblanApplicationInfoTagRepository.eblanApplicationInfoTagsFlow.first()
             val previousTagCrossRefs = eblanApplicationInfoRepository.getTagCrossRefs(previousTags)
+            val previousFolders = folderEblanApplicationInfoRepository.getFolderEblanApplicationInfos()
 
             replaceHome(
                 home = home,
@@ -102,6 +109,8 @@ class ApplyAiOrganizationUseCase @Inject constructor(
                 previousHomeSettings = homeSettings,
                 previousTags = previousTags,
                 previousTagCrossRefs = previousTagCrossRefs,
+                previousFolders = previousFolders,
+                appDrawerPlan = planAppDrawerFolders(home, context, previousFolders),
             )
 
             if (restore) {
@@ -124,6 +133,8 @@ class ApplyAiOrganizationUseCase @Inject constructor(
         previousHomeSettings: HomeSettings,
         previousTags: List<EblanApplicationInfoTag>,
         previousTagCrossRefs: List<EblanApplicationInfoTagCrossRef>,
+        previousFolders: List<FolderEblanApplicationInfo>,
+        appDrawerPlan: AppDrawerPlan,
     ) {
         val previousGridItems = context.gridItems
         val finalIds = finalGridItems.map { it.id }.toSet()
@@ -172,6 +183,18 @@ class ApplyAiOrganizationUseCase @Inject constructor(
                 eblanApplicationInfoTagCrossRefs = tagCrossRefs,
             )
 
+            eblanApplicationInfoRepository.updateEblanApplicationInfos(appDrawerPlan.clearedApps)
+
+            appDrawerPlan.removedFolders.forEach {
+                folderEblanApplicationInfoRepository.deleteFolderEblanApplicationInfoById(it.id)
+            }
+
+            appDrawerPlan.newFolders.forEach {
+                folderEblanApplicationInfoRepository.upsertFolderEblanApplicationInfo(it)
+            }
+
+            eblanApplicationInfoRepository.updateEblanApplicationInfos(appDrawerPlan.assignedApps)
+
             applied = true
         } finally {
             if (!applied) {
@@ -181,6 +204,9 @@ class ApplyAiOrganizationUseCase @Inject constructor(
                     previousHomeSettings = previousHomeSettings,
                     previousTags = previousTags,
                     previousTagCrossRefs = previousTagCrossRefs,
+                    previousApps = context.apps,
+                    previousFolders = previousFolders,
+                    createdFolders = appDrawerPlan.newFolders,
                 )
             }
         }
@@ -246,6 +272,9 @@ class ApplyAiOrganizationUseCase @Inject constructor(
         previousHomeSettings: HomeSettings,
         previousTags: List<EblanApplicationInfoTag>,
         previousTagCrossRefs: List<EblanApplicationInfoTagCrossRef>,
+        previousApps: List<EblanApplicationInfo>,
+        previousFolders: List<FolderEblanApplicationInfo>,
+        createdFolders: List<FolderEblanApplicationInfo>,
     ) = withContext(NonCancellable) {
         if (createdGridItems.isNotEmpty()) {
             runCatching { gridRepository.deleteGridItems(createdGridItems) }
@@ -261,5 +290,73 @@ class ApplyAiOrganizationUseCase @Inject constructor(
                 eblanApplicationInfoTagCrossRefs = previousTagCrossRefs,
             )
         }
+
+        // Visible apps are unlinked first, so deleting the created folders does not cascade to them.
+        runCatching {
+            eblanApplicationInfoRepository.updateEblanApplicationInfos(
+                previousApps.filter { !it.isHidden }.map { it.copy(folderId = null, folderIndex = -1) },
+            )
+        }
+
+        createdFolders.forEach {
+            runCatching { folderEblanApplicationInfoRepository.deleteFolderEblanApplicationInfoById(it.id) }
+        }
+
+        previousFolders.forEach {
+            runCatching { folderEblanApplicationInfoRepository.upsertFolderEblanApplicationInfo(it) }
+        }
+
+        runCatching { eblanApplicationInfoRepository.updateEblanApplicationInfos(previousApps) }
     }
+}
+
+internal class AppDrawerPlan(
+    val clearedApps: List<EblanApplicationInfo>,
+    val removedFolders: List<FolderEblanApplicationInfo>,
+    val newFolders: List<FolderEblanApplicationInfo>,
+    val assignedApps: List<EblanApplicationInfo>,
+)
+
+/**
+ * Plans the app drawer folder changes. Folders still used by hidden apps are kept, because hidden
+ * apps are not part of the proposal.
+ */
+@OptIn(ExperimentalUuidApi::class)
+internal fun planAppDrawerFolders(
+    home: AiOrganizerHomeDto,
+    context: AiOrganizerHomeContext,
+    previousFolders: List<FolderEblanApplicationInfo>,
+): AppDrawerPlan {
+    val hiddenFolderIds = context.apps.filter { it.isHidden }.mapNotNull { it.folderId }.toSet()
+    val keptMaxIndex = previousFolders.filter { it.id in hiddenFolderIds }.maxOfOrNull { it.index } ?: -1
+    val newFolderIds = home.appDrawerFolders.associate { it.id to Uuid.random().toHexString() }
+    val appsByKey = context.apps.associateBy { it.componentName to it.serialNumber }
+
+    return AppDrawerPlan(
+        clearedApps = context.apps
+            .filter { !it.isHidden && it.folderId != null }
+            .map { it.copy(folderId = null, folderIndex = -1) },
+        removedFolders = previousFolders.filter { it.id !in hiddenFolderIds },
+        newFolders = home.appDrawerFolders.mapIndexed { position, folder ->
+            FolderEblanApplicationInfo(
+                id = requireNotNull(newFolderIds[folder.id]),
+                icon = null,
+                label = folder.label,
+                index = keptMaxIndex + 1 + position,
+                folderIndex = -1,
+                folderId = null,
+            )
+        },
+        assignedApps = home.appDrawer
+            .filter { it.folderId != null }
+            .groupBy { requireNotNull(it.folderId) }
+            .flatMap { (folderId, members) ->
+                members.mapIndexed { position, app ->
+                    requireNotNull(appsByKey[app.componentName to app.serialNumber]).copy(
+                        folderId = requireNotNull(newFolderIds[folderId]),
+                        folderIndex = position,
+                    )
+                }
+            },
+    )
 }

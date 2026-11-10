@@ -20,6 +20,7 @@ package com.eblan.launcher.domain.usecase.aiorganizer
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTagCrossRef
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
@@ -170,11 +171,12 @@ private fun AiGridItemType.matches(data: GridItemData): Boolean = when (data) {
 
 private fun GridItem.position(columns: Int): Int = startRow * columns + startColumn
 
-private fun EblanApplicationInfo.toAiAppDto(): AiAppDto = AiAppDto(
+private fun EblanApplicationInfo.toAiAppDto(folderId: String? = null): AiAppDto = AiAppDto(
     componentName = componentName,
     packageName = packageName,
     serialNumber = serialNumber,
     label = label,
+    folderId = folderId,
 )
 
 internal fun AiOrganizerHomeContext.toRequestDto(pageCount: Int): AiOrganizerRequestDto = AiOrganizerRequestDto(
@@ -205,33 +207,47 @@ internal fun AiOrganizerHomeContext.toRequestDto(pageCount: Int): AiOrganizerReq
 
 /**
  * Serializes the current home so it can be applied later with the same validation as a generated
- * organization. The app drawer is omitted because it is derived from the device on apply.
+ * organization. Only visible apps inside app drawer folders are listed, since every other visible
+ * app is top-level on apply. Folders with no visible members are omitted.
  */
 internal fun AiOrganizerHomeContext.toSnapshotDto(
     pageCount: Int,
     tags: List<EblanApplicationInfoTag>,
     tagCrossRefs: List<EblanApplicationInfoTagCrossRef>,
-): AiOrganizerHomeDto = AiOrganizerHomeDto(
-    gridItems = gridItems.map { item ->
-        val fields = item.data.toAiItemFields()
+    appDrawerFolders: List<FolderEblanApplicationInfo>,
+): AiOrganizerHomeDto {
+    val folderApps = apps
+        .filter { !it.isHidden && it.folderId != null }
+        .sortedBy { it.folderIndex }
+    val folderIdsWithApps = folderApps.mapNotNull { it.folderId }.toSet()
 
-        AiGridItemDto(
-            id = item.id,
-            type = fields.type,
-            componentName = fields.componentName,
-            serialNumber = fields.serialNumber,
-            label = fields.label,
-            page = item.page,
-            position = item.position(columns),
-            folderId = item.data.parentFolderId(),
-        )
-    },
-    tags = tags.map { AiTagDto(id = it.id, name = it.name, index = it.index) },
-    tagCrossRefs = tagCrossRefs.map {
-        AiTagCrossRefDto(componentName = it.componentName, serialNumber = it.serialNumber, id = it.id)
-    },
-    settings = AiHomeSettingsDto(pageCount = pageCount),
-)
+    return AiOrganizerHomeDto(
+        gridItems = gridItems.map { item ->
+            val fields = item.data.toAiItemFields()
+
+            AiGridItemDto(
+                id = item.id,
+                type = fields.type,
+                componentName = fields.componentName,
+                serialNumber = fields.serialNumber,
+                label = fields.label,
+                page = item.page,
+                position = item.position(columns),
+                folderId = item.data.parentFolderId(),
+            )
+        },
+        appDrawer = folderApps.map { it.toAiAppDto(folderId = it.folderId) },
+        appDrawerFolders = appDrawerFolders
+            .filter { it.id in folderIdsWithApps }
+            .sortedBy { it.index }
+            .map { AiAppDrawerFolderDto(id = it.id, label = it.label) },
+        tags = tags.map { AiTagDto(id = it.id, name = it.name, index = it.index) },
+        tagCrossRefs = tagCrossRefs.map {
+            AiTagCrossRefDto(componentName = it.componentName, serialNumber = it.serialNumber, id = it.id)
+        },
+        settings = AiHomeSettingsDto(pageCount = pageCount),
+    )
+}
 
 /**
  * Extracts the JSON document from a model response, tolerating surrounding Markdown code fences.
@@ -286,7 +302,55 @@ internal fun AiOrganizerHomeDto.withoutUnrecoverableItems(context: AiOrganizerHo
         kept = next
     }
 
-    return copy(gridItems = kept)
+    return copy(
+        gridItems = kept,
+        appDrawer = appDrawer.filter { (it.componentName to it.serialNumber) in installedAppKeys },
+    )
+}
+
+/**
+ * Removes app drawer folders that have no members and clears references to folders that are not
+ * listed, so an empty or dangling folder never fails validation.
+ */
+internal fun AiOrganizerHomeDto.withoutEmptyAppDrawerFolders(): AiOrganizerHomeDto {
+    val listedIds = appDrawerFolders.map { it.id }.toSet()
+    val usedIds = appDrawer.mapNotNull { it.folderId }.filter { it in listedIds }.toSet()
+
+    return copy(
+        appDrawer = appDrawer.map { app ->
+            val folderId = app.folderId
+
+            if (folderId == null || folderId in usedIds) app else app.copy(folderId = null)
+        },
+        appDrawerFolders = appDrawerFolders.filter { it.id in usedIds },
+    )
+}
+
+/**
+ * Validates app drawer folders and assignments. Only visible apps may be placed, and each at most once.
+ */
+internal fun AiOrganizerHomeDto.validateAppDrawer(context: AiOrganizerHomeContext) {
+    require(appDrawerFolders.all { it.id.isNotBlank() && it.label.isNotBlank() }) {
+        "App drawer folders require a non-blank id and label"
+    }
+    require(appDrawerFolders.map { it.id }.toSet().size == appDrawerFolders.size) {
+        "Duplicate ids in appDrawerFolders"
+    }
+
+    val visibleKeys = context.apps.filter { !it.isHidden }.map { it.componentName to it.serialNumber }.toSet()
+    val appKeys = appDrawer.map { it.componentName to it.serialNumber }
+
+    require(appKeys.size == appKeys.toSet().size) { "Each app drawer application may appear only once" }
+    require(appKeys.all { it in visibleKeys }) { "appDrawer references an unknown application" }
+
+    val folderIds = appDrawerFolders.map { it.id }.toSet()
+
+    require(appDrawer.all { it.folderId == null || it.folderId in folderIds }) {
+        "appDrawer folderId must reference a listed app drawer folder"
+    }
+    require(appDrawerFolders.all { folder -> appDrawer.any { it.folderId == folder.id } }) {
+        "Each app drawer folder must contain at least one application"
+    }
 }
 
 private fun AiGridItemDto.appKey(): Pair<String, Long>? = if (componentName != null && serialNumber != null) {
@@ -422,6 +486,8 @@ internal fun AiOrganizerHomeDto.validate(context: AiOrganizerHomeContext): List<
             }
         }
     }
+
+    validateAppDrawer(context)
 
     val tagIds = tags.map { it.id }
 

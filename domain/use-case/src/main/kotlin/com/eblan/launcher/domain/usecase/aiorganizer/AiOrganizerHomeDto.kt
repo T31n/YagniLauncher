@@ -38,6 +38,7 @@ internal data class AiOrganizerRequestDto(
 internal data class AiOrganizerHomeDto(
     val gridItems: List<AiGridItemDto>,
     val appDrawer: List<AiAppDto> = emptyList(),
+    val appDrawerFolders: List<AiAppDrawerFolderDto> = emptyList(),
     val tags: List<AiTagDto> = emptyList(),
     val tagCrossRefs: List<AiTagCrossRefDto> = emptyList(),
     val settings: AiHomeSettingsDto,
@@ -93,6 +94,13 @@ internal data class AiAppDto(
     val componentName: String,
     val packageName: String,
     val serialNumber: Long,
+    val label: String,
+    val folderId: String? = null,
+)
+
+@Serializable
+internal data class AiAppDrawerFolderDto(
+    val id: String,
     val label: String,
 )
 
