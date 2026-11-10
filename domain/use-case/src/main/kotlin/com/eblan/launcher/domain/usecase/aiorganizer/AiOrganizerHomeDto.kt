@@ -41,8 +41,8 @@ internal data class AiOrganizerHomeDto(
     val dockGridItems: List<AiGridItemDto>? = null,
     val appDrawer: List<AiAppDto> = emptyList(),
     val appDrawerFolders: List<AiAppDrawerFolderDto> = emptyList(),
-    val tags: List<AiTagDto> = emptyList(),
-    val tagCrossRefs: List<AiTagCrossRefDto> = emptyList(),
+    val tags: List<AiTagDto>,
+    val tagCrossRefs: List<AiTagCrossRefDto>,
     val settings: AiHomeSettingsDto,
 )
 

@@ -30,7 +30,6 @@ import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTagCrossRef
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.GridItem
-import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoTagRepository
 import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
@@ -106,7 +105,7 @@ class ApplyAiOrganizationUseCase @Inject constructor(
                 home = home,
                 finalGridItems = finalGridItems,
                 context = context,
-                previousHomeSettings = homeSettings,
+                previousPageCount = homeSettings.pageCount,
                 previousTags = previousTags,
                 previousTagCrossRefs = previousTagCrossRefs,
                 previousFolders = previousFolders,
@@ -130,7 +129,7 @@ class ApplyAiOrganizationUseCase @Inject constructor(
         home: AiOrganizerHomeDto,
         finalGridItems: List<GridItem>,
         context: AiOrganizerHomeContext,
-        previousHomeSettings: HomeSettings,
+        previousPageCount: Int,
         previousTags: List<EblanApplicationInfoTag>,
         previousTagCrossRefs: List<EblanApplicationInfoTagCrossRef>,
         previousFolders: List<FolderEblanApplicationInfo>,
@@ -147,20 +146,9 @@ class ApplyAiOrganizationUseCase @Inject constructor(
         try {
             gridRepository.upsertGridItems(finalGridItems)
 
-            omittedGridItems.forEach {
-                deleteGridItemData(
-                    gridItem = it,
-                    folderPopupGridItems = emptyMap(),
-                    appWidgetHostWrapper = appWidgetHostWrapper,
-                    launcherAppsWrapper = launcherAppsWrapper,
-                )
-            }
-
             gridRepository.deleteGridItems(omittedGridItems)
 
-            userDataRepository.updateHomeSettings(
-                previousHomeSettings.copy(pageCount = home.settings.pageCount),
-            )
+            updatePageCount(home.settings.pageCount)
 
             val (tags, tagCrossRefs) = withHiddenAppTags(
                 hiddenApps = context.apps.filter { it.isHidden },
@@ -201,7 +189,7 @@ class ApplyAiOrganizationUseCase @Inject constructor(
                 rollback(
                     previousGridItems = previousGridItems,
                     createdGridItems = createdGridItems,
-                    previousHomeSettings = previousHomeSettings,
+                    previousPageCount = previousPageCount,
                     previousTags = previousTags,
                     previousTagCrossRefs = previousTagCrossRefs,
                     previousApps = context.apps,
@@ -210,6 +198,25 @@ class ApplyAiOrganizationUseCase @Inject constructor(
                 )
             }
         }
+
+        // Bindings are released only after the apply commits, so a rollback keeps them valid.
+        omittedGridItems.forEach {
+            runCatching {
+                deleteGridItemData(
+                    gridItem = it,
+                    folderPopupGridItems = emptyMap(),
+                    appWidgetHostWrapper = appWidgetHostWrapper,
+                    launcherAppsWrapper = launcherAppsWrapper,
+                )
+            }
+        }
+    }
+
+    /** Updates only the page count so settings changed concurrently are preserved. */
+    private suspend fun updatePageCount(pageCount: Int) {
+        val current = userDataRepository.userDataFlow.first().homeSettings
+
+        userDataRepository.updateHomeSettings(current.copy(pageCount = pageCount))
     }
 
     /**
@@ -225,9 +232,15 @@ class ApplyAiOrganizationUseCase @Inject constructor(
         previousTagCrossRefs: List<EblanApplicationInfoTagCrossRef>,
     ): Pair<List<EblanApplicationInfoTag>, List<EblanApplicationInfoTagCrossRef>> {
         val hiddenKeys = hiddenApps.map { it.componentName to it.serialNumber }.toSet()
+        val proposedHiddenKeys = proposedTagCrossRefs
+            .map { it.componentName to it.serialNumber }
+            .filter { it in hiddenKeys }
+            .toSet()
 
+        // A proposed membership for a hidden app, such as a restored snapshot, replaces the current one.
         val preservedCrossRefs = previousTagCrossRefs.filter {
-            (it.componentName to it.serialNumber) in hiddenKeys
+            val key = it.componentName to it.serialNumber
+            key in hiddenKeys && key !in proposedHiddenKeys
         }
 
         if (preservedCrossRefs.isEmpty()) {
@@ -252,9 +265,7 @@ class ApplyAiOrganizationUseCase @Inject constructor(
 
         val tags = proposedTags + preservedTags
 
-        val crossRefs = proposedTagCrossRefs.filter {
-            (it.componentName to it.serialNumber) !in hiddenKeys
-        } + preservedCrossRefs.map {
+        val crossRefs = proposedTagCrossRefs + preservedCrossRefs.map {
             it.copy(id = remappedIds[it.id] ?: it.id)
         }
 
@@ -269,7 +280,7 @@ class ApplyAiOrganizationUseCase @Inject constructor(
     private suspend fun rollback(
         previousGridItems: List<GridItem>,
         createdGridItems: List<GridItem>,
-        previousHomeSettings: HomeSettings,
+        previousPageCount: Int,
         previousTags: List<EblanApplicationInfoTag>,
         previousTagCrossRefs: List<EblanApplicationInfoTagCrossRef>,
         previousApps: List<EblanApplicationInfo>,
@@ -282,7 +293,7 @@ class ApplyAiOrganizationUseCase @Inject constructor(
 
         runCatching { gridRepository.upsertGridItems(previousGridItems) }
 
-        runCatching { userDataRepository.updateHomeSettings(previousHomeSettings) }
+        runCatching { updatePageCount(previousPageCount) }
 
         runCatching {
             eblanApplicationInfoTagRepository.replaceEblanApplicationInfoTags(

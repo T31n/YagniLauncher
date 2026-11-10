@@ -41,7 +41,7 @@ internal const val MAX_AI_PAGE_COUNT = 100
 /** Writes via a temp file and rename so a reader never sees a partially written home file. */
 internal fun writeHomeFile(directory: File, name: String, content: ByteArray) {
     val target = File(directory, name)
-    val temp = File(directory, "$name.tmp")
+    val temp = File.createTempFile("$name.", ".tmp", directory)
 
     try {
         temp.writeBytes(content)
@@ -262,8 +262,12 @@ internal fun AiOrganizerHomeContext.toSnapshotDto(
     val folderIdsWithApps = folderApps.mapNotNull { it.folderId }.toSet()
 
     return AiOrganizerHomeDto(
-        gridItems = gridItems.filter { it.associate == Associate.Grid }.map { it.toAiGridItemDto(this) },
-        dockGridItems = gridItems.filter { it.associate == Associate.Dock }.map { it.toAiGridItemDto(this) },
+        gridItems = gridItems
+            .filter { it.associate == Associate.Grid && it.data !is GridItemData.Widget }
+            .map { it.toAiGridItemDto(this) },
+        dockGridItems = gridItems
+            .filter { it.associate == Associate.Dock && it.data !is GridItemData.Widget }
+            .map { it.toAiGridItemDto(this) },
         appDrawer = folderApps.map { it.toAiAppDto(folderId = it.folderId) },
         appDrawerFolders = appDrawerFolders
             .filter { it.id in folderIdsWithApps }
@@ -305,6 +309,9 @@ internal fun AiOrganizerHomeDto.withoutUnrecoverableItems(context: AiOrganizerHo
         .filter { !it.isHidden }
         .map { it.componentName to it.serialNumber }
         .toSet()
+    val allInstalledAppKeys = context.apps
+        .map { it.componentName to it.serialNumber }
+        .toSet()
 
     fun List<AiGridItemDto>.withoutUnrecoverable(): List<AiGridItemDto> {
         var kept = filter { item ->
@@ -338,6 +345,7 @@ internal fun AiOrganizerHomeDto.withoutUnrecoverableItems(context: AiOrganizerHo
         gridItems = gridItems.withoutUnrecoverable(),
         dockGridItems = dockGridItems?.withoutUnrecoverable(),
         appDrawer = appDrawer.filter { (it.componentName to it.serialNumber) in installedAppKeys },
+        tagCrossRefs = tagCrossRefs.filter { (it.componentName to it.serialNumber) in allInstalledAppKeys },
     )
 }
 

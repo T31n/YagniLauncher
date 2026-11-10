@@ -38,5 +38,7 @@
     <string name="ai_organizer_restored">Previous organization restored.</string>
     <string name="ai_organizer_applied">New organization applied.</string>
     <string name="ai_organizer_backup_saved">Current home backed up.</string>
+    <string name="ai_organizer_backup_failed">Backing up the current home failed.</string>
     <string name="ai_organizer_settings_saved">Settings saved.</string>
+    <string name="ai_organizer_settings_save_failed">Saving settings failed.</string>
 </resources>

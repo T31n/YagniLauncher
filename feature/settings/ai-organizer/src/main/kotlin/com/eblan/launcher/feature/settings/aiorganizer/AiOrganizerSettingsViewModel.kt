@@ -43,7 +43,9 @@ import javax.inject.Inject
 
 internal enum class AiOrganizerSettingsMessage {
     SettingsSaved,
+    SettingsSaveFailed,
     BackupSaved,
+    BackupFailed,
 }
 
 @HiltViewModel
@@ -52,7 +54,7 @@ internal class AiOrganizerSettingsViewModel @Inject constructor(
     private val applyAiOrganizationUseCase: ApplyAiOrganizationUseCase,
     private val backupAiOrganizationUseCase: BackupAiOrganizationUseCase,
     private val getAiOrganizerStatusUseCase: GetAiOrganizerStatusUseCase,
-    homeOperationLock: HomeOperationLock,
+    private val homeOperationLock: HomeOperationLock,
 ) : ViewModel() {
     private val status = MutableStateFlow(AiOrganizerStatus(hasNewHome = false, hasBackup = false))
 
@@ -74,6 +76,8 @@ internal class AiOrganizerSettingsViewModel @Inject constructor(
 
     private val backupExceptionHandler = CoroutineExceptionHandler { _, _ ->
         refreshStatus()
+
+        _messages.tryEmit(AiOrganizerSettingsMessage.BackupFailed)
     }
 
     val aiOrganizerSettingsUiState = combine(
@@ -96,6 +100,12 @@ internal class AiOrganizerSettingsViewModel @Inject constructor(
 
     init {
         refreshStatus()
+
+        viewModelScope.launch {
+            homeOperationLock.isBusy.collect { busy ->
+                if (!busy) refreshStatus()
+            }
+        }
     }
 
     fun refreshStatus() {
@@ -106,9 +116,13 @@ internal class AiOrganizerSettingsViewModel @Inject constructor(
 
     fun updateAiOrganizerSettings(aiOrganizerSettings: AiOrganizerSettings) {
         viewModelScope.launch {
-            userDataRepository.updateAiOrganizerSettings(aiOrganizerSettings = aiOrganizerSettings)
-
-            _messages.emit(AiOrganizerSettingsMessage.SettingsSaved)
+            runCatching {
+                userDataRepository.updateAiOrganizerSettings(aiOrganizerSettings = aiOrganizerSettings)
+            }.onSuccess {
+                _messages.emit(AiOrganizerSettingsMessage.SettingsSaved)
+            }.onFailure {
+                _messages.emit(AiOrganizerSettingsMessage.SettingsSaveFailed)
+            }
         }
     }
 

@@ -105,7 +105,9 @@ internal fun AiOrganizerSettingsScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     val backupSavedMessage = stringResource(R.string.ai_organizer_backup_saved)
+    val backupFailedMessage = stringResource(R.string.ai_organizer_backup_failed)
     val settingsSavedMessage = stringResource(R.string.ai_organizer_settings_saved)
+    val settingsSaveFailedMessage = stringResource(R.string.ai_organizer_settings_save_failed)
 
     LaunchedEffect(Unit) {
         messages.collect { message ->
@@ -114,7 +116,9 @@ internal fun AiOrganizerSettingsScreen(
             snackbarHostState.showSnackbar(
                 message = when (message) {
                     AiOrganizerSettingsMessage.SettingsSaved -> settingsSavedMessage
+                    AiOrganizerSettingsMessage.SettingsSaveFailed -> settingsSaveFailedMessage
                     AiOrganizerSettingsMessage.BackupSaved -> backupSavedMessage
+                    AiOrganizerSettingsMessage.BackupFailed -> backupFailedMessage
                 },
             )
         }
