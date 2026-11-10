@@ -36,8 +36,6 @@ import java.io.IOException
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
-internal const val MAX_AI_PAGE_COUNT = 100
-
 /** Writes via a temp file and rename so a reader never sees a partially written home file. */
 internal fun writeHomeFile(directory: File, name: String, content: ByteArray) {
     val targetFile = File(directory, name)
@@ -57,6 +55,7 @@ internal fun writeHomeFile(directory: File, name: String, content: ByteArray) {
 /**
  * Describes the current home state that an AI organization must be consistent with.
  *
+ * @property pageCount Current number of grid pages. The AI cannot change it.
  * @property columns Columns per grid page.
  * @property rows Rows per grid page.
  * @property dockPageCount Number of dock pages, which the AI cannot change.
@@ -67,6 +66,7 @@ internal fun writeHomeFile(directory: File, name: String, content: ByteArray) {
  * @property apps All installed applications, including hidden ones that may still be tagged.
  */
 internal data class AiOrganizerHomeContext(
+    val pageCount: Int,
     val columns: Int,
     val rows: Int,
     val dockPageCount: Int,
@@ -92,6 +92,7 @@ internal fun buildAiOrganizerHomeContext(
     gridItems: GridItems,
     apps: List<EblanApplicationInfo>,
 ): AiOrganizerHomeContext = AiOrganizerHomeContext(
+    pageCount = homeSettings.pageCount,
     columns = homeSettings.columns,
     rows = homeSettings.rows,
     dockPageCount = homeSettings.dockPageCount,
@@ -418,11 +419,8 @@ private fun AiGridItemDto.appKey(): Pair<String, Long>? = if (componentName != n
  */
 @OptIn(ExperimentalUuidApi::class)
 internal fun AiOrganizerHomeDto.validate(context: AiOrganizerHomeContext): List<GridItem> {
-    val pageCount = settings.pageCount
-
-    require(pageCount in 1..MAX_AI_PAGE_COUNT) {
-        "pageCount must be between 1 and $MAX_AI_PAGE_COUNT"
-    }
+    // The page count is never taken from the response; the current home's page count is always used.
+    val pageCount = context.pageCount
 
     // A missing dockGridItems array keeps the current dock untouched.
     val dockDtos = dockGridItems ?: context.gridItems
@@ -533,11 +531,18 @@ internal fun AiOrganizerHomeDto.validate(context: AiOrganizerHomeContext): List<
             )
     } + fixedWidgets
 
-    val applicationKeys = finalItems.mapNotNull { item ->
+    val finalApplicationKeys = finalItems.mapNotNull { item ->
         (item.data as? GridItemData.ApplicationInfo)?.let { it.componentName to it.serialNumber }
     }
 
-    require(applicationKeys.size == applicationKeys.toSet().size) { "Each application may appear only once" }
+    // Duplicates already present in the current home are preserved, so only newly added applications are checked.
+    val newlyAddedApplicationKeys = finalItems
+        .filter { it.id !in managedById }
+        .mapNotNull { item -> (item.data as? GridItemData.ApplicationInfo)?.let { it.componentName to it.serialNumber } }
+
+    require(newlyAddedApplicationKeys.all { key -> finalApplicationKeys.count { it == key } == 1 }) {
+        "Each newly added application may appear only once"
+    }
 
     val occupiedCells = mutableSetOf<Pair<Associate, Triple<Int, Int, Int>>>()
 

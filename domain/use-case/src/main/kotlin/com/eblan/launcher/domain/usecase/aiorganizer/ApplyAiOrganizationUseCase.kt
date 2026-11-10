@@ -139,8 +139,6 @@ class ApplyAiOrganizationUseCase @Inject constructor(
 
         gridRepository.deleteGridItems(omittedGridItems)
 
-        updatePageCount(home.settings.pageCount)
-
         val (tags, tagCrossRefs) = withHiddenAppTags(
             hiddenApps = context.apps.filter { it.isHidden },
             proposedTags = home.tags.map {
@@ -182,13 +180,6 @@ class ApplyAiOrganizationUseCase @Inject constructor(
                 launcherAppsWrapper = launcherAppsWrapper,
             )
         }
-    }
-
-    /** Updates only the page count so settings changed concurrently are preserved. */
-    private suspend fun updatePageCount(pageCount: Int) {
-        val current = userDataRepository.userDataFlow.first().homeSettings
-
-        userDataRepository.updateHomeSettings(current.copy(pageCount = pageCount))
     }
 
     /**
