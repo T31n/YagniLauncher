@@ -20,7 +20,6 @@ package com.eblan.launcher.domain.usecase.aiorganizer
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTagCrossRef
-import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
@@ -334,9 +333,6 @@ private fun AiGridItemDto.appKey(): Pair<String, Long>? = if (componentName != n
  */
 @OptIn(ExperimentalUuidApi::class)
 internal fun AiOrganizerHomeDto.validate(context: AiOrganizerHomeContext): List<GridItem> {
-    // The page count is never taken from the response; the current home's page count is always used.
-    val pageCount = context.pageCount
-
     // A missing dockGridItems array keeps the current dock untouched.
     val dockDtos = dockGridItems ?: context.gridItems
         .filter { it.associate == Associate.Dock }
@@ -350,7 +346,7 @@ internal fun AiOrganizerHomeDto.validate(context: AiOrganizerHomeContext): List<
     }
 
     surfaceItems.forEach { (item, surface) ->
-        require(item.page in 0 until context.pageCountOf(surface, pageCount)) {
+        require(item.page in 0 until context.pageCountOf(surface, context.pageCount)) {
             "Invalid page ${item.page} for item ${item.id}"
         }
         require(item.position in 0 until context.columnsOf(surface) * context.rowsOf(surface)) {
