@@ -76,7 +76,7 @@ class ApplyAiOrganizationUseCase @Inject constructor(
             val homeDirectory = fileManager.getFilesDirectory(FileManager.HOME_DIR)
             val sourceFile = if (restore) AiOrganizerFile.HOME_BACKUP else AiOrganizerFile.NEW_HOME
 
-            val content = fileManager.readFileBytes(
+            val homeFileBytes = fileManager.readFileBytes(
                 directory = homeDirectory,
                 name = sourceFile.fileName,
             ) ?: return@runExclusively ApplyAiOrganizationResult.MISSING_FILE
@@ -90,7 +90,7 @@ class ApplyAiOrganizationUseCase @Inject constructor(
             )
 
             val (home, finalGridItems) = runCatching {
-                val parsed = parseAiOrganizerHome(content.decodeToString())
+                val parsed = parseAiOrganizerHome(homeFileBytes.decodeToString())
                 val document = (if (restore) parsed.withoutUnrecoverableItems(context) else parsed)
                     .withoutEmptyAppDrawerFolders()
 
@@ -239,8 +239,8 @@ class ApplyAiOrganizationUseCase @Inject constructor(
 
         // A proposed membership for a hidden app, such as a restored snapshot, replaces the current one.
         val preservedCrossRefs = previousTagCrossRefs.filter {
-            val key = it.componentName to it.serialNumber
-            key in hiddenKeys && key !in proposedHiddenKeys
+            val hiddenAppKey = it.componentName to it.serialNumber
+            hiddenAppKey in hiddenKeys && hiddenAppKey !in proposedHiddenKeys
         }
 
         if (preservedCrossRefs.isEmpty()) {
@@ -248,16 +248,16 @@ class ApplyAiOrganizationUseCase @Inject constructor(
         }
 
         val proposedTagIds = proposedTags.map { it.id }.toSet()
-        var nextId = (proposedTagIds + previousTags.map { it.id }).maxOrNull() ?: 0L
-        val remappedIds = mutableMapOf<Long, Long>()
+        var nextTagId = (proposedTagIds + previousTags.map { it.id }).maxOrNull() ?: 0L
+        val remappedTagIds = mutableMapOf<Long, Long>()
 
         val preservedTagIds = preservedCrossRefs.map { it.id }.toSet()
 
         val preservedTags = previousTags.filter { it.id in preservedTagIds }.map { tag ->
             if (tag.id in proposedTagIds) {
-                nextId += 1
-                remappedIds[tag.id] = nextId
-                tag.copy(id = nextId)
+                nextTagId += 1
+                remappedTagIds[tag.id] = nextTagId
+                tag.copy(id = nextTagId)
             } else {
                 tag
             }
@@ -266,7 +266,7 @@ class ApplyAiOrganizationUseCase @Inject constructor(
         val tags = proposedTags + preservedTags
 
         val crossRefs = proposedTagCrossRefs + preservedCrossRefs.map {
-            it.copy(id = remappedIds[it.id] ?: it.id)
+            it.copy(id = remappedTagIds[it.id] ?: it.id)
         }
 
         return tags to crossRefs

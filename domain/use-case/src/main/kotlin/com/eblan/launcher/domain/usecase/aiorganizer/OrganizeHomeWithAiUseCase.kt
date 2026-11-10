@@ -70,7 +70,7 @@ class OrganizeHomeWithAiUseCase @Inject constructor(
             )
         }
 
-        val request = aiOrganizerJson.encodeToString(
+        val requestJson = aiOrganizerJson.encodeToString(
             context.toRequestDto(pageCount = homeSettings.pageCount),
         )
 
@@ -78,7 +78,7 @@ class OrganizeHomeWithAiUseCase @Inject constructor(
             aiOrganizerRepository.complete(
                 settings = settings,
                 systemPrompt = systemInstructions,
-                userPrompt = request,
+                userPrompt = requestJson,
             )
         } catch (exception: IOException) {
             return@withContext OrganizeHomeWithAiResult.RequestFailed(
@@ -94,14 +94,14 @@ class OrganizeHomeWithAiUseCase @Inject constructor(
             )
         }
 
-        val content = aiOrganizerJson.encodeToString(home).toByteArray()
+        val homeFileBytes = aiOrganizerJson.encodeToString(home).toByteArray()
 
         homeOperationLock.runExclusively {
             withContext(ioDispatcher) {
                 writeHomeFile(
                     directory = fileManager.getFilesDirectory(FileManager.HOME_DIR),
                     name = AiOrganizerFile.NEW_HOME.fileName,
-                    content = content,
+                    content = homeFileBytes,
                 )
             }
         }

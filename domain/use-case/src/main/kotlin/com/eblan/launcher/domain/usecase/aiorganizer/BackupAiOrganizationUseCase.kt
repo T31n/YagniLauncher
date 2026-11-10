@@ -60,20 +60,20 @@ class BackupAiOrganizationUseCase @Inject constructor(
 
             val tags = eblanApplicationInfoTagRepository.eblanApplicationInfoTagsFlow.first()
 
-            val snapshot = context.toSnapshotDto(
+            val homeSnapshotDto = context.toSnapshotDto(
                 pageCount = homeSettings.pageCount,
                 tags = tags,
                 tagCrossRefs = eblanApplicationInfoRepository.getTagCrossRefs(tags),
                 appDrawerFolders = folderEblanApplicationInfoRepository.getFolderEblanApplicationInfos(),
             )
 
-            val content = aiOrganizerJson.encodeToString(snapshot).toByteArray()
+            val homeSnapshotBytes = aiOrganizerJson.encodeToString(homeSnapshotDto).toByteArray()
 
             withContext(ioDispatcher) {
                 writeHomeFile(
                     directory = fileManager.getFilesDirectory(FileManager.HOME_DIR),
                     name = AiOrganizerFile.HOME_BACKUP.fileName,
-                    content = content,
+                    content = homeSnapshotBytes,
                 )
             }
         }

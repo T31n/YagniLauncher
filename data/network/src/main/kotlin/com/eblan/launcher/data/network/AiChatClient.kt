@@ -48,7 +48,7 @@ class AiChatClient @Inject constructor(private val okHttpClient: OkHttpClient) {
         systemPrompt: String,
         userPrompt: String,
     ): String {
-        val url = endpoint.trim().toHttpUrlOrNull()
+        val requestUrl = endpoint.trim().toHttpUrlOrNull()
             ?: throw IOException("Invalid endpoint URL")
 
         val body = json.encodeToString(
@@ -62,7 +62,7 @@ class AiChatClient @Inject constructor(private val okHttpClient: OkHttpClient) {
         ).toRequestBody("application/json; charset=utf-8".toMediaType())
 
         val request = Request.Builder()
-            .url(url)
+            .url(requestUrl)
             .post(body)
             .header("Content-Type", "application/json")
             .apply { if (apiKey.isNotBlank()) header("Authorization", "Bearer ${apiKey.trim()}") }
@@ -91,14 +91,14 @@ class AiChatClient @Inject constructor(private val okHttpClient: OkHttpClient) {
                     // Catch here so the continuation is always resumed.
                     try {
                         response.use {
-                            val content = it.body.string()
+                            val responseBody = it.body.string()
                             if (it.isSuccessful) {
                                 if (continuation.isActive) {
-                                    continuation.resumeWith(Result.success(content))
+                                    continuation.resumeWith(Result.success(responseBody))
                                 }
                             } else {
                                 continuation.resumeWithException(
-                                    IOException("HTTP ${it.code}: ${content.take(300)}"),
+                                    IOException("HTTP ${it.code}: ${responseBody.take(300)}"),
                                 )
                             }
                         }

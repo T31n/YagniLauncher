@@ -108,15 +108,15 @@ class AiOrganizerService : Service() {
     private fun finish(result: OrganizeHomeWithAiResult) {
         when (result) {
             OrganizeHomeWithAiResult.Ready -> notify(
-                id = AndroidNotificationManagerWrapper.AI_ORGANIZER_READY_NOTIFICATION_ID,
-                title = getString(R.string.ai_organizer_ready_title),
-                text = getString(R.string.ai_organizer_ready_text),
+                notificationId = AndroidNotificationManagerWrapper.AI_ORGANIZER_READY_NOTIFICATION_ID,
+                notificationTitle = getString(R.string.ai_organizer_ready_title),
+                notificationText = getString(R.string.ai_organizer_ready_text),
             )
 
             else -> notify(
-                id = AndroidNotificationManagerWrapper.AI_ORGANIZER_ERROR_NOTIFICATION_ID,
-                title = getString(R.string.ai_organizer_failed_title),
-                text = result.messageText(),
+                notificationId = AndroidNotificationManagerWrapper.AI_ORGANIZER_ERROR_NOTIFICATION_ID,
+                notificationTitle = getString(R.string.ai_organizer_failed_title),
+                notificationText = result.messageText(),
             )
         }
 
@@ -134,16 +134,16 @@ class AiOrganizerService : Service() {
         OrganizeHomeWithAiResult.Failed -> getString(R.string.ai_organizer_unexpected_error_text)
     }
 
-    private fun notify(id: Int, title: String, text: String) {
+    private fun notify(notificationId: Int, notificationTitle: String, notificationText: String) {
         notificationManagerWrapper.notify(
-            id = id,
+            id = notificationId,
             notification = NotificationCompat.Builder(
                 this,
                 AndroidNotificationManagerWrapper.CHANNEL_ID,
             )
                 .setSmallIcon(R.drawable.baseline_import_export_24)
-                .setContentTitle(title)
-                .setContentText(text)
+                .setContentTitle(notificationTitle)
+                .setContentText(notificationText)
                 .setAutoCancel(true)
                 .build(),
         )

@@ -56,7 +56,7 @@ internal class AiOrganizerSettingsViewModel @Inject constructor(
     private val getAiOrganizerStatusUseCase: GetAiOrganizerStatusUseCase,
     private val homeOperationLock: HomeOperationLock,
 ) : ViewModel() {
-    private val status = MutableStateFlow(AiOrganizerStatus(hasNewHome = false, hasBackup = false))
+    private val hasNewHomeStatus = MutableStateFlow(AiOrganizerStatus(hasNewHome = false, hasBackup = false))
 
     private val applyResult = MutableStateFlow<ApplyAiOrganizationResult?>(null)
 
@@ -82,13 +82,13 @@ internal class AiOrganizerSettingsViewModel @Inject constructor(
 
     val aiOrganizerSettingsUiState = combine(
         userDataRepository.userDataFlow,
-        status,
+        hasNewHomeStatus,
         applyResult,
         homeOperationLock.isBusy,
-    ) { userData, status, applyResult, isBusy ->
+    ) { userData, aiOrganizerStatus, applyResult, isBusy ->
         AiOrganizerSettingsUiState.Success(
             aiOrganizerSettings = userData.aiOrganizerSettings,
-            status = status,
+            status = aiOrganizerStatus,
             applyResult = applyResult,
             isBusy = isBusy,
         )
@@ -110,7 +110,7 @@ internal class AiOrganizerSettingsViewModel @Inject constructor(
 
     fun refreshStatus() {
         viewModelScope.launch {
-            status.value = getAiOrganizerStatusUseCase()
+            hasNewHomeStatus.value = getAiOrganizerStatusUseCase()
         }
     }
 
