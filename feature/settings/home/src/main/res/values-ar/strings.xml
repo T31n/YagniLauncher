@@ -29,6 +29,9 @@
     <string name="add_new_apps">إضافة تطبيقات جديدة</string>
     <string name="add_new_apps_to_home_screen">إضافة تطبيقات جديدة للشاشة الرئيسية</string>
     <string name="dock">شريط التطبيقات السفلي</string>
+    <string name="enable_dock">تفعيل شريط التطبيقات السفلي</string>
+    <string name="show_or_hide_the_dock">إظهار أو إخفاء شريط التطبيقات السفلي</string>
+    <string name="dock_grid_item">عنصر شبكة شريط التطبيقات السفلي</string>
     <string name="dock_infinite_scroll">تمرير لانهائي لشريط التطبيقات السفلي</string>
     <string name="prevent_rotation_when_device_orientation_changes">منع تدوير الشاشة عند تغيير اتجاه الجهاز</string>
     <string name="show_page_indicator">إظهار مؤشر الصفحات</string>

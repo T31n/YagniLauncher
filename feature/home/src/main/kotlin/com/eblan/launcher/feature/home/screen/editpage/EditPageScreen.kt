@@ -469,10 +469,9 @@ internal fun EditDockGridPageScreen(
                                 PageGridItem(
                                     // Item and Settings
                                     gridItem = it,
-                                    gridItemSettings = homeSettings.gridItemSettings,
+                                    gridItemSettings = homeSettings.dockGridItemSettings,
                                     folderPopupGridItems = folderPopupGridItems,
                                     hasShortcutHostPermission = hasShortcutHostPermission,
-                                    // Colors
                                     textColor = textColor,
                                     systemTextColor = systemTextColor,
                                     systemCustomTextColor = systemCustomTextColor,

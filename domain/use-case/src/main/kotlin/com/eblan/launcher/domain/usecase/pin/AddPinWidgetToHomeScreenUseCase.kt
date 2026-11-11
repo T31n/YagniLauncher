@@ -101,7 +101,7 @@ class AddPinWidgetToHomeScreenUseCase @Inject constructor(
 
         val initialPage = homeSettings.initialPage
 
-        val dockHeight = homeSettings.dockHeight
+        val dockHeight = if (homeSettings.enableDock) homeSettings.dockHeight else 0
 
         val eblanApplicationInfoIcon =
             packageManagerWrapper.getComponentName(packageName = packageName)?.let {

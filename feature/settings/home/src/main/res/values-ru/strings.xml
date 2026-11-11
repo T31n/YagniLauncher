@@ -29,6 +29,9 @@
     <string name="add_new_apps">Добавить новые приложения</string>
     <string name="add_new_apps_to_home_screen">Добавить новые приложения на домашний экран</string>
     <string name="dock">Док-Панель</string>
+    <string name="enable_dock">Включить док-панель</string>
+    <string name="show_or_hide_the_dock">Показать или скрыть док-панель</string>
+    <string name="dock_grid_item">Элемент сетки док-панели</string>
     <string name="dock_infinite_scroll">Бесконечная прокрутка в док-панели</string>
     <string name="prevent_rotation_when_device_orientation_changes">Предотвращать поворот при изменении ориентации устройства</string>
     <string name="show_page_indicator">Показывать индикатор страницы</string>

@@ -98,6 +98,8 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
         pagerTransitionEffectProto = PagerTransitionEffectProto.PagerTransitionEffectNone
         showStatusBar = true
         showNavigationBar = true
+        dockGridItemSettingsProto = defaultGridItemSettingsProto
+        enableDock = true
     }.build()
 
     private val defaultAppDrawerSettingsProto = AppDrawerSettingsProto.newBuilder().apply {
@@ -164,9 +166,19 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
     }.build()
 
     override suspend fun readFrom(input: InputStream): UserDataProto = try {
-        defaultValue.toBuilder()
-            .mergeFrom(UserDataProto.parseFrom(input))
-            .build()
+        val parsedUserDataProto = UserDataProto.parseFrom(input)
+
+        val mergedUserDataProto = defaultValue.toBuilder()
+            .mergeFrom(parsedUserDataProto)
+
+        // Existing users have no dock grid item settings yet; carry over their current grid item settings so the dock looks the same.
+        if (!parsedUserDataProto.homeSettingsProto.hasDockGridItemSettingsProto()) {
+            mergedUserDataProto.homeSettingsProto = mergedUserDataProto.homeSettingsProto.toBuilder()
+                .setDockGridItemSettingsProto(mergedUserDataProto.homeSettingsProto.gridItemSettingsProto)
+                .build()
+        }
+
+        mergedUserDataProto.build()
     } catch (exception: InvalidProtocolBufferException) {
         throw CorruptionException("Cannot read proto.", exception)
     }

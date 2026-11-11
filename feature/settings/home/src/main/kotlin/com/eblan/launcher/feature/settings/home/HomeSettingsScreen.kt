@@ -277,12 +277,28 @@ private fun Success(
 
         SettingsCategoryText(text = stringResource(R.string.dock))
 
+        SettingsSwitchItem(
+            // Content
+            title = stringResource(R.string.enable_dock),
+            subtitle = stringResource(R.string.show_or_hide_the_dock),
+            // State
+            checked = homeSettings.enableDock,
+            // Appearance
+            shape = settingsFirstItemShape,
+            // Callbacks
+            onCheckedChange = {
+                onUpdateHomeSettings(
+                    homeSettings.copy(enableDock = it),
+                )
+            },
+        )
+
         SettingsColumnItem(
             // Content
             title = stringResource(R.string.dock_grid),
             subtitle = "${homeSettings.dockColumns}x${homeSettings.dockRows}",
             // Layout
-            shape = settingsFirstItemShape,
+            shape = settingsMiddleItemShape,
             // Actions
             onClick = {
                 showDockGridDialog = true
@@ -357,7 +373,7 @@ private fun Success(
             // State
             checked = homeSettings.addDockBottomPadding,
             // Appearance
-            shape = settingsLastItemShape,
+            shape = settingsMiddleItemShape,
             // Callbacks
             onCheckedChange = {
                 onUpdateHomeSettings(
@@ -373,6 +389,19 @@ private fun Success(
             onUpdateGridItemSettings = {
                 onUpdateHomeSettings(
                     homeSettings.copy(gridItemSettings = it),
+                )
+            },
+        )
+
+        GridItemSettings(
+            // Grid item
+            gridItemSettings = homeSettings.dockGridItemSettings,
+            // Content
+            title = stringResource(R.string.dock_grid_item),
+            // Actions
+            onUpdateGridItemSettings = {
+                onUpdateHomeSettings(
+                    homeSettings.copy(dockGridItemSettings = it),
                 )
             },
         )
