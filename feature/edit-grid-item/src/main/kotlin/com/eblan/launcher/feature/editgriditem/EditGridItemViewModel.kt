@@ -23,7 +23,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
-import com.eblan.launcher.domain.common.GridMutex
 import com.eblan.launcher.domain.framework.IconPackManager
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.model.grid.GridItem
@@ -46,8 +45,6 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 
 @HiltViewModel
@@ -56,7 +53,6 @@ internal class EditGridItemViewModel @Inject constructor(
     private val iconPackManager: IconPackManager,
     packageManagerWrapper: PackageManagerWrapper,
     private val gridRepository: GridRepository,
-    @GridMutex private val gridLock: Mutex,
     getEblanApplicationInfosUseCase: GetEblanApplicationInfosUseCase,
     private val updateGridItemCustomIconUseCase: UpdateGridItemCustomIconUseCase,
     private val deleteGridItemCustomIconUseCase: DeleteGridItemCustomIconUseCase,
@@ -105,9 +101,7 @@ internal class EditGridItemViewModel @Inject constructor(
 
     fun updateGridItem(gridItem: GridItem) {
         viewModelScope.launch {
-            gridLock.withLock {
-                gridRepository.updateGridItem(gridItem = gridItem)
-            }
+            gridRepository.updateGridItem(gridItem = gridItem)
 
             getGridItem()
         }
