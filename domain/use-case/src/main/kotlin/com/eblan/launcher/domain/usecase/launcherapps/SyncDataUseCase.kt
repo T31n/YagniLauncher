@@ -188,13 +188,13 @@ class SyncDataUseCase @Inject constructor(
                 eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos(),
                 applicationInfoGridItemRepository = applicationInfoGridItemRepository,
             )
-        }
 
-        insertApplicationInfoGridItems(
-            eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos(),
-            experimentalSettings = experimentalSettings,
-            homeSettings = homeSettings,
-        )
+            insertApplicationInfoGridItems(
+                eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos(),
+                experimentalSettings = experimentalSettings,
+                homeSettings = homeSettings,
+            )
+        }
     }
 
     /** Adds newly installed non-system applications to the home screen when configured to do so. */
@@ -259,7 +259,9 @@ class SyncDataUseCase @Inject constructor(
                 )
             }
 
-            applicationInfoGridItemRepository.insertApplicationInfoGridItems(applicationInfoGridItems = applicationInfoGridItems)
+            applicationInfoGridItemRepository.insertApplicationInfoGridItems(
+                applicationInfoGridItems = applicationInfoGridItems,
+            )
         }
     }
 
@@ -398,104 +400,102 @@ class SyncDataUseCase @Inject constructor(
     ) {
         if (!experimentalSettings.firstLaunch) return
 
-        gridLock.withLock {
-            val gridItems = gridRepository.getGridItems().toGridItems()
-                .filter {
-                    it.isTopLevel() && it.associate == Associate.Grid
-                }
-
-            if (gridItems.isNotEmpty()) {
-                userDataRepository.updateExperimentalSettings(
-                    experimentalSettings.copy(firstLaunch = false),
-                )
-
-                return@withLock
+        val gridItems = gridRepository.getGridItems().toGridItems()
+            .filter {
+                it.isTopLevel() && it.associate == Associate.Grid
             }
 
-            val eblanApplicationInfosBySystem = eblanApplicationInfos.filter {
-                currentCoroutineContext().ensureActive()
-
-                packageManagerWrapper.isSystem(flags = it.flags)
-            }
-
-            val applicationInfoGridItems = mutableListOf<ApplicationInfoGridItem>()
-
-            /** Creates a default grid record for one application at the specified grid position. */
-            @OptIn(ExperimentalUuidApi::class)
-            fun insertApplicationInfoGridItem(
-                index: Int,
-                eblanApplicationInfo: EblanApplicationInfo,
-                columns: Int,
-                associate: Associate,
-            ) {
-                val startColumn = index % columns
-
-                val startRow = index / columns
-
-                val eblanAction = EblanAction(
-                    eblanActionType = EblanActionType.None,
-                    serialNumber = 0L,
-                    componentName = "",
-                )
-
-                applicationInfoGridItems.add(
-                    ApplicationInfoGridItem(
-                        id = Uuid.random().toHexString(),
-                        page = 0,
-                        startColumn = startColumn,
-                        startRow = startRow,
-                        columnSpan = 1,
-                        rowSpan = 1,
-                        associate = associate,
-                        componentName = eblanApplicationInfo.componentName,
-                        packageName = eblanApplicationInfo.packageName,
-                        icon = eblanApplicationInfo.icon,
-                        label = eblanApplicationInfo.label,
-                        override = false,
-                        serialNumber = eblanApplicationInfo.serialNumber,
-                        customIcon = null,
-                        customLabel = null,
-                        gridItemSettings = when (associate) {
-                            Associate.Dock -> homeSettings.dockGridItemSettings
-                            Associate.Grid -> homeSettings.gridItemSettings
-                        },
-                        doubleTap = eblanAction,
-                        swipeUp = eblanAction,
-                        swipeDown = eblanAction,
-                        index = -1,
-                        folderId = null,
-                    ),
-                )
-            }
-
-            eblanApplicationInfosBySystem.take(homeSettings.columns)
-                .forEachIndexed { index, launcherAppsActivityInfo ->
-                    insertApplicationInfoGridItem(
-                        index = index,
-                        eblanApplicationInfo = launcherAppsActivityInfo,
-                        columns = homeSettings.columns,
-                        associate = Associate.Grid,
-                    )
-                }
-
-            eblanApplicationInfosBySystem.drop(homeSettings.columns)
-                .take(homeSettings.dockColumns)
-                .forEachIndexed { index, launcherAppsActivityInfo ->
-                    insertApplicationInfoGridItem(
-                        index = index,
-                        eblanApplicationInfo = launcherAppsActivityInfo,
-                        columns = homeSettings.dockColumns,
-                        associate = Associate.Dock,
-                    )
-                }
-
-            applicationInfoGridItemRepository.insertApplicationInfoGridItems(applicationInfoGridItems = applicationInfoGridItems)
-
+        if (gridItems.isNotEmpty()) {
             userDataRepository.updateExperimentalSettings(
-                experimentalSettings = experimentalSettings.copy(
-                    firstLaunch = false,
+                experimentalSettings.copy(firstLaunch = false),
+            )
+
+            return
+        }
+
+        val eblanApplicationInfosBySystem = eblanApplicationInfos.filter {
+            currentCoroutineContext().ensureActive()
+
+            packageManagerWrapper.isSystem(flags = it.flags)
+        }
+
+        val applicationInfoGridItems = mutableListOf<ApplicationInfoGridItem>()
+
+        /** Creates a default grid record for one application at the specified grid position. */
+        @OptIn(ExperimentalUuidApi::class)
+        fun insertApplicationInfoGridItem(
+            index: Int,
+            eblanApplicationInfo: EblanApplicationInfo,
+            columns: Int,
+            associate: Associate,
+        ) {
+            val startColumn = index % columns
+
+            val startRow = index / columns
+
+            val eblanAction = EblanAction(
+                eblanActionType = EblanActionType.None,
+                serialNumber = 0L,
+                componentName = "",
+            )
+
+            applicationInfoGridItems.add(
+                ApplicationInfoGridItem(
+                    id = Uuid.random().toHexString(),
+                    page = 0,
+                    startColumn = startColumn,
+                    startRow = startRow,
+                    columnSpan = 1,
+                    rowSpan = 1,
+                    associate = associate,
+                    componentName = eblanApplicationInfo.componentName,
+                    packageName = eblanApplicationInfo.packageName,
+                    icon = eblanApplicationInfo.icon,
+                    label = eblanApplicationInfo.label,
+                    override = false,
+                    serialNumber = eblanApplicationInfo.serialNumber,
+                    customIcon = null,
+                    customLabel = null,
+                    gridItemSettings = when (associate) {
+                        Associate.Dock -> homeSettings.dockGridItemSettings
+                        Associate.Grid -> homeSettings.gridItemSettings
+                    },
+                    doubleTap = eblanAction,
+                    swipeUp = eblanAction,
+                    swipeDown = eblanAction,
+                    index = -1,
+                    folderId = null,
                 ),
             )
         }
+
+        eblanApplicationInfosBySystem.take(homeSettings.columns)
+            .forEachIndexed { index, launcherAppsActivityInfo ->
+                insertApplicationInfoGridItem(
+                    index = index,
+                    eblanApplicationInfo = launcherAppsActivityInfo,
+                    columns = homeSettings.columns,
+                    associate = Associate.Grid,
+                )
+            }
+
+        eblanApplicationInfosBySystem.drop(homeSettings.columns)
+            .take(homeSettings.dockColumns)
+            .forEachIndexed { index, launcherAppsActivityInfo ->
+                insertApplicationInfoGridItem(
+                    index = index,
+                    eblanApplicationInfo = launcherAppsActivityInfo,
+                    columns = homeSettings.dockColumns,
+                    associate = Associate.Dock,
+                )
+            }
+
+        applicationInfoGridItemRepository.insertApplicationInfoGridItems(applicationInfoGridItems = applicationInfoGridItems)
+
+        userDataRepository.updateExperimentalSettings(
+            experimentalSettings = experimentalSettings.copy(
+                firstLaunch = false,
+            ),
+        )
     }
 }
