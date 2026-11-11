@@ -440,10 +440,9 @@ class SyncDataUseCase @Inject constructor(
                     serialNumber = eblanApplicationInfo.serialNumber,
                     customIcon = null,
                     customLabel = null,
-                    gridItemSettings = if (associate == Associate.Dock) {
-                        homeSettings.dockGridItemSettings
-                    } else {
-                        homeSettings.gridItemSettings
+                    gridItemSettings = when (associate) {
+                        Associate.Dock -> homeSettings.dockGridItemSettings
+                        else -> homeSettings.gridItemSettings
                     },
                     doubleTap = eblanAction,
                     swipeUp = eblanAction,

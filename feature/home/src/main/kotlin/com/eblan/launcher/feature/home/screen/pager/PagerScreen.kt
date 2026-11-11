@@ -349,7 +349,10 @@ internal fun PagerScreen(
         onResetPinGridItem = onResetPinGridItem,
     )
 
-    val visibleDockHeight = if (homeSettings.enableDock) homeSettings.dockHeight else 0
+    val visibleDockHeight = when (homeSettings.enableDock) {
+        true -> homeSettings.dockHeight
+        false -> 0
+    }
 
     val dockHeight = visibleDockHeight.dp
 
@@ -1053,172 +1056,174 @@ internal fun PagerScreen(
                     .height(PAGE_INDICATOR_HEIGHT),
             )
 
-            if (homeSettings.enableDock) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(dockHeight + paddingValues.calculateBottomPadding()),
-                ) {
+            when (homeSettings.enableDock) {
+                true -> {
                     Box(
                         modifier = Modifier
-                            .matchParentSize()
-                            .padding(
-                                start = homeSettings.dockPadding.dp,
-                                top = homeSettings.dockPadding.dp,
-                                end = homeSettings.dockPadding.dp,
-                                bottom = if (homeSettings.addDockBottomPadding) {
-                                    homeSettings.dockPadding.dp + paddingValues.calculateBottomPadding()
-                                } else {
-                                    homeSettings.dockPadding.dp
-                                },
-                            )
-                            .background(
-                                color = Color(homeSettings.dockCustomBackgroundColor),
-                                shape = RoundedCornerShape(
-                                    topStart = homeSettings.dockTopStartCornerRadius.dp,
-                                    topEnd = homeSettings.dockTopEndCornerRadius.dp,
-                                    bottomStart = homeSettings.dockBottomStartCornerRadius.dp,
-                                    bottomEnd = homeSettings.dockBottomEndCornerRadius.dp,
-                                ),
-                            ),
-                    )
-
-                    if (isVisibleSparkleDockGrid) {
-                        SparkleGridLayout(
-                            // Grid Structure
-                            columns = homeSettings.dockColumns,
-                            rows = homeSettings.dockRows,
-                            // Grid Item
-                            gridItem = moveGridItemResult.movingGridItem,
-                            gridItemSettings = homeSettings.dockGridItemSettings,
-                            // Drag and Style
-                            dragIntOffset = pagerScreenState.dragIntOffset,
-                            textColor = textColor,
-                            // Modifier
+                            .fillMaxWidth()
+                            .height(dockHeight + paddingValues.calculateBottomPadding()),
+                    ) {
+                        Box(
                             modifier = Modifier
-                                .fillMaxSize()
+                                .matchParentSize()
                                 .padding(
-                                    start = paddingValues.calculateStartPadding(layoutDirection),
-                                    end = paddingValues.calculateEndPadding(layoutDirection),
+                                    start = homeSettings.dockPadding.dp,
+                                    top = homeSettings.dockPadding.dp,
+                                    end = homeSettings.dockPadding.dp,
+                                    bottom = if (homeSettings.addDockBottomPadding) {
+                                        homeSettings.dockPadding.dp + paddingValues.calculateBottomPadding()
+                                    } else {
+                                        homeSettings.dockPadding.dp
+                                    },
+                                )
+                                .background(
+                                    color = Color(homeSettings.dockCustomBackgroundColor),
+                                    shape = RoundedCornerShape(
+                                        topStart = homeSettings.dockTopStartCornerRadius.dp,
+                                        topEnd = homeSettings.dockTopEndCornerRadius.dp,
+                                        bottomStart = homeSettings.dockBottomStartCornerRadius.dp,
+                                        bottomEnd = homeSettings.dockBottomEndCornerRadius.dp,
+                                    ),
+                                ),
+                        )
+
+                        if (isVisibleSparkleDockGrid) {
+                            SparkleGridLayout(
+                                // Grid Structure
+                                columns = homeSettings.dockColumns,
+                                rows = homeSettings.dockRows,
+                                // Grid Item
+                                gridItem = moveGridItemResult.movingGridItem,
+                                gridItemSettings = homeSettings.dockGridItemSettings,
+                                // Drag and Style
+                                dragIntOffset = pagerScreenState.dragIntOffset,
+                                textColor = textColor,
+                                // Modifier
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(
+                                        start = paddingValues.calculateStartPadding(layoutDirection),
+                                        end = paddingValues.calculateEndPadding(layoutDirection),
+                                        bottom = paddingValues.calculateBottomPadding(),
+                                    ),
+                            )
+                        }
+
+                        HorizontalPager(
+                            state = dockGridHorizontalPagerState,
+                            modifier = Modifier
+                                .matchParentSize()
+                                .padding(
                                     bottom = paddingValues.calculateBottomPadding(),
                                 ),
-                        )
-                    }
+                            userScrollEnabled = !isVisibleOverlay,
+                        ) { index ->
+                            val page = calculatePage(
+                                index = index,
+                                infiniteScroll = homeSettings.dockInfiniteScroll,
+                                pageCount = homeSettings.dockPageCount,
+                            )
 
-                    HorizontalPager(
-                        state = dockGridHorizontalPagerState,
-                        modifier = Modifier
-                            .matchParentSize()
-                            .padding(
-                                bottom = paddingValues.calculateBottomPadding(),
-                            ),
-                        userScrollEnabled = !isVisibleOverlay,
-                    ) { index ->
-                        val page = calculatePage(
-                            index = index,
-                            infiniteScroll = homeSettings.dockInfiniteScroll,
-                            pageCount = homeSettings.dockPageCount,
-                        )
-
-                        GridLayout(
-                            // Grid Properties
-                            gridItems = dockGridItemsByPage[page],
-                            columns = homeSettings.dockColumns,
-                            rows = homeSettings.dockRows,
-                            // Layout Options
-                            animate = (isVisibleOverlay || isResizing) && experimentalSettings.gridItemAnimation,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(
-                                    start = paddingValues.calculateStartPadding(layoutDirection),
-                                    end = paddingValues.calculateEndPadding(layoutDirection),
-                                )
-                                .pagerTransitionEffect(
-                                    pagerState = dockGridHorizontalPagerState,
-                                    page = index,
-                                    effect = homeSettings.pagerTransitionEffect,
-                                ),
-                            // Content
-                            content = {
-                                InteractiveGridItem(
-                                    // Item Data
-                                    gridItem = it,
-                                    gridItemSettings = homeSettings.dockGridItemSettings,
-                                    sharedElementKey = SharedElementKey(
-                                        id = it.id,
-                                        parent = SharedElementKey.Parent.Dock,
+                            GridLayout(
+                                // Grid Properties
+                                gridItems = dockGridItemsByPage[page],
+                                columns = homeSettings.dockColumns,
+                                rows = homeSettings.dockRows,
+                                // Layout Options
+                                animate = (isVisibleOverlay || isResizing) && experimentalSettings.gridItemAnimation,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(
+                                        start = paddingValues.calculateStartPadding(layoutDirection),
+                                        end = paddingValues.calculateEndPadding(layoutDirection),
+                                    )
+                                    .pagerTransitionEffect(
+                                        pagerState = dockGridHorizontalPagerState,
+                                        page = index,
+                                        effect = homeSettings.pagerTransitionEffect,
                                     ),
-                                    statusBarNotifications = statusBarNotifications,
-                                    moveGridItemResult = moveGridItemResult,
-                                    // Layout and Dimensions
-                                    cellWidth = safeDrawingWidth / homeSettings.dockColumns,
-                                    cellHeight = dockHeightPx / homeSettings.dockRows,
-                                    leftPadding = leftPadding,
-                                    topOffset = dockTopLeft,
-                                    // Styling and Appearance
-                                    textColor = textColor,
-                                    folderCornerRadius = folderSettings.folderCornerRadius,
-                                    folderBackgroundColor = folderSettings.folderBackgroundColor,
-                                    customFolderBackgroundColor = folderSettings.customFolderBackgroundColor,
-                                    customFolderBorderColor = folderSettings.customFolderBorderColor,
-                                    folderBorderWidth = folderSettings.borderWidth,
-                                    systemCustomTextColor = homeSettings.dockGridItemSettings.customTextColor,
-                                    iconPackFilePaths = iconPackFilePaths,
-                                    // Animation and Transition
-                                    sharedTransitionScope = this@SharedTransitionLayout,
-                                    animations = experimentalSettings.gridItemAnimation,
-                                    // State and Flags
-                                    drag = pagerScreenState.drag,
-                                    hasShortcutHostPermission = hasShortcutHostPermission,
-                                    isScrollInProgress = dockGridHorizontalPagerState.isScrollInProgress,
-                                    isVisibleOverlay = isVisibleOverlay,
-                                    isVisibleFolderGridItems = isVisibleFolderGridItems,
-                                    lockMovement = experimentalSettings.lockMovement,
-                                    isDragging = pagerScreenState.isDragging,
-                                    showGridItemMenu = pagerScreenState.showGridItemMenu,
-                                    folderPopups = folderPopups,
-                                    folderGridItemEntries = folderGridItemEntries,
-                                    // Callbacks
-                                    onOpenAppDrawer = pagerScreenState::openApplicationScreen,
-                                    onShowFolderWhenDragging = { folderPopupEntry, gridItem ->
-                                        pagerScreenState.showFolderWhenDragging(
-                                            // Folder and item being dragged
-                                            folderEntry = folderPopupEntry,
-                                            movingGridItem = gridItem,
-                                            // Callbacks
-                                            onShowFolderWhenDragging = onShowFolderWhenDragging,
-                                        )
-                                    },
-                                    onResetGrid = onResetGrid,
-                                    onLongPressGridItem = { gridItem, imageBitmap, intOffset, intSize, sharedElementKey ->
-                                        pagerScreenState.longPressGridItem(
-                                            // Grid item details
-                                            gridItem = gridItem,
-                                            imageBitmap = imageBitmap,
-                                            newSharedElementKey = sharedElementKey,
-                                            // Grid item position and size
-                                            intOffset = intOffset,
-                                            intSize = intSize,
-                                            // Callbacks
-                                            onUpdateGridItemSource = onUpdateGridItemSource,
-                                            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                                            onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
-                                        )
-                                    },
-                                    onTapFolderGridItem = { folderPopupEntry ->
-                                        pagerScreenState.tapFolderGridItem(
-                                            folderEntry = folderPopupEntry,
-                                            onUpsertFolderGridItemPopupEntry = onUpsertFolderGridItemPopupEntry,
-                                        )
-                                    },
-                                    onDragGridItem = pagerScreenState::dragGridItem,
-                                )
-                            },
-                        )
+                                // Content
+                                content = {
+                                    InteractiveGridItem(
+                                        // Item Data
+                                        gridItem = it,
+                                        gridItemSettings = homeSettings.dockGridItemSettings,
+                                        sharedElementKey = SharedElementKey(
+                                            id = it.id,
+                                            parent = SharedElementKey.Parent.Dock,
+                                        ),
+                                        statusBarNotifications = statusBarNotifications,
+                                        moveGridItemResult = moveGridItemResult,
+                                        // Layout and Dimensions
+                                        cellWidth = safeDrawingWidth / homeSettings.dockColumns,
+                                        cellHeight = dockHeightPx / homeSettings.dockRows,
+                                        leftPadding = leftPadding,
+                                        topOffset = dockTopLeft,
+                                        // Styling and Appearance
+                                        textColor = textColor,
+                                        folderCornerRadius = folderSettings.folderCornerRadius,
+                                        folderBackgroundColor = folderSettings.folderBackgroundColor,
+                                        customFolderBackgroundColor = folderSettings.customFolderBackgroundColor,
+                                        customFolderBorderColor = folderSettings.customFolderBorderColor,
+                                        folderBorderWidth = folderSettings.borderWidth,
+                                        systemCustomTextColor = homeSettings.dockGridItemSettings.customTextColor,
+                                        iconPackFilePaths = iconPackFilePaths,
+                                        // Animation and Transition
+                                        sharedTransitionScope = this@SharedTransitionLayout,
+                                        animations = experimentalSettings.gridItemAnimation,
+                                        // State and Flags
+                                        drag = pagerScreenState.drag,
+                                        hasShortcutHostPermission = hasShortcutHostPermission,
+                                        isScrollInProgress = dockGridHorizontalPagerState.isScrollInProgress,
+                                        isVisibleOverlay = isVisibleOverlay,
+                                        isVisibleFolderGridItems = isVisibleFolderGridItems,
+                                        lockMovement = experimentalSettings.lockMovement,
+                                        isDragging = pagerScreenState.isDragging,
+                                        showGridItemMenu = pagerScreenState.showGridItemMenu,
+                                        folderPopups = folderPopups,
+                                        folderGridItemEntries = folderGridItemEntries,
+                                        // Callbacks
+                                        onOpenAppDrawer = pagerScreenState::openApplicationScreen,
+                                        onShowFolderWhenDragging = { folderPopupEntry, gridItem ->
+                                            pagerScreenState.showFolderWhenDragging(
+                                                // Folder and item being dragged
+                                                folderEntry = folderPopupEntry,
+                                                movingGridItem = gridItem,
+                                                // Callbacks
+                                                onShowFolderWhenDragging = onShowFolderWhenDragging,
+                                            )
+                                        },
+                                        onResetGrid = onResetGrid,
+                                        onLongPressGridItem = { gridItem, imageBitmap, intOffset, intSize, sharedElementKey ->
+                                            pagerScreenState.longPressGridItem(
+                                                // Grid item details
+                                                gridItem = gridItem,
+                                                imageBitmap = imageBitmap,
+                                                newSharedElementKey = sharedElementKey,
+                                                // Grid item position and size
+                                                intOffset = intOffset,
+                                                intSize = intSize,
+                                                // Callbacks
+                                                onUpdateGridItemSource = onUpdateGridItemSource,
+                                                onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+                                                onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
+                                            )
+                                        },
+                                        onTapFolderGridItem = { folderPopupEntry ->
+                                            pagerScreenState.tapFolderGridItem(
+                                                folderEntry = folderPopupEntry,
+                                                onUpsertFolderGridItemPopupEntry = onUpsertFolderGridItemPopupEntry,
+                                            )
+                                        },
+                                        onDragGridItem = pagerScreenState::dragGridItem,
+                                    )
+                                },
+                            )
+                        }
                     }
                 }
-            } else {
-                Spacer(modifier = Modifier.height(paddingValues.calculateBottomPadding()))
+
+                false -> Spacer(modifier = Modifier.height(paddingValues.calculateBottomPadding()))
             }
         }
 
@@ -1226,10 +1231,9 @@ internal fun PagerScreen(
             GridItemPopup(
                 // Grid Item Details
                 gridItem = pagerScreenState.selectedGridItem,
-                gridItemSettings = if (pagerScreenState.selectedGridItem?.associate == Associate.Dock) {
-                    homeSettings.dockGridItemSettings
-                } else {
-                    homeSettings.gridItemSettings
+                gridItemSettings = when (pagerScreenState.selectedGridItem?.associate) {
+                    Associate.Dock -> homeSettings.dockGridItemSettings
+                    else -> homeSettings.gridItemSettings
                 },
                 isCloseGridItemPopup = pagerScreenState.isCloseGridItemMenu,
                 popupIntOffset = pagerScreenState.menuIntOffset,
