@@ -19,7 +19,7 @@ package com.eblan.launcher.domain.usecase.grid
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
-import com.eblan.launcher.domain.common.GridLock
+import com.eblan.launcher.domain.common.GridMutex
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
@@ -30,6 +30,8 @@ import com.eblan.launcher.domain.usecase.folder.asPreviewFolders
 import com.eblan.launcher.domain.usecase.util.getRecursiveFolderGridItems
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.uuid.ExperimentalUuidApi
@@ -40,7 +42,7 @@ class UpdateGridItemsAfterMoveUseCase @Inject constructor(
     private val gridRepository: GridRepository,
     private val folderGridItemRepository: FolderGridItemRepository,
     private val userDataRepository: UserDataRepository,
-    private val gridLock: GridLock,
+    @GridMutex private val gridLock: Mutex,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     /**

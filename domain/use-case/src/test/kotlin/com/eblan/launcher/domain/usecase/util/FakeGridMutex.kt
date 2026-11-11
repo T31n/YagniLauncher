@@ -15,15 +15,8 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.domain.common
+package com.eblan.launcher.domain.usecase.util
 
-/**
- * Serializes every grid read-compute-write sequence so that background sync and user edits
- * cannot observe or overwrite each other's partial state.
- *
- * Implementations must be reentrant: a block running under the lock may call other
- * lock-guarded grid functions (for example, repository methods) without deadlocking.
- */
-interface GridLock {
-    suspend fun <T> withLock(block: suspend () -> T): T
-}
+import kotlinx.coroutines.sync.Mutex
+
+fun fakeGridMutex(): Mutex = Mutex()

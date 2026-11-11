@@ -20,7 +20,7 @@ package com.eblan.launcher.domain.usecase.launcherapps
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.common.FileManager
-import com.eblan.launcher.domain.common.GridLock
+import com.eblan.launcher.domain.common.GridMutex
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.AppWidgetManagerWrapper
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
@@ -54,6 +54,8 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.uuid.ExperimentalUuidApi
@@ -78,7 +80,7 @@ class SyncDataUseCase @Inject constructor(
     private val folderGridItemRepository: FolderGridItemRepository,
     private val gridRepository: GridRepository,
     private val updateIconPacksUseCase: UpdateIconPacksUseCase,
-    private val gridLock: GridLock,
+    @GridMutex private val gridLock: Mutex,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     /** Refreshes launcher data and icon-pack caches using the current user settings. */

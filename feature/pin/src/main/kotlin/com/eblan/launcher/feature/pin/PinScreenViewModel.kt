@@ -19,7 +19,7 @@ package com.eblan.launcher.feature.pin
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.eblan.launcher.domain.common.GridLock
+import com.eblan.launcher.domain.common.GridMutex
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.usecase.grid.DeleteGridItemUseCase
@@ -30,6 +30,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 
 @HiltViewModel
@@ -37,7 +39,7 @@ class PinScreenViewModel @Inject constructor(
     private val addPinShortcutToHomeScreenUseCase: AddPinShortcutToHomeScreenUseCase,
     private val addPinWidgetToHomeScreenUseCase: AddPinWidgetToHomeScreenUseCase,
     private val gridRepository: GridRepository,
-    private val gridLock: GridLock,
+    @GridMutex private val gridLock: Mutex,
     private val deleteGridItemUseCase: DeleteGridItemUseCase,
 ) : ViewModel() {
     private val _gridItem = MutableStateFlow<GridItem?>(null)

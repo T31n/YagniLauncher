@@ -21,11 +21,9 @@ import com.eblan.launcher.common.AndroidColor
 import com.eblan.launcher.common.AndroidImageSerializer
 import com.eblan.launcher.common.impl.DefaultAndroidColor
 import com.eblan.launcher.common.impl.DefaultFileManager
-import com.eblan.launcher.common.impl.DefaultGridLock
 import com.eblan.launcher.common.impl.DefaultIconKeyGenerator
 import com.eblan.launcher.common.impl.DefaultImageSerializer
 import com.eblan.launcher.domain.common.FileManager
-import com.eblan.launcher.domain.common.GridLock
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import dagger.Binds
 import dagger.Module
@@ -52,8 +50,4 @@ internal interface CommonModule {
     @Binds
     @Singleton
     fun androidColor(impl: DefaultAndroidColor): AndroidColor
-
-    @Binds
-    @Singleton
-    fun gridLock(impl: DefaultGridLock): GridLock
 }

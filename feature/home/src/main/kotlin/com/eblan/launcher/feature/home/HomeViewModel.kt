@@ -20,7 +20,7 @@ package com.eblan.launcher.feature.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eblan.launcher.domain.common.FileManager
-import com.eblan.launcher.domain.common.GridLock
+import com.eblan.launcher.domain.common.GridMutex
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
@@ -79,6 +79,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.io.File
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
@@ -100,7 +102,7 @@ internal class HomeViewModel @Inject constructor(
     getEblanAppWidgetProviderInfosByLabelUseCase: GetEblanAppWidgetProviderInfosByLabelUseCase,
     getEblanShortcutConfigsByLabelUseCase: GetEblanShortcutConfigsByLabelUseCase,
     private val gridRepository: GridRepository,
-    private val gridLock: GridLock,
+    @GridMutex private val gridLock: Mutex,
     private val syncDataUseCase: SyncDataUseCase,
     private val addPackageUseCase: AddPackageUseCase,
     private val removePackageUseCase: RemovePackageUseCase,

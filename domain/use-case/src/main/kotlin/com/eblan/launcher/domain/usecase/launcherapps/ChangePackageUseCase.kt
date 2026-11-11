@@ -20,7 +20,7 @@ package com.eblan.launcher.domain.usecase.launcherapps
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.common.FileManager
-import com.eblan.launcher.domain.common.GridLock
+import com.eblan.launcher.domain.common.GridMutex
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.AppWidgetManagerWrapper
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
@@ -42,6 +42,8 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -61,7 +63,7 @@ class ChangePackageUseCase @Inject constructor(
     private val widgetGridItemRepository: WidgetGridItemRepository,
     private val iconKeyGenerator: IconKeyGenerator,
     private val userDataRepository: UserDataRepository,
-    private val gridLock: GridLock,
+    @GridMutex private val gridLock: Mutex,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     /**

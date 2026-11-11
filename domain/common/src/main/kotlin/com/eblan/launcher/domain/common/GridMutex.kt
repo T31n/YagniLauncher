@@ -15,10 +15,11 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.domain.usecase.util
+package com.eblan.launcher.domain.common
 
-import com.eblan.launcher.domain.common.GridLock
+import javax.inject.Qualifier
+import kotlin.annotation.AnnotationRetention.RUNTIME
 
-class FakeGridLock : GridLock {
-    override suspend fun <T> withLock(block: suspend () -> T): T = block()
-}
+@Qualifier
+@Retention(RUNTIME)
+annotation class GridMutex

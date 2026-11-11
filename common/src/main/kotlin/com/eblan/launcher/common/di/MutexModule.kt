@@ -15,17 +15,22 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.common.impl
+package com.eblan.launcher.common.di
 
-import com.eblan.launcher.domain.common.GridLock
+import com.eblan.launcher.domain.common.GridMutex
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
-import javax.inject.Inject
+import javax.inject.Singleton
 
-internal class DefaultGridLock @Inject constructor() : GridLock {
-    private val mutex = Mutex()
+@Module
+@InstallIn(SingletonComponent::class)
+internal object MutexModule {
 
-    override suspend fun <T> withLock(block: suspend () -> T): T = mutex.withLock {
-        block()
-    }
+    @Provides
+    @Singleton
+    @GridMutex
+    fun provideGridMutex(): Mutex = Mutex()
 }

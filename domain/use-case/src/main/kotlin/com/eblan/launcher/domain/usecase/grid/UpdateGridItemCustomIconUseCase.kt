@@ -20,7 +20,7 @@ package com.eblan.launcher.domain.usecase.grid
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.common.FileManager
-import com.eblan.launcher.domain.common.GridLock
+import com.eblan.launcher.domain.common.GridMutex
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.ContentResolverWrapper
 import com.eblan.launcher.domain.model.grid.GridItem
@@ -28,6 +28,8 @@ import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.usecase.util.getCustomIcon
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -37,7 +39,7 @@ class UpdateGridItemCustomIconUseCase @Inject constructor(
     private val iconKeyGenerator: IconKeyGenerator,
     private val contentResolverWrapper: ContentResolverWrapper,
     private val gridRepository: GridRepository,
-    private val gridLock: GridLock,
+    @GridMutex private val gridLock: Mutex,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     /**

@@ -24,7 +24,7 @@ import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.GridItems
 import com.eblan.launcher.domain.model.grid.WidgetGridItem
 import com.eblan.launcher.domain.repository.FakeGridRepository
-import com.eblan.launcher.domain.usecase.util.FakeGridLock
+import com.eblan.launcher.domain.usecase.util.fakeGridMutex
 import com.eblan.launcher.domain.usecase.util.toGridItems
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -55,7 +55,7 @@ class MoveGridItemUseCaseTest {
 
         val moveGridItemUseCase = MoveGridItemUseCase(
             gridRepository = gridRepository,
-            gridLock = FakeGridLock(),
+            gridLock = fakeGridMutex(),
             defaultDispatcher = dispatcher,
         )
 
@@ -118,7 +118,7 @@ class MoveGridItemUseCaseTest {
 
         val moveGridItemUseCase = MoveGridItemUseCase(
             gridRepository = gridRepository,
-            gridLock = FakeGridLock(),
+            gridLock = fakeGridMutex(),
             defaultDispatcher = dispatcher,
         )
 
@@ -178,7 +178,7 @@ class MoveGridItemUseCaseTest {
 
         val moveGridItemUseCase = MoveGridItemUseCase(
             gridRepository = gridRepository,
-            gridLock = FakeGridLock(),
+            gridLock = fakeGridMutex(),
             defaultDispatcher = dispatcher,
         )
 
@@ -266,7 +266,7 @@ class MoveGridItemUseCaseTest {
 
         val moveGridItemUseCase = MoveGridItemUseCase(
             gridRepository = gridRepository,
-            gridLock = FakeGridLock(),
+            gridLock = fakeGridMutex(),
             defaultDispatcher = dispatcher,
         )
 
@@ -337,7 +337,7 @@ class MoveGridItemUseCaseTest {
 
         val moveGridItemUseCase = MoveGridItemUseCase(
             gridRepository = gridRepository,
-            gridLock = FakeGridLock(),
+            gridLock = fakeGridMutex(),
             defaultDispatcher = dispatcher,
         )
 
@@ -400,7 +400,7 @@ class MoveGridItemUseCaseTest {
 
         val moveGridItemUseCase = MoveGridItemUseCase(
             gridRepository = gridRepository,
-            gridLock = FakeGridLock(),
+            gridLock = fakeGridMutex(),
             defaultDispatcher = dispatcher,
         )
 

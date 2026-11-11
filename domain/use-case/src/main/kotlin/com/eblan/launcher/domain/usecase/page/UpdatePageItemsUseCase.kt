@@ -19,7 +19,7 @@ package com.eblan.launcher.domain.usecase.page
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
-import com.eblan.launcher.domain.common.GridLock
+import com.eblan.launcher.domain.common.GridMutex
 import com.eblan.launcher.domain.framework.AppWidgetHostWrapper
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.model.grid.Associate
@@ -31,6 +31,8 @@ import com.eblan.launcher.domain.usecase.folder.asPreviewFolders
 import com.eblan.launcher.domain.usecase.util.deleteGridItemData
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -41,7 +43,7 @@ class UpdatePageItemsUseCase @Inject constructor(
     private val appWidgetHostWrapper: AppWidgetHostWrapper,
     private val launcherAppsWrapper: LauncherAppsWrapper,
     private val folderGridItemRepository: FolderGridItemRepository,
-    private val gridLock: GridLock,
+    @GridMutex private val gridLock: Mutex,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     /**

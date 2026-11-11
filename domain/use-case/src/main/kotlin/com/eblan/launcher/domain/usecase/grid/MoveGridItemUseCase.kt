@@ -19,7 +19,7 @@ package com.eblan.launcher.domain.usecase.grid
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
-import com.eblan.launcher.domain.common.GridLock
+import com.eblan.launcher.domain.common.GridMutex
 import com.eblan.launcher.domain.grid.getGridItemByCoordinates
 import com.eblan.launcher.domain.grid.getGridItemSection
 import com.eblan.launcher.domain.grid.getRelativeResolveDirection
@@ -34,13 +34,15 @@ import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.usecase.util.isTopLevel
 import com.eblan.launcher.domain.usecase.util.toGridItems
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 /** Moves a grid item and resolves any item it overlaps on the same page and association. */
 class MoveGridItemUseCase @Inject constructor(
     private val gridRepository: GridRepository,
-    private val gridLock: GridLock,
+    @GridMutex private val gridLock: Mutex,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     /**
