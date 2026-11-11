@@ -442,7 +442,7 @@ class SyncDataUseCase @Inject constructor(
                     customLabel = null,
                     gridItemSettings = when (associate) {
                         Associate.Dock -> homeSettings.dockGridItemSettings
-                        else -> homeSettings.gridItemSettings
+                        Associate.Grid -> homeSettings.gridItemSettings
                     },
                     doubleTap = eblanAction,
                     swipeUp = eblanAction,

@@ -166,19 +166,9 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
     }.build()
 
     override suspend fun readFrom(input: InputStream): UserDataProto = try {
-        val parsedUserDataProto = UserDataProto.parseFrom(input)
-
-        val mergedUserDataProto = defaultValue.toBuilder()
-            .mergeFrom(parsedUserDataProto)
-
-        // Existing users have no dock grid item settings yet; carry over their current grid item settings so the dock looks the same.
-        if (!parsedUserDataProto.homeSettingsProto.hasDockGridItemSettingsProto()) {
-            mergedUserDataProto.homeSettingsProto = mergedUserDataProto.homeSettingsProto.toBuilder()
-                .setDockGridItemSettingsProto(mergedUserDataProto.homeSettingsProto.gridItemSettingsProto)
-                .build()
-        }
-
-        mergedUserDataProto.build()
+        defaultValue.toBuilder()
+            .mergeFrom(UserDataProto.parseFrom(input))
+            .build()
     } catch (exception: InvalidProtocolBufferException) {
         throw CorruptionException("Cannot read proto.", exception)
     }
