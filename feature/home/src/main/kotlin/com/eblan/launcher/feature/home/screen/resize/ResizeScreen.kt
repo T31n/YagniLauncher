@@ -58,7 +58,10 @@ internal fun ResizeScreen(
 ) {
     val density = LocalDensity.current
 
-    val dockHeight = homeSettings.dockHeight.dp
+    val dockHeight = when (homeSettings.enableDock) {
+        true -> homeSettings.dockHeight
+        false -> 0
+    }.dp
 
     val dockHeightPx = with(density) {
         dockHeight.roundToPx()
@@ -156,7 +159,7 @@ internal fun ResizeScreen(
                     rows = homeSettings.dockRows,
                     // Grid Item
                     gridItem = resizeGridItem,
-                    gridItemSettings = homeSettings.gridItemSettings,
+                    gridItemSettings = homeSettings.dockGridItemSettings,
                     // Behavior and Appearance
                     lockMovement = lockMovement,
                     textColor = textColor,

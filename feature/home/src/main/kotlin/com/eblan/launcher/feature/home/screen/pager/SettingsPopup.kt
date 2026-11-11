@@ -70,6 +70,7 @@ internal fun SettingsPopup(
     gridItems: List<GridItem>,
     // State
     hasSystemFeatureAppWidgets: Boolean,
+    isEnableDock: Boolean,
     popupSettingsIntOffset: IntOffset?,
     // Actions
     onDismissRequest: () -> Unit,
@@ -153,19 +154,21 @@ internal fun SettingsPopup(
                     },
                 )
 
-                PopupMenuRow(
-                    title = stringResource(R.string.edit_dock_pages),
-                    imageVector = EblanLauncherIcons.Pages,
-                    shape = settingsMiddleItemShape,
-                    onClick = {
-                        onEditPage(
-                            gridItems,
-                            Associate.Dock,
-                        )
+                if (isEnableDock) {
+                    PopupMenuRow(
+                        title = stringResource(R.string.edit_dock_pages),
+                        imageVector = EblanLauncherIcons.Pages,
+                        shape = settingsMiddleItemShape,
+                        onClick = {
+                            onEditPage(
+                                gridItems,
+                                Associate.Dock,
+                            )
 
-                        dismiss()
-                    },
-                )
+                            dismiss()
+                        },
+                    )
+                }
 
                 if (hasSystemFeatureAppWidgets) {
                     PopupMenuRow(

@@ -98,6 +98,8 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
         pagerTransitionEffectProto = PagerTransitionEffectProto.PagerTransitionEffectNone
         showStatusBar = true
         showNavigationBar = true
+        dockGridItemSettingsProto = defaultGridItemSettingsProto
+        enableDock = true
     }.build()
 
     private val defaultAppDrawerSettingsProto = AppDrawerSettingsProto.newBuilder().apply {

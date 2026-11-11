@@ -46,4 +46,6 @@ data class HomeSettings(
     val pagerTransitionEffect: PagerTransitionEffect,
     val showStatusBar: Boolean,
     val showNavigationBar: Boolean,
+    val enableDock: Boolean,
+    val dockGridItemSettings: GridItemSettings,
 )

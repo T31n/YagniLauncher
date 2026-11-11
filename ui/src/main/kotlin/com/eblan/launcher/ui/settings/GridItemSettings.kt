@@ -55,6 +55,8 @@ import com.eblan.launcher.common.R as commonR
 fun GridItemSettings(
     // Grid item
     gridItemSettings: GridItemSettings,
+    // Content
+    title: String = stringResource(R.string.grid_item),
     // Layout
     modifier: Modifier = Modifier,
     // Actions
@@ -74,7 +76,7 @@ fun GridItemSettings(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        SettingsCategoryText(text = stringResource(R.string.grid_item))
+        SettingsCategoryText(text = title)
 
         SettingsColumnItem(
             // Content

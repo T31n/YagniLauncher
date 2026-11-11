@@ -87,6 +87,8 @@ internal fun HomeSettingsProto.toHomeSettings(): HomeSettings = HomeSettings(
     pagerTransitionEffect = pagerTransitionEffectProto.toPagerTransitionEffect(),
     showStatusBar = showStatusBar,
     showNavigationBar = showNavigationBar,
+    enableDock = enableDock,
+    dockGridItemSettings = dockGridItemSettingsProto.toGridItemSettings(),
 )
 
 internal fun AppDrawerSettingsProto.toAppDrawerSettings(): AppDrawerSettings = AppDrawerSettings(
@@ -178,6 +180,8 @@ internal fun HomeSettings.toHomeSettingsProto(): HomeSettingsProto = HomeSetting
     builder.pagerTransitionEffectProto = pagerTransitionEffect.toPagerTransitionEffectProto()
     builder.showStatusBar = showStatusBar
     builder.showNavigationBar = showNavigationBar
+    builder.enableDock = enableDock
+    builder.dockGridItemSettingsProto = dockGridItemSettings.toGridItemSettingsProto()
 }.build()
 
 internal fun AppDrawerSettings.toAppDrawerSettingsProto(): AppDrawerSettingsProto = AppDrawerSettingsProto.newBuilder().also { builder ->

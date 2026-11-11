@@ -798,7 +798,7 @@ private fun Success(
                     // Appearance
                     textColor = textColor,
                     systemTextColor = textColor,
-                    systemCustomTextColor = homeData.userData.homeSettings.gridItemSettings.customTextColor,
+                    systemCustomTextColor = homeData.userData.homeSettings.dockGridItemSettings.customTextColor,
                     folderBackgroundColor = homeData.userData.folderSettings.folderBackgroundColor,
                     customFolderBackgroundColor = homeData.userData.folderSettings.customFolderBackgroundColor,
                     customFolderBorderColor = homeData.userData.folderSettings.customFolderBorderColor,

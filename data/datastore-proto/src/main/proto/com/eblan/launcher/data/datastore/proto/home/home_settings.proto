@@ -33,4 +33,6 @@ message HomeSettingsProto {
   optional PagerTransitionEffectProto pagerTransitionEffectProto = 30;
   optional bool showStatusBar = 31;
   optional bool showNavigationBar = 32;
+  GridItemSettingsProto dockGridItemSettingsProto = 33;
+  optional bool enableDock = 34;
 }
