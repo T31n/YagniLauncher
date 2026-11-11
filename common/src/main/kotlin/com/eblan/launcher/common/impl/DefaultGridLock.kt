@@ -18,31 +18,14 @@
 package com.eblan.launcher.common.impl
 
 import com.eblan.launcher.domain.common.GridLock
-import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import kotlin.coroutines.AbstractCoroutineContextElement
-import kotlin.coroutines.CoroutineContext
 
-/**
- * [Mutex] is not reentrant, so a use case holding the lock that calls a repository method
- * which also takes the lock would deadlock. The context element marks that the current
- * coroutine already holds the lock, letting nested calls pass through.
- */
 internal class DefaultGridLock @Inject constructor() : GridLock {
     private val mutex = Mutex()
 
-    override suspend fun <T> withLock(block: suspend () -> T): T {
-        if (currentCoroutineContext()[HeldGridWriteLockKey] != null) return block()
-
-        return mutex.withLock {
-            withContext(HeldGridWriteLockElement()) { block() }
-        }
+    override suspend fun <T> withLock(block: suspend () -> T): T = mutex.withLock {
+        block()
     }
 }
-
-private object HeldGridWriteLockKey : CoroutineContext.Key<HeldGridWriteLockElement>
-
-private class HeldGridWriteLockElement : AbstractCoroutineContextElement(HeldGridWriteLockKey)
