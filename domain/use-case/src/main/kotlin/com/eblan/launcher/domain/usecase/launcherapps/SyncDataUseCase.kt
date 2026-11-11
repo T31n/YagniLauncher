@@ -422,7 +422,6 @@ class SyncDataUseCase @Inject constructor(
         val applicationInfoGridItems = mutableListOf<ApplicationInfoGridItem>()
 
         /** Creates a default grid record for one application at the specified grid position. */
-        @OptIn(ExperimentalUuidApi::class)
         fun insertApplicationInfoGridItem(
             index: Int,
             eblanApplicationInfo: EblanApplicationInfo,

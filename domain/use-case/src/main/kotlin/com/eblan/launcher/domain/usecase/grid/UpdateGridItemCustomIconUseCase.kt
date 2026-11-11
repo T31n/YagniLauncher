@@ -51,33 +51,33 @@ class UpdateGridItemCustomIconUseCase @Inject constructor(
     suspend operator fun invoke(
         gridItem: GridItem,
         uri: String,
-    ) = gridLock.withLock {
-        withContext(ioDispatcher) {
-            val data = when (val data = gridItem.data) {
-                is GridItemData.ApplicationInfo,
-                is GridItemData.Folder,
-                is GridItemData.ShortcutConfig,
-                is GridItemData.ShortcutInfo,
-                -> data
+    ) = withContext(ioDispatcher) {
+        val data = when (val data = gridItem.data) {
+            is GridItemData.ApplicationInfo,
+            is GridItemData.Folder,
+            is GridItemData.ShortcutConfig,
+            is GridItemData.ShortcutInfo,
+            -> data
 
-                else -> error("Unsupported Grid Item")
-            }
+            else -> error("Unsupported Grid Item")
+        }
 
-            val customIcon = getCustomIcon(
-                contentResolverWrapper = contentResolverWrapper,
-                fileManager = fileManager,
-                iconKeyGenerator = iconKeyGenerator,
-                uri = uri,
-            ) ?: return@withContext
+        val customIcon = getCustomIcon(
+            contentResolverWrapper = contentResolverWrapper,
+            fileManager = fileManager,
+            iconKeyGenerator = iconKeyGenerator,
+            uri = uri,
+        ) ?: return@withContext
 
-            val newData = when (data) {
-                is GridItemData.ApplicationInfo -> data.copy(customIcon = customIcon)
-                is GridItemData.Folder -> data.copy(icon = customIcon)
-                is GridItemData.ShortcutConfig -> data.copy(customIcon = customIcon)
-                is GridItemData.ShortcutInfo -> data.copy(customIcon = customIcon)
-                else -> data
-            }
+        val newData = when (data) {
+            is GridItemData.ApplicationInfo -> data.copy(customIcon = customIcon)
+            is GridItemData.Folder -> data.copy(icon = customIcon)
+            is GridItemData.ShortcutConfig -> data.copy(customIcon = customIcon)
+            is GridItemData.ShortcutInfo -> data.copy(customIcon = customIcon)
+            else -> data
+        }
 
+        gridLock.withLock {
             gridRepository.updateGridItem(gridItem = gridItem.copy(data = newData))
 
             // Delete the old custom icon after successfully updated the new grid item
