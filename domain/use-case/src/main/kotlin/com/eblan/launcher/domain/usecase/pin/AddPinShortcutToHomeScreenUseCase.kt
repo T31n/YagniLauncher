@@ -20,6 +20,7 @@ package com.eblan.launcher.domain.usecase.pin
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.common.FileManager
+import com.eblan.launcher.domain.common.GridLock
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.grid.findAvailableRegionByPage
@@ -47,6 +48,7 @@ class AddPinShortcutToHomeScreenUseCase @Inject constructor(
     private val gridRepository: GridRepository,
     private val packageManagerWrapper: PackageManagerWrapper,
     private val iconKeyGenerator: IconKeyGenerator,
+    private val gridLock: GridLock,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     /**
@@ -134,23 +136,25 @@ class AddPinShortcutToHomeScreenUseCase @Inject constructor(
             swipeDown = eblanAction,
         )
 
-        val gridItems = gridRepository.getGridItems().toGridItems()
-            .filter {
-                it.isTopLevel() && it.associate == Associate.Grid
+        gridLock.withLock {
+            val gridItems = gridRepository.getGridItems().toGridItems()
+                .filter {
+                    it.isTopLevel() && it.associate == Associate.Grid
+                }
+
+            val newGridItem = findAvailableRegionByPage(
+                gridItems = gridItems,
+                gridItem = gridItem,
+                pageCount = pageCount,
+                columns = columns,
+                rows = rows,
+            )
+
+            if (newGridItem != null) {
+                gridRepository.insertGridItem(gridItem = newGridItem)
             }
 
-        val newGridItem = findAvailableRegionByPage(
-            gridItems = gridItems,
-            gridItem = gridItem,
-            pageCount = pageCount,
-            columns = columns,
-            rows = rows,
-        )
-
-        if (newGridItem != null) {
-            gridRepository.insertGridItem(gridItem = newGridItem)
+            newGridItem
         }
-
-        newGridItem
     }
 }

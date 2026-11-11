@@ -20,6 +20,7 @@ package com.eblan.launcher.domain.usecase.launcherapps
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.common.FileManager
+import com.eblan.launcher.domain.common.GridLock
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
@@ -37,6 +38,7 @@ class ChangeShortcutsUseCase @Inject constructor(
     private val fileManager: FileManager,
     private val packageManagerWrapper: PackageManagerWrapper,
     private val iconKeyGenerator: IconKeyGenerator,
+    private val gridLock: GridLock,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     /**
@@ -86,13 +88,15 @@ class ChangeShortcutsUseCase @Inject constructor(
                 deleteEblanShortcutInfos = deleteEblanShortcutInfos,
             )
 
-            updateShortcutInfoGridItems(
-                eblanShortcutInfos = eblanShortcutInfoRepository.getEblanShortcutInfos(),
-                shortcutInfoGridItemRepository = shortcutInfoGridItemRepository,
-                fileManager = fileManager,
-                packageManagerWrapper = packageManagerWrapper,
-                iconKeyGenerator = iconKeyGenerator,
-            )
+            gridLock.withLock {
+                updateShortcutInfoGridItems(
+                    eblanShortcutInfos = eblanShortcutInfoRepository.getEblanShortcutInfos(),
+                    shortcutInfoGridItemRepository = shortcutInfoGridItemRepository,
+                    fileManager = fileManager,
+                    packageManagerWrapper = packageManagerWrapper,
+                    iconKeyGenerator = iconKeyGenerator,
+                )
+            }
         }
     }
 }

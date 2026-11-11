@@ -19,6 +19,7 @@ package com.eblan.launcher.domain.usecase.grid
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
+import com.eblan.launcher.domain.common.GridLock
 import com.eblan.launcher.domain.grid.getGridItemByCoordinates
 import com.eblan.launcher.domain.grid.getGridItemSection
 import com.eblan.launcher.domain.grid.getRelativeResolveDirection
@@ -39,6 +40,7 @@ import javax.inject.Inject
 /** Moves a grid item and resolves any item it overlaps on the same page and association. */
 class MoveGridItemUseCase @Inject constructor(
     private val gridRepository: GridRepository,
+    private val gridLock: GridLock,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     /**
@@ -62,70 +64,72 @@ class MoveGridItemUseCase @Inject constructor(
         gridWidth: Int,
         gridHeight: Int,
     ): MoveGridItemResult {
-        return withContext(defaultDispatcher) {
-            val gridItemsByPage = gridRepository.getGridItems().toGridItems().filter {
-                it.isTopLevel() && it.page == movingGridItem.page &&
-                    it.associate == movingGridItem.associate
-            }.toMutableList()
+        return gridLock.withLock {
+            withContext(defaultDispatcher) {
+                val gridItemsByPage = gridRepository.getGridItems().toGridItems().filter {
+                    it.isTopLevel() && it.page == movingGridItem.page &&
+                        it.associate == movingGridItem.associate
+                }.toMutableList()
 
-            val index =
-                gridItemsByPage.indexOfFirst {
-                    it.id == movingGridItem.id
+                val index =
+                    gridItemsByPage.indexOfFirst {
+                        it.id == movingGridItem.id
+                    }
+
+                if (index != -1) {
+                    gridItemsByPage[index] = movingGridItem
+                } else {
+                    gridItemsByPage.add(movingGridItem)
                 }
 
-            if (index != -1) {
-                gridItemsByPage[index] = movingGridItem
-            } else {
-                gridItemsByPage.add(movingGridItem)
-            }
-
-            val conflictingGridItemByCoordinates = getGridItemByCoordinates(
-                id = movingGridItem.id,
-                gridItems = gridItemsByPage,
-                columns = columns,
-                rows = rows,
-                x = x,
-                y = y,
-                gridWidth = gridWidth,
-                gridHeight = gridHeight,
-            )
-
-            if (conflictingGridItemByCoordinates != null) {
-                return@withContext handleConflictsOfGridItemCoordinates(
+                val conflictingGridItemByCoordinates = getGridItemByCoordinates(
+                    id = movingGridItem.id,
                     gridItems = gridItemsByPage,
-                    movingGridItem = movingGridItem,
-                    conflictingGridItem = conflictingGridItemByCoordinates,
+                    columns = columns,
+                    rows = rows,
                     x = x,
-                    columns = columns,
-                    rows = rows,
+                    y = y,
                     gridWidth = gridWidth,
+                    gridHeight = gridHeight,
                 )
-            }
 
-            val conflictingGridItemBySpan = gridItemsByPage.find {
-                it.id != movingGridItem.id && rectanglesOverlap(
-                    moving = movingGridItem,
-                    other = it,
-                )
-            }
+                if (conflictingGridItemByCoordinates != null) {
+                    return@withContext handleConflictsOfGridItemCoordinates(
+                        gridItems = gridItemsByPage,
+                        movingGridItem = movingGridItem,
+                        conflictingGridItem = conflictingGridItemByCoordinates,
+                        x = x,
+                        columns = columns,
+                        rows = rows,
+                        gridWidth = gridWidth,
+                    )
+                }
 
-            if (conflictingGridItemBySpan != null) {
-                return@withContext handleConflictsOfGridItemSpan(
+                val conflictingGridItemBySpan = gridItemsByPage.find {
+                    it.id != movingGridItem.id && rectanglesOverlap(
+                        moving = movingGridItem,
+                        other = it,
+                    )
+                }
+
+                if (conflictingGridItemBySpan != null) {
+                    return@withContext handleConflictsOfGridItemSpan(
+                        movingGridItem = movingGridItem,
+                        conflictingGridItem = conflictingGridItemBySpan,
+                        gridItems = gridItemsByPage,
+                        columns = columns,
+                        rows = rows,
+                    )
+                }
+
+                gridRepository.upsertGridItems(gridItems = gridItemsByPage)
+
+                return@withContext MoveGridItemResult(
+                    isSuccess = true,
                     movingGridItem = movingGridItem,
-                    conflictingGridItem = conflictingGridItemBySpan,
-                    gridItems = gridItemsByPage,
-                    columns = columns,
-                    rows = rows,
+                    conflictingGridItem = null,
                 )
             }
-
-            gridRepository.upsertGridItems(gridItems = gridItemsByPage)
-
-            return@withContext MoveGridItemResult(
-                isSuccess = true,
-                movingGridItem = movingGridItem,
-                conflictingGridItem = null,
-            )
         }
     }
 

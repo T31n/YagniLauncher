@@ -19,6 +19,7 @@ package com.eblan.launcher.domain.usecase.page
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
+import com.eblan.launcher.domain.common.GridLock
 import com.eblan.launcher.domain.framework.AppWidgetHostWrapper
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.model.grid.Associate
@@ -40,6 +41,7 @@ class UpdatePageItemsUseCase @Inject constructor(
     private val appWidgetHostWrapper: AppWidgetHostWrapper,
     private val launcherAppsWrapper: LauncherAppsWrapper,
     private val folderGridItemRepository: FolderGridItemRepository,
+    private val gridLock: GridLock,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     /**
@@ -56,58 +58,60 @@ class UpdatePageItemsUseCase @Inject constructor(
         pageItemsToDelete: List<PageItem>,
         associate: Associate,
     ) {
-        withContext(defaultDispatcher) {
-            val userData = userDataRepository.userDataFlow.first()
+        gridLock.withLock {
+            withContext(defaultDispatcher) {
+                val userData = userDataRepository.userDataFlow.first()
 
-            pageItemsToDelete.forEach { pageItem ->
-                pageItem.gridItems.forEach { gridItem ->
-                    val previewFolderGridItems =
-                        folderGridItemRepository.getFolderGridItemWrappers()
-                            .asPreviewFolders(
-                                maxFolderColumns = userData.folderSettings.maxFolderColumns,
-                                maxFolderRows = userData.folderSettings.maxFolderRows,
-                            )
+                pageItemsToDelete.forEach { pageItem ->
+                    pageItem.gridItems.forEach { gridItem ->
+                        val previewFolderGridItems =
+                            folderGridItemRepository.getFolderGridItemWrappers()
+                                .asPreviewFolders(
+                                    maxFolderColumns = userData.folderSettings.maxFolderColumns,
+                                    maxFolderRows = userData.folderSettings.maxFolderRows,
+                                )
 
-                    deleteGridItemData(
-                        gridItem = gridItem,
-                        folderPopupGridItems = previewFolderGridItems,
-                        appWidgetHostWrapper = appWidgetHostWrapper,
-                        launcherAppsWrapper = launcherAppsWrapper,
-                    )
+                        deleteGridItemData(
+                            gridItem = gridItem,
+                            folderPopupGridItems = previewFolderGridItems,
+                            appWidgetHostWrapper = appWidgetHostWrapper,
+                            launcherAppsWrapper = launcherAppsWrapper,
+                        )
+                    }
+
+                    gridRepository.deleteGridItems(gridItems = pageItem.gridItems)
                 }
 
-                gridRepository.deleteGridItems(gridItems = pageItem.gridItems)
+                val gridItems = pageItems.flatMapIndexed { index, pageItem ->
+                    pageItem.gridItems.map { gridItem ->
+                        gridItem.copy(page = index)
+                    }
+                }
+
+                val newInitialPage = pageItems.indexOfFirst { it.id == id }
+
+                when (associate) {
+                    Associate.Grid -> {
+                        userDataRepository.updateHomeSettings(
+                            homeSettings = userData.homeSettings.copy(
+                                pageCount = pageItems.size,
+                                initialPage = newInitialPage,
+                            ),
+                        )
+                    }
+
+                    Associate.Dock -> {
+                        userDataRepository.updateHomeSettings(
+                            homeSettings = userData.homeSettings.copy(
+                                dockPageCount = pageItems.size,
+                                dockInitialPage = newInitialPage,
+                            ),
+                        )
+                    }
+                }
+
+                gridRepository.upsertGridItems(gridItems = gridItems)
             }
-
-            val gridItems = pageItems.flatMapIndexed { index, pageItem ->
-                pageItem.gridItems.map { gridItem ->
-                    gridItem.copy(page = index)
-                }
-            }
-
-            val newInitialPage = pageItems.indexOfFirst { it.id == id }
-
-            when (associate) {
-                Associate.Grid -> {
-                    userDataRepository.updateHomeSettings(
-                        homeSettings = userData.homeSettings.copy(
-                            pageCount = pageItems.size,
-                            initialPage = newInitialPage,
-                        ),
-                    )
-                }
-
-                Associate.Dock -> {
-                    userDataRepository.updateHomeSettings(
-                        homeSettings = userData.homeSettings.copy(
-                            dockPageCount = pageItems.size,
-                            dockInitialPage = newInitialPage,
-                        ),
-                    )
-                }
-            }
-
-            gridRepository.upsertGridItems(gridItems = gridItems)
         }
     }
 }

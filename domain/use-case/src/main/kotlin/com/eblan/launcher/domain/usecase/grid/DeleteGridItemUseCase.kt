@@ -19,6 +19,7 @@ package com.eblan.launcher.domain.usecase.grid
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
+import com.eblan.launcher.domain.common.GridLock
 import com.eblan.launcher.domain.framework.AppWidgetHostWrapper
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.model.grid.GridItem
@@ -39,6 +40,7 @@ class DeleteGridItemUseCase @Inject constructor(
     private val appWidgetHostWrapper: AppWidgetHostWrapper,
     private val launcherAppsWrapper: LauncherAppsWrapper,
     private val folderGridItemRepository: FolderGridItemRepository,
+    private val gridLock: GridLock,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     /**
@@ -49,23 +51,25 @@ class DeleteGridItemUseCase @Inject constructor(
      *
      * @param gridItem The item to delete.
      */
-    suspend operator fun invoke(gridItem: GridItem) = withContext(defaultDispatcher) {
-        val userData = userDataRepository.userDataFlow.first()
+    suspend operator fun invoke(gridItem: GridItem) = gridLock.withLock {
+        withContext(defaultDispatcher) {
+            val userData = userDataRepository.userDataFlow.first()
 
-        val previewFolderGridItems =
-            folderGridItemRepository.getFolderGridItemWrappers()
-                .asPreviewFolders(
-                    maxFolderColumns = userData.folderSettings.maxFolderColumns,
-                    maxFolderRows = userData.folderSettings.maxFolderRows,
-                )
+            val previewFolderGridItems =
+                folderGridItemRepository.getFolderGridItemWrappers()
+                    .asPreviewFolders(
+                        maxFolderColumns = userData.folderSettings.maxFolderColumns,
+                        maxFolderRows = userData.folderSettings.maxFolderRows,
+                    )
 
-        deleteGridItemData(
-            gridItem = gridItem,
-            folderPopupGridItems = previewFolderGridItems,
-            appWidgetHostWrapper = appWidgetHostWrapper,
-            launcherAppsWrapper = launcherAppsWrapper,
-        )
+            deleteGridItemData(
+                gridItem = gridItem,
+                folderPopupGridItems = previewFolderGridItems,
+                appWidgetHostWrapper = appWidgetHostWrapper,
+                launcherAppsWrapper = launcherAppsWrapper,
+            )
 
-        gridRepository.deleteGridItem(gridItem = gridItem)
+            gridRepository.deleteGridItem(gridItem = gridItem)
+        }
     }
 }

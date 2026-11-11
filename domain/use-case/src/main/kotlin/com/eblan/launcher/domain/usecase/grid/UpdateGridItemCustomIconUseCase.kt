@@ -20,6 +20,7 @@ package com.eblan.launcher.domain.usecase.grid
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.common.FileManager
+import com.eblan.launcher.domain.common.GridLock
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.ContentResolverWrapper
 import com.eblan.launcher.domain.model.grid.GridItem
@@ -36,6 +37,7 @@ class UpdateGridItemCustomIconUseCase @Inject constructor(
     private val iconKeyGenerator: IconKeyGenerator,
     private val contentResolverWrapper: ContentResolverWrapper,
     private val gridRepository: GridRepository,
+    private val gridLock: GridLock,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     /**
@@ -49,35 +51,37 @@ class UpdateGridItemCustomIconUseCase @Inject constructor(
     suspend operator fun invoke(
         gridItem: GridItem,
         uri: String,
-    ) = withContext(ioDispatcher) {
-        val data = when (val data = gridItem.data) {
-            is GridItemData.ApplicationInfo,
-            is GridItemData.Folder,
-            is GridItemData.ShortcutConfig,
-            is GridItemData.ShortcutInfo,
-            -> data
+    ) = gridLock.withLock {
+        withContext(ioDispatcher) {
+            val data = when (val data = gridItem.data) {
+                is GridItemData.ApplicationInfo,
+                is GridItemData.Folder,
+                is GridItemData.ShortcutConfig,
+                is GridItemData.ShortcutInfo,
+                -> data
 
-            else -> error("Unsupported Grid Item")
+                else -> error("Unsupported Grid Item")
+            }
+
+            val customIcon = getCustomIcon(
+                contentResolverWrapper = contentResolverWrapper,
+                fileManager = fileManager,
+                iconKeyGenerator = iconKeyGenerator,
+                uri = uri,
+            ) ?: return@withContext
+
+            val newData = when (data) {
+                is GridItemData.ApplicationInfo -> data.copy(customIcon = customIcon)
+                is GridItemData.Folder -> data.copy(icon = customIcon)
+                is GridItemData.ShortcutConfig -> data.copy(customIcon = customIcon)
+                is GridItemData.ShortcutInfo -> data.copy(customIcon = customIcon)
+                else -> data
+            }
+
+            gridRepository.updateGridItem(gridItem = gridItem.copy(data = newData))
+
+            // Delete the old custom icon after successfully updated the new grid item
+            deleteGridItemCustomIconFile(gridItem = gridItem)
         }
-
-        val customIcon = getCustomIcon(
-            contentResolverWrapper = contentResolverWrapper,
-            fileManager = fileManager,
-            iconKeyGenerator = iconKeyGenerator,
-            uri = uri,
-        ) ?: return@withContext
-
-        val newData = when (data) {
-            is GridItemData.ApplicationInfo -> data.copy(customIcon = customIcon)
-            is GridItemData.Folder -> data.copy(icon = customIcon)
-            is GridItemData.ShortcutConfig -> data.copy(customIcon = customIcon)
-            is GridItemData.ShortcutInfo -> data.copy(customIcon = customIcon)
-            else -> data
-        }
-
-        gridRepository.updateGridItem(gridItem = gridItem.copy(data = newData))
-
-        // Delete the old custom icon after successfully updated the new grid item
-        deleteGridItemCustomIconFile(gridItem = gridItem)
     }
 }

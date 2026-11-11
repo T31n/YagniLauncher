@@ -20,13 +20,17 @@ package com.eblan.launcher.data.repository.impl
 import com.eblan.launcher.data.repository.mapper.asEntity
 import com.eblan.launcher.data.repository.mapper.asFolderGridItemWrapper
 import com.eblan.launcher.data.room.dao.FolderGridItemDao
+import com.eblan.launcher.domain.common.GridLock
 import com.eblan.launcher.domain.model.grid.FolderGridItem
 import com.eblan.launcher.domain.model.grid.FolderGridItemWrapper
 import com.eblan.launcher.domain.repository.FolderGridItemRepository
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-internal class DefaultFolderGridItemRepository @Inject constructor(private val folderGridItemDao: FolderGridItemDao) : FolderGridItemRepository {
+internal class DefaultFolderGridItemRepository @Inject constructor(
+    private val folderGridItemDao: FolderGridItemDao,
+    private val gridLock: GridLock,
+) : FolderGridItemRepository {
     override val folderGridItemWrappersFlow =
         folderGridItemDao.getFolderGridItemWrapperEntitiesFlow().map { entities ->
             entities.map {
@@ -36,23 +40,23 @@ internal class DefaultFolderGridItemRepository @Inject constructor(private val f
 
     override suspend fun getFolderGridItemWrappers(): List<FolderGridItemWrapper> = folderGridItemDao.getFolderGridItemWrapperEntities().map { it.asFolderGridItemWrapper() }
 
-    override suspend fun updateFolderGridItem(folderGridItem: FolderGridItem) {
+    override suspend fun updateFolderGridItem(folderGridItem: FolderGridItem) = gridLock.withLock {
         folderGridItemDao.updateFolderGridItemEntity(entity = folderGridItem.asEntity())
     }
 
-    override suspend fun deleteFolderGridItem(folderGridItem: FolderGridItem) {
+    override suspend fun deleteFolderGridItem(folderGridItem: FolderGridItem) = gridLock.withLock {
         folderGridItemDao.deleteFolderGridItemEntity(entity = folderGridItem.asEntity())
     }
 
-    override suspend fun insertFolderGridItem(folderGridItem: FolderGridItem) {
+    override suspend fun insertFolderGridItem(folderGridItem: FolderGridItem) = gridLock.withLock {
         folderGridItemDao.insertFolderGridItemEntity(entity = folderGridItem.asEntity())
     }
 
-    override suspend fun upsertFolderGridItem(folderGridItem: FolderGridItem) {
+    override suspend fun upsertFolderGridItem(folderGridItem: FolderGridItem) = gridLock.withLock {
         folderGridItemDao.upsertFolderGridItemEntity(entity = folderGridItem.asEntity())
     }
 
-    override suspend fun deleteFolderGridItemById(id: String) {
+    override suspend fun deleteFolderGridItemById(id: String) = gridLock.withLock {
         folderGridItemDao.deleteFolderGridItemEntityById(id = id)
     }
 }

@@ -19,6 +19,7 @@ package com.eblan.launcher.domain.usecase.folder
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
+import com.eblan.launcher.domain.common.GridLock
 import com.eblan.launcher.domain.model.folder.FolderPopup
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
@@ -31,6 +32,7 @@ import javax.inject.Inject
 /** Reorders grid-folder items and persists their updated child indices. */
 class MoveFolderGridItemUseCase @Inject constructor(
     private val gridRepository: GridRepository,
+    private val gridLock: GridLock,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     /**
@@ -53,57 +55,59 @@ class MoveFolderGridItemUseCase @Inject constructor(
         gridWidth: Int,
         gridHeight: Int,
         currentPage: Int,
-    ): MoveGridItemResult = withContext(defaultDispatcher) {
-        val gridItemsPerPage = folderPopup.columns * folderPopup.rows
+    ): MoveGridItemResult = gridLock.withLock {
+        withContext(defaultDispatcher) {
+            val gridItemsPerPage = folderPopup.columns * folderPopup.rows
 
-        val cellWidth = gridWidth / folderPopup.columns
-        val cellHeight = gridHeight / folderPopup.rows
+            val cellWidth = gridWidth / folderPopup.columns
+            val cellHeight = gridHeight / folderPopup.rows
 
-        val targetColumn = dragX / cellWidth
-        val targetRow = dragY / cellHeight
+            val targetColumn = dragX / cellWidth
+            val targetRow = dragY / cellHeight
 
-        val targetIndex =
-            currentPage * gridItemsPerPage + targetRow * folderPopup.columns + targetColumn
+            val targetIndex =
+                currentPage * gridItemsPerPage + targetRow * folderPopup.columns + targetColumn
 
-        val folderGridItems = folderPopup.folderGridItems.toMutableList()
+            val folderGridItems = folderPopup.folderGridItems.toMutableList()
 
-        val movingIndex =
-            folderGridItems.indexOfFirst {
-                it.id == movingGridItem.id
+            val movingIndex =
+                folderGridItems.indexOfFirst {
+                    it.id == movingGridItem.id
+                }
+
+            if (movingIndex != -1) {
+                folderGridItems.add(
+                    targetIndex.coerceIn(
+                        0,
+                        folderGridItems.size - 1,
+                    ),
+                    folderGridItems.removeAt(movingIndex),
+                )
             }
 
-        if (movingIndex != -1) {
-            folderGridItems.add(
-                targetIndex.coerceIn(
-                    0,
-                    folderGridItems.size - 1,
-                ),
-                folderGridItems.removeAt(movingIndex),
+            val indexedGridItems = folderGridItems.mapIndexed { index, gridItem ->
+                when (val data = gridItem.data) {
+                    is GridItemData.ApplicationInfo -> gridItem.copy(data = data.copy(index = index))
+
+                    is GridItemData.ShortcutConfig -> gridItem.copy(data = data.copy(index = index))
+
+                    is GridItemData.ShortcutInfo ->
+                        gridItem.copy(data = data.copy(index = index))
+
+                    is GridItemData.Folder ->
+                        gridItem.copy(data = data.copy(index = index))
+
+                    else -> error("Unsupported move Folder GridItem ")
+                }
+            }
+
+            gridRepository.upsertGridItems(gridItems = indexedGridItems)
+
+            MoveGridItemResult(
+                isSuccess = true,
+                movingGridItem = movingGridItem,
+                conflictingGridItem = null,
             )
         }
-
-        val indexedGridItems = folderGridItems.mapIndexed { index, gridItem ->
-            when (val data = gridItem.data) {
-                is GridItemData.ApplicationInfo -> gridItem.copy(data = data.copy(index = index))
-
-                is GridItemData.ShortcutConfig -> gridItem.copy(data = data.copy(index = index))
-
-                is GridItemData.ShortcutInfo ->
-                    gridItem.copy(data = data.copy(index = index))
-
-                is GridItemData.Folder ->
-                    gridItem.copy(data = data.copy(index = index))
-
-                else -> error("Unsupported move Folder GridItem ")
-            }
-        }
-
-        gridRepository.upsertGridItems(gridItems = indexedGridItems)
-
-        MoveGridItemResult(
-            isSuccess = true,
-            movingGridItem = movingGridItem,
-            conflictingGridItem = null,
-        )
     }
 }

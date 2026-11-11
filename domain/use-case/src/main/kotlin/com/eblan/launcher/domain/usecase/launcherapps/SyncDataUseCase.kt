@@ -20,6 +20,7 @@ package com.eblan.launcher.domain.usecase.launcherapps
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.common.FileManager
+import com.eblan.launcher.domain.common.GridLock
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.AppWidgetManagerWrapper
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
@@ -77,6 +78,7 @@ class SyncDataUseCase @Inject constructor(
     private val folderGridItemRepository: FolderGridItemRepository,
     private val gridRepository: GridRepository,
     private val updateIconPacksUseCase: UpdateIconPacksUseCase,
+    private val gridLock: GridLock,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     /** Refreshes launcher data and icon-pack caches using the current user settings. */
@@ -153,6 +155,7 @@ class SyncDataUseCase @Inject constructor(
             newSyncEblanApplicationInfos = newSyncEblanApplicationInfos,
             oldSyncEblanApplicationInfos = oldSyncEblanApplicationInfos,
             applicationInfoGridItems = newApplicationInfoGridItems,
+            applicationInfoGridItemRepository = applicationInfoGridItemRepository,
             folderSettings = folderSettings,
         )
 
@@ -180,18 +183,18 @@ class SyncDataUseCase @Inject constructor(
 
         updateEblanShortcutConfigs(newEblanShortcutConfigs = newEblanShortcutConfigs)
 
-        updateApplicationInfoGridItems(
-            eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos(),
-            applicationInfoGridItemRepository = applicationInfoGridItemRepository,
-        )
+        gridLock.withLock {
+            updateApplicationInfoGridItems(
+                eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos(),
+                applicationInfoGridItemRepository = applicationInfoGridItemRepository,
+            )
+        }
 
         insertApplicationInfoGridItems(
             eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos(),
             experimentalSettings = experimentalSettings,
             homeSettings = homeSettings,
         )
-
-        applicationInfoGridItemRepository.insertApplicationInfoGridItems(applicationInfoGridItems = newApplicationInfoGridItems)
     }
 
     /** Adds newly installed non-system applications to the home screen when configured to do so. */
@@ -201,6 +204,7 @@ class SyncDataUseCase @Inject constructor(
         newSyncEblanApplicationInfos: List<SyncEblanApplicationInfo>,
         oldSyncEblanApplicationInfos: List<SyncEblanApplicationInfo>,
         applicationInfoGridItems: MutableList<ApplicationInfoGridItem>,
+        applicationInfoGridItemRepository: ApplicationInfoGridItemRepository,
         folderSettings: FolderSettings,
     ) {
         if (!homeSettings.addNewAppsToHomeScreen ||
@@ -209,12 +213,6 @@ class SyncDataUseCase @Inject constructor(
         ) {
             return
         }
-
-        val gridItems = gridRepository.getGridItems().toGridItems()
-            .filter {
-                it.isTopLevel() && it.associate == Associate.Grid
-            }
-            .toMutableList()
 
         val oldNonSystemApplications =
             oldSyncEblanApplicationInfos.filterNot {
@@ -238,20 +236,30 @@ class SyncDataUseCase @Inject constructor(
                 it.asAddNewEblanApplicationInfo()
             }
 
-        newAddNewEblanApplicationInfos.forEach {
-            currentCoroutineContext().ensureActive()
+        gridLock.withLock {
+            val gridItems = gridRepository.getGridItems().toGridItems()
+                .filter {
+                    it.isTopLevel() && it.associate == Associate.Grid
+                }
+                .toMutableList()
 
-            addNewApplicationToHomeScreen(
-                gridItems = gridItems,
-                componentName = it.componentName,
-                packageName = it.packageName,
-                icon = it.icon,
-                label = it.label,
-                homeSettings = homeSettings,
-                applicationInfoGridItems = applicationInfoGridItems,
-                folderGridItemRepository = folderGridItemRepository,
-                folderSettings = folderSettings,
-            )
+            newAddNewEblanApplicationInfos.forEach {
+                currentCoroutineContext().ensureActive()
+
+                addNewApplicationToHomeScreen(
+                    gridItems = gridItems,
+                    componentName = it.componentName,
+                    packageName = it.packageName,
+                    icon = it.icon,
+                    label = it.label,
+                    homeSettings = homeSettings,
+                    applicationInfoGridItems = applicationInfoGridItems,
+                    folderGridItemRepository = folderGridItemRepository,
+                    folderSettings = folderSettings,
+                )
+            }
+
+            applicationInfoGridItemRepository.insertApplicationInfoGridItems(applicationInfoGridItems = applicationInfoGridItems)
         }
     }
 
@@ -294,13 +302,15 @@ class SyncDataUseCase @Inject constructor(
             deleteEblanAppWidgetProviderInfos = deleteEblanAppWidgetProviderInfos,
         )
 
-        updateWidgetGridItems(
-            eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos(),
-            fileManager = fileManager,
-            packageManagerWrapper = packageManagerWrapper,
-            widgetGridItemRepository = widgetGridItemRepository,
-            iconKeyGenerator = iconKeyGenerator,
-        )
+        gridLock.withLock {
+            updateWidgetGridItems(
+                eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos(),
+                fileManager = fileManager,
+                packageManagerWrapper = packageManagerWrapper,
+                widgetGridItemRepository = widgetGridItemRepository,
+                iconKeyGenerator = iconKeyGenerator,
+            )
+        }
     }
 
     /** Synchronizes launcher shortcuts when shortcut-host permission is available. */
@@ -334,13 +344,15 @@ class SyncDataUseCase @Inject constructor(
             deleteEblanShortcutInfos = deleteEblanShortcutInfos,
         )
 
-        updateShortcutInfoGridItems(
-            eblanShortcutInfos = eblanShortcutInfoRepository.getEblanShortcutInfos(),
-            shortcutInfoGridItemRepository = shortcutInfoGridItemRepository,
-            fileManager = fileManager,
-            packageManagerWrapper = packageManagerWrapper,
-            iconKeyGenerator = iconKeyGenerator,
-        )
+        gridLock.withLock {
+            updateShortcutInfoGridItems(
+                eblanShortcutInfos = eblanShortcutInfoRepository.getEblanShortcutInfos(),
+                shortcutInfoGridItemRepository = shortcutInfoGridItemRepository,
+                fileManager = fileManager,
+                packageManagerWrapper = packageManagerWrapper,
+                iconKeyGenerator = iconKeyGenerator,
+            )
+        }
     }
 
     /** Reconciles shortcut-configuration records and the grid items that reference them. */
@@ -366,13 +378,15 @@ class SyncDataUseCase @Inject constructor(
 
         deleteEblanShortcutConfigIcons(eblanShortcutConfigs = deleteEblanShortcutConfigs)
 
-        updateShortcutConfigGridItems(
-            eblanShortcutConfigs = eblanShortcutConfigRepository.getEblanShortcutConfigs(),
-            shortcutConfigGridItemRepository = shortcutConfigGridItemRepository,
-            fileManager = fileManager,
-            packageManagerWrapper = packageManagerWrapper,
-            iconKeyGenerator = iconKeyGenerator,
-        )
+        gridLock.withLock {
+            updateShortcutConfigGridItems(
+                eblanShortcutConfigs = eblanShortcutConfigRepository.getEblanShortcutConfigs(),
+                shortcutConfigGridItemRepository = shortcutConfigGridItemRepository,
+                fileManager = fileManager,
+                packageManagerWrapper = packageManagerWrapper,
+                iconKeyGenerator = iconKeyGenerator,
+            )
+        }
     }
 
     /** Seeds the home grid and dock with system applications during the first launch only. */
@@ -384,102 +398,104 @@ class SyncDataUseCase @Inject constructor(
     ) {
         if (!experimentalSettings.firstLaunch) return
 
-        val gridItems = gridRepository.getGridItems().toGridItems()
-            .filter {
-                it.isTopLevel() && it.associate == Associate.Grid
+        gridLock.withLock {
+            val gridItems = gridRepository.getGridItems().toGridItems()
+                .filter {
+                    it.isTopLevel() && it.associate == Associate.Grid
+                }
+
+            if (gridItems.isNotEmpty()) {
+                userDataRepository.updateExperimentalSettings(
+                    experimentalSettings.copy(firstLaunch = false),
+                )
+
+                return@withLock
             }
 
-        if (gridItems.isNotEmpty()) {
+            val eblanApplicationInfosBySystem = eblanApplicationInfos.filter {
+                currentCoroutineContext().ensureActive()
+
+                packageManagerWrapper.isSystem(flags = it.flags)
+            }
+
+            val applicationInfoGridItems = mutableListOf<ApplicationInfoGridItem>()
+
+            /** Creates a default grid record for one application at the specified grid position. */
+            @OptIn(ExperimentalUuidApi::class)
+            fun insertApplicationInfoGridItem(
+                index: Int,
+                eblanApplicationInfo: EblanApplicationInfo,
+                columns: Int,
+                associate: Associate,
+            ) {
+                val startColumn = index % columns
+
+                val startRow = index / columns
+
+                val eblanAction = EblanAction(
+                    eblanActionType = EblanActionType.None,
+                    serialNumber = 0L,
+                    componentName = "",
+                )
+
+                applicationInfoGridItems.add(
+                    ApplicationInfoGridItem(
+                        id = Uuid.random().toHexString(),
+                        page = 0,
+                        startColumn = startColumn,
+                        startRow = startRow,
+                        columnSpan = 1,
+                        rowSpan = 1,
+                        associate = associate,
+                        componentName = eblanApplicationInfo.componentName,
+                        packageName = eblanApplicationInfo.packageName,
+                        icon = eblanApplicationInfo.icon,
+                        label = eblanApplicationInfo.label,
+                        override = false,
+                        serialNumber = eblanApplicationInfo.serialNumber,
+                        customIcon = null,
+                        customLabel = null,
+                        gridItemSettings = when (associate) {
+                            Associate.Dock -> homeSettings.dockGridItemSettings
+                            Associate.Grid -> homeSettings.gridItemSettings
+                        },
+                        doubleTap = eblanAction,
+                        swipeUp = eblanAction,
+                        swipeDown = eblanAction,
+                        index = -1,
+                        folderId = null,
+                    ),
+                )
+            }
+
+            eblanApplicationInfosBySystem.take(homeSettings.columns)
+                .forEachIndexed { index, launcherAppsActivityInfo ->
+                    insertApplicationInfoGridItem(
+                        index = index,
+                        eblanApplicationInfo = launcherAppsActivityInfo,
+                        columns = homeSettings.columns,
+                        associate = Associate.Grid,
+                    )
+                }
+
+            eblanApplicationInfosBySystem.drop(homeSettings.columns)
+                .take(homeSettings.dockColumns)
+                .forEachIndexed { index, launcherAppsActivityInfo ->
+                    insertApplicationInfoGridItem(
+                        index = index,
+                        eblanApplicationInfo = launcherAppsActivityInfo,
+                        columns = homeSettings.dockColumns,
+                        associate = Associate.Dock,
+                    )
+                }
+
+            applicationInfoGridItemRepository.insertApplicationInfoGridItems(applicationInfoGridItems = applicationInfoGridItems)
+
             userDataRepository.updateExperimentalSettings(
-                experimentalSettings.copy(firstLaunch = false),
-            )
-
-            return
-        }
-
-        val eblanApplicationInfosBySystem = eblanApplicationInfos.filter {
-            currentCoroutineContext().ensureActive()
-
-            packageManagerWrapper.isSystem(flags = it.flags)
-        }
-
-        val applicationInfoGridItems = mutableListOf<ApplicationInfoGridItem>()
-
-        /** Creates a default grid record for one application at the specified grid position. */
-        @OptIn(ExperimentalUuidApi::class)
-        fun insertApplicationInfoGridItem(
-            index: Int,
-            eblanApplicationInfo: EblanApplicationInfo,
-            columns: Int,
-            associate: Associate,
-        ) {
-            val startColumn = index % columns
-
-            val startRow = index / columns
-
-            val eblanAction = EblanAction(
-                eblanActionType = EblanActionType.None,
-                serialNumber = 0L,
-                componentName = "",
-            )
-
-            applicationInfoGridItems.add(
-                ApplicationInfoGridItem(
-                    id = Uuid.random().toHexString(),
-                    page = 0,
-                    startColumn = startColumn,
-                    startRow = startRow,
-                    columnSpan = 1,
-                    rowSpan = 1,
-                    associate = associate,
-                    componentName = eblanApplicationInfo.componentName,
-                    packageName = eblanApplicationInfo.packageName,
-                    icon = eblanApplicationInfo.icon,
-                    label = eblanApplicationInfo.label,
-                    override = false,
-                    serialNumber = eblanApplicationInfo.serialNumber,
-                    customIcon = null,
-                    customLabel = null,
-                    gridItemSettings = when (associate) {
-                        Associate.Dock -> homeSettings.dockGridItemSettings
-                        Associate.Grid -> homeSettings.gridItemSettings
-                    },
-                    doubleTap = eblanAction,
-                    swipeUp = eblanAction,
-                    swipeDown = eblanAction,
-                    index = -1,
-                    folderId = null,
+                experimentalSettings = experimentalSettings.copy(
+                    firstLaunch = false,
                 ),
             )
         }
-
-        eblanApplicationInfosBySystem.take(homeSettings.columns)
-            .forEachIndexed { index, launcherAppsActivityInfo ->
-                insertApplicationInfoGridItem(
-                    index = index,
-                    eblanApplicationInfo = launcherAppsActivityInfo,
-                    columns = homeSettings.columns,
-                    associate = Associate.Grid,
-                )
-            }
-
-        eblanApplicationInfosBySystem.drop(homeSettings.columns)
-            .take(homeSettings.dockColumns)
-            .forEachIndexed { index, launcherAppsActivityInfo ->
-                insertApplicationInfoGridItem(
-                    index = index,
-                    eblanApplicationInfo = launcherAppsActivityInfo,
-                    columns = homeSettings.dockColumns,
-                    associate = Associate.Dock,
-                )
-            }
-
-        applicationInfoGridItemRepository.insertApplicationInfoGridItems(applicationInfoGridItems = applicationInfoGridItems)
-
-        userDataRepository.updateExperimentalSettings(
-            experimentalSettings = experimentalSettings.copy(
-                firstLaunch = false,
-            ),
-        )
     }
 }

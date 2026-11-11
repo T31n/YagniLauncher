@@ -28,5 +28,6 @@ android {
 dependencies {
     implementation(projects.data.datastore)
     implementation(projects.data.room)
+    implementation(projects.domain.common)
     implementation(projects.domain.repository)
 }

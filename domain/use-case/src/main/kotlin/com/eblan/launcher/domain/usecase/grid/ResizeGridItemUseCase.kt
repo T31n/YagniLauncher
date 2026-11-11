@@ -19,6 +19,7 @@ package com.eblan.launcher.domain.usecase.grid
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
+import com.eblan.launcher.domain.common.GridLock
 import com.eblan.launcher.domain.grid.getRelativeResolveDirection
 import com.eblan.launcher.domain.grid.rectanglesOverlap
 import com.eblan.launcher.domain.grid.resolveConflicts
@@ -33,6 +34,7 @@ import javax.inject.Inject
 /** Resizes a top-level grid item and resolves any resulting overlap. */
 class ResizeGridItemUseCase @Inject constructor(
     private val gridRepository: GridRepository,
+    private val gridLock: GridLock,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     /**
@@ -47,42 +49,44 @@ class ResizeGridItemUseCase @Inject constructor(
         resizingGridItem: GridItem,
         columns: Int,
         rows: Int,
-    ): GridItem = withContext(defaultDispatcher) {
-        val gridItems =
-            gridRepository.getGridItems().toGridItems().filter {
-                it.isTopLevel() && it.page == resizingGridItem.page &&
-                    it.associate == resizingGridItem.associate
-            }.toMutableList()
+    ): GridItem = gridLock.withLock {
+        withContext(defaultDispatcher) {
+            val gridItems =
+                gridRepository.getGridItems().toGridItems().filter {
+                    it.isTopLevel() && it.page == resizingGridItem.page &&
+                        it.associate == resizingGridItem.associate
+                }.toMutableList()
 
-        val index =
-            gridItems.indexOfFirst {
-                it.id == resizingGridItem.id
+            val index =
+                gridItems.indexOfFirst {
+                    it.id == resizingGridItem.id
+                }
+
+            val oldGridItem = gridItems[index]
+
+            gridItems[index] = resizingGridItem
+
+            val gridItemBySpan = gridItems.find {
+                it.id != resizingGridItem.id && rectanglesOverlap(
+                    moving = resizingGridItem,
+                    other = it,
+                )
             }
 
-        val oldGridItem = gridItems[index]
+            if (gridItemBySpan != null) {
+                handleConflictsOfGridItemSpan(
+                    oldGridItem = oldGridItem,
+                    conflictingGridItem = gridItemBySpan,
+                    gridItems = gridItems,
+                    resizingGridItem = resizingGridItem,
+                    columns = columns,
+                    rows = rows,
+                )
+            } else {
+                gridRepository.upsertGridItems(gridItems = gridItems)
 
-        gridItems[index] = resizingGridItem
-
-        val gridItemBySpan = gridItems.find {
-            it.id != resizingGridItem.id && rectanglesOverlap(
-                moving = resizingGridItem,
-                other = it,
-            )
-        }
-
-        if (gridItemBySpan != null) {
-            handleConflictsOfGridItemSpan(
-                oldGridItem = oldGridItem,
-                conflictingGridItem = gridItemBySpan,
-                gridItems = gridItems,
-                resizingGridItem = resizingGridItem,
-                columns = columns,
-                rows = rows,
-            )
-        } else {
-            gridRepository.upsertGridItems(gridItems = gridItems)
-
-            resizingGridItem
+                resizingGridItem
+            }
         }
     }
 

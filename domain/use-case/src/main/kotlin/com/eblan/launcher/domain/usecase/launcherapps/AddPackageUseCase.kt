@@ -20,6 +20,7 @@ package com.eblan.launcher.domain.usecase.launcherapps
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.common.FileManager
+import com.eblan.launcher.domain.common.GridLock
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.AppWidgetManagerWrapper
 import com.eblan.launcher.domain.framework.IconPackManager
@@ -29,9 +30,7 @@ import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.ApplicationInfoGridItem
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.launcherapps.LauncherAppsActivityInfo
-import com.eblan.launcher.domain.model.userdata.FolderSettings
 import com.eblan.launcher.domain.model.userdata.GeneralSettings
-import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.domain.repository.ApplicationInfoGridItemRepository
 import com.eblan.launcher.domain.repository.EblanAppWidgetProviderInfoRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
@@ -67,6 +66,7 @@ class AddPackageUseCase @Inject constructor(
     private val applicationInfoGridItemRepository: ApplicationInfoGridItemRepository,
     private val folderGridItemRepository: FolderGridItemRepository,
     private val gridRepository: GridRepository,
+    private val gridLock: GridLock,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     /**
@@ -82,8 +82,6 @@ class AddPackageUseCase @Inject constructor(
         withContext(ioDispatcher) {
             val userData = userDataRepository.userDataFlow.first()
 
-            val newApplicationInfoGridItems = mutableListOf<ApplicationInfoGridItem>()
-
             val launcherAppsActivityInfosByPackageName = launcherAppsWrapper.getActivityListWithCacheIcons(
                 serialNumber = serialNumber,
                 packageName = packageName,
@@ -93,8 +91,7 @@ class AddPackageUseCase @Inject constructor(
                 fallbackIconTint = userData.generalSettings.fallbackIconTint,
                 theme = userData.generalSettings.theme,
             ).onEach {
-                addEblanApplicationInfo(
-                    homeSettings = userData.homeSettings,
+                upsertEblanApplicationInfo(
                     serialNumber = it.serialNumber,
                     componentName = it.componentName,
                     packageName = it.packageName,
@@ -102,8 +99,6 @@ class AddPackageUseCase @Inject constructor(
                     activityLabel = it.activityLabel,
                     lastUpdateTime = it.lastUpdateTime,
                     flags = it.flags,
-                    applicationInfoGridItems = newApplicationInfoGridItems,
-                    folderSettings = userData.folderSettings,
                 )
             }
 
@@ -122,9 +117,37 @@ class AddPackageUseCase @Inject constructor(
                 packageName = packageName,
             )
 
-            applicationInfoGridItemRepository.insertApplicationInfoGridItems(
-                applicationInfoGridItems = newApplicationInfoGridItems,
-            )
+            gridLock.withLock {
+                val newApplicationInfoGridItems = mutableListOf<ApplicationInfoGridItem>()
+
+                if (userData.homeSettings.addNewAppsToHomeScreen) {
+                    val gridItems = gridRepository.getGridItems().toGridItems()
+                        .filter {
+                            it.isTopLevel() && it.associate == Associate.Grid
+                        }
+                        .toMutableList()
+
+                    launcherAppsActivityInfosByPackageName.forEach {
+                        currentCoroutineContext().ensureActive()
+
+                        addNewApplicationToHomeScreen(
+                            gridItems = gridItems,
+                            componentName = it.componentName,
+                            packageName = it.packageName,
+                            icon = it.activityIcon,
+                            label = it.activityLabel,
+                            homeSettings = userData.homeSettings,
+                            applicationInfoGridItems = newApplicationInfoGridItems,
+                            folderGridItemRepository = folderGridItemRepository,
+                            folderSettings = userData.folderSettings,
+                        )
+                    }
+                }
+
+                applicationInfoGridItemRepository.insertApplicationInfoGridItems(
+                    applicationInfoGridItems = newApplicationInfoGridItems,
+                )
+            }
 
             addIconPackInfos(
                 iconPackPackageName = userData.generalSettings.iconPackPackageName,
@@ -134,9 +157,8 @@ class AddPackageUseCase @Inject constructor(
         }
     }
 
-    /** Stores an activity and queues a home-screen item when that setting is enabled. */
-    private suspend fun addEblanApplicationInfo(
-        homeSettings: HomeSettings,
+    /** Stores an activity's application record without touching the grid. */
+    private suspend fun upsertEblanApplicationInfo(
         serialNumber: Long,
         componentName: String,
         packageName: String,
@@ -144,8 +166,6 @@ class AddPackageUseCase @Inject constructor(
         activityLabel: String,
         lastUpdateTime: Long,
         flags: Int,
-        applicationInfoGridItems: MutableList<ApplicationInfoGridItem>,
-        folderSettings: FolderSettings,
     ) {
         eblanApplicationInfoRepository.upsertEblanApplicationInfo(
             eblanApplicationInfo = EblanApplicationInfo(
@@ -162,26 +182,6 @@ class AddPackageUseCase @Inject constructor(
                 folderIndex = -1,
                 folderId = null,
             ),
-        )
-
-        if (!homeSettings.addNewAppsToHomeScreen) return
-
-        val gridItems = gridRepository.getGridItems().toGridItems()
-            .filter {
-                it.isTopLevel() && it.associate == Associate.Grid
-            }
-            .toMutableList()
-
-        addNewApplicationToHomeScreen(
-            gridItems = gridItems,
-            componentName = componentName,
-            packageName = packageName,
-            icon = activityIcon,
-            label = activityLabel,
-            homeSettings = homeSettings,
-            applicationInfoGridItems = applicationInfoGridItems,
-            folderGridItemRepository = folderGridItemRepository,
-            folderSettings = folderSettings,
         )
     }
 

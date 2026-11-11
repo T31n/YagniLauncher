@@ -19,6 +19,7 @@ package com.eblan.launcher.domain.usecase.grid
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
+import com.eblan.launcher.domain.common.GridLock
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
@@ -31,6 +32,7 @@ import javax.inject.Inject
 class DeleteGridItemCustomIconUseCase @Inject constructor(
     private val gridRepository: GridRepository,
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
+    private val gridLock: GridLock,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     /**
@@ -40,35 +42,37 @@ class DeleteGridItemCustomIconUseCase @Inject constructor(
      *
      * @param gridItem The item whose custom icon should be removed.
      */
-    suspend operator fun invoke(gridItem: GridItem) = withContext(ioDispatcher) {
-        val newData = when (val data = gridItem.data) {
-            is GridItemData.ApplicationInfo -> {
-                val eblanApplicationInfo =
-                    eblanApplicationInfoRepository.getEblanApplicationInfoByComponentName(
-                        serialNumber = data.serialNumber,
-                        componentName = data.componentName,
-                    )
+    suspend operator fun invoke(gridItem: GridItem) = gridLock.withLock {
+        withContext(ioDispatcher) {
+            val newData = when (val data = gridItem.data) {
+                is GridItemData.ApplicationInfo -> {
+                    val eblanApplicationInfo =
+                        eblanApplicationInfoRepository.getEblanApplicationInfoByComponentName(
+                            serialNumber = data.serialNumber,
+                            componentName = data.componentName,
+                        )
 
-                if (eblanApplicationInfo != null) {
-                    eblanApplicationInfoRepository.updateEblanApplicationInfo(
-                        eblanApplicationInfo = eblanApplicationInfo.copy(customIcon = null),
-                    )
+                    if (eblanApplicationInfo != null) {
+                        eblanApplicationInfoRepository.updateEblanApplicationInfo(
+                            eblanApplicationInfo = eblanApplicationInfo.copy(customIcon = null),
+                        )
+                    }
+
+                    data.copy(customIcon = null)
                 }
 
-                data.copy(customIcon = null)
+                is GridItemData.ShortcutConfig -> data.copy(customIcon = null)
+
+                is GridItemData.ShortcutInfo -> data.copy(customIcon = null)
+
+                is GridItemData.Folder -> data.copy(icon = null)
+
+                else -> error("Unsupported Grid Item")
             }
 
-            is GridItemData.ShortcutConfig -> data.copy(customIcon = null)
+            deleteGridItemCustomIconFile(gridItem = gridItem)
 
-            is GridItemData.ShortcutInfo -> data.copy(customIcon = null)
-
-            is GridItemData.Folder -> data.copy(icon = null)
-
-            else -> error("Unsupported Grid Item")
+            gridRepository.updateGridItem(gridItem = gridItem.copy(data = newData))
         }
-
-        deleteGridItemCustomIconFile(gridItem = gridItem)
-
-        gridRepository.updateGridItem(gridItem = gridItem.copy(data = newData))
     }
 }

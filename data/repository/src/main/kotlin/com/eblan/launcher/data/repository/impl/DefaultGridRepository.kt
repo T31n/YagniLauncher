@@ -31,6 +31,7 @@ import com.eblan.launcher.data.room.entity.ShortcutInfoGridItemEntity
 import com.eblan.launcher.data.room.entity.WidgetGridItemEntity
 import com.eblan.launcher.data.room.model.GridItemEntities
 import com.eblan.launcher.data.room.transaction.GridItemEntityTransaction
+import com.eblan.launcher.domain.common.GridLock
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItems
@@ -51,15 +52,18 @@ internal class DefaultGridRepository @Inject constructor(
     private val folderGridItemRepository: FolderGridItemRepository,
     private val shortcutConfigGridItemRepository: ShortcutConfigGridItemRepository,
     private val gridItemEntityTransaction: GridItemEntityTransaction,
+    private val gridLock: GridLock,
 ) : GridRepository {
     override val gridItemsFlow: Flow<GridItems> =
         gridItemEntityTransaction.gridItemEntitiesFlow.map { gridItemEntities ->
             gridItemEntities.asGridItems()
         }
 
-    override suspend fun getGridItems(): GridItems = gridItemEntityTransaction.getGridItemEntities().asGridItems()
+    override suspend fun getGridItems(): GridItems = gridLock.withLock {
+        gridItemEntityTransaction.getGridItemEntities().asGridItems()
+    }
 
-    override suspend fun insertGridItem(gridItem: GridItem) {
+    override suspend fun insertGridItem(gridItem: GridItem) = gridLock.withLock {
         when (val data = gridItem.data) {
             is GridItemData.ApplicationInfo -> {
                 applicationInfoGridItemRepository.insertApplicationInfoGridItem(
@@ -93,7 +97,7 @@ internal class DefaultGridRepository @Inject constructor(
         }
     }
 
-    override suspend fun updateGridItem(gridItem: GridItem) {
+    override suspend fun updateGridItem(gridItem: GridItem) = gridLock.withLock {
         when (val data = gridItem.data) {
             is GridItemData.ApplicationInfo -> {
                 applicationInfoGridItemRepository.updateApplicationInfoGridItem(
@@ -127,7 +131,7 @@ internal class DefaultGridRepository @Inject constructor(
         }
     }
 
-    override suspend fun upsertGridItems(gridItems: List<GridItem>) {
+    override suspend fun upsertGridItems(gridItems: List<GridItem>) = gridLock.withLock {
         val applicationInfoGridItemEntities = mutableListOf<ApplicationInfoGridItemEntity>()
 
         val widgetGridItemEntities = mutableListOf<WidgetGridItemEntity>()
@@ -181,7 +185,7 @@ internal class DefaultGridRepository @Inject constructor(
         )
     }
 
-    override suspend fun deleteGridItems(gridItems: List<GridItem>) {
+    override suspend fun deleteGridItems(gridItems: List<GridItem>) = gridLock.withLock {
         val applicationInfoGridItemEntities = mutableListOf<ApplicationInfoGridItemEntity>()
 
         val widgetGridItemEntities = mutableListOf<WidgetGridItemEntity>()
@@ -235,7 +239,7 @@ internal class DefaultGridRepository @Inject constructor(
         )
     }
 
-    override suspend fun deleteGridItem(gridItem: GridItem) {
+    override suspend fun deleteGridItem(gridItem: GridItem) = gridLock.withLock {
         when (val data = gridItem.data) {
             is GridItemData.ApplicationInfo -> {
                 applicationInfoGridItemRepository.deleteApplicationInfoGridItem(
@@ -269,7 +273,7 @@ internal class DefaultGridRepository @Inject constructor(
         }
     }
 
-    override suspend fun upsertGridItem(gridItem: GridItem) {
+    override suspend fun upsertGridItem(gridItem: GridItem) = gridLock.withLock {
         when (val data = gridItem.data) {
             is GridItemData.ApplicationInfo -> {
                 applicationInfoGridItemRepository.upsertApplicationInfoGridItem(
@@ -303,7 +307,7 @@ internal class DefaultGridRepository @Inject constructor(
         }
     }
 
-    override suspend fun deleteGridItemById(gridItem: GridItem) {
+    override suspend fun deleteGridItemById(gridItem: GridItem) = gridLock.withLock {
         when (gridItem.data) {
             is GridItemData.ApplicationInfo -> applicationInfoGridItemRepository.deleteApplicationInfoGridItemById(
                 id = gridItem.id,

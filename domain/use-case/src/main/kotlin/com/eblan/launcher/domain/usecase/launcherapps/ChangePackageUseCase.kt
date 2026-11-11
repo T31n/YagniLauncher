@@ -20,6 +20,7 @@ package com.eblan.launcher.domain.usecase.launcherapps
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.common.FileManager
+import com.eblan.launcher.domain.common.GridLock
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.AppWidgetManagerWrapper
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
@@ -60,6 +61,7 @@ class ChangePackageUseCase @Inject constructor(
     private val widgetGridItemRepository: WidgetGridItemRepository,
     private val iconKeyGenerator: IconKeyGenerator,
     private val userDataRepository: UserDataRepository,
+    private val gridLock: GridLock,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     /**
@@ -172,10 +174,12 @@ class ChangePackageUseCase @Inject constructor(
             oldDeleteEblanApplicationInfos = oldDeleteEblanApplicationInfos,
         )
 
-        updateApplicationInfoGridItems(
-            eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos(),
-            applicationInfoGridItemRepository = applicationInfoGridItemRepository,
-        )
+        gridLock.withLock {
+            updateApplicationInfoGridItems(
+                eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos(),
+                applicationInfoGridItemRepository = applicationInfoGridItemRepository,
+            )
+        }
 
         updateEblanShortcutConfigs(
             serialNumber = serialNumber,
@@ -234,13 +238,15 @@ class ChangePackageUseCase @Inject constructor(
             deleteEblanAppWidgetProviderInfos = deleteEblanAppWidgetProviderInfos,
         )
 
-        updateWidgetGridItems(
-            eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos(),
-            fileManager = fileManager,
-            packageManagerWrapper = packageManagerWrapper,
-            widgetGridItemRepository = widgetGridItemRepository,
-            iconKeyGenerator = iconKeyGenerator,
-        )
+        gridLock.withLock {
+            updateWidgetGridItems(
+                eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos(),
+                fileManager = fileManager,
+                packageManagerWrapper = packageManagerWrapper,
+                widgetGridItemRepository = widgetGridItemRepository,
+                iconKeyGenerator = iconKeyGenerator,
+            )
+        }
     }
 
     /** Reconciles launcher shortcuts and updates or removes their grid-item data. */
@@ -285,13 +291,15 @@ class ChangePackageUseCase @Inject constructor(
             deleteEblanShortcutInfos = deleteEblanShortcutInfos,
         )
 
-        updateShortcutInfoGridItems(
-            eblanShortcutInfos = eblanShortcutInfoRepository.getEblanShortcutInfos(),
-            shortcutInfoGridItemRepository = shortcutInfoGridItemRepository,
-            fileManager = fileManager,
-            packageManagerWrapper = packageManagerWrapper,
-            iconKeyGenerator = iconKeyGenerator,
-        )
+        gridLock.withLock {
+            updateShortcutInfoGridItems(
+                eblanShortcutInfos = eblanShortcutInfoRepository.getEblanShortcutInfos(),
+                shortcutInfoGridItemRepository = shortcutInfoGridItemRepository,
+                fileManager = fileManager,
+                packageManagerWrapper = packageManagerWrapper,
+                iconKeyGenerator = iconKeyGenerator,
+            )
+        }
     }
 
     /** Reconciles shortcut-configuration activities and their grid-item data for this package. */
@@ -321,12 +329,14 @@ class ChangePackageUseCase @Inject constructor(
 
         deleteEblanShortcutConfigIcons(eblanShortcutConfigs = deleteEblanShortcutConfigs)
 
-        updateShortcutConfigGridItems(
-            eblanShortcutConfigs = eblanShortcutConfigRepository.getEblanShortcutConfigs(),
-            shortcutConfigGridItemRepository = shortcutConfigGridItemRepository,
-            fileManager = fileManager,
-            packageManagerWrapper = packageManagerWrapper,
-            iconKeyGenerator = iconKeyGenerator,
-        )
+        gridLock.withLock {
+            updateShortcutConfigGridItems(
+                eblanShortcutConfigs = eblanShortcutConfigRepository.getEblanShortcutConfigs(),
+                shortcutConfigGridItemRepository = shortcutConfigGridItemRepository,
+                fileManager = fileManager,
+                packageManagerWrapper = packageManagerWrapper,
+                iconKeyGenerator = iconKeyGenerator,
+            )
+        }
     }
 }

@@ -23,8 +23,8 @@ import com.eblan.launcher.domain.model.grid.ApplicationInfoGridItem
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.GridItems
 import com.eblan.launcher.domain.repository.FakeGridRepository
+import com.eblan.launcher.domain.usecase.util.FakeGridLock
 import com.eblan.launcher.domain.usecase.util.toGridItems
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -51,6 +51,7 @@ class ResizeGridItemUseCaseTest {
 
         val resizeGridItemUseCase = ResizeGridItemUseCase(
             gridRepository = gridRepository,
+            gridLock = FakeGridLock(),
             defaultDispatcher = dispatcher,
         )
 
@@ -102,6 +103,7 @@ class ResizeGridItemUseCaseTest {
 
         val resizeGridItemUseCase = ResizeGridItemUseCase(
             gridRepository = gridRepository,
+            gridLock = FakeGridLock(),
             defaultDispatcher = dispatcher,
         )
 
@@ -188,6 +190,7 @@ class ResizeGridItemUseCaseTest {
 
         val resizeGridItemUseCase = ResizeGridItemUseCase(
             gridRepository = gridRepository,
+            gridLock = FakeGridLock(),
             defaultDispatcher = dispatcher,
         )
 
@@ -241,6 +244,7 @@ class ResizeGridItemUseCaseTest {
 
         val resizeGridItemUseCase = ResizeGridItemUseCase(
             gridRepository = gridRepository,
+            gridLock = FakeGridLock(),
             defaultDispatcher = dispatcher,
         )
 
@@ -293,6 +297,7 @@ class ResizeGridItemUseCaseTest {
 
         val resizeGridItemUseCase = ResizeGridItemUseCase(
             gridRepository = gridRepository,
+            gridLock = FakeGridLock(),
             defaultDispatcher = dispatcher,
         )
 
@@ -344,6 +349,7 @@ class ResizeGridItemUseCaseTest {
 
         val resizeGridItemUseCase = ResizeGridItemUseCase(
             gridRepository = gridRepository,
+            gridLock = FakeGridLock(),
             defaultDispatcher = dispatcher,
         )
 

@@ -20,6 +20,7 @@ package com.eblan.launcher.domain.usecase.launcherapps
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.common.FileManager
+import com.eblan.launcher.domain.common.GridLock
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.repository.ApplicationInfoGridItemRepository
@@ -53,6 +54,7 @@ class RemovePackageUseCase @Inject constructor(
     private val shortcutConfigGridItemRepository: ShortcutConfigGridItemRepository,
     private val packageManagerWrapper: PackageManagerWrapper,
     private val iconKeyGenerator: IconKeyGenerator,
+    private val gridLock: GridLock,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     /**
@@ -102,25 +104,27 @@ class RemovePackageUseCase @Inject constructor(
                 packageName = packageName,
             )
 
-            applicationInfoGridItemRepository.deleteApplicationInfoGridItem(
-                serialNumber = serialNumber,
-                packageName = packageName,
-            )
+            gridLock.withLock {
+                applicationInfoGridItemRepository.deleteApplicationInfoGridItem(
+                    serialNumber = serialNumber,
+                    packageName = packageName,
+                )
 
-            widgetGridItemRepository.deleteWidgetGridItemByPackageName(
-                serialNumber = serialNumber,
-                packageName = packageName,
-            )
+                widgetGridItemRepository.deleteWidgetGridItemByPackageName(
+                    serialNumber = serialNumber,
+                    packageName = packageName,
+                )
 
-            shortcutInfoGridItemRepository.deleteShortcutInfoGridItemByPackageName(
-                serialNumber = serialNumber,
-                packageName = packageName,
-            )
+                shortcutInfoGridItemRepository.deleteShortcutInfoGridItemByPackageName(
+                    serialNumber = serialNumber,
+                    packageName = packageName,
+                )
 
-            shortcutConfigGridItemRepository.deleteShortcutConfigGridItemByPackageName(
-                serialNumber = serialNumber,
-                packageName = packageName,
-            )
+                shortcutConfigGridItemRepository.deleteShortcutConfigGridItemByPackageName(
+                    serialNumber = serialNumber,
+                    packageName = packageName,
+                )
+            }
         }
     }
 
