@@ -20,27 +20,23 @@ package com.eblan.launcher.data.repository.impl
 import com.eblan.launcher.data.repository.mapper.asEntity
 import com.eblan.launcher.data.repository.mapper.asModel
 import com.eblan.launcher.data.room.dao.ShortcutInfoGridItemDao
-import com.eblan.launcher.domain.common.GridLock
 import com.eblan.launcher.domain.model.grid.PartialShortcutInfoGridItem
 import com.eblan.launcher.domain.model.grid.ShortcutInfoGridItem
 import com.eblan.launcher.domain.repository.ShortcutInfoGridItemRepository
 import javax.inject.Inject
 
-internal class DefaultShortcutInfoGridItemRepository @Inject constructor(
-    private val shortcutInfoGridItemDao: ShortcutInfoGridItemDao,
-    private val gridLock: GridLock,
-) : ShortcutInfoGridItemRepository {
+internal class DefaultShortcutInfoGridItemRepository @Inject constructor(private val shortcutInfoGridItemDao: ShortcutInfoGridItemDao) : ShortcutInfoGridItemRepository {
     override suspend fun getShortcutInfoGridItems(): List<ShortcutInfoGridItem> = shortcutInfoGridItemDao.getShortcutInfoGridItemEntities().map {
         it.asModel()
     }
 
-    override suspend fun updateShortcutInfoGridItem(shortcutInfoGridItem: ShortcutInfoGridItem) = gridLock.withLock {
+    override suspend fun updateShortcutInfoGridItem(shortcutInfoGridItem: ShortcutInfoGridItem) {
         shortcutInfoGridItemDao.updateShortcutInfoGridItemEntity(
             shortcutInfoGridItem.asEntity(),
         )
     }
 
-    override suspend fun deleteShortcutInfoGridItems(shortcutInfoGridItems: List<ShortcutInfoGridItem>) = gridLock.withLock {
+    override suspend fun deleteShortcutInfoGridItems(shortcutInfoGridItems: List<ShortcutInfoGridItem>) {
         val entities = shortcutInfoGridItems.map {
             it.asEntity()
         }
@@ -48,7 +44,7 @@ internal class DefaultShortcutInfoGridItemRepository @Inject constructor(
         shortcutInfoGridItemDao.deleteShortcutInfoGridItemEntities(entities = entities)
     }
 
-    override suspend fun deleteShortcutInfoGridItem(shortcutInfoGridItem: ShortcutInfoGridItem) = gridLock.withLock {
+    override suspend fun deleteShortcutInfoGridItem(shortcutInfoGridItem: ShortcutInfoGridItem) {
         shortcutInfoGridItemDao.deleteShortcutInfoGridItemEntity(entity = shortcutInfoGridItem.asEntity())
     }
 
@@ -65,26 +61,26 @@ internal class DefaultShortcutInfoGridItemRepository @Inject constructor(
     override suspend fun deleteShortcutInfoGridItemByPackageName(
         serialNumber: Long,
         packageName: String,
-    ) = gridLock.withLock {
+    ) {
         shortcutInfoGridItemDao.deleteShortcutInfoGridItemEntityByPackageName(
             serialNumber = serialNumber,
             packageName = packageName,
         )
     }
 
-    override suspend fun updatePartialShortcutInfoGridItems(partialShortcutInfoGridItems: List<PartialShortcutInfoGridItem>) = gridLock.withLock {
+    override suspend fun updatePartialShortcutInfoGridItems(partialShortcutInfoGridItems: List<PartialShortcutInfoGridItem>) {
         shortcutInfoGridItemDao.updatePartialShortcutInfoGridItems(partialShortcutInfoGridItems = partialShortcutInfoGridItems)
     }
 
-    override suspend fun insertShortcutInfoGridItem(shortcutInfoGridItem: ShortcutInfoGridItem) = gridLock.withLock {
+    override suspend fun insertShortcutInfoGridItem(shortcutInfoGridItem: ShortcutInfoGridItem) {
         shortcutInfoGridItemDao.insertShortcutInfoGridItemEntity(entity = shortcutInfoGridItem.asEntity())
     }
 
-    override suspend fun upsertShortcutInfoGridItem(shortcutInfoGridItem: ShortcutInfoGridItem) = gridLock.withLock {
+    override suspend fun upsertShortcutInfoGridItem(shortcutInfoGridItem: ShortcutInfoGridItem) {
         shortcutInfoGridItemDao.upsertShortcutInfoGridItemEntity(entity = shortcutInfoGridItem.asEntity())
     }
 
-    override suspend fun deleteShortcutInfoGridItemById(id: String) = gridLock.withLock {
+    override suspend fun deleteShortcutInfoGridItemById(id: String) {
         shortcutInfoGridItemDao.deleteShortcutInfoGridItemEntityById(id = id)
     }
 }

@@ -20,27 +20,23 @@ package com.eblan.launcher.data.repository.impl
 import com.eblan.launcher.data.repository.mapper.asEntity
 import com.eblan.launcher.data.repository.mapper.asModel
 import com.eblan.launcher.data.room.dao.WidgetGridItemDao
-import com.eblan.launcher.domain.common.GridLock
 import com.eblan.launcher.domain.model.grid.WidgetGridItem
 import com.eblan.launcher.domain.model.widget.PartialUpdateWidgetGridItem
 import com.eblan.launcher.domain.repository.WidgetGridItemRepository
 import javax.inject.Inject
 
-internal class DefaultWidgetGridItemRepository @Inject constructor(
-    private val widgetGridItemDao: WidgetGridItemDao,
-    private val gridLock: GridLock,
-) : WidgetGridItemRepository {
+internal class DefaultWidgetGridItemRepository @Inject constructor(private val widgetGridItemDao: WidgetGridItemDao) : WidgetGridItemRepository {
     override suspend fun getWidgetGridItems(): List<WidgetGridItem> = widgetGridItemDao.getWidgetGridItemEntities().map {
         it.asModel()
     }
 
-    override suspend fun updateWidgetGridItem(widgetGridItem: WidgetGridItem) = gridLock.withLock {
+    override suspend fun updateWidgetGridItem(widgetGridItem: WidgetGridItem) {
         widgetGridItemDao.updateWidgetGridItemEntity(
             widgetGridItem.asEntity(),
         )
     }
 
-    override suspend fun deleteWidgetGridItemsByPackageName(widgetGridItems: List<WidgetGridItem>) = gridLock.withLock {
+    override suspend fun deleteWidgetGridItemsByPackageName(widgetGridItems: List<WidgetGridItem>) {
         val entities = widgetGridItems.map {
             it.asEntity()
         }
@@ -48,33 +44,33 @@ internal class DefaultWidgetGridItemRepository @Inject constructor(
         widgetGridItemDao.deleteWidgetGridItemEntities(entities = entities)
     }
 
-    override suspend fun deleteWidgetGridItem(widgetGridItem: WidgetGridItem) = gridLock.withLock {
+    override suspend fun deleteWidgetGridItem(widgetGridItem: WidgetGridItem) {
         widgetGridItemDao.deleteWidgetGridItemEntity(entity = widgetGridItem.asEntity())
     }
 
     override suspend fun deleteWidgetGridItemByPackageName(
         serialNumber: Long,
         packageName: String,
-    ) = gridLock.withLock {
+    ) {
         widgetGridItemDao.deleteWidgetGridItemEntityByPackageName(
             serialNumber = serialNumber,
             packageName = packageName,
         )
     }
 
-    override suspend fun updatePartialWidgetGridItems(partialUpdateWidgetGridItems: List<PartialUpdateWidgetGridItem>) = gridLock.withLock {
+    override suspend fun updatePartialWidgetGridItems(partialUpdateWidgetGridItems: List<PartialUpdateWidgetGridItem>) {
         widgetGridItemDao.updatePartialWidgetGridItems(partialUpdateWidgetGridItems = partialUpdateWidgetGridItems)
     }
 
-    override suspend fun insertWidgetGridItem(widgetGridItem: WidgetGridItem) = gridLock.withLock {
+    override suspend fun insertWidgetGridItem(widgetGridItem: WidgetGridItem) {
         widgetGridItemDao.insertWidgetGridItemEntity(entity = widgetGridItem.asEntity())
     }
 
-    override suspend fun upsertWidgetGridItem(widgetGridItem: WidgetGridItem) = gridLock.withLock {
+    override suspend fun upsertWidgetGridItem(widgetGridItem: WidgetGridItem) {
         widgetGridItemDao.upsertWidgetGridItemEntity(entity = widgetGridItem.asEntity())
     }
 
-    override suspend fun deleteWidgetGridItemById(id: String) = gridLock.withLock {
+    override suspend fun deleteWidgetGridItemById(id: String) {
         widgetGridItemDao.deleteWidgetGridItemEntityById(id = id)
     }
 }

@@ -20,6 +20,7 @@ package com.eblan.launcher.feature.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eblan.launcher.domain.common.FileManager
+import com.eblan.launcher.domain.common.GridLock
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
@@ -99,6 +100,7 @@ internal class HomeViewModel @Inject constructor(
     getEblanAppWidgetProviderInfosByLabelUseCase: GetEblanAppWidgetProviderInfosByLabelUseCase,
     getEblanShortcutConfigsByLabelUseCase: GetEblanShortcutConfigsByLabelUseCase,
     private val gridRepository: GridRepository,
+    private val gridLock: GridLock,
     private val syncDataUseCase: SyncDataUseCase,
     private val addPackageUseCase: AddPackageUseCase,
     private val removePackageUseCase: RemovePackageUseCase,
@@ -460,8 +462,6 @@ internal class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             val movingGridItem = moveGridItemResult.movingGridItem
 
-            gridRepository.deleteGridItemById(gridItem = movingGridItem)
-
             val eblanApplicationInfoIcon =
                 packageManagerWrapper.getComponentName(packageName = pinItemRequestType.packageName)
                     ?.let { componentName ->
@@ -493,7 +493,10 @@ internal class HomeViewModel @Inject constructor(
                 folderId = null,
             )
 
-            gridRepository.insertGridItem(gridItem = movingGridItem.copy(data = data))
+            gridLock.withLock {
+                gridRepository.deleteGridItemById(gridItem = movingGridItem)
+                gridRepository.insertGridItem(gridItem = movingGridItem.copy(data = data))
+            }
 
             updateGridItemsAfterMove(moveGridItemResult = moveGridItemResult)
 
@@ -591,7 +594,9 @@ internal class HomeViewModel @Inject constructor(
                 }
             }
 
-            gridRepository.updateGridItem(gridItem = movingGridItem)
+            gridLock.withLock {
+                gridRepository.updateGridItem(gridItem = movingGridItem)
+            }
 
             _moveGridItemResult.update {
                 MoveGridItemResult(
@@ -626,7 +631,9 @@ internal class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             moveGridItemJob?.cancelAndJoin()
 
-            gridRepository.updateGridItem(gridItem = movingGridItem)
+            gridLock.withLock {
+                gridRepository.updateGridItem(gridItem = movingGridItem)
+            }
 
             _folderGridItemEntries.update {
                 it + folderEntry
@@ -883,7 +890,9 @@ internal class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             moveGridItemJob?.cancelAndJoin()
 
-            gridRepository.upsertGridItems(gridItems = folderGridItems)
+            gridLock.withLock {
+                gridRepository.upsertGridItems(gridItems = folderGridItems)
+            }
 
             updateGridItemsAfterMoveUseCase(moveGridItemResult = moveGridItemResult)
 

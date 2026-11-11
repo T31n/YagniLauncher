@@ -20,27 +20,23 @@ package com.eblan.launcher.data.repository.impl
 import com.eblan.launcher.data.repository.mapper.asEntity
 import com.eblan.launcher.data.repository.mapper.asModel
 import com.eblan.launcher.data.room.dao.ShortcutConfigGridItemDao
-import com.eblan.launcher.domain.common.GridLock
 import com.eblan.launcher.domain.model.grid.PartialShortcutConfigGridItem
 import com.eblan.launcher.domain.model.grid.ShortcutConfigGridItem
 import com.eblan.launcher.domain.repository.ShortcutConfigGridItemRepository
 import javax.inject.Inject
 
-internal class DefaultShortcutConfigGridItemRepository @Inject constructor(
-    private val shortcutConfigGridItemDao: ShortcutConfigGridItemDao,
-    private val gridLock: GridLock,
-) : ShortcutConfigGridItemRepository {
+internal class DefaultShortcutConfigGridItemRepository @Inject constructor(private val shortcutConfigGridItemDao: ShortcutConfigGridItemDao) : ShortcutConfigGridItemRepository {
     override suspend fun getShortcutConfigGridItems(): List<ShortcutConfigGridItem> = shortcutConfigGridItemDao.getShortcutConfigGridItemEntities().map {
         it.asModel()
     }
 
-    override suspend fun updateShortcutConfigGridItem(shortcutConfigGridItem: ShortcutConfigGridItem) = gridLock.withLock {
+    override suspend fun updateShortcutConfigGridItem(shortcutConfigGridItem: ShortcutConfigGridItem) {
         shortcutConfigGridItemDao.updateShortcutConfigGridItemEntity(
             shortcutConfigGridItem.asEntity(),
         )
     }
 
-    override suspend fun deleteShortcutConfigGridItems(shortcutConfigGridItems: List<ShortcutConfigGridItem>) = gridLock.withLock {
+    override suspend fun deleteShortcutConfigGridItems(shortcutConfigGridItems: List<ShortcutConfigGridItem>) {
         val entities = shortcutConfigGridItems.map {
             it.asEntity()
         }
@@ -48,7 +44,7 @@ internal class DefaultShortcutConfigGridItemRepository @Inject constructor(
         shortcutConfigGridItemDao.deleteShortcutConfigGridItemEntities(entities = entities)
     }
 
-    override suspend fun deleteShortcutConfigGridItem(shortcutConfigGridItem: ShortcutConfigGridItem) = gridLock.withLock {
+    override suspend fun deleteShortcutConfigGridItem(shortcutConfigGridItem: ShortcutConfigGridItem) {
         shortcutConfigGridItemDao.deleteShortcutConfigGridItemEntity(entity = shortcutConfigGridItem.asEntity())
     }
 
@@ -65,7 +61,7 @@ internal class DefaultShortcutConfigGridItemRepository @Inject constructor(
     override suspend fun deleteShortcutConfigGridItemByPackageName(
         serialNumber: Long,
         packageName: String,
-    ) = gridLock.withLock {
+    ) {
         shortcutConfigGridItemDao.deleteShortcutConfigGridItemEntityPackageName(
             serialNumber = serialNumber,
             packageName = packageName,
@@ -74,21 +70,21 @@ internal class DefaultShortcutConfigGridItemRepository @Inject constructor(
 
     override suspend fun updatePartialShortcutConfigGridItems(
         partialShortcutConfigGridItems: List<PartialShortcutConfigGridItem>,
-    ) = gridLock.withLock {
+    ) {
         shortcutConfigGridItemDao.updatePartialShortcutConfigGridItems(
             partialShortcutConfigGridItems = partialShortcutConfigGridItems,
         )
     }
 
-    override suspend fun insertShortcutConfigGridItem(shortcutConfigGridItem: ShortcutConfigGridItem) = gridLock.withLock {
+    override suspend fun insertShortcutConfigGridItem(shortcutConfigGridItem: ShortcutConfigGridItem) {
         shortcutConfigGridItemDao.insertShortcutConfigGridItemEntity(entity = shortcutConfigGridItem.asEntity())
     }
 
-    override suspend fun upsertShortcutConfigGridItem(shortcutConfigGridItem: ShortcutConfigGridItem) = gridLock.withLock {
+    override suspend fun upsertShortcutConfigGridItem(shortcutConfigGridItem: ShortcutConfigGridItem) {
         shortcutConfigGridItemDao.upsertShortcutConfigGridItemEntity(entity = shortcutConfigGridItem.asEntity())
     }
 
-    override suspend fun deleteShortcutConfigGridItemById(id: String) = gridLock.withLock {
+    override suspend fun deleteShortcutConfigGridItemById(id: String) {
         shortcutConfigGridItemDao.deleteShortcutConfigGridItemEntityById(id = id)
     }
 }

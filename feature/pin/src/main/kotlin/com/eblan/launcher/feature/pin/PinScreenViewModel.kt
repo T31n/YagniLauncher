@@ -19,6 +19,7 @@ package com.eblan.launcher.feature.pin
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.eblan.launcher.domain.common.GridLock
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.usecase.grid.DeleteGridItemUseCase
@@ -36,6 +37,7 @@ class PinScreenViewModel @Inject constructor(
     private val addPinShortcutToHomeScreenUseCase: AddPinShortcutToHomeScreenUseCase,
     private val addPinWidgetToHomeScreenUseCase: AddPinWidgetToHomeScreenUseCase,
     private val gridRepository: GridRepository,
+    private val gridLock: GridLock,
     private val deleteGridItemUseCase: DeleteGridItemUseCase,
 ) : ViewModel() {
     private val _gridItem = MutableStateFlow<GridItem?>(null)
@@ -118,7 +120,9 @@ class PinScreenViewModel @Inject constructor(
 
     fun updateGridItemData(gridItem: GridItem) {
         viewModelScope.launch {
-            gridRepository.updateGridItem(gridItem = gridItem)
+            gridLock.withLock {
+                gridRepository.updateGridItem(gridItem = gridItem)
+            }
 
             _isBoundWidget.update {
                 true

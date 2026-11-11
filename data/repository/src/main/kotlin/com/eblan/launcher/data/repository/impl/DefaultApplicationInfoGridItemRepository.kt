@@ -20,7 +20,6 @@ package com.eblan.launcher.data.repository.impl
 import com.eblan.launcher.data.repository.mapper.asEntity
 import com.eblan.launcher.data.repository.mapper.asModel
 import com.eblan.launcher.data.room.dao.ApplicationInfoGridItemDao
-import com.eblan.launcher.domain.common.GridLock
 import com.eblan.launcher.domain.model.grid.ApplicationInfoGridItem
 import com.eblan.launcher.domain.model.grid.PartialApplicationInfoGridItem
 import com.eblan.launcher.domain.repository.ApplicationInfoGridItemRepository
@@ -28,19 +27,18 @@ import javax.inject.Inject
 
 internal class DefaultApplicationInfoGridItemRepository @Inject constructor(
     private val applicationInfoGridItemDao: ApplicationInfoGridItemDao,
-    private val gridLock: GridLock,
 ) : ApplicationInfoGridItemRepository {
     override suspend fun getApplicationInfoGridItems(): List<ApplicationInfoGridItem> = applicationInfoGridItemDao.getApplicationInfoGridItemEntities().map {
         it.asModel()
     }
 
-    override suspend fun updateApplicationInfoGridItem(applicationInfoGridItem: ApplicationInfoGridItem) = gridLock.withLock {
+    override suspend fun updateApplicationInfoGridItem(applicationInfoGridItem: ApplicationInfoGridItem) {
         applicationInfoGridItemDao.updateApplicationInfoGridItemEntity(
             applicationInfoGridItem.asEntity(),
         )
     }
 
-    override suspend fun deleteApplicationInfoGridItems(applicationInfoGridItems: List<ApplicationInfoGridItem>) = gridLock.withLock {
+    override suspend fun deleteApplicationInfoGridItems(applicationInfoGridItems: List<ApplicationInfoGridItem>) {
         val entities = applicationInfoGridItems.map {
             it.asEntity()
         }
@@ -48,7 +46,7 @@ internal class DefaultApplicationInfoGridItemRepository @Inject constructor(
         applicationInfoGridItemDao.deleteApplicationInfoGridItemEntities(entities = entities)
     }
 
-    override suspend fun deleteApplicationInfoGridItem(applicationInfoGridItem: ApplicationInfoGridItem) = gridLock.withLock {
+    override suspend fun deleteApplicationInfoGridItem(applicationInfoGridItem: ApplicationInfoGridItem) {
         applicationInfoGridItemDao.deleteApplicationInfoGridItemEntity(entity = applicationInfoGridItem.asEntity())
     }
 
@@ -65,20 +63,20 @@ internal class DefaultApplicationInfoGridItemRepository @Inject constructor(
     override suspend fun deleteApplicationInfoGridItem(
         serialNumber: Long,
         packageName: String,
-    ) = gridLock.withLock {
+    ) {
         applicationInfoGridItemDao.deleteApplicationInfoGridItemEntity(
             serialNumber = serialNumber,
             packageName = packageName,
         )
     }
 
-    override suspend fun updatePartialApplicationInfoGridItems(partialApplicationInfoGridItems: List<PartialApplicationInfoGridItem>) = gridLock.withLock {
+    override suspend fun updatePartialApplicationInfoGridItems(partialApplicationInfoGridItems: List<PartialApplicationInfoGridItem>) {
         applicationInfoGridItemDao.updatePartialApplicationInfoGridItems(
             partialApplicationInfoGridItems = partialApplicationInfoGridItems,
         )
     }
 
-    override suspend fun insertApplicationInfoGridItems(applicationInfoGridItems: List<ApplicationInfoGridItem>) = gridLock.withLock {
+    override suspend fun insertApplicationInfoGridItems(applicationInfoGridItems: List<ApplicationInfoGridItem>) {
         val entities = applicationInfoGridItems.map {
             it.asEntity()
         }
@@ -86,15 +84,15 @@ internal class DefaultApplicationInfoGridItemRepository @Inject constructor(
         applicationInfoGridItemDao.insertApplicationInfoGridItemEntities(entities = entities)
     }
 
-    override suspend fun insertApplicationInfoGridItem(applicationInfoGridItem: ApplicationInfoGridItem) = gridLock.withLock {
+    override suspend fun insertApplicationInfoGridItem(applicationInfoGridItem: ApplicationInfoGridItem) {
         applicationInfoGridItemDao.insertApplicationInfoGridItemEntity(entity = applicationInfoGridItem.asEntity())
     }
 
-    override suspend fun upsertApplicationInfoGridItem(applicationInfoGridItem: ApplicationInfoGridItem) = gridLock.withLock {
+    override suspend fun upsertApplicationInfoGridItem(applicationInfoGridItem: ApplicationInfoGridItem) {
         applicationInfoGridItemDao.upsertApplicationInfoGridItemEntity(entity = applicationInfoGridItem.asEntity())
     }
 
-    override suspend fun deleteApplicationInfoGridItemById(id: String) = gridLock.withLock {
+    override suspend fun deleteApplicationInfoGridItemById(id: String) {
         applicationInfoGridItemDao.deleteApplicationInfoGridItemEntityById(id = id)
     }
 }

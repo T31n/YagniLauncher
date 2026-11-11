@@ -23,6 +23,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
+import com.eblan.launcher.domain.common.GridLock
 import com.eblan.launcher.domain.framework.IconPackManager
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.model.grid.GridItem
@@ -53,6 +54,7 @@ internal class EditGridItemViewModel @Inject constructor(
     private val iconPackManager: IconPackManager,
     packageManagerWrapper: PackageManagerWrapper,
     private val gridRepository: GridRepository,
+    private val gridLock: GridLock,
     getEblanApplicationInfosUseCase: GetEblanApplicationInfosUseCase,
     private val updateGridItemCustomIconUseCase: UpdateGridItemCustomIconUseCase,
     private val deleteGridItemCustomIconUseCase: DeleteGridItemCustomIconUseCase,
@@ -101,7 +103,9 @@ internal class EditGridItemViewModel @Inject constructor(
 
     fun updateGridItem(gridItem: GridItem) {
         viewModelScope.launch {
-            gridRepository.updateGridItem(gridItem = gridItem)
+            gridLock.withLock {
+                gridRepository.updateGridItem(gridItem = gridItem)
+            }
 
             getGridItem()
         }
