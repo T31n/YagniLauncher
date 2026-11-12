@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~
   ~   Copyright 2023 Einstein Blanco
   ~
@@ -14,8 +15,7 @@
   ~   See the License for the specific language governing permissions and
   ~   limitations under the License.
   ~
-  -->
-<resources>
+  --><resources>
     <string name="choose_yagni_launcher">Wybierz Yagni Launcher</string>
     <string name="default_launcher">Domyślny launcher</string>
     <string name="themes_icon_packs">Motywy, paczki ikon</string>
@@ -24,12 +24,8 @@
     <string name="swipe_gesture_actions">Działania gestów przesunięcia</string>
     <string name="advanced_options_for_power_users">Opcje zaawansowane dla zaawansowanych użytkowników</string>
     <string name="thank_you_for_using_yagni_launcher_alpha">Dziękujemy za korzystanie z Yagni Launcher Alpha!</string>
-    <string name="about_development_description">
-    Prace nad aplikacją rozpoczęły się w styczniu 2025 roku z regularnymi, cotygodniowymi aktualizacjami. To mój jak dotąd najbardziej złożony projekt, w którego ulepszanie wkładam mnóstwo wysiłku.
-</string>
-    <string name="support_message">
-    Jeśli uważasz tę aplikację za wartościową, będę wdzięczny za wsparcie poprzez przekazanie darowizny w serwisie Ko-fi lub dodanie gwiazdki do repozytorium na GitHubie.
-</string>
+    <string name="about_development_description">Prace nad aplikacją rozpoczęły się w styczniu 2025 roku z regularnymi, cotygodniowymi aktualizacjami. To mój jak dotąd najbardziej złożony projekt, w którego ulepszanie wkładam mnóstwo wysiłku.</string>
+    <string name="support_message">Jeśli uważasz tę aplikację za wartościową, będę wdzięczny za wsparcie poprzez przekazanie darowizny w serwisie Ko-fi lub dodanie gwiazdki do repozytorium na GitHubie.</string>
     <string name="support_on_ko_fi">Wesprzyj na Ko-Fi</string>
     <string name="star_on_github">Dodaj gwiazdkę na GitHubie</string>
     <string name="note_this_informational_card_will_be_removed_in_future_stable_releases">Uwaga: Ta karta informacyjna zostanie usunięta w przyszłych wersjach stabilnych</string>
