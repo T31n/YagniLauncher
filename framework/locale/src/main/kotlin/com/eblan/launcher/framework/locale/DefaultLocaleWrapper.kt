@@ -45,16 +45,15 @@ internal class DefaultLocaleWrapper @Inject constructor(
             while (xmlResourceParser.next() != XmlPullParser.END_DOCUMENT) {
                 if (xmlResourceParser.eventType == XmlPullParser.START_TAG && xmlResourceParser.name == "locale") {
                     supportedLanguageTags.add(
-                        xmlResourceParser.getAttributeValue(ANDROID_NAMESPACE, "name"),
+                        xmlResourceParser.getAttributeValue(
+                            "http://schemas.android.com/apk/res/android",
+                            "name",
+                        ),
                     )
                 }
             }
         }
 
         return supportedLanguageTags
-    }
-
-    private companion object {
-        const val ANDROID_NAMESPACE = "http://schemas.android.com/apk/res/android"
     }
 }
