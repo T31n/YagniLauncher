@@ -1,27 +1,3 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="horizontal"></string>
-    <string name="sort_update_and_delete_tags"></string>
-    <string name="no_folders"></string>
-    <string name="horizontal_grid"></string>
-    <string name="rows_height_is_not_valid"></string>
-    <string name="exclude_tagged_apps"></string>
-    <string name="rows_height"></string>
-    <string name="show_keyboard"></string>
-    <string name="vertical_grid"></string>
-    <string name="app_drawer_type"></string>
-    <string name="no_hidden_applications"></string>
-    <string name="fuzzy_search"></string>
-    <string name="hide_selected_apps_from_the_app_drawer"></string>
-    <string name="manage_tags"></string>
-    <string name="hide_apps_marked_with_selected_tags"></string>
-    <string name="no_tags"></string>
-    <string name="blur_behind"></string>
-    <string name="blurs_the_wallpaper_when_app_drawer_opens"></string>
-    <string name="vertical"></string>
-    <string name="hidden_applications"></string>
-    <string name="sort_update_and_delete_folders"></string>
-    <string name="find_apps_even_with_typos_or_accented_characters"></string>
-    <string name="show_keyboard_when_app_drawer_opens"></string>
-    <string name="manage_folders"></string>
-</resources>
+    </resources>
