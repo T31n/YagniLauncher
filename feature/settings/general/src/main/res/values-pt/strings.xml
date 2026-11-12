@@ -29,4 +29,8 @@
     <string name="tear_drop">Lágrima</string>
     <string name="apply_icons_from_supported_icon_packs">Aplicar icons de conjuntos de icons suportados</string>
     <string name="pentagon">Pentágono</string>
+    <string name="language_name"></string>
+    <string name="system_bars_theme"></string>
+    <string name="language"></string>
+    <string name="system_default"></string>
 </resources>
