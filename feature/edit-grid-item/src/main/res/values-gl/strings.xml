@@ -1,7 +1,3 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="grid_item_actions"></string>
-    <string name="custom_short_label"></string>
-    <string name="override"></string>
-    <string name="override_the_grid_item_settings"></string>
-</resources>
+    </resources>
