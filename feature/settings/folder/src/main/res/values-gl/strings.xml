@@ -1,17 +1,3 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="cell_width_is_not_valid"></string>
-    <string name="cell_height_is_not_valid"></string>
-    <string name="max_rows_is_not_valid"></string>
-    <string name="cell_height"></string>
-    <string name="folder_corner_radius"></string>
-    <string name="folder_border_width"></string>
-    <string name="folder_max_grid"></string>
-    <string name="max_columns_is_not_valid"></string>
-    <string name="folder_cell_dimension"></string>
-    <string name="cell_width"></string>
-    <string name="max_rows"></string>
-    <string name="folder_background_color"></string>
-    <string name="folder_border_color"></string>
-    <string name="max_columns"></string>
-</resources>
+    </resources>

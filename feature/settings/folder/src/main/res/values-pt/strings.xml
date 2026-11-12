@@ -12,6 +12,4 @@
     <string name="max_rows">Máximo de Linhas</string>
     <string name="folder_background_color">Cor de Fundo da Pasta</string>
     <string name="max_columns">Máximo de Colunas</string>
-    <string name="folder_border_width"></string>
-    <string name="folder_border_color"></string>
 </resources>
