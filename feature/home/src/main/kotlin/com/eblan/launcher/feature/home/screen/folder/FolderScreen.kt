@@ -129,7 +129,7 @@ internal fun FolderScreen(
     onDragFolderGridItem: () -> Unit,
     onLongPressFolderGridItem: (
         gridItem: GridItem,
-        imageBitmap: ImageBitmap,
+        imageBitmap: suspend () -> ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,

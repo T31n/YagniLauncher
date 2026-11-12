@@ -36,7 +36,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -84,7 +83,6 @@ import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
 import com.eblan.launcher.feature.home.util.handleEblanAction
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import com.eblan.launcher.ui.local.LocalStatusBarManager
-import kotlinx.coroutines.launch
 
 @Composable
 internal fun InteractiveFolderGridItem(
@@ -135,7 +133,7 @@ internal fun InteractiveFolderGridItem(
     onResetGrid: () -> Unit,
     onLongPressGridItem: (
         gridItem: GridItem,
-        imageBitmap: ImageBitmap,
+        imageBitmap: suspend () -> ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
@@ -150,8 +148,6 @@ internal fun InteractiveFolderGridItem(
     var intSize by remember { mutableStateOf(IntSize.Zero) }
 
     val graphicsLayer = rememberGraphicsLayer()
-
-    val scope = rememberCoroutineScope()
 
     val currentDrag = rememberUpdatedState(drag)
     val currentIsDragging = rememberUpdatedState(isDragging)
@@ -221,15 +217,13 @@ internal fun InteractiveFolderGridItem(
                             null
                         },
                         onLongPress = {
-                            scope.launch {
-                                currentOnLongPressGridItem(
-                                    gridItem,
-                                    graphicsLayer.toImageBitmap(),
-                                    intOffset,
-                                    intSize,
-                                    sharedElementKey,
-                                )
-                            }
+                            currentOnLongPressGridItem(
+                                gridItem,
+                                { graphicsLayer.toImageBitmap() },
+                                intOffset,
+                                intSize,
+                                sharedElementKey,
+                            )
                         },
                         onTap = {
                             currentOnTapFolderGridItem(

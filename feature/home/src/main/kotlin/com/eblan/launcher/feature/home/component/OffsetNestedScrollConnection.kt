@@ -47,9 +47,8 @@ internal fun rememberNestedScrollConnectionEffect(
     }
 
     LaunchedEffect(
-        key1 = nestedScrollConnection,
-        key2 = swipeY,
-        key3 = scrollableState.canScrollBackward,
+        key1 = swipeY,
+        key2 = scrollableState.canScrollBackward,
     ) {
         nestedScrollConnection.updateSwipeY(swipeY)
         nestedScrollConnection.updateCanScrollBackward(scrollableState.canScrollBackward)

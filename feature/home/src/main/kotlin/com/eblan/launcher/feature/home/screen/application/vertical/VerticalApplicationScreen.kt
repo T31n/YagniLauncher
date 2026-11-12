@@ -518,9 +518,10 @@ private fun EblanApplicationInfos(
     val privateIsQuiteModeEnabled by rememberIsPrivateQuietModeEnabled(eblanUser = getEblanApplicationInfosByLabelAndTag.privateEblanUser)
 
     val isDefaultLauncher by rememberIsDefaultLauncher()
+    val isScreenDismissed = swipeY.toInt() == screenHeight
 
-    LaunchedEffect(key1 = swipeY) {
-        if (swipeY.toInt() == screenHeight) {
+    LaunchedEffect(key1 = isScreenDismissed) {
+        if (isScreenDismissed) {
             lazyGridState.scrollToItem(0)
         }
     }

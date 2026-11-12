@@ -143,6 +143,7 @@ internal fun handleDragGridItem(
         gridWidth: Int,
         gridHeight: Int,
     ) -> Unit,
+    onCancelPendingMoveGridItem: () -> Unit,
     onUpdateAssociate: (Associate) -> Unit,
     onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
 ) {
@@ -217,6 +218,7 @@ internal fun handleDragGridItem(
                     safeDrawingHeight = safeDrawingHeight,
                     // Callbacks
                     onMoveGridItem = onMoveGridItem,
+                    onCancelPendingMoveGridItem = onCancelPendingMoveGridItem,
                     onUpdateAssociate = onUpdateAssociate,
                     onUpdateSharedElementKey = onUpdateSharedElementKey,
                 )
@@ -239,6 +241,7 @@ internal fun handleDragGridItem(
                     dragY = localDragY,
                     // Callbacks
                     onMoveGridItem = onMoveGridItem,
+                    onCancelPendingMoveGridItem = onCancelPendingMoveGridItem,
                     onUpdateAssociate = onUpdateAssociate,
                     onUpdateSharedElementKey = onUpdateSharedElementKey,
                 )
@@ -592,6 +595,7 @@ private fun dragGridItem(
         gridWidth: Int,
         gridHeight: Int,
     ) -> Unit,
+    onCancelPendingMoveGridItem: () -> Unit,
     onUpdateAssociate: (Associate) -> Unit,
     onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
 ) {
@@ -624,11 +628,20 @@ private fun dragGridItem(
         currentPage = currentPage,
     )
 
-    if (isGridItemSpanWithinBounds(
+    if (newMovingGridItem == movingGridItem) {
+        onUpdateAssociate(Associate.Grid)
+        onUpdateSharedElementKey(
+            SharedElementKey(
+                id = newMovingGridItem.id,
+                parent = SharedElementKey.Parent.Grid,
+            ),
+        )
+        onCancelPendingMoveGridItem()
+    } else if (isGridItemSpanWithinBounds(
             gridItem = newMovingGridItem,
             columns = columns,
             rows = rows,
-        ) && newMovingGridItem != movingGridItem
+        )
     ) {
         onUpdateAssociate(Associate.Grid)
 
@@ -676,6 +689,7 @@ private fun dragDockGridItem(
         gridWidth: Int,
         gridHeight: Int,
     ) -> Unit,
+    onCancelPendingMoveGridItem: () -> Unit,
     onUpdateAssociate: (Associate) -> Unit,
     onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
 ) {
@@ -704,11 +718,20 @@ private fun dragDockGridItem(
         currentPage = currentPage,
     )
 
-    if (isGridItemSpanWithinBounds(
+    if (newMovingGridItem == movingGridItem) {
+        onUpdateAssociate(Associate.Dock)
+        onUpdateSharedElementKey(
+            SharedElementKey(
+                id = newMovingGridItem.id,
+                parent = SharedElementKey.Parent.Dock,
+            ),
+        )
+        onCancelPendingMoveGridItem()
+    } else if (isGridItemSpanWithinBounds(
             gridItem = newMovingGridItem,
             columns = dockColumns,
             rows = dockRows,
-        ) && newMovingGridItem != movingGridItem
+        )
     ) {
         onUpdateAssociate(Associate.Dock)
 

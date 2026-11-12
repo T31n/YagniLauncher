@@ -46,7 +46,6 @@ import com.eblan.launcher.domain.usecase.application.GetEblanShortcutConfigsByLa
 import com.eblan.launcher.domain.usecase.application.GetEblanShortcutInfosUseCase
 import com.eblan.launcher.domain.usecase.folder.DeleteFolderEblanApplicationInfoGridItemsUseCase
 import com.eblan.launcher.domain.usecase.folder.GetFolderEblanApplicationInfoPopupsUseCase
-import com.eblan.launcher.domain.usecase.folder.GetFolderPopupsUseCase
 import com.eblan.launcher.domain.usecase.folder.GetRecursiveFolderEblanApplicationInfosUseCase
 import com.eblan.launcher.domain.usecase.folder.MoveFolderEblanApplicationInfoGridItemUseCase
 import com.eblan.launcher.domain.usecase.folder.MoveFolderGridItemUseCase
@@ -108,7 +107,6 @@ internal class HomeViewModel @Inject constructor(
     private val iconKeyGenerator: IconKeyGenerator,
     private val deleteGridItemUseCase: DeleteGridItemUseCase,
     getTextColorUseCase: GetTextColorUseCase,
-    getFolderPopupsUseCase: GetFolderPopupsUseCase,
     getFolderEblanApplicationInfoPopupsUseCase: GetFolderEblanApplicationInfoPopupsUseCase,
     private val moveFolderEblanApplicationInfoGridItemUseCase: MoveFolderEblanApplicationInfoGridItemUseCase,
     getEblanApplicationTagsUseCase: GetEblanApplicationTagsUseCase,
@@ -218,12 +216,6 @@ internal class HomeViewModel @Inject constructor(
         initialValue = TextColor.System,
     )
 
-    val previewFolderGridItems = getFolderPopupsUseCase().stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = emptyMap(),
-    )
-
     val folderEblanApplicationInfoPopups =
         getFolderEblanApplicationInfoPopupsUseCase().stateIn(
             scope = viewModelScope,
@@ -254,18 +246,24 @@ internal class HomeViewModel @Inject constructor(
         moveGridItemJob = viewModelScope.launch {
             delay(moveDelay)
 
+            val moveGridItemResult = moveGridItemUseCase(
+                movingGridItem = movingGridItem,
+                x = x,
+                y = y,
+                columns = columns,
+                rows = rows,
+                gridWidth = gridWidth,
+                gridHeight = gridHeight,
+            )
+
             _moveGridItemResult.update {
-                moveGridItemUseCase(
-                    movingGridItem = movingGridItem,
-                    x = x,
-                    y = y,
-                    columns = columns,
-                    rows = rows,
-                    gridWidth = gridWidth,
-                    gridHeight = gridHeight,
-                )
+                moveGridItemResult
             }
         }
+    }
+
+    fun cancelPendingMoveGridItem() {
+        moveGridItemJob?.cancel()
     }
 
     fun resizeGridItem(
@@ -549,16 +547,18 @@ internal class HomeViewModel @Inject constructor(
         moveGridItemJob = viewModelScope.launch {
             delay(moveDelay)
 
+            val folderMoveGridItemResult = moveFolderGridItemUseCase(
+                folderPopup = folderPopup,
+                movingGridItem = movingGridItem,
+                dragX = dragX,
+                dragY = dragY,
+                gridWidth = gridWidth,
+                gridHeight = gridHeight,
+                currentPage = currentPage,
+            )
+
             _moveGridItemResult.update {
-                moveFolderGridItemUseCase(
-                    folderPopup = folderPopup,
-                    movingGridItem = movingGridItem,
-                    dragX = dragX,
-                    dragY = dragY,
-                    gridWidth = gridWidth,
-                    gridHeight = gridHeight,
-                    currentPage = currentPage,
-                )
+                folderMoveGridItemResult
             }
         }
     }
@@ -756,7 +756,7 @@ internal class HomeViewModel @Inject constructor(
         moveGridItemJob = viewModelScope.launch {
             delay(moveDelay)
 
-            _moveFolderEblanApplicationInfoGridItemResult.update {
+            val moveFolderEblanApplicationInfoGridItemResult =
                 moveFolderEblanApplicationInfoGridItemUseCase(
                     folderGridItemPopup = folderGridItemPopup,
                     folderEblanApplicationInfoGridItem = folderEblanApplicationInfoGridItem,
@@ -766,6 +766,9 @@ internal class HomeViewModel @Inject constructor(
                     gridHeight = gridHeight,
                     currentPage = currentPage,
                 )
+
+            _moveFolderEblanApplicationInfoGridItemResult.update {
+                moveFolderEblanApplicationInfoGridItemResult
             }
         }
     }

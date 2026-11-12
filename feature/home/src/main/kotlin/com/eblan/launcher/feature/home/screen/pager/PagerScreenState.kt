@@ -90,6 +90,10 @@ import com.eblan.launcher.ui.local.LocalStatusBarManager
 import com.eblan.launcher.ui.local.LocalUserManager
 import com.eblan.launcher.ui.local.LocalWallpaperManager
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
@@ -175,6 +179,8 @@ internal class PagerScreenState(
 
     var sharedElementKey by mutableStateOf<SharedElementKey?>(null)
         private set
+
+    private var overlayCaptureJob: Job? = null
 
     var associate by mutableStateOf<Associate?>(null)
         private set
@@ -416,6 +422,8 @@ internal class PagerScreenState(
     }
 
     fun resetOverlay() {
+        cancelOverlayCapture()
+
         overlayImageBitmap = null
 
         sharedElementKey = null
@@ -425,6 +433,37 @@ internal class PagerScreenState(
         overlayIntSize = null
 
         drag = Drag.None
+    }
+
+    private fun cancelOverlayCapture() {
+        overlayCaptureJob?.cancel()
+
+        overlayCaptureJob = null
+    }
+
+    private fun launchOverlayCapture(
+        imageBitmap: suspend () -> ImageBitmap,
+        onImageBitmapCaptured: (ImageBitmap) -> Unit,
+    ) {
+        val captureJob = scope.launch(start = CoroutineStart.LAZY) {
+            val currentJob = currentCoroutineContext()[Job]
+
+            try {
+                val capturedImageBitmap = imageBitmap()
+
+                currentCoroutineContext().ensureActive()
+
+                onImageBitmapCaptured(capturedImageBitmap)
+            } finally {
+                if (overlayCaptureJob === currentJob) {
+                    overlayCaptureJob = null
+                }
+            }
+        }
+
+        overlayCaptureJob = captureJob
+
+        captureJob.start()
     }
 
     fun updateHasDoubleTap(value: Boolean) {
@@ -1356,7 +1395,7 @@ internal class PagerScreenState(
     fun longPressGridItem(
         // Grid item details
         gridItem: GridItem,
-        imageBitmap: ImageBitmap,
+        imageBitmap: suspend () -> ImageBitmap,
         newSharedElementKey: SharedElementKey,
         // Grid item position and size
         intOffset: IntOffset,
@@ -1366,6 +1405,8 @@ internal class PagerScreenState(
         onUpdateIsVisibleOverlay: (Boolean) -> Unit,
         onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
     ) {
+        cancelOverlayCapture()
+
         onUpdateGridItemSource(GridItemSource.Existing)
 
         onUpdateMoveGridItemResult(
@@ -1376,7 +1417,7 @@ internal class PagerScreenState(
             ),
         )
 
-        overlayImageBitmap = imageBitmap
+        overlayImageBitmap = null
 
         overlayIntOffset = intOffset
 
@@ -1384,15 +1425,19 @@ internal class PagerScreenState(
 
         sharedElementKey = newSharedElementKey
 
-        menuIntOffset = intOffset
+        launchOverlayCapture(imageBitmap) { capturedImageBitmap ->
+            overlayImageBitmap = capturedImageBitmap
 
-        menuIntSize = intSize
+            menuIntOffset = intOffset
 
-        selectedGridItem = gridItem
+            menuIntSize = intSize
 
-        showGridItemMenu = true
+            selectedGridItem = gridItem
 
-        onUpdateIsVisibleOverlay(true)
+            showGridItemMenu = true
+
+            onUpdateIsVisibleOverlay(true)
+        }
     }
 
     fun showFolderWhenDragging(
@@ -1436,7 +1481,7 @@ internal class PagerScreenState(
     fun longPressFolderGridItem(
         // Item details
         gridItem: GridItem,
-        imageBitmap: ImageBitmap,
+        imageBitmap: suspend () -> ImageBitmap,
         // Position and size
         intOffset: IntOffset,
         intSize: IntSize,
@@ -1446,6 +1491,8 @@ internal class PagerScreenState(
         onUpdateIsVisibleOverlay: (Boolean) -> Unit,
         onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
     ) {
+        cancelOverlayCapture()
+
         onUpdateMoveGridItemResult(
             MoveGridItemResult(
                 isSuccess = true,
@@ -1454,7 +1501,7 @@ internal class PagerScreenState(
             ),
         )
 
-        overlayImageBitmap = imageBitmap
+        overlayImageBitmap = null
 
         overlayIntOffset = intOffset
 
@@ -1462,15 +1509,19 @@ internal class PagerScreenState(
 
         sharedElementKey = newSharedElementKey
 
-        menuIntOffset = intOffset
+        launchOverlayCapture(imageBitmap) { capturedImageBitmap ->
+            overlayImageBitmap = capturedImageBitmap
 
-        menuIntSize = intSize
+            menuIntOffset = intOffset
 
-        selectedGridItem = gridItem
+            menuIntSize = intSize
 
-        showFolderGridItemMenu = true
+            selectedGridItem = gridItem
 
-        onUpdateIsVisibleOverlay(true)
+            showFolderGridItemMenu = true
+
+            onUpdateIsVisibleOverlay(true)
+        }
     }
 
     fun dragFolderGridItem() {
@@ -1722,7 +1773,7 @@ internal class PagerScreenState(
         folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
         // Visuals
         newSharedElementKey: SharedElementKey,
-        imageBitmap: ImageBitmap,
+        imageBitmap: suspend () -> ImageBitmap,
         // Layout
         intOffset: IntOffset,
         intSize: IntSize,
@@ -1730,6 +1781,8 @@ internal class PagerScreenState(
         onUpdateMoveFolderEblanApplicationInfoGridItemResult: (MoveFolderEblanApplicationInfoGridItemResult) -> Unit,
         onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     ) {
+        cancelOverlayCapture()
+
         onUpdateMoveFolderEblanApplicationInfoGridItemResult(
             MoveFolderEblanApplicationInfoGridItemResult(
                 isSuccess = true,
@@ -1737,7 +1790,7 @@ internal class PagerScreenState(
             ),
         )
 
-        overlayImageBitmap = imageBitmap
+        overlayImageBitmap = null
 
         overlayIntOffset = intOffset
 
@@ -1745,15 +1798,19 @@ internal class PagerScreenState(
 
         sharedElementKey = newSharedElementKey
 
-        menuIntOffset = intOffset
+        launchOverlayCapture(imageBitmap) { capturedImageBitmap ->
+            overlayImageBitmap = capturedImageBitmap
 
-        menuIntSize = intSize
+            menuIntOffset = intOffset
 
-        selectedFolderEblanApplicationInfoGridItem = folderEblanApplicationInfoGridItem
+            menuIntSize = intSize
 
-        showFolderEblanApplicationInfoGridItemMenu = true
+            selectedFolderEblanApplicationInfoGridItem = folderEblanApplicationInfoGridItem
 
-        onUpdateIsVisibleOverlay(true)
+            showFolderEblanApplicationInfoGridItemMenu = true
+
+            onUpdateIsVisibleOverlay(true)
+        }
     }
 
     fun dragFolderEblanApplicationInfoGridItem() {

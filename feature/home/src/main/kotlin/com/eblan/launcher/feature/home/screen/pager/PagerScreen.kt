@@ -79,6 +79,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -225,6 +227,7 @@ internal fun PagerScreen(
         gridWidth: Int,
         gridHeight: Int,
     ) -> Unit,
+    onCancelPendingMoveGridItem: () -> Unit,
     onResizeGridItem: (
         gridItem: GridItem,
         columns: Int,
@@ -396,6 +399,9 @@ internal fun PagerScreen(
     val currentIsVisibleOverlay = rememberUpdatedState(isVisibleOverlay)
     val currentMoveGridItemResult = rememberUpdatedState(moveGridItemResult)
     val currentFolderGridItemEntries = rememberUpdatedState(folderGridItemEntries)
+    var sharedTransitionLayoutCoordinates by remember {
+        mutableStateOf<LayoutCoordinates?>(null)
+    }
 
     val appWidgetLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
@@ -613,7 +619,6 @@ internal fun PagerScreen(
     LaunchedEffect(
         key1 = pagerScreenState.dragIntOffset,
         key2 = pagerScreenState,
-        key3 = experimentalSettings,
     ) {
         handleDragGridItem(
             // Grid Dimensions
@@ -644,6 +649,7 @@ internal fun PagerScreen(
             isDockScrollInProgress = dockGridHorizontalPagerState.isScrollInProgress,
             // Callbacks
             onMoveGridItem = onMoveGridItem,
+            onCancelPendingMoveGridItem = onCancelPendingMoveGridItem,
             onUpdateAssociate = pagerScreenState::updateAssociate,
             onUpdateSharedElementKey = pagerScreenState::updateSharedElementKey,
         )
@@ -652,7 +658,6 @@ internal fun PagerScreen(
     LaunchedEffect(
         key1 = pagerScreenState.drag,
         key2 = pagerScreenState,
-        key3 = experimentalSettings,
     ) {
         handleDropGridItem(
             // Context and Environment
@@ -852,9 +857,17 @@ internal fun PagerScreen(
     SharedTransitionLayout(
         modifier = modifier
             .fillMaxSize()
+            .onGloballyPositioned {
+                sharedTransitionLayoutCoordinates = it
+            }
             .pointerInput(key1 = pagerScreenState) {
                 detectDragGesturesAfterLongPress(
-                    onDragStart = pagerScreenState::dragStart,
+                    onDragStart = { pointerOffset ->
+                        val rootPointerOffset = requireNotNull(sharedTransitionLayoutCoordinates)
+                            .localToRoot(pointerOffset)
+
+                        pagerScreenState.dragStart(rootPointerOffset)
+                    },
                     onDragEnd = {
                         pagerScreenState.updateDrag(Drag.End)
                     },

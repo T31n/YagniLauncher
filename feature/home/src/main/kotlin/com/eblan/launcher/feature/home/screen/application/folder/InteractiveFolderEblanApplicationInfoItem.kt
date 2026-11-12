@@ -39,7 +39,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -124,7 +123,7 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
     // Callbacks
     onLongPressFolderEblanApplicationInfoGridItem: (
         folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
-        imageBitmap: ImageBitmap,
+        imageBitmap: suspend () -> ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
@@ -318,7 +317,7 @@ private fun InteractiveEblanApplicationInfoItem(
     // Callbacks
     onLongPressFolderEblanApplicationInfoGridItem: (
         folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
-        imageBitmap: ImageBitmap,
+        imageBitmap: suspend () -> ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
@@ -329,8 +328,6 @@ private fun InteractiveEblanApplicationInfoItem(
     val launcherApps = LocalLauncherApps.current
     val layoutDirection = LocalLayoutDirection.current
     val keyboardController = LocalSoftwareKeyboardController.current
-
-    val scope = rememberCoroutineScope()
 
     val iconPackFilePath = iconPackFilePaths[data.componentName]
     val icon = data.icon
@@ -390,17 +387,15 @@ private fun InteractiveEblanApplicationInfoItem(
                                 )
                             },
                             onLongPress = {
-                                scope.launch {
-                                    keyboardController?.hide()
+                                keyboardController?.hide()
 
-                                    onLongPressFolderEblanApplicationInfoGridItem(
-                                        folderEblanApplicationInfoGridItem,
-                                        graphicsLayer.toImageBitmap(),
-                                        intOffset,
-                                        intSize,
-                                        sharedElementKey,
-                                    )
-                                }
+                                onLongPressFolderEblanApplicationInfoGridItem(
+                                    folderEblanApplicationInfoGridItem,
+                                    { graphicsLayer.toImageBitmap() },
+                                    intOffset,
+                                    intSize,
+                                    sharedElementKey,
+                                )
                             },
                         )
                     }
@@ -495,7 +490,7 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
     // Callbacks
     onLongPressFolderEblanApplicationInfoGridItem: (
         folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
-        imageBitmap: ImageBitmap,
+        imageBitmap: suspend () -> ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
@@ -503,8 +498,6 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
     onTapFolderEblanApplicationInfoItem: (FolderEntry) -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
-
-    val scope = rememberCoroutineScope()
 
     val maxLines = if (appDrawerSettings.gridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
 
@@ -543,17 +536,15 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
                                 )
                             },
                             onLongPress = {
-                                scope.launch {
-                                    keyboardController?.hide()
+                                keyboardController?.hide()
 
-                                    onLongPressFolderEblanApplicationInfoGridItem(
-                                        folderEblanApplicationInfoGridItem,
-                                        graphicsLayer.toImageBitmap(),
-                                        intOffset,
-                                        intSize,
-                                        sharedElementKey,
-                                    )
-                                }
+                                onLongPressFolderEblanApplicationInfoGridItem(
+                                    folderEblanApplicationInfoGridItem,
+                                    { graphicsLayer.toImageBitmap() },
+                                    intOffset,
+                                    intSize,
+                                    sharedElementKey,
+                                )
                             },
                         )
                     }
