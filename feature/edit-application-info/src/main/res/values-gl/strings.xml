@@ -1,9 +1,3 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hide_from_drawer"></string>
-    <string name="tags"></string>
-    <string name="tag_is_not_valid"></string>
-    <string name="add_tag"></string>
-    <string name="view_hidden_apps_in_app_drawer_settings"></string>
-    <string name="update_tag"></string>
-</resources>
+    </resources>
