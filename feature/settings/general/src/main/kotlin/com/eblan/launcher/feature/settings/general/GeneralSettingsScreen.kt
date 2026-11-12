@@ -18,6 +18,7 @@
 package com.eblan.launcher.feature.settings.general
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Build
 import android.provider.Settings
 import androidx.compose.foundation.layout.Arrangement
@@ -58,6 +59,7 @@ import com.eblan.launcher.service.IconPackService
 import com.eblan.launcher.ui.dialog.ColorPickerDialog
 import com.eblan.launcher.ui.dialog.RadioOptionsDialog
 import com.eblan.launcher.ui.dialog.getTitle
+import com.eblan.launcher.ui.local.LocalLocaleWrapper
 import com.eblan.launcher.ui.settings.SettingsColumnItem
 import com.eblan.launcher.ui.settings.SettingsDropdownItem
 import com.eblan.launcher.ui.settings.SettingsSwitchItem
@@ -65,6 +67,7 @@ import com.eblan.launcher.ui.settings.rememberIsNotificationAccessGranted
 import com.eblan.launcher.ui.settings.settingsFirstItemShape
 import com.eblan.launcher.ui.settings.settingsLastItemShape
 import com.eblan.launcher.ui.settings.settingsMiddleItemShape
+import java.util.Locale
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -158,6 +161,10 @@ private fun Success(
     onUpdateGeneralSettings: (GeneralSettings) -> Unit,
 ) {
     val context = LocalContext.current
+    val localeWrapper = LocalLocaleWrapper.current
+    val applicationLanguageTags = remember {
+        listOf("") + localeWrapper.getSupportedLanguageTags()
+    }
 
     val isNotificationAccessGranted by rememberIsNotificationAccessGranted()
 
@@ -165,6 +172,9 @@ private fun Success(
     var selectIconPackDialog by remember { mutableStateOf(false) }
     var showIconTintPickerDialog by remember { mutableStateOf(false) }
     var showIconShapeDialog by remember { mutableStateOf(false) }
+    var showLanguageDialog by remember { mutableStateOf(false) }
+
+    val applicationLanguageTag = localeWrapper.getApplicationLanguageTag()
 
     Column(
         modifier = modifier
@@ -196,6 +206,18 @@ private fun Success(
             // Actions
             onClick = {
                 selectIconPackDialog = true
+            },
+        )
+
+        SettingsColumnItem(
+            // Content
+            title = stringResource(R.string.language),
+            subtitle = getLanguageLabel(applicationLanguageTag),
+            // Layout
+            shape = settingsMiddleItemShape,
+            // Actions
+            onClick = {
+                showLanguageDialog = true
             },
         )
 
@@ -389,6 +411,25 @@ private fun Success(
         )
     }
 
+    if (showLanguageDialog) {
+        RadioOptionsDialog(
+            // Dialog Content
+            title = stringResource(R.string.language),
+            options = applicationLanguageTags,
+            selected = applicationLanguageTag,
+            // Callbacks
+            label = {
+                getLanguageLabel(it)
+            },
+            onDismissRequest = {
+                showLanguageDialog = false
+            },
+            onUpdateClick = {
+                localeWrapper.setApplicationLanguageTag(languageTag = it)
+            },
+        )
+    }
+
     if (showIconShapeDialog) {
         RadioOptionsDialog(
             // Dialog Content
@@ -431,4 +472,19 @@ private fun IconShape.getTitle() = when (this) {
     IconShape.Cookie -> stringResource(R.string.cookie)
     IconShape.Flower -> stringResource(R.string.flower)
     IconShape.Shield -> stringResource(R.string.shield)
+}
+
+@Composable
+private fun getLanguageLabel(languageTag: String): String {
+    val context = LocalContext.current
+
+    return if (languageTag.isEmpty()) {
+        stringResource(R.string.system_default)
+    } else {
+        val languageConfiguration = Configuration(context.resources.configuration).apply {
+            setLocale(Locale.forLanguageTag(languageTag))
+        }
+
+        context.createConfigurationContext(languageConfiguration).getString(R.string.language_name)
+    }
 }

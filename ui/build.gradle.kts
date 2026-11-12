@@ -48,6 +48,7 @@ dependencies {
     api(projects.framework.accessibilityManager)
     api(projects.framework.iconPackManager)
     api(projects.framework.launcherApps)
+    api(projects.framework.locale)
     api(projects.framework.packageManager)
     api(projects.framework.settings)
     api(projects.framework.statusbarManager)

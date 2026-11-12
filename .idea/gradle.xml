@@ -59,6 +59,7 @@
             <option value="$PROJECT_DIR$/framework/icon-pack-manager" />
             <option value="$PROJECT_DIR$/framework/jaro-winkler-similarity" />
             <option value="$PROJECT_DIR$/framework/launcher-apps" />
+            <option value="$PROJECT_DIR$/framework/locale" />
             <option value="$PROJECT_DIR$/framework/notification-manager" />
             <option value="$PROJECT_DIR$/framework/package-manager" />
             <option value="$PROJECT_DIR$/framework/resources" />
