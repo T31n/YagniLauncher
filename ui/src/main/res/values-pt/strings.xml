@@ -51,4 +51,6 @@
     <string name="single_line_label">Etiqueta em Linha Única</string>
     <string name="start_label_end_icon">Etiqueta no Início, Icon no Fim</string>
     <string name="open_recents">Abrir Recentes</string>
+    <string name="border_width"></string>
+    <string name="border_width_is_not_valid"></string>
 </resources>
