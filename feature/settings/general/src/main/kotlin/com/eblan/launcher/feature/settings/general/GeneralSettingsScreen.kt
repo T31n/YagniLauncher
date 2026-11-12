@@ -58,6 +58,7 @@ import com.eblan.launcher.service.IconPackService
 import com.eblan.launcher.ui.dialog.ColorPickerDialog
 import com.eblan.launcher.ui.dialog.RadioOptionsDialog
 import com.eblan.launcher.ui.dialog.getTitle
+import com.eblan.launcher.ui.local.LocalLocaleWrapper
 import com.eblan.launcher.ui.settings.SettingsColumnItem
 import com.eblan.launcher.ui.settings.SettingsDropdownItem
 import com.eblan.launcher.ui.settings.SettingsSwitchItem
@@ -65,6 +66,7 @@ import com.eblan.launcher.ui.settings.rememberIsNotificationAccessGranted
 import com.eblan.launcher.ui.settings.settingsFirstItemShape
 import com.eblan.launcher.ui.settings.settingsLastItemShape
 import com.eblan.launcher.ui.settings.settingsMiddleItemShape
+import java.util.Locale
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -144,6 +146,15 @@ internal fun GeneralSettingsScreen(
     }
 }
 
+private val applicationLanguageTags = listOf("", "en", "ar", "cs", "pl", "ru")
+
+@Composable
+private fun getLanguageLabel(languageTag: String): String = if (languageTag.isEmpty()) {
+    stringResource(R.string.system_default)
+} else {
+    Locale.forLanguageTag(languageTag).getDisplayLanguage(Locale.forLanguageTag(languageTag))
+}
+
 @Composable
 private fun Success(
     // Icon Packs
@@ -158,6 +169,7 @@ private fun Success(
     onUpdateGeneralSettings: (GeneralSettings) -> Unit,
 ) {
     val context = LocalContext.current
+    val localeWrapper = LocalLocaleWrapper.current
 
     val isNotificationAccessGranted by rememberIsNotificationAccessGranted()
 
@@ -165,6 +177,11 @@ private fun Success(
     var selectIconPackDialog by remember { mutableStateOf(false) }
     var showIconTintPickerDialog by remember { mutableStateOf(false) }
     var showIconShapeDialog by remember { mutableStateOf(false) }
+    var showLanguageDialog by remember { mutableStateOf(false) }
+
+    var applicationLanguageTag by remember {
+        mutableStateOf(localeWrapper.getApplicationLanguageTag())
+    }
 
     Column(
         modifier = modifier
@@ -196,6 +213,18 @@ private fun Success(
             // Actions
             onClick = {
                 selectIconPackDialog = true
+            },
+        )
+
+        SettingsColumnItem(
+            // Content
+            title = stringResource(R.string.language),
+            subtitle = getLanguageLabel(applicationLanguageTag),
+            // Layout
+            shape = settingsMiddleItemShape,
+            // Actions
+            onClick = {
+                showLanguageDialog = true
             },
         )
 
@@ -385,6 +414,28 @@ private fun Success(
                         customIconTint = it,
                     ),
                 )
+            },
+        )
+    }
+
+    if (showLanguageDialog) {
+        RadioOptionsDialog(
+            // Dialog Content
+            title = stringResource(R.string.language),
+            options = applicationLanguageTags,
+            selected = applicationLanguageTag,
+            // Callbacks
+            label = {
+                getLanguageLabel(it)
+            },
+            onDismissRequest = {
+                showLanguageDialog = false
+            },
+            onUpdateClick = {
+                applicationLanguageTag = it
+                localeWrapper.setApplicationLanguageTag(languageTag = it)
+
+                showLanguageDialog = false
             },
         )
     }

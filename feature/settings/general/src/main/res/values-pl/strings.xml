@@ -25,6 +25,8 @@
     <string name="theme">Motyw</string>
     <string name="system_bars_theme">Motyw pasków systemowych</string>
     <string name="dynamic_theme">Motyw dynamiczny</string>
+    <string name="language">Język</string>
+    <string name="system_default">Domyślny systemowy</string>
     <string name="notification_dots">Kropki powiadomień</string>
     <string name="show_notification_dots">Pokazuj kropki powiadomień</string>
     <string name="apply_icons_from_supported_icon_packs">Zastosuj ikony ze wspieranych paczek ikon</string>

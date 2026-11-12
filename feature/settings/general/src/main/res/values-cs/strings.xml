@@ -25,6 +25,8 @@
     <string name="theme">Motiv</string>
     <string name="system_bars_theme">Motiv systémových lišt</string>
     <string name="dynamic_theme">Dynamický motiv</string>
+    <string name="language">Jazyk</string>
+    <string name="system_default">Výchozí nastavení systému</string>
     <string name="notification_dots">Tečky oznámení</string>
     <string name="show_notification_dots">Zobrazovat tečky oznámení</string>
     <string name="apply_icons_from_supported_icon_packs">Použít ikony z podporovaných balíčků ikon</string>

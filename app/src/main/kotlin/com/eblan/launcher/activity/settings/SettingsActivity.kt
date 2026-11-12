@@ -19,10 +19,10 @@ package com.eblan.launcher.activity.settings
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
@@ -36,11 +36,13 @@ import com.eblan.launcher.activity.main.MainActivity
 import com.eblan.launcher.designsystem.theme.EblanLauncherTheme
 import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.framework.accessibilitymanager.AndroidAccessibilityManagerWrapper
+import com.eblan.launcher.framework.locale.LocaleWrapper
 import com.eblan.launcher.framework.packagemanager.AndroidPackageManagerWrapper
 import com.eblan.launcher.framework.settings.AndroidSettingsWrapper
 import com.eblan.launcher.model.ActivityUiState
 import com.eblan.launcher.navigation.SettingsNavHost
 import com.eblan.launcher.ui.local.LocalAccessibilityManager
+import com.eblan.launcher.ui.local.LocalLocaleWrapper
 import com.eblan.launcher.ui.local.LocalPackageManager
 import com.eblan.launcher.ui.local.LocalSettings
 import com.eblan.launcher.util.handleEdgeToEdge
@@ -48,7 +50,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class SettingsActivity : ComponentActivity() {
+class SettingsActivity : AppCompatActivity() {
     private val viewModel: SettingsActivityViewModel by viewModels()
 
     @Inject
@@ -60,6 +62,9 @@ class SettingsActivity : ComponentActivity() {
     @Inject
     lateinit var androidAccessibilityManagerWrapper: AndroidAccessibilityManagerWrapper
 
+    @Inject
+    lateinit var localeWrapper: LocaleWrapper
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -68,6 +73,7 @@ class SettingsActivity : ComponentActivity() {
                 LocalPackageManager provides androidPackageManagerWrapper,
                 LocalSettings provides androidSettingsWrapper,
                 LocalAccessibilityManager provides androidAccessibilityManagerWrapper,
+                LocalLocaleWrapper provides localeWrapper,
             ) {
                 val navController = rememberNavController()
 

@@ -27,6 +27,7 @@
     <uses-permission android:name="android.permission.ACCESS_HIDDEN_PROFILES" />
 
     <application
+        android:localeConfig="@xml/locales_config"
         android:name=".EblanApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"

@@ -30,5 +30,6 @@ dependencies {
     implementation(projects.domain.framework)
     implementation(projects.domain.repository)
     implementation(projects.domain.useCase)
+    implementation(projects.framework.locale)
     implementation(projects.service)
 }

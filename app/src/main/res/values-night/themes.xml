@@ -17,9 +17,12 @@
   -->
 <resources>
 
-    <style name="Theme.EblanLauncher" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.EblanLauncher" parent="Theme.AppCompat.NoActionBar" />
 
-    <style name="Theme.EblanLauncher.Wallpaper" parent="android:Theme.Material.Wallpaper.NoTitleBar" />
+    <style name="Theme.EblanLauncher.Wallpaper" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowShowWallpaper">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
 
     <style name="PinActivityTheme" parent="@android:style/Theme.Translucent.NoTitleBar">
         <item name="android:windowTranslucentStatus">true</item>
