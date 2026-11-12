@@ -41,4 +41,11 @@
     <string name="dock_padding">Enchimento da Doca</string>
     <string name="prevent_rotation_when_device_orientation_changes">Não rodar quando a orientação do aparelho mudar</string>
     <string name="dock_rows_is_not_valid">Linhas da doca inválidas</string>
+    <string name="show_or_hide_the_dock"></string>
+    <string name="dock_grid_item"></string>
+    <string name="show_status_bar"></string>
+    <string name="show_the_navigation_bar_on_the_home_screen"></string>
+    <string name="show_the_status_bar_on_the_home_screen"></string>
+    <string name="enable_dock"></string>
+    <string name="show_navigation_bar"></string>
 </resources>
