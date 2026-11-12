@@ -619,7 +619,6 @@ internal fun PagerScreen(
     LaunchedEffect(
         key1 = pagerScreenState.dragIntOffset,
         key2 = pagerScreenState,
-        key3 = experimentalSettings,
     ) {
         handleDragGridItem(
             // Grid Dimensions
@@ -659,7 +658,6 @@ internal fun PagerScreen(
     LaunchedEffect(
         key1 = pagerScreenState.drag,
         key2 = pagerScreenState,
-        key3 = experimentalSettings,
     ) {
         handleDropGridItem(
             // Context and Environment

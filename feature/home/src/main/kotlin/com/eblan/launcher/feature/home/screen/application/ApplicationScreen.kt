@@ -739,6 +739,9 @@ private fun ApplicationScreenEffect(
 
     val focusManager = LocalFocusManager.current
 
+    val isScreenDismissed = swipeY == screenHeight.toFloat()
+    val shouldFocusSearch = swipeY == 0f && showKeyboard
+
     LaunchedEffect(key1 = textFieldState) {
         snapshotFlow { textFieldState.text }.debounce(500L.milliseconds).onEach {
             onGetEblanApplicationInfosByLabel(it.toString())
@@ -749,9 +752,12 @@ private fun ApplicationScreenEffect(
         onGetEblanApplicationInfosByTagId(selectedEblanApplicationInfoTagId)
     }
 
-    LaunchedEffect(key1 = swipeY, key2 = showKeyboard) {
-        when (swipeY) {
-            screenHeight.toFloat() -> {
+    LaunchedEffect(
+        key1 = isScreenDismissed,
+        key2 = shouldFocusSearch,
+    ) {
+        when {
+            isScreenDismissed -> {
                 textFieldState.clearText()
 
                 horizontalPagerState.scrollToPage(0)
@@ -761,7 +767,7 @@ private fun ApplicationScreenEffect(
                 keyboardController?.hide()
             }
 
-            0f if showKeyboard -> {
+            shouldFocusSearch -> {
                 focusRequester.requestFocus()
 
                 keyboardController?.show()

@@ -46,6 +46,7 @@ internal fun ScreenEffect(
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
+    val isScreenDismissed = swipeY == screenHeight.toFloat()
 
     LaunchedEffect(key1 = textFieldState) {
         snapshotFlow { textFieldState.text }.debounce(500L.milliseconds)
@@ -54,8 +55,8 @@ internal fun ScreenEffect(
             }.collect()
     }
 
-    LaunchedEffect(key1 = swipeY) {
-        if (swipeY == screenHeight.toFloat()) {
+    LaunchedEffect(key1 = isScreenDismissed) {
+        if (isScreenDismissed) {
             keyboardController?.hide()
         }
     }
