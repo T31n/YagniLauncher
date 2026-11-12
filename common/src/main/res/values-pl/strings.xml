@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~
   ~   Copyright 2023 Einstein Blanco
   ~
@@ -14,8 +15,7 @@
   ~   See the License for the specific language governing permissions and
   ~   limitations under the License.
   ~
-  -->
-<resources>
+  --><resources>
     <string name="save">Zapisz</string>
     <string name="settings">Ustawienia</string>
     <string name="experimental">Eksperymentalne</string>
@@ -34,7 +34,7 @@
     <string name="add">Dodaj</string>
     <string name="okay">Okej</string>
     <string name="custom_label_is_not_valid">Nieprawidłowa własna etykieta</string>
-    <string name="custom">Własny</string>
+    <string name="custom">Niestandardowy</string>
     <string name="rows_is_not_valid">Nieprawidłowa liczba wierszy</string>
     <string name="search_applications">Szukaj aplikacji</string>
     <string name="dark">Ciemny</string>
