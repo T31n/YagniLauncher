@@ -174,9 +174,7 @@ private fun Success(
     var showIconShapeDialog by remember { mutableStateOf(false) }
     var showLanguageDialog by remember { mutableStateOf(false) }
 
-    var applicationLanguageTag by remember {
-        mutableStateOf(localeWrapper.getApplicationLanguageTag())
-    }
+    val applicationLanguageTag = localeWrapper.getApplicationLanguageTag()
 
     Column(
         modifier = modifier
@@ -427,10 +425,7 @@ private fun Success(
                 showLanguageDialog = false
             },
             onUpdateClick = {
-                applicationLanguageTag = it
                 localeWrapper.setApplicationLanguageTag(languageTag = it)
-
-                showLanguageDialog = false
             },
         )
     }
