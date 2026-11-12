@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~
   ~   Copyright 2023 Einstein Blanco
   ~
@@ -14,8 +15,7 @@
   ~   See the License for the specific language governing permissions and
   ~   limitations under the License.
   ~
-  -->
-<resources>
+  --><resources>
     <string name="horizontal_grid">Horizontální mřížka</string>
     <string name="vertical_grid">Vertikální mřížka</string>
     <string name="rows_height">Výška řádků</string>
@@ -24,12 +24,12 @@
     <string name="no_hidden_applications">Žádné skryté aplikace</string>
     <string name="app_drawer_type">Typ nabídky aplikací</string>
     <string name="exclude_tagged_apps">Vyřadit oštítkované aplikace</string>
-    <string name="hide_selected_apps_from_the_app_drawer">Skrýt vybrané aplikace z nabídky aplikací</string>
+    <string name="hide_selected_apps_from_the_app_drawer">Skrýt vybrané aplikace z nabídky aplikací</string>
     <string name="hide_apps_marked_with_selected_tags">Skrýt aplikace označené vybranými štítky</string>
     <string name="show_keyboard">Zobrazit klávesnici</string>
     <string name="show_keyboard_when_app_drawer_opens">Zobrazit klávesnici při otevření nabídky</string>
     <string name="fuzzy_search">Fuzzy vyhledávání</string>
-    <string name="find_apps_even_with_typos_or_accented_characters">Vyhledávat aplikace i s překlepy nebo diakritikou</string>
+    <string name="find_apps_even_with_typos_or_accented_characters">Vyhledávat aplikace i s překlepy nebo diakritikou</string>
     <string name="blur_behind">Rozmazání pozadí</string>
     <string name="blurs_the_wallpaper_when_app_drawer_opens">Rozmazat tapetu při otevření nabídky aplikací</string>
     <string name="no_folders">Žádné složky</string>
