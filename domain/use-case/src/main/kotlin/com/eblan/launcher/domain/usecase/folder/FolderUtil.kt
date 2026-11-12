@@ -26,6 +26,7 @@ import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoWrapper
 import com.eblan.launcher.domain.model.folder.FolderPopup
 import com.eblan.launcher.domain.model.grid.FolderGridItemWrapper
 import com.eblan.launcher.domain.model.grid.GridItemData
+import com.eblan.launcher.domain.model.grid.GridItems
 import com.eblan.launcher.domain.usecase.util.asGridItem
 import com.eblan.launcher.domain.usecase.util.getGridDimension
 import com.eblan.launcher.domain.usecase.util.getGridItemsByPage
@@ -80,6 +81,30 @@ internal suspend fun List<FolderGridItemWrapper>.asPreviewFolders(
     maxFolderRows: Int,
 ): Map<String, FolderPopup> = associate {
     it.folderGridItem.id to it.asPreviewFolder(
+        maxFolderColumns = maxFolderColumns,
+        maxFolderRows = maxFolderRows,
+    )
+}
+
+/** Builds all grid-folder previews from one complete grid-items snapshot. */
+internal suspend fun GridItems.asPreviewFolders(
+    maxFolderColumns: Int,
+    maxFolderRows: Int,
+): Map<String, FolderPopup> {
+    val applicationInfoGridItemsByFolderId = applicationInfoGridItems.groupBy { it.folderId }
+    val shortcutInfoGridItemsByFolderId = shortcutInfoGridItems.groupBy { it.folderId }
+    val shortcutConfigGridItemsByFolderId = shortcutConfigGridItems.groupBy { it.folderId }
+    val folderGridItemsByFolderId = folderGridItems.groupBy { it.folderId }
+
+    return folderGridItems.map { folderGridItem ->
+        FolderGridItemWrapper(
+            folderGridItem = folderGridItem,
+            applicationInfoGridItems = applicationInfoGridItemsByFolderId[folderGridItem.id].orEmpty(),
+            shortcutInfoGridItems = shortcutInfoGridItemsByFolderId[folderGridItem.id].orEmpty(),
+            shortcutConfigGridItems = shortcutConfigGridItemsByFolderId[folderGridItem.id].orEmpty(),
+            folderGridItems = folderGridItemsByFolderId[folderGridItem.id].orEmpty(),
+        )
+    }.asPreviewFolders(
         maxFolderColumns = maxFolderColumns,
         maxFolderRows = maxFolderRows,
     )

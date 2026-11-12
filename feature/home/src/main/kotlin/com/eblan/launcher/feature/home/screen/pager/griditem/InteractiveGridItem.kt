@@ -27,7 +27,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -64,7 +63,6 @@ import com.eblan.launcher.feature.home.util.getVerticalAlignment
 import com.eblan.launcher.feature.home.util.getVerticalArrangement
 import com.eblan.launcher.ui.local.LocalAppWidgetHost
 import com.eblan.launcher.ui.local.LocalAppWidgetManager
-import kotlinx.coroutines.launch
 
 @Composable
 internal fun InteractiveGridItem(
@@ -112,7 +110,7 @@ internal fun InteractiveGridItem(
     onResetGrid: () -> Unit,
     onLongPressGridItem: (
         gridItem: GridItem,
-        imageBitmap: ImageBitmap,
+        imageBitmap: suspend () -> ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
@@ -379,7 +377,7 @@ private fun InteractiveWidgetGridItem(
     // Callback
     onLongPressGridItem: (
         gridItem: GridItem,
-        imageBitmap: ImageBitmap,
+        imageBitmap: suspend () -> ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
@@ -391,8 +389,6 @@ private fun InteractiveWidgetGridItem(
     val appWidgetInfo = appWidgetManager.getAppWidgetInfo(appWidgetId = data.appWidgetId)
 
     val graphicsLayer = rememberGraphicsLayer()
-
-    val scope = rememberCoroutineScope()
 
     val alpha = if (hasInteraction) 0f else 1f
 
@@ -442,15 +438,13 @@ private fun InteractiveWidgetGridItem(
                 update = {
                     if (!isVisibleOverlay) {
                         it.setOnLongClickListener {
-                            scope.launch {
-                                currentOnLongPressGridItem(
-                                    gridItem,
-                                    graphicsLayer.toImageBitmap(),
-                                    intOffset,
-                                    intSize,
-                                    sharedElementKey,
-                                )
-                            }
+                            currentOnLongPressGridItem(
+                                gridItem,
+                                { graphicsLayer.toImageBitmap() },
+                                intOffset,
+                                intSize,
+                                sharedElementKey,
+                            )
 
                             true
                         }
@@ -465,15 +459,13 @@ private fun InteractiveWidgetGridItem(
                     detectTapGestures(
                         onLongPress = if (!isVisibleOverlay) {
                             {
-                                scope.launch {
-                                    currentOnLongPressGridItem(
-                                        gridItem,
-                                        graphicsLayer.toImageBitmap(),
-                                        intOffset,
-                                        intSize,
-                                        sharedElementKey,
-                                    )
-                                }
+                                currentOnLongPressGridItem(
+                                    gridItem,
+                                    { graphicsLayer.toImageBitmap() },
+                                    intOffset,
+                                    intSize,
+                                    sharedElementKey,
+                                )
                             }
                         } else {
                             null

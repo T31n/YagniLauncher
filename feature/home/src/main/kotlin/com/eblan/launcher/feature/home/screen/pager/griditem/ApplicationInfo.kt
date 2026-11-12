@@ -34,7 +34,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -73,7 +72,6 @@ import com.eblan.launcher.feature.home.util.handleEblanAction
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import com.eblan.launcher.ui.local.LocalStatusBarManager
 import com.eblan.launcher.ui.settings.rememberIsNotificationAccessGranted
-import kotlinx.coroutines.launch
 
 @Composable
 internal fun InteractiveApplicationInfoGridItem(
@@ -107,7 +105,7 @@ internal fun InteractiveApplicationInfoGridItem(
     onOpenAppDrawer: () -> Unit,
     onLongPressGridItem: (
         gridItem: GridItem,
-        imageBitmap: ImageBitmap,
+        imageBitmap: suspend () -> ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
@@ -121,8 +119,6 @@ internal fun InteractiveApplicationInfoGridItem(
     var intSize by remember { mutableStateOf(IntSize.Zero) }
 
     val graphicsLayer = rememberGraphicsLayer()
-
-    val scope = rememberCoroutineScope()
 
     val alpha = if (hasInteraction) 0f else 1f
 
@@ -175,15 +171,13 @@ internal fun InteractiveApplicationInfoGridItem(
                             null
                         },
                         onLongPress = {
-                            scope.launch {
-                                currentOnLongPressGridItem(
-                                    gridItem,
-                                    graphicsLayer.toImageBitmap(),
-                                    intOffset,
-                                    intSize,
-                                    sharedElementKey,
-                                )
-                            }
+                            currentOnLongPressGridItem(
+                                gridItem,
+                                { graphicsLayer.toImageBitmap() },
+                                intOffset,
+                                intSize,
+                                sharedElementKey,
+                            )
                         },
                         onTap = {
                             androidLauncherAppsWrapper.startMainActivity(

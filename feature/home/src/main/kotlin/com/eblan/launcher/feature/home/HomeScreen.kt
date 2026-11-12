@@ -109,7 +109,6 @@ internal fun HomeRoute(
     val gridItemSource by viewModel.gridItemSource.collectAsStateWithLifecycle()
     val isVisibleOverlay by viewModel.isVisibleOverlay.collectAsStateWithLifecycle()
     val textColor by viewModel.textColor.collectAsStateWithLifecycle()
-    val folderPopups by viewModel.previewFolderGridItems.collectAsStateWithLifecycle()
     val folderEblanApplicationInfoPopups by viewModel.folderEblanApplicationInfoPopups.collectAsStateWithLifecycle()
     val folderEblanApplicationInfoEntries by viewModel.folderEblanApplicationInfoEntries.collectAsStateWithLifecycle()
     val moveFolderEblanApplicationInfoGridItemResult by viewModel.moveFolderEblanApplicationInfoGridItemResult.collectAsStateWithLifecycle()
@@ -130,7 +129,6 @@ internal fun HomeRoute(
         movedGridItemResult = movedGridItemResult,
         // Folders Data
         folderGridItemEntries = folderGridItemEntries,
-        folderPopups = folderPopups,
         folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
         folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
         moveFolderEblanApplicationInfoGridItemResult = moveFolderEblanApplicationInfoGridItemResult,
@@ -170,6 +168,7 @@ internal fun HomeRoute(
         onGetPinGridItem = viewModel::getPinGridItem,
         onResetPinGridItem = viewModel::resetPinGridItem,
         onMoveGridItem = viewModel::moveGridItem,
+        onCancelPendingMoveGridItem = viewModel::cancelPendingMoveGridItem,
         onUpdateMoveGridItemResult = viewModel::updateMoveGridItemResult,
         onUpdateGridItemsAfterMove = viewModel::updateGridItemsAfterMove,
         onResizeGridItem = viewModel::resizeGridItem,
@@ -217,7 +216,6 @@ internal fun HomeScreen(
     movedGridItemResult: MoveGridItemResult?,
     // Folders Data
     folderGridItemEntries: List<FolderEntry>,
-    folderPopups: Map<String, FolderPopup>,
     folderEblanApplicationInfoEntries: List<FolderEntry>,
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     moveFolderEblanApplicationInfoGridItemResult: MoveFolderEblanApplicationInfoGridItemResult?,
@@ -288,6 +286,7 @@ internal fun HomeScreen(
         gridWidth: Int,
         gridHeight: Int,
     ) -> Unit,
+    onCancelPendingMoveGridItem: () -> Unit,
     onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
     onResizeGridItem: (
@@ -389,7 +388,7 @@ internal fun HomeScreen(
                 // Folder Entries
                 folderGridItemEntries = folderGridItemEntries,
                 folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
-                folderPopups = folderPopups,
+                folderPopups = homeUiState.homeData.folderPopups,
                 folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                 // Grid Interaction State
                 pinGridItem = pinGridItem,
@@ -419,6 +418,7 @@ internal fun HomeScreen(
                 onDeleteGridItem = onDeleteGridItem,
                 onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
                 onMoveGridItem = onMoveGridItem,
+                onCancelPendingMoveGridItem = onCancelPendingMoveGridItem,
                 onUpdateGridItemsAfterMove = onUpdateGridItemsAfterMove,
                 onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
                 // Pin Item Actions
@@ -535,6 +535,7 @@ private fun Success(
         gridWidth: Int,
         gridHeight: Int,
     ) -> Unit,
+    onCancelPendingMoveGridItem: () -> Unit,
     onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
     onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
     // Pin Item Actions
@@ -713,6 +714,7 @@ private fun Success(
                     onUpdateGridItemsAfterMove = onUpdateGridItemsAfterMove,
                     onEditGridItem = onEditGridItem,
                     onMoveGridItem = onMoveGridItem,
+                    onCancelPendingMoveGridItem = onCancelPendingMoveGridItem,
                     onResizeGridItem = onResizeGridItem,
                     onResizeCancel = onResetGrid,
                     onResizeEnd = onResetGridAfterResize,

@@ -43,7 +43,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -136,7 +135,7 @@ internal fun InteractiveFolderGridItem(
     onUpsertFolderGridItemPopupEntry: (FolderEntry) -> Unit,
     onLongPressFolderGridItem: (
         gridItem: GridItem,
-        imageBitmap: ImageBitmap,
+        imageBitmap: suspend () -> ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
@@ -416,7 +415,7 @@ private fun InteractiveApplicationInfoGridItem(
     onOpenAppDrawer: () -> Unit,
     onLongPressFolderGridItem: (
         gridItem: GridItem,
-        imageBitmap: ImageBitmap,
+        imageBitmap: suspend () -> ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
@@ -431,8 +430,6 @@ private fun InteractiveApplicationInfoGridItem(
     var intSize by remember { mutableStateOf(IntSize.Zero) }
 
     val graphicsLayer = rememberGraphicsLayer()
-
-    val scope = rememberCoroutineScope()
 
     val icon = iconPackFilePaths[data.componentName] ?: data.icon
 
@@ -474,15 +471,13 @@ private fun InteractiveApplicationInfoGridItem(
                                 null
                             },
                             onLongPress = {
-                                scope.launch {
-                                    onLongPressFolderGridItem(
-                                        gridItem,
-                                        graphicsLayer.toImageBitmap(),
-                                        intOffset,
-                                        intSize,
-                                        sharedElementKey,
-                                    )
-                                }
+                                onLongPressFolderGridItem(
+                                    gridItem,
+                                    { graphicsLayer.toImageBitmap() },
+                                    intOffset,
+                                    intSize,
+                                    sharedElementKey,
+                                )
                             },
                             onTap = {
                                 androidLauncherAppsWrapper.startMainActivity(
@@ -602,7 +597,7 @@ private fun InteractiveShortcutInfoGridItem(
     onOpenAppDrawer: () -> Unit,
     onLongPressFolderGridItem: (
         gridItem: GridItem,
-        imageBitmap: ImageBitmap,
+        imageBitmap: suspend () -> ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
@@ -617,8 +612,6 @@ private fun InteractiveShortcutInfoGridItem(
     var intSize by remember { mutableStateOf(IntSize.Zero) }
 
     val graphicsLayer = rememberGraphicsLayer()
-
-    val scope = rememberCoroutineScope()
 
     val customIcon = data.customIcon ?: data.icon
 
@@ -658,15 +651,13 @@ private fun InteractiveShortcutInfoGridItem(
                                 null
                             },
                             onLongPress = {
-                                scope.launch {
-                                    onLongPressFolderGridItem(
-                                        gridItem,
-                                        graphicsLayer.toImageBitmap(),
-                                        intOffset,
-                                        intSize,
-                                        sharedElementKey,
-                                    )
-                                }
+                                onLongPressFolderGridItem(
+                                    gridItem,
+                                    { graphicsLayer.toImageBitmap() },
+                                    intOffset,
+                                    intSize,
+                                    sharedElementKey,
+                                )
                             },
                             onTap = {
                                 if (
@@ -791,7 +782,7 @@ private fun InteractiveShortcutConfigGridItem(
     onOpenAppDrawer: () -> Unit,
     onLongPressFolderGridItem: (
         gridItem: GridItem,
-        imageBitmap: ImageBitmap,
+        imageBitmap: suspend () -> ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
@@ -805,8 +796,6 @@ private fun InteractiveShortcutConfigGridItem(
     var intSize by remember { mutableStateOf(IntSize.Zero) }
 
     val graphicsLayer = rememberGraphicsLayer()
-
-    val scope = rememberCoroutineScope()
 
     val icon = when {
         data.customIcon != null -> data.customIcon
@@ -855,15 +844,13 @@ private fun InteractiveShortcutConfigGridItem(
                                 null
                             },
                             onLongPress = {
-                                scope.launch {
-                                    onLongPressFolderGridItem(
-                                        gridItem,
-                                        graphicsLayer.toImageBitmap(),
-                                        intOffset,
-                                        intSize,
-                                        sharedElementKey,
-                                    )
-                                }
+                                onLongPressFolderGridItem(
+                                    gridItem,
+                                    { graphicsLayer.toImageBitmap() },
+                                    intOffset,
+                                    intSize,
+                                    sharedElementKey,
+                                )
                             },
                             onTap = {
                                 data.shortcutIntentUri?.let {
@@ -973,7 +960,7 @@ private fun InteractiveNestedFolderGridItem(
     onUpsertFolderGridItemPopupEntry: (FolderEntry) -> Unit,
     onLongPressFolderGridItem: (
         gridItem: GridItem,
-        imageBitmap: ImageBitmap,
+        imageBitmap: suspend () -> ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
@@ -987,8 +974,6 @@ private fun InteractiveNestedFolderGridItem(
     var intSize by remember { mutableStateOf(IntSize.Zero) }
 
     val graphicsLayer = rememberGraphicsLayer()
-
-    val scope = rememberCoroutineScope()
 
     val hasInteraction = isSelected && isVisibleOverlay
 
@@ -1024,15 +1009,13 @@ private fun InteractiveNestedFolderGridItem(
                                 null
                             },
                             onLongPress = {
-                                scope.launch {
-                                    onLongPressFolderGridItem(
-                                        gridItem,
-                                        graphicsLayer.toImageBitmap(),
-                                        intOffset,
-                                        intSize,
-                                        sharedElementKey,
-                                    )
-                                }
+                                onLongPressFolderGridItem(
+                                    gridItem,
+                                    { graphicsLayer.toImageBitmap() },
+                                    intOffset,
+                                    intSize,
+                                    sharedElementKey,
+                                )
                             },
                             onTap = {
                                 onUpsertFolderGridItemPopupEntry(

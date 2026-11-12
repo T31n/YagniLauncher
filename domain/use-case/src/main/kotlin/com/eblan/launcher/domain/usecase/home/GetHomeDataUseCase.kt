@@ -28,6 +28,7 @@ import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.userdata.HomeData
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
+import com.eblan.launcher.domain.usecase.folder.asPreviewFolders
 import com.eblan.launcher.domain.usecase.util.getIconPackFilePaths
 import com.eblan.launcher.domain.usecase.util.isTopLevel
 import com.eblan.launcher.domain.usecase.util.toGridItems
@@ -37,7 +38,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
-/** Combines home settings and grid contents into the data needed to render the home screen. */
+/** Combines home settings and grid contents into one snapshot for the home screen. */
 class GetHomeDataUseCase @Inject constructor(
     private val userDataRepository: UserDataRepository,
     private val launcherAppsWrapper: LauncherAppsWrapper,
@@ -48,7 +49,7 @@ class GetHomeDataUseCase @Inject constructor(
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     /**
-     * Emits top-level grid items grouped by page, together with permissions and icon-pack paths.
+     * Emits top-level grid items, their folder previews, permissions, and icon-pack paths.
      *
      * Invalidly positioned items are omitted from the page groups but remain in the full item list.
      *
@@ -76,6 +77,11 @@ class GetHomeDataUseCase @Inject constructor(
             ) && it.associate == Associate.Dock
         }.groupBy { it.page }
 
+        val folderPopups = gridItems.asPreviewFolders(
+            maxFolderColumns = userData.folderSettings.maxFolderColumns,
+            maxFolderRows = userData.folderSettings.maxFolderRows,
+        )
+
         val iconPackFilePaths = getIconPackFilePaths(
             iconPackPackageName = userData.generalSettings.iconPackPackageName,
             componentNames = gridItems.applicationInfoGridItems.map { it.componentName },
@@ -88,6 +94,7 @@ class GetHomeDataUseCase @Inject constructor(
             gridItems = currentGridItems,
             gridItemsByPage = gridItemsByPage,
             dockGridItemsByPage = dockGridItemsByPage,
+            folderPopups = folderPopups,
             hasShortcutHostPermission = launcherAppsWrapper.hasShortcutHostPermission,
             hasSystemFeatureAppWidgets = packageManagerWrapper.hasSystemFeatureAppWidgets,
             iconPackFilePaths = iconPackFilePaths,

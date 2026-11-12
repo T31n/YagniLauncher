@@ -1356,7 +1356,7 @@ internal class PagerScreenState(
     fun longPressGridItem(
         // Grid item details
         gridItem: GridItem,
-        imageBitmap: ImageBitmap,
+        imageBitmap: suspend () -> ImageBitmap,
         newSharedElementKey: SharedElementKey,
         // Grid item position and size
         intOffset: IntOffset,
@@ -1376,7 +1376,7 @@ internal class PagerScreenState(
             ),
         )
 
-        overlayImageBitmap = imageBitmap
+        overlayImageBitmap = null
 
         overlayIntOffset = intOffset
 
@@ -1384,15 +1384,19 @@ internal class PagerScreenState(
 
         sharedElementKey = newSharedElementKey
 
-        menuIntOffset = intOffset
+        scope.launch {
+            overlayImageBitmap = imageBitmap()
 
-        menuIntSize = intSize
+            menuIntOffset = intOffset
 
-        selectedGridItem = gridItem
+            menuIntSize = intSize
 
-        showGridItemMenu = true
+            selectedGridItem = gridItem
 
-        onUpdateIsVisibleOverlay(true)
+            showGridItemMenu = true
+
+            onUpdateIsVisibleOverlay(true)
+        }
     }
 
     fun showFolderWhenDragging(
@@ -1436,7 +1440,7 @@ internal class PagerScreenState(
     fun longPressFolderGridItem(
         // Item details
         gridItem: GridItem,
-        imageBitmap: ImageBitmap,
+        imageBitmap: suspend () -> ImageBitmap,
         // Position and size
         intOffset: IntOffset,
         intSize: IntSize,
@@ -1454,7 +1458,7 @@ internal class PagerScreenState(
             ),
         )
 
-        overlayImageBitmap = imageBitmap
+        overlayImageBitmap = null
 
         overlayIntOffset = intOffset
 
@@ -1462,15 +1466,19 @@ internal class PagerScreenState(
 
         sharedElementKey = newSharedElementKey
 
-        menuIntOffset = intOffset
+        scope.launch {
+            overlayImageBitmap = imageBitmap()
 
-        menuIntSize = intSize
+            menuIntOffset = intOffset
 
-        selectedGridItem = gridItem
+            menuIntSize = intSize
 
-        showFolderGridItemMenu = true
+            selectedGridItem = gridItem
 
-        onUpdateIsVisibleOverlay(true)
+            showFolderGridItemMenu = true
+
+            onUpdateIsVisibleOverlay(true)
+        }
     }
 
     fun dragFolderGridItem() {
@@ -1722,7 +1730,7 @@ internal class PagerScreenState(
         folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
         // Visuals
         newSharedElementKey: SharedElementKey,
-        imageBitmap: ImageBitmap,
+        imageBitmap: suspend () -> ImageBitmap,
         // Layout
         intOffset: IntOffset,
         intSize: IntSize,
@@ -1737,7 +1745,7 @@ internal class PagerScreenState(
             ),
         )
 
-        overlayImageBitmap = imageBitmap
+        overlayImageBitmap = null
 
         overlayIntOffset = intOffset
 
@@ -1745,15 +1753,19 @@ internal class PagerScreenState(
 
         sharedElementKey = newSharedElementKey
 
-        menuIntOffset = intOffset
+        scope.launch {
+            overlayImageBitmap = imageBitmap()
 
-        menuIntSize = intSize
+            menuIntOffset = intOffset
 
-        selectedFolderEblanApplicationInfoGridItem = folderEblanApplicationInfoGridItem
+            menuIntSize = intSize
 
-        showFolderEblanApplicationInfoGridItemMenu = true
+            selectedFolderEblanApplicationInfoGridItem = folderEblanApplicationInfoGridItem
 
-        onUpdateIsVisibleOverlay(true)
+            showFolderEblanApplicationInfoGridItemMenu = true
+
+            onUpdateIsVisibleOverlay(true)
+        }
     }
 
     fun dragFolderEblanApplicationInfoGridItem() {

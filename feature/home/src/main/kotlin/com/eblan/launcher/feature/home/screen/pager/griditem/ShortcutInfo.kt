@@ -33,7 +33,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -71,7 +70,6 @@ import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.handleEblanAction
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import com.eblan.launcher.ui.local.LocalStatusBarManager
-import kotlinx.coroutines.launch
 
 @Composable
 internal fun InteractiveShortcutInfoGridItem(
@@ -105,7 +103,7 @@ internal fun InteractiveShortcutInfoGridItem(
     onOpenAppDrawer: () -> Unit,
     onLongPressGridItem: (
         gridItem: GridItem,
-        imageBitmap: ImageBitmap,
+        imageBitmap: suspend () -> ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
@@ -119,8 +117,6 @@ internal fun InteractiveShortcutInfoGridItem(
     var intSize by remember { mutableStateOf(IntSize.Zero) }
 
     val graphicsLayer = rememberGraphicsLayer()
-    val scope = rememberCoroutineScope()
-
     val alpha = if (hasInteraction) {
         0f
     } else if (hasShortcutHostPermission && data.isEnabled) {
@@ -173,15 +169,13 @@ internal fun InteractiveShortcutInfoGridItem(
                             null
                         },
                         onLongPress = {
-                            scope.launch {
-                                currentOnLongPressGridItem(
-                                    gridItem,
-                                    graphicsLayer.toImageBitmap(),
-                                    intOffset,
-                                    intSize,
-                                    sharedElementKey,
-                                )
-                            }
+                            currentOnLongPressGridItem(
+                                gridItem,
+                                { graphicsLayer.toImageBitmap() },
+                                intOffset,
+                                intSize,
+                                sharedElementKey,
+                            )
                         },
                         onTap = {
                             if (

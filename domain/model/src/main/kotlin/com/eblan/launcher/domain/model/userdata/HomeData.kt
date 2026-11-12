@@ -17,6 +17,7 @@
  */
 package com.eblan.launcher.domain.model.userdata
 
+import com.eblan.launcher.domain.model.folder.FolderPopup
 import com.eblan.launcher.domain.model.grid.GridItem
 
 data class HomeData(
@@ -24,6 +25,7 @@ data class HomeData(
     val gridItems: List<GridItem>,
     val gridItemsByPage: Map<Int, List<GridItem>>,
     val dockGridItemsByPage: Map<Int, List<GridItem>>,
+    val folderPopups: Map<String, FolderPopup>,
     val hasShortcutHostPermission: Boolean,
     val hasSystemFeatureAppWidgets: Boolean,
     val iconPackFilePaths: Map<String, String?>,
