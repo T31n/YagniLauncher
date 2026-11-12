@@ -27,6 +27,7 @@
     <string name="dynamic_theme">Dynamic Theme</string>
     <string name="language">Language</string>
     <string name="system_default">System Default</string>
+    <string name="language_name">English</string>
     <string name="notification_dots">Notification Dots</string>
     <string name="show_notification_dots">Show notification dots</string>
     <string name="apply_icons_from_supported_icon_packs">Apply icons from supported icon packs</string>

@@ -18,6 +18,7 @@
 package com.eblan.launcher.feature.settings.general
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Build
 import android.provider.Settings
 import androidx.compose.foundation.layout.Arrangement
@@ -146,15 +147,6 @@ internal fun GeneralSettingsScreen(
     }
 }
 
-private val applicationLanguageTags = listOf("", "en", "ar", "cs", "pl", "ru")
-
-@Composable
-private fun getLanguageLabel(languageTag: String): String = if (languageTag.isEmpty()) {
-    stringResource(R.string.system_default)
-} else {
-    Locale.forLanguageTag(languageTag).getDisplayLanguage(Locale.forLanguageTag(languageTag))
-}
-
 @Composable
 private fun Success(
     // Icon Packs
@@ -170,6 +162,9 @@ private fun Success(
 ) {
     val context = LocalContext.current
     val localeWrapper = LocalLocaleWrapper.current
+    val applicationLanguageTags = remember {
+        listOf("") + localeWrapper.getSupportedLanguageTags()
+    }
 
     val isNotificationAccessGranted by rememberIsNotificationAccessGranted()
 
@@ -482,4 +477,19 @@ private fun IconShape.getTitle() = when (this) {
     IconShape.Cookie -> stringResource(R.string.cookie)
     IconShape.Flower -> stringResource(R.string.flower)
     IconShape.Shield -> stringResource(R.string.shield)
+}
+
+@Composable
+private fun getLanguageLabel(languageTag: String): String {
+    val context = LocalContext.current
+
+    return if (languageTag.isEmpty()) {
+        stringResource(R.string.system_default)
+    } else {
+        val languageConfiguration = Configuration(context.resources.configuration).apply {
+            setLocale(Locale.forLanguageTag(languageTag))
+        }
+
+        context.createConfigurationContext(languageConfiguration).getString(R.string.language_name)
+    }
 }

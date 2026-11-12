@@ -17,11 +17,16 @@
  */
 package com.eblan.launcher.framework.locale
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
+import dagger.hilt.android.qualifiers.ApplicationContext
+import org.xmlpull.v1.XmlPullParser
 import javax.inject.Inject
 
-internal class DefaultLocaleWrapper @Inject constructor() : LocaleWrapper {
+internal class DefaultLocaleWrapper @Inject constructor(
+    @param:ApplicationContext private val context: Context,
+) : LocaleWrapper {
     override fun getApplicationLanguageTag(): String = AppCompatDelegate.getApplicationLocales().toLanguageTags()
 
     override fun setApplicationLanguageTag(languageTag: String) {
@@ -30,7 +35,26 @@ internal class DefaultLocaleWrapper @Inject constructor() : LocaleWrapper {
         } else {
             LocaleListCompat.forLanguageTags(languageTag)
         }
-
         AppCompatDelegate.setApplicationLocales(applicationLocales)
+    }
+
+    override fun getSupportedLanguageTags(): List<String> {
+        val supportedLanguageTags = mutableListOf<String>()
+
+        context.resources.getXml(R.xml.locales_config).use { xmlResourceParser ->
+            while (xmlResourceParser.next() != XmlPullParser.END_DOCUMENT) {
+                if (xmlResourceParser.eventType == XmlPullParser.START_TAG && xmlResourceParser.name == "locale") {
+                    supportedLanguageTags.add(
+                        xmlResourceParser.getAttributeValue(ANDROID_NAMESPACE, "name"),
+                    )
+                }
+            }
+        }
+
+        return supportedLanguageTags
+    }
+
+    private companion object {
+        const val ANDROID_NAMESPACE = "http://schemas.android.com/apk/res/android"
     }
 }

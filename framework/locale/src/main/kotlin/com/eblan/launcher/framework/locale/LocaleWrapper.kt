@@ -27,4 +27,9 @@ interface LocaleWrapper {
      * Sets the app language from a BCP 47 language tag. An empty string resets to the system language.
      */
     fun setApplicationLanguageTag(languageTag: String)
+
+    /**
+     * Returns the BCP 47 language tags supported by this app, as declared in res/xml/locales_config.xml.
+     */
+    fun getSupportedLanguageTags(): List<String>
 }

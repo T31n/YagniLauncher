@@ -39,6 +39,7 @@
     <string name="dynamic_theme">المظهر العام الدايناميكي</string>
     <string name="language">اللغة</string>
     <string name="system_default">افتراضي النظام</string>
+    <string name="language_name">العربية</string>
     <string name="notification_dots">نقاط الإشعارات</string>
     <string name="show_notification_dots">إظهار نقاط الإشعارات</string>
     <string name="apply_icons_from_supported_icon_packs">تطبيق الأيقونات من حزم الأيقونات المدعومة</string>

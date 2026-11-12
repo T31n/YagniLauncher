@@ -27,6 +27,7 @@
     <string name="dynamic_theme">Динамическая тема</string>
     <string name="language">Язык</string>
     <string name="system_default">Системный</string>
+    <string name="language_name">Русский</string>
     <string name="notification_dots">Точки уведомлений</string>
     <string name="show_notification_dots">Показать точки уведомлений</string>
     <string name="apply_icons_from_supported_icon_packs">Применить иконки с поддерживаемых пакетов иконок</string>
