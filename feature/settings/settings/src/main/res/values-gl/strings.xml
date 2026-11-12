@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~
+  ~   Copyright 2023 Einstein Blanco
+  ~
+  ~   Licensed under the GNU General Public License v3.0 (the "License");
+  ~   you may not use this file except in compliance with the License.
+  ~   You may obtain a copy of the License at
+  ~
+  ~       https://www.gnu.org/licenses/gpl-3.0
+  ~
+  ~   Unless required by applicable law or agreed to in writing, software
+  ~   distributed under the License is distributed on an "AS IS" BASIS,
+  ~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~   See the License for the specific language governing permissions and
+  ~   limitations under the License.
+  ~
+  -->
+<resources>
+    <string name="choose_yagni_launcher">Escoller Yagni Launcher</string>
+    <string name="default_launcher">Launcher predeterminado</string>
+    <string name="themes_icon_packs">Temas, paquetes de iconas</string>
+    <string name="grid_icon_dock_and_more">Cuadrícula, icona, dock</string>
+    <string name="columns_and_rows_count">Número de columnas e filas</string>
+    <string name="swipe_gesture_actions">Accións dos xestos de pasar</string>
+    <string name="advanced_options_for_power_users">Opcións avanzadas para usuarios expertos</string>
+    <string name="thank_you_for_using_yagni_launcher_alpha">Grazas por usar Yagni Launcher Alpha!</string>
+    <string name="about_development_description">
+    O desenvolvemento comezou en xaneiro de 2025 con actualizacións semanais regulares. Este é o meu proxecto máis complexo ata a data, e dedico un esforzo considerable á súa mellora.
+</string>
+    <string name="support_message">
+    Se atopas valor na aplicación, agradeceríache moito o teu apoio mediante unha doazón en Ko-fi ou dándolle unha estrela ao repositorio en GitHub.
+</string>
+    <string name="support_on_ko_fi">Apoia en Ko-fi</string>
+    <string name="star_on_github">Dar unha estrela en GitHub</string>
+    <string name="note_this_informational_card_will_be_removed_in_future_stable_releases">Nota: esta tarxeta informativa eliminarase en futuras versións estables</string>
+    <string name="corner_radius_background_color_and_more">Raio das esquinas, cor de fondo e máis</string>
+</resources>

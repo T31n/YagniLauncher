@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~
+  ~   Copyright 2023 Einstein Blanco
+  ~
+  ~   Licensed under the GNU General Public License v3.0 (the "License");
+  ~   you may not use this file except in compliance with the License.
+  ~   You may obtain a copy of the License at
+  ~
+  ~       https://www.gnu.org/licenses/gpl-3.0
+  ~
+  ~   Unless required by applicable law or agreed to in writing, software
+  ~   distributed under the License is distributed on an "AS IS" BASIS,
+  ~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~   See the License for the specific language governing permissions and
+  ~   limitations under the License.
+  ~
+  -->
+<resources>
+    <string name="warning">Aviso</string>
+    <string name="disable_background_sync_description">
+    Desativar a sincronização em segundo plano ajuda a economizar um pouco de memória e deixa tudo mais leve, mas também significa que o Yagni Launcher não atualizará automaticamente seus aplicativos, widgets ou atalhos.\n\nA gaveta de aplicativos pode mostrar ícones desatualizados, widgets ausentes ou atalhos que não funcionam mais.
+</string>
+    <string name="sync_data">Sincronizar dados</string>
+    <string name="keep_data_up_to_date">Manter os dados atualizados</string>
+    <string name="enable_or_disable_sync_data">Ativar ou desativar a sincronização de dados</string>
+    <string name="lock_movement">Bloquear movimento</string>
+    <string name="prevent_other_grid_items_from_moving">Impedir que outros itens da grade se movam</string>
+    <string name="grid_item_animation">Animação do item da grade</string>
+    <string name="enable_or_disable_animations">Ativar ou desativar a animação do item da grade</string>
+</resources>

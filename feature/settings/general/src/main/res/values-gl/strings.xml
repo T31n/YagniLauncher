@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~
+  ~   Copyright 2023 Einstein Blanco
+  ~
+  ~   Licensed under the GNU General Public License v3.0 (the "License");
+  ~   you may not use this file except in compliance with the License.
+  ~   You may obtain a copy of the License at
+  ~
+  ~       https://www.gnu.org/licenses/gpl-3.0
+  ~
+  ~   Unless required by applicable law or agreed to in writing, software
+  ~   distributed under the License is distributed on an "AS IS" BASIS,
+  ~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~   See the License for the specific language governing permissions and
+  ~   limitations under the License.
+  ~
+  -->
+<resources>
+    <string name="import_icon_pack">Importar paquete de iconas</string>
+    <string name="no_icon_packs">Non hai paquetes de iconas</string>
+    <string name="select_icon_pack">Seleccionar paquete de iconas</string>
+    <string name="please_import_an_icon_pack_first">Importa primeiro un paquete de iconas</string>
+    <string name="reset">Restablecer</string>
+    <string name="default_icon_pack">Predeterminado</string>
+    <string name="theme">Tema</string>
+    <string name="system_bars_theme">Tema das barras do sistema</string>
+    <string name="dynamic_theme">Tema dinámico</string>
+    <string name="language">Idioma</string>
+    <string name="system_default">Predeterminado do sistema</string>
+    <string name="language_name">Galego</string>
+    <string name="notification_dots">Puntos de notificación</string>
+    <string name="show_notification_dots">Mostrar puntos de notificación</string>
+    <string name="apply_icons_from_supported_icon_packs">Aplicar iconas dos paquetes de iconas compatibles</string>
+    <string name="adapt_colors_to_your_wallpaper_automatically">Adaptar as cores ao teu fondo de pantalla automaticamente</string>
+    <string name="icon_tint">Tinte da icona</string>
+    <string name="fallback_icon_tint">Tinte de icona alternativo</string>
+    <string name="use_the_fallback_icon_tint">Usar o tinte de icona alternativo</string>
+    <string name="none">Ningún</string>
+    <string name="circle">Círculo</string>
+    <string name="square">Cadrado</string>
+    <string name="rounded_square">Cadrado redondeado</string>
+    <string name="tear_drop">Gota</string>
+    <string name="hexagon">Hexágono</string>
+    <string name="octagon">Octógono</string>
+    <string name="diamond">Diamante</string>
+    <string name="pentagon">Pentágono</string>
+    <string name="clover">Trevo</string>
+    <string name="cookie">Galleta</string>
+    <string name="flower">Flor</string>
+    <string name="shield">Escudo</string>
+    <string name="icon_shape">Forma da icona</string>
+</resources>

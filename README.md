@@ -30,13 +30,19 @@ Closed-source launchers are locking features behind paywalls and adding trackers
 
 **YAGNI ("You Aren't Gonna Need It")** is a principle which arose from extreme programming (XP) that states a programmer should not add functionality until deemed necessary.
 
-## Why Choose Yagni Launcher?
+## Built From Scratch
 
-Yagni matches and extends stock functionality without the bloat, built from scratch to stay fast, lightweight, and battery-efficient.
+Yagni matches and extends stock functionality without the bloat.
 
-- ⚡ Modern — Kotlin and Jetpack Compose, with no legacy overhead
-- 🪶 Small — ~2 MB, 80–90% smaller than typical stock launchers
-- 🔋 Efficient — Minimal resource and battery use
+**Stack**
+- Kotlin and Jetpack Compose for the UI
+- Hilt for dependency injection
+- Room and Proto DataStore for storage
+- Kotlin Coroutines and Serialization
+
+**Small and efficient**
+- 🪶 Small — ~2 MB
+- 🔋 Efficient — minimal resource and battery use
 
 ## Screenshots
 
@@ -54,11 +60,6 @@ Yagni matches and extends stock functionality without the bloat, built from scra
 
 ## Documentation
 If you're interested in contributing to the project, I recommend reading the [Yagni Launcher Architecture](docs/ARCHITECTURE.md) first.
-
-## Translation
-Translations are managed with [Weblate](https://hosted.weblate.org/engage/yagni-launcher/).
-
-[![Translation status](https://hosted.weblate.org/widget/yagni-launcher/multi-auto.svg)](https://hosted.weblate.org/engage/yagni-launcher/)
 
 ## License
 **Yagni Launcher** is licensed under the GNU General Public License v3.0. See the [license](LICENSE)

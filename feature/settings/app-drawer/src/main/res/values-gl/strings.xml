@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~
+  ~   Copyright 2023 Einstein Blanco
+  ~
+  ~   Licensed under the GNU General Public License v3.0 (the "License");
+  ~   you may not use this file except in compliance with the License.
+  ~   You may obtain a copy of the License at
+  ~
+  ~       https://www.gnu.org/licenses/gpl-3.0
+  ~
+  ~   Unless required by applicable law or agreed to in writing, software
+  ~   distributed under the License is distributed on an "AS IS" BASIS,
+  ~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~   See the License for the specific language governing permissions and
+  ~   limitations under the License.
+  ~
+  -->
+<resources>
+    <string name="horizontal_grid">Cuadrícula horizontal</string>
+    <string name="vertical_grid">Cuadrícula vertical</string>
+    <string name="rows_height">Altura das filas</string>
+    <string name="rows_height_is_not_valid">A altura das filas non é válida</string>
+    <string name="hidden_applications">Aplicacións ocultas</string>
+    <string name="no_hidden_applications">Non hai aplicacións ocultas</string>
+    <string name="app_drawer_type">Tipo de caixón de aplicacións</string>
+    <string name="exclude_tagged_apps">Excluír aplicacións etiquetadas</string>
+    <string name="hide_selected_apps_from_the_app_drawer">Ocultar as aplicacións seleccionadas do caixón de aplicacións</string>
+    <string name="hide_apps_marked_with_selected_tags">Ocultar as aplicacións marcadas coas etiquetas seleccionadas</string>
+    <string name="show_keyboard">Mostrar teclado</string>
+    <string name="show_keyboard_when_app_drawer_opens">Mostrar o teclado ao abrir o caixón de aplicacións</string>
+    <string name="fuzzy_search">Busca aproximada</string>
+    <string name="find_apps_even_with_typos_or_accented_characters">Atopa aplicacións mesmo con erros tipográficos ou caracteres acentuados</string>
+    <string name="blur_behind">Desenfoque de fondo</string>
+    <string name="blurs_the_wallpaper_when_app_drawer_opens">Desenfoca o fondo de pantalla ao abrir o caixón de aplicacións</string>
+    <string name="no_folders">Non hai cartafoles</string>
+    <string name="no_tags">Non hai etiquetas</string>
+    <string name="manage_tags">Xestionar etiquetas</string>
+    <string name="sort_update_and_delete_tags">Ordenar, actualizar e eliminar etiquetas</string>
+    <string name="manage_folders">Xestionar cartafoles</string>
+    <string name="sort_update_and_delete_folders">Ordenar, actualizar e eliminar cartafoles</string>
+    <string name="vertical">Vertical</string>
+    <string name="horizontal">Horizontal</string>
+</resources>

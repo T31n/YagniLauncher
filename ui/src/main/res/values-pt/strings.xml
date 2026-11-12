@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~
+  ~   Copyright 2023 Einstein Blanco
+  ~
+  ~   Licensed under the GNU General Public License v3.0 (the "License");
+  ~   you may not use this file except in compliance with the License.
+  ~   You may obtain a copy of the License at
+  ~
+  ~       https://www.gnu.org/licenses/gpl-3.0
+  ~
+  ~   Unless required by applicable law or agreed to in writing, software
+  ~   distributed under the License is distributed on an "AS IS" BASIS,
+  ~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~   See the License for the specific language governing permissions and
+  ~   limitations under the License.
+  ~
+  -->
+<resources>
+    <string name="open">Abrir %1$s</string>
+    <string name="app">Aplicativo</string>
+    <string name="open_app_drawer">Abrir gaveta de aplicativos</string>
+    <string name="open_notification_panel">Abrir painel de notificações</string>
+    <string name="lock_screen">Bloquear tela</string>
+    <string name="open_quick_settings">Abrir configurações rápidas</string>
+    <string name="open_recents">Abrir recentes</string>
+    <string name="enable_the_accessibility_service_permission_to_use_additional_actions">Ative a permissão do serviço de acessibilidade para usar ações adicionais</string>
+    <string name="corner_radius">Raio dos cantos</string>
+    <string name="corner_radius_is_not_valid">O raio dos cantos não é válido</string>
+    <string name="icon_size">Tamanho do ícone</string>
+    <string name="icon_size_is_not_valid">O tamanho do ícone não é válido</string>
+    <string name="padding">Preenchimento</string>
+    <string name="padding_is_not_valid">O preenchimento não é válido</string>
+    <string name="border_width">Largura da borda</string>
+    <string name="border_width_is_not_valid">A largura da borda não é válida</string>
+    <string name="text_size">Tamanho do texto</string>
+    <string name="text_size_is_not_valid">O tamanho do texto não é válido</string>
+    <string name="select_application">Selecionar aplicativo</string>
+    <string name="custom_icon">Ícone personalizado</string>
+    <string name="gallery">Galeria</string>
+    <string name="pick_icons_from_your_gallery">Escolha ícones da sua galeria</string>
+    <string name="reset_custom_icon">Redefinir ícone personalizado</string>
+    <string name="grid_item">Item da grade</string>
+    <string name="text_color">Cor do texto</string>
+    <string name="single_line_label">Rótulo de uma linha</string>
+    <string name="horizontal_alignment">Alinhamento horizontal</string>
+    <string name="vertical_arrangement">Disposição vertical</string>
+    <string name="start">Início</string>
+    <string name="center_horizontally">Centralizar horizontalmente</string>
+    <string name="end">Fim</string>
+    <string name="bottom">Inferior</string>
+    <string name="top">Superior</string>
+    <string name="center">Centro</string>
+    <string name="double_tap">Toque duplo</string>
+    <string name="swipe_up">Deslizar para cima</string>
+    <string name="swipe_down">Deslizar para baixo</string>
+    <string name="limit_app_names_to_one_line">Limitar nomes dos aplicativos a uma linha</string>
+    <string name="add_folder">Adicionar pasta</string>
+    <string name="folder_is_not_valid">A pasta não é válida</string>
+    <string name="center_vertically">Centralizar verticalmente</string>
+    <string name="top_icon_bottom_label">Ícone no topo, rótulo embaixo</string>
+    <string name="top_label_bottom_icon">Rótulo no topo, ícone embaixo</string>
+    <string name="start_icon_end_label">Ícone no início, rótulo no fim</string>
+    <string name="start_label_end_icon">Rótulo no início, ícone no fim</string>
+    <string name="icon_only">Somente ícone</string>
+    <string name="label_only">Somente rótulo</string>
+    <string name="text_padding">Preenchimento do texto</string>
+    <string name="icon_padding">Preenchimento do ícone</string>
+    <string name="layout_type">Tipo de layout</string>
+    <string name="vertical_alignment">Alinhamento vertical</string>
+    <string name="horizontal_arrangement">Disposição horizontal</string>
+    <string name="open_notification_panel_by_reflection">Abrir painel de notificações por reflexão</string>
+</resources>

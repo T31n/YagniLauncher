@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~
+  ~   Copyright 2023 Einstein Blanco
+  ~
+  ~   Licensed under the GNU General Public License v3.0 (the "License");
+  ~   you may not use this file except in compliance with the License.
+  ~   You may obtain a copy of the License at
+  ~
+  ~       https://www.gnu.org/licenses/gpl-3.0
+  ~
+  ~   Unless required by applicable law or agreed to in writing, software
+  ~   distributed under the License is distributed on an "AS IS" BASIS,
+  ~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~   See the License for the specific language governing permissions and
+  ~   limitations under the License.
+  ~
+  -->
+<resources>
+    <string name="dock_grid">Grade da doca</string>
+    <string name="dock_columns_is_not_valid">As colunas da doca não são válidas</string>
+    <string name="dock_rows_is_not_valid">As linhas da doca não são válidas</string>
+    <string name="dock_height">Altura da doca</string>
+    <string name="dock_height_is_not_valid">A altura da doca não é válida</string>
+    <string name="infinite_scrolling">Rolagem infinita</string>
+    <string name="seamless_loop_page_scroll">Rolagem de páginas em loop contínuo</string>
+    <string name="wallpaper_scrolling">Rolagem do papel de parede</string>
+    <string name="scroll_wallpaper_across_pages">Rolar o papel de parede entre as páginas</string>
+    <string name="lock_screen_orientation">Bloquear orientação da tela</string>
+    <string name="add_new_apps">Adicionar novos aplicativos</string>
+    <string name="add_new_apps_to_home_screen">Adicionar novos aplicativos à tela inicial</string>
+    <string name="dock">Doca</string>
+    <string name="enable_dock">Ativar doca</string>
+    <string name="show_or_hide_the_dock">Mostrar ou ocultar a doca</string>
+    <string name="dock_grid_item">Item da grade da doca</string>
+    <string name="dock_infinite_scroll">Rolagem infinita da doca</string>
+    <string name="prevent_rotation_when_device_orientation_changes">Impedir rotação quando a orientação do dispositivo mudar</string>
+    <string name="show_page_indicator">Mostrar indicador de página</string>
+    <string name="show_status_bar">Mostrar barra de status</string>
+    <string name="show_the_status_bar_on_the_home_screen">Mostrar a barra de status na tela inicial</string>
+    <string name="show_navigation_bar">Mostrar barra de navegação</string>
+    <string name="show_the_navigation_bar_on_the_home_screen">Mostrar a barra de navegação na tela inicial</string>
+    <string name="show_an_indicator_for_the_current_page">Mostrar um indicador para a página atual</string>
+    <string name="dock_background_color">Cor de fundo da doca</string>
+    <string name="dock_padding">Preenchimento da doca</string>
+    <string name="dock_corner_radius">Raio dos cantos da doca</string>
+    <string name="dock_padding_is_not_valid">O preenchimento da doca não é válido</string>
+    <string name="top_start">Superior inicial</string>
+    <string name="top_start_is_not_valid">O superior inicial não é válido</string>
+    <string name="top_end">Superior final</string>
+    <string name="top_end_is_not_valid">O superior final não é válido</string>
+    <string name="bottom_start">Inferior inicial</string>
+    <string name="bottom_start_is_not_valid">O inferior inicial não é válido</string>
+    <string name="bottom_end">Inferior final</string>
+    <string name="bottom_end_is_not_valid">O inferior final não é válido</string>
+    <string name="set_the_radius_for_each_dock_corner">Defina o raio de cada canto da doca</string>
+    <string name="add_bottom_padding">Adicionar preenchimento inferior</string>
+    <string name="add_the_bottom_padding_of_the_dock">Adicionar o preenchimento inferior da doca</string>
+    <string name="pager_transition_effect">Efeito de transição das páginas</string>
+    <string name="transition_effect_none">Nenhum</string>
+    <string name="transition_effect_fade">Esmaecer</string>
+    <string name="transition_effect_zoom_out">Zoom para fora</string>
+    <string name="transition_effect_depth">Profundidade</string>
+    <string name="transition_effect_cube">Cubo</string>
+    <string name="transition_effect_flip">Virar</string>
+    <string name="transition_effect_parallax">Paralaxe</string>
+    <string name="transition_effect_stack">Pilha</string>
+</resources>
