@@ -1,20 +1,3 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="request_permissions"></string>
-    <string name="work_apps_are_paused"></string>
-    <string name="edit_dock_pages"></string>
-    <string name="unpause"></string>
-    <string name="clone"></string>
-    <string name="allow_permissions_so_we_can_inform_you_about_important_crash_reports_and_make_phone_shortcuts"></string>
-    <string name="you_won_t_receive_notifications_from_your_work_apps"></string>
-    <string name="personal"></string>
-    <string name="work"></string>
-    <string name="edit_pages"></string>
-    <string name="search_widgets"></string>
-    <string name="shortcuts"></string>
-    <string name="private_space"></string>
-    <string name="please_wait_for_the_white_box_indicator"></string>
-    <string name="widgets"></string>
-    <string name="wallpaper"></string>
-    <string name="later"></string>
-</resources>
+    </resources>
