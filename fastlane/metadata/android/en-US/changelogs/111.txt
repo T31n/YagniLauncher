@@ -1,0 +1,3 @@
+- Updated translations and accessibility descriptions
+- Added language selection with locale support
+- Added dock settings and UI improvements
