@@ -36,7 +36,7 @@ fun <T> springAnimationSpec(): SpringSpec<T> = spring(
 )
 
 fun <T> popupSpringAnimationSpec(): SpringSpec<T> = spring(
-    dampingRatio = Spring.DampingRatioHighBouncy,
+    dampingRatio = Spring.DampingRatioMediumBouncy,
     stiffness = Spring.StiffnessMediumLow,
 )
 
