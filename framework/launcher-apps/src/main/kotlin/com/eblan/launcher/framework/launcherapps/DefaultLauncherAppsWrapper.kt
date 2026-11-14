@@ -111,6 +111,10 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
                 launcherApps.getActivityList(packageName, userHandle)
                     .firstOrNull()
                     ?.applicationInfo
+                    ?: context.packageManager.getApplicationInfo(
+                        packageName,
+                        PackageManager.GET_META_DATA,
+                    )
             }
         } catch (_: PackageManager.NameNotFoundException) {
             null
@@ -602,7 +606,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         )
     }
 
-    private suspend fun LauncherActivityInfo.toFastLauncherAppsActivityInfo(): FastLauncherAppsActivityInfo = FastLauncherAppsActivityInfo(
+    private fun LauncherActivityInfo.toFastLauncherAppsActivityInfo(): FastLauncherAppsActivityInfo = FastLauncherAppsActivityInfo(
         serialNumber = userManagerWrapper.getSerialNumberForUser(userHandle = user),
         componentName = componentName.flattenToString(),
         packageName = applicationInfo.packageName,
@@ -663,7 +667,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
     }
 
     @RequiresApi(Build.VERSION_CODES.N_MR1)
-    private suspend fun ShortcutInfo.toFastLauncherAppsShortcutInfo(): FastLauncherAppsShortcutInfo = FastLauncherAppsShortcutInfo(
+    private fun ShortcutInfo.toFastLauncherAppsShortcutInfo(): FastLauncherAppsShortcutInfo = FastLauncherAppsShortcutInfo(
         shortcutId = id,
         packageName = `package`,
         serialNumber = userManagerWrapper.getSerialNumberForUser(userHandle = userHandle),
