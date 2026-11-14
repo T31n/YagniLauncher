@@ -52,13 +52,13 @@ internal fun getAnimatedRect(
         startWidth,
         endWidth,
         progress,
-    )
+    ).coerceAtLeast(0f)
 
     val height = lerp(
         startHeight,
         endHeight,
         progress,
-    )
+    ).coerceAtLeast(0f)
 
     val left = lerp(
         startCenterX,
