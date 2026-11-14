@@ -373,11 +373,8 @@ internal class DefaultImageSerializer @Inject constructor(
         val tintedDrawable = when (iconTint) {
             IconTint.None -> drawable
 
-            IconTint.System,
-            IconTint.Custom,
-            -> getTintedDrawable(
+            IconTint.Custom -> getTintedDrawable(
                 drawable = drawable,
-                iconTint = iconTint,
                 customIconTint = customIconTint,
                 fallbackIconTint = fallbackIconTint,
                 theme = theme,
@@ -424,7 +421,6 @@ internal class DefaultImageSerializer @Inject constructor(
 
     private fun getTintedDrawable(
         drawable: Drawable,
-        iconTint: IconTint,
         customIconTint: Int,
         fallbackIconTint: Boolean,
         theme: Theme,
@@ -436,16 +432,10 @@ internal class DefaultImageSerializer @Inject constructor(
         ) {
             copy.monochrome?.let {
                 return AdaptiveIconDrawable(
-                    when (iconTint) {
-                        IconTint.System -> contrastingBackgroundColor(iconColor = customIconTint)
-
-                        IconTint.Custom -> adaptiveIconBackgroundColor(
-                            theme = theme,
-                            customIconColor = customIconTint,
-                        )
-
-                        IconTint.None -> error("Icon tint must be enabled")
-                    }.toDrawable(),
+                    adaptiveIconBackgroundColor(
+                        theme = theme,
+                        customIconColor = customIconTint,
+                    ).toDrawable(),
                     it.mutate().apply { setTint(customIconTint) },
                 )
             }
@@ -541,13 +531,6 @@ internal class DefaultImageSerializer @Inject constructor(
         }
 
         return baseColor
-    }
-
-    private fun contrastingBackgroundColor(iconColor: Int): Int {
-        val blackContrast = ColorUtils.calculateContrast(iconColor, Color.BLACK)
-        val whiteContrast = ColorUtils.calculateContrast(iconColor, Color.WHITE)
-
-        return if (blackContrast >= whiteContrast) Color.BLACK else Color.WHITE
     }
 
     private companion object {

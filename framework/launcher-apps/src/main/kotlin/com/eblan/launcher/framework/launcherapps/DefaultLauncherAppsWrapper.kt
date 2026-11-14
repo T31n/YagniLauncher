@@ -35,7 +35,6 @@ import android.os.Process.myUserHandle
 import android.os.UserHandle
 import android.os.UserManager
 import androidx.annotation.RequiresApi
-import com.eblan.launcher.common.AndroidColor
 import com.eblan.launcher.common.AndroidImageSerializer
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
@@ -43,7 +42,6 @@ import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
-import com.eblan.launcher.domain.framework.WallpaperManagerWrapper
 import com.eblan.launcher.domain.model.launcherapps.EblanUser
 import com.eblan.launcher.domain.model.launcherapps.EblanUserType
 import com.eblan.launcher.domain.model.launcherapps.FastLauncherAppsActivityInfo
@@ -72,10 +70,8 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
     private val userManagerWrapper: AndroidUserManagerWrapper,
     private val fileManager: FileManager,
     private val packageManagerWrapper: PackageManagerWrapper,
-    private val wallpaperManagerWrapper: WallpaperManagerWrapper,
     private val androidPackageManager: AndroidPackageManagerWrapper,
     private val iconKeyGenerator: IconKeyGenerator,
-    private val androidColor: AndroidColor,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : LauncherAppsWrapper,
     AndroidLauncherAppsWrapper {
@@ -669,16 +665,6 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
 
         val transformedDrawable = when (iconTint) {
             IconTint.None -> imageSerializer.getShapedDrawable(drawable, iconShape)
-
-            IconTint.System -> imageSerializer.getTintedAndShapedDrawable(
-                drawable = drawable,
-                iconTint = iconTint,
-                customIconTint = wallpaperManagerWrapper.getSystemWallpaperColor()
-                    ?: androidColor.getColor(),
-                fallbackIconTint = fallbackIconColor,
-                theme = theme,
-                iconShape = iconShape,
-            )
 
             IconTint.Custom -> imageSerializer.getTintedAndShapedDrawable(
                 drawable = drawable,

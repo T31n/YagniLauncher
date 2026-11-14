@@ -21,12 +21,10 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.XmlResourceParser
 import android.graphics.drawable.Drawable
-import com.eblan.launcher.common.AndroidColor
 import com.eblan.launcher.common.AndroidImageSerializer
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.framework.IconPackManager
-import com.eblan.launcher.domain.framework.WallpaperManagerWrapper
 import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
 import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.IconTint
@@ -46,8 +44,6 @@ import javax.inject.Inject
 internal class DefaultIconPackManager @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val imageSerializer: AndroidImageSerializer,
-    private val wallpaperManagerWrapper: WallpaperManagerWrapper,
-    private val androidColor: AndroidColor,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : IconPackManager,
     AndroidIconPackManager {
@@ -124,12 +120,7 @@ internal class DefaultIconPackManager @Inject constructor(
             val transformedDrawable = imageSerializer.getTintedAndShapedDrawable(
                 drawable = drawable,
                 iconTint = iconTint,
-                customIconTint = when (iconTint) {
-                    IconTint.System -> wallpaperManagerWrapper.getSystemWallpaperColor()
-                        ?: androidColor.getColor()
-
-                    else -> customIconTint
-                },
+                customIconTint = customIconTint,
                 fallbackIconTint = fallbackIconTint,
                 theme = theme,
                 iconShape = iconShape,

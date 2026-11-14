@@ -274,7 +274,6 @@ private fun Success(
         )
 
         when (generalSettings.iconTint) {
-            IconTint.System,
             IconTint.Custom,
             -> {
                 SettingsSwitchItem(
