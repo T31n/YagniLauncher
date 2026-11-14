@@ -120,6 +120,10 @@ fun ColorPickerDialog(
 
     var alpha by remember { mutableFloatStateOf(Color(customColor).alpha) }
 
+    val selectedColor = Color.hsv(hue, saturation, value)
+        .copy(alpha = alpha)
+        .toArgb()
+
     EblanDialog(
         modifier = modifier,
         onDismissRequest = onDismissRequest,
@@ -149,54 +153,20 @@ fun ColorPickerDialog(
             },
         )
 
-        val selectedColor = Color.hsv(hue, saturation, value)
-            .copy(alpha = alpha)
-            .toArgb()
-
         Spacer(Modifier.height(12.dp))
 
-        LazyRow(
-            modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(horizontal = 4.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-        ) {
-            items(colorPresets) { presetColor ->
-                val presetColorArgb = presetColor.toArgb()
-                val isSelected = selectedColor == presetColorArgb
+        ColorPresetRow(
+            selectedColor = selectedColor,
+            onSelectColor = { presetColor ->
+                val presetHsv = FloatArray(3)
+                android.graphics.Color.colorToHSV(presetColor, presetHsv)
 
-                Box(
-                    modifier = Modifier
-                        .size(36.dp)
-                        .clip(CircleShape)
-                        .background(presetColor)
-                        .border(
-                            width = if (isSelected) 3.dp else 1.dp,
-                            color = if (isSelected) {
-                                MaterialTheme.colorScheme.primary
-                            } else {
-                                MaterialTheme.colorScheme.outlineVariant
-                            },
-                            shape = CircleShape,
-                        )
-                        .selectable(
-                            selected = isSelected,
-                            role = Role.RadioButton,
-                            onClick = {
-                                val presetHsv = FloatArray(3)
-                                android.graphics.Color.colorToHSV(presetColorArgb, presetHsv)
-
-                                hue = presetHsv[0]
-                                saturation = presetHsv[1]
-                                value = presetHsv[2]
-                                alpha = 1f
-                            },
-                        )
-                        .semantics {
-                            contentDescription = "#%06X".format(Locale.ROOT, 0xFFFFFF and presetColorArgb)
-                        },
-                )
-            }
-        }
+                hue = presetHsv[0]
+                saturation = presetHsv[1]
+                value = presetHsv[2]
+                alpha = 1f
+            },
+        )
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -452,6 +422,50 @@ private fun AlphaCanvas(
         )
 
         drawSliderIndicator(alpha * size.width)
+    }
+}
+
+@Composable
+private fun ColorPresetRow(
+    selectedColor: Int,
+    onSelectColor: (Int) -> Unit,
+) {
+    LazyRow(
+        modifier = Modifier.fillMaxWidth(),
+        contentPadding = PaddingValues(horizontal = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        items(colorPresets) { presetColor ->
+            val presetColorArgb = presetColor.toArgb()
+            val isSelected = selectedColor == presetColorArgb
+
+            Box(
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(CircleShape)
+                    .background(presetColor)
+                    .border(
+                        width = if (isSelected) 3.dp else 1.dp,
+                        color = if (isSelected) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.outlineVariant
+                        },
+                        shape = CircleShape,
+                    )
+                    .selectable(
+                        selected = isSelected,
+                        role = Role.RadioButton,
+                        onClick = {
+                            onSelectColor(presetColorArgb)
+                        },
+                    )
+                    .semantics {
+                        contentDescription =
+                            "#%06X".format(Locale.ROOT, 0xFFFFFF and presetColorArgb)
+                    },
+            )
+        }
     }
 }
 
