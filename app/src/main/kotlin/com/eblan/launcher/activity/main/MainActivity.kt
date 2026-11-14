@@ -32,6 +32,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.eblan.launcher.activity.settings.SettingsActivity
 import com.eblan.launcher.common.AndroidImageSerializer
+import com.eblan.launcher.common.AndroidUserManagerWrapper
 import com.eblan.launcher.designsystem.theme.EblanLauncherTheme
 import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
@@ -42,7 +43,6 @@ import com.eblan.launcher.framework.launcherapps.PinItemRequestWrapper
 import com.eblan.launcher.framework.packagemanager.AndroidPackageManagerWrapper
 import com.eblan.launcher.framework.settings.AndroidSettingsWrapper
 import com.eblan.launcher.framework.statusbarmanager.AndroidStatusBarManagerWrapper
-import com.eblan.launcher.common.AndroidUserManagerWrapper
 import com.eblan.launcher.framework.wallpapermanager.AndroidWallpaperManagerWrapper
 import com.eblan.launcher.framework.widgetmanager.AndroidAppWidgetHostWrapper
 import com.eblan.launcher.framework.widgetmanager.AndroidAppWidgetManagerWrapper

@@ -26,6 +26,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.UserHandle
 import com.eblan.launcher.common.AndroidImageSerializer
+import com.eblan.launcher.common.AndroidUserManagerWrapper
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.common.FileManager
@@ -33,7 +34,6 @@ import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.AppWidgetManagerWrapper
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.model.widget.AppWidgetManagerAppWidgetProviderInfo
-import com.eblan.launcher.common.AndroidUserManagerWrapper
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.currentCoroutineContext

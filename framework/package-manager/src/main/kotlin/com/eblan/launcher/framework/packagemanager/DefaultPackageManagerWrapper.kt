@@ -27,11 +27,11 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.UserHandle
 import com.eblan.launcher.common.AndroidImageSerializer
+import com.eblan.launcher.common.AndroidUserManagerWrapper
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPack
-import com.eblan.launcher.common.AndroidUserManagerWrapper
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext

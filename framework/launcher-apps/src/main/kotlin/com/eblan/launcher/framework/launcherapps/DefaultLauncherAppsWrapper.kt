@@ -37,6 +37,7 @@ import android.os.UserHandle
 import android.os.UserManager
 import androidx.annotation.RequiresApi
 import com.eblan.launcher.common.AndroidImageSerializer
+import com.eblan.launcher.common.AndroidUserManagerWrapper
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.common.FileManager
@@ -54,7 +55,6 @@ import com.eblan.launcher.domain.model.launcherapps.ShortcutQueryFlag
 import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.IconTint
 import com.eblan.launcher.domain.model.userdata.Theme
-import com.eblan.launcher.common.AndroidUserManagerWrapper
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.currentCoroutineContext
