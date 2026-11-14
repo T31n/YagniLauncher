@@ -39,4 +39,7 @@ data class EblanShortcutInfoEntity(
     val isEnabled: Boolean,
     @ColumnInfo(defaultValue = "0")
     val lastChangedTimestamp: Long,
+    val activityComponentName: String? = null,
+    @ColumnInfo(defaultValue = "0")
+    val rank: Int = 0,
 )
