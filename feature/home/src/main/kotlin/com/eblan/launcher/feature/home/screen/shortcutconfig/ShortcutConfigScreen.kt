@@ -92,6 +92,7 @@ import com.eblan.launcher.domain.model.shortcutconfig.EblanShortcutConfig
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.feature.home.component.ScreenEffect
+import com.eblan.launcher.feature.home.component.getEblanUserTypeTitle
 import com.eblan.launcher.feature.home.component.rememberNestedScrollConnectionEffect
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
@@ -285,7 +286,7 @@ private fun EblanShortcutConfigTabRow(
                 },
                 text = {
                     Text(
-                        text = eblanUser.eblanUserType.name,
+                        text = eblanUser.eblanUserType.getEblanUserTypeTitle(),
                         maxLines = 1,
                     )
                 },

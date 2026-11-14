@@ -23,6 +23,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
+import com.eblan.launcher.domain.model.launcherapps.EblanUserType
+import com.eblan.launcher.feature.home.R
 import com.eblan.launcher.feature.home.model.Drag
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collect
@@ -77,4 +80,12 @@ internal fun ScreenEffect(
     HomeHandler(enabled = swipeY < screenHeight.toFloat()) {
         onDismiss()
     }
+}
+
+@Composable
+internal fun EblanUserType.getEblanUserTypeTitle() = when (this) {
+    EblanUserType.Personal -> stringResource(R.string.personal)
+    EblanUserType.Clone -> stringResource(R.string.clone)
+    EblanUserType.Work -> stringResource(R.string.work)
+    EblanUserType.Private -> stringResource(R.string.private_space)
 }
