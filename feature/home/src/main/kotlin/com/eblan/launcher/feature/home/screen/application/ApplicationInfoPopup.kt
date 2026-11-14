@@ -178,13 +178,13 @@ internal fun ApplicationInfoPopup(
                 y = y,
             ),
             visibleState = transitionState,
-            enter = fadeIn(animationSpec = springAnimationSpec<Float>()) + scaleIn(
+            enter = fadeIn(animationSpec = springAnimationSpec()) + scaleIn(
                 initialScale = 0.8f,
-                animationSpec = popupSpringAnimationSpec<Float>(),
+                animationSpec = popupSpringAnimationSpec(),
             ),
-            exit = fadeOut(animationSpec = springAnimationSpec<Float>()) + scaleOut(
+            exit = fadeOut(animationSpec = springAnimationSpec()) + scaleOut(
                 targetScale = 0.8f,
-                animationSpec = popupSpringAnimationSpec<Float>(),
+                animationSpec = popupSpringAnimationSpec(),
             ),
         ) {
             ApplicationInfoMenu(
@@ -372,13 +372,13 @@ internal fun PrivateApplicationInfoPopup(
                 y = y,
             ),
             visibleState = transitionState,
-            enter = fadeIn(animationSpec = springAnimationSpec<Float>()) + scaleIn(
+            enter = fadeIn(animationSpec = springAnimationSpec()) + scaleIn(
                 initialScale = 0.8f,
-                animationSpec = popupSpringAnimationSpec<Float>(),
+                animationSpec = popupSpringAnimationSpec(),
             ),
-            exit = fadeOut(animationSpec = springAnimationSpec<Float>()) + scaleOut(
+            exit = fadeOut(animationSpec = springAnimationSpec()) + scaleOut(
                 targetScale = 0.8f,
-                animationSpec = popupSpringAnimationSpec<Float>(),
+                animationSpec = popupSpringAnimationSpec(),
             ),
         ) {
             PrivateApplicationInfoMenu(
@@ -499,6 +499,7 @@ internal fun ApplicationInfoMenu(
                         // Appearance
                         icon = icon,
                         isVisibleOverlay = isVisibleOverlay,
+                        modifier = Modifier.weight(1f, fill = false),
                         // Actions
                         onTapShortcutInfo = onTapShortcutInfo,
                         onDragShortcutInfo = onDragShortcutInfo,
@@ -583,6 +584,8 @@ private fun PrivateApplicationInfoMenu(
                     PrivateShortcutInfoMenu(
                         // Shortcut Data
                         eblanShortcutInfosGroup = eblanShortcutInfosGroup,
+                        // Layout
+                        modifier = Modifier.weight(1f, fill = false),
                         // Actions
                         onTapShortcutInfo = onTapShortcutInfo,
                     )

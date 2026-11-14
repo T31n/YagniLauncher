@@ -607,8 +607,9 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         }
 
         val shortcutQueryFlag = when {
-            isPinned -> ShortcutQueryFlag.Pinned
             isDynamic -> ShortcutQueryFlag.Dynamic
+            isDeclaredInManifest -> ShortcutQueryFlag.Manifest
+            isPinned -> ShortcutQueryFlag.Pinned
             else -> ShortcutQueryFlag.Manifest
         }
 

@@ -186,13 +186,13 @@ internal fun FolderGridItemPopup(
                 y = y,
             ),
             visibleState = transitionState,
-            enter = fadeIn(animationSpec = springAnimationSpec<Float>()) + scaleIn(
+            enter = fadeIn(animationSpec = springAnimationSpec()) + scaleIn(
                 initialScale = 0.8f,
-                animationSpec = popupSpringAnimationSpec<Float>(),
+                animationSpec = popupSpringAnimationSpec(),
             ),
-            exit = fadeOut(animationSpec = springAnimationSpec<Float>()) + scaleOut(
+            exit = fadeOut(animationSpec = springAnimationSpec()) + scaleOut(
                 targetScale = 0.8f,
-                animationSpec = popupSpringAnimationSpec<Float>(),
+                animationSpec = popupSpringAnimationSpec(),
             ),
         ) {
             FolderGridItemPopupContent(
