@@ -44,7 +44,7 @@ class GetEblanShortcutInfosUseCase @Inject constructor(
      */
     operator fun invoke(): Flow<Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>> = eblanShortcutInfoRepository.eblanShortcutInfosFlow.map { eblanShortcutInfos ->
         val maxShortcutCountPerApp = shortcutManagerWrapper.getMaxShortcutCountPerActivity()
-        println(maxShortcutCountPerApp)
+
         eblanShortcutInfos
             .filter {
                 it.shortcutQueryFlag != ShortcutQueryFlag.Pinned
