@@ -23,7 +23,6 @@ import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -53,6 +52,8 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import com.eblan.launcher.designsystem.component.popupSpringAnimationSpec
+import com.eblan.launcher.designsystem.component.springAnimationSpec
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
 import com.eblan.launcher.domain.model.grid.GridItem
@@ -182,8 +183,14 @@ internal fun GridItemPopup(
                 y = y,
             ),
             visibleState = transitionState,
-            enter = fadeIn(tween()) + scaleIn(initialScale = 0.8f, animationSpec = tween()),
-            exit = fadeOut(tween()) + scaleOut(targetScale = 0.8f, animationSpec = tween()),
+            enter = fadeIn(animationSpec = springAnimationSpec<Float>()) + scaleIn(
+                initialScale = 0.8f,
+                animationSpec = popupSpringAnimationSpec<Float>(),
+            ),
+            exit = fadeOut(animationSpec = springAnimationSpec<Float>()) + scaleOut(
+                targetScale = 0.8f,
+                animationSpec = popupSpringAnimationSpec<Float>(),
+            ),
         ) {
             GridItemPopupContent(
                 // Item Details
