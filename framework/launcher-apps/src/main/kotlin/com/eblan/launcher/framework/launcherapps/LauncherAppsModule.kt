@@ -38,9 +38,5 @@ internal interface LauncherAppsModule {
 
     @Binds
     @Singleton
-    fun launcherAppsProfileWrapper(impl: DefaultLauncherAppsWrapper): LauncherAppsProfileWrapper
-
-    @Binds
-    @Singleton
     fun pinItemRequestWrapper(impl: DefaultPinItemRequestWrapper): PinItemRequestWrapper
 }

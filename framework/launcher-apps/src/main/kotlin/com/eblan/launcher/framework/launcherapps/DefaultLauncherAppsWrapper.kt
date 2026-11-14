@@ -22,7 +22,6 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
-import android.content.pm.ApplicationInfo
 import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
 import android.content.pm.LauncherUserInfo
@@ -55,9 +54,7 @@ import com.eblan.launcher.domain.model.launcherapps.ShortcutQueryFlag
 import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.IconTint
 import com.eblan.launcher.domain.model.userdata.Theme
-import com.eblan.launcher.framework.packagemanager.AndroidUserBadgingWrapper
-import com.eblan.launcher.framework.usermanager.AndroidUserManagerWrapper
-import dagger.Lazy
+import com.eblan.launcher.common.AndroidUserManagerWrapper
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.currentCoroutineContext
@@ -71,12 +68,10 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
     private val imageSerializer: AndroidImageSerializer,
     private val userManagerWrapper: AndroidUserManagerWrapper,
     private val fileManager: FileManager,
-    private val androidUserBadgingWrapper: Lazy<AndroidUserBadgingWrapper>,
     private val iconKeyGenerator: IconKeyGenerator,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : LauncherAppsWrapper,
-    AndroidLauncherAppsWrapper,
-    LauncherAppsProfileWrapper {
+    AndroidLauncherAppsWrapper {
     private val launcherApps =
         context.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
 
@@ -92,42 +87,6 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
 
     override fun unregisterCallback(callback: LauncherApps.Callback) {
         launcherApps.unregisterCallback(callback)
-    }
-
-    override fun getApplicationInfoForUser(
-        packageName: String,
-        serialNumber: Long,
-    ): ApplicationInfo? {
-        val userHandle = userManagerWrapper.getUserForSerialNumber(serialNumber) ?: return null
-
-        return try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                launcherApps.getApplicationInfo(
-                    packageName,
-                    PackageManager.GET_META_DATA,
-                    userHandle,
-                )
-            } else {
-                launcherApps.getActivityList(packageName, userHandle)
-                    .firstOrNull()
-                    ?.applicationInfo
-                    ?: context.packageManager.getApplicationInfo(
-                        packageName,
-                        PackageManager.GET_META_DATA,
-                    )
-            }
-        } catch (_: PackageManager.NameNotFoundException) {
-            null
-        }
-    }
-
-    override fun getActivityListForUser(
-        packageName: String,
-        serialNumber: Long,
-    ): List<LauncherActivityInfo> {
-        val userHandle = userManagerWrapper.getUserForSerialNumber(serialNumber) ?: return emptyList()
-
-        return launcherApps.getActivityList(packageName, userHandle)
     }
 
     override suspend fun getActivityListWithCacheIcons(
@@ -517,14 +476,10 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
                 isPrivateSpaceEntryPointHidden = isPrivateSpaceEntryPointHidden(userHandle = userHandle),
             )
         } else {
-            val eblanUserType = when {
-                androidUserBadgingWrapper.get().getUserBadgedLabel(
-                    label = "",
-                    userHandle = userHandle,
-                ).isNotBlank() -> EblanUserType.Work
-
-                else -> EblanUserType.Personal
+            val isWorkProfile = withContext(ioDispatcher) {
+                context.packageManager.getUserBadgedLabel("", userHandle).isNotBlank()
             }
+            val eblanUserType = if (isWorkProfile) EblanUserType.Work else EblanUserType.Personal
 
             EblanUser(
                 serialNumber = serialNumber,
@@ -723,8 +678,11 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             )
         } ?: return null
 
-        val badgedDrawable = androidUserBadgingWrapper.get().getUserBadgedIcon(transformedDrawable, userHandle)
-            ?: return null
+        val badgedDrawable = try {
+            context.packageManager.getUserBadgedIcon(transformedDrawable, userHandle)
+        } catch (_: IllegalArgumentException) {
+            null
+        } ?: return null
 
         imageSerializer.createDrawablePath(
             drawable = badgedDrawable,

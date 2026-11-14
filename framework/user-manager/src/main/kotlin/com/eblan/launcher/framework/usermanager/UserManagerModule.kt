@@ -17,6 +17,7 @@
  */
 package com.eblan.launcher.framework.usermanager
 
+import com.eblan.launcher.common.AndroidUserManagerWrapper
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

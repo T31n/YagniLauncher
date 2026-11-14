@@ -20,16 +20,18 @@ package com.eblan.launcher.framework.packagemanager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
+import android.content.pm.LauncherApps
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.UserHandle
 import com.eblan.launcher.common.AndroidImageSerializer
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPack
-import com.eblan.launcher.framework.launcherapps.LauncherAppsProfileWrapper
+import com.eblan.launcher.common.AndroidUserManagerWrapper
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -39,12 +41,12 @@ import javax.inject.Inject
 internal class DefaultPackageManagerWrapper @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val imageSerializer: AndroidImageSerializer,
-    private val launcherAppsProfileWrapper: LauncherAppsProfileWrapper,
+    private val userManagerWrapper: AndroidUserManagerWrapper,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : PackageManagerWrapper,
-    AndroidPackageManagerWrapper,
-    AndroidUserBadgingWrapper {
+    AndroidPackageManagerWrapper {
     private val packageManager = context.packageManager
+    private val launcherApps = context.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
 
     override val hasSystemFeatureAppWidgets
         get() = packageManager.hasSystemFeature(PackageManager.FEATURE_APP_WIDGETS)
@@ -92,10 +94,9 @@ internal class DefaultPackageManagerWrapper @Inject constructor(
         serialNumber: Long?,
     ): String? = withContext(ioDispatcher) {
         if (serialNumber != null) {
-            return@withContext launcherAppsProfileWrapper.getActivityListForUser(
-                packageName = packageName,
-                serialNumber = serialNumber,
-            )
+            val userHandle = userManagerWrapper.getUserForSerialNumber(serialNumber) ?: return@withContext null
+
+            return@withContext launcherApps.getActivityList(packageName, userHandle)
                 .firstOrNull()
                 ?.componentName
                 ?.flattenToString()
@@ -165,17 +166,29 @@ internal class DefaultPackageManagerWrapper @Inject constructor(
     private fun getApplicationInfoForUser(
         packageName: String,
         serialNumber: Long?,
-    ): ApplicationInfo? = try {
-        if (serialNumber != null) {
-            launcherAppsProfileWrapper.getApplicationInfoForUser(
-                packageName = packageName,
-                serialNumber = serialNumber,
-            )
-        } else {
-            packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
+    ): ApplicationInfo? {
+        return try {
+            if (serialNumber != null) {
+                val userHandle = userManagerWrapper.getUserForSerialNumber(serialNumber) ?: return null
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    launcherApps.getApplicationInfo(
+                        packageName,
+                        PackageManager.GET_META_DATA,
+                        userHandle,
+                    )
+                } else {
+                    launcherApps.getActivityList(packageName, userHandle)
+                        .firstOrNull()
+                        ?.applicationInfo
+                        ?: packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
+                }
+            } else {
+                packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
+            }
+        } catch (_: PackageManager.NameNotFoundException) {
+            null
         }
-    } catch (_: PackageManager.NameNotFoundException) {
-        null
     }
 
     override suspend fun getUserBadgedLabel(

@@ -15,13 +15,26 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.framework.packagemanager
+package com.eblan.launcher.common
 
-import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.UserHandle
+import androidx.annotation.RequiresApi
 
-interface AndroidUserBadgingWrapper {
-    suspend fun getUserBadgedLabel(label: CharSequence, userHandle: UserHandle): CharSequence
+interface AndroidUserManagerWrapper {
+    fun getSerialNumberForUser(userHandle: UserHandle): Long
 
-    suspend fun getUserBadgedIcon(drawable: Drawable, userHandle: UserHandle): Drawable?
+    fun getUserForSerialNumber(serialNumber: Long): UserHandle?
+
+    fun isUserRunning(userHandle: UserHandle): Boolean
+
+    fun isUserUnlocked(userHandle: UserHandle): Boolean
+
+    fun isQuietModeEnabled(userHandle: UserHandle): Boolean
+
+    @RequiresApi(Build.VERSION_CODES.P)
+    suspend fun requestQuietModeEnabled(
+        enableQuiteMode: Boolean,
+        userHandle: UserHandle,
+    ): Boolean
 }
