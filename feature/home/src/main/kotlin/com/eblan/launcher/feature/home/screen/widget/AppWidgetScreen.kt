@@ -34,6 +34,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -58,6 +59,8 @@ import androidx.compose.ui.graphics.layer.GraphicsLayer
 import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -249,8 +252,6 @@ private fun EblanAppWidgetScreenItem(
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
     var intSize by remember { mutableStateOf(IntSize.Zero) }
 
-    val preview = eblanAppWidgetProviderInfo.preview ?: eblanAppWidgetProviderInfo.applicationIcon
-
     val graphicsLayer = rememberGraphicsLayer()
 
     val id = remember { Uuid.random().toHexString() }
@@ -333,23 +334,33 @@ private fun EblanAppWidgetScreenItem(
             Spacer(modifier = Modifier.height(10.dp))
         }
 
-        AsyncImage(
+        Box(
             modifier = Modifier
-                .onGloballyPositioned {
-                    intOffset = it.positionInRoot().round()
+                .width(160.dp)
+                .height(100.dp)
+                .onGloballyPositioned(
+                    onGloballyPositioned = { it: LayoutCoordinates ->
+                        intOffset = it.positionInRoot().round()
 
-                    intSize = it.size
-                }
+                        intSize = it.size
+                    },
+                )
                 .drawWithContent {
                     graphicsLayer.record {
                         this@drawWithContent.drawContent()
                     }
 
-                    drawLayer(graphicsLayer)
+                    drawLayer(graphicsLayer = graphicsLayer)
                 },
-            model = preview,
-            contentDescription = null,
-        )
+            contentAlignment = Alignment.Center,
+        ) {
+            AsyncImage(
+                model = eblanAppWidgetProviderInfo.preview
+                    ?: eblanAppWidgetProviderInfo.applicationIcon,
+                contentScale = ContentScale.Fit,
+                contentDescription = null,
+            )
+        }
     }
 }
 

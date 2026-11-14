@@ -192,7 +192,7 @@ class ChangePackageUseCase @Inject constructor(
         if (!packageManagerWrapper.hasSystemFeatureAppWidgets) return
 
         val appWidgetManagerAppWidgetProviderInfosByPackageName =
-            appWidgetManagerWrapper.getInstalledProvidersWithCacheIcons()
+            appWidgetManagerWrapper.getInstalledProvidersForProfilesWithCacheIcons()
                 .filter {
                     it.serialNumber == serialNumber && it.packageName == packageName
                 }

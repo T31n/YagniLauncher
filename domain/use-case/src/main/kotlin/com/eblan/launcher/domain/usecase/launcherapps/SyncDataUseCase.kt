@@ -260,7 +260,7 @@ class SyncDataUseCase @Inject constructor(
         if (!packageManagerWrapper.hasSystemFeatureAppWidgets) return
 
         val appWidgetManagerAppWidgetProviderInfos =
-            appWidgetManagerWrapper.getInstalledProvidersWithCacheIcons()
+            appWidgetManagerWrapper.getInstalledProvidersForProfilesWithCacheIcons()
 
         val oldEblanAppWidgetProviderInfos =
             eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos()

@@ -19,7 +19,9 @@ package com.eblan.launcher.domain.usecase.application
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
+import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
+import com.eblan.launcher.domain.model.launcherapps.EblanUser
 import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
 import com.eblan.launcher.domain.repository.EblanAppWidgetProviderInfoRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -31,16 +33,17 @@ import javax.inject.Inject
 /** Exposes widget providers whose application labels match a changing search query. */
 class GetEblanAppWidgetProviderInfosByLabelUseCase @Inject constructor(
     private val eblanAppWidgetProviderInfoRepository: EblanAppWidgetProviderInfoRepository,
+    private val launcherAppsWrapper: LauncherAppsWrapper,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     /**
-     * Filters providers by a case-insensitive label substring, sorts them by label, and groups them
-     * by application.
+     * Filters providers by a case-insensitive label substring, sorts them by user and label, and
+     * groups them by user and application.
      *
      * @param labelFlow The flow of query strings to apply.
-     * @return A flow of provider lists grouped by their application information.
+     * @return A flow of provider lists grouped by user and application information.
      */
-    operator fun invoke(labelFlow: Flow<String>): Flow<Map<EblanApplicationInfoGroup, List<EblanAppWidgetProviderInfo>>> = combine(
+    operator fun invoke(labelFlow: Flow<String>): Flow<Map<EblanUser, Map<EblanApplicationInfoGroup, List<EblanAppWidgetProviderInfo>>>> = combine(
         eblanAppWidgetProviderInfoRepository.eblanAppWidgetProviderInfosFlow,
         labelFlow,
     ) { eblanAppWidgetProviderInfos, label ->
@@ -49,15 +52,22 @@ class GetEblanAppWidgetProviderInfosByLabelUseCase @Inject constructor(
                 other = label,
                 ignoreCase = true,
             ) == true
-        }.sortedBy {
-            it.applicationLabel?.lowercase()
-        }.groupBy {
-            EblanApplicationInfoGroup(
-                serialNumber = it.serialNumber,
-                packageName = it.packageName,
-                icon = it.applicationIcon,
-                label = it.applicationLabel,
-            )
+        }.sortedWith(
+            compareBy(
+                { it.serialNumber },
+                { it.applicationLabel?.lowercase() },
+            ),
+        ).groupBy {
+            launcherAppsWrapper.getUser(serialNumber = it.serialNumber)
+        }.mapValues { entry ->
+            entry.value.groupBy {
+                EblanApplicationInfoGroup(
+                    serialNumber = it.serialNumber,
+                    packageName = it.packageName,
+                    icon = it.applicationIcon,
+                    label = it.applicationLabel,
+                )
+            }
         }
     }.flowOn(defaultDispatcher)
 }

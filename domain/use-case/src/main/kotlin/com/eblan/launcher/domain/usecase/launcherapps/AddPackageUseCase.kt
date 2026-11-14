@@ -190,7 +190,7 @@ class AddPackageUseCase @Inject constructor(
         serialNumber: Long,
         packageName: String,
     ) {
-        val eblanAppWidgetProviderInfos = appWidgetManagerWrapper.getInstalledProvidersWithCacheIcons()
+        val eblanAppWidgetProviderInfos = appWidgetManagerWrapper.getInstalledProvidersForProfilesWithCacheIcons()
             .filter {
                 it.serialNumber == serialNumber &&
                     it.packageName == packageName

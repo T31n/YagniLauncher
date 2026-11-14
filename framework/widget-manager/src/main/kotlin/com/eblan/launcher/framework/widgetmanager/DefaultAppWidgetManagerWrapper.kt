@@ -21,6 +21,7 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProviderInfo
 import android.content.ComponentName
 import android.content.Context
+import android.content.pm.LauncherApps
 import android.os.Build
 import android.os.Bundle
 import android.os.UserHandle
@@ -52,9 +53,20 @@ internal class DefaultAppWidgetManagerWrapper @Inject constructor(
 ) : AppWidgetManagerWrapper,
     AndroidAppWidgetManagerWrapper {
     private val appWidgetManager = AppWidgetManager.getInstance(context)
+    private val launcherApps = context.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
 
-    override suspend fun getInstalledProvidersWithCacheIcons(): List<AppWidgetManagerAppWidgetProviderInfo> = withContext(ioDispatcher) {
-        appWidgetManager.installedProviders.map {
+    override suspend fun getInstalledProvidersForProfilesWithCacheIcons(): List<AppWidgetManagerAppWidgetProviderInfo> = withContext(ioDispatcher) {
+        val installedProviders = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            launcherApps.profiles.flatMap { userHandle ->
+                currentCoroutineContext().ensureActive()
+
+                appWidgetManager.getInstalledProvidersForProfile(userHandle)
+            }
+        } else {
+            appWidgetManager.installedProviders
+        }
+
+        installedProviders.map {
             currentCoroutineContext().ensureActive()
 
             it.toEblanAppWidgetProviderInfo()
