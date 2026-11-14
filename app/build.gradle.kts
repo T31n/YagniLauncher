@@ -49,13 +49,14 @@ android {
 }
 
 dependencies {
+    // Projects
     implementation(projects.common)
     implementation(projects.data.repository)
     implementation(projects.designSystem)
     implementation(projects.domain.framework)
     implementation(projects.domain.model)
-    implementation(projects.domain.useCase)
     implementation(projects.domain.repository)
+    implementation(projects.domain.useCase)
     implementation(projects.feature.action)
     implementation(projects.feature.editApplicationInfo)
     implementation(projects.feature.editFolderApplicationInfo)
@@ -76,15 +77,17 @@ dependencies {
     implementation(projects.service)
     implementation(projects.ui)
 
+    // Libraries
+    implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
 
+    // Tests
     androidTestImplementation(libs.androidx.test.core.ktx)
-    androidTestImplementation(libs.androidx.test.runner)
-    androidTestImplementation(libs.androidx.test.rules)
     androidTestImplementation(libs.androidx.test.ext.junit.ktx)
+    androidTestImplementation(libs.androidx.test.rules)
+    androidTestImplementation(libs.androidx.test.runner)
 }

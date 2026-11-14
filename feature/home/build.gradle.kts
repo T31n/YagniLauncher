@@ -26,6 +26,7 @@ android {
 }
 
 dependencies {
+    // Projects
     implementation(projects.common)
     implementation(projects.domain.framework)
     implementation(projects.domain.grid)
@@ -36,6 +37,7 @@ dependencies {
     implementation(projects.framework.userManager)
     implementation(projects.service)
 
+    // Libraries
     implementation(libs.accompanist.permissions)
     implementation(libs.androidx.core.core)
 }

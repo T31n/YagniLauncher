@@ -30,10 +30,13 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.dataStore.core)
+    // Projects
     implementation(projects.common)
     implementation(projects.data.datastoreProto)
     implementation(projects.domain.common)
     implementation(projects.domain.model)
     implementation(projects.domain.repository)
+
+    // Libraries
+    implementation(libs.androidx.dataStore.core)
 }

@@ -21,5 +21,6 @@ plugins {
 }
 
 dependencies {
+    // Libraries
     api(libs.javax.inject)
 }
