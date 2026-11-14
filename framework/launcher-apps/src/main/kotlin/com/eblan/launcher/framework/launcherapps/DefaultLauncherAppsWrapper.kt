@@ -22,9 +22,11 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
+import android.content.pm.ApplicationInfo
 import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
 import android.content.pm.LauncherUserInfo
+import android.content.pm.PackageManager
 import android.content.pm.ShortcutInfo
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
@@ -41,7 +43,6 @@ import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
-import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.model.launcherapps.EblanUser
 import com.eblan.launcher.domain.model.launcherapps.EblanUserType
 import com.eblan.launcher.domain.model.launcherapps.FastLauncherAppsActivityInfo
@@ -54,8 +55,9 @@ import com.eblan.launcher.domain.model.launcherapps.ShortcutQueryFlag
 import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.IconTint
 import com.eblan.launcher.domain.model.userdata.Theme
-import com.eblan.launcher.framework.packagemanager.AndroidPackageManagerWrapper
+import com.eblan.launcher.framework.packagemanager.AndroidUserBadgingWrapper
 import com.eblan.launcher.framework.usermanager.AndroidUserManagerWrapper
+import dagger.Lazy
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.currentCoroutineContext
@@ -69,12 +71,12 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
     private val imageSerializer: AndroidImageSerializer,
     private val userManagerWrapper: AndroidUserManagerWrapper,
     private val fileManager: FileManager,
-    private val packageManagerWrapper: PackageManagerWrapper,
-    private val androidPackageManager: AndroidPackageManagerWrapper,
+    private val androidUserBadgingWrapper: Lazy<AndroidUserBadgingWrapper>,
     private val iconKeyGenerator: IconKeyGenerator,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : LauncherAppsWrapper,
-    AndroidLauncherAppsWrapper {
+    AndroidLauncherAppsWrapper,
+    LauncherAppsProfileWrapper {
     private val launcherApps =
         context.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
 
@@ -90,6 +92,38 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
 
     override fun unregisterCallback(callback: LauncherApps.Callback) {
         launcherApps.unregisterCallback(callback)
+    }
+
+    override fun getApplicationInfoForUser(
+        packageName: String,
+        serialNumber: Long,
+    ): ApplicationInfo? {
+        val userHandle = userManagerWrapper.getUserForSerialNumber(serialNumber) ?: return null
+
+        return try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                launcherApps.getApplicationInfo(
+                    packageName,
+                    PackageManager.GET_META_DATA,
+                    userHandle,
+                )
+            } else {
+                launcherApps.getActivityList(packageName, userHandle)
+                    .firstOrNull()
+                    ?.applicationInfo
+            }
+        } catch (_: PackageManager.NameNotFoundException) {
+            null
+        }
+    }
+
+    override fun getActivityListForUser(
+        packageName: String,
+        serialNumber: Long,
+    ): List<LauncherActivityInfo> {
+        val userHandle = userManagerWrapper.getUserForSerialNumber(serialNumber) ?: return emptyList()
+
+        return launcherApps.getActivityList(packageName, userHandle)
     }
 
     override suspend fun getActivityListWithCacheIcons(
@@ -480,7 +514,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             )
         } else {
             val eblanUserType = when {
-                androidPackageManager.getUserBadgedLabel(
+                androidUserBadgingWrapper.get().getUserBadgedLabel(
                     label = "",
                     userHandle = userHandle,
                 ).isNotBlank() -> EblanUserType.Work
@@ -563,7 +597,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             packageName = applicationInfo.packageName,
             activityIcon = activityIcon,
             activityLabel = label.toString(),
-            lastUpdateTime = packageManagerWrapper.getLastUpdateTime(packageName = applicationInfo.packageName),
+            lastUpdateTime = getLastUpdateTime(packageName = applicationInfo.packageName),
             flags = applicationInfo.flags,
         )
     }
@@ -572,7 +606,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         serialNumber = userManagerWrapper.getSerialNumberForUser(userHandle = user),
         componentName = componentName.flattenToString(),
         packageName = applicationInfo.packageName,
-        lastUpdateTime = packageManagerWrapper.getLastUpdateTime(packageName = applicationInfo.packageName),
+        lastUpdateTime = getLastUpdateTime(packageName = applicationInfo.packageName),
     )
 
     @RequiresApi(Build.VERSION_CODES.N_MR1)
@@ -633,8 +667,14 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         shortcutId = id,
         packageName = `package`,
         serialNumber = userManagerWrapper.getSerialNumberForUser(userHandle = userHandle),
-        lastChangedTimestamp = packageManagerWrapper.getLastUpdateTime(packageName = `package`),
+        lastChangedTimestamp = getLastUpdateTime(packageName = `package`),
     )
+
+    private fun getLastUpdateTime(packageName: String): Long = try {
+        context.packageManager.getPackageInfo(packageName, 0).lastUpdateTime
+    } catch (_: PackageManager.NameNotFoundException) {
+        0L
+    }
 
     private suspend fun getActivityIcon(
         componentName: ComponentName,
@@ -679,7 +719,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             )
         } ?: return null
 
-        val badgedDrawable = androidPackageManager.getUserBadgedIcon(transformedDrawable, userHandle)
+        val badgedDrawable = androidUserBadgingWrapper.get().getUserBadgedIcon(transformedDrawable, userHandle)
             ?: return null
 
         imageSerializer.createDrawablePath(

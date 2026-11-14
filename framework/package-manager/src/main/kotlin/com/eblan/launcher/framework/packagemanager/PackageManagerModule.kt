@@ -35,4 +35,8 @@ internal interface PackageManagerModule {
     @Binds
     @Singleton
     fun androidPackageManagerWrapper(impl: DefaultPackageManagerWrapper): AndroidPackageManagerWrapper
+
+    @Binds
+    @Singleton
+    fun androidUserBadgingWrapper(impl: DefaultPackageManagerWrapper): AndroidUserBadgingWrapper
 }
