@@ -27,13 +27,10 @@ import javax.inject.Inject
 internal class DefaultShortcutManagerWrapper @Inject constructor(
     @param:ApplicationContext private val context: Context,
 ) : ShortcutManagerWrapper {
-    override fun getMaxShortcutCountPerActivity(): Int {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N_MR1) {
-            return 0
-        }
-
-        return checkNotNull(context.getSystemService(ShortcutManager::class.java)) {
-            "ShortcutManager system service is unavailable"
-        }.maxShortcutCountPerActivity
+    override fun getMaxShortcutCountPerActivity(): Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+        (context.getSystemService(Context.SHORTCUT_SERVICE) as? ShortcutManager)?.maxShortcutCountPerActivity
+            ?: 0
+    } else {
+        0
     }
 }
