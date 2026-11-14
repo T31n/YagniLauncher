@@ -300,6 +300,7 @@ internal suspend fun updateShortcutConfigGridItems(
                     activityIcon = eblanShortcutConfig.activityIcon,
                     applicationLabel = packageManagerWrapper.getApplicationLabel(
                         packageName = eblanShortcutConfig.packageName,
+                        serialNumber = eblanShortcutConfig.serialNumber,
                     ),
                     applicationIcon = resolveApplicationIcon(
                         fileManager = fileManager,
@@ -374,6 +375,7 @@ internal suspend fun updateWidgetGridItems(
                     ),
                     label = packageManagerWrapper.getApplicationLabel(
                         packageName = eblanAppWidgetProviderInfo.packageName,
+                        serialNumber = eblanAppWidgetProviderInfo.serialNumber,
                     ),
                 ),
             )
@@ -416,6 +418,7 @@ internal suspend fun AppWidgetManagerAppWidgetProviderInfo.toEblanAppWidgetProvi
     ),
     applicationLabel = packageManagerWrapper.getApplicationLabel(
         packageName = packageName,
+        serialNumber = serialNumber,
     ),
     lastUpdateTime = lastUpdateTime,
     label = label,
@@ -488,6 +491,7 @@ internal suspend fun ShortcutConfigActivityInfo.toEblanShortcutConfig(
     ),
     applicationLabel = packageManagerWrapper.getApplicationLabel(
         packageName = packageName,
+        serialNumber = serialNumber,
     ),
 )
 
@@ -652,7 +656,10 @@ private suspend fun resolveApplicationIcon(
     val directory = fileManager.getFilesDirectory(FileManager.ICONS_DIR)
 
     val componentName =
-        packageManagerWrapper.getComponentName(packageName = packageName)
+        packageManagerWrapper.getComponentName(
+            packageName = packageName,
+            serialNumber = serialNumber,
+        )
 
     /** Returns the cached icon path for the given activity or package component. */
     suspend fun getApplicationIcon(componentName: String): String? {
@@ -667,6 +674,7 @@ private suspend fun resolveApplicationIcon(
         return packageManagerWrapper.getApplicationIconCache(
             packageName = packageName,
             file = file,
+            serialNumber = serialNumber,
         )
     }
 

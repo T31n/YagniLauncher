@@ -61,7 +61,10 @@ class GetPinGridItemUseCase @Inject constructor(
         when (pinItemRequestType) {
             is PinItemRequestType.Widget -> {
                 val eblanApplicationInfoIcon =
-                    packageManagerWrapper.getComponentName(packageName = pinItemRequestType.packageName)
+                    packageManagerWrapper.getComponentName(
+                        packageName = pinItemRequestType.packageName,
+                        serialNumber = pinItemRequestType.serialNumber,
+                    )
                         ?.let {
                             val directory = fileManager.getFilesDirectory(FileManager.ICONS_DIR)
 
@@ -92,7 +95,10 @@ class GetPinGridItemUseCase @Inject constructor(
                     targetCellHeight = pinItemRequestType.targetCellHeight,
                     targetCellWidth = pinItemRequestType.targetCellWidth,
                     preview = pinItemRequestType.preview,
-                    label = packageManagerWrapper.getApplicationLabel(packageName = pinItemRequestType.packageName),
+                    label = packageManagerWrapper.getApplicationLabel(
+                        packageName = pinItemRequestType.packageName,
+                        serialNumber = pinItemRequestType.serialNumber,
+                    ),
                     icon = eblanApplicationInfoIcon,
                 )
 
@@ -128,7 +134,10 @@ class GetPinGridItemUseCase @Inject constructor(
 
             is PinItemRequestType.ShortcutInfo -> {
                 val eblanApplicationInfoIcon =
-                    packageManagerWrapper.getComponentName(packageName = pinItemRequestType.packageName)
+                    packageManagerWrapper.getComponentName(
+                        packageName = pinItemRequestType.packageName,
+                        serialNumber = pinItemRequestType.serialNumber,
+                    )
                         ?.let {
                             val directory = fileManager.getFilesDirectory(FileManager.ICONS_DIR)
 

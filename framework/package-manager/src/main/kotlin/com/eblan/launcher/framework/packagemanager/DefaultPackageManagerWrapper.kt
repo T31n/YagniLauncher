@@ -20,15 +20,18 @@ package com.eblan.launcher.framework.packagemanager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
+import android.content.pm.LauncherApps
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.UserHandle
 import com.eblan.launcher.common.AndroidImageSerializer
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPack
+import com.eblan.launcher.framework.usermanager.AndroidUserManagerWrapper
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -38,10 +41,12 @@ import javax.inject.Inject
 internal class DefaultPackageManagerWrapper @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val imageSerializer: AndroidImageSerializer,
+    private val userManagerWrapper: AndroidUserManagerWrapper,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : PackageManagerWrapper,
     AndroidPackageManagerWrapper {
     private val packageManager = context.packageManager
+    private val launcherApps = context.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
 
     override val hasSystemFeatureAppWidgets
         get() = packageManager.hasSystemFeature(PackageManager.FEATURE_APP_WIDGETS)
@@ -49,12 +54,16 @@ internal class DefaultPackageManagerWrapper @Inject constructor(
     override suspend fun getApplicationIconCache(
         packageName: String,
         file: File,
+        serialNumber: Long?,
     ): String? = withContext(ioDispatcher) {
         try {
+            val applicationInfo = getApplicationInfoForUser(
+                packageName = packageName,
+                serialNumber = serialNumber,
+            ) ?: return@withContext null
+
             imageSerializer.createDrawablePath(
-                drawable = packageManager.getApplicationIcon(
-                    packageName,
-                ),
+                drawable = packageManager.getApplicationIcon(applicationInfo),
                 file = file,
             )
 
@@ -64,18 +73,35 @@ internal class DefaultPackageManagerWrapper @Inject constructor(
         }
     }
 
-    override suspend fun getApplicationLabel(packageName: String): String? = withContext(ioDispatcher) {
-        try {
-            val applicationInfo =
-                packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
+    override suspend fun getApplicationLabel(
+        packageName: String,
+        serialNumber: Long?,
+    ): String? = withContext(ioDispatcher) {
+        val applicationInfo = getApplicationInfoForUser(
+            packageName = packageName,
+            serialNumber = serialNumber,
+        ) ?: return@withContext null
 
+        try {
             packageManager.getApplicationLabel(applicationInfo).toString()
         } catch (_: PackageManager.NameNotFoundException) {
             null
         }
     }
 
-    override suspend fun getComponentName(packageName: String): String? = withContext(ioDispatcher) {
+    override suspend fun getComponentName(
+        packageName: String,
+        serialNumber: Long?,
+    ): String? = withContext(ioDispatcher) {
+        if (serialNumber != null) {
+            val userHandle = userManagerWrapper.getUserForSerialNumber(serialNumber) ?: return@withContext null
+
+            return@withContext launcherApps.getActivityList(packageName, userHandle)
+                .firstOrNull()
+                ?.componentName
+                ?.flattenToString()
+        }
+
         val launchIntent = packageManager.getLaunchIntentForPackage(packageName)
 
         launchIntent?.component?.flattenToString()
@@ -136,6 +162,33 @@ internal class DefaultPackageManagerWrapper @Inject constructor(
     }
 
     override fun isSystem(flags: Int): Boolean = (flags and (ApplicationInfo.FLAG_SYSTEM or ApplicationInfo.FLAG_UPDATED_SYSTEM_APP)) != 0
+
+    private fun getApplicationInfoForUser(
+        packageName: String,
+        serialNumber: Long?,
+    ): ApplicationInfo? {
+        return try {
+            if (serialNumber != null) {
+                val userHandle = userManagerWrapper.getUserForSerialNumber(serialNumber) ?: return null
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    launcherApps.getApplicationInfo(
+                        packageName,
+                        PackageManager.GET_META_DATA,
+                        userHandle,
+                    )
+                } else {
+                    launcherApps.getActivityList(packageName, userHandle)
+                        .firstOrNull()
+                        ?.applicationInfo
+                }
+            } else {
+                packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
+            }
+        } catch (_: PackageManager.NameNotFoundException) {
+            null
+        }
+    }
 
     override suspend fun getUserBadgedLabel(
         label: CharSequence,

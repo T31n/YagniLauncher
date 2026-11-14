@@ -132,7 +132,10 @@ class RemovePackageUseCase @Inject constructor(
         val iconPackPackageName =
             userDataRepository.userDataFlow.first().generalSettings.iconPackPackageName
 
-        val componentName = packageManagerWrapper.getComponentName(packageName = packageName)
+        val componentName = packageManagerWrapper.getComponentName(
+            packageName = packageName,
+            serialNumber = serialNumber,
+        )
 
         eblanApplicationInfoRepository.getEblanApplicationInfosByPackageName(
             serialNumber = serialNumber,

@@ -108,7 +108,10 @@ class AddPinWidgetToHomeScreenUseCase @Inject constructor(
         }
 
         val eblanApplicationInfoIcon =
-            packageManagerWrapper.getComponentName(packageName = packageName)?.let {
+            packageManagerWrapper.getComponentName(
+                packageName = packageName,
+                serialNumber = serialNumber,
+            )?.let {
                 val directory = fileManager.getFilesDirectory(FileManager.ICONS_DIR)
 
                 val file = File(
@@ -164,7 +167,10 @@ class AddPinWidgetToHomeScreenUseCase @Inject constructor(
             targetCellHeight = targetCellHeight,
             targetCellWidth = targetCellWidth,
             preview = preview,
-            label = packageManagerWrapper.getApplicationLabel(packageName = packageName),
+            label = packageManagerWrapper.getApplicationLabel(
+                packageName = packageName,
+                serialNumber = serialNumber,
+            ),
             icon = eblanApplicationInfoIcon,
         )
 

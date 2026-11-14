@@ -82,7 +82,10 @@ class AddPinShortcutToHomeScreenUseCase @Inject constructor(
         val initialPage = homeSettings.initialPage
 
         val eblanApplicationInfoIcon =
-            packageManagerWrapper.getComponentName(packageName = packageName)
+            packageManagerWrapper.getComponentName(
+                packageName = packageName,
+                serialNumber = serialNumber,
+            )
                 ?.let {
                     val directory = fileManager.getFilesDirectory(FileManager.ICONS_DIR)
 

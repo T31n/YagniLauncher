@@ -461,7 +461,10 @@ internal class HomeViewModel @Inject constructor(
             gridRepository.deleteGridItemById(gridItem = movingGridItem)
 
             val eblanApplicationInfoIcon =
-                packageManagerWrapper.getComponentName(packageName = pinItemRequestType.packageName)
+                packageManagerWrapper.getComponentName(
+                    packageName = pinItemRequestType.packageName,
+                    serialNumber = pinItemRequestType.serialNumber,
+                )
                     ?.let { componentName ->
                         val directory = fileManager.getFilesDirectory(FileManager.ICONS_DIR)
 

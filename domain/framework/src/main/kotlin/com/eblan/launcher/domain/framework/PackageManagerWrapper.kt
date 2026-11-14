@@ -26,11 +26,18 @@ interface PackageManagerWrapper {
     suspend fun getApplicationIconCache(
         packageName: String,
         file: File,
+        serialNumber: Long? = null,
     ): String?
 
-    suspend fun getApplicationLabel(packageName: String): String?
+    suspend fun getApplicationLabel(
+        packageName: String,
+        serialNumber: Long? = null,
+    ): String?
 
-    suspend fun getComponentName(packageName: String): String?
+    suspend fun getComponentName(
+        packageName: String,
+        serialNumber: Long? = null,
+    ): String?
 
     suspend fun getIconPackInfos(): List<PackageManagerIconPack>
 
