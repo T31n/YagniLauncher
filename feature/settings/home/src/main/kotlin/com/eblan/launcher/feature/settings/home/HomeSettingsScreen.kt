@@ -385,6 +385,8 @@ private fun Success(
         GridItemSettings(
             // Grid item
             gridItemSettings = homeSettings.gridItemSettings,
+            // Content
+            title = stringResource(com.eblan.launcher.ui.R.string.grid_item),
             // Actions
             onUpdateGridItemSettings = {
                 onUpdateHomeSettings(

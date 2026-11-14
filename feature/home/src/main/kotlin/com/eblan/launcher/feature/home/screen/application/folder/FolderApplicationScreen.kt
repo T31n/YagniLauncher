@@ -21,6 +21,8 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -245,12 +247,18 @@ internal fun FolderApplicationScreen(
     val currentLockMovement = rememberUpdatedState(lockMovement)
 
     val isInProgress by remember {
-        derivedStateOf { progress.value < 1f }
+        derivedStateOf { progress.isRunning || progress.value != 1f }
     }
 
     LaunchedEffect(key1 = animations) {
         if (animations) {
-            progress.animateTo(targetValue = 1f)
+            progress.animateTo(
+                targetValue = 1f,
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioLowBouncy,
+                    stiffness = Spring.StiffnessMedium,
+                ),
+            )
         } else {
             progress.snapTo(targetValue = 1f)
         }
@@ -566,7 +574,13 @@ private suspend fun handleIsCloseFolder(
     onAnimateToScrollToPage(0)
 
     if (animations) {
-        progress.animateTo(targetValue = 0f)
+        progress.animateTo(
+            targetValue = 0f,
+            animationSpec = spring(
+                dampingRatio = Spring.DampingRatioLowBouncy,
+                stiffness = Spring.StiffnessMedium,
+            ),
+        )
     } else {
         progress.snapTo(targetValue = 0f)
     }

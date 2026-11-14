@@ -143,6 +143,5 @@ fun BackgroundColor.getTitle() = when (this) {
 @Composable
 fun IconTint.getTitle() = when (this) {
     IconTint.None -> stringResource(commonR.string.none)
-    IconTint.System -> stringResource(commonR.string.system)
     IconTint.Custom -> stringResource(commonR.string.custom)
 }

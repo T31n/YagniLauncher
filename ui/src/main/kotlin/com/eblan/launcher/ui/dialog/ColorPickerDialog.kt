@@ -18,6 +18,8 @@
 package com.eblan.launcher.ui.dialog
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -25,12 +27,20 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -50,11 +60,39 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.component.EblanDialog
+import java.util.Locale
 import kotlin.math.ceil
 import com.eblan.launcher.common.R as commonR
+
+private val colorPresets = listOf(
+    Color(0xFFF44336),
+    Color(0xFFE91E63),
+    Color(0xFF9C27B0),
+    Color(0xFF673AB7),
+    Color(0xFF3F51B5),
+    Color(0xFF2196F3),
+    Color(0xFF03A9F4),
+    Color(0xFF00BCD4),
+    Color(0xFF009688),
+    Color(0xFF4CAF50),
+    Color(0xFF8BC34A),
+    Color(0xFFCDDC39),
+    Color(0xFFFFEB3B),
+    Color(0xFFFFC107),
+    Color(0xFFFF9800),
+    Color(0xFFFF5722),
+    Color(0xFF795548),
+    Color(0xFF9E9E9E),
+    Color(0xFF607D8B),
+    Color.White,
+    Color.Black,
+)
 
 @Composable
 fun ColorPickerDialog(
@@ -84,61 +122,87 @@ fun ColorPickerDialog(
 
     var alpha by remember { mutableFloatStateOf(Color(customColor).alpha) }
 
+    val selectedColor = Color.hsv(hue, saturation, value)
+        .copy(alpha = alpha)
+        .toArgb()
+
     EblanDialog(
         modifier = modifier,
         onDismissRequest = onDismissRequest,
     ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleLarge,
-        )
-
-        ColorPicker(
-            hue = hue,
-            saturation = saturation,
-            value = value,
-            alpha = alpha,
-            modifier = Modifier.fillMaxWidth(),
-            onSaturationSelected = {
-                saturation = it
-            },
-            onValueSelected = {
-                value = it
-            },
-            onHueSelected = {
-                hue = it
-            },
-            onAlphaSelected = {
-                alpha = it
-            },
-        )
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End,
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            TextButton(
-                onClick = onDismissRequest,
-            ) {
-                Text(text = stringResource(commonR.string.cancel))
-            }
-
-            Spacer(
-                modifier = Modifier.width(5.dp),
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleLarge,
             )
 
-            TextButton(
-                onClick = {
-                    onSelectColor(
-                        Color.hsv(hue, saturation, value)
-                            .copy(alpha = alpha)
-                            .toArgb(),
-                    )
-
-                    onDismissRequest()
+            ColorPicker(
+                hue = hue,
+                saturation = saturation,
+                value = value,
+                alpha = alpha,
+                modifier = Modifier.fillMaxWidth(),
+                onSaturationSelected = {
+                    saturation = it
                 },
+                onValueSelected = {
+                    value = it
+                },
+                onHueSelected = {
+                    hue = it
+                },
+                onAlphaSelected = {
+                    alpha = it
+                },
+            )
+
+            Spacer(Modifier.height(12.dp))
+
+            ColorPresetRow(
+                selectedColor = selectedColor,
+                onSelectColor = { presetColor ->
+                    val presetHsv = FloatArray(3)
+                    android.graphics.Color.colorToHSV(presetColor, presetHsv)
+
+                    hue = presetHsv[0]
+                    saturation = presetHsv[1]
+                    value = presetHsv[2]
+                    alpha = 1f
+                },
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
             ) {
-                Text(text = stringResource(commonR.string.save))
+                TextButton(
+                    onClick = onDismissRequest,
+                ) {
+                    Text(text = stringResource(commonR.string.cancel))
+                }
+
+                Spacer(
+                    modifier = Modifier.width(5.dp),
+                )
+
+                TextButton(
+                    onClick = {
+                        onSelectColor(
+                            Color.hsv(hue, saturation, value)
+                                .copy(alpha = alpha)
+                                .toArgb(),
+                        )
+
+                        onDismissRequest()
+                    },
+                ) {
+                    Text(text = stringResource(commonR.string.save))
+                }
             }
         }
     }
@@ -367,6 +431,50 @@ private fun AlphaCanvas(
         )
 
         drawSliderIndicator(alpha * size.width)
+    }
+}
+
+@Composable
+private fun ColorPresetRow(
+    selectedColor: Int,
+    onSelectColor: (Int) -> Unit,
+) {
+    LazyRow(
+        modifier = Modifier.fillMaxWidth(),
+        contentPadding = PaddingValues(horizontal = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        items(colorPresets) { presetColor ->
+            val presetColorArgb = presetColor.toArgb()
+            val isSelected = selectedColor == presetColorArgb
+
+            Box(
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(CircleShape)
+                    .background(presetColor)
+                    .border(
+                        width = if (isSelected) 3.dp else 1.dp,
+                        color = if (isSelected) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.outlineVariant
+                        },
+                        shape = CircleShape,
+                    )
+                    .selectable(
+                        selected = isSelected,
+                        role = Role.RadioButton,
+                        onClick = {
+                            onSelectColor(presetColorArgb)
+                        },
+                    )
+                    .semantics {
+                        contentDescription =
+                            "#%06X".format(Locale.ROOT, 0xFFFFFF and presetColorArgb)
+                    },
+            )
+        }
     }
 }
 

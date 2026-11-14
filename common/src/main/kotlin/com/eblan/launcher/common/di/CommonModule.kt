@@ -17,9 +17,7 @@
  */
 package com.eblan.launcher.common.di
 
-import com.eblan.launcher.common.AndroidColor
 import com.eblan.launcher.common.AndroidImageSerializer
-import com.eblan.launcher.common.impl.DefaultAndroidColor
 import com.eblan.launcher.common.impl.DefaultFileManager
 import com.eblan.launcher.common.impl.DefaultIconKeyGenerator
 import com.eblan.launcher.common.impl.DefaultImageSerializer
@@ -46,8 +44,4 @@ internal interface CommonModule {
     @Binds
     @Singleton
     fun androidImageSerializer(impl: DefaultImageSerializer): AndroidImageSerializer
-
-    @Binds
-    @Singleton
-    fun androidColor(impl: DefaultAndroidColor): AndroidColor
 }

@@ -97,7 +97,6 @@ import com.eblan.launcher.feature.home.util.handleEblanAction
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import com.eblan.launcher.ui.local.LocalStatusBarManager
 import com.eblan.launcher.ui.settings.rememberIsNotificationAccessGranted
-import kotlinx.coroutines.launch
 
 @Composable
 internal fun InteractiveFolderGridItem(
@@ -154,6 +153,8 @@ internal fun InteractiveFolderGridItem(
         gridItemSettings
     }
 
+    val folderGridItemAnimationProgress = progress.coerceIn(0f, 1f)
+
     val currentTextColor = getTextColorFromBackgroundColor(
         // Background Color
         backgroundColor = folderBackgroundColor,
@@ -166,19 +167,19 @@ internal fun InteractiveFolderGridItem(
     )
 
     val padding = if (animations) {
-        lerp(1.dp, currentGridItemSettings.padding.dp, progress)
+        lerp(1.dp, currentGridItemSettings.padding.dp, folderGridItemAnimationProgress)
     } else {
         currentGridItemSettings.padding.dp
     }
 
     val iconPadding = if (animations) {
-        lerp(0.dp, currentGridItemSettings.iconPadding.dp, progress)
+        lerp(0.dp, currentGridItemSettings.iconPadding.dp, folderGridItemAnimationProgress)
     } else {
         currentGridItemSettings.iconPadding.dp
     }
 
     val textPadding = if (animations) {
-        lerp(0.dp, currentGridItemSettings.textPadding.dp, progress)
+        lerp(0.dp, currentGridItemSettings.textPadding.dp, folderGridItemAnimationProgress)
     } else {
         currentGridItemSettings.textPadding.dp
     }
@@ -190,7 +191,7 @@ internal fun InteractiveFolderGridItem(
                 FOLDER_PREVIEW_ROWS,
             ),
             currentGridItemSettings.iconSize.dp,
-            progress,
+            folderGridItemAnimationProgress,
         )
     } else {
         currentGridItemSettings.iconSize.dp

@@ -56,7 +56,7 @@ fun GridItemSettings(
     // Grid item
     gridItemSettings: GridItemSettings,
     // Content
-    title: String = stringResource(R.string.grid_item),
+    title: String,
     // Layout
     modifier: Modifier = Modifier,
     // Actions

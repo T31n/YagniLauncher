@@ -20,8 +20,9 @@ package com.eblan.launcher.feature.home.screen.shortcutinfo
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ListItem
@@ -83,10 +84,7 @@ internal fun ShortcutInfoScreen(
 ) {
     Column(
         modifier = modifier
-            .sizeIn(
-                maxWidth = 300.dp,
-                maxHeight = 150.dp,
-            )
+            .width(IntrinsicSize.Max)
             .verticalScroll(rememberScrollState()),
     ) {
         eblanShortcutInfosGroup.forEach { eblanShortcutInfo ->
@@ -121,10 +119,7 @@ internal fun PrivateShortcutInfoMenu(
 ) {
     Column(
         modifier = modifier
-            .sizeIn(
-                maxWidth = 300.dp,
-                maxHeight = 150.dp,
-            )
+            .width(IntrinsicSize.Max)
             .verticalScroll(rememberScrollState()),
     ) {
         eblanShortcutInfosGroup.forEach { eblanShortcutInfo ->

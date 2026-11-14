@@ -35,7 +35,7 @@ class GetEblanShortcutInfosUseCase @Inject constructor(
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     /**
-     * Emits shortcuts grouped by user and package, excluding shortcuts already pinned to the home screen.
+     * Emits published manifest and dynamic shortcuts grouped by user and package, excluding pinned-only shortcuts.
      *
      * @return A flow of shortcut groups and their shortcut lists.
      */

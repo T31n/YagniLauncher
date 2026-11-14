@@ -22,7 +22,6 @@ import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -53,6 +52,8 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import com.eblan.launcher.designsystem.component.popupSpringAnimationSpec
+import com.eblan.launcher.designsystem.component.springAnimationSpec
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
@@ -177,13 +178,13 @@ internal fun ApplicationInfoPopup(
                 y = y,
             ),
             visibleState = transitionState,
-            enter = fadeIn(tween()) + scaleIn(
+            enter = fadeIn(animationSpec = springAnimationSpec()) + scaleIn(
                 initialScale = 0.8f,
-                animationSpec = tween(),
+                animationSpec = popupSpringAnimationSpec(),
             ),
-            exit = fadeOut(tween()) + scaleOut(
+            exit = fadeOut(animationSpec = springAnimationSpec()) + scaleOut(
                 targetScale = 0.8f,
-                animationSpec = tween(),
+                animationSpec = popupSpringAnimationSpec(),
             ),
         ) {
             ApplicationInfoMenu(
@@ -371,13 +372,13 @@ internal fun PrivateApplicationInfoPopup(
                 y = y,
             ),
             visibleState = transitionState,
-            enter = fadeIn(tween()) + scaleIn(
+            enter = fadeIn(animationSpec = springAnimationSpec()) + scaleIn(
                 initialScale = 0.8f,
-                animationSpec = tween(),
+                animationSpec = popupSpringAnimationSpec(),
             ),
-            exit = fadeOut(tween()) + scaleOut(
+            exit = fadeOut(animationSpec = springAnimationSpec()) + scaleOut(
                 targetScale = 0.8f,
-                animationSpec = tween(),
+                animationSpec = popupSpringAnimationSpec(),
             ),
         ) {
             PrivateApplicationInfoMenu(
@@ -498,6 +499,7 @@ internal fun ApplicationInfoMenu(
                         // Appearance
                         icon = icon,
                         isVisibleOverlay = isVisibleOverlay,
+                        modifier = Modifier.weight(1f, fill = false),
                         // Actions
                         onTapShortcutInfo = onTapShortcutInfo,
                         onDragShortcutInfo = onDragShortcutInfo,
@@ -582,6 +584,8 @@ private fun PrivateApplicationInfoMenu(
                     PrivateShortcutInfoMenu(
                         // Shortcut Data
                         eblanShortcutInfosGroup = eblanShortcutInfosGroup,
+                        // Layout
+                        modifier = Modifier.weight(1f, fill = false),
                         // Actions
                         onTapShortcutInfo = onTapShortcutInfo,
                     )

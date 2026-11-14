@@ -23,7 +23,6 @@ import android.content.Intent.createChooser
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -54,6 +53,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
+import com.eblan.launcher.designsystem.component.popupSpringAnimationSpec
+import com.eblan.launcher.designsystem.component.springAnimationSpec
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.GridItem
@@ -122,8 +123,14 @@ internal fun SettingsPopup(
     ) {
         AnimatedVisibility(
             visibleState = transitionState,
-            enter = fadeIn(tween()) + scaleIn(initialScale = 0.8f, animationSpec = tween()),
-            exit = fadeOut(tween()) + scaleOut(targetScale = 0.8f, animationSpec = tween()),
+            enter = fadeIn(animationSpec = springAnimationSpec<Float>()) + scaleIn(
+                initialScale = 0.8f,
+                animationSpec = popupSpringAnimationSpec<Float>(),
+            ),
+            exit = fadeOut(animationSpec = springAnimationSpec<Float>()) + scaleOut(
+                targetScale = 0.8f,
+                animationSpec = popupSpringAnimationSpec<Float>(),
+            ),
         ) {
             Column(
                 modifier = Modifier.width(IntrinsicSize.Max),

@@ -5,6 +5,7 @@ option java_multiple_files = true;
 
 enum IconTintProto {
   IconTintNone = 0;
-  IconTintSystem = 1;
+  reserved 1;
+  reserved "IconTintSystem";
   IconTintCustom = 2;
 }
