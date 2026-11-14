@@ -269,6 +269,8 @@ private fun Success(
             GridItemSettings(
                 // Grid item
                 gridItemSettings = gridItem.gridItemSettings,
+                // Content
+                title = stringResource(com.eblan.launcher.ui.R.string.grid_item),
                 // Actions
                 onUpdateGridItemSettings = {
                     onUpdateGridItem(gridItem.copy(gridItemSettings = it))

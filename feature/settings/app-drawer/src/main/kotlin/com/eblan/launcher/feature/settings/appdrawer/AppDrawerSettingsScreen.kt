@@ -340,6 +340,8 @@ private fun Success(
         GridItemSettings(
             // Grid item
             gridItemSettings = appDrawerSettings.gridItemSettings,
+            // Content
+            title = stringResource(com.eblan.launcher.ui.R.string.grid_item),
             // Actions
             onUpdateGridItemSettings = {
                 onUpdateAppDrawerSettings(

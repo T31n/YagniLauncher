@@ -36,9 +36,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -128,72 +130,79 @@ fun ColorPickerDialog(
         modifier = modifier,
         onDismissRequest = onDismissRequest,
     ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleLarge,
-        )
-
-        ColorPicker(
-            hue = hue,
-            saturation = saturation,
-            value = value,
-            alpha = alpha,
-            modifier = Modifier.fillMaxWidth(),
-            onSaturationSelected = {
-                saturation = it
-            },
-            onValueSelected = {
-                value = it
-            },
-            onHueSelected = {
-                hue = it
-            },
-            onAlphaSelected = {
-                alpha = it
-            },
-        )
-
-        Spacer(Modifier.height(12.dp))
-
-        ColorPresetRow(
-            selectedColor = selectedColor,
-            onSelectColor = { presetColor ->
-                val presetHsv = FloatArray(3)
-                android.graphics.Color.colorToHSV(presetColor, presetHsv)
-
-                hue = presetHsv[0]
-                saturation = presetHsv[1]
-                value = presetHsv[2]
-                alpha = 1f
-            },
-        )
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End,
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            TextButton(
-                onClick = onDismissRequest,
-            ) {
-                Text(text = stringResource(commonR.string.cancel))
-            }
-
-            Spacer(
-                modifier = Modifier.width(5.dp),
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleLarge,
             )
 
-            TextButton(
-                onClick = {
-                    onSelectColor(
-                        Color.hsv(hue, saturation, value)
-                            .copy(alpha = alpha)
-                            .toArgb(),
-                    )
-
-                    onDismissRequest()
+            ColorPicker(
+                hue = hue,
+                saturation = saturation,
+                value = value,
+                alpha = alpha,
+                modifier = Modifier.fillMaxWidth(),
+                onSaturationSelected = {
+                    saturation = it
                 },
+                onValueSelected = {
+                    value = it
+                },
+                onHueSelected = {
+                    hue = it
+                },
+                onAlphaSelected = {
+                    alpha = it
+                },
+            )
+
+            Spacer(Modifier.height(12.dp))
+
+            ColorPresetRow(
+                selectedColor = selectedColor,
+                onSelectColor = { presetColor ->
+                    val presetHsv = FloatArray(3)
+                    android.graphics.Color.colorToHSV(presetColor, presetHsv)
+
+                    hue = presetHsv[0]
+                    saturation = presetHsv[1]
+                    value = presetHsv[2]
+                    alpha = 1f
+                },
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
             ) {
-                Text(text = stringResource(commonR.string.save))
+                TextButton(
+                    onClick = onDismissRequest,
+                ) {
+                    Text(text = stringResource(commonR.string.cancel))
+                }
+
+                Spacer(
+                    modifier = Modifier.width(5.dp),
+                )
+
+                TextButton(
+                    onClick = {
+                        onSelectColor(
+                            Color.hsv(hue, saturation, value)
+                                .copy(alpha = alpha)
+                                .toArgb(),
+                        )
+
+                        onDismissRequest()
+                    },
+                ) {
+                    Text(text = stringResource(commonR.string.save))
+                }
             }
         }
     }
