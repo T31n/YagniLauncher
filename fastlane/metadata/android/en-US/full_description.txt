@@ -10,6 +10,6 @@
 
 <ul>
 <li>⚡ Modern — Kotlin and Jetpack Compose, with no legacy overhead</li>
-<li>🪶 Small — ~2 MB, 80–90% smaller than typical stock launchers</li>
+<li>🪶 Small APK size</li>
 <li>🔋 Efficient — Minimal resource and battery use</li>
 </ul>

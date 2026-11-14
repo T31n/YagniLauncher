@@ -41,7 +41,7 @@ Yagni matches and extends stock functionality without the bloat.
 - Kotlin Coroutines and Serialization
 
 **Small and efficient**
-- 🪶 Small — ~2 MB
+- 🪶 Small APK size
 - 🔋 Efficient — minimal resource and battery use
 
 ## Screenshots
