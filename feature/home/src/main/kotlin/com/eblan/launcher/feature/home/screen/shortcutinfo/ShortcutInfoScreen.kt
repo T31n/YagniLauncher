@@ -21,6 +21,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -85,6 +86,7 @@ internal fun ShortcutInfoScreen(
     Column(
         modifier = modifier
             .width(IntrinsicSize.Max)
+            .heightIn(max = 400.dp)
             .verticalScroll(rememberScrollState()),
     ) {
         eblanShortcutInfosGroup.forEach { eblanShortcutInfo ->

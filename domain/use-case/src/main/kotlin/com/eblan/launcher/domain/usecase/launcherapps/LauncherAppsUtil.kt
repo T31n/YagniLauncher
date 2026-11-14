@@ -502,6 +502,8 @@ internal fun LauncherAppsShortcutInfo.toEblanShortcutInfo(): EblanShortcutInfo =
     shortcutQueryFlag = shortcutQueryFlag,
     isEnabled = isEnabled,
     lastChangedTimestamp = lastChangedTimestamp,
+    activityComponentName = activityComponentName,
+    rank = rank,
 )
 
 /**

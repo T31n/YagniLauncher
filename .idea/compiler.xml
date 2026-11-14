@@ -91,6 +91,7 @@
       <module name="YagniLauncher.framework.file-manager" target="21" />
       <module name="YagniLauncher.framework.image-serializer" target="21" />
       <module name="YagniLauncher.framework.power-manager" target="21" />
+      <module name="YagniLauncher.framework.shortcut-manager" target="21" />
       <module name="YagniLauncher.framework.transliterator" target="21" />
     </bytecodeTargetLevel>
   </component>
