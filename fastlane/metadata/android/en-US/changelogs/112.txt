@@ -1,0 +1,4 @@
+- Enhance widget handling for user profiles and improve UI layout
+- Add activity component to shortcut info and improve database handling
+- Refactor ColorPickerDialog and add color preset options
+- Bug fixes and stability improvements
