@@ -140,6 +140,7 @@ class ChangePackageUseCase @Inject constructor(
 
                         it.toEblanShortcutConfig(
                             fileManager = fileManager,
+                            launcherAppsWrapper = launcherAppsWrapper,
                             packageManagerWrapper = packageManagerWrapper,
                             iconKeyGenerator = iconKeyGenerator,
                         )
@@ -166,12 +167,6 @@ class ChangePackageUseCase @Inject constructor(
             deleteEblanApplicationInfos = oldDeleteEblanApplicationInfos,
         )
 
-        deleteEblanApplicationInfoIcons(
-            eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos(),
-            eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos(),
-            oldDeleteEblanApplicationInfos = oldDeleteEblanApplicationInfos,
-        )
-
         updateApplicationInfoGridItems(
             eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos(),
             applicationInfoGridItemRepository = applicationInfoGridItemRepository,
@@ -181,6 +176,17 @@ class ChangePackageUseCase @Inject constructor(
             serialNumber = serialNumber,
             packageName = packageName,
             newEblanShortcutConfigs = newEblanShortcutConfigs,
+        )
+
+        deleteEblanApplicationInfoIcons(
+            eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos(),
+            eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos(),
+            eblanShortcutConfigs = eblanShortcutConfigRepository.getEblanShortcutConfigs(),
+            applicationInfoGridItems = applicationInfoGridItemRepository.getApplicationInfoGridItems(),
+            widgetGridItems = widgetGridItemRepository.getWidgetGridItems(),
+            shortcutConfigGridItems = shortcutConfigGridItemRepository.getShortcutConfigGridItems(),
+            shortcutInfoGridItems = shortcutInfoGridItemRepository.getShortcutInfoGridItems(),
+            oldDeleteEblanApplicationInfos = oldDeleteEblanApplicationInfos,
         )
     }
 
@@ -192,7 +198,7 @@ class ChangePackageUseCase @Inject constructor(
         if (!packageManagerWrapper.hasSystemFeatureAppWidgets) return
 
         val appWidgetManagerAppWidgetProviderInfosByPackageName =
-            appWidgetManagerWrapper.getInstalledProvidersWithCacheIcons()
+            appWidgetManagerWrapper.getInstalledProvidersForProfilesWithCacheIcons()
                 .filter {
                     it.serialNumber == serialNumber && it.packageName == packageName
                 }
@@ -209,6 +215,7 @@ class ChangePackageUseCase @Inject constructor(
 
                 it.toEblanAppWidgetProviderInfo(
                     fileManager = fileManager,
+                    launcherAppsWrapper = launcherAppsWrapper,
                     packageManagerWrapper = packageManagerWrapper,
                     iconKeyGenerator = iconKeyGenerator,
                 )
@@ -220,6 +227,15 @@ class ChangePackageUseCase @Inject constructor(
                     it.serialNumber to it.componentName
                 }
 
+        val obsoleteEblanAppWidgetProviderInfoFiles =
+            oldEblanAppWidgetProviderInfosByPackageName.filter { oldEblanAppWidgetProviderInfo ->
+                newEblanAppWidgetProviderInfosByPackageName.none { newEblanAppWidgetProviderInfo ->
+                    newEblanAppWidgetProviderInfo.serialNumber == oldEblanAppWidgetProviderInfo.serialNumber &&
+                        newEblanAppWidgetProviderInfo.componentName == oldEblanAppWidgetProviderInfo.componentName &&
+                        newEblanAppWidgetProviderInfo.preview == oldEblanAppWidgetProviderInfo.preview
+                }
+            }
+
         eblanAppWidgetProviderInfoRepository.deleteEblanAppWidgetProviderInfos(
             eblanAppWidgetProviderInfos = deleteEblanAppWidgetProviderInfos,
         )
@@ -228,18 +244,24 @@ class ChangePackageUseCase @Inject constructor(
             eblanAppWidgetProviderInfos = newEblanAppWidgetProviderInfosByPackageName,
         )
 
-        deleteEblanAppWidgetProviderInfoIcons(
-            eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos(),
-            eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos(),
-            deleteEblanAppWidgetProviderInfos = deleteEblanAppWidgetProviderInfos,
-        )
-
         updateWidgetGridItems(
             eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos(),
             fileManager = fileManager,
+            launcherAppsWrapper = launcherAppsWrapper,
             packageManagerWrapper = packageManagerWrapper,
             widgetGridItemRepository = widgetGridItemRepository,
             iconKeyGenerator = iconKeyGenerator,
+        )
+
+        deleteEblanAppWidgetProviderInfoIcons(
+            eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos(),
+            eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos(),
+            eblanShortcutConfigs = eblanShortcutConfigRepository.getEblanShortcutConfigs(),
+            applicationInfoGridItems = applicationInfoGridItemRepository.getApplicationInfoGridItems(),
+            widgetGridItems = widgetGridItemRepository.getWidgetGridItems(),
+            shortcutConfigGridItems = shortcutConfigGridItemRepository.getShortcutConfigGridItems(),
+            shortcutInfoGridItems = shortcutInfoGridItemRepository.getShortcutInfoGridItems(),
+            deleteEblanAppWidgetProviderInfos = obsoleteEblanAppWidgetProviderInfoFiles,
         )
     }
 
@@ -289,6 +311,7 @@ class ChangePackageUseCase @Inject constructor(
             eblanShortcutInfos = eblanShortcutInfoRepository.getEblanShortcutInfos(),
             shortcutInfoGridItemRepository = shortcutInfoGridItemRepository,
             fileManager = fileManager,
+            launcherAppsWrapper = launcherAppsWrapper,
             packageManagerWrapper = packageManagerWrapper,
             iconKeyGenerator = iconKeyGenerator,
         )
@@ -319,14 +342,24 @@ class ChangePackageUseCase @Inject constructor(
             eblanShortcutConfigs = deleteEblanShortcutConfigs,
         )
 
-        deleteEblanShortcutConfigIcons(eblanShortcutConfigs = deleteEblanShortcutConfigs)
-
         updateShortcutConfigGridItems(
             eblanShortcutConfigs = eblanShortcutConfigRepository.getEblanShortcutConfigs(),
             shortcutConfigGridItemRepository = shortcutConfigGridItemRepository,
             fileManager = fileManager,
+            launcherAppsWrapper = launcherAppsWrapper,
             packageManagerWrapper = packageManagerWrapper,
             iconKeyGenerator = iconKeyGenerator,
+        )
+
+        deleteEblanShortcutConfigIcons(
+            eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos(),
+            eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos(),
+            eblanShortcutConfigs = eblanShortcutConfigRepository.getEblanShortcutConfigs(),
+            applicationInfoGridItems = applicationInfoGridItemRepository.getApplicationInfoGridItems(),
+            widgetGridItems = widgetGridItemRepository.getWidgetGridItems(),
+            shortcutConfigGridItems = shortcutConfigGridItemRepository.getShortcutConfigGridItems(),
+            shortcutInfoGridItems = shortcutInfoGridItemRepository.getShortcutInfoGridItems(),
+            deleteEblanShortcutConfigs = deleteEblanShortcutConfigs,
         )
     }
 }

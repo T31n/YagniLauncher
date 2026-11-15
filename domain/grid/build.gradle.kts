@@ -21,9 +21,13 @@ plugins {
 }
 
 dependencies {
+    // Projects
     implementation(projects.domain.model)
+
+    // Libraries
     implementation(libs.kotlinx.coroutines.core)
 
+    // Tests
     testImplementation(testFixtures(projects.domain.model))
     benchmarkImplementation(testFixtures(projects.domain.model))
 }

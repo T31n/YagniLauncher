@@ -26,7 +26,10 @@ android {
 }
 
 dependencies {
-    implementation(libs.apache.commons.text)
+    // Projects
     implementation(projects.domain.common)
     implementation(projects.domain.framework)
+
+    // Libraries
+    implementation(libs.apache.commons.text)
 }

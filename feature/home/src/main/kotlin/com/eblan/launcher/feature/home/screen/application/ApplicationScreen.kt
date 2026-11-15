@@ -90,13 +90,13 @@ import com.eblan.launcher.domain.model.folder.FolderEntry
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.launcherapps.EblanUser
 import com.eblan.launcher.domain.model.launcherapps.EblanUserPageKey
-import com.eblan.launcher.domain.model.launcherapps.EblanUserType
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.AppDrawerType
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.R
 import com.eblan.launcher.feature.home.component.HomeHandler
+import com.eblan.launcher.feature.home.component.getEblanUserTypeTitle
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.screen.application.horizontal.HorizontalApplicationScreen
@@ -782,12 +782,4 @@ private fun ApplicationScreenEffect(
     HomeHandler(enabled = swipeY < screenHeight.toFloat()) {
         onDismiss()
     }
-}
-
-@Composable
-private fun EblanUserType.getEblanUserTypeTitle() = when (this) {
-    EblanUserType.Personal -> stringResource(R.string.personal)
-    EblanUserType.Clone -> stringResource(R.string.clone)
-    EblanUserType.Work -> stringResource(R.string.work)
-    EblanUserType.Private -> stringResource(R.string.private_space)
 }

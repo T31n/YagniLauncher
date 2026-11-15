@@ -26,6 +26,7 @@ android {
 }
 
 dependencies {
+    // Projects
     implementation(projects.data.datastore)
     implementation(projects.data.room)
     implementation(projects.domain.repository)

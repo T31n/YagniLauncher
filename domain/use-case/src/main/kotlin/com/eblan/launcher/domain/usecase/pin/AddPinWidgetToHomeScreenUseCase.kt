@@ -21,6 +21,7 @@ import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
+import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.grid.findAvailableRegionByPage
 import com.eblan.launcher.domain.grid.getWidgetGridItemSize
@@ -46,6 +47,7 @@ import kotlin.uuid.Uuid
 class AddPinWidgetToHomeScreenUseCase @Inject constructor(
     private val userDataRepository: UserDataRepository,
     private val fileManager: FileManager,
+    private val launcherAppsWrapper: LauncherAppsWrapper,
     private val packageManagerWrapper: PackageManagerWrapper,
     private val gridRepository: GridRepository,
     private val iconKeyGenerator: IconKeyGenerator,
@@ -108,7 +110,10 @@ class AddPinWidgetToHomeScreenUseCase @Inject constructor(
         }
 
         val eblanApplicationInfoIcon =
-            packageManagerWrapper.getComponentName(packageName = packageName)?.let {
+            launcherAppsWrapper.getFastActivityList(
+                serialNumber = serialNumber,
+                packageName = packageName,
+            ).firstOrNull()?.componentName?.let {
                 val directory = fileManager.getFilesDirectory(FileManager.ICONS_DIR)
 
                 val file = File(
@@ -164,7 +169,10 @@ class AddPinWidgetToHomeScreenUseCase @Inject constructor(
             targetCellHeight = targetCellHeight,
             targetCellWidth = targetCellWidth,
             preview = preview,
-            label = packageManagerWrapper.getApplicationLabel(packageName = packageName),
+            label = packageManagerWrapper.getApplicationLabel(
+                packageName = packageName,
+                serialNumber = serialNumber,
+            ),
             icon = eblanApplicationInfoIcon,
         )
 

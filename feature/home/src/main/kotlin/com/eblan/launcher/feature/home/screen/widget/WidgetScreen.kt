@@ -20,6 +20,7 @@ package com.eblan.launcher.feature.home.screen.widget
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -30,9 +31,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.BottomSheetDefaults.DragHandle
@@ -43,7 +47,9 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
@@ -64,6 +70,8 @@ import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -81,9 +89,11 @@ import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemSettings
+import com.eblan.launcher.domain.model.launcherapps.EblanUser
 import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
 import com.eblan.launcher.feature.home.R
 import com.eblan.launcher.feature.home.component.ScreenEffect
+import com.eblan.launcher.feature.home.component.getEblanUserTypeTitle
 import com.eblan.launcher.feature.home.component.rememberNestedScrollConnectionEffect
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
@@ -106,7 +116,7 @@ internal fun WidgetScreen(
     alpha: Float,
     isVisibleOverlay: Boolean,
     swipeY: Float,
-    eblanAppWidgetProviderInfos: Map<EblanApplicationInfoGroup, List<EblanAppWidgetProviderInfo>>,
+    eblanAppWidgetProviderInfos: Map<EblanUser, Map<EblanApplicationInfoGroup, List<EblanAppWidgetProviderInfo>>>,
     // Interaction
     drag: Drag,
     modifier: Modifier = Modifier,
@@ -128,17 +138,11 @@ internal fun WidgetScreen(
 
     val scope = rememberCoroutineScope()
 
-    val lazyListState = rememberLazyListState()
-
-    val nestedScrollConnection = rememberNestedScrollConnectionEffect(
-        // Scroll State
-        scrollableState = lazyListState,
-        swipeY = swipeY,
-        // Drag Callbacks
-        onVerticalDrag = onVerticalDrag,
-        onDragEnd = onDragEnd,
+    val horizontalPagerState = rememberPagerState(
+        pageCount = {
+            eblanAppWidgetProviderInfos.keys.size
+        },
     )
-
     val searchBarState = rememberSearchBarState()
     val textFieldState = rememberTextFieldState()
 
@@ -187,7 +191,6 @@ internal fun WidgetScreen(
     ) {
         Column(
             modifier = Modifier
-                .nestedScroll(nestedScrollConnection)
                 .fillMaxSize()
                 .padding(
                     start = paddingValues.calculateStartPadding(layoutDirection),
@@ -221,29 +224,161 @@ internal fun WidgetScreen(
                 },
             )
 
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                state = lazyListState,
-                contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
-            ) {
-                items(eblanAppWidgetProviderInfos.keys.toList()) { eblanApplicationInfoGroup ->
-                    key(eblanApplicationInfoGroup.packageName) {
-                        EblanApplicationInfoItem(
-                            // Application Info
-                            eblanApplicationInfoGroup = eblanApplicationInfoGroup,
-                            eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfos,
-                            // Layout Dimensions
-                            screenWidth = screenWidth,
-                            screenHeight = screenHeight,
-                            rows = rows,
-                            columns = columns,
-                            // Display Settings
-                            isVisibleOverlay = isVisibleOverlay,
-                            gridItemSettings = gridItemSettings,
-                            // Actions
-                            onDragWidget = onDragWidget,
-                        )
+            if (eblanAppWidgetProviderInfos.keys.size > 1) {
+                EblanAppWidgetProviderInfoTabRow(
+                    currentPage = horizontalPagerState.currentPage,
+                    eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfos,
+                    onAnimateScrollToPage = horizontalPagerState::animateScrollToPage,
+                )
+
+                HorizontalPager(
+                    modifier = Modifier.fillMaxSize(),
+                    state = horizontalPagerState,
+                ) { index ->
+                    EblanAppWidgetProvidersPage(
+                        // Configuration
+                        eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfos,
+                        // Layout
+                        index = index,
+                        paddingValues = paddingValues,
+                        swipeY = swipeY,
+                        rows = rows,
+                        columns = columns,
+                        screenWidth = screenWidth,
+                        screenHeight = screenHeight,
+                        // Grid and Visibility
+                        gridItemSettings = gridItemSettings,
+                        isVisibleOverlay = isVisibleOverlay,
+                        // Gestures
+                        onVerticalDrag = onVerticalDrag,
+                        onDragEnd = onDragEnd,
+                        // Actions
+                        onDragWidget = onDragWidget,
+                    )
+                }
+            } else {
+                EblanAppWidgetProvidersPage(
+                    // Configuration
+                    eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfos,
+                    // Layout
+                    index = 0,
+                    paddingValues = paddingValues,
+                    swipeY = swipeY,
+                    rows = rows,
+                    columns = columns,
+                    screenWidth = screenWidth,
+                    screenHeight = screenHeight,
+                    // Grid and Visibility
+                    gridItemSettings = gridItemSettings,
+                    isVisibleOverlay = isVisibleOverlay,
+                    // Gestures
+                    onVerticalDrag = onVerticalDrag,
+                    onDragEnd = onDragEnd,
+                    // Actions
+                    onDragWidget = onDragWidget,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun EblanAppWidgetProviderInfoTabRow(
+    currentPage: Int,
+    eblanAppWidgetProviderInfos: Map<EblanUser, Map<EblanApplicationInfoGroup, List<EblanAppWidgetProviderInfo>>>,
+    onAnimateScrollToPage: suspend (Int) -> Unit,
+) {
+    val scope = rememberCoroutineScope()
+
+    SecondaryTabRow(selectedTabIndex = currentPage) {
+        eblanAppWidgetProviderInfos.keys.forEachIndexed { index, eblanUser ->
+            Tab(
+                selected = currentPage == index,
+                onClick = {
+                    scope.launch {
+                        onAnimateScrollToPage(index)
                     }
+                },
+                text = {
+                    Text(
+                        text = eblanUser.eblanUserType.getEblanUserTypeTitle(),
+                        maxLines = 1,
+                    )
+                },
+            )
+        }
+    }
+}
+
+@Composable
+private fun EblanAppWidgetProvidersPage(
+    // Configuration
+    eblanAppWidgetProviderInfos: Map<EblanUser, Map<EblanApplicationInfoGroup, List<EblanAppWidgetProviderInfo>>>,
+    // Layout
+    index: Int,
+    paddingValues: PaddingValues,
+    swipeY: Float,
+    rows: Int,
+    columns: Int,
+    screenWidth: Int,
+    screenHeight: Int,
+    // Grid and Visibility
+    gridItemSettings: GridItemSettings,
+    isVisibleOverlay: Boolean,
+    modifier: Modifier = Modifier,
+    // Gestures
+    onVerticalDrag: (Float) -> Unit,
+    onDragEnd: () -> Unit,
+    // Actions
+    onDragWidget: (
+        gridItem: GridItem,
+        imageBitmap: ImageBitmap,
+        intOffset: IntOffset,
+        intSize: IntSize,
+        sharedElementKey: SharedElementKey,
+    ) -> Unit,
+) {
+    val lazyListState = rememberLazyListState()
+    val eblanUser = eblanAppWidgetProviderInfos.keys.toList().getOrNull(index)
+    val eblanApplicationInfoGroups = eblanUser?.let(eblanAppWidgetProviderInfos::get).orEmpty()
+    val nestedScrollConnection = rememberNestedScrollConnectionEffect(
+        // Scroll State
+        scrollableState = lazyListState,
+        swipeY = swipeY,
+        // Drag Callbacks
+        onVerticalDrag = onVerticalDrag,
+        onDragEnd = onDragEnd,
+    )
+
+    Box(
+        modifier = modifier
+            .nestedScroll(nestedScrollConnection)
+            .fillMaxSize(),
+    ) {
+        LazyColumn(
+            state = lazyListState,
+            modifier = Modifier.matchParentSize(),
+            contentPadding = PaddingValues(
+                bottom = paddingValues.calculateBottomPadding(),
+            ),
+        ) {
+            items(eblanApplicationInfoGroups.keys.toList()) { eblanApplicationInfoGroup ->
+                key(eblanApplicationInfoGroup.serialNumber, eblanApplicationInfoGroup.packageName) {
+                    EblanApplicationInfoItem(
+                        // Application Info
+                        eblanApplicationInfoGroup = eblanApplicationInfoGroup,
+                        eblanAppWidgetProviderInfos = eblanApplicationInfoGroups,
+                        // Layout Dimensions
+                        screenWidth = screenWidth,
+                        screenHeight = screenHeight,
+                        rows = rows,
+                        columns = columns,
+                        // Display Settings
+                        isVisibleOverlay = isVisibleOverlay,
+                        gridItemSettings = gridItemSettings,
+                        // Actions
+                        onDragWidget = onDragWidget,
+                    )
                 }
             }
         }
@@ -366,8 +501,6 @@ private fun EblanAppWidgetProviderInfoItem(
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
     var intSize by remember { mutableStateOf(IntSize.Zero) }
 
-    val preview = eblanAppWidgetProviderInfo.preview ?: eblanAppWidgetProviderInfo.applicationIcon
-
     val graphicsLayer = rememberGraphicsLayer()
 
     Column(
@@ -400,25 +533,33 @@ private fun EblanAppWidgetProviderInfoItem(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        AsyncImage(
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
+                .width(160.dp)
                 .height(100.dp)
-                .onGloballyPositioned {
-                    intOffset = it.positionInRoot().round()
+                .onGloballyPositioned(
+                    onGloballyPositioned = { it: LayoutCoordinates ->
+                        intOffset = it.positionInRoot().round()
 
-                    intSize = it.size
-                }
+                        intSize = it.size
+                    },
+                )
                 .drawWithContent {
                     graphicsLayer.record {
                         this@drawWithContent.drawContent()
                     }
 
-                    drawLayer(graphicsLayer)
+                    drawLayer(graphicsLayer = graphicsLayer)
                 },
-            model = preview,
-            contentDescription = null,
-        )
+            contentAlignment = Alignment.Center,
+        ) {
+            AsyncImage(
+                model = eblanAppWidgetProviderInfo.preview
+                    ?: eblanAppWidgetProviderInfo.applicationIcon,
+                contentScale = ContentScale.Fit,
+                contentDescription = null,
+            )
+        }
 
         val text =
             if (eblanAppWidgetProviderInfo.targetCellWidth > 0 && eblanAppWidgetProviderInfo.targetCellHeight > 0) {

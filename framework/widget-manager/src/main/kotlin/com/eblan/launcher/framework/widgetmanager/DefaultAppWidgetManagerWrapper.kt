@@ -21,18 +21,20 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProviderInfo
 import android.content.ComponentName
 import android.content.Context
+import android.content.Context.USER_SERVICE
+import android.content.pm.LauncherApps
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.UserHandle
+import android.os.UserManager
 import com.eblan.launcher.common.AndroidImageSerializer
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.AppWidgetManagerWrapper
-import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.model.widget.AppWidgetManagerAppWidgetProviderInfo
-import com.eblan.launcher.framework.usermanager.AndroidUserManagerWrapper
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.currentCoroutineContext
@@ -44,17 +46,29 @@ import javax.inject.Inject
 internal class DefaultAppWidgetManagerWrapper @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val imageSerializer: AndroidImageSerializer,
-    private val userManagerWrapper: AndroidUserManagerWrapper,
     private val fileManager: FileManager,
-    private val packageManagerWrapper: PackageManagerWrapper,
     private val iconKeyGenerator: IconKeyGenerator,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : AppWidgetManagerWrapper,
     AndroidAppWidgetManagerWrapper {
     private val appWidgetManager = AppWidgetManager.getInstance(context)
+    private val launcherApps =
+        context.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
+    private val userManager = context.getSystemService(USER_SERVICE) as UserManager
+    private val packageManager = context.packageManager
 
-    override suspend fun getInstalledProvidersWithCacheIcons(): List<AppWidgetManagerAppWidgetProviderInfo> = withContext(ioDispatcher) {
-        appWidgetManager.installedProviders.map {
+    override suspend fun getInstalledProvidersForProfilesWithCacheIcons(): List<AppWidgetManagerAppWidgetProviderInfo> = withContext(ioDispatcher) {
+        val installedProviders = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            launcherApps.profiles.flatMap { userHandle ->
+                currentCoroutineContext().ensureActive()
+
+                appWidgetManager.getInstalledProvidersForProfile(userHandle)
+            }
+        } else {
+            appWidgetManager.installedProviders
+        }
+
+        installedProviders.map {
             currentCoroutineContext().ensureActive()
 
             it.toEblanAppWidgetProviderInfo()
@@ -81,14 +95,14 @@ internal class DefaultAppWidgetManagerWrapper @Inject constructor(
     }
 
     private suspend fun AppWidgetProviderInfo.toEblanAppWidgetProviderInfo(): AppWidgetManagerAppWidgetProviderInfo {
-        val serialNumber = userManagerWrapper.getSerialNumberForUser(userHandle = profile)
+        val serialNumber = userManager.getSerialNumberForUser(profile)
 
         val preview = loadPreviewImage(context, 0)?.let { drawable ->
             val directory = fileManager.getFilesDirectory(FileManager.WIDGETS_DIR)
 
             val file = File(
                 directory,
-                iconKeyGenerator.getHashedName(name = provider.flattenToString()),
+                iconKeyGenerator.getHashedName(name = "$serialNumber:${provider.flattenToString()}"),
             )
 
             imageSerializer.createDrawablePath(
@@ -115,7 +129,7 @@ internal class DefaultAppWidgetManagerWrapper @Inject constructor(
                 maxResizeWidth = maxResizeWidth,
                 maxResizeHeight = maxResizeHeight,
                 preview = preview,
-                lastUpdateTime = packageManagerWrapper.getLastUpdateTime(packageName = provider.packageName),
+                lastUpdateTime = getLastUpdateTime(packageName = provider.packageName),
                 label = loadLabel(context.packageManager),
                 description = loadDescription(context)?.let(CharSequence::toString),
             )
@@ -135,10 +149,18 @@ internal class DefaultAppWidgetManagerWrapper @Inject constructor(
                 maxResizeWidth = 0,
                 maxResizeHeight = 0,
                 preview = preview,
-                lastUpdateTime = packageManagerWrapper.getLastUpdateTime(packageName = provider.packageName),
+                lastUpdateTime = getLastUpdateTime(packageName = provider.packageName),
                 label = loadLabel(context.packageManager),
                 description = null,
             )
+        }
+    }
+
+    private suspend fun getLastUpdateTime(packageName: String): Long = withContext(ioDispatcher) {
+        try {
+            packageManager.getPackageInfo(packageName, 0).lastUpdateTime
+        } catch (_: PackageManager.NameNotFoundException) {
+            0L
         }
     }
 }

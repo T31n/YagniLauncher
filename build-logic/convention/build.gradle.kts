@@ -38,15 +38,17 @@ kotlin {
 }
 
 dependencies {
-    compileOnly(libs.android.tools.common)
+    // Plugins
     compileOnly(libs.android.gradlePlugin)
+    compileOnly(libs.android.tools.common)
     compileOnly(libs.compose.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
     compileOnly(libs.ksp.gradlePlugin)
     compileOnly(libs.room.gradlePlugin)
-
     implementation(libs.kotlin.allopen.gradlePlugin)
     implementation(libs.kotlinx.benchmark.gradlePlugin)
+
+    // Gradle API
     implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
 }
 

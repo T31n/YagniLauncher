@@ -434,7 +434,7 @@ private fun EblanApplicationInfos(
                         animations = animations,
                         isVisibleOverlay = isVisibleOverlay,
                         isScrollInProgress = isScrollInProgress,
-                        isSwiping = swipeY > 0f,
+                        isSwiping = swipeY != 0f,
                         systemTextColor = systemTextColor,
                         systemCustomTextColor = systemCustomTextColor,
                         modifier = Modifier.fillMaxSize(),

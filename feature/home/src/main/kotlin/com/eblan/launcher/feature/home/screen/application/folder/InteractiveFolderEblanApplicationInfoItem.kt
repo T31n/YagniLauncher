@@ -88,7 +88,6 @@ import com.eblan.launcher.feature.home.util.getHorizontalAlignment
 import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
 import com.eblan.launcher.feature.home.util.getVerticalArrangement
 import com.eblan.launcher.ui.local.LocalLauncherApps
-import kotlinx.coroutines.launch
 
 @Composable
 internal fun InteractiveFolderEblanApplicationInfoItem(

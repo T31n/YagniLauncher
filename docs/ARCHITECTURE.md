@@ -30,13 +30,13 @@ The codebase is split into five layers:
 
 1. **Domain** — Pure Kotlin entities, repository/framework interfaces, use cases, and grid algorithms. No Android SDK imports.
 2. **Data** — Persistence implementations: Room database, Proto DataStore preferences, and the repositories that combine them.
-3. **Framework** — Thin wrappers around Android system APIs (`PackageManager`, `LauncherApps`, `WallpaperManager`, `AppWidgetManager`, etc.), most of them implementing an interface declared in `domain:framework`.
+3. **Framework** — Modules that own integrations with Android system APIs (`PackageManager`, `LauncherApps`, `WallpaperManager`, `AppWidgetManager`, etc.). They implement Domain abstractions where the Domain needs those capabilities.
 4. **Presentation** — Compose UI and ViewModels: the `feature:*` screens plus the `ui` and `design-system` component libraries.
 5. **Android Entry Points** — The outermost layer: `app` and `service`, the two modules Android itself talks to (the `Application`/Activity graph and background `Service` components). They wire every other module together and are the only modules allowed to depend on the whole graph at once.
 
 ## Dependency Rule
 
-Dependencies only point **inward**: Android Entry Points depend on Presentation, Framework, Data, and Domain; Presentation depends on Framework and Domain; Data depends on Domain; and Framework depends on Domain. Domain depends on nothing else in the project. No inner layer ever references an outer one.
+Dependencies point **inward**: Android Entry Points compose the graph; Presentation depends on Domain and the framework capabilities it uses; Data and Framework implement contracts from Domain. Domain does not depend on Android, Data, Framework, Presentation, or the entry points.
 
 ## Module Groups
 
@@ -66,9 +66,9 @@ Concrete persistence implementations behind the `domain:repository` interfaces:
 
 ### Framework
 
-Each `framework:*` module wraps a single Android system API so the rest of the codebase never imports it directly (e.g. `framework:launcher-apps`, `framework:package-manager`, `framework:wallpaper-manager`, `framework:widget-manager`, `framework:icon-pack-manager`, `framework:file-manager`, `framework:resources`, `framework:accessibility-manager`, `framework:notification-manager`, `framework:settings`, `framework:image-serializer`, `framework:user-manager`, `framework:jaro-winkler-similarity`, `framework:content-resolver`).
+Each `framework:*` module owns its Android integration. Current modules are `framework:accessibility-manager`, `framework:content-resolver`, `framework:icon-pack-manager`, `framework:jaro-winkler-similarity`, `framework:launcher-apps`, `framework:locale`, `framework:notification-manager`, `framework:package-manager`, `framework:resources`, `framework:settings`, `framework:statusbar-manager`, `framework:user-manager`, `framework:wallpaper-manager`, and `framework:widget-manager`.
 
-Most of these modules implement an interface declared in `domain:framework` and are bound to it via Hilt, which lets the domain layer depend on the abstraction instead of the Android API. A few modules (for example `framework:user-manager`, `framework:accessibility-manager`, `framework:notification-manager`, `framework:settings`, and `framework:image-serializer`) wrap a system API directly without a `domain:framework` interface, since nothing in the domain layer currently needs to consume them through an abstraction.
+When the Domain needs a capability, its abstraction is declared in `domain:framework` and the owning framework module binds its implementation with Hilt. Framework modules generally call Android APIs directly; `AndroidUserManagerWrapper` is declared in `framework:user-manager`, which also provides its Hilt implementation. `ui` exposes that module through an API dependency, while `feature:home` and `service` depend on it directly.
 
 ### Presentation
 
@@ -89,10 +89,10 @@ The outermost layer. `app` and `service` are the only modules the Android OS tal
 
 ### Shared Infrastructure
 
-| Module        | Responsibility                                                                                        |
-|---------------|-------------------------------------------------------------------------------------------------------|
-| `common`      | Application-wide Hilt bindings (icon key generation, coroutine dispatchers).                          |
-| `build-logic` | Gradle convention plugins that standardize module build configuration.                                |
+| Module        | Responsibility                                                                                                                                      |
+|---------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
+| `common`      | Shared Android infrastructure: image serialization, file and icon-key utilities, and dispatcher bindings. |
+| `build-logic` | Gradle convention plugins that standardize module build configuration.                                                                              |
 
 ---
 
@@ -101,8 +101,8 @@ The outermost layer. `app` and `service` are the only modules the Android OS tal
 These three module groups all sit in the Presentation layer, but each has a distinct responsibility:
 
 - **`design-system`** contains generic, reusable visual primitives — theming, icons, animations, dialogs, and other Compose building blocks that carry no knowledge of the launcher's domain models or features. It is model-free: it has no dependency on `domain:model` or any other domain module.
-- **`ui`** contains shared, *application-aware* UI: composites built from `design-system` primitives that are reused across multiple features (dialogs like `SelectApplicationDialog`, settings composables, etc.). This is where launcher-model-aware and framework-aware shared UI lives — it depends on `design-system`, on `domain:model` for the types it renders, and exposes the `framework:*` modules as API dependencies so features can reach framework implementations through a single dependency on `:ui`.
-- **`feature:*`** modules contain screens, ViewModels, and UI state specific to one feature. They depend on both `design-system` and `ui` (added automatically by the `feature` Gradle convention plugin) plus whatever `domain:*` modules that feature's use cases require.
+- **`ui`** contains shared, *application-aware* UI: composites built from `design-system` primitives that are reused across multiple features (dialogs like `SelectApplicationDialog`, settings composables, etc.). It depends on `design-system`, `domain:model`, and the framework modules needed by its shared UI, which it exposes as API dependencies.
+- **`feature:*`** modules contain screens, ViewModels, and UI state specific to one feature. They depend on both `design-system` and `ui` (added automatically by the `feature` Gradle convention plugin), plus any `domain:*` or framework modules they use directly.
 
 ---
 

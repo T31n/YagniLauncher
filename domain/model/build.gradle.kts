@@ -23,5 +23,6 @@ plugins {
 }
 
 dependencies {
+    // Libraries
     implementation(libs.kotlinx.serialization.json)
 }

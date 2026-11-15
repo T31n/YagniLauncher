@@ -190,7 +190,7 @@ class AddPackageUseCase @Inject constructor(
         serialNumber: Long,
         packageName: String,
     ) {
-        val eblanAppWidgetProviderInfos = appWidgetManagerWrapper.getInstalledProvidersWithCacheIcons()
+        val eblanAppWidgetProviderInfos = appWidgetManagerWrapper.getInstalledProvidersForProfilesWithCacheIcons()
             .filter {
                 it.serialNumber == serialNumber &&
                     it.packageName == packageName
@@ -199,6 +199,7 @@ class AddPackageUseCase @Inject constructor(
 
                 it.toEblanAppWidgetProviderInfo(
                     fileManager = fileManager,
+                    launcherAppsWrapper = launcherAppsWrapper,
                     packageManagerWrapper = packageManagerWrapper,
                     iconKeyGenerator = iconKeyGenerator,
                 )
@@ -242,6 +243,7 @@ class AddPackageUseCase @Inject constructor(
 
             it.toEblanShortcutConfig(
                 fileManager = fileManager,
+                launcherAppsWrapper = launcherAppsWrapper,
                 packageManagerWrapper = packageManagerWrapper,
                 iconKeyGenerator = iconKeyGenerator,
             )

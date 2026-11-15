@@ -45,6 +45,7 @@ android {
 }
 
 dependencies {
+    // Projects
     api(projects.framework.accessibilityManager)
     api(projects.framework.iconPackManager)
     api(projects.framework.launcherApps)
@@ -62,6 +63,7 @@ dependencies {
     implementation(projects.domain.framework)
     implementation(projects.domain.model)
 
+    // Libraries
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.activity.ktx)
 }

@@ -26,6 +26,7 @@ android {
 }
 
 dependencies {
+    // Projects
     implementation(projects.domain.common)
     implementation(projects.domain.framework)
     implementation(projects.domain.repository)
@@ -33,5 +34,6 @@ dependencies {
     implementation(projects.framework.notificationManager)
     implementation(projects.framework.userManager)
 
+    // Libraries
     implementation(libs.androidx.core.core)
 }
