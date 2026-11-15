@@ -21,6 +21,7 @@ import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
+import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.GridItem
@@ -42,6 +43,7 @@ import kotlin.uuid.Uuid
 class GetPinGridItemUseCase @Inject constructor(
     private val fileManager: FileManager,
     private val userDataRepository: UserDataRepository,
+    private val launcherAppsWrapper: LauncherAppsWrapper,
     private val packageManagerWrapper: PackageManagerWrapper,
     private val iconKeyGenerator: IconKeyGenerator,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
@@ -61,10 +63,10 @@ class GetPinGridItemUseCase @Inject constructor(
         when (pinItemRequestType) {
             is PinItemRequestType.Widget -> {
                 val eblanApplicationInfoIcon =
-                    packageManagerWrapper.getComponentName(
-                        packageName = pinItemRequestType.packageName,
+                    launcherAppsWrapper.getFastActivityList(
                         serialNumber = pinItemRequestType.serialNumber,
-                    )
+                        packageName = pinItemRequestType.packageName,
+                    ).firstOrNull()?.componentName
                         ?.let {
                             val directory = fileManager.getFilesDirectory(FileManager.ICONS_DIR)
 
@@ -134,10 +136,10 @@ class GetPinGridItemUseCase @Inject constructor(
 
             is PinItemRequestType.ShortcutInfo -> {
                 val eblanApplicationInfoIcon =
-                    packageManagerWrapper.getComponentName(
-                        packageName = pinItemRequestType.packageName,
+                    launcherAppsWrapper.getFastActivityList(
                         serialNumber = pinItemRequestType.serialNumber,
-                    )
+                        packageName = pinItemRequestType.packageName,
+                    ).firstOrNull()?.componentName
                         ?.let {
                             val directory = fileManager.getFilesDirectory(FileManager.ICONS_DIR)
 

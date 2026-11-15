@@ -21,6 +21,7 @@ import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
+import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.repository.ApplicationInfoGridItemRepository
 import com.eblan.launcher.domain.repository.EblanAppWidgetProviderInfoRepository
@@ -51,6 +52,7 @@ class RemovePackageUseCase @Inject constructor(
     private val eblanShortcutInfoRepository: EblanShortcutInfoRepository,
     private val eblanShortcutConfigRepository: EblanShortcutConfigRepository,
     private val shortcutConfigGridItemRepository: ShortcutConfigGridItemRepository,
+    private val launcherAppsWrapper: LauncherAppsWrapper,
     private val packageManagerWrapper: PackageManagerWrapper,
     private val iconKeyGenerator: IconKeyGenerator,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
@@ -135,10 +137,10 @@ class RemovePackageUseCase @Inject constructor(
         val iconPackPackageName =
             userDataRepository.userDataFlow.first().generalSettings.iconPackPackageName
 
-        val componentName = packageManagerWrapper.getComponentName(
-            packageName = packageName,
+        val componentName = launcherAppsWrapper.getFastActivityList(
             serialNumber = serialNumber,
-        )
+            packageName = packageName,
+        ).firstOrNull()?.componentName
 
         eblanApplicationInfoRepository.getEblanApplicationInfosByPackageName(
             serialNumber = serialNumber,

@@ -137,6 +137,7 @@ class SyncDataUseCase @Inject constructor(
 
                             it.toEblanShortcutConfig(
                                 fileManager = fileManager,
+                                launcherAppsWrapper = launcherAppsWrapper,
                                 packageManagerWrapper = packageManagerWrapper,
                                 iconKeyGenerator = iconKeyGenerator,
                             )
@@ -273,6 +274,7 @@ class SyncDataUseCase @Inject constructor(
             appWidgetManagerAppWidgetProviderInfos.map {
                 it.toEblanAppWidgetProviderInfo(
                     fileManager = fileManager,
+                    launcherAppsWrapper = launcherAppsWrapper,
                     packageManagerWrapper = packageManagerWrapper,
                     iconKeyGenerator = iconKeyGenerator,
                 )
@@ -304,6 +306,7 @@ class SyncDataUseCase @Inject constructor(
         updateWidgetGridItems(
             eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos(),
             fileManager = fileManager,
+            launcherAppsWrapper = launcherAppsWrapper,
             packageManagerWrapper = packageManagerWrapper,
             widgetGridItemRepository = widgetGridItemRepository,
             iconKeyGenerator = iconKeyGenerator,
@@ -355,6 +358,7 @@ class SyncDataUseCase @Inject constructor(
             eblanShortcutInfos = eblanShortcutInfoRepository.getEblanShortcutInfos(),
             shortcutInfoGridItemRepository = shortcutInfoGridItemRepository,
             fileManager = fileManager,
+            launcherAppsWrapper = launcherAppsWrapper,
             packageManagerWrapper = packageManagerWrapper,
             iconKeyGenerator = iconKeyGenerator,
         )
@@ -385,6 +389,7 @@ class SyncDataUseCase @Inject constructor(
             eblanShortcutConfigs = eblanShortcutConfigRepository.getEblanShortcutConfigs(),
             shortcutConfigGridItemRepository = shortcutConfigGridItemRepository,
             fileManager = fileManager,
+            launcherAppsWrapper = launcherAppsWrapper,
             packageManagerWrapper = packageManagerWrapper,
             iconKeyGenerator = iconKeyGenerator,
         )

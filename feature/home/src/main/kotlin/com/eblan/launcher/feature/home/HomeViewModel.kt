@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
+import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
@@ -91,7 +92,7 @@ internal class HomeViewModel @Inject constructor(
     private val updateGridItemsAfterMoveUseCase: UpdateGridItemsAfterMoveUseCase,
     private val getPinGridItemUseCase: GetPinGridItemUseCase,
     private val fileManager: FileManager,
-    private val packageManagerWrapper: PackageManagerWrapper,
+    private val launcherAppsWrapper: LauncherAppsWrapper,
     getEblanShortcutInfosUseCase: GetEblanShortcutInfosUseCase,
     eblanAppWidgetProviderInfoRepository: EblanAppWidgetProviderInfoRepository,
     getEblanApplicationInfosByLabelAndTagUseCase: GetEblanApplicationInfosByLabelAndTagUseCase,
@@ -461,10 +462,10 @@ internal class HomeViewModel @Inject constructor(
             gridRepository.deleteGridItemById(gridItem = movingGridItem)
 
             val eblanApplicationInfoIcon =
-                packageManagerWrapper.getComponentName(
-                    packageName = pinItemRequestType.packageName,
+                launcherAppsWrapper.getFastActivityList(
                     serialNumber = pinItemRequestType.serialNumber,
-                )
+                    packageName = pinItemRequestType.packageName,
+                ).firstOrNull()?.componentName
                     ?.let { componentName ->
                         val directory = fileManager.getFilesDirectory(FileManager.ICONS_DIR)
 

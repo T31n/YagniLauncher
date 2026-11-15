@@ -21,6 +21,7 @@ import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
+import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.grid.findAvailableRegionByPage
 import com.eblan.launcher.domain.model.grid.Associate
@@ -45,6 +46,7 @@ class AddPinShortcutToHomeScreenUseCase @Inject constructor(
     private val userDataRepository: UserDataRepository,
     private val fileManager: FileManager,
     private val gridRepository: GridRepository,
+    private val launcherAppsWrapper: LauncherAppsWrapper,
     private val packageManagerWrapper: PackageManagerWrapper,
     private val iconKeyGenerator: IconKeyGenerator,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
@@ -82,10 +84,10 @@ class AddPinShortcutToHomeScreenUseCase @Inject constructor(
         val initialPage = homeSettings.initialPage
 
         val eblanApplicationInfoIcon =
-            packageManagerWrapper.getComponentName(
-                packageName = packageName,
+            launcherAppsWrapper.getFastActivityList(
                 serialNumber = serialNumber,
-            )
+                packageName = packageName,
+            ).firstOrNull()?.componentName
                 ?.let {
                     val directory = fileManager.getFilesDirectory(FileManager.ICONS_DIR)
 

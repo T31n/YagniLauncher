@@ -140,6 +140,7 @@ class ChangePackageUseCase @Inject constructor(
 
                         it.toEblanShortcutConfig(
                             fileManager = fileManager,
+                            launcherAppsWrapper = launcherAppsWrapper,
                             packageManagerWrapper = packageManagerWrapper,
                             iconKeyGenerator = iconKeyGenerator,
                         )
@@ -213,6 +214,7 @@ class ChangePackageUseCase @Inject constructor(
 
                 it.toEblanAppWidgetProviderInfo(
                     fileManager = fileManager,
+                    launcherAppsWrapper = launcherAppsWrapper,
                     packageManagerWrapper = packageManagerWrapper,
                     iconKeyGenerator = iconKeyGenerator,
                 )
@@ -244,6 +246,7 @@ class ChangePackageUseCase @Inject constructor(
         updateWidgetGridItems(
             eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos(),
             fileManager = fileManager,
+            launcherAppsWrapper = launcherAppsWrapper,
             packageManagerWrapper = packageManagerWrapper,
             widgetGridItemRepository = widgetGridItemRepository,
             iconKeyGenerator = iconKeyGenerator,
@@ -306,6 +309,7 @@ class ChangePackageUseCase @Inject constructor(
             eblanShortcutInfos = eblanShortcutInfoRepository.getEblanShortcutInfos(),
             shortcutInfoGridItemRepository = shortcutInfoGridItemRepository,
             fileManager = fileManager,
+            launcherAppsWrapper = launcherAppsWrapper,
             packageManagerWrapper = packageManagerWrapper,
             iconKeyGenerator = iconKeyGenerator,
         )
@@ -340,6 +344,7 @@ class ChangePackageUseCase @Inject constructor(
             eblanShortcutConfigs = eblanShortcutConfigRepository.getEblanShortcutConfigs(),
             shortcutConfigGridItemRepository = shortcutConfigGridItemRepository,
             fileManager = fileManager,
+            launcherAppsWrapper = launcherAppsWrapper,
             packageManagerWrapper = packageManagerWrapper,
             iconKeyGenerator = iconKeyGenerator,
         )

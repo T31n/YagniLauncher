@@ -19,6 +19,7 @@ package com.eblan.launcher.domain.usecase.launcherapps
 
 import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
+import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.grid.findAvailableRegionByPage
 import com.eblan.launcher.domain.model.application.AddNewEblanApplicationInfo
@@ -274,6 +275,7 @@ internal suspend fun updateShortcutInfoGridItems(
     eblanShortcutInfos: List<EblanShortcutInfo>?,
     shortcutInfoGridItemRepository: ShortcutInfoGridItemRepository,
     fileManager: FileManager,
+    launcherAppsWrapper: LauncherAppsWrapper,
     packageManagerWrapper: PackageManagerWrapper,
     iconKeyGenerator: IconKeyGenerator,
 ) {
@@ -303,6 +305,7 @@ internal suspend fun updateShortcutInfoGridItems(
                         icon = eblanShortcutInfo.icon,
                         eblanApplicationInfoIcon = resolveApplicationIcon(
                             fileManager = fileManager,
+                            launcherAppsWrapper = launcherAppsWrapper,
                             packageManagerWrapper = packageManagerWrapper,
                             iconKeyGenerator = iconKeyGenerator,
                             serialNumber = eblanShortcutInfo.serialNumber,
@@ -328,6 +331,7 @@ internal suspend fun updateShortcutConfigGridItems(
     eblanShortcutConfigs: List<EblanShortcutConfig>,
     shortcutConfigGridItemRepository: ShortcutConfigGridItemRepository,
     fileManager: FileManager,
+    launcherAppsWrapper: LauncherAppsWrapper,
     packageManagerWrapper: PackageManagerWrapper,
     iconKeyGenerator: IconKeyGenerator,
 ) {
@@ -359,6 +363,7 @@ internal suspend fun updateShortcutConfigGridItems(
                     ),
                     applicationIcon = resolveApplicationIcon(
                         fileManager = fileManager,
+                        launcherAppsWrapper = launcherAppsWrapper,
                         packageManagerWrapper = packageManagerWrapper,
                         iconKeyGenerator = iconKeyGenerator,
                         serialNumber = eblanShortcutConfig.serialNumber,
@@ -384,6 +389,7 @@ internal suspend fun updateShortcutConfigGridItems(
 internal suspend fun updateWidgetGridItems(
     eblanAppWidgetProviderInfos: List<EblanAppWidgetProviderInfo>,
     fileManager: FileManager,
+    launcherAppsWrapper: LauncherAppsWrapper,
     packageManagerWrapper: PackageManagerWrapper,
     widgetGridItemRepository: WidgetGridItemRepository,
     iconKeyGenerator: IconKeyGenerator,
@@ -441,6 +447,7 @@ internal suspend fun updateWidgetGridItems(
                     targetCellWidth = eblanAppWidgetProviderInfo.targetCellWidth,
                     icon = resolveApplicationIcon(
                         fileManager = fileManager,
+                        launcherAppsWrapper = launcherAppsWrapper,
                         packageManagerWrapper = packageManagerWrapper,
                         iconKeyGenerator = iconKeyGenerator,
                         serialNumber = eblanAppWidgetProviderInfo.serialNumber,
@@ -465,6 +472,7 @@ internal suspend fun updateWidgetGridItems(
 /** Converts framework widget-provider metadata to the persisted domain model. */
 internal suspend fun AppWidgetManagerAppWidgetProviderInfo.toEblanAppWidgetProviderInfo(
     fileManager: FileManager,
+    launcherAppsWrapper: LauncherAppsWrapper,
     packageManagerWrapper: PackageManagerWrapper,
     iconKeyGenerator: IconKeyGenerator,
 ): EblanAppWidgetProviderInfo = EblanAppWidgetProviderInfo(
@@ -484,6 +492,7 @@ internal suspend fun AppWidgetManagerAppWidgetProviderInfo.toEblanAppWidgetProvi
     preview = preview,
     applicationIcon = resolveApplicationIcon(
         fileManager = fileManager,
+        launcherAppsWrapper = launcherAppsWrapper,
         packageManagerWrapper = packageManagerWrapper,
         iconKeyGenerator = iconKeyGenerator,
         serialNumber = serialNumber,
@@ -547,6 +556,7 @@ internal fun SyncEblanApplicationInfo.toDeleteEblanApplicationInfo() = DeleteEbl
 /** Converts shortcut-configuration activity metadata to a repository model with cached app icon data. */
 internal suspend fun ShortcutConfigActivityInfo.toEblanShortcutConfig(
     fileManager: FileManager,
+    launcherAppsWrapper: LauncherAppsWrapper,
     packageManagerWrapper: PackageManagerWrapper,
     iconKeyGenerator: IconKeyGenerator,
 ): EblanShortcutConfig = EblanShortcutConfig(
@@ -557,6 +567,7 @@ internal suspend fun ShortcutConfigActivityInfo.toEblanShortcutConfig(
     activityLabel = activityLabel,
     applicationIcon = resolveApplicationIcon(
         fileManager = fileManager,
+        launcherAppsWrapper = launcherAppsWrapper,
         packageManagerWrapper = packageManagerWrapper,
         iconKeyGenerator = iconKeyGenerator,
         serialNumber = serialNumber,
@@ -721,6 +732,7 @@ internal fun SyncEblanApplicationInfo.asAddNewEblanApplicationInfo(): AddNewEbla
 /** Resolves an application's cached icon path, falling back from its launch activity to its package. */
 private suspend fun resolveApplicationIcon(
     fileManager: FileManager,
+    launcherAppsWrapper: LauncherAppsWrapper,
     packageManagerWrapper: PackageManagerWrapper,
     iconKeyGenerator: IconKeyGenerator,
     serialNumber: Long,
@@ -729,10 +741,10 @@ private suspend fun resolveApplicationIcon(
     val directory = fileManager.getFilesDirectory(FileManager.ICONS_DIR)
 
     val componentName =
-        packageManagerWrapper.getComponentName(
+        launcherAppsWrapper.getFastActivityList(
             packageName = packageName,
             serialNumber = serialNumber,
-        )
+        ).firstOrNull()?.componentName
 
     /** Returns the cached icon path for the given activity or package component. */
     suspend fun getApplicationIcon(componentName: String): String? {

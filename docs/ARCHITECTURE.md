@@ -68,7 +68,7 @@ Concrete persistence implementations behind the `domain:repository` interfaces:
 
 Each `framework:*` module owns its Android integration. Current modules are `framework:accessibility-manager`, `framework:content-resolver`, `framework:icon-pack-manager`, `framework:jaro-winkler-similarity`, `framework:launcher-apps`, `framework:locale`, `framework:notification-manager`, `framework:package-manager`, `framework:resources`, `framework:settings`, `framework:statusbar-manager`, `framework:user-manager`, `framework:wallpaper-manager`, and `framework:widget-manager`.
 
-When the Domain needs a capability, its abstraction is declared in `domain:framework` and the owning framework module binds its implementation with Hilt. Framework modules do not use one another's implementations; they call Android APIs directly. `AndroidUserManagerWrapper` is the shared Android-facing exception: its contract lives in `:common`, and `framework:user-manager` provides its implementation.
+When the Domain needs a capability, its abstraction is declared in `domain:framework` and the owning framework module binds its implementation with Hilt. Framework modules generally call Android APIs directly; `AndroidUserManagerWrapper` is declared in `framework:user-manager`, which also provides its Hilt implementation. `ui` exposes that module through an API dependency, while `feature:home` and `service` depend on it directly.
 
 ### Presentation
 
@@ -91,7 +91,7 @@ The outermost layer. `app` and `service` are the only modules the Android OS tal
 
 | Module        | Responsibility                                                                                                                                      |
 |---------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
-| `common`      | Shared Android infrastructure: image serialization, file and icon-key utilities, dispatcher bindings, and the `AndroidUserManagerWrapper` contract. |
+| `common`      | Shared Android infrastructure: image serialization, file and icon-key utilities, and dispatcher bindings. |
 | `build-logic` | Gradle convention plugins that standardize module build configuration.                                                                              |
 
 ---

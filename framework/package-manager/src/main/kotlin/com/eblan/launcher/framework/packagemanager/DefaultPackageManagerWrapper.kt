@@ -91,15 +91,6 @@ internal class DefaultPackageManagerWrapper @Inject constructor(
         }
     }
 
-    override suspend fun getComponentName(
-        packageName: String,
-        serialNumber: Long,
-    ): String? = withContext(ioDispatcher) {
-        val launchIntent = packageManager.getLaunchIntentForPackage(packageName)
-
-        launchIntent?.component?.flattenToString()
-    }
-
     override suspend fun isDefaultLauncher(): Boolean = withContext(ioDispatcher) {
         val intent = Intent(Intent.ACTION_MAIN).apply {
             addCategory(Intent.CATEGORY_HOME)

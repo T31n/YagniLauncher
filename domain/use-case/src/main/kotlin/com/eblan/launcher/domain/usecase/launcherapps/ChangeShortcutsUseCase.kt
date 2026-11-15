@@ -90,6 +90,7 @@ class ChangeShortcutsUseCase @Inject constructor(
                 eblanShortcutInfos = eblanShortcutInfoRepository.getEblanShortcutInfos(),
                 shortcutInfoGridItemRepository = shortcutInfoGridItemRepository,
                 fileManager = fileManager,
+                launcherAppsWrapper = launcherAppsWrapper,
                 packageManagerWrapper = packageManagerWrapper,
                 iconKeyGenerator = iconKeyGenerator,
             )

@@ -34,11 +34,6 @@ interface PackageManagerWrapper {
         serialNumber: Long,
     ): String?
 
-    suspend fun getComponentName(
-        packageName: String,
-        serialNumber: Long,
-    ): String?
-
     suspend fun getIconPackInfos(): List<PackageManagerIconPack>
 
     fun isSystem(flags: Int): Boolean
