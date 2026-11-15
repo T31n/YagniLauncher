@@ -71,7 +71,10 @@ class RemovePackageUseCase @Inject constructor(
                 serialNumber = serialNumber,
             )
 
-            deleteEblanAppWidgetProviderInfoFiles(packageName = packageName)
+            deleteEblanAppWidgetProviderInfoFiles(
+                serialNumber = serialNumber,
+                packageName = packageName,
+            )
 
             deleteEblaShortcutInfoFiles(
                 serialNumber = serialNumber,
@@ -211,28 +214,44 @@ class RemovePackageUseCase @Inject constructor(
     }
 
     /** Deletes widget provider and preview files associated with the package. */
-    private suspend fun deleteEblanAppWidgetProviderInfoFiles(packageName: String) {
-        eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfosByPackageName(
-            packageName = packageName,
-        ).forEach { eblanAppWidgetProviderInfo ->
-            currentCoroutineContext().ensureActive()
+    private suspend fun deleteEblanAppWidgetProviderInfoFiles(
+        serialNumber: Long,
+        packageName: String,
+    ) {
+        val eblanAppWidgetProviderInfos =
+            eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos()
 
-            eblanAppWidgetProviderInfo.applicationIcon?.let {
-                val iconFile = File(it)
-
-                if (iconFile.exists()) {
-                    iconFile.delete()
-                }
+        val deleteEblanAppWidgetProviderInfos =
+            eblanAppWidgetProviderInfos.filter {
+                it.serialNumber == serialNumber && it.packageName == packageName
             }
 
-            eblanAppWidgetProviderInfo.preview?.let {
-                val previewFile = File(it)
-
-                if (previewFile.exists()) {
-                    previewFile.delete()
-                }
-            }
-        }
+        deleteEblanAppWidgetProviderInfoIcons(
+            eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos()
+                .filterNot {
+                    it.serialNumber == serialNumber && it.packageName == packageName
+                },
+            eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfos.filterNot {
+                it.serialNumber == serialNumber && it.packageName == packageName
+            },
+            eblanShortcutConfigs = eblanShortcutConfigRepository.getEblanShortcutConfigs()
+                .filterNot {
+                    it.serialNumber == serialNumber && it.packageName == packageName
+                },
+            applicationInfoGridItems = applicationInfoGridItemRepository.getApplicationInfoGridItems()
+                .filterNot {
+                    it.serialNumber == serialNumber && it.packageName == packageName
+                },
+            widgetGridItems = widgetGridItemRepository.getWidgetGridItems()
+                .filterNot {
+                    it.serialNumber == serialNumber && it.packageName == packageName
+                },
+            shortcutConfigGridItems = shortcutConfigGridItemRepository.getShortcutConfigGridItems()
+                .filterNot {
+                    it.serialNumber == serialNumber && it.packageName == packageName
+                },
+            deleteEblanAppWidgetProviderInfos = deleteEblanAppWidgetProviderInfos,
+        )
     }
 
     /** Deletes unreferenced shortcut icons and custom icons for the package's shortcut items. */

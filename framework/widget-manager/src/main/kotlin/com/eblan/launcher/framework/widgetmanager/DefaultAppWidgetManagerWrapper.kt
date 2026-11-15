@@ -102,7 +102,7 @@ internal class DefaultAppWidgetManagerWrapper @Inject constructor(
 
             val file = File(
                 directory,
-                iconKeyGenerator.getHashedName(name = provider.flattenToString()),
+                iconKeyGenerator.getHashedName(name = "$serialNumber:${provider.flattenToString()}"),
             )
 
             imageSerializer.createDrawablePath(

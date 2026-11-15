@@ -64,6 +64,10 @@ import kotlin.uuid.Uuid
 internal suspend fun deleteEblanApplicationInfoIcons(
     eblanApplicationInfos: List<EblanApplicationInfo>,
     eblanAppWidgetProviderInfos: List<EblanAppWidgetProviderInfo>,
+    eblanShortcutConfigs: List<EblanShortcutConfig>,
+    applicationInfoGridItems: List<ApplicationInfoGridItem>,
+    widgetGridItems: List<WidgetGridItem>,
+    shortcutConfigGridItems: List<ShortcutConfigGridItem>,
     oldDeleteEblanApplicationInfos: List<DeleteEblanApplicationInfo>,
 ) {
     oldDeleteEblanApplicationInfos.forEach { oldDeleteEblanApplicationInfo ->
@@ -76,6 +80,14 @@ internal suspend fun deleteEblanApplicationInfoIcons(
                 it.icon == icon
             } && eblanAppWidgetProviderInfos.none {
                 it.applicationIcon == icon
+            } && eblanShortcutConfigs.none {
+                it.activityIcon == icon || it.applicationIcon == icon
+            } && applicationInfoGridItems.none {
+                it.icon == icon
+            } && widgetGridItems.none {
+                it.icon == icon
+            } && shortcutConfigGridItems.none {
+                it.activityIcon == icon || it.applicationIcon == icon
             }
 
         if (hasNoIconReference) {
@@ -92,6 +104,10 @@ internal suspend fun deleteEblanApplicationInfoIcons(
 internal suspend fun deleteEblanAppWidgetProviderInfoIcons(
     eblanApplicationInfos: List<EblanApplicationInfo>,
     eblanAppWidgetProviderInfos: List<EblanAppWidgetProviderInfo>,
+    eblanShortcutConfigs: List<EblanShortcutConfig>,
+    applicationInfoGridItems: List<ApplicationInfoGridItem>,
+    widgetGridItems: List<WidgetGridItem>,
+    shortcutConfigGridItems: List<ShortcutConfigGridItem>,
     deleteEblanAppWidgetProviderInfos: List<EblanAppWidgetProviderInfo>,
 ) {
     deleteEblanAppWidgetProviderInfos.forEach { deleteEblanAppWidgetProviderInfo ->
@@ -104,6 +120,14 @@ internal suspend fun deleteEblanAppWidgetProviderInfoIcons(
                 it.applicationIcon == applicationIcon
             } && eblanApplicationInfos.none {
                 it.icon == applicationIcon
+            } && eblanShortcutConfigs.none {
+                it.activityIcon == applicationIcon || it.applicationIcon == applicationIcon
+            } && applicationInfoGridItems.none {
+                it.icon == applicationIcon
+            } && widgetGridItems.none {
+                it.icon == applicationIcon
+            } && shortcutConfigGridItems.none {
+                it.activityIcon == applicationIcon || it.applicationIcon == applicationIcon
             }
 
         if (hasNoIconReference) {
@@ -114,11 +138,19 @@ internal suspend fun deleteEblanAppWidgetProviderInfoIcons(
             }
         }
 
-        deleteEblanAppWidgetProviderInfo.preview?.let {
-            val previewFile = File(it)
+        deleteEblanAppWidgetProviderInfo.preview?.let { preview ->
+            val hasNoPreviewReference = eblanAppWidgetProviderInfos.none {
+                it.preview == preview
+            } && widgetGridItems.none {
+                it.preview == preview
+            }
 
-            if (previewFile.exists()) {
-                previewFile.delete()
+            if (hasNoPreviewReference) {
+                val previewFile = File(preview)
+
+                if (previewFile.exists()) {
+                    previewFile.delete()
+                }
             }
         }
     }
@@ -150,13 +182,36 @@ internal suspend fun deleteEblanShortInfoIcons(
 }
 
 /** Deletes the cached activity icons belonging to removed shortcut configurations. */
-internal suspend fun deleteEblanShortcutConfigIcons(eblanShortcutConfigs: List<EblanShortcutConfig>) {
-    eblanShortcutConfigs.forEach { deleteEblanShortcutConfig ->
+internal suspend fun deleteEblanShortcutConfigIcons(
+    eblanApplicationInfos: List<EblanApplicationInfo>,
+    eblanAppWidgetProviderInfos: List<EblanAppWidgetProviderInfo>,
+    eblanShortcutConfigs: List<EblanShortcutConfig>,
+    applicationInfoGridItems: List<ApplicationInfoGridItem>,
+    widgetGridItems: List<WidgetGridItem>,
+    shortcutConfigGridItems: List<ShortcutConfigGridItem>,
+    deleteEblanShortcutConfigs: List<EblanShortcutConfig>,
+) {
+    deleteEblanShortcutConfigs.forEach { deleteEblanShortcutConfig ->
         currentCoroutineContext().ensureActive()
 
         val activityIcon = deleteEblanShortcutConfig.activityIcon
 
-        if (activityIcon != null) {
+        val hasNoIconReference = activityIcon != null &&
+            eblanApplicationInfos.none {
+                it.icon == activityIcon
+            } && eblanAppWidgetProviderInfos.none {
+                it.applicationIcon == activityIcon
+            } && eblanShortcutConfigs.none {
+                it.activityIcon == activityIcon || it.applicationIcon == activityIcon
+            } && applicationInfoGridItems.none {
+                it.icon == activityIcon
+            } && widgetGridItems.none {
+                it.icon == activityIcon
+            } && shortcutConfigGridItems.none {
+                it.activityIcon == activityIcon || it.applicationIcon == activityIcon
+            }
+
+        if (hasNoIconReference) {
             val activityIconFile = File(activityIcon)
 
             if (activityIconFile.exists()) {
@@ -340,6 +395,24 @@ internal suspend fun updateWidgetGridItems(
     val deleteWidgetGridItems = mutableListOf<WidgetGridItem>()
 
     val widgetGridItems = widgetGridItemRepository.getWidgetGridItems()
+
+    widgetGridItems.forEach { widgetGridItem ->
+        currentCoroutineContext().ensureActive()
+
+        val eblanAppWidgetProviderInfo = eblanAppWidgetProviderInfos.find {
+            it.serialNumber == widgetGridItem.serialNumber && it.componentName == widgetGridItem.componentName
+        }
+
+        if (eblanAppWidgetProviderInfo != null &&
+            widgetGridItem.preview != eblanAppWidgetProviderInfo.preview
+        ) {
+            widgetGridItemRepository.updateWidgetGridItem(
+                widgetGridItem = widgetGridItem.copy(
+                    preview = eblanAppWidgetProviderInfo.preview,
+                ),
+            )
+        }
+    }
 
     widgetGridItems.filterNot {
         it.override
