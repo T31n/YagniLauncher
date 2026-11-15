@@ -252,6 +252,10 @@ class RemovePackageUseCase @Inject constructor(
                 .filterNot {
                     it.serialNumber == serialNumber && it.packageName == packageName
                 },
+            shortcutInfoGridItems = shortcutInfoGridItemRepository.getShortcutInfoGridItems()
+                .filterNot {
+                    it.serialNumber == serialNumber && it.packageName == packageName
+                },
             deleteEblanAppWidgetProviderInfos = deleteEblanAppWidgetProviderInfos,
         )
     }

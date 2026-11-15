@@ -90,7 +90,6 @@ import com.eblan.launcher.domain.model.folder.FolderEntry
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.launcherapps.EblanUser
 import com.eblan.launcher.domain.model.launcherapps.EblanUserPageKey
-import com.eblan.launcher.domain.model.launcherapps.EblanUserType
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.AppDrawerType
 import com.eblan.launcher.domain.model.userdata.BackgroundColor

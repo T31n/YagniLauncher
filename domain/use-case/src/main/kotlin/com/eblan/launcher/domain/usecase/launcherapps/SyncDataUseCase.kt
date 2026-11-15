@@ -187,6 +187,7 @@ class SyncDataUseCase @Inject constructor(
             applicationInfoGridItems = applicationInfoGridItemRepository.getApplicationInfoGridItems(),
             widgetGridItems = widgetGridItemRepository.getWidgetGridItems(),
             shortcutConfigGridItems = shortcutConfigGridItemRepository.getShortcutConfigGridItems(),
+            shortcutInfoGridItems = shortcutInfoGridItemRepository.getShortcutInfoGridItems(),
             oldDeleteEblanApplicationInfos = oldDeleteEblanApplicationInfos,
         )
 
@@ -319,6 +320,7 @@ class SyncDataUseCase @Inject constructor(
             applicationInfoGridItems = applicationInfoGridItemRepository.getApplicationInfoGridItems(),
             widgetGridItems = widgetGridItemRepository.getWidgetGridItems(),
             shortcutConfigGridItems = shortcutConfigGridItemRepository.getShortcutConfigGridItems(),
+            shortcutInfoGridItems = shortcutInfoGridItemRepository.getShortcutInfoGridItems(),
             deleteEblanAppWidgetProviderInfos = deleteEblanAppWidgetProviderInfoPreviews,
         )
     }
@@ -401,6 +403,7 @@ class SyncDataUseCase @Inject constructor(
             applicationInfoGridItems = applicationInfoGridItemRepository.getApplicationInfoGridItems(),
             widgetGridItems = widgetGridItemRepository.getWidgetGridItems(),
             shortcutConfigGridItems = shortcutConfigGridItemRepository.getShortcutConfigGridItems(),
+            shortcutInfoGridItems = shortcutInfoGridItemRepository.getShortcutInfoGridItems(),
             deleteEblanShortcutConfigs = deleteEblanShortcutConfigs,
         )
     }

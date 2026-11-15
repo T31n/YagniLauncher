@@ -185,6 +185,7 @@ class ChangePackageUseCase @Inject constructor(
             applicationInfoGridItems = applicationInfoGridItemRepository.getApplicationInfoGridItems(),
             widgetGridItems = widgetGridItemRepository.getWidgetGridItems(),
             shortcutConfigGridItems = shortcutConfigGridItemRepository.getShortcutConfigGridItems(),
+            shortcutInfoGridItems = shortcutInfoGridItemRepository.getShortcutInfoGridItems(),
             oldDeleteEblanApplicationInfos = oldDeleteEblanApplicationInfos,
         )
     }
@@ -259,6 +260,7 @@ class ChangePackageUseCase @Inject constructor(
             applicationInfoGridItems = applicationInfoGridItemRepository.getApplicationInfoGridItems(),
             widgetGridItems = widgetGridItemRepository.getWidgetGridItems(),
             shortcutConfigGridItems = shortcutConfigGridItemRepository.getShortcutConfigGridItems(),
+            shortcutInfoGridItems = shortcutInfoGridItemRepository.getShortcutInfoGridItems(),
             deleteEblanAppWidgetProviderInfos = obsoleteEblanAppWidgetProviderInfoFiles,
         )
     }
@@ -356,6 +358,7 @@ class ChangePackageUseCase @Inject constructor(
             applicationInfoGridItems = applicationInfoGridItemRepository.getApplicationInfoGridItems(),
             widgetGridItems = widgetGridItemRepository.getWidgetGridItems(),
             shortcutConfigGridItems = shortcutConfigGridItemRepository.getShortcutConfigGridItems(),
+            shortcutInfoGridItems = shortcutInfoGridItemRepository.getShortcutInfoGridItems(),
             deleteEblanShortcutConfigs = deleteEblanShortcutConfigs,
         )
     }

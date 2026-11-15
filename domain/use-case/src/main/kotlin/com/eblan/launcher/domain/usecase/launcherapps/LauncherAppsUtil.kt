@@ -69,6 +69,7 @@ internal suspend fun deleteEblanApplicationInfoIcons(
     applicationInfoGridItems: List<ApplicationInfoGridItem>,
     widgetGridItems: List<WidgetGridItem>,
     shortcutConfigGridItems: List<ShortcutConfigGridItem>,
+    shortcutInfoGridItems: List<ShortcutInfoGridItem>,
     oldDeleteEblanApplicationInfos: List<DeleteEblanApplicationInfo>,
 ) {
     oldDeleteEblanApplicationInfos.forEach { oldDeleteEblanApplicationInfo ->
@@ -89,6 +90,8 @@ internal suspend fun deleteEblanApplicationInfoIcons(
                 it.icon == icon
             } && shortcutConfigGridItems.none {
                 it.activityIcon == icon || it.applicationIcon == icon
+            } && shortcutInfoGridItems.none {
+                it.eblanApplicationInfoIcon == icon
             }
 
         if (hasNoIconReference) {
@@ -109,6 +112,7 @@ internal suspend fun deleteEblanAppWidgetProviderInfoIcons(
     applicationInfoGridItems: List<ApplicationInfoGridItem>,
     widgetGridItems: List<WidgetGridItem>,
     shortcutConfigGridItems: List<ShortcutConfigGridItem>,
+    shortcutInfoGridItems: List<ShortcutInfoGridItem>,
     deleteEblanAppWidgetProviderInfos: List<EblanAppWidgetProviderInfo>,
 ) {
     deleteEblanAppWidgetProviderInfos.forEach { deleteEblanAppWidgetProviderInfo ->
@@ -129,6 +133,8 @@ internal suspend fun deleteEblanAppWidgetProviderInfoIcons(
                 it.icon == applicationIcon
             } && shortcutConfigGridItems.none {
                 it.activityIcon == applicationIcon || it.applicationIcon == applicationIcon
+            } && shortcutInfoGridItems.none {
+                it.eblanApplicationInfoIcon == applicationIcon
             }
 
         if (hasNoIconReference) {
@@ -190,6 +196,7 @@ internal suspend fun deleteEblanShortcutConfigIcons(
     applicationInfoGridItems: List<ApplicationInfoGridItem>,
     widgetGridItems: List<WidgetGridItem>,
     shortcutConfigGridItems: List<ShortcutConfigGridItem>,
+    shortcutInfoGridItems: List<ShortcutInfoGridItem>,
     deleteEblanShortcutConfigs: List<EblanShortcutConfig>,
 ) {
     deleteEblanShortcutConfigs.forEach { deleteEblanShortcutConfig ->
@@ -210,6 +217,8 @@ internal suspend fun deleteEblanShortcutConfigIcons(
                 it.icon == activityIcon
             } && shortcutConfigGridItems.none {
                 it.activityIcon == activityIcon || it.applicationIcon == activityIcon
+            } && shortcutInfoGridItems.none {
+                it.eblanApplicationInfoIcon == activityIcon
             }
 
         if (hasNoIconReference) {
