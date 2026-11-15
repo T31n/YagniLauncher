@@ -38,10 +38,6 @@ The codebase is split into five layers:
 
 Dependencies point **inward**: Android Entry Points compose the graph; Presentation depends on Domain and the framework capabilities it uses; Data and Framework implement contracts from Domain. Domain does not depend on Android, Data, Framework, Presentation, or the entry points.
 
-The root `:common` module is shared infrastructure rather than a Clean Architecture layer. It depends on selected Domain modules and provides shared Android utilities and contracts to modules that need them.
-
-Framework modules must not depend on one another. A framework module should call the Android API it needs directly. Keep a shared contract in `:common` only for a genuinely shared capability, such as `AndroidUserManagerWrapper`; don't add a contract solely to connect one framework module to another. Contracts needed by the Domain remain in `domain:framework`.
-
 ## Module Groups
 
 ### Domain
@@ -93,10 +89,10 @@ The outermost layer. `app` and `service` are the only modules the Android OS tal
 
 ### Shared Infrastructure
 
-| Module        | Responsibility                                                                                        |
-|---------------|-------------------------------------------------------------------------------------------------------|
+| Module        | Responsibility                                                                                                                                      |
+|---------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
 | `common`      | Shared Android infrastructure: image serialization, file and icon-key utilities, dispatcher bindings, and the `AndroidUserManagerWrapper` contract. |
-| `build-logic` | Gradle convention plugins that standardize module build configuration.                                |
+| `build-logic` | Gradle convention plugins that standardize module build configuration.                                                                              |
 
 ---
 

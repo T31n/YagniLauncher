@@ -15,7 +15,7 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.common
+package com.eblan.launcher.framework.usermanager
 
 import android.os.Build
 import android.os.UserHandle

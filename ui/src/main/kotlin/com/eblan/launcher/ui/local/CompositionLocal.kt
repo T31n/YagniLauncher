@@ -19,7 +19,6 @@ package com.eblan.launcher.ui.local
 
 import androidx.compose.runtime.staticCompositionLocalOf
 import com.eblan.launcher.common.AndroidImageSerializer
-import com.eblan.launcher.common.AndroidUserManagerWrapper
 import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.framework.accessibilitymanager.AndroidAccessibilityManagerWrapper
@@ -30,6 +29,7 @@ import com.eblan.launcher.framework.locale.LocaleWrapper
 import com.eblan.launcher.framework.packagemanager.AndroidPackageManagerWrapper
 import com.eblan.launcher.framework.settings.AndroidSettingsWrapper
 import com.eblan.launcher.framework.statusbarmanager.AndroidStatusBarManagerWrapper
+import com.eblan.launcher.framework.usermanager.AndroidUserManagerWrapper
 import com.eblan.launcher.framework.wallpapermanager.AndroidWallpaperManagerWrapper
 import com.eblan.launcher.framework.widgetmanager.AndroidAppWidgetHostWrapper
 import com.eblan.launcher.framework.widgetmanager.AndroidAppWidgetManagerWrapper
