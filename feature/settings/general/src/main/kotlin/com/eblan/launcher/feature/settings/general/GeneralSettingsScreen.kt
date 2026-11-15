@@ -40,6 +40,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -67,6 +68,7 @@ import com.eblan.launcher.ui.settings.rememberIsNotificationAccessGranted
 import com.eblan.launcher.ui.settings.settingsFirstItemShape
 import com.eblan.launcher.ui.settings.settingsLastItemShape
 import com.eblan.launcher.ui.settings.settingsMiddleItemShape
+import kotlinx.serialization.json.Json.Default.configuration
 import java.util.Locale
 import com.eblan.launcher.common.R as commonR
 
@@ -476,11 +478,12 @@ private fun IconShape.getTitle() = when (this) {
 @Composable
 private fun getLanguageLabel(languageTag: String): String {
     val context = LocalContext.current
+    val configuration = LocalConfiguration.current
 
     return if (languageTag.isEmpty()) {
         stringResource(R.string.system_default)
     } else {
-        val languageConfiguration = Configuration(context.resources.configuration).apply {
+        val languageConfiguration = Configuration(configuration).apply {
             setLocale(Locale.forLanguageTag(languageTag))
         }
 

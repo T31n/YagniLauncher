@@ -22,7 +22,6 @@ import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
-import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.repository.ApplicationInfoGridItemRepository
 import com.eblan.launcher.domain.repository.EblanAppWidgetProviderInfoRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
@@ -53,7 +52,6 @@ class RemovePackageUseCase @Inject constructor(
     private val eblanShortcutConfigRepository: EblanShortcutConfigRepository,
     private val shortcutConfigGridItemRepository: ShortcutConfigGridItemRepository,
     private val launcherAppsWrapper: LauncherAppsWrapper,
-    private val packageManagerWrapper: PackageManagerWrapper,
     private val iconKeyGenerator: IconKeyGenerator,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
