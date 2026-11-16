@@ -84,11 +84,11 @@ import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.getHorizontalAlignment
 import com.eblan.launcher.feature.home.util.getHorizontalArrangement
+import com.eblan.launcher.feature.home.util.getIconPath
 import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
 import com.eblan.launcher.feature.home.util.getVerticalAlignment
 import com.eblan.launcher.feature.home.util.getVerticalArrangement
 import kotlinx.coroutines.launch
-import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 @Composable
@@ -416,16 +416,11 @@ private fun PreviewFolderEblanApplicationInfoItem(
 
         when (val data = folderEblanApplicationInfoGridItem.data) {
             is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
-                val iconPackFilePath = iconPackFilePaths[data.componentName]
-                val icon = data.icon
-                val customIcon = data.customIcon
-
-                val iconPath = when {
-                    iconPackFilePath != null -> iconPackFilePath
-                    customIcon != null -> customIcon
-                    icon != null -> icon
-                    else -> null
-                }
+                val iconPath = getIconPath(
+                    iconPackFilePath = iconPackFilePaths[data.componentName],
+                    customIcon = data.customIcon,
+                    icon = data.icon,
+                )
 
                 AsyncImage(
                     model = Builder(context)

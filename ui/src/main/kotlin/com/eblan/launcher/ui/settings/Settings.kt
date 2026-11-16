@@ -65,9 +65,10 @@ import coil3.compose.AsyncImage
 import com.eblan.launcher.designsystem.component.VerticalSlideReveal
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPack
+import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.ui.R
 import com.eblan.launcher.ui.local.LocalAccessibilityManager
-import com.eblan.launcher.ui.local.LocalPackageManager
+import com.eblan.launcher.ui.local.LocalRoleManager
 import com.eblan.launcher.ui.local.LocalSettings
 import com.eblan.launcher.common.R as commonR
 
@@ -342,17 +343,17 @@ fun SettingsCategoryText(
 
 @Composable
 fun rememberIsDefaultLauncher(): State<Boolean> {
-    val packageManager = LocalPackageManager.current
+    val androidRoleManagerWrapper = LocalRoleManager.current
 
     val lifecycleOwner = LocalLifecycleOwner.current
 
     return produceState(
         initialValue = false,
         key1 = lifecycleOwner,
-        key2 = packageManager,
+        key2 = androidRoleManagerWrapper,
     ) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-            value = packageManager.isDefaultLauncher()
+            value = androidRoleManagerWrapper.isHomeRoleHeld()
         }
     }
 }
@@ -588,4 +589,10 @@ private fun IconPackItem(
             )
         }
     }
+}
+
+@Composable
+fun BackgroundColor.getTitle() = when (this) {
+    BackgroundColor.System -> stringResource(commonR.string.system)
+    BackgroundColor.Custom -> stringResource(commonR.string.custom)
 }

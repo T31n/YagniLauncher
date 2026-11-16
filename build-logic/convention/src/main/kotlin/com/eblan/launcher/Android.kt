@@ -12,7 +12,7 @@ fun CommonExtension.configureAndroid() {
     compileSdk = 37
 
     defaultConfig.apply {
-        minSdk = 24
+        minSdk = 29
     }
 
     compileOptions.apply {

@@ -47,17 +47,18 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
+import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.FolderSettings
 import com.eblan.launcher.feature.settings.folder.dialog.EditFolderCellDimensionDialog
 import com.eblan.launcher.feature.settings.folder.dialog.EditFolderMaxGridDialog
 import com.eblan.launcher.feature.settings.folder.model.FolderSettingsUiState
-import com.eblan.launcher.ui.dialog.BackgroundColorDialog
 import com.eblan.launcher.ui.dialog.ColorPickerDialog
 import com.eblan.launcher.ui.dialog.EditBorderWidthDialog
 import com.eblan.launcher.ui.dialog.EditCornerRadiusDialog
-import com.eblan.launcher.ui.dialog.getTitle
 import com.eblan.launcher.ui.settings.SettingsColumnItem
+import com.eblan.launcher.ui.settings.SettingsDropdownItem
 import com.eblan.launcher.ui.settings.SettingsItemCard
+import com.eblan.launcher.ui.settings.getTitle
 import com.eblan.launcher.ui.settings.settingsFirstItemShape
 import com.eblan.launcher.ui.settings.settingsLastItemShape
 import com.eblan.launcher.ui.settings.settingsMiddleItemShape
@@ -132,7 +133,7 @@ private fun Success(
 
     var showFolderCornerRadiusGridDialog by remember { mutableStateOf(false) }
 
-    var showFolderBackgroundColorDialog by remember { mutableStateOf(false) }
+    var showFolderBackgroundColorPickerDialog by remember { mutableStateOf(false) }
 
     var showFolderBorderColorDialog by remember { mutableStateOf(false) }
 
@@ -181,15 +182,25 @@ private fun Success(
             },
         )
 
-        SettingsColumnItem(
+        SettingsDropdownItem(
             // Content
             title = stringResource(R.string.folder_background_color),
-            subtitle = folderSettings.folderBackgroundColor.getTitle(),
+            options = BackgroundColor.entries,
+            selected = folderSettings.folderBackgroundColor,
+            label = {
+                it.getTitle()
+            },
             // Layout
             shape = settingsMiddleItemShape,
             // Actions
-            onClick = {
-                showFolderBackgroundColorDialog = true
+            onSelectedChange = {
+                if (it == BackgroundColor.Custom) {
+                    showFolderBackgroundColorPickerDialog = true
+                } else {
+                    onUpdateFolderSettings(
+                        folderSettings.copy(folderBackgroundColor = it),
+                    )
+                }
             },
         )
 
@@ -277,22 +288,22 @@ private fun Success(
         )
     }
 
-    if (showFolderBackgroundColorDialog) {
-        BackgroundColorDialog(
+    if (showFolderBackgroundColorPickerDialog) {
+        ColorPickerDialog(
             // Content
             title = stringResource(commonR.string.background_color),
             // State
-            backgroundColor = folderSettings.folderBackgroundColor,
-            customBackgroundColor = folderSettings.customFolderBackgroundColor,
+            customColor = folderSettings.customFolderBackgroundColor,
+            showAlphaSlider = true,
             // Actions
             onDismissRequest = {
-                showFolderBackgroundColorDialog = false
+                showFolderBackgroundColorPickerDialog = false
             },
-            onUpdateClick = { backgroundColor, customColor ->
+            onSelectColor = {
                 onUpdateFolderSettings(
                     folderSettings.copy(
-                        folderBackgroundColor = backgroundColor,
-                        customFolderBackgroundColor = customColor,
+                        folderBackgroundColor = BackgroundColor.Custom,
+                        customFolderBackgroundColor = it,
                     ),
                 )
             },

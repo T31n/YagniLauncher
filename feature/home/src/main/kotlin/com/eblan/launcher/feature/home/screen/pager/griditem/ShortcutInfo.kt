@@ -18,7 +18,6 @@
 package com.eblan.launcher.feature.home.screen.pager.griditem
 
 import android.graphics.Rect
-import android.os.Build
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -67,6 +66,8 @@ import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.component.swipeGestures
 import com.eblan.launcher.feature.home.component.whiteBox
 import com.eblan.launcher.feature.home.model.SharedElementKey
+import com.eblan.launcher.feature.home.util.getGridItemIconPath
+import com.eblan.launcher.feature.home.util.getGridItemLabel
 import com.eblan.launcher.feature.home.util.handleEblanAction
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import com.eblan.launcher.ui.local.LocalStatusBarManager
@@ -125,14 +126,8 @@ internal fun InteractiveShortcutInfoGridItem(
         0.3f
     }
 
-    val icon = data.icon
-    val customIcon = data.customIcon
-
-    val iconPath = when {
-        customIcon != null -> customIcon
-        icon != null -> icon
-        else -> null
-    }
+    val iconPath = getGridItemIconPath(data = data)
+    val label = getGridItemLabel(data = data).toString()
 
     val currentOnOpenAppDrawer by rememberUpdatedState(onOpenAppDrawer)
     val currentOnLongPressGridItem by rememberUpdatedState(onLongPressGridItem)
@@ -180,8 +175,7 @@ internal fun InteractiveShortcutInfoGridItem(
                         onTap = {
                             if (
                                 hasShortcutHostPermission &&
-                                data.isEnabled &&
-                                Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1
+                                data.isEnabled
                             ) {
                                 androidLauncherAppsWrapper.startShortcut(
                                     serialNumber = data.serialNumber,
@@ -267,7 +261,7 @@ internal fun InteractiveShortcutInfoGridItem(
             modifier = Modifier
                 .padding(gridItemSettings.textPadding.dp)
                 .alpha(alpha = alpha),
-            text = data.customShortLabel ?: data.shortLabel,
+            text = label,
             color = textColor,
             textAlign = TextAlign.Center,
             maxLines = maxLines,
@@ -282,7 +276,7 @@ internal fun InteractiveShortcutInfoGridItem(
                 .padding(gridItemSettings.textPadding.dp)
                 .then(iconModifier)
                 .alpha(alpha = alpha),
-            text = data.customShortLabel ?: data.shortLabel,
+            text = label,
             color = textColor,
             textAlign = TextAlign.Center,
             maxLines = maxLines,

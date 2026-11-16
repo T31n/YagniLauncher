@@ -97,7 +97,6 @@ import com.eblan.launcher.feature.home.component.rememberNestedScrollConnectionE
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import kotlinx.coroutines.launch
-import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 import com.eblan.launcher.common.R as commonR
 

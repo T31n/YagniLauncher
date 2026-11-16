@@ -19,7 +19,6 @@ package com.eblan.launcher.feature.home.screen.folder
 
 import android.content.Intent.parseUri
 import android.graphics.Rect
-import android.os.Build
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -432,8 +431,6 @@ private fun InteractiveApplicationInfoGridItem(
 
     val graphicsLayer = rememberGraphicsLayer()
 
-    val icon = iconPackFilePaths[data.componentName] ?: data.icon
-
     val hasNotifications =
         (statusBarNotifications[data.packageName] ?: 0) > 0
 
@@ -442,6 +439,17 @@ private fun InteractiveApplicationInfoGridItem(
     val alpha = if (hasInteraction) 0f else 1f
 
     val isNotificationAccessGranted by rememberIsNotificationAccessGranted()
+
+    val iconPackFilePath = iconPackFilePaths[data.componentName] ?: data.icon
+    val icon = data.icon
+    val customIcon = data.customIcon
+
+    val iconPath = when {
+        customIcon != null -> customIcon
+        iconPackFilePath != null -> iconPackFilePath
+        icon != null -> icon
+        else -> null
+    }
 
     Column(
         modifier = modifier
@@ -511,7 +519,7 @@ private fun InteractiveApplicationInfoGridItem(
                 .alpha(alpha),
         ) {
             AsyncImage(
-                model = Builder(context).data(data.customIcon ?: icon)
+                model = Builder(context).data(iconPath)
                     .addLastModifiedToFileCacheKey(true).size(Size.ORIGINAL).build(),
                 contentDescription = null,
                 modifier = Modifier
@@ -614,14 +622,21 @@ private fun InteractiveShortcutInfoGridItem(
 
     val graphicsLayer = rememberGraphicsLayer()
 
-    val customIcon = data.customIcon ?: data.icon
-
     val customShortLabel = data.customShortLabel ?: data.shortLabel
 
     val hasInteraction = isSelected && isVisibleOverlay
 
     val defaultAlpha = if (hasShortcutHostPermission && data.isEnabled) 1f else 0.3f
     val alpha = if (hasInteraction) 0f else defaultAlpha
+
+    val icon = data.icon
+    val customIcon = data.customIcon
+
+    val iconPath = when {
+        customIcon != null -> customIcon
+        icon != null -> icon
+        else -> null
+    }
 
     Column(
         modifier = modifier
@@ -663,8 +678,7 @@ private fun InteractiveShortcutInfoGridItem(
                             onTap = {
                                 if (
                                     hasShortcutHostPermission &&
-                                    data.isEnabled &&
-                                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1
+                                    data.isEnabled
                                 ) {
                                     androidLauncherAppsWrapper.startShortcut(
                                         serialNumber = data.serialNumber,
@@ -696,7 +710,7 @@ private fun InteractiveShortcutInfoGridItem(
             modifier = Modifier.size(iconSize),
         ) {
             AsyncImage(
-                model = Builder(context).data(customIcon).addLastModifiedToFileCacheKey(true)
+                model = Builder(context).data(iconPath).addLastModifiedToFileCacheKey(true)
                     .size(Size.ORIGINAL).build(),
                 modifier = Modifier
                     .matchParentSize()
@@ -798,11 +812,17 @@ private fun InteractiveShortcutConfigGridItem(
 
     val graphicsLayer = rememberGraphicsLayer()
 
-    val icon = when {
-        data.customIcon != null -> data.customIcon
-        data.shortcutIntentIcon != null -> data.shortcutIntentIcon
-        data.activityIcon != null -> data.activityIcon
-        else -> data.applicationIcon
+    val customIcon = data.customIcon
+    val shortcutIntentIcon = data.shortcutIntentIcon
+    val activityIcon = data.activityIcon
+    val applicationIcon = data.applicationIcon
+
+    val iconPath = when {
+        customIcon != null -> customIcon
+        shortcutIntentIcon != null -> shortcutIntentIcon
+        activityIcon != null -> activityIcon
+        applicationIcon != null -> applicationIcon
+        else -> null
     }
 
     val label = when {
@@ -877,7 +897,7 @@ private fun InteractiveShortcutConfigGridItem(
         verticalArrangement = verticalArrangement,
     ) {
         AsyncImage(
-            model = Builder(context).data(icon).addLastModifiedToFileCacheKey(true)
+            model = Builder(context).data(iconPath).addLastModifiedToFileCacheKey(true)
                 .size(Size.ORIGINAL).build(),
             contentDescription = null,
             modifier = Modifier
@@ -1188,10 +1208,19 @@ private fun PreviewNestedFolderGridItem(
 
         when (val data = gridItem.data) {
             is GridItemData.ApplicationInfo -> {
-                val icon = iconPackFilePaths[data.componentName] ?: data.icon
+                val iconPackFilePath = iconPackFilePaths[data.componentName] ?: data.icon
+                val icon = data.icon
+                val customIcon = data.customIcon
+
+                val iconPath = when {
+                    customIcon != null -> customIcon
+                    iconPackFilePath != null -> iconPackFilePath
+                    icon != null -> icon
+                    else -> null
+                }
 
                 AsyncImage(
-                    model = Builder(context).data(data.customIcon ?: icon)
+                    model = Builder(context).data(iconPath)
                         .addLastModifiedToFileCacheKey(true).size(Size.ORIGINAL).build(),
                     contentDescription = null,
                     modifier = commonModifier,

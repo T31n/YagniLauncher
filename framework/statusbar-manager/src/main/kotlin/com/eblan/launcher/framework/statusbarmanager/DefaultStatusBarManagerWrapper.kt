@@ -20,18 +20,15 @@ package com.eblan.launcher.framework.statusbarmanager
 import android.annotation.SuppressLint
 import android.app.StatusBarManager
 import android.content.Context
-import androidx.annotation.RequiresApi
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 internal class DefaultStatusBarManagerWrapper @Inject constructor(
     @param:ApplicationContext private val context: Context,
 ) : AndroidStatusBarManagerWrapper {
-    @RequiresApi(29)
     val statusBarManager = context.getSystemService("statusbar") as StatusBarManager
 
     @SuppressLint("PrivateApi")
-    @RequiresApi(29)
     override fun expandNotificationsPanel(): Any? = try {
         statusBarManager.javaClass
             .getDeclaredMethod("expandNotificationsPanel")

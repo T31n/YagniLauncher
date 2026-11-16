@@ -74,13 +74,14 @@ import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.getHorizontalAlignment
 import com.eblan.launcher.feature.home.util.getHorizontalArrangement
+import com.eblan.launcher.feature.home.util.getIconPath
+import com.eblan.launcher.feature.home.util.getLabel
 import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
 import com.eblan.launcher.feature.home.util.getVerticalAlignment
 import com.eblan.launcher.feature.home.util.getVerticalArrangement
 import com.eblan.launcher.framework.launcherapps.AndroidLauncherAppsWrapper
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import kotlinx.coroutines.launch
-import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 @Composable
@@ -145,16 +146,16 @@ internal fun EblanApplicationInfoItem(
 
     val maxLines = if (gridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
 
-    val iconPackFilePath = iconPackFilePaths[eblanApplicationInfo.componentName]
-    val icon = eblanApplicationInfo.icon
-    val customIcon = eblanApplicationInfo.customIcon
+    val iconPath = getIconPath(
+        iconPackFilePath = iconPackFilePaths[eblanApplicationInfo.componentName],
+        customIcon = eblanApplicationInfo.customIcon,
+        icon = eblanApplicationInfo.icon,
+    )
 
-    val iconPath = when {
-        iconPackFilePath != null -> iconPackFilePath
-        customIcon != null -> customIcon
-        icon != null -> icon
-        else -> null
-    }
+    val label = getLabel(
+        customLabel = eblanApplicationInfo.customLabel,
+        label = eblanApplicationInfo.label,
+    )
 
     val horizontalAlignment =
         getHorizontalAlignment(horizontalAlignment = gridItemSettings.horizontalAlignment)
@@ -294,8 +295,7 @@ internal fun EblanApplicationInfoItem(
             modifier = Modifier
                 .padding(gridItemSettings.textPadding.dp)
                 .alpha(alpha),
-            text = eblanApplicationInfo.customLabel
-                ?: eblanApplicationInfo.label,
+            text = label,
             color = textColor,
             textAlign = TextAlign.Center,
             maxLines = maxLines,
@@ -310,8 +310,7 @@ internal fun EblanApplicationInfoItem(
                 .padding(gridItemSettings.textPadding.dp)
                 .then(iconModifier)
                 .alpha(alpha),
-            text = eblanApplicationInfo.customLabel
-                ?: eblanApplicationInfo.label,
+            text = label,
             color = textColor,
             textAlign = TextAlign.Center,
             maxLines = maxLines,

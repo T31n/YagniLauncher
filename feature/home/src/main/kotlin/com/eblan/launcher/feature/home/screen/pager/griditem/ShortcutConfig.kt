@@ -65,6 +65,8 @@ import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.component.swipeGestures
 import com.eblan.launcher.feature.home.component.whiteBox
 import com.eblan.launcher.feature.home.model.SharedElementKey
+import com.eblan.launcher.feature.home.util.getGridItemIconPath
+import com.eblan.launcher.feature.home.util.getGridItemLabel
 import com.eblan.launcher.feature.home.util.handleEblanAction
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import com.eblan.launcher.ui.local.LocalStatusBarManager
@@ -119,28 +121,8 @@ internal fun InteractiveShortcutConfigGridItem(
     val currentOnOpenAppDrawer by rememberUpdatedState(onOpenAppDrawer)
     val currentOnLongPressGridItem by rememberUpdatedState(onLongPressGridItem)
 
-    val customIcon = data.customIcon
-    val shortcutIntentIcon = data.shortcutIntentIcon
-    val activityIcon = data.activityIcon
-    val applicationIcon = data.applicationIcon
-
-    val iconPath = when {
-        customIcon != null -> customIcon
-        shortcutIntentIcon != null -> shortcutIntentIcon
-        activityIcon != null -> activityIcon
-        applicationIcon != null -> applicationIcon
-        else -> null
-    }
-
-    val label = if (data.customLabel != null) {
-        data.customLabel
-    } else if (data.shortcutIntentName != null) {
-        data.shortcutIntentName
-    } else if (data.activityLabel != null) {
-        data.activityLabel
-    } else {
-        data.applicationLabel
-    }
+    val iconPath = getGridItemIconPath(data = data)
+    val label = getGridItemLabel(data = data).toString()
 
     val itemModifier = modifier
         .fillMaxSize()

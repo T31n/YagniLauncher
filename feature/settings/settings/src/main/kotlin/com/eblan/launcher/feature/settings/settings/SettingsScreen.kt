@@ -17,9 +17,12 @@
  */
 package com.eblan.launcher.feature.settings.settings
 
+import android.app.Activity
 import android.content.Intent
-import android.provider.Settings.ACTION_HOME_SETTINGS
+import android.provider.Settings
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,6 +46,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -51,6 +57,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
+import com.eblan.launcher.ui.local.LocalRoleManager
 import com.eblan.launcher.ui.settings.SettingsRowItem
 import com.eblan.launcher.ui.settings.rememberIsDefaultLauncher
 import com.eblan.launcher.ui.settings.settingsFirstItemShape
@@ -100,6 +107,19 @@ internal fun SettingsScreen(
     onFolder: () -> Unit,
 ) {
     val context = LocalContext.current
+    val androidRoleManagerWrapper = LocalRoleManager.current
+
+    var shouldOpenHomeSettingsOnNextClick by remember { mutableStateOf(false) }
+
+    val requestHomeRoleLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+    ) { activityResult ->
+        if (activityResult.resultCode != Activity.RESULT_OK &&
+            !androidRoleManagerWrapper.isHomeRoleHeld()
+        ) {
+            shouldOpenHomeSettingsOnNextClick = true
+        }
+    }
 
     val isDefaultLauncher by rememberIsDefaultLauncher()
 
@@ -151,7 +171,15 @@ internal fun SettingsScreen(
                         shape = settingsFirstItemShape,
                         // Action
                         onClick = {
-                            context.startActivity(Intent(ACTION_HOME_SETTINGS))
+                            if (shouldOpenHomeSettingsOnNextClick ||
+                                !androidRoleManagerWrapper.isHomeRoleAvailable()
+                            ) {
+                                context.startActivity(Intent(Settings.ACTION_HOME_SETTINGS))
+                            } else {
+                                requestHomeRoleLauncher.launch(
+                                    androidRoleManagerWrapper.createRequestHomeRoleIntent(),
+                                )
+                            }
                         },
                     )
                 }

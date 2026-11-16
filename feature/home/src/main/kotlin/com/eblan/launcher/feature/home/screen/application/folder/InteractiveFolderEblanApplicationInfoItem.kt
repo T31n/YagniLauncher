@@ -85,6 +85,8 @@ import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.getHorizontalAlignment
+import com.eblan.launcher.feature.home.util.getIconPath
+import com.eblan.launcher.feature.home.util.getLabel
 import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
 import com.eblan.launcher.feature.home.util.getVerticalArrangement
 import com.eblan.launcher.ui.local.LocalLauncherApps
@@ -342,17 +344,6 @@ private fun InteractiveEblanApplicationInfoItem(
     val layoutDirection = LocalLayoutDirection.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    val iconPackFilePath = iconPackFilePaths[data.componentName]
-    val icon = data.icon
-    val customIcon = data.customIcon
-
-    val iconPath = when {
-        iconPackFilePath != null -> iconPackFilePath
-        customIcon != null -> customIcon
-        icon != null -> icon
-        else -> null
-    }
-
     val leftPadding = with(density) {
         paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
     }
@@ -421,7 +412,13 @@ private fun InteractiveEblanApplicationInfoItem(
     ) {
         AsyncImage(
             model = Builder(context)
-                .data(iconPath)
+                .data(
+                    getIconPath(
+                        iconPackFilePath = iconPackFilePaths[data.componentName],
+                        customIcon = data.customIcon,
+                        icon = data.icon,
+                    ),
+                )
                 .addLastModifiedToFileCacheKey(true)
                 .size(Size.ORIGINAL).build(),
             contentDescription = null,
@@ -455,7 +452,10 @@ private fun InteractiveEblanApplicationInfoItem(
             modifier = Modifier
                 .padding(textPadding)
                 .alpha(alpha),
-            text = data.label,
+            text = getLabel(
+                customLabel = data.customLabel,
+                label = data.label,
+            ),
             color = textColor,
             textAlign = TextAlign.Center,
             maxLines = maxLines,
@@ -604,7 +604,10 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
             Surface(
                 modifier = commonModifier,
                 shape = RoundedCornerShape(folderCornerRadius.dp),
-                border = BorderStroke(width = folderBorderWidth.dp, color = Color(customFolderBorderColor)),
+                border = BorderStroke(
+                    width = folderBorderWidth.dp,
+                    color = Color(customFolderBorderColor),
+                ),
                 color = when (folderBackgroundColor) {
                     BackgroundColor.System -> MaterialTheme.colorScheme.surface
                     BackgroundColor.Custom -> Color(customFolderBackgroundColor)
@@ -689,16 +692,11 @@ private fun PreviewFolderEblanApplicationInfoItem(
 
         when (val data = folderEblanApplicationInfoGridItem.data) {
             is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
-                val iconPackFilePath = iconPackFilePaths[data.componentName]
-                val icon = data.icon
-                val customIcon = data.customIcon
-
-                val iconPath = when {
-                    iconPackFilePath != null -> iconPackFilePath
-                    customIcon != null -> customIcon
-                    icon != null -> icon
-                    else -> null
-                }
+                val iconPath = getIconPath(
+                    iconPackFilePath = iconPackFilePaths[data.componentName],
+                    customIcon = data.customIcon,
+                    icon = data.icon,
+                )
 
                 AsyncImage(
                     model = Builder(context).data(iconPath)

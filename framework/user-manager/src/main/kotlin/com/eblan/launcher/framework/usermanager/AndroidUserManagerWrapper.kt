@@ -17,9 +17,7 @@
  */
 package com.eblan.launcher.framework.usermanager
 
-import android.os.Build
 import android.os.UserHandle
-import androidx.annotation.RequiresApi
 
 interface AndroidUserManagerWrapper {
     fun getSerialNumberForUser(userHandle: UserHandle): Long
@@ -32,7 +30,6 @@ interface AndroidUserManagerWrapper {
 
     fun isQuietModeEnabled(userHandle: UserHandle): Boolean
 
-    @RequiresApi(Build.VERSION_CODES.P)
     suspend fun requestQuietModeEnabled(
         enableQuiteMode: Boolean,
         userHandle: UserHandle,

@@ -388,7 +388,7 @@ internal fun QuiteModeScreen(
             textAlign = TextAlign.Center,
         )
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && isDefaultLauncher && userHandle != null) {
+        if (isDefaultLauncher && userHandle != null) {
             Spacer(modifier = Modifier.height(10.dp))
 
             OutlinedButton(

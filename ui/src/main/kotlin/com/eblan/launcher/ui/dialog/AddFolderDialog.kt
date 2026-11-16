@@ -34,7 +34,6 @@ import androidx.compose.ui.res.stringResource
 import com.eblan.launcher.designsystem.component.EblanDialog
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.ui.R
-import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 import com.eblan.launcher.common.R as commonR
 

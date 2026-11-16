@@ -21,8 +21,6 @@ import android.graphics.drawable.Drawable
 import android.os.UserHandle
 
 interface AndroidPackageManagerWrapper {
-    suspend fun isDefaultLauncher(): Boolean
-
     suspend fun getUserBadgedLabel(label: CharSequence, userHandle: UserHandle): CharSequence
 
     suspend fun getUserBadgedIcon(drawable: Drawable, userHandle: UserHandle): Drawable?

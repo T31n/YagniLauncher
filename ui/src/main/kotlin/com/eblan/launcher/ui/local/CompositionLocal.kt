@@ -28,6 +28,7 @@ import com.eblan.launcher.framework.launcherapps.AndroidLauncherAppsWrapper
 import com.eblan.launcher.framework.launcherapps.PinItemRequestWrapper
 import com.eblan.launcher.framework.locale.LocaleWrapper
 import com.eblan.launcher.framework.packagemanager.AndroidPackageManagerWrapper
+import com.eblan.launcher.framework.rolemanager.AndroidRoleManagerWrapper
 import com.eblan.launcher.framework.settings.AndroidSettingsWrapper
 import com.eblan.launcher.framework.statusbarmanager.AndroidStatusBarManagerWrapper
 import com.eblan.launcher.framework.usermanager.AndroidUserManagerWrapper
@@ -57,6 +58,10 @@ val LocalWallpaperManager = staticCompositionLocalOf<AndroidWallpaperManagerWrap
 
 val LocalPackageManager = staticCompositionLocalOf<AndroidPackageManagerWrapper> {
     error("No AndroidPackageManager provided")
+}
+
+val LocalRoleManager = staticCompositionLocalOf<AndroidRoleManagerWrapper> {
+    error("No AndroidRoleManagerWrapper provided")
 }
 
 val LocalImageSerializer = staticCompositionLocalOf<AndroidImageSerializer> {

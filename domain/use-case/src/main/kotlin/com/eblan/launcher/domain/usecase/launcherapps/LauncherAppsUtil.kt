@@ -58,7 +58,6 @@ import com.eblan.launcher.domain.usecase.util.getRecursiveFolderGridItems
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import java.io.File
-import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 /** Deletes application icon files that are no longer referenced by applications or widgets. */

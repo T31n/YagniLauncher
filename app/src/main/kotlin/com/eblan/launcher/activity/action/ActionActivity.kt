@@ -22,7 +22,6 @@ import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
 import android.graphics.Canvas
 import android.graphics.drawable.Icon
-import android.os.Build
 import android.os.Bundle
 import android.util.TypedValue
 import androidx.activity.ComponentActivity
@@ -67,7 +66,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
-import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 @AndroidEntryPoint
@@ -218,23 +216,19 @@ class ActionActivity : ComponentActivity() {
                 putExtra(Intent.EXTRA_SHORTCUT_ICON, bitmap)
             }
 
-            val resultIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val shortcutManager = getSystemService(ShortcutManager::class.java)
+            val shortcutManager = getSystemService(ShortcutManager::class.java)
 
-                if (shortcutManager.isRequestPinShortcutSupported) {
-                    val shortcut = ShortcutInfo.Builder(applicationContext, shortcutId)
-                        .setShortLabel(shortcutName).setLongLabel(shortcutName).setIcon(
-                            Icon.createWithResource(
-                                applicationContext,
-                                resId,
-                            ),
-                        ).setIntent(shortcutIntent).build()
+            val resultIntent = if (shortcutManager.isRequestPinShortcutSupported) {
+                val shortcut = ShortcutInfo.Builder(applicationContext, shortcutId)
+                    .setShortLabel(shortcutName).setLongLabel(shortcutName).setIcon(
+                        Icon.createWithResource(
+                            applicationContext,
+                            resId,
+                        ),
+                    ).setIntent(shortcutIntent).build()
 
-                    shortcutManager.createShortcutResultIntent(shortcut)?.apply {
-                        putExtras(legacyExtras)
-                    }
-                } else {
-                    legacyExtras
+                shortcutManager.createShortcutResultIntent(shortcut)?.apply {
+                    putExtras(legacyExtras)
                 }
             } else {
                 legacyExtras

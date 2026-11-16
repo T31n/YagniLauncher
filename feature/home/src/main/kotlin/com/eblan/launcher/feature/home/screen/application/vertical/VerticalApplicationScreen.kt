@@ -17,7 +17,6 @@
  */
 package com.eblan.launcher.feature.home.screen.application.vertical
 
-import android.os.Build
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -414,7 +413,7 @@ private fun EblanApplicationInfosPage(
                 onTapFolderApplicationInfo = onTapFolderApplicationInfo,
             )
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && isDefaultLauncher &&
+            if (isDefaultLauncher &&
                 eblanUserPageKey.eblanUser.serialNumber > 0 && userHandle != null
             ) {
                 FloatingActionButton(

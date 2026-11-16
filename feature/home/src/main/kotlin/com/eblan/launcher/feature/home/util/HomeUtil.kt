@@ -22,7 +22,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Process.myUserHandle
 import androidx.compose.foundation.layout.Arrangement
@@ -101,9 +100,7 @@ internal fun handleEblanAction(
         EblanActionType.OpenAppDrawer -> onOpenAppDrawer()
 
         EblanActionType.OpenNotificationPanelByReflection -> {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                statusBarManagerWrapper.expandNotificationsPanel()
-            }
+            statusBarManagerWrapper.expandNotificationsPanel()
         }
 
         EblanActionType.None -> Unit

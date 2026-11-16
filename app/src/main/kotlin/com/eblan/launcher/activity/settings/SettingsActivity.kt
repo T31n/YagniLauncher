@@ -44,6 +44,7 @@ import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.framework.accessibilitymanager.AndroidAccessibilityManagerWrapper
 import com.eblan.launcher.framework.locale.LocaleWrapper
 import com.eblan.launcher.framework.packagemanager.AndroidPackageManagerWrapper
+import com.eblan.launcher.framework.rolemanager.AndroidRoleManagerWrapper
 import com.eblan.launcher.framework.settings.AndroidSettingsWrapper
 import com.eblan.launcher.framework.wallpapermanager.AndroidWallpaperManagerWrapper
 import com.eblan.launcher.navigation.SettingsNavHost
@@ -51,6 +52,7 @@ import com.eblan.launcher.ui.local.LocalAccessibilityManager
 import com.eblan.launcher.ui.local.LocalLocaleWrapper
 import com.eblan.launcher.ui.local.LocalMaterialColorSchemeResolver
 import com.eblan.launcher.ui.local.LocalPackageManager
+import com.eblan.launcher.ui.local.LocalRoleManager
 import com.eblan.launcher.ui.local.LocalSettings
 import com.eblan.launcher.ui.local.LocalWallpaperManager
 import com.eblan.launcher.util.handleEdgeToEdge
@@ -65,6 +67,9 @@ class SettingsActivity : AppCompatActivity() {
 
     @Inject
     lateinit var androidPackageManagerWrapper: AndroidPackageManagerWrapper
+
+    @Inject
+    lateinit var androidRoleManagerWrapper: AndroidRoleManagerWrapper
 
     @Inject
     lateinit var androidSettingsWrapper: AndroidSettingsWrapper
@@ -87,6 +92,7 @@ class SettingsActivity : AppCompatActivity() {
         setContent {
             CompositionLocalProvider(
                 LocalPackageManager provides androidPackageManagerWrapper,
+                LocalRoleManager provides androidRoleManagerWrapper,
                 LocalSettings provides androidSettingsWrapper,
                 LocalAccessibilityManager provides androidAccessibilityManagerWrapper,
                 LocalLocaleWrapper provides localeWrapper,

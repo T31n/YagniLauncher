@@ -51,6 +51,7 @@ dependencies {
     api(projects.framework.launcherApps)
     api(projects.framework.locale)
     api(projects.framework.packageManager)
+    api(projects.framework.roleManager)
     api(projects.framework.settings)
     api(projects.framework.statusbarManager)
     api(projects.framework.userManager)

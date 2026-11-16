@@ -28,7 +28,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.draganddrop.dragAndDropSource
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -90,7 +89,6 @@ import kotlinx.coroutines.launch
 import java.io.File
 import com.eblan.launcher.common.R as commonR
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PinScreen(
     // Data and State
@@ -144,7 +142,6 @@ fun PinScreen(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun PinShortcutScreen(
     // Item Data
@@ -249,7 +246,6 @@ private fun PinShortcutScreen(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun PinWidgetScreen(
     // Widget State
@@ -415,7 +411,6 @@ private fun PinWidgetScreen(
 }
 
 @Suppress("DEPRECATION")
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun PinBottomSheet(
@@ -521,7 +516,6 @@ private fun PinBottomSheet(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 private fun handleGridItem(
     // Context and Item
     context: Context,
@@ -550,7 +544,6 @@ private fun handleGridItem(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 private suspend fun addPinShortcutToHomeScreen(
     // Shortcut Information
     shortcutInfo: ShortcutInfo,

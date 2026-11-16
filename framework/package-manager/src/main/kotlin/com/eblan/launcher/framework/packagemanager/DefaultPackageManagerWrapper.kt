@@ -25,7 +25,6 @@ import android.content.pm.LauncherApps
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.graphics.drawable.Drawable
-import android.os.Build
 import android.os.UserHandle
 import android.os.UserManager
 import com.eblan.launcher.common.AndroidImageSerializer
@@ -49,7 +48,6 @@ internal class DefaultPackageManagerWrapper @Inject constructor(
     private val launcherApps =
         context.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
     private val userManager = context.getSystemService(USER_SERVICE) as UserManager
-
     override val hasSystemFeatureAppWidgets
         get() = packageManager.hasSystemFeature(PackageManager.FEATURE_APP_WIDGETS)
 
@@ -89,18 +87,6 @@ internal class DefaultPackageManagerWrapper @Inject constructor(
         } catch (_: PackageManager.NameNotFoundException) {
             null
         }
-    }
-
-    override suspend fun isDefaultLauncher(): Boolean = withContext(ioDispatcher) {
-        val intent = Intent(Intent.ACTION_MAIN).apply {
-            addCategory(Intent.CATEGORY_HOME)
-        }
-
-        val resolveInfo = packageManager.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY)
-
-        val defaultLauncherPackage = resolveInfo?.activityInfo?.packageName
-
-        defaultLauncherPackage == context.packageName
     }
 
     override suspend fun getIconPackInfos(): List<PackageManagerIconPack> {
@@ -146,9 +132,7 @@ internal class DefaultPackageManagerWrapper @Inject constructor(
         if (serialNumber != null) {
             val userHandle = userManager.getUserForSerialNumber(serialNumber)
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
-                userHandle != null
-            ) {
+            if (userHandle != null) {
                 launcherApps.getApplicationInfo(
                     packageName,
                     PackageManager.GET_META_DATA,
