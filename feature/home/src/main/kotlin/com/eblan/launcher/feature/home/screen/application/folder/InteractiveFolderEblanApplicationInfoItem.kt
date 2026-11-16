@@ -84,6 +84,8 @@ import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
+import com.eblan.launcher.feature.home.util.getFolderGridItemIconPath
+import com.eblan.launcher.feature.home.util.getFolderGridItemLabel
 import com.eblan.launcher.feature.home.util.getHorizontalAlignment
 import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
 import com.eblan.launcher.feature.home.util.getVerticalArrangement
@@ -342,16 +344,10 @@ private fun InteractiveEblanApplicationInfoItem(
     val layoutDirection = LocalLayoutDirection.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    val iconPackFilePath = iconPackFilePaths[data.componentName]
-    val icon = data.icon
-    val customIcon = data.customIcon
-
-    val iconPath = when {
-        iconPackFilePath != null -> iconPackFilePath
-        customIcon != null -> customIcon
-        icon != null -> icon
-        else -> null
-    }
+    val iconPath = getFolderGridItemIconPath(
+        data = data,
+        iconPackFilePath = iconPackFilePaths[data.componentName],
+    )
 
     val leftPadding = with(density) {
         paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
@@ -455,7 +451,7 @@ private fun InteractiveEblanApplicationInfoItem(
             modifier = Modifier
                 .padding(textPadding)
                 .alpha(alpha),
-            text = data.label,
+            text = getFolderGridItemLabel(data = data),
             color = textColor,
             textAlign = TextAlign.Center,
             maxLines = maxLines,
@@ -640,7 +636,7 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
             modifier = Modifier
                 .padding(textPadding)
                 .alpha(textAlpha),
-            text = data.label,
+            text = getFolderGridItemLabel(data = data),
             color = textColor,
             textAlign = TextAlign.Center,
             maxLines = maxLines,
@@ -689,16 +685,10 @@ private fun PreviewFolderEblanApplicationInfoItem(
 
         when (val data = folderEblanApplicationInfoGridItem.data) {
             is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
-                val iconPackFilePath = iconPackFilePaths[data.componentName]
-                val icon = data.icon
-                val customIcon = data.customIcon
-
-                val iconPath = when {
-                    iconPackFilePath != null -> iconPackFilePath
-                    customIcon != null -> customIcon
-                    icon != null -> icon
-                    else -> null
-                }
+                val iconPath = getFolderGridItemIconPath(
+                    data = data,
+                    iconPackFilePath = iconPackFilePaths[data.componentName],
+                )
 
                 AsyncImage(
                     model = Builder(context).data(iconPath)
@@ -709,7 +699,7 @@ private fun PreviewFolderEblanApplicationInfoItem(
             }
 
             is FolderEblanApplicationInfoGridItemData.Folder -> {
-                val icon = data.icon
+                val icon = getFolderGridItemIconPath(data = data)
 
                 if (icon != null) {
                     AsyncImage(

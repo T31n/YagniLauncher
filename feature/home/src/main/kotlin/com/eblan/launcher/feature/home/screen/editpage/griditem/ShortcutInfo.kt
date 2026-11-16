@@ -42,6 +42,8 @@ import coil3.size.Size
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.feature.home.component.GridItemLayoutType
+import com.eblan.launcher.feature.home.util.getGridItemIconPath
+import com.eblan.launcher.feature.home.util.getGridItemLabel
 
 @Composable
 internal fun ShortcutInfoGridItem(
@@ -64,14 +66,8 @@ internal fun ShortcutInfoGridItem(
 
     val alpha = if (hasShortcutHostPermission && data.isEnabled) 1f else 0.3f
 
-    val icon = data.icon
-    val customIcon = data.customIcon
-
-    val iconPath = when {
-        customIcon != null -> customIcon
-        icon != null -> icon
-        else -> null
-    }
+    val iconPath = getGridItemIconPath(data = data)
+    val label = getGridItemLabel(data).toString()
 
     val itemModifier = modifier
         .fillMaxSize()
@@ -114,7 +110,7 @@ internal fun ShortcutInfoGridItem(
     val labelContent: @Composable () -> Unit = {
         Text(
             modifier = commonModifier,
-            text = data.customShortLabel ?: data.shortLabel,
+            text = label,
             color = textColor,
             textAlign = TextAlign.Center,
             maxLines = maxLines,

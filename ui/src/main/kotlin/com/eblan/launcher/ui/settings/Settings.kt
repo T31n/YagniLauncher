@@ -65,6 +65,7 @@ import coil3.compose.AsyncImage
 import com.eblan.launcher.designsystem.component.VerticalSlideReveal
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPack
+import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.ui.R
 import com.eblan.launcher.ui.local.LocalAccessibilityManager
 import com.eblan.launcher.ui.local.LocalRoleManager
@@ -588,4 +589,10 @@ private fun IconPackItem(
             )
         }
     }
+}
+
+@Composable
+fun BackgroundColor.getTitle() = when (this) {
+    BackgroundColor.System -> stringResource(commonR.string.system)
+    BackgroundColor.Custom -> stringResource(commonR.string.custom)
 }

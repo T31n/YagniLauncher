@@ -68,6 +68,8 @@ import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.component.swipeGestures
 import com.eblan.launcher.feature.home.component.whiteBox
 import com.eblan.launcher.feature.home.model.SharedElementKey
+import com.eblan.launcher.feature.home.util.getGridItemIconPath
+import com.eblan.launcher.feature.home.util.getGridItemLabel
 import com.eblan.launcher.feature.home.util.handleEblanAction
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import com.eblan.launcher.ui.local.LocalStatusBarManager
@@ -125,16 +127,11 @@ internal fun InteractiveApplicationInfoGridItem(
     val currentOnOpenAppDrawer by rememberUpdatedState(onOpenAppDrawer)
     val currentOnLongPressGridItem by rememberUpdatedState(onLongPressGridItem)
 
-    val iconPackFilePath = iconPackFilePaths[data.componentName]
-    val icon = data.icon
-    val customIcon = data.customIcon
-
-    val iconPath = when {
-        iconPackFilePath != null -> iconPackFilePath
-        customIcon != null -> customIcon
-        icon != null -> icon
-        else -> null
-    }
+    val iconPath = getGridItemIconPath(
+        data = data,
+        iconPackFilePath = iconPackFilePaths[data.componentName],
+    )
+    val label = getGridItemLabel(data = data).toString()
 
     val hasNotifications = (statusBarNotifications[data.packageName] ?: 0) > 0
     val isNotificationAccessGranted by rememberIsNotificationAccessGranted()
@@ -261,7 +258,7 @@ internal fun InteractiveApplicationInfoGridItem(
             modifier = Modifier
                 .padding(gridItemSettings.textPadding.dp)
                 .alpha(alpha = alpha),
-            text = data.customLabel ?: data.label,
+            text = label,
             color = textColor,
             textAlign = TextAlign.Center,
             maxLines = maxLines,
@@ -276,7 +273,7 @@ internal fun InteractiveApplicationInfoGridItem(
                 .padding(gridItemSettings.textPadding.dp)
                 .then(iconModifier)
                 .alpha(alpha = alpha),
-            text = data.customLabel ?: data.label,
+            text = label,
             color = textColor,
             textAlign = TextAlign.Center,
             maxLines = maxLines,

@@ -44,6 +44,8 @@ import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.feature.home.component.GridItemLayoutType
+import com.eblan.launcher.feature.home.util.getGridItemIconPath
+import com.eblan.launcher.feature.home.util.getGridItemLabel
 
 @Composable
 internal fun ApplicationInfoGridItem(
@@ -63,16 +65,11 @@ internal fun ApplicationInfoGridItem(
 ) {
     val context = LocalContext.current
 
-    val iconPackFilePath = iconPackFilePaths[data.componentName]
-    val icon = data.icon
-    val customIcon = data.customIcon
-
-    val iconPath = when {
-        iconPackFilePath != null -> iconPackFilePath
-        customIcon != null -> customIcon
-        icon != null -> icon
-        else -> null
-    }
+    val iconPath = getGridItemIconPath(
+        data = data,
+        iconPackFilePath = iconPackFilePaths[data.componentName],
+    )
+    val label = getGridItemLabel(data = data).toString()
 
     val itemModifier = modifier
         .fillMaxSize()
@@ -117,7 +114,7 @@ internal fun ApplicationInfoGridItem(
     val labelContent: @Composable () -> Unit = {
         Text(
             modifier = commonModifier,
-            text = data.customLabel ?: data.label,
+            text = label,
             color = textColor,
             textAlign = TextAlign.Center,
             maxLines = maxLines,

@@ -44,6 +44,8 @@ import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.feature.home.component.GridItemLayoutType
+import com.eblan.launcher.feature.home.util.getGridItemIconPath
+import com.eblan.launcher.feature.home.util.getGridItemLabel
 
 @Composable
 internal fun ShortcutConfigGridItem(
@@ -62,28 +64,8 @@ internal fun ShortcutConfigGridItem(
 ) {
     val context = LocalContext.current
 
-    val customIcon = data.customIcon
-    val shortcutIntentIcon = data.shortcutIntentIcon
-    val activityIcon = data.activityIcon
-    val applicationIcon = data.applicationIcon
-
-    val iconPath = when {
-        customIcon != null -> customIcon
-        shortcutIntentIcon != null -> shortcutIntentIcon
-        activityIcon != null -> activityIcon
-        applicationIcon != null -> applicationIcon
-        else -> null
-    }
-
-    val label = if (data.customLabel != null) {
-        data.customLabel
-    } else if (data.shortcutIntentName != null) {
-        data.shortcutIntentName
-    } else if (data.activityLabel != null) {
-        data.activityLabel
-    } else {
-        data.applicationLabel
-    }
+    val iconPath = getGridItemIconPath(data = data)
+    val label = getGridItemLabel(data = data).toString()
 
     val itemModifier = modifier
         .fillMaxSize()
@@ -128,7 +110,7 @@ internal fun ShortcutConfigGridItem(
     val labelContent: @Composable () -> Unit = {
         Text(
             modifier = commonModifier,
-            text = label.toString(),
+            text = label,
             color = textColor,
             textAlign = TextAlign.Center,
             maxLines = maxLines,

@@ -79,6 +79,7 @@ import com.eblan.launcher.feature.home.component.whiteBox
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.screen.pager.handleConflictingGridItem
+import com.eblan.launcher.feature.home.util.getGridItemIconPath
 import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
 import com.eblan.launcher.feature.home.util.handleEblanAction
 import com.eblan.launcher.ui.local.LocalLauncherApps
@@ -487,16 +488,10 @@ private fun PreviewFolderGridItem(
 
         when (val data = gridItem.data) {
             is GridItemData.ApplicationInfo -> {
-                val iconPackFilePath = iconPackFilePaths[data.componentName] ?: data.icon
-                val icon = data.icon
-                val customIcon = data.customIcon
-
-                val iconPath = when {
-                    iconPackFilePath != null -> iconPackFilePath
-                    customIcon != null -> customIcon
-                    icon != null -> icon
-                    else -> null
-                }
+                val iconPath = getGridItemIconPath(
+                    data = data,
+                    iconPackFilePath = iconPackFilePaths[data.componentName],
+                )
 
                 AsyncImage(
                     model = Builder(context)
@@ -510,18 +505,7 @@ private fun PreviewFolderGridItem(
             }
 
             is GridItemData.ShortcutConfig -> {
-                val customIcon = data.customIcon
-                val shortcutIntentIcon = data.shortcutIntentIcon
-                val activityIcon = data.activityIcon
-                val applicationIcon = data.applicationIcon
-
-                val iconPath = when {
-                    customIcon != null -> customIcon
-                    shortcutIntentIcon != null -> shortcutIntentIcon
-                    activityIcon != null -> activityIcon
-                    applicationIcon != null -> applicationIcon
-                    else -> null
-                }
+                val iconPath = getGridItemIconPath(data = data)
 
                 AsyncImage(
                     model = Builder(context)
@@ -535,14 +519,7 @@ private fun PreviewFolderGridItem(
             }
 
             is GridItemData.ShortcutInfo -> {
-                val icon = data.icon
-                val customIcon = data.customIcon
-
-                val iconPath = when {
-                    customIcon != null -> customIcon
-                    icon != null -> icon
-                    else -> null
-                }
+                val iconPath = getGridItemIconPath(data = data)
 
                 AsyncImage(
                     model = Builder(context)

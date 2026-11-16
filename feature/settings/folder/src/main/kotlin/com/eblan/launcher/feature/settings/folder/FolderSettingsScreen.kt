@@ -55,10 +55,10 @@ import com.eblan.launcher.feature.settings.folder.model.FolderSettingsUiState
 import com.eblan.launcher.ui.dialog.ColorPickerDialog
 import com.eblan.launcher.ui.dialog.EditBorderWidthDialog
 import com.eblan.launcher.ui.dialog.EditCornerRadiusDialog
-import com.eblan.launcher.ui.dialog.getTitle
 import com.eblan.launcher.ui.settings.SettingsColumnItem
 import com.eblan.launcher.ui.settings.SettingsDropdownItem
 import com.eblan.launcher.ui.settings.SettingsItemCard
+import com.eblan.launcher.ui.settings.getTitle
 import com.eblan.launcher.ui.settings.settingsFirstItemShape
 import com.eblan.launcher.ui.settings.settingsLastItemShape
 import com.eblan.launcher.ui.settings.settingsMiddleItemShape

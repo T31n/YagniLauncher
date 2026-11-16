@@ -55,11 +55,11 @@ import com.eblan.launcher.feature.settings.appdrawer.dialog.ManageFoldersDialog
 import com.eblan.launcher.feature.settings.appdrawer.dialog.ManageTagsDialog
 import com.eblan.launcher.feature.settings.appdrawer.model.AppDrawerSettingsUiState
 import com.eblan.launcher.ui.dialog.ColorPickerDialog
-import com.eblan.launcher.ui.dialog.getTitle
 import com.eblan.launcher.ui.settings.GridItemSettings
 import com.eblan.launcher.ui.settings.SettingsColumnItem
 import com.eblan.launcher.ui.settings.SettingsDropdownItem
 import com.eblan.launcher.ui.settings.SettingsSwitchItem
+import com.eblan.launcher.ui.settings.getTitle
 import com.eblan.launcher.ui.settings.settingsFirstItemShape
 import com.eblan.launcher.ui.settings.settingsMiddleItemShape
 import com.eblan.launcher.common.R as commonR
