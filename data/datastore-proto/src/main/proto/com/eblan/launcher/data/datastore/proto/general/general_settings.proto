@@ -3,6 +3,8 @@ syntax = "proto3";
 import "com/eblan/launcher/data/datastore/proto/general/theme.proto";
 import "com/eblan/launcher/data/datastore/proto/general/color_source.proto";
 import "com/eblan/launcher/data/datastore/proto/general/icon_shape.proto";
+import "com/eblan/launcher/data/datastore/proto/general/color_scheme_palette_style.proto";
+import "com/eblan/launcher/data/datastore/proto/general/color_scheme_contrast_preset.proto";
 
 option java_package = "com.eblan.launcher.data.datastore.proto.general";
 option java_multiple_files = true;
@@ -16,4 +18,7 @@ message GeneralSettingsProto {
   optional IconShapeProto iconShapeProto = 8;
   optional ThemeProto systemBarsThemeProto = 9;
   optional int32 customSeedColor = 10;
+  optional ColorSchemePaletteStyleProto colorSchemePaletteStyleProto = 11;
+  optional ColorSchemeContrastPresetProto colorSchemeContrastPresetProto = 12;
+  optional bool amoledBlack = 13;
 }

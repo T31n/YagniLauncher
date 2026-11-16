@@ -93,6 +93,7 @@ class AddPackageUseCase @Inject constructor(
                 iconShape = userData.generalSettings.iconShape,
                 fallbackIconTint = userData.generalSettings.fallbackIconTint,
                 theme = userData.generalSettings.theme,
+                colorSchemeSettings = userData.generalSettings.colorSchemeSettings,
             ).onEach {
                 addEblanApplicationInfo(
                     homeSettings = userData.homeSettings,

@@ -159,6 +159,7 @@ class MainActivity : AppCompatActivity() {
                     theme = generalSettings?.theme,
                     colorSource = generalSettings?.colorSource,
                     customSeedColor = generalSettings?.customSeedColor,
+                    colorSchemeSettings = generalSettings?.colorSchemeSettings,
                 )
 
                 MainContent(

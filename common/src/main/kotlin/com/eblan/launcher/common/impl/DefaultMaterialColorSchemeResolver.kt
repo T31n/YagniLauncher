@@ -29,13 +29,15 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.eblan.launcher.common.MaterialColorSchemeResolver
+import com.eblan.launcher.domain.model.userdata.ColorSchemePaletteStyle
+import com.eblan.launcher.domain.model.userdata.ColorSchemeSettings
 import com.eblan.launcher.domain.model.userdata.ColorSource
 import com.eblan.launcher.domain.model.userdata.Theme
-import com.materialkolor.PaletteStyle
 import com.materialkolor.dynamicColorScheme
 import com.materialkolor.dynamiccolor.ColorSpec
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
+import com.materialkolor.PaletteStyle as MaterialKolorPaletteStyle
 
 internal class DefaultMaterialColorSchemeResolver @Inject constructor(
     @param:ApplicationContext private val context: Context,
@@ -76,14 +78,16 @@ internal class DefaultMaterialColorSchemeResolver @Inject constructor(
     override fun getCustomColorScheme(
         seedColor: Int,
         isDarkTheme: Boolean,
+        colorSchemeSettings: ColorSchemeSettings,
     ): ColorScheme {
         val opaqueSeedColor = (seedColor and 0x00FFFFFF) or 0xFF000000.toInt()
 
         return dynamicColorScheme(
             seedColor = Color(opaqueSeedColor),
             isDark = isDarkTheme,
-            style = PaletteStyle.TonalSpot,
-            contrastLevel = 0.0,
+            isAmoled = isDarkTheme && colorSchemeSettings.amoledBlack,
+            style = colorSchemeSettings.paletteStyle.toMaterialKolorPaletteStyle(),
+            contrastLevel = colorSchemeSettings.contrastPreset.contrastLevel,
             specVersion = ColorSpec.SpecVersion.SPEC_2021,
         )
     }
@@ -93,6 +97,7 @@ internal class DefaultMaterialColorSchemeResolver @Inject constructor(
         colorSource: ColorSource,
         customSeedColor: Int,
         theme: Theme,
+        colorSchemeSettings: ColorSchemeSettings,
     ): Int {
         val isDarkTheme = isDarkTheme(theme)
 
@@ -100,6 +105,7 @@ internal class DefaultMaterialColorSchemeResolver @Inject constructor(
             colorSource = colorSource,
             customSeedColor = customSeedColor,
             isDarkTheme = isDarkTheme,
+            colorSchemeSettings = colorSchemeSettings,
         )
 
         return colorScheme?.primary?.toArgb() ?: if (isDarkTheme) {
@@ -114,6 +120,7 @@ internal class DefaultMaterialColorSchemeResolver @Inject constructor(
         colorSource: ColorSource,
         customSeedColor: Int,
         theme: Theme,
+        colorSchemeSettings: ColorSchemeSettings,
     ): Int {
         val isDarkTheme = isDarkTheme(theme)
 
@@ -121,6 +128,7 @@ internal class DefaultMaterialColorSchemeResolver @Inject constructor(
             colorSource = colorSource,
             customSeedColor = customSeedColor,
             isDarkTheme = isDarkTheme,
+            colorSchemeSettings = colorSchemeSettings,
         )
 
         return colorScheme?.surfaceContainerHighest?.toArgb() ?: if (isDarkTheme) {
@@ -134,6 +142,7 @@ internal class DefaultMaterialColorSchemeResolver @Inject constructor(
         colorSource: ColorSource,
         customSeedColor: Int,
         isDarkTheme: Boolean,
+        colorSchemeSettings: ColorSchemeSettings,
     ): ColorScheme? = when (colorSource) {
         ColorSource.None -> null
 
@@ -142,7 +151,20 @@ internal class DefaultMaterialColorSchemeResolver @Inject constructor(
         ColorSource.Custom -> getCustomColorScheme(
             seedColor = customSeedColor,
             isDarkTheme = isDarkTheme,
+            colorSchemeSettings = colorSchemeSettings,
         )
+    }
+
+    private fun ColorSchemePaletteStyle.toMaterialKolorPaletteStyle(): MaterialKolorPaletteStyle = when (this) {
+        ColorSchemePaletteStyle.TonalSpot -> MaterialKolorPaletteStyle.TonalSpot
+        ColorSchemePaletteStyle.Neutral -> MaterialKolorPaletteStyle.Neutral
+        ColorSchemePaletteStyle.Vibrant -> MaterialKolorPaletteStyle.Vibrant
+        ColorSchemePaletteStyle.Expressive -> MaterialKolorPaletteStyle.Expressive
+        ColorSchemePaletteStyle.Rainbow -> MaterialKolorPaletteStyle.Rainbow
+        ColorSchemePaletteStyle.FruitSalad -> MaterialKolorPaletteStyle.FruitSalad
+        ColorSchemePaletteStyle.Monochrome -> MaterialKolorPaletteStyle.Monochrome
+        ColorSchemePaletteStyle.Fidelity -> MaterialKolorPaletteStyle.Fidelity
+        ColorSchemePaletteStyle.Content -> MaterialKolorPaletteStyle.Content
     }
 
     private companion object {

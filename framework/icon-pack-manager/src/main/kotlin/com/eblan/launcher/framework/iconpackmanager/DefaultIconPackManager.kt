@@ -26,6 +26,7 @@ import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.framework.IconPackManager
 import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
+import com.eblan.launcher.domain.model.userdata.ColorSchemeSettings
 import com.eblan.launcher.domain.model.userdata.ColorSource
 import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.Theme
@@ -104,6 +105,7 @@ internal class DefaultIconPackManager @Inject constructor(
         iconShape: IconShape,
         fallbackIconTint: Boolean,
         theme: Theme,
+        colorSchemeSettings: ColorSchemeSettings,
     ): String? = withContext(ioDispatcher) {
         val packageContext =
             context.createPackageContext(packageName, Context.CONTEXT_IGNORE_SECURITY)
@@ -126,6 +128,7 @@ internal class DefaultIconPackManager @Inject constructor(
                     fallbackIconTint = fallbackIconTint,
                     theme = theme,
                     iconShape = iconShape,
+                    colorSchemeSettings = colorSchemeSettings,
                 )
             } else {
                 imageSerializer.getShapedDrawable(

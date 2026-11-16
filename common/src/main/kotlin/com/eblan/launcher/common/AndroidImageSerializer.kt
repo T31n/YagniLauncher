@@ -19,6 +19,7 @@ package com.eblan.launcher.common
 
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import com.eblan.launcher.domain.model.userdata.ColorSchemeSettings
 import com.eblan.launcher.domain.model.userdata.ColorSource
 import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.Theme
@@ -46,5 +47,6 @@ interface AndroidImageSerializer {
         fallbackIconTint: Boolean,
         theme: Theme,
         iconShape: IconShape,
+        colorSchemeSettings: ColorSchemeSettings = ColorSchemeSettings(),
     ): Drawable?
 }

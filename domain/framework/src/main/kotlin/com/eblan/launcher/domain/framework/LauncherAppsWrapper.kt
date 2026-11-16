@@ -24,6 +24,7 @@ import com.eblan.launcher.domain.model.launcherapps.LauncherAppsActivityInfo
 import com.eblan.launcher.domain.model.launcherapps.LauncherAppsShortcutInfo
 import com.eblan.launcher.domain.model.launcherapps.ShortcutConfigActivityInfo
 import com.eblan.launcher.domain.model.launcherapps.ShortcutQuery
+import com.eblan.launcher.domain.model.userdata.ColorSchemeSettings
 import com.eblan.launcher.domain.model.userdata.ColorSource
 import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.Theme
@@ -38,6 +39,7 @@ interface LauncherAppsWrapper {
         iconShape: IconShape,
         fallbackIconTint: Boolean,
         theme: Theme,
+        colorSchemeSettings: ColorSchemeSettings = ColorSchemeSettings(),
     ): List<LauncherAppsActivityInfo>
 
     suspend fun getFastActivityList(): List<FastLauncherAppsActivityInfo>
@@ -51,6 +53,7 @@ interface LauncherAppsWrapper {
         iconShape: IconShape,
         fallbackIconTint: Boolean,
         theme: Theme,
+        colorSchemeSettings: ColorSchemeSettings = ColorSchemeSettings(),
     ): List<LauncherAppsActivityInfo>
 
     suspend fun getFastActivityList(

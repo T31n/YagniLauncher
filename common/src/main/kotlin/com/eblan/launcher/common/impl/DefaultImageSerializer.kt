@@ -38,6 +38,7 @@ import com.eblan.launcher.common.AndroidImageSerializer
 import com.eblan.launcher.common.MaterialColorSchemeResolver
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
+import com.eblan.launcher.domain.model.userdata.ColorSchemeSettings
 import com.eblan.launcher.domain.model.userdata.ColorSource
 import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.Theme
@@ -368,6 +369,7 @@ internal class DefaultImageSerializer @Inject constructor(
         fallbackIconTint: Boolean,
         theme: Theme,
         iconShape: IconShape,
+        colorSchemeSettings: ColorSchemeSettings,
     ): Drawable? {
         val tintedDrawable = getTintedDrawable(
             drawable = drawable,
@@ -375,6 +377,7 @@ internal class DefaultImageSerializer @Inject constructor(
             customSeedColor = customSeedColor,
             fallbackIconTint = fallbackIconTint,
             theme = theme,
+            colorSchemeSettings = colorSchemeSettings,
         ) ?: return null
 
         return getShapedDrawable(
@@ -421,11 +424,13 @@ internal class DefaultImageSerializer @Inject constructor(
         customSeedColor: Int,
         fallbackIconTint: Boolean,
         theme: Theme,
+        colorSchemeSettings: ColorSchemeSettings,
     ): Drawable? {
         val primaryColor = materialColorSchemeResolver.getPrimaryColor(
             colorSource = colorSource,
             customSeedColor = customSeedColor,
             theme = theme,
+            colorSchemeSettings = colorSchemeSettings,
         )
 
         val copy = drawable.constantState?.newDrawable()?.mutate() ?: drawable.mutate()
@@ -439,6 +444,7 @@ internal class DefaultImageSerializer @Inject constructor(
                         colorSource = colorSource,
                         customSeedColor = customSeedColor,
                         theme = theme,
+                        colorSchemeSettings = colorSchemeSettings,
                     ).toDrawable(),
                     it.mutate().apply { setTint(primaryColor) },
                 )
