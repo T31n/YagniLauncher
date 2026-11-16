@@ -17,8 +17,7 @@
  */
 package com.eblan.launcher.feature.settings.settings
 
-import android.content.Intent
-import android.provider.Settings.ACTION_HOME_SETTINGS
+import android.app.role.RoleManager
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -151,7 +150,9 @@ internal fun SettingsScreen(
                         shape = settingsFirstItemShape,
                         // Action
                         onClick = {
-                            context.startActivity(Intent(ACTION_HOME_SETTINGS))
+                            val roleManager = context.getSystemService(RoleManager::class.java) as RoleManager
+
+                            context.startActivity(roleManager.createRequestRoleIntent(RoleManager.ROLE_HOME))
                         },
                     )
                 }

@@ -22,11 +22,9 @@ import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.LauncherApps.PinItemRequest
-import android.os.Build
 import android.os.Bundle
 import android.os.UserHandle
 import androidx.activity.result.ActivityResult
-import androidx.annotation.RequiresApi
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.framework.widgetmanager.AndroidAppWidgetHostWrapper
@@ -130,7 +128,6 @@ internal fun handleAppWidgetLauncherResult(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 internal fun handleIsBoundWidget(
     // Widget Info
     appWidgetId: Int,

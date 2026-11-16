@@ -18,7 +18,6 @@
 package com.eblan.launcher.feature.home.screen.folder
 
 import android.graphics.Rect
-import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
@@ -219,14 +218,12 @@ internal fun FolderGridItemPopup(
                     )
                 },
                 onTapShortcutInfo = { serialNumber, packageName, shortcutId ->
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
-                        launcherApps.startShortcut(
-                            serialNumber = serialNumber,
-                            packageName = packageName,
-                            id = shortcutId,
-                            sourceBounds = getSourceBounds(),
-                        )
-                    }
+                    launcherApps.startShortcut(
+                        serialNumber = serialNumber,
+                        packageName = packageName,
+                        id = shortcutId,
+                        sourceBounds = getSourceBounds(),
+                    )
                 },
                 onWidgets = onWidgets,
                 onResetFolderGridItemPopupEntries = onResetFolderGridItemPopupEntries,

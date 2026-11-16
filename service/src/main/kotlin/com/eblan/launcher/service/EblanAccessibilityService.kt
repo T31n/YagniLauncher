@@ -22,7 +22,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.Build
 import android.view.accessibility.AccessibilityEvent
 import androidx.core.content.ContextCompat
 import com.eblan.launcher.domain.model.home.GlobalAction
@@ -40,9 +39,7 @@ class EblanAccessibilityService : AccessibilityService() {
                             performGlobalAction(GLOBAL_ACTION_QUICK_SETTINGS)
 
                         GlobalAction.LockScreen.name ->
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                                performGlobalAction(GLOBAL_ACTION_LOCK_SCREEN)
-                            }
+                            performGlobalAction(GLOBAL_ACTION_LOCK_SCREEN)
 
                         GlobalAction.Recents.name ->
                             performGlobalAction(GLOBAL_ACTION_RECENTS)

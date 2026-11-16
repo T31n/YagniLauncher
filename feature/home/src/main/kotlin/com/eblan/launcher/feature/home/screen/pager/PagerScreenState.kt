@@ -23,7 +23,6 @@ import android.content.Intent
 import android.content.pm.LauncherApps.PinItemRequest
 import android.os.Build
 import android.os.IBinder
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -805,9 +804,7 @@ internal class PagerScreenState(
     }
 
     suspend fun handlePinItemRequest(pinItemRequest: PinItemRequest?) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O ||
-            pinItemRequest == null
-        ) {
+        if (pinItemRequest == null) {
             return
         }
 
@@ -822,7 +819,6 @@ internal class PagerScreenState(
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private suspend fun PinItemRequest.handleRequestTypeShortcut() {
         val shortcutInfo = shortcutInfo ?: return
 
@@ -868,7 +864,6 @@ internal class PagerScreenState(
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private suspend fun PinItemRequest.handleAppWidgetRequestType() {
         val appWidgetProviderInfo = getAppWidgetProviderInfo(context) ?: return
 

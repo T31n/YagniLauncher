@@ -19,13 +19,11 @@ package com.eblan.launcher.activity.pin
 
 import android.content.Intent
 import android.content.pm.LauncherApps.PinItemRequest
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.annotation.RequiresApi
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -102,56 +100,53 @@ class PinActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val homeIntent = Intent(Intent.ACTION_MAIN)
-                .addCategory(Intent.CATEGORY_HOME)
-                .setPackage(packageName)
+        val homeIntent = Intent(Intent.ACTION_MAIN)
+            .addCategory(Intent.CATEGORY_HOME)
+            .setPackage(packageName)
 
-            val pinItemRequest = androidLauncherAppsWrapper.getPinItemRequest(intent = intent)
+        val pinItemRequest = androidLauncherAppsWrapper.getPinItemRequest(intent = intent)
 
-            setContent {
-                CompositionLocalProvider(
-                    LocalAppWidgetHost provides androidAppWidgetHostWrapper,
-                    LocalAppWidgetManager provides androidAppWidgetManagerWrapper,
-                    LocalPinItemRequest provides pinItemRequestWrapper,
-                    LocalLauncherApps provides androidLauncherAppsWrapper,
-                    LocalImageSerializer provides imageSerializer,
-                    LocalMaterialColorSchemeResolver provides materialColorSchemeResolver,
-                    LocalUserManager provides androidUserManagerWrapper,
-                    LocalFileManager provides fileManager,
-                    LocalIconKeyGenerator provides iconKeyGenerator,
-                    LocalWallpaperManager provides androidWallpaperManagerWrapper,
-                ) {
-                    val generalSettings: GeneralSettings? by viewModel.generalSettingsFlow.collectAsStateWithLifecycle(
-                        initialValue = null,
-                    )
+        setContent {
+            CompositionLocalProvider(
+                LocalAppWidgetHost provides androidAppWidgetHostWrapper,
+                LocalAppWidgetManager provides androidAppWidgetManagerWrapper,
+                LocalPinItemRequest provides pinItemRequestWrapper,
+                LocalLauncherApps provides androidLauncherAppsWrapper,
+                LocalImageSerializer provides imageSerializer,
+                LocalMaterialColorSchemeResolver provides materialColorSchemeResolver,
+                LocalUserManager provides androidUserManagerWrapper,
+                LocalFileManager provides fileManager,
+                LocalIconKeyGenerator provides iconKeyGenerator,
+                LocalWallpaperManager provides androidWallpaperManagerWrapper,
+            ) {
+                val generalSettings: GeneralSettings? by viewModel.generalSettingsFlow.collectAsStateWithLifecycle(
+                    initialValue = null,
+                )
 
-                    val applicationTheme by produceApplicationThemeState(
-                        theme = generalSettings?.theme,
-                        systemBarsTheme = generalSettings?.systemBarsTheme,
-                        colorSource = generalSettings?.colorSource,
-                        customSeedColor = generalSettings?.customSeedColor,
-                    )
+                val applicationTheme by produceApplicationThemeState(
+                    theme = generalSettings?.theme,
+                    systemBarsTheme = generalSettings?.systemBarsTheme,
+                    colorSource = generalSettings?.colorSource,
+                    customSeedColor = generalSettings?.customSeedColor,
+                )
 
-                    val colorScheme by produceColorSchemeState(
-                        theme = generalSettings?.theme,
-                        colorSource = generalSettings?.colorSource,
-                        customSeedColor = generalSettings?.customSeedColor,
-                        colorSchemeSettings = generalSettings?.colorSchemeSettings,
-                    )
+                val colorScheme by produceColorSchemeState(
+                    theme = generalSettings?.theme,
+                    colorSource = generalSettings?.colorSource,
+                    customSeedColor = generalSettings?.customSeedColor,
+                    colorSchemeSettings = generalSettings?.colorSchemeSettings,
+                )
 
-                    MainContent(
-                        applicationTheme = applicationTheme,
-                        colorScheme = colorScheme,
-                        pinItemRequest = pinItemRequest,
-                        homeIntent = homeIntent,
-                    )
-                }
+                MainContent(
+                    applicationTheme = applicationTheme,
+                    colorScheme = colorScheme,
+                    pinItemRequest = pinItemRequest,
+                    homeIntent = homeIntent,
+                )
             }
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     @Composable
     private fun MainContent(
         applicationTheme: ApplicationTheme?,

@@ -17,7 +17,6 @@
  */
 package com.eblan.launcher.feature.home.screen.application
 
-import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -208,7 +207,7 @@ internal fun PrivateSpaceStickyHeader(
                     )
                 }
             }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && isDefaultLauncher && userHandle != null) {
+            if (isDefaultLauncher && userHandle != null) {
                 IconButton(
                     onClick = {
                         scope.launch {

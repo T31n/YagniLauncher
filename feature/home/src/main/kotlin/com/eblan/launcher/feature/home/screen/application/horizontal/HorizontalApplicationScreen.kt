@@ -17,7 +17,6 @@
  */
 package com.eblan.launcher.feature.home.screen.application.horizontal
 
-import android.os.Build
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
@@ -344,7 +343,7 @@ private fun EblanApplicationInfosPage(
                 onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
             )
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && isDefaultLauncher &&
+            if (isDefaultLauncher &&
                 eblanUserPageKey.eblanUser.serialNumber > 0 && userHandle != null
             ) {
                 FloatingActionButton(

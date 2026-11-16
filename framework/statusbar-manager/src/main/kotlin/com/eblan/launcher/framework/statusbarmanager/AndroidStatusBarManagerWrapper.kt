@@ -17,9 +17,6 @@
  */
 package com.eblan.launcher.framework.statusbarmanager
 
-import androidx.annotation.RequiresApi
-
 interface AndroidStatusBarManagerWrapper {
-    @RequiresApi(29)
     fun expandNotificationsPanel(): Any?
 }

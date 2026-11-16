@@ -18,7 +18,6 @@
 package com.eblan.launcher.feature.home.screen.pager.griditem
 
 import android.graphics.Rect
-import android.os.Build
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -180,8 +179,7 @@ internal fun InteractiveShortcutInfoGridItem(
                         onTap = {
                             if (
                                 hasShortcutHostPermission &&
-                                data.isEnabled &&
-                                Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1
+                                data.isEnabled
                             ) {
                                 androidLauncherAppsWrapper.startShortcut(
                                     serialNumber = data.serialNumber,

@@ -18,12 +18,9 @@
 package com.eblan.launcher.framework.notificationmanager
 
 import android.app.Notification
-import android.os.Build
-import androidx.annotation.RequiresApi
 
 interface AndroidNotificationManagerWrapper {
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun createNotificationChannel(
         channelId: String,
         name: String,

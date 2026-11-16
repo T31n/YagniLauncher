@@ -498,7 +498,7 @@ internal suspend fun handleShortcutConfigIntentSenderLauncherResult(
 
     val movingGridItem = currentMoveGridItemResult.movingGridItem
 
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O || result.resultCode == Activity.RESULT_CANCELED) {
+    if (result.resultCode == Activity.RESULT_CANCELED) {
         onDeleteGridItem(movingGridItem)
 
         return
@@ -650,8 +650,7 @@ private fun onDragEndPinShortcut(
     onUpdateIsDragging: (Boolean) -> Unit,
     onResetGrid: () -> Unit,
 ) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
-        pinItemRequest != null &&
+    if (pinItemRequest != null &&
         pinItemRequest.isValid &&
         pinItemRequest.accept()
     ) {
@@ -685,7 +684,7 @@ private fun bindPinWidget(
         putInt(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
     }
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && pinItemRequest.isValid && pinItemRequest.accept(
+    if (pinItemRequest.isValid && pinItemRequest.accept(
             extras,
         )
     ) {

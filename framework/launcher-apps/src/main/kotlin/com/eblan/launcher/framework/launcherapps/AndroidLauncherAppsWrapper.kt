@@ -23,13 +23,10 @@ import android.content.pm.LauncherApps
 import android.content.pm.ShortcutInfo
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
-import android.os.Build
 import android.os.Handler
-import androidx.annotation.RequiresApi
 
 interface AndroidLauncherAppsWrapper {
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun getPinItemRequest(intent: Intent): LauncherApps.PinItemRequest
 
     fun startMainActivity(
@@ -38,7 +35,6 @@ interface AndroidLauncherAppsWrapper {
         sourceBounds: Rect,
     )
 
-    @RequiresApi(Build.VERSION_CODES.N_MR1)
     fun startShortcut(
         serialNumber: Long,
         packageName: String,
@@ -46,7 +42,6 @@ interface AndroidLauncherAppsWrapper {
         sourceBounds: Rect,
     )
 
-    @RequiresApi(Build.VERSION_CODES.N_MR1)
     fun startShortcut(
         packageName: String,
         id: String,

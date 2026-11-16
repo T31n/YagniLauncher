@@ -44,13 +44,11 @@ class EblanApplication :
 
         Thread.setDefaultUncaughtExceptionHandler(this)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notificationManagerWrapper.createNotificationChannel(
-                channelId = AndroidNotificationManagerWrapper.CHANNEL_ID,
-                name = getString(R.string.app_name),
-                importance = NotificationManager.IMPORTANCE_DEFAULT,
-            )
-        }
+        notificationManagerWrapper.createNotificationChannel(
+            channelId = AndroidNotificationManagerWrapper.CHANNEL_ID,
+            name = getString(R.string.app_name),
+            importance = NotificationManager.IMPORTANCE_DEFAULT,
+        )
     }
 
     @Suppress("DEPRECATION")
@@ -65,11 +63,7 @@ class EblanApplication :
             val appVersion = try {
                 val packageInfo = packageManager.getPackageInfo(packageName, 0)
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    "${packageInfo.versionName} (${packageInfo.longVersionCode})"
-                } else {
-                    packageInfo.versionCode
-                }
+                "${packageInfo.versionName} (${packageInfo.longVersionCode})"
             } catch (_: Exception) {
                 "Unknown"
             }

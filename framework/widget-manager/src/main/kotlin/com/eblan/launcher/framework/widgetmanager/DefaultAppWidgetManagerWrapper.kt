@@ -58,14 +58,10 @@ internal class DefaultAppWidgetManagerWrapper @Inject constructor(
     private val packageManager = context.packageManager
 
     override suspend fun getInstalledProvidersForProfilesWithCacheIcons(): List<AppWidgetManagerAppWidgetProviderInfo> = withContext(ioDispatcher) {
-        val installedProviders = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            launcherApps.profiles.flatMap { userHandle ->
-                currentCoroutineContext().ensureActive()
+        val installedProviders = launcherApps.profiles.flatMap { userHandle ->
+            currentCoroutineContext().ensureActive()
 
-                appWidgetManager.getInstalledProvidersForProfile(userHandle)
-            }
-        } else {
-            appWidgetManager.installedProviders
+            appWidgetManager.getInstalledProvidersForProfile(userHandle)
         }
 
         installedProviders.map {

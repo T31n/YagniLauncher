@@ -417,11 +417,7 @@ private fun Success(
                     putExtra(IconPackService.ICON_PACK_LABEL, label)
                 }
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    context.startForegroundService(intent)
-                } else {
-                    context.startService(intent)
-                }
+                context.startForegroundService(intent)
             },
         )
     }
