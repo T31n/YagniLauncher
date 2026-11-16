@@ -22,7 +22,6 @@ import android.content.Context
 import android.content.res.XmlResourceParser
 import android.graphics.drawable.Drawable
 import com.eblan.launcher.common.AndroidImageSerializer
-import com.eblan.launcher.common.MaterialColorSchemeResolver
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.framework.IconPackManager
@@ -45,7 +44,6 @@ import javax.inject.Inject
 internal class DefaultIconPackManager @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val imageSerializer: AndroidImageSerializer,
-    private val materialColorSchemeResolver: MaterialColorSchemeResolver,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : IconPackManager,
     AndroidIconPackManager {
@@ -123,11 +121,8 @@ internal class DefaultIconPackManager @Inject constructor(
             val transformedDrawable = if (iconTint) {
                 imageSerializer.getTintedAndShapedDrawable(
                     drawable = drawable,
-                    iconTintColor = materialColorSchemeResolver.getPrimaryColor(
-                        colorSource = colorSource,
-                        customSeedColor = customSeedColor,
-                        theme = theme,
-                    ),
+                    colorSource = colorSource,
+                    customSeedColor = customSeedColor,
                     fallbackIconTint = fallbackIconTint,
                     theme = theme,
                     iconShape = iconShape,

@@ -38,7 +38,6 @@ import android.os.UserHandle
 import android.os.UserManager
 import androidx.annotation.RequiresApi
 import com.eblan.launcher.common.AndroidImageSerializer
-import com.eblan.launcher.common.MaterialColorSchemeResolver
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.common.FileManager
@@ -67,7 +66,6 @@ import javax.inject.Inject
 internal class DefaultLauncherAppsWrapper @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val imageSerializer: AndroidImageSerializer,
-    private val materialColorSchemeResolver: MaterialColorSchemeResolver,
     private val fileManager: FileManager,
     private val iconKeyGenerator: IconKeyGenerator,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
@@ -679,11 +677,8 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         val transformedDrawable = if (iconTint) {
             imageSerializer.getTintedAndShapedDrawable(
                 drawable = drawable,
-                iconTintColor = materialColorSchemeResolver.getPrimaryColor(
-                    colorSource = colorSource,
-                    customSeedColor = customSeedColor,
-                    theme = theme,
-                ),
+                colorSource = colorSource,
+                customSeedColor = customSeedColor,
                 fallbackIconTint = fallbackIconColor,
                 theme = theme,
                 iconShape = iconShape,

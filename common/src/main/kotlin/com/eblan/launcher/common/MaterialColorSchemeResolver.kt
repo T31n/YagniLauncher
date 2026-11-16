@@ -38,4 +38,11 @@ interface MaterialColorSchemeResolver {
         customSeedColor: Int,
         theme: Theme,
     ): Int
+
+    @ColorInt
+    fun getSurfaceColor(
+        colorSource: ColorSource,
+        customSeedColor: Int,
+        theme: Theme,
+    ): Int
 }

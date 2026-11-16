@@ -132,27 +132,52 @@ internal class DefaultMaterialColorSchemeResolver @Inject constructor(
         theme: Theme,
     ): Int {
         val isDarkTheme = isDarkTheme(theme)
+        val colorScheme = getColorScheme(
+            colorSource = colorSource,
+            customSeedColor = customSeedColor,
+            isDarkTheme = isDarkTheme,
+        )
 
-        return when (colorSource) {
-            ColorSource.None -> if (isDarkTheme) {
-                DARK_THEME_PRIMARY_COLOR
-            } else {
-                LIGHT_THEME_PRIMARY_COLOR
-            }
-
-            ColorSource.Wallpaper -> getWallpaperColorScheme(
-                isDarkTheme = isDarkTheme,
-            )?.primary?.toArgb() ?: if (isDarkTheme) {
-                DARK_THEME_PRIMARY_COLOR
-            } else {
-                LIGHT_THEME_PRIMARY_COLOR
-            }
-
-            ColorSource.Custom -> getCustomColorScheme(
-                seedColor = customSeedColor,
-                isDarkTheme = isDarkTheme,
-            ).primary.toArgb()
+        return colorScheme?.primary?.toArgb() ?: if (isDarkTheme) {
+            DARK_THEME_PRIMARY_COLOR
+        } else {
+            LIGHT_THEME_PRIMARY_COLOR
         }
+    }
+
+    @ColorInt
+    override fun getSurfaceColor(
+        colorSource: ColorSource,
+        customSeedColor: Int,
+        theme: Theme,
+    ): Int {
+        val isDarkTheme = isDarkTheme(theme)
+        val colorScheme = getColorScheme(
+            colorSource = colorSource,
+            customSeedColor = customSeedColor,
+            isDarkTheme = isDarkTheme,
+        )
+
+        return colorScheme?.surface?.toArgb() ?: if (isDarkTheme) {
+            DARK_THEME_SURFACE_COLOR
+        } else {
+            LIGHT_THEME_SURFACE_COLOR
+        }
+    }
+
+    private fun getColorScheme(
+        colorSource: ColorSource,
+        customSeedColor: Int,
+        isDarkTheme: Boolean,
+    ): ColorScheme? = when (colorSource) {
+        ColorSource.None -> null
+
+        ColorSource.Wallpaper -> getWallpaperColorScheme(isDarkTheme)
+
+        ColorSource.Custom -> getCustomColorScheme(
+            seedColor = customSeedColor,
+            isDarkTheme = isDarkTheme,
+        )
     }
 
     private fun isSystemDarkTheme(): Boolean = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK ==
@@ -178,5 +203,7 @@ internal class DefaultMaterialColorSchemeResolver @Inject constructor(
     private companion object {
         const val LIGHT_THEME_PRIMARY_COLOR = 0xFF4C662B.toInt()
         const val DARK_THEME_PRIMARY_COLOR = 0xFFB1D18A.toInt()
+        const val LIGHT_THEME_SURFACE_COLOR = 0xFFF9FAEF.toInt()
+        const val DARK_THEME_SURFACE_COLOR = 0xFF12140E.toInt()
     }
 }

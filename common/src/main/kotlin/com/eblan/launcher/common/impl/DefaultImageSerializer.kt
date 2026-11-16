@@ -32,13 +32,13 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
 import androidx.annotation.ColorInt
-import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.drawable.toDrawable
 import com.eblan.launcher.common.AndroidImageSerializer
 import com.eblan.launcher.common.MaterialColorSchemeResolver
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
+import com.eblan.launcher.domain.model.userdata.ColorSource
 import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.Theme
 import kotlinx.coroutines.CoroutineDispatcher
@@ -363,14 +363,16 @@ internal class DefaultImageSerializer @Inject constructor(
 
     override fun getTintedAndShapedDrawable(
         drawable: Drawable,
-        iconTintColor: Int,
+        colorSource: ColorSource,
+        customSeedColor: Int,
         fallbackIconTint: Boolean,
         theme: Theme,
         iconShape: IconShape,
     ): Drawable? {
         val tintedDrawable = getTintedDrawable(
             drawable = drawable,
-            iconTintColor = iconTintColor,
+            colorSource = colorSource,
+            customSeedColor = customSeedColor,
             fallbackIconTint = fallbackIconTint,
             theme = theme,
         ) ?: return null
@@ -415,10 +417,17 @@ internal class DefaultImageSerializer @Inject constructor(
 
     private fun getTintedDrawable(
         drawable: Drawable,
-        iconTintColor: Int,
+        colorSource: ColorSource,
+        customSeedColor: Int,
         fallbackIconTint: Boolean,
         theme: Theme,
     ): Drawable? {
+        val primaryColor = materialColorSchemeResolver.getPrimaryColor(
+            colorSource = colorSource,
+            customSeedColor = customSeedColor,
+            theme = theme,
+        )
+
         val copy = drawable.constantState?.newDrawable()?.mutate() ?: drawable.mutate()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
@@ -426,17 +435,18 @@ internal class DefaultImageSerializer @Inject constructor(
         ) {
             copy.monochrome?.let {
                 return AdaptiveIconDrawable(
-                    adaptiveIconBackgroundColor(
+                    materialColorSchemeResolver.getSurfaceColor(
+                        colorSource = colorSource,
+                        customSeedColor = customSeedColor,
                         theme = theme,
-                        iconTintColor = iconTintColor,
                     ).toDrawable(),
-                    it.mutate().apply { setTint(iconTintColor) },
+                    it.mutate().apply { setTint(primaryColor) },
                 )
             }
         }
 
         return if (fallbackIconTint) {
-            copy.tintedBitmap(iconTintColor = iconTintColor)
+            copy.tintedBitmap(iconTintColor = primaryColor)
         } else {
             copy
         }
@@ -493,40 +503,7 @@ internal class DefaultImageSerializer @Inject constructor(
         )
     }
 
-    private fun adaptiveIconBackgroundColor(
-        theme: Theme,
-        iconTintColor: Int,
-    ): Int {
-        val isDarkTheme = materialColorSchemeResolver.isDarkTheme(theme)
-
-        val baseColor = if (isDarkTheme) Color.BLACK else Color.WHITE
-        var tintAmount =
-            if (isDarkTheme) DARK_BACKGROUND_TINT_AMOUNT else LIGHT_BACKGROUND_TINT_AMOUNT
-
-        while (tintAmount > 0f) {
-            val backgroundColor = ColorUtils.compositeColors(
-                ColorUtils.blendARGB(
-                    baseColor,
-                    iconTintColor,
-                    tintAmount,
-                ),
-                baseColor,
-            )
-
-            if (ColorUtils.calculateContrast(iconTintColor, backgroundColor) >= MIN_ICON_CONTRAST_RATIO) {
-                return backgroundColor
-            }
-
-            tintAmount /= 2f
-        }
-
-        return baseColor
-    }
-
     private companion object {
         const val ROUNDED_SQUARE_CORNER_RATIO = 0.2f
-        const val LIGHT_BACKGROUND_TINT_AMOUNT = 0.16f
-        const val DARK_BACKGROUND_TINT_AMOUNT = 0.36f
-        const val MIN_ICON_CONTRAST_RATIO = 3.0
     }
 }
