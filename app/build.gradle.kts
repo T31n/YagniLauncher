@@ -73,6 +73,7 @@ dependencies {
     implementation(projects.framework.contentResolver)
     implementation(projects.framework.jaroWinklerSimilarity)
     implementation(projects.framework.notificationManager)
+    implementation(projects.framework.roleManager)
     implementation(projects.framework.resources)
     implementation(projects.service)
     implementation(projects.ui)

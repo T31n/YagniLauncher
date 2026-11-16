@@ -63,6 +63,7 @@
             <option value="$PROJECT_DIR$/framework/notification-manager" />
             <option value="$PROJECT_DIR$/framework/package-manager" />
             <option value="$PROJECT_DIR$/framework/resources" />
+            <option value="$PROJECT_DIR$/framework/role-manager" />
             <option value="$PROJECT_DIR$/framework/settings" />
             <option value="$PROJECT_DIR$/framework/statusbar-manager" />
             <option value="$PROJECT_DIR$/framework/user-manager" />

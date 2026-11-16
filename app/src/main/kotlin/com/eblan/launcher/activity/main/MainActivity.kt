@@ -44,6 +44,7 @@ import com.eblan.launcher.framework.iconpackmanager.AndroidIconPackManager
 import com.eblan.launcher.framework.launcherapps.AndroidLauncherAppsWrapper
 import com.eblan.launcher.framework.launcherapps.PinItemRequestWrapper
 import com.eblan.launcher.framework.packagemanager.AndroidPackageManagerWrapper
+import com.eblan.launcher.framework.rolemanager.AndroidRoleManagerWrapper
 import com.eblan.launcher.framework.settings.AndroidSettingsWrapper
 import com.eblan.launcher.framework.statusbarmanager.AndroidStatusBarManagerWrapper
 import com.eblan.launcher.framework.usermanager.AndroidUserManagerWrapper
@@ -62,6 +63,7 @@ import com.eblan.launcher.ui.local.LocalLauncherApps
 import com.eblan.launcher.ui.local.LocalMaterialColorSchemeResolver
 import com.eblan.launcher.ui.local.LocalPackageManager
 import com.eblan.launcher.ui.local.LocalPinItemRequest
+import com.eblan.launcher.ui.local.LocalRoleManager
 import com.eblan.launcher.ui.local.LocalSettings
 import com.eblan.launcher.ui.local.LocalStatusBarManager
 import com.eblan.launcher.ui.local.LocalUserManager
@@ -91,6 +93,9 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var androidPackageManagerWrapper: AndroidPackageManagerWrapper
+
+    @Inject
+    lateinit var androidRoleManagerWrapper: AndroidRoleManagerWrapper
 
     @Inject
     lateinit var imageSerializer: AndroidImageSerializer
@@ -134,6 +139,7 @@ class MainActivity : AppCompatActivity() {
                 LocalPinItemRequest provides pinItemRequestWrapper,
                 LocalWallpaperManager provides androidWallpaperManagerWrapper,
                 LocalPackageManager provides androidPackageManagerWrapper,
+                LocalRoleManager provides androidRoleManagerWrapper,
                 LocalImageSerializer provides imageSerializer,
                 LocalMaterialColorSchemeResolver provides materialColorSchemeResolver,
                 LocalUserManager provides androidUserManagerWrapper,

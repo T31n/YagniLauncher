@@ -17,7 +17,6 @@
  */
 package com.eblan.launcher.framework.packagemanager
 
-import android.app.role.RoleManager
 import android.content.Context
 import android.content.Context.USER_SERVICE
 import android.content.Intent
@@ -49,8 +48,6 @@ internal class DefaultPackageManagerWrapper @Inject constructor(
     private val launcherApps =
         context.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
     private val userManager = context.getSystemService(USER_SERVICE) as UserManager
-    private val roleManager = context.getSystemService(RoleManager::class.java) as RoleManager
-
     override val hasSystemFeatureAppWidgets
         get() = packageManager.hasSystemFeature(PackageManager.FEATURE_APP_WIDGETS)
 
@@ -90,10 +87,6 @@ internal class DefaultPackageManagerWrapper @Inject constructor(
         } catch (_: PackageManager.NameNotFoundException) {
             null
         }
-    }
-
-    override suspend fun isDefaultLauncher(): Boolean = withContext(ioDispatcher) {
-        roleManager.isRoleHeld(RoleManager.ROLE_HOME)
     }
 
     override suspend fun getIconPackInfos(): List<PackageManagerIconPack> {

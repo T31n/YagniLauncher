@@ -67,7 +67,7 @@ import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPack
 import com.eblan.launcher.ui.R
 import com.eblan.launcher.ui.local.LocalAccessibilityManager
-import com.eblan.launcher.ui.local.LocalPackageManager
+import com.eblan.launcher.ui.local.LocalRoleManager
 import com.eblan.launcher.ui.local.LocalSettings
 import com.eblan.launcher.common.R as commonR
 
@@ -342,17 +342,17 @@ fun SettingsCategoryText(
 
 @Composable
 fun rememberIsDefaultLauncher(): State<Boolean> {
-    val packageManager = LocalPackageManager.current
+    val androidRoleManagerWrapper = LocalRoleManager.current
 
     val lifecycleOwner = LocalLifecycleOwner.current
 
     return produceState(
         initialValue = false,
         key1 = lifecycleOwner,
-        key2 = packageManager,
+        key2 = androidRoleManagerWrapper,
     ) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-            value = packageManager.isDefaultLauncher()
+            value = androidRoleManagerWrapper.isHomeRoleHeld()
         }
     }
 }

@@ -17,7 +17,6 @@
  */
 package com.eblan.launcher.feature.settings.settings
 
-import android.app.role.RoleManager
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -50,6 +49,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
+import com.eblan.launcher.ui.local.LocalRoleManager
 import com.eblan.launcher.ui.settings.SettingsRowItem
 import com.eblan.launcher.ui.settings.rememberIsDefaultLauncher
 import com.eblan.launcher.ui.settings.settingsFirstItemShape
@@ -99,6 +99,7 @@ internal fun SettingsScreen(
     onFolder: () -> Unit,
 ) {
     val context = LocalContext.current
+    val androidRoleManagerWrapper = LocalRoleManager.current
 
     val isDefaultLauncher by rememberIsDefaultLauncher()
 
@@ -150,9 +151,7 @@ internal fun SettingsScreen(
                         shape = settingsFirstItemShape,
                         // Action
                         onClick = {
-                            val roleManager = context.getSystemService(RoleManager::class.java) as RoleManager
-
-                            context.startActivity(roleManager.createRequestRoleIntent(RoleManager.ROLE_HOME))
+                            context.startActivity(androidRoleManagerWrapper.createRequestHomeRoleIntent())
                         },
                     )
                 }
