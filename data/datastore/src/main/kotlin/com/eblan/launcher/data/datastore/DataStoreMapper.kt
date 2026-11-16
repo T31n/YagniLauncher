@@ -218,8 +218,10 @@ internal fun GeneralSettings.toGeneralSettingsProto(): GeneralSettingsProto = Ge
     builder.iconTint = iconTint
     builder.fallbackIconTint = fallbackIconTint
     builder.iconShapeProto = iconShape.toIconShapeProto()
-    builder.colorSchemePaletteStyleProto = colorSchemeSettings.paletteStyle.toColorSchemePaletteStyleProto()
-    builder.colorSchemeContrastPresetProto = colorSchemeSettings.contrastPreset.toColorSchemeContrastPresetProto()
+    builder.colorSchemePaletteStyleProto =
+        colorSchemeSettings.paletteStyle.toColorSchemePaletteStyleProto()
+    builder.colorSchemeContrastPresetProto =
+        colorSchemeSettings.contrastPreset.toColorSchemeContrastPresetProto()
     builder.amoledBlack = colorSchemeSettings.amoledBlack
 }.build()
 
@@ -361,8 +363,6 @@ private fun TextColor.toTextColorProto(): TextColorProto = when (this) {
 
 private fun BackgroundColor.toBackgroundColorProto(): BackgroundColorProto = when (this) {
     BackgroundColor.System -> BackgroundColorProto.BackgroundColorSystem
-    BackgroundColor.Light -> BackgroundColorProto.BackgroundColorLight
-    BackgroundColor.Dark -> BackgroundColorProto.BackgroundColorDark
     BackgroundColor.Custom -> BackgroundColorProto.BackgroundColorCustom
 }
 
@@ -375,8 +375,6 @@ private fun TextColorProto.toTextColor(): TextColor = when (this) {
 
 private fun BackgroundColorProto.toBackgroundColor(): BackgroundColor = when (this) {
     BackgroundColorProto.BackgroundColorSystem, BackgroundColorProto.UNRECOGNIZED -> BackgroundColor.System
-    BackgroundColorProto.BackgroundColorLight -> BackgroundColor.Light
-    BackgroundColorProto.BackgroundColorDark -> BackgroundColor.Dark
     BackgroundColorProto.BackgroundColorCustom -> BackgroundColor.Custom
 }
 

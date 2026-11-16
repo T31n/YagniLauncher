@@ -135,7 +135,5 @@ fun BackgroundColorDialog(
 @Composable
 fun BackgroundColor.getTitle() = when (this) {
     BackgroundColor.System -> stringResource(commonR.string.system)
-    BackgroundColor.Light -> stringResource(commonR.string.light)
-    BackgroundColor.Dark -> stringResource(commonR.string.dark)
     BackgroundColor.Custom -> stringResource(commonR.string.custom)
 }

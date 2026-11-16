@@ -19,7 +19,5 @@ package com.eblan.launcher.domain.model.userdata
 
 enum class BackgroundColor {
     System,
-    Light,
-    Dark,
     Custom,
 }

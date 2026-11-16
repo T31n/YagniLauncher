@@ -305,8 +305,6 @@ internal fun FolderEblanApplicationInfoItem(
                 border = BorderStroke(width = folderBorderWidth.dp, color = Color(customFolderBorderColor)),
                 color = when (folderBackgroundColor) {
                     BackgroundColor.System -> MaterialTheme.colorScheme.surface
-                    BackgroundColor.Light -> Color.White
-                    BackgroundColor.Dark -> Color.Black
                     BackgroundColor.Custom -> Color(customFolderBackgroundColor)
                 },
             ) {
