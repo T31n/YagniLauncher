@@ -19,15 +19,17 @@ package com.eblan.launcher.framework.rolemanager
 
 import android.app.role.RoleManager
 import android.content.Context
+import android.content.Intent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-internal class DefaultRoleManagerWrapper @Inject constructor(
-    @param:ApplicationContext private val context: Context,
-) : AndroidRoleManagerWrapper {
+internal class DefaultRoleManagerWrapper @Inject constructor(@param:ApplicationContext private val context: Context) : AndroidRoleManagerWrapper {
     private val androidRoleManager = context.getSystemService(RoleManager::class.java) as RoleManager
 
-    override fun isHomeRoleHeld(): Boolean = androidRoleManager.isRoleHeld(RoleManager.ROLE_HOME)
+    override fun isHomeRoleAvailable(): Boolean = androidRoleManager.isRoleAvailable(RoleManager.ROLE_HOME)
 
-    override fun createRequestHomeRoleIntent() = androidRoleManager.createRequestRoleIntent(RoleManager.ROLE_HOME)
+    override fun isHomeRoleHeld(): Boolean = isHomeRoleAvailable() &&
+        androidRoleManager.isRoleHeld(RoleManager.ROLE_HOME)
+
+    override fun createRequestHomeRoleIntent(): Intent = androidRoleManager.createRequestRoleIntent(RoleManager.ROLE_HOME)
 }

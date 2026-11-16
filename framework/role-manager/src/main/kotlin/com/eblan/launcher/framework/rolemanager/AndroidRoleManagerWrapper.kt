@@ -20,6 +20,8 @@ package com.eblan.launcher.framework.rolemanager
 import android.content.Intent
 
 interface AndroidRoleManagerWrapper {
+    fun isHomeRoleAvailable(): Boolean
+
     fun isHomeRoleHeld(): Boolean
 
     fun createRequestHomeRoleIntent(): Intent
