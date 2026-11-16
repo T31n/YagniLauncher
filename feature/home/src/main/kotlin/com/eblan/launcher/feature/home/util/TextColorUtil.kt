@@ -18,9 +18,9 @@
 package com.eblan.launcher.feature.home.util
 
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.luminance
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
+import com.materialkolor.ktx.contrastRatio
 
 internal fun getGridItemTextColor(
     // Grid Item Text Colors
@@ -80,7 +80,7 @@ internal fun getTextColorFromBackgroundColor(
             defaultColor = defaultColor,
         )
 
-        val textColorByLuminance = getTextColorByLuminance(
+        val textColorByContrast = getTextColorByContrast(
             // Colors
             customBackgroundColor = Color(customBackgroundColor),
             systemTextColor = gridItemTextColor,
@@ -90,7 +90,7 @@ internal fun getTextColorFromBackgroundColor(
             // Text Colors
             textColor = textColor,
             customTextColor = customTextColor,
-            defaultColor = textColorByLuminance,
+            defaultColor = textColorByContrast,
         )
     }
 }
@@ -115,7 +115,7 @@ internal fun getApplicationScreenTextColor(
             defaultColor = defaultColor,
         )
 
-        getTextColorByLuminance(
+        getTextColorByContrast(
             // Colors
             customBackgroundColor = Color(customBackgroundColor),
             systemTextColor = gridItemTextColor,
@@ -123,17 +123,18 @@ internal fun getApplicationScreenTextColor(
     }
 }
 
-private fun getTextColorByLuminance(
+private fun getTextColorByContrast(
     // Colors
     customBackgroundColor: Color,
     systemTextColor: Color,
     // Thresholds
     alphaThreshold: Float = 0.5f,
-    luminanceCrossover: Float = 0.5f,
 ): Color {
     if (customBackgroundColor.alpha < alphaThreshold) return systemTextColor
 
-    return if (customBackgroundColor.luminance() >= luminanceCrossover) {
+    return if (Color.Black.contrastRatio(customBackgroundColor) >=
+        Color.White.contrastRatio(customBackgroundColor)
+    ) {
         Color.Black
     } else {
         Color.White
