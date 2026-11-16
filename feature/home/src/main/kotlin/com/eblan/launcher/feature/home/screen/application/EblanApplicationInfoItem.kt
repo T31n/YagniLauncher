@@ -72,10 +72,10 @@ import com.eblan.launcher.feature.home.component.GridItemLayoutType
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
-import com.eblan.launcher.feature.home.util.getEblanApplicationInfoIconPath
-import com.eblan.launcher.feature.home.util.getEblanApplicationInfoLabel
 import com.eblan.launcher.feature.home.util.getHorizontalAlignment
 import com.eblan.launcher.feature.home.util.getHorizontalArrangement
+import com.eblan.launcher.feature.home.util.getIconPath
+import com.eblan.launcher.feature.home.util.getLabel
 import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
 import com.eblan.launcher.feature.home.util.getVerticalAlignment
 import com.eblan.launcher.feature.home.util.getVerticalArrangement
@@ -146,11 +146,16 @@ internal fun EblanApplicationInfoItem(
 
     val maxLines = if (gridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
 
-    val iconPath = getEblanApplicationInfoIconPath(
-        data = eblanApplicationInfo,
+    val iconPath = getIconPath(
         iconPackFilePath = iconPackFilePaths[eblanApplicationInfo.componentName],
+        customIcon = eblanApplicationInfo.customIcon,
+        icon = eblanApplicationInfo.icon,
     )
-    val label = getEblanApplicationInfoLabel(data = eblanApplicationInfo)
+
+    val label = getLabel(
+        customLabel = eblanApplicationInfo.customLabel,
+        label = eblanApplicationInfo.label,
+    )
 
     val horizontalAlignment =
         getHorizontalAlignment(horizontalAlignment = gridItemSettings.horizontalAlignment)

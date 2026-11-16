@@ -17,26 +17,15 @@
  */
 package com.eblan.launcher.feature.home.util
 
-import com.eblan.launcher.domain.model.application.EblanApplicationInfo
-import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
 import com.eblan.launcher.domain.model.grid.GridItemData
-
-internal fun getEblanApplicationInfoIconPath(
-    data: EblanApplicationInfo,
-    iconPackFilePath: String? = null,
-): String? = getApplicationInfoIconPath(
-    customIcon = data.customIcon,
-    iconPackFilePath = iconPackFilePath,
-    icon = data.icon,
-)
 
 internal fun getGridItemIconPath(
     data: GridItemData,
     iconPackFilePath: String? = null,
 ): String? = when (data) {
-    is GridItemData.ApplicationInfo -> getApplicationInfoIconPath(
-        customIcon = data.customIcon,
+    is GridItemData.ApplicationInfo -> getIconPath(
         iconPackFilePath = iconPackFilePath,
+        customIcon = data.customIcon,
         icon = data.icon,
     )
 
@@ -54,21 +43,11 @@ internal fun getGridItemIconPath(
     is GridItemData.Widget -> data.icon
 }
 
-internal fun getFolderGridItemIconPath(
-    data: FolderEblanApplicationInfoGridItemData,
-    iconPackFilePath: String? = null,
-): String? = when (data) {
-    is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> getApplicationInfoIconPath(
-        customIcon = data.customIcon,
-        iconPackFilePath = iconPackFilePath,
-        icon = data.icon,
-    )
-
-    is FolderEblanApplicationInfoGridItemData.Folder -> data.icon
-}
-
 internal fun getGridItemLabel(data: GridItemData): String? = when (data) {
-    is GridItemData.ApplicationInfo -> data.customLabel ?: data.label
+    is GridItemData.ApplicationInfo -> getLabel(
+        customLabel = data.customLabel,
+        label = data.label,
+    )
 
     is GridItemData.Folder -> data.label
 
@@ -79,20 +58,21 @@ internal fun getGridItemLabel(data: GridItemData): String? = when (data) {
             ?: data.applicationLabel
     }
 
-    is GridItemData.ShortcutInfo -> data.customShortLabel ?: data.shortLabel
+    is GridItemData.ShortcutInfo -> getLabel(
+        customLabel = data.customShortLabel,
+        label = data.shortLabel,
+    )
 
     is GridItemData.Widget -> data.label
 }
 
-internal fun getEblanApplicationInfoLabel(data: EblanApplicationInfo): String = data.customLabel ?: data.label
+internal fun getLabel(
+    customLabel: String?,
+    label: String,
+): String = customLabel ?: label
 
-internal fun getFolderGridItemLabel(data: FolderEblanApplicationInfoGridItemData): String = when (data) {
-    is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> data.customLabel ?: data.label
-    is FolderEblanApplicationInfoGridItemData.Folder -> data.label
-}
-
-private fun getApplicationInfoIconPath(
-    customIcon: String?,
+internal fun getIconPath(
     iconPackFilePath: String?,
+    customIcon: String?,
     icon: String?,
 ): String? = customIcon ?: iconPackFilePath ?: icon

@@ -82,9 +82,9 @@ import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
-import com.eblan.launcher.feature.home.util.getFolderGridItemIconPath
 import com.eblan.launcher.feature.home.util.getHorizontalAlignment
 import com.eblan.launcher.feature.home.util.getHorizontalArrangement
+import com.eblan.launcher.feature.home.util.getIconPath
 import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
 import com.eblan.launcher.feature.home.util.getVerticalAlignment
 import com.eblan.launcher.feature.home.util.getVerticalArrangement
@@ -416,9 +416,10 @@ private fun PreviewFolderEblanApplicationInfoItem(
 
         when (val data = folderEblanApplicationInfoGridItem.data) {
             is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
-                val iconPath = getFolderGridItemIconPath(
-                    data = data,
+                val iconPath = getIconPath(
                     iconPackFilePath = iconPackFilePaths[data.componentName],
+                    customIcon = data.customIcon,
+                    icon = data.icon,
                 )
 
                 AsyncImage(
@@ -433,7 +434,7 @@ private fun PreviewFolderEblanApplicationInfoItem(
             }
 
             is FolderEblanApplicationInfoGridItemData.Folder -> {
-                val icon = getFolderGridItemIconPath(data = data)
+                val icon = data.icon
 
                 if (icon != null) {
                     AsyncImage(
