@@ -67,6 +67,7 @@ import javax.inject.Inject
 internal class DefaultLauncherAppsWrapper @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val imageSerializer: AndroidImageSerializer,
+    private val materialColorSchemeResolver: MaterialColorSchemeResolver,
     private val fileManager: FileManager,
     private val iconKeyGenerator: IconKeyGenerator,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
@@ -678,8 +679,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         val transformedDrawable = if (iconTint) {
             imageSerializer.getTintedAndShapedDrawable(
                 drawable = drawable,
-                iconTintColor = MaterialColorSchemeResolver.getPrimaryColor(
-                    context = context,
+                iconTintColor = materialColorSchemeResolver.getPrimaryColor(
                     colorSource = colorSource,
                     customSeedColor = customSeedColor,
                     theme = theme,

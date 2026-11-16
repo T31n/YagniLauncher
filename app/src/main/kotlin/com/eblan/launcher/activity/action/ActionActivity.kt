@@ -41,6 +41,7 @@ import androidx.core.graphics.createBitmap
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.activity.main.MainActivity
+import com.eblan.launcher.common.MaterialColorSchemeResolver
 import com.eblan.launcher.designsystem.theme.EblanLauncherTheme
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
@@ -51,6 +52,7 @@ import com.eblan.launcher.feature.action.ActionScreen
 import com.eblan.launcher.framework.accessibilitymanager.AndroidAccessibilityManagerWrapper
 import com.eblan.launcher.model.ActivityUiState
 import com.eblan.launcher.ui.local.LocalAccessibilityManager
+import com.eblan.launcher.ui.local.LocalMaterialColorSchemeResolver
 import com.eblan.launcher.ui.settings.getEblanActionTypeSubtitle
 import com.eblan.launcher.util.handleEdgeToEdge
 import dagger.hilt.android.AndroidEntryPoint
@@ -72,13 +74,18 @@ class ActionActivity : ComponentActivity() {
     @Inject
     lateinit var androidAccessibilityManagerWrapper: AndroidAccessibilityManagerWrapper
 
+    @Inject
+    lateinit var materialColorSchemeResolver: MaterialColorSchemeResolver
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
             CompositionLocalProvider(
                 LocalAccessibilityManager provides androidAccessibilityManagerWrapper,
+                LocalMaterialColorSchemeResolver provides materialColorSchemeResolver,
             ) {
+                val colorSchemeResolver = LocalMaterialColorSchemeResolver.current
                 val activityUiState by viewModel.activityUiState.collectAsStateWithLifecycle()
 
                 when (val state = activityUiState) {
@@ -91,6 +98,7 @@ class ActionActivity : ComponentActivity() {
                             theme = Theme.System,
                             colorSource = ColorSource.None,
                             customSeedColor = 0xFF6750A4.toInt(),
+                            materialColorSchemeResolver = colorSchemeResolver,
                         ) {
                             Surface(modifier = Modifier.fillMaxSize()) {
                                 Box(modifier = Modifier.fillMaxSize())
@@ -100,13 +108,17 @@ class ActionActivity : ComponentActivity() {
 
                     is ActivityUiState.Success -> {
                         SideEffect {
-                            handleEdgeToEdge(theme = state.applicationTheme.systemBarsTheme)
+                            handleEdgeToEdge(
+                                theme = state.applicationTheme.systemBarsTheme,
+                                materialColorSchemeResolver = colorSchemeResolver,
+                            )
                         }
 
                         EblanLauncherTheme(
                             theme = state.applicationTheme.theme,
                             colorSource = state.applicationTheme.colorSource,
                             customSeedColor = state.applicationTheme.customSeedColor,
+                            materialColorSchemeResolver = colorSchemeResolver,
                         ) {
                             Surface {
                                 ActionScreen(

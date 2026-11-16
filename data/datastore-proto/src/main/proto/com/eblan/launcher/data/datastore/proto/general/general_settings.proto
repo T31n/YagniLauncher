@@ -12,8 +12,6 @@ message GeneralSettingsProto {
   optional ColorSourceProto colorSourceProto = 3;
   optional string iconPackPackageName = 4;
   optional bool iconTint = 5;
-  reserved 6;
-  reserved "customIconTint";
   optional bool fallbackIconTint = 7;
   optional IconShapeProto iconShapeProto = 8;
   optional ThemeProto systemBarsThemeProto = 9;

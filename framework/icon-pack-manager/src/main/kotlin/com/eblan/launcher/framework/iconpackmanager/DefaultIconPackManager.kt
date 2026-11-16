@@ -45,6 +45,7 @@ import javax.inject.Inject
 internal class DefaultIconPackManager @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val imageSerializer: AndroidImageSerializer,
+    private val materialColorSchemeResolver: MaterialColorSchemeResolver,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : IconPackManager,
     AndroidIconPackManager {
@@ -122,8 +123,7 @@ internal class DefaultIconPackManager @Inject constructor(
             val transformedDrawable = if (iconTint) {
                 imageSerializer.getTintedAndShapedDrawable(
                     drawable = drawable,
-                    iconTintColor = MaterialColorSchemeResolver.getPrimaryColor(
-                        context = context,
+                    iconTintColor = materialColorSchemeResolver.getPrimaryColor(
                         colorSource = colorSource,
                         customSeedColor = customSeedColor,
                         theme = theme,

@@ -29,6 +29,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.common.AndroidImageSerializer
+import com.eblan.launcher.common.MaterialColorSchemeResolver
 import com.eblan.launcher.designsystem.theme.EblanLauncherTheme
 import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
@@ -45,6 +46,7 @@ import com.eblan.launcher.ui.local.LocalFileManager
 import com.eblan.launcher.ui.local.LocalIconKeyGenerator
 import com.eblan.launcher.ui.local.LocalImageSerializer
 import com.eblan.launcher.ui.local.LocalLauncherApps
+import com.eblan.launcher.ui.local.LocalMaterialColorSchemeResolver
 import com.eblan.launcher.ui.local.LocalPinItemRequest
 import com.eblan.launcher.ui.local.LocalUserManager
 import com.eblan.launcher.util.handleEdgeToEdge
@@ -68,6 +70,9 @@ class PinActivity : ComponentActivity() {
 
     @Inject
     lateinit var imageSerializer: AndroidImageSerializer
+
+    @Inject
+    lateinit var materialColorSchemeResolver: MaterialColorSchemeResolver
 
     @Inject
     lateinit var androidUserManagerWrapper: AndroidUserManagerWrapper
@@ -99,10 +104,12 @@ class PinActivity : ComponentActivity() {
                     LocalPinItemRequest provides pinItemRequestWrapper,
                     LocalLauncherApps provides androidLauncherAppsWrapper,
                     LocalImageSerializer provides imageSerializer,
+                    LocalMaterialColorSchemeResolver provides materialColorSchemeResolver,
                     LocalUserManager provides androidUserManagerWrapper,
                     LocalFileManager provides fileManager,
                     LocalIconKeyGenerator provides iconKeyGenerator,
                 ) {
+                    val colorSchemeResolver = LocalMaterialColorSchemeResolver.current
                     val activityUiState by viewModel.activityUiState.collectAsStateWithLifecycle()
 
                     when (val state = activityUiState) {
@@ -110,13 +117,17 @@ class PinActivity : ComponentActivity() {
 
                         is ActivityUiState.Success -> {
                             SideEffect {
-                                handleEdgeToEdge(theme = state.applicationTheme.systemBarsTheme)
+                                handleEdgeToEdge(
+                                    theme = state.applicationTheme.systemBarsTheme,
+                                    materialColorSchemeResolver = colorSchemeResolver,
+                                )
                             }
 
                             EblanLauncherTheme(
                                 theme = state.applicationTheme.theme,
                                 colorSource = state.applicationTheme.colorSource,
                                 customSeedColor = state.applicationTheme.customSeedColor,
+                                materialColorSchemeResolver = colorSchemeResolver,
                             ) {
                                 PinScreen(
                                     // Data and State

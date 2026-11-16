@@ -32,6 +32,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.eblan.launcher.activity.settings.SettingsActivity
 import com.eblan.launcher.common.AndroidImageSerializer
+import com.eblan.launcher.common.MaterialColorSchemeResolver
 import com.eblan.launcher.designsystem.theme.EblanLauncherTheme
 import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
@@ -56,6 +57,7 @@ import com.eblan.launcher.ui.local.LocalIconKeyGenerator
 import com.eblan.launcher.ui.local.LocalIconPackManager
 import com.eblan.launcher.ui.local.LocalImageSerializer
 import com.eblan.launcher.ui.local.LocalLauncherApps
+import com.eblan.launcher.ui.local.LocalMaterialColorSchemeResolver
 import com.eblan.launcher.ui.local.LocalPackageManager
 import com.eblan.launcher.ui.local.LocalPinItemRequest
 import com.eblan.launcher.ui.local.LocalSettings
@@ -88,6 +90,9 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var imageSerializer: AndroidImageSerializer
+
+    @Inject
+    lateinit var materialColorSchemeResolver: MaterialColorSchemeResolver
 
     @Inject
     lateinit var androidUserManagerWrapper: AndroidUserManagerWrapper
@@ -126,6 +131,7 @@ class MainActivity : AppCompatActivity() {
                 LocalWallpaperManager provides androidWallpaperManagerWrapper,
                 LocalPackageManager provides androidPackageManagerWrapper,
                 LocalImageSerializer provides imageSerializer,
+                LocalMaterialColorSchemeResolver provides materialColorSchemeResolver,
                 LocalUserManager provides androidUserManagerWrapper,
                 LocalSettings provides androidSettingsWrapper,
                 LocalIconPackManager provides androidIconPackManager,
@@ -134,6 +140,7 @@ class MainActivity : AppCompatActivity() {
                 LocalIconKeyGenerator provides iconKeyGenerator,
                 LocalStatusBarManager provides androidStatusBarManagerWrapper,
             ) {
+                val colorSchemeResolver = LocalMaterialColorSchemeResolver.current
                 val navController = rememberNavController()
 
                 val mainActivityUiState by viewModel.activityUiState.collectAsStateWithLifecycle()
@@ -143,13 +150,17 @@ class MainActivity : AppCompatActivity() {
 
                     is ActivityUiState.Success -> {
                         SideEffect {
-                            handleEdgeToEdge(theme = state.applicationTheme.systemBarsTheme)
+                            handleEdgeToEdge(
+                                theme = state.applicationTheme.systemBarsTheme,
+                                materialColorSchemeResolver = colorSchemeResolver,
+                            )
                         }
 
                         EblanLauncherTheme(
                             theme = state.applicationTheme.theme,
                             colorSource = state.applicationTheme.colorSource,
                             customSeedColor = state.applicationTheme.customSeedColor,
+                            materialColorSchemeResolver = colorSchemeResolver,
                         ) {
                             MainNavHost(
                                 configureResultCode = configureResultCode,

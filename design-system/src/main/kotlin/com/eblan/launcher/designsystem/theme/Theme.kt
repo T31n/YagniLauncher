@@ -18,17 +18,12 @@
 package com.eblan.launcher.designsystem.theme
 
 import android.os.Build
-import androidx.annotation.RequiresApi
-import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import com.eblan.launcher.common.MaterialColorSchemeResolver
 import com.eblan.launcher.domain.model.userdata.ColorSource
 import com.eblan.launcher.domain.model.userdata.Theme
@@ -114,24 +109,23 @@ fun EblanLauncherTheme(
     theme: Theme,
     colorSource: ColorSource,
     customSeedColor: Int,
+    materialColorSchemeResolver: MaterialColorSchemeResolver,
     content: @Composable () -> Unit,
 ) {
-    val context = LocalContext.current
-    val isDarkTheme = MaterialColorSchemeResolver.isDarkTheme(context, theme)
+    val isDarkTheme = materialColorSchemeResolver.isDarkTheme(theme)
     val colorScheme = when (colorSource) {
         ColorSource.None -> if (isDarkTheme) DarkColorScheme else LightColorScheme
 
         ColorSource.Wallpaper -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            getDynamicColorScheme(
-                context = context,
+            materialColorSchemeResolver.getWallpaperColorScheme(
                 isDarkTheme = isDarkTheme,
-            )
+            ) ?: if (isDarkTheme) DarkColorScheme else LightColorScheme
         } else {
             if (isDarkTheme) DarkColorScheme else LightColorScheme
         }
 
         ColorSource.Custom -> remember(customSeedColor, isDarkTheme) {
-            MaterialColorSchemeResolver.getCustomColorScheme(
+            materialColorSchemeResolver.getCustomColorScheme(
                 seedColor = customSeedColor,
                 isDarkTheme = isDarkTheme,
             )
@@ -142,15 +136,4 @@ fun EblanLauncherTheme(
         colorScheme = colorScheme,
         content = content,
     )
-}
-
-@Composable
-@RequiresApi(Build.VERSION_CODES.S)
-private fun getDynamicColorScheme(
-    context: android.content.Context,
-    isDarkTheme: Boolean,
-): ColorScheme = if (isDarkTheme) {
-    dynamicDarkColorScheme(context)
-} else {
-    dynamicLightColorScheme(context)
 }

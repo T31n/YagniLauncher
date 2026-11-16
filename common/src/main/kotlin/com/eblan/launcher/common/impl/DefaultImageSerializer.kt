@@ -17,7 +17,6 @@
  */
 package com.eblan.launcher.common.impl
 
-import android.content.Context
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -42,7 +41,6 @@ import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.Theme
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
@@ -53,7 +51,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 internal class DefaultImageSerializer @Inject constructor(
-    @param:ApplicationContext private val context: Context,
+    private val materialColorSchemeResolver: MaterialColorSchemeResolver,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : AndroidImageSerializer {
@@ -499,7 +497,7 @@ internal class DefaultImageSerializer @Inject constructor(
         theme: Theme,
         iconTintColor: Int,
     ): Int {
-        val isDarkTheme = MaterialColorSchemeResolver.isDarkTheme(context, theme)
+        val isDarkTheme = materialColorSchemeResolver.isDarkTheme(theme)
 
         val baseColor = if (isDarkTheme) Color.BLACK else Color.WHITE
         var tintAmount =

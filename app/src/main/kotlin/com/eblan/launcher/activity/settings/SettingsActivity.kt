@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.eblan.launcher.activity.main.MainActivity
+import com.eblan.launcher.common.MaterialColorSchemeResolver
 import com.eblan.launcher.designsystem.theme.EblanLauncherTheme
 import com.eblan.launcher.domain.model.userdata.ColorSource
 import com.eblan.launcher.domain.model.userdata.Theme
@@ -44,6 +45,7 @@ import com.eblan.launcher.model.ActivityUiState
 import com.eblan.launcher.navigation.SettingsNavHost
 import com.eblan.launcher.ui.local.LocalAccessibilityManager
 import com.eblan.launcher.ui.local.LocalLocaleWrapper
+import com.eblan.launcher.ui.local.LocalMaterialColorSchemeResolver
 import com.eblan.launcher.ui.local.LocalPackageManager
 import com.eblan.launcher.ui.local.LocalSettings
 import com.eblan.launcher.util.handleEdgeToEdge
@@ -66,6 +68,9 @@ class SettingsActivity : AppCompatActivity() {
     @Inject
     lateinit var localeWrapper: LocaleWrapper
 
+    @Inject
+    lateinit var materialColorSchemeResolver: MaterialColorSchemeResolver
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -75,7 +80,9 @@ class SettingsActivity : AppCompatActivity() {
                 LocalSettings provides androidSettingsWrapper,
                 LocalAccessibilityManager provides androidAccessibilityManagerWrapper,
                 LocalLocaleWrapper provides localeWrapper,
+                LocalMaterialColorSchemeResolver provides materialColorSchemeResolver,
             ) {
+                val colorSchemeResolver = LocalMaterialColorSchemeResolver.current
                 val navController = rememberNavController()
 
                 val activityUiState by viewModel.activityUiState.collectAsStateWithLifecycle()
@@ -90,6 +97,7 @@ class SettingsActivity : AppCompatActivity() {
                             theme = Theme.System,
                             colorSource = ColorSource.None,
                             customSeedColor = 0xFF6750A4.toInt(),
+                            materialColorSchemeResolver = colorSchemeResolver,
                         ) {
                             Surface(modifier = Modifier.fillMaxSize()) {
                                 Box(modifier = Modifier.fillMaxSize())
@@ -99,13 +107,17 @@ class SettingsActivity : AppCompatActivity() {
 
                     is ActivityUiState.Success -> {
                         SideEffect {
-                            handleEdgeToEdge(theme = state.applicationTheme.systemBarsTheme)
+                            handleEdgeToEdge(
+                                theme = state.applicationTheme.systemBarsTheme,
+                                materialColorSchemeResolver = colorSchemeResolver,
+                            )
                         }
 
                         EblanLauncherTheme(
                             theme = state.applicationTheme.theme,
                             colorSource = state.applicationTheme.colorSource,
                             customSeedColor = state.applicationTheme.customSeedColor,
+                            materialColorSchemeResolver = colorSchemeResolver,
                         ) {
                             Surface {
                                 SettingsNavHost(
