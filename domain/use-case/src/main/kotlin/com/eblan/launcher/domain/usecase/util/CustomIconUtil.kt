@@ -30,7 +30,6 @@ import kotlin.uuid.Uuid
  *
  * @return The saved file path, or `null` if the URI cannot be opened or writing fails.
  */
-@OptIn(ExperimentalUuidApi::class)
 internal suspend fun getCustomIcon(
     contentResolverWrapper: ContentResolverWrapper,
     fileManager: FileManager,

@@ -240,8 +240,6 @@ internal fun ApplicationScreen(
             },
         color = when (appDrawerSettings.backgroundColor) {
             BackgroundColor.System -> MaterialTheme.colorScheme.surface
-            BackgroundColor.Light -> Color.White
-            BackgroundColor.Dark -> Color.Black
             BackgroundColor.Custom -> Color(appDrawerSettings.customBackgroundColor)
         },
     ) {
@@ -477,8 +475,6 @@ internal fun EblanApplicationInfoTabRow(
 
     val containerColor = when (backgroundColor) {
         BackgroundColor.System -> MaterialTheme.colorScheme.surface
-        BackgroundColor.Light -> Color.White
-        BackgroundColor.Dark -> Color.Black
         BackgroundColor.Custom -> Color(customBackgroundColor)
     }
 

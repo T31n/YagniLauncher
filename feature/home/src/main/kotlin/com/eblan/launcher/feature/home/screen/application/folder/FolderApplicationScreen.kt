@@ -456,8 +456,6 @@ internal fun FolderApplicationScreen(
             shape = RoundedCornerShape(folderCornerRadius.dp),
             color = when (folderBackgroundColor) {
                 BackgroundColor.System -> MaterialTheme.colorScheme.surface
-                BackgroundColor.Light -> Color.White
-                BackgroundColor.Dark -> Color.Black
                 BackgroundColor.Custom -> Color(customFolderBackgroundColor)
             },
             shadowElevation = 2.dp,
@@ -603,7 +601,6 @@ private suspend fun handleIsCloseFolder(
     )
 }
 
-@OptIn(ExperimentalUuidApi::class)
 private fun handleMoveFolderGridItemOutsideFolder(
     // Settings
     gridItemSettings: GridItemSettings,

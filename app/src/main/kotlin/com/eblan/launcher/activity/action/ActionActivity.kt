@@ -109,6 +109,7 @@ class ActionActivity : ComponentActivity() {
                     theme = generalSettings?.theme,
                     colorSource = generalSettings?.colorSource,
                     customSeedColor = generalSettings?.customSeedColor,
+                    colorSchemeSettings = generalSettings?.colorSchemeSettings,
                 )
 
                 MainContent(
@@ -160,7 +161,6 @@ class ActionActivity : ComponentActivity() {
     }
 
     @Suppress("DEPRECATION")
-    @OptIn(ExperimentalUuidApi::class)
     private suspend fun createShortcutResult(
         resId: Int,
         eblanAction: EblanAction,

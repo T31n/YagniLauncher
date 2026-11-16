@@ -54,7 +54,6 @@ class GetPinGridItemUseCase @Inject constructor(
      * @param pinItemRequestType The system request describing the item to pin.
      * @return A new grid item initialized on the current initial page.
      */
-    @OptIn(ExperimentalUuidApi::class)
     suspend operator fun invoke(
         pinItemRequestType: PinItemRequestType,
     ): GridItem = withContext(ioDispatcher) {

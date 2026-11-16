@@ -531,7 +531,6 @@ private fun EblanShortcutConfigItem(
     }
 }
 
-@OptIn(ExperimentalUuidApi::class)
 private suspend fun handleOnLongPress(
     // Configuration
     eblanShortcutConfig: EblanShortcutConfig,

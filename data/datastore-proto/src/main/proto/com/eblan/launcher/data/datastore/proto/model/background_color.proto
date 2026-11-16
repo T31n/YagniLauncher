@@ -5,7 +5,5 @@ option java_multiple_files = true;
 
 enum BackgroundColorProto {
   BackgroundColorSystem = 0;
-  BackgroundColorLight = 1;
-  BackgroundColorDark = 2;
   BackgroundColorCustom = 3;
 }

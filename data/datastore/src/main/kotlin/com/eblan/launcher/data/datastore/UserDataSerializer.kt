@@ -24,6 +24,8 @@ import com.eblan.launcher.data.datastore.proto.appdrawer.AppDrawerSettingsProto
 import com.eblan.launcher.data.datastore.proto.appdrawer.AppDrawerTypeProto
 import com.eblan.launcher.data.datastore.proto.experimental.ExperimentalSettingsProto
 import com.eblan.launcher.data.datastore.proto.folder.FolderSettingsProto
+import com.eblan.launcher.data.datastore.proto.general.ColorSchemeContrastPresetProto
+import com.eblan.launcher.data.datastore.proto.general.ColorSchemePaletteStyleProto
 import com.eblan.launcher.data.datastore.proto.general.ColorSourceProto
 import com.eblan.launcher.data.datastore.proto.general.GeneralSettingsProto
 import com.eblan.launcher.data.datastore.proto.general.IconShapeProto
@@ -50,6 +52,9 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
         systemBarsThemeProto = ThemeProto.ThemeWallpaper
         colorSourceProto = ColorSourceProto.ColorSourceNone
         customSeedColor = 0xFF6750A4.toInt()
+        colorSchemePaletteStyleProto = ColorSchemePaletteStyleProto.ColorSchemePaletteStyleTonalSpot
+        colorSchemeContrastPresetProto = ColorSchemeContrastPresetProto.ColorSchemeContrastPresetStandard
+        amoledBlack = false
         iconPackPackageName = ""
         iconTint = false
         fallbackIconTint = false

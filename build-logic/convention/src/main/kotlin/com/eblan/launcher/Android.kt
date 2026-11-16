@@ -9,7 +9,7 @@ import org.gradle.kotlin.dsl.dependencies
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginExtension
 
 fun CommonExtension.configureAndroid() {
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig.apply {
         minSdk = 24

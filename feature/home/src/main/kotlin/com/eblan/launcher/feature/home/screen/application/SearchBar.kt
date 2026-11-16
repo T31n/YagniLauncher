@@ -125,8 +125,6 @@ private fun getSearchBarColors(
 ): SearchBarColors {
     val containerColor = when (backgroundColor) {
         BackgroundColor.System -> MaterialTheme.colorScheme.surfaceContainerHigh
-        BackgroundColor.Light -> Color.White
-        BackgroundColor.Dark -> Color.Black
         BackgroundColor.Custom -> Color(customBackgroundColor)
     }
 

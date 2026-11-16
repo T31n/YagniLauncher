@@ -21,6 +21,8 @@ import com.eblan.launcher.data.datastore.proto.appdrawer.AppDrawerSettingsProto
 import com.eblan.launcher.data.datastore.proto.appdrawer.AppDrawerTypeProto
 import com.eblan.launcher.data.datastore.proto.experimental.ExperimentalSettingsProto
 import com.eblan.launcher.data.datastore.proto.folder.FolderSettingsProto
+import com.eblan.launcher.data.datastore.proto.general.ColorSchemeContrastPresetProto
+import com.eblan.launcher.data.datastore.proto.general.ColorSchemePaletteStyleProto
 import com.eblan.launcher.data.datastore.proto.general.ColorSourceProto
 import com.eblan.launcher.data.datastore.proto.general.GeneralSettingsProto
 import com.eblan.launcher.data.datastore.proto.general.IconShapeProto
@@ -47,6 +49,9 @@ import com.eblan.launcher.domain.model.grid.VerticalArrangement
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.AppDrawerType
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
+import com.eblan.launcher.domain.model.userdata.ColorSchemeContrastPreset
+import com.eblan.launcher.domain.model.userdata.ColorSchemePaletteStyle
+import com.eblan.launcher.domain.model.userdata.ColorSchemeSettings
 import com.eblan.launcher.domain.model.userdata.ColorSource
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
@@ -133,6 +138,11 @@ internal fun GeneralSettingsProto.toGeneralSettings(): GeneralSettings = General
     iconTint = iconTint,
     fallbackIconTint = fallbackIconTint,
     iconShape = iconShapeProto.toIconShape(),
+    colorSchemeSettings = ColorSchemeSettings(
+        paletteStyle = colorSchemePaletteStyleProto.toColorSchemePaletteStyle(),
+        contrastPreset = colorSchemeContrastPresetProto.toColorSchemeContrastPreset(),
+        amoledBlack = amoledBlack,
+    ),
 )
 
 internal fun GridItemSettings.toGridItemSettingsProto(): GridItemSettingsProto = GridItemSettingsProto.newBuilder().also { builder ->
@@ -208,6 +218,11 @@ internal fun GeneralSettings.toGeneralSettingsProto(): GeneralSettingsProto = Ge
     builder.iconTint = iconTint
     builder.fallbackIconTint = fallbackIconTint
     builder.iconShapeProto = iconShape.toIconShapeProto()
+    builder.colorSchemePaletteStyleProto =
+        colorSchemeSettings.paletteStyle.toColorSchemePaletteStyleProto()
+    builder.colorSchemeContrastPresetProto =
+        colorSchemeSettings.contrastPreset.toColorSchemeContrastPresetProto()
+    builder.amoledBlack = colorSchemeSettings.amoledBlack
 }.build()
 
 internal fun GestureSettings.toGestureSettingsProto(): GestureSettingsProto = GestureSettingsProto.newBuilder().also { builder ->
@@ -348,8 +363,6 @@ private fun TextColor.toTextColorProto(): TextColorProto = when (this) {
 
 private fun BackgroundColor.toBackgroundColorProto(): BackgroundColorProto = when (this) {
     BackgroundColor.System -> BackgroundColorProto.BackgroundColorSystem
-    BackgroundColor.Light -> BackgroundColorProto.BackgroundColorLight
-    BackgroundColor.Dark -> BackgroundColorProto.BackgroundColorDark
     BackgroundColor.Custom -> BackgroundColorProto.BackgroundColorCustom
 }
 
@@ -362,8 +375,6 @@ private fun TextColorProto.toTextColor(): TextColor = when (this) {
 
 private fun BackgroundColorProto.toBackgroundColor(): BackgroundColor = when (this) {
     BackgroundColorProto.BackgroundColorSystem, BackgroundColorProto.UNRECOGNIZED -> BackgroundColor.System
-    BackgroundColorProto.BackgroundColorLight -> BackgroundColor.Light
-    BackgroundColorProto.BackgroundColorDark -> BackgroundColor.Dark
     BackgroundColorProto.BackgroundColorCustom -> BackgroundColor.Custom
 }
 
@@ -447,6 +458,44 @@ private fun ColorSourceProto.toColorSource(): ColorSource = when (this) {
     ColorSourceProto.ColorSourceNone, ColorSourceProto.UNRECOGNIZED -> ColorSource.None
     ColorSourceProto.ColorSourceWallpaper -> ColorSource.Wallpaper
     ColorSourceProto.ColorSourceCustom -> ColorSource.Custom
+}
+
+private fun ColorSchemePaletteStyleProto.toColorSchemePaletteStyle(): ColorSchemePaletteStyle = when (this) {
+    ColorSchemePaletteStyleProto.ColorSchemePaletteStyleTonalSpot, ColorSchemePaletteStyleProto.UNRECOGNIZED -> ColorSchemePaletteStyle.TonalSpot
+    ColorSchemePaletteStyleProto.ColorSchemePaletteStyleNeutral -> ColorSchemePaletteStyle.Neutral
+    ColorSchemePaletteStyleProto.ColorSchemePaletteStyleVibrant -> ColorSchemePaletteStyle.Vibrant
+    ColorSchemePaletteStyleProto.ColorSchemePaletteStyleExpressive -> ColorSchemePaletteStyle.Expressive
+    ColorSchemePaletteStyleProto.ColorSchemePaletteStyleRainbow -> ColorSchemePaletteStyle.Rainbow
+    ColorSchemePaletteStyleProto.ColorSchemePaletteStyleFruitSalad -> ColorSchemePaletteStyle.FruitSalad
+    ColorSchemePaletteStyleProto.ColorSchemePaletteStyleMonochrome -> ColorSchemePaletteStyle.Monochrome
+    ColorSchemePaletteStyleProto.ColorSchemePaletteStyleFidelity -> ColorSchemePaletteStyle.Fidelity
+    ColorSchemePaletteStyleProto.ColorSchemePaletteStyleContent -> ColorSchemePaletteStyle.Content
+}
+
+private fun ColorSchemePaletteStyle.toColorSchemePaletteStyleProto(): ColorSchemePaletteStyleProto = when (this) {
+    ColorSchemePaletteStyle.TonalSpot -> ColorSchemePaletteStyleProto.ColorSchemePaletteStyleTonalSpot
+    ColorSchemePaletteStyle.Neutral -> ColorSchemePaletteStyleProto.ColorSchemePaletteStyleNeutral
+    ColorSchemePaletteStyle.Vibrant -> ColorSchemePaletteStyleProto.ColorSchemePaletteStyleVibrant
+    ColorSchemePaletteStyle.Expressive -> ColorSchemePaletteStyleProto.ColorSchemePaletteStyleExpressive
+    ColorSchemePaletteStyle.Rainbow -> ColorSchemePaletteStyleProto.ColorSchemePaletteStyleRainbow
+    ColorSchemePaletteStyle.FruitSalad -> ColorSchemePaletteStyleProto.ColorSchemePaletteStyleFruitSalad
+    ColorSchemePaletteStyle.Monochrome -> ColorSchemePaletteStyleProto.ColorSchemePaletteStyleMonochrome
+    ColorSchemePaletteStyle.Fidelity -> ColorSchemePaletteStyleProto.ColorSchemePaletteStyleFidelity
+    ColorSchemePaletteStyle.Content -> ColorSchemePaletteStyleProto.ColorSchemePaletteStyleContent
+}
+
+private fun ColorSchemeContrastPresetProto.toColorSchemeContrastPreset(): ColorSchemeContrastPreset = when (this) {
+    ColorSchemeContrastPresetProto.ColorSchemeContrastPresetStandard, ColorSchemeContrastPresetProto.UNRECOGNIZED -> ColorSchemeContrastPreset.Standard
+    ColorSchemeContrastPresetProto.ColorSchemeContrastPresetReduced -> ColorSchemeContrastPreset.Reduced
+    ColorSchemeContrastPresetProto.ColorSchemeContrastPresetMedium -> ColorSchemeContrastPreset.Medium
+    ColorSchemeContrastPresetProto.ColorSchemeContrastPresetHigh -> ColorSchemeContrastPreset.High
+}
+
+private fun ColorSchemeContrastPreset.toColorSchemeContrastPresetProto(): ColorSchemeContrastPresetProto = when (this) {
+    ColorSchemeContrastPreset.Standard -> ColorSchemeContrastPresetProto.ColorSchemeContrastPresetStandard
+    ColorSchemeContrastPreset.Reduced -> ColorSchemeContrastPresetProto.ColorSchemeContrastPresetReduced
+    ColorSchemeContrastPreset.Medium -> ColorSchemeContrastPresetProto.ColorSchemeContrastPresetMedium
+    ColorSchemeContrastPreset.High -> ColorSchemeContrastPresetProto.ColorSchemeContrastPresetHigh
 }
 
 private fun ColorSource.toColorSourceProto(): ColorSourceProto = when (this) {

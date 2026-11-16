@@ -26,4 +26,5 @@ data class GeneralSettings(
     val iconTint: Boolean,
     val fallbackIconTint: Boolean,
     val iconShape: IconShape,
+    val colorSchemeSettings: ColorSchemeSettings = ColorSchemeSettings(),
 )

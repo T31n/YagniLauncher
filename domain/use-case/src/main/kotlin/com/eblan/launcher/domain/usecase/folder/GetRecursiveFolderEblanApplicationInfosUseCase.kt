@@ -80,7 +80,6 @@ class GetRecursiveFolderEblanApplicationInfosUseCase @Inject constructor(
     }
 
     /** Recursively maps a folder popup's children to transient grid items. */
-    @OptIn(ExperimentalUuidApi::class)
     private fun getRecursiveFolderGridItems(
         gridItemSettings: GridItemSettings,
         gridItem: GridItem? = null,

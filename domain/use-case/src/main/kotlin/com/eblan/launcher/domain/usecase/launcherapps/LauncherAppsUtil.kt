@@ -607,7 +607,6 @@ internal fun LauncherAppsShortcutInfo.toEblanShortcutInfo(): EblanShortcutInfo =
  * Adds an application to the home-screen grid if it is not already present at the top level or in
  * one of its folders.
  */
-@OptIn(ExperimentalUuidApi::class)
 internal suspend fun addNewApplicationToHomeScreen(
     gridItems: MutableList<GridItem>,
     componentName: String,

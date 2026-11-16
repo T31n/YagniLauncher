@@ -24,6 +24,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.produceState
 import com.eblan.launcher.designsystem.theme.getDefaultColorScheme
 import com.eblan.launcher.domain.model.userdata.ApplicationTheme
+import com.eblan.launcher.domain.model.userdata.ColorSchemeSettings
 import com.eblan.launcher.domain.model.userdata.ColorSource
 import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.ui.local.LocalMaterialColorSchemeResolver
@@ -79,6 +80,7 @@ fun produceColorSchemeState(
     theme: Theme?,
     colorSource: ColorSource?,
     customSeedColor: Int?,
+    colorSchemeSettings: ColorSchemeSettings?,
 ): State<ColorScheme?> {
     val wallpaperManager = LocalWallpaperManager.current
     val materialColorSchemeResolver = LocalMaterialColorSchemeResolver.current
@@ -89,11 +91,12 @@ fun produceColorSchemeState(
         theme,
         colorSource,
         customSeedColor,
+        colorSchemeSettings,
         wallpaperManager,
         materialColorSchemeResolver,
         isSystemDarkTheme,
     ) {
-        if (theme == null || colorSource == null || customSeedColor == null) {
+        if (theme == null || colorSource == null || customSeedColor == null || colorSchemeSettings == null) {
             value = null
             return@produceState
         }
@@ -125,6 +128,7 @@ fun produceColorSchemeState(
                 ColorSource.Custom -> materialColorSchemeResolver.getCustomColorScheme(
                     seedColor = customSeedColor,
                     isDarkTheme = isDarkTheme,
+                    colorSchemeSettings = colorSchemeSettings,
                 )
             }
         }

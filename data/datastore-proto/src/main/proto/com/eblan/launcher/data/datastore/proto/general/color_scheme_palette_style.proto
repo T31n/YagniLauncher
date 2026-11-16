@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option java_package = "com.eblan.launcher.data.datastore.proto.general";
+option java_multiple_files = true;
+
+enum ColorSchemePaletteStyleProto {
+  ColorSchemePaletteStyleTonalSpot = 0;
+  ColorSchemePaletteStyleNeutral = 1;
+  ColorSchemePaletteStyleVibrant = 2;
+  ColorSchemePaletteStyleExpressive = 3;
+  ColorSchemePaletteStyleRainbow = 4;
+  ColorSchemePaletteStyleFruitSalad = 5;
+  ColorSchemePaletteStyleMonochrome = 6;
+  ColorSchemePaletteStyleFidelity = 7;
+  ColorSchemePaletteStyleContent = 8;
+}

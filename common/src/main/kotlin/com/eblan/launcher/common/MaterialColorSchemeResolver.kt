@@ -19,6 +19,7 @@ package com.eblan.launcher.common
 
 import androidx.annotation.ColorInt
 import androidx.compose.material3.ColorScheme
+import com.eblan.launcher.domain.model.userdata.ColorSchemeSettings
 import com.eblan.launcher.domain.model.userdata.ColorSource
 import com.eblan.launcher.domain.model.userdata.Theme
 
@@ -30,6 +31,7 @@ interface MaterialColorSchemeResolver {
     fun getCustomColorScheme(
         seedColor: Int,
         isDarkTheme: Boolean,
+        colorSchemeSettings: ColorSchemeSettings = ColorSchemeSettings(),
     ): ColorScheme
 
     @ColorInt
@@ -37,6 +39,7 @@ interface MaterialColorSchemeResolver {
         colorSource: ColorSource,
         customSeedColor: Int,
         theme: Theme,
+        colorSchemeSettings: ColorSchemeSettings = ColorSchemeSettings(),
     ): Int
 
     @ColorInt
@@ -44,5 +47,6 @@ interface MaterialColorSchemeResolver {
         colorSource: ColorSource,
         customSeedColor: Int,
         theme: Theme,
+        colorSchemeSettings: ColorSchemeSettings = ColorSchemeSettings(),
     ): Int
 }

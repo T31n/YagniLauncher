@@ -252,7 +252,6 @@ private fun PrivateShortcutInfoMenuItem(
     )
 }
 
-@OptIn(ExperimentalUuidApi::class)
 private suspend fun handleOnLongPress(
     // Shortcut Information
     eblanShortcutInfo: EblanShortcutInfo,

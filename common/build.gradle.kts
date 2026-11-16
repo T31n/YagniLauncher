@@ -34,5 +34,5 @@ dependencies {
     // Libraries
     api(platform(libs.androidx.compose.bom))
     api(libs.androidx.compose.material3)
-    implementation(libs.google.material)
+    implementation(libs.material.kolor)
 }

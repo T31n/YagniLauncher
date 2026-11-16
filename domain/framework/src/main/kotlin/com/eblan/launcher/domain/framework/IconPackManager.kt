@@ -18,6 +18,7 @@
 package com.eblan.launcher.domain.framework
 
 import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
+import com.eblan.launcher.domain.model.userdata.ColorSchemeSettings
 import com.eblan.launcher.domain.model.userdata.ColorSource
 import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.Theme
@@ -36,5 +37,6 @@ interface IconPackManager {
         iconShape: IconShape,
         fallbackIconTint: Boolean,
         theme: Theme,
+        colorSchemeSettings: ColorSchemeSettings = ColorSchemeSettings(),
     ): String?
 }

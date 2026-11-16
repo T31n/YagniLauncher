@@ -49,6 +49,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.iconpackinfo.EblanIconPackInfo
 import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPack
+import com.eblan.launcher.domain.model.userdata.ColorSchemeContrastPreset
+import com.eblan.launcher.domain.model.userdata.ColorSchemePaletteStyle
 import com.eblan.launcher.domain.model.userdata.ColorSource
 import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.domain.model.userdata.IconShape
@@ -67,7 +69,6 @@ import com.eblan.launcher.ui.settings.rememberIsNotificationAccessGranted
 import com.eblan.launcher.ui.settings.settingsFirstItemShape
 import com.eblan.launcher.ui.settings.settingsLastItemShape
 import com.eblan.launcher.ui.settings.settingsMiddleItemShape
-import kotlinx.serialization.json.Json.Default.configuration
 import java.util.Locale
 import com.eblan.launcher.common.R as commonR
 
@@ -278,6 +279,66 @@ private fun Success(
             },
         )
 
+        if (generalSettings.colorSource == ColorSource.Custom) {
+            SettingsDropdownItem(
+                // Content
+                title = stringResource(R.string.palette_style),
+                options = ColorSchemePaletteStyle.entries,
+                selected = generalSettings.colorSchemeSettings.paletteStyle,
+                label = {
+                    it.getTitle()
+                },
+                // Layout
+                shape = settingsMiddleItemShape,
+                // Actions
+                onSelectedChange = {
+                    onUpdateGeneralSettings(
+                        generalSettings.copy(
+                            colorSchemeSettings = generalSettings.colorSchemeSettings.copy(paletteStyle = it),
+                        ),
+                    )
+                },
+            )
+
+            SettingsDropdownItem(
+                // Content
+                title = stringResource(R.string.contrast_preset),
+                options = ColorSchemeContrastPreset.entries,
+                selected = generalSettings.colorSchemeSettings.contrastPreset,
+                label = {
+                    it.getTitle()
+                },
+                // Layout
+                shape = settingsMiddleItemShape,
+                // Actions
+                onSelectedChange = {
+                    onUpdateGeneralSettings(
+                        generalSettings.copy(
+                            colorSchemeSettings = generalSettings.colorSchemeSettings.copy(contrastPreset = it),
+                        ),
+                    )
+                },
+            )
+
+            SettingsSwitchItem(
+                // Content
+                title = stringResource(R.string.amoled_black),
+                subtitle = stringResource(R.string.use_pure_black_surfaces_in_dark_mode),
+                // State
+                checked = generalSettings.colorSchemeSettings.amoledBlack,
+                // Appearance
+                shape = settingsMiddleItemShape,
+                // Callbacks
+                onCheckedChange = {
+                    onUpdateGeneralSettings(
+                        generalSettings.copy(
+                            colorSchemeSettings = generalSettings.colorSchemeSettings.copy(amoledBlack = it),
+                        ),
+                    )
+                },
+            )
+        }
+
         SettingsSwitchItem(
             // Content
             title = stringResource(R.string.icon_tint),
@@ -457,6 +518,27 @@ private fun ColorSource.getTitle() = when (this) {
     ColorSource.None -> stringResource(commonR.string.none)
     ColorSource.Wallpaper -> stringResource(R.string.wallpaper)
     ColorSource.Custom -> stringResource(commonR.string.custom)
+}
+
+@Composable
+private fun ColorSchemePaletteStyle.getTitle() = when (this) {
+    ColorSchemePaletteStyle.TonalSpot -> stringResource(R.string.tonal_spot)
+    ColorSchemePaletteStyle.Neutral -> stringResource(R.string.neutral)
+    ColorSchemePaletteStyle.Vibrant -> stringResource(R.string.vibrant)
+    ColorSchemePaletteStyle.Expressive -> stringResource(R.string.expressive)
+    ColorSchemePaletteStyle.Rainbow -> stringResource(R.string.rainbow)
+    ColorSchemePaletteStyle.FruitSalad -> stringResource(R.string.fruit_salad)
+    ColorSchemePaletteStyle.Monochrome -> stringResource(R.string.monochrome)
+    ColorSchemePaletteStyle.Fidelity -> stringResource(R.string.fidelity)
+    ColorSchemePaletteStyle.Content -> stringResource(R.string.content)
+}
+
+@Composable
+private fun ColorSchemeContrastPreset.getTitle() = when (this) {
+    ColorSchemeContrastPreset.Standard -> stringResource(R.string.standard)
+    ColorSchemeContrastPreset.Reduced -> stringResource(R.string.reduced)
+    ColorSchemeContrastPreset.Medium -> stringResource(R.string.medium)
+    ColorSchemeContrastPreset.High -> stringResource(R.string.high)
 }
 
 @Composable
