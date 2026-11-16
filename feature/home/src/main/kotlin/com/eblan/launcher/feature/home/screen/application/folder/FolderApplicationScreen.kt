@@ -82,7 +82,6 @@ import com.eblan.launcher.feature.home.util.handleAnimateScrollToPage
 import com.eblan.launcher.feature.home.util.handleDropFolderGridItem
 import com.eblan.launcher.feature.home.util.handlePageDirection
 import kotlin.math.roundToInt
-import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 @Composable

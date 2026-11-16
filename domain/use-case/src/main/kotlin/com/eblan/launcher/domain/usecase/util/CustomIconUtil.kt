@@ -22,7 +22,6 @@ import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.framework.ContentResolverWrapper
 import java.io.File
 import java.io.IOException
-import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 /**
