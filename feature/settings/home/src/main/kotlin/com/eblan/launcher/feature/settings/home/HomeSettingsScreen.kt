@@ -50,11 +50,11 @@ import com.eblan.launcher.feature.settings.home.dialog.EditDockPaddingDialog
 import com.eblan.launcher.feature.settings.home.dialog.EditGridDialog
 import com.eblan.launcher.feature.settings.home.model.HomeSettingsUiState
 import com.eblan.launcher.ui.dialog.ColorPickerDialog
-import com.eblan.launcher.ui.dialog.RadioOptionsDialog
 import com.eblan.launcher.ui.settings.CustomBackgroundColor
 import com.eblan.launcher.ui.settings.GridItemSettings
 import com.eblan.launcher.ui.settings.SettingsCategoryText
 import com.eblan.launcher.ui.settings.SettingsColumnItem
+import com.eblan.launcher.ui.settings.SettingsDropdownItem
 import com.eblan.launcher.ui.settings.SettingsSwitchItem
 import com.eblan.launcher.ui.settings.settingsFirstItemShape
 import com.eblan.launcher.ui.settings.settingsLastItemShape
@@ -130,7 +130,6 @@ private fun Success(
     var showDockCustomBackgroundColorDialog by remember { mutableStateOf(false) }
     var showDockPaddingDialog by remember { mutableStateOf(false) }
     var showDockCornerRadiusDialog by remember { mutableStateOf(false) }
-    var showPagerTransitionEffectDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -151,15 +150,19 @@ private fun Success(
             },
         )
 
-        SettingsColumnItem(
+        SettingsDropdownItem(
             // Content
             title = stringResource(R.string.pager_transition_effect),
-            subtitle = homeSettings.pagerTransitionEffect.getTitle(),
+            options = PagerTransitionEffect.entries,
+            selected = homeSettings.pagerTransitionEffect,
+            label = {
+                it.getTitle()
+            },
             // Layout
             shape = settingsMiddleItemShape,
             // Actions
-            onClick = {
-                showPagerTransitionEffectDialog = true
+            onSelectedChange = {
+                onUpdateHomeSettings(homeSettings.copy(pagerTransitionEffect = it))
             },
         )
 
@@ -425,23 +428,6 @@ private fun Success(
                         rows = rows,
                     ),
                 )
-            },
-        )
-    }
-
-    if (showPagerTransitionEffectDialog) {
-        RadioOptionsDialog(
-            // Dialog Content
-            title = stringResource(R.string.pager_transition_effect),
-            options = PagerTransitionEffect.entries,
-            selected = homeSettings.pagerTransitionEffect,
-            // Callbacks
-            label = { it.getTitle() },
-            onDismissRequest = {
-                showPagerTransitionEffectDialog = false
-            },
-            onUpdateClick = {
-                onUpdateHomeSettings(homeSettings.copy(pagerTransitionEffect = it))
             },
         )
     }

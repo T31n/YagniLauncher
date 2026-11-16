@@ -48,7 +48,6 @@ import com.eblan.launcher.ui.dialog.EditCornerRadiusDialog
 import com.eblan.launcher.ui.dialog.EditIconSizeDialog
 import com.eblan.launcher.ui.dialog.EditPaddingDialog
 import com.eblan.launcher.ui.dialog.EditTextSizeDialog
-import com.eblan.launcher.ui.dialog.RadioOptionsDialog
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -68,7 +67,6 @@ fun GridItemSettings(
     var showBackgroundColorDialog by remember { mutableStateOf(false) }
     var showPaddingDialog by remember { mutableStateOf(false) }
     var showCornerRadiusDialog by remember { mutableStateOf(false) }
-    var showLayoutType by remember { mutableStateOf(false) }
     var showIconPaddingDialog by remember { mutableStateOf(false) }
     var showTextPaddingDialog by remember { mutableStateOf(false) }
 
@@ -78,15 +76,19 @@ fun GridItemSettings(
     ) {
         SettingsCategoryText(text = title)
 
-        SettingsColumnItem(
+        SettingsDropdownItem(
             // Content
             title = stringResource(R.string.layout_type),
-            subtitle = gridItemSettings.layoutType.getSubtitle(),
+            options = LayoutType.entries,
+            selected = gridItemSettings.layoutType,
+            label = {
+                it.getSubtitle()
+            },
             // Layout
             shape = settingsFirstItemShape,
             // Actions
-            onClick = {
-                showLayoutType = true
+            onSelectedChange = {
+                onUpdateGridItemSettings(gridItemSettings.copy(layoutType = it))
             },
         )
 
@@ -378,25 +380,6 @@ fun GridItemSettings(
                         cornerRadius = it,
                     ),
                 )
-            },
-        )
-    }
-
-    if (showLayoutType) {
-        RadioOptionsDialog(
-            // Dialog Content
-            title = "Layout Type",
-            options = LayoutType.entries,
-            selected = gridItemSettings.layoutType,
-            // Callbacks
-            label = {
-                it.getSubtitle()
-            },
-            onDismissRequest = {
-                showLayoutType = false
-            },
-            onUpdateClick = {
-                onUpdateGridItemSettings(gridItemSettings.copy(layoutType = it))
             },
         )
     }

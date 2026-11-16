@@ -60,7 +60,6 @@ import com.eblan.launcher.feature.settings.general.dialog.SelectIconPackInfoDial
 import com.eblan.launcher.feature.settings.general.model.GeneralSettingsUiState
 import com.eblan.launcher.service.IconPackService
 import com.eblan.launcher.ui.dialog.ColorPickerDialog
-import com.eblan.launcher.ui.dialog.RadioOptionsDialog
 import com.eblan.launcher.ui.local.LocalLocaleWrapper
 import com.eblan.launcher.ui.settings.SettingsColumnItem
 import com.eblan.launcher.ui.settings.SettingsDropdownItem
@@ -173,9 +172,6 @@ private fun Success(
     var showImportIconPackDialog by remember { mutableStateOf(false) }
     var selectIconPackDialog by remember { mutableStateOf(false) }
     var showCustomSeedColorPickerDialog by remember { mutableStateOf(false) }
-    var showIconShapeDialog by remember { mutableStateOf(false) }
-    var showLanguageDialog by remember { mutableStateOf(false) }
-
     val applicationLanguageTag = localeWrapper.getApplicationLanguageTag()
 
     Column(
@@ -211,15 +207,19 @@ private fun Success(
             },
         )
 
-        SettingsColumnItem(
+        SettingsDropdownItem(
             // Content
             title = stringResource(R.string.language),
-            subtitle = getLanguageLabel(applicationLanguageTag),
+            options = applicationLanguageTags,
+            selected = applicationLanguageTag,
+            label = {
+                getLanguageLabel(it)
+            },
             // Layout
             shape = settingsMiddleItemShape,
             // Actions
-            onClick = {
-                showLanguageDialog = true
+            onSelectedChange = {
+                localeWrapper.setApplicationLanguageTag(languageTag = it)
             },
         )
 
@@ -369,10 +369,14 @@ private fun Success(
             )
         }
 
-        SettingsColumnItem(
+        SettingsDropdownItem(
             // Content
             title = stringResource(R.string.icon_shape),
-            subtitle = generalSettings.iconShape.getTitle(),
+            options = IconShape.entries,
+            selected = generalSettings.iconShape,
+            label = {
+                it.getTitle()
+            },
             // Layout
             shape = if (isNotificationAccessGranted) {
                 settingsLastItemShape
@@ -380,8 +384,8 @@ private fun Success(
                 settingsMiddleItemShape
             },
             // Actions
-            onClick = {
-                showIconShapeDialog = true
+            onSelectedChange = {
+                onUpdateGeneralSettings(generalSettings.copy(iconShape = it))
             },
         )
 
@@ -458,44 +462,6 @@ private fun Success(
                         customSeedColor = it,
                     ),
                 )
-            },
-        )
-    }
-
-    if (showLanguageDialog) {
-        RadioOptionsDialog(
-            // Dialog Content
-            title = stringResource(R.string.language),
-            options = applicationLanguageTags,
-            selected = applicationLanguageTag,
-            // Callbacks
-            label = {
-                getLanguageLabel(it)
-            },
-            onDismissRequest = {
-                showLanguageDialog = false
-            },
-            onUpdateClick = {
-                localeWrapper.setApplicationLanguageTag(languageTag = it)
-            },
-        )
-    }
-
-    if (showIconShapeDialog) {
-        RadioOptionsDialog(
-            // Dialog Content
-            title = stringResource(R.string.icon_shape),
-            options = IconShape.entries,
-            selected = generalSettings.iconShape,
-            // Callbacks
-            label = {
-                it.getTitle()
-            },
-            onDismissRequest = {
-                showIconShapeDialog = false
-            },
-            onUpdateClick = {
-                onUpdateGeneralSettings(generalSettings.copy(iconShape = it))
             },
         )
     }
