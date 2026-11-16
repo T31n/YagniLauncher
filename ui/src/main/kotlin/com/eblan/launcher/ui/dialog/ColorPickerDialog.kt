@@ -99,6 +99,7 @@ fun ColorPickerDialog(
     // Content
     title: String,
     customColor: Int,
+    showAlphaSlider: Boolean,
     // Layout
     modifier: Modifier = Modifier,
     // Callbacks
@@ -122,8 +123,10 @@ fun ColorPickerDialog(
 
     var alpha by remember { mutableFloatStateOf(Color(customColor).alpha) }
 
+    val selectedAlpha = if (showAlphaSlider) alpha else 1f
+
     val selectedColor = Color.hsv(hue, saturation, value)
-        .copy(alpha = alpha)
+        .copy(alpha = selectedAlpha)
         .toArgb()
 
     EblanDialog(
@@ -145,7 +148,8 @@ fun ColorPickerDialog(
                 hue = hue,
                 saturation = saturation,
                 value = value,
-                alpha = alpha,
+                alpha = selectedAlpha,
+                showAlphaSlider = showAlphaSlider,
                 modifier = Modifier.fillMaxWidth(),
                 onSaturationSelected = {
                     saturation = it
@@ -194,7 +198,7 @@ fun ColorPickerDialog(
                     onClick = {
                         onSelectColor(
                             Color.hsv(hue, saturation, value)
-                                .copy(alpha = alpha)
+                                .copy(alpha = selectedAlpha)
                                 .toArgb(),
                         )
 
@@ -215,6 +219,7 @@ private fun ColorPicker(
     saturation: Float,
     value: Float,
     alpha: Float,
+    showAlphaSlider: Boolean,
     // Modifier
     modifier: Modifier = Modifier,
     // Callbacks
@@ -249,16 +254,18 @@ private fun ColorPicker(
                     .height(barHeight),
             )
 
-            Spacer(Modifier.height(16.dp))
+            if (showAlphaSlider) {
+                Spacer(Modifier.height(16.dp))
 
-            AlphaCanvas(
-                color = Color.hsv(hue, saturation, value),
-                alpha = alpha,
-                onAlphaSelected = onAlphaSelected,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(barHeight),
-            )
+                AlphaCanvas(
+                    color = Color.hsv(hue, saturation, value),
+                    alpha = alpha,
+                    onAlphaSelected = onAlphaSelected,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(barHeight),
+                )
+            }
         }
     }
 }

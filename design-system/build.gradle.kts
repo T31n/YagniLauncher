@@ -27,6 +27,7 @@ android {
 
 dependencies {
     // Projects
+    implementation(projects.common)
     implementation(projects.domain.model)
 
     // Libraries

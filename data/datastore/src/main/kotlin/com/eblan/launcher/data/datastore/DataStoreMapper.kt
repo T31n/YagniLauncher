@@ -21,9 +21,9 @@ import com.eblan.launcher.data.datastore.proto.appdrawer.AppDrawerSettingsProto
 import com.eblan.launcher.data.datastore.proto.appdrawer.AppDrawerTypeProto
 import com.eblan.launcher.data.datastore.proto.experimental.ExperimentalSettingsProto
 import com.eblan.launcher.data.datastore.proto.folder.FolderSettingsProto
+import com.eblan.launcher.data.datastore.proto.general.ColorSourceProto
 import com.eblan.launcher.data.datastore.proto.general.GeneralSettingsProto
 import com.eblan.launcher.data.datastore.proto.general.IconShapeProto
-import com.eblan.launcher.data.datastore.proto.general.IconTintProto
 import com.eblan.launcher.data.datastore.proto.general.ThemeProto
 import com.eblan.launcher.data.datastore.proto.gesture.EblanActionProto
 import com.eblan.launcher.data.datastore.proto.gesture.EblanActionTypeProto
@@ -47,6 +47,7 @@ import com.eblan.launcher.domain.model.grid.VerticalArrangement
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.AppDrawerType
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
+import com.eblan.launcher.domain.model.userdata.ColorSource
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
@@ -55,7 +56,6 @@ import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.domain.model.userdata.GestureSettings
 import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.domain.model.userdata.IconShape
-import com.eblan.launcher.domain.model.userdata.IconTint
 import com.eblan.launcher.domain.model.userdata.PagerTransitionEffect
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.domain.model.userdata.Theme
@@ -127,10 +127,10 @@ internal fun GridItemSettingsProto.toGridItemSettings(): GridItemSettings = Grid
 internal fun GeneralSettingsProto.toGeneralSettings(): GeneralSettings = GeneralSettings(
     theme = themeProto.toTheme(),
     systemBarsTheme = systemBarsThemeProto.toTheme(),
-    dynamicTheme = dynamicTheme,
+    colorSource = colorSourceProto.toColorSource(),
+    customSeedColor = customSeedColor,
     iconPackPackageName = iconPackPackageName,
-    iconTint = iconTintProto.toIconTint(),
-    customIconTint = customIconTint,
+    iconTint = iconTint,
     fallbackIconTint = fallbackIconTint,
     iconShape = iconShapeProto.toIconShape(),
 )
@@ -202,10 +202,10 @@ internal fun AppDrawerSettings.toAppDrawerSettingsProto(): AppDrawerSettingsProt
 internal fun GeneralSettings.toGeneralSettingsProto(): GeneralSettingsProto = GeneralSettingsProto.newBuilder().also { builder ->
     builder.themeProto = theme.toThemeProto()
     builder.systemBarsThemeProto = systemBarsTheme.toThemeProto()
-    builder.dynamicTheme = dynamicTheme
+    builder.colorSourceProto = colorSource.toColorSourceProto()
+    builder.customSeedColor = customSeedColor
     builder.iconPackPackageName = iconPackPackageName
-    builder.iconTintProto = iconTint.toIconTintProto()
-    builder.customIconTint = customIconTint
+    builder.iconTint = iconTint
     builder.fallbackIconTint = fallbackIconTint
     builder.iconShapeProto = iconShape.toIconShapeProto()
 }.build()
@@ -441,14 +441,16 @@ private fun VerticalAlignmentProto.toVerticalAlignment(): VerticalAlignment = wh
     VerticalAlignmentProto.VerticalAlignmentBottom -> VerticalAlignment.Bottom
 }
 
-private fun IconTintProto.toIconTint(): IconTint = when (this) {
-    IconTintProto.IconTintNone, IconTintProto.UNRECOGNIZED -> IconTint.None
-    IconTintProto.IconTintCustom -> IconTint.Custom
+private fun ColorSourceProto.toColorSource(): ColorSource = when (this) {
+    ColorSourceProto.ColorSourceNone, ColorSourceProto.UNRECOGNIZED -> ColorSource.None
+    ColorSourceProto.ColorSourceWallpaper -> ColorSource.Wallpaper
+    ColorSourceProto.ColorSourceCustom -> ColorSource.Custom
 }
 
-private fun IconTint.toIconTintProto(): IconTintProto = when (this) {
-    IconTint.None -> IconTintProto.IconTintNone
-    IconTint.Custom -> IconTintProto.IconTintCustom
+private fun ColorSource.toColorSourceProto(): ColorSourceProto = when (this) {
+    ColorSource.None -> ColorSourceProto.ColorSourceNone
+    ColorSource.Wallpaper -> ColorSourceProto.ColorSourceWallpaper
+    ColorSource.Custom -> ColorSourceProto.ColorSourceCustom
 }
 
 private fun IconShapeProto.toIconShape(): IconShape = when (this) {

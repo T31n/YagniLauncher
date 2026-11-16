@@ -37,7 +37,8 @@ class SettingsActivityViewModel @Inject constructor(
             applicationTheme = ApplicationTheme(
                 theme = userData.generalSettings.theme,
                 systemBarsTheme = userData.generalSettings.systemBarsTheme,
-                dynamicTheme = userData.generalSettings.dynamicTheme,
+                colorSource = userData.generalSettings.colorSource,
+                customSeedColor = userData.generalSettings.customSeedColor,
             ),
         )
     }.stateIn(

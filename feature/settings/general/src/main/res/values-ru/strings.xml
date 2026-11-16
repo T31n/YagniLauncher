@@ -24,14 +24,15 @@
     <string name="default_icon_pack">По умолчанию</string>
     <string name="theme">Тема</string>
     <string name="system_bars_theme">Тема системных панелей</string>
-    <string name="dynamic_theme">Динамическая тема</string>
+    <string name="color_source">Источник цвета</string>
+    <string name="wallpaper">Обои</string>
     <string name="language">Язык</string>
     <string name="system_default">Системный</string>
     <string name="language_name">Русский</string>
     <string name="notification_dots">Точки уведомлений</string>
     <string name="show_notification_dots">Показать точки уведомлений</string>
     <string name="apply_icons_from_supported_icon_packs">Применить иконки с поддерживаемых пакетов иконок</string>
-    <string name="adapt_colors_to_your_wallpaper_automatically">Адаптировать цвета к вашим обоям автоматически</string>
+    <string name="tint_icons_using_the_selected_color_source">Окрашивать значки цветом из выбранного источника</string>
     <string name="icon_tint">Оттенок иконки</string>
     <string name="fallback_icon_tint">Оттенок резервной иконки</string>
     <string name="use_the_fallback_icon_tint">Использовать оттенок резервной иконки</string>

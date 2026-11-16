@@ -22,12 +22,13 @@ import android.content.Context
 import android.content.res.XmlResourceParser
 import android.graphics.drawable.Drawable
 import com.eblan.launcher.common.AndroidImageSerializer
+import com.eblan.launcher.common.MaterialColorSchemeResolver
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.framework.IconPackManager
 import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
+import com.eblan.launcher.domain.model.userdata.ColorSource
 import com.eblan.launcher.domain.model.userdata.IconShape
-import com.eblan.launcher.domain.model.userdata.IconTint
 import com.eblan.launcher.domain.model.userdata.Theme
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
@@ -98,9 +99,10 @@ internal class DefaultIconPackManager @Inject constructor(
         packageName: String,
         drawableName: String,
         file: File,
-        iconTint: IconTint,
+        iconTint: Boolean,
+        colorSource: ColorSource,
+        customSeedColor: Int,
         iconShape: IconShape,
-        customIconTint: Int,
         fallbackIconTint: Boolean,
         theme: Theme,
     ): String? = withContext(ioDispatcher) {
@@ -117,14 +119,25 @@ internal class DefaultIconPackManager @Inject constructor(
                 packageContext.theme,
             )
 
-            val transformedDrawable = imageSerializer.getTintedAndShapedDrawable(
-                drawable = drawable,
-                iconTint = iconTint,
-                customIconTint = customIconTint,
-                fallbackIconTint = fallbackIconTint,
-                theme = theme,
-                iconShape = iconShape,
-            ) ?: return@withContext null
+            val transformedDrawable = if (iconTint) {
+                imageSerializer.getTintedAndShapedDrawable(
+                    drawable = drawable,
+                    iconTintColor = MaterialColorSchemeResolver.getPrimaryColor(
+                        context = context,
+                        colorSource = colorSource,
+                        customSeedColor = customSeedColor,
+                        theme = theme,
+                    ),
+                    fallbackIconTint = fallbackIconTint,
+                    theme = theme,
+                    iconShape = iconShape,
+                )
+            } else {
+                imageSerializer.getShapedDrawable(
+                    drawable = drawable,
+                    iconShape = iconShape,
+                )
+            } ?: return@withContext null
 
             imageSerializer.createDrawablePath(
                 drawable = transformedDrawable,

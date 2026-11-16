@@ -44,6 +44,7 @@ import com.eblan.launcher.activity.main.MainActivity
 import com.eblan.launcher.designsystem.theme.EblanLauncherTheme
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
+import com.eblan.launcher.domain.model.userdata.ColorSource
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.feature.action.ActionScreen
@@ -88,7 +89,8 @@ class ActionActivity : ComponentActivity() {
 
                         EblanLauncherTheme(
                             theme = Theme.System,
-                            dynamicTheme = false,
+                            colorSource = ColorSource.None,
+                            customSeedColor = 0xFF6750A4.toInt(),
                         ) {
                             Surface(modifier = Modifier.fillMaxSize()) {
                                 Box(modifier = Modifier.fillMaxSize())
@@ -103,7 +105,8 @@ class ActionActivity : ComponentActivity() {
 
                         EblanLauncherTheme(
                             theme = state.applicationTheme.theme,
-                            dynamicTheme = state.applicationTheme.dynamicTheme,
+                            colorSource = state.applicationTheme.colorSource,
+                            customSeedColor = state.applicationTheme.customSeedColor,
                         ) {
                             Surface {
                                 ActionScreen(

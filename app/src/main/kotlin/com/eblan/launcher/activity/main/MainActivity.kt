@@ -148,7 +148,8 @@ class MainActivity : AppCompatActivity() {
 
                         EblanLauncherTheme(
                             theme = state.applicationTheme.theme,
-                            dynamicTheme = state.applicationTheme.dynamicTheme,
+                            colorSource = state.applicationTheme.colorSource,
+                            customSeedColor = state.applicationTheme.customSeedColor,
                         ) {
                             MainNavHost(
                                 configureResultCode = configureResultCode,

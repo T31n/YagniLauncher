@@ -115,7 +115,8 @@ class PinActivity : ComponentActivity() {
 
                             EblanLauncherTheme(
                                 theme = state.applicationTheme.theme,
-                                dynamicTheme = state.applicationTheme.dynamicTheme,
+                                colorSource = state.applicationTheme.colorSource,
+                                customSeedColor = state.applicationTheme.customSeedColor,
                             ) {
                                 PinScreen(
                                     // Data and State

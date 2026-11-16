@@ -40,7 +40,6 @@ import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.framework.ResourcesWrapper
 import com.eblan.launcher.domain.model.userdata.IconShape
-import com.eblan.launcher.domain.model.userdata.IconTint
 import com.eblan.launcher.domain.model.userdata.Theme
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -364,22 +363,17 @@ internal class DefaultImageSerializer @Inject constructor(
 
     override fun getTintedAndShapedDrawable(
         drawable: Drawable,
-        iconTint: IconTint,
-        customIconTint: Int,
+        iconTintColor: Int,
         fallbackIconTint: Boolean,
         theme: Theme,
         iconShape: IconShape,
     ): Drawable? {
-        val tintedDrawable = when (iconTint) {
-            IconTint.None -> drawable
-
-            IconTint.Custom -> getTintedDrawable(
-                drawable = drawable,
-                customIconTint = customIconTint,
-                fallbackIconTint = fallbackIconTint,
-                theme = theme,
-            ) ?: return null
-        }
+        val tintedDrawable = getTintedDrawable(
+            drawable = drawable,
+            iconTintColor = iconTintColor,
+            fallbackIconTint = fallbackIconTint,
+            theme = theme,
+        ) ?: return null
 
         return getShapedDrawable(
             drawable = tintedDrawable,
@@ -421,7 +415,7 @@ internal class DefaultImageSerializer @Inject constructor(
 
     private fun getTintedDrawable(
         drawable: Drawable,
-        customIconTint: Int,
+        iconTintColor: Int,
         fallbackIconTint: Boolean,
         theme: Theme,
     ): Drawable? {
@@ -434,21 +428,21 @@ internal class DefaultImageSerializer @Inject constructor(
                 return AdaptiveIconDrawable(
                     adaptiveIconBackgroundColor(
                         theme = theme,
-                        customIconColor = customIconTint,
+                        iconTintColor = iconTintColor,
                     ).toDrawable(),
-                    it.mutate().apply { setTint(customIconTint) },
+                    it.mutate().apply { setTint(iconTintColor) },
                 )
             }
         }
 
         return if (fallbackIconTint) {
-            copy.tintedBitmap(customIconColor = customIconTint)
+            copy.tintedBitmap(iconTintColor = iconTintColor)
         } else {
             copy
         }
     }
 
-    private fun Drawable.tintedBitmap(customIconColor: Int): Drawable? {
+    private fun Drawable.tintedBitmap(iconTintColor: Int): Drawable? {
         val width = if (bounds.isEmpty) {
             intrinsicWidth
         } else {
@@ -471,7 +465,7 @@ internal class DefaultImageSerializer @Inject constructor(
             val result = createBitmap(width, height)
 
             val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                colorFilter = luminanceTintFilter(customIconColor)
+                colorFilter = luminanceTintFilter(iconTintColor)
             }
 
             Canvas(result).drawBitmap(source, 0f, 0f, paint)
@@ -501,7 +495,7 @@ internal class DefaultImageSerializer @Inject constructor(
 
     private fun adaptiveIconBackgroundColor(
         theme: Theme,
-        customIconColor: Int,
+        iconTintColor: Int,
     ): Int {
         val isDarkTheme = when (theme) {
             Theme.System -> resourcesWrapper.isDarkTheme()
@@ -517,13 +511,13 @@ internal class DefaultImageSerializer @Inject constructor(
             val backgroundColor = ColorUtils.compositeColors(
                 ColorUtils.blendARGB(
                     baseColor,
-                    customIconColor,
+                    iconTintColor,
                     tintAmount,
                 ),
                 baseColor,
             )
 
-            if (ColorUtils.calculateContrast(customIconColor, backgroundColor) >= MIN_ICON_CONTRAST_RATIO) {
+            if (ColorUtils.calculateContrast(iconTintColor, backgroundColor) >= MIN_ICON_CONTRAST_RATIO) {
                 return backgroundColor
             }
 

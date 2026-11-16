@@ -20,6 +20,7 @@ package com.eblan.launcher.domain.usecase.home
 import com.eblan.launcher.domain.framework.ResourcesWrapper
 import com.eblan.launcher.domain.framework.WallpaperManagerWrapper
 import com.eblan.launcher.domain.model.userdata.ApplicationTheme
+import com.eblan.launcher.domain.model.userdata.ColorSource
 import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.domain.repository.UserDataRepository
 import kotlinx.coroutines.flow.Flow
@@ -32,11 +33,7 @@ class GetApplicationThemeUseCase @Inject constructor(
     private val wallpaperManagerWrapper: WallpaperManagerWrapper,
     private val resourcesWrapper: ResourcesWrapper,
 ) {
-    /**
-     * Emits the selected light or dark theme and whether dynamic colors are enabled.
-     *
-     * @return A flow that updates when user theme settings or wallpaper color hints change.
-     */
+    /** Emits the selected theme and colors, updating when wallpaper color hints change. */
     operator fun invoke(): Flow<ApplicationTheme> = combine(
         userDataRepository.userDataFlow,
         wallpaperManagerWrapper.getColorsChanged(),
@@ -45,7 +42,8 @@ class GetApplicationThemeUseCase @Inject constructor(
             Theme.System -> {
                 getApplicationThemeByColorHints(
                     colorHints = colorHints,
-                    dynamicTheme = userData.generalSettings.dynamicTheme,
+                    colorSource = userData.generalSettings.colorSource,
+                    customSeedColor = userData.generalSettings.customSeedColor,
                     systemBarsTheme = userData.generalSettings.systemBarsTheme,
                 )
             }
@@ -54,7 +52,8 @@ class GetApplicationThemeUseCase @Inject constructor(
                 ApplicationTheme(
                     theme = userData.generalSettings.theme,
                     systemBarsTheme = userData.generalSettings.systemBarsTheme,
-                    dynamicTheme = userData.generalSettings.dynamicTheme,
+                    colorSource = userData.generalSettings.colorSource,
+                    customSeedColor = userData.generalSettings.customSeedColor,
                 )
             }
         }
@@ -63,7 +62,8 @@ class GetApplicationThemeUseCase @Inject constructor(
     /** Resolves system mode from wallpaper hints, falling back to the current system theme. */
     private fun getApplicationThemeByColorHints(
         colorHints: Int?,
-        dynamicTheme: Boolean,
+        colorSource: ColorSource,
+        customSeedColor: Int,
         systemBarsTheme: Theme,
     ): ApplicationTheme = if (colorHints != null) {
         val hintSupportsDarkTheme =
@@ -73,13 +73,15 @@ class GetApplicationThemeUseCase @Inject constructor(
             ApplicationTheme(
                 theme = Theme.Dark,
                 systemBarsTheme = systemBarsTheme,
-                dynamicTheme = dynamicTheme,
+                colorSource = colorSource,
+                customSeedColor = customSeedColor,
             )
         } else {
             ApplicationTheme(
                 theme = Theme.Light,
                 systemBarsTheme = systemBarsTheme,
-                dynamicTheme = dynamicTheme,
+                colorSource = colorSource,
+                customSeedColor = customSeedColor,
             )
         }
     } else {
@@ -90,7 +92,8 @@ class GetApplicationThemeUseCase @Inject constructor(
                 Theme.Light
             },
             systemBarsTheme = systemBarsTheme,
-            dynamicTheme = dynamicTheme,
+            colorSource = colorSource,
+            customSeedColor = customSeedColor,
         )
     }
 }

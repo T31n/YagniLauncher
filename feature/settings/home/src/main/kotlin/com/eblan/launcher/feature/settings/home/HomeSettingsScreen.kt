@@ -491,6 +491,7 @@ private fun Success(
             // Content
             title = stringResource(R.string.dock_background_color),
             customColor = homeSettings.dockCustomBackgroundColor,
+            showAlphaSlider = true,
             // Callbacks
             onDismissRequest = {
                 showDockCustomBackgroundColorDialog = false

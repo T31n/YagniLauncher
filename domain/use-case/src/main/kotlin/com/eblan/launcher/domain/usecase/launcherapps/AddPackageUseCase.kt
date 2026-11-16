@@ -88,8 +88,9 @@ class AddPackageUseCase @Inject constructor(
                 serialNumber = serialNumber,
                 packageName = packageName,
                 iconTint = userData.generalSettings.iconTint,
+                colorSource = userData.generalSettings.colorSource,
+                customSeedColor = userData.generalSettings.customSeedColor,
                 iconShape = userData.generalSettings.iconShape,
-                customIconTint = userData.generalSettings.customIconTint,
                 fallbackIconTint = userData.generalSettings.fallbackIconTint,
                 theme = userData.generalSettings.theme,
             ).onEach {

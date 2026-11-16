@@ -27,8 +27,11 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import com.eblan.launcher.common.MaterialColorSchemeResolver
+import com.eblan.launcher.domain.model.userdata.ColorSource
 import com.eblan.launcher.domain.model.userdata.Theme
 
 private val LightColorScheme = lightColorScheme(
@@ -110,13 +113,34 @@ private val DarkColorScheme = darkColorScheme(
 @Composable
 fun EblanLauncherTheme(
     theme: Theme,
-    dynamicTheme: Boolean,
+    colorSource: ColorSource,
+    customSeedColor: Int,
     content: @Composable () -> Unit,
 ) {
-    val colorScheme = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && dynamicTheme) {
-        getDynamicColorScheme(theme = theme)
-    } else {
-        getGreenColorScheme(theme = theme)
+    val context = LocalContext.current
+    val isDarkTheme = when (theme) {
+        Theme.System -> isSystemInDarkTheme()
+        Theme.Light -> false
+        Theme.Dark -> true
+    }
+    val colorScheme = when (colorSource) {
+        ColorSource.None -> getGreenColorScheme(theme = theme)
+
+        ColorSource.Wallpaper -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            getDynamicColorScheme(
+                context = context,
+                isDarkTheme = isDarkTheme,
+            )
+        } else {
+            getGreenColorScheme(theme = theme)
+        }
+
+        ColorSource.Custom -> remember(customSeedColor, isDarkTheme) {
+            MaterialColorSchemeResolver.getCustomColorScheme(
+                seedColor = customSeedColor,
+                isDarkTheme = isDarkTheme,
+            )
+        }
     }
 
     MaterialTheme(
@@ -133,21 +157,11 @@ private fun getGreenColorScheme(theme: Theme): ColorScheme = when (theme) {
 }
 
 @RequiresApi(Build.VERSION_CODES.S)
-@Composable
-private fun getDynamicColorScheme(theme: Theme): ColorScheme {
-    val context = LocalContext.current
-
-    return when (theme) {
-        Theme.System -> if (isSystemInDarkTheme()) {
-            dynamicDarkColorScheme(context)
-        } else {
-            dynamicLightColorScheme(
-                context,
-            )
-        }
-
-        Theme.Light -> dynamicLightColorScheme(context)
-
-        Theme.Dark -> dynamicDarkColorScheme(context)
-    }
+private fun getDynamicColorScheme(
+    context: android.content.Context,
+    isDarkTheme: Boolean,
+): ColorScheme = if (isDarkTheme) {
+    dynamicDarkColorScheme(context)
+} else {
+    dynamicLightColorScheme(context)
 }

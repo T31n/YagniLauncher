@@ -49,9 +49,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.iconpackinfo.EblanIconPackInfo
 import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPack
+import com.eblan.launcher.domain.model.userdata.ColorSource
 import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.domain.model.userdata.IconShape
-import com.eblan.launcher.domain.model.userdata.IconTint
 import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.feature.settings.general.dialog.ImportIconPackInfoDialog
 import com.eblan.launcher.feature.settings.general.dialog.SelectIconPackInfoDialog
@@ -59,7 +59,6 @@ import com.eblan.launcher.feature.settings.general.model.GeneralSettingsUiState
 import com.eblan.launcher.service.IconPackService
 import com.eblan.launcher.ui.dialog.ColorPickerDialog
 import com.eblan.launcher.ui.dialog.RadioOptionsDialog
-import com.eblan.launcher.ui.dialog.getTitle
 import com.eblan.launcher.ui.local.LocalLocaleWrapper
 import com.eblan.launcher.ui.settings.SettingsColumnItem
 import com.eblan.launcher.ui.settings.SettingsDropdownItem
@@ -172,7 +171,7 @@ private fun Success(
 
     var showImportIconPackDialog by remember { mutableStateOf(false) }
     var selectIconPackDialog by remember { mutableStateOf(false) }
-    var showIconTintPickerDialog by remember { mutableStateOf(false) }
+    var showCustomSeedColorPickerDialog by remember { mutableStateOf(false) }
     var showIconShapeDialog by remember { mutableStateOf(false) }
     var showLanguageDialog by remember { mutableStateOf(false) }
 
@@ -257,9 +256,13 @@ private fun Success(
 
         SettingsDropdownItem(
             // Content
-            title = stringResource(R.string.icon_tint),
-            options = IconTint.entries,
-            selected = generalSettings.iconTint,
+            title = stringResource(R.string.color_source),
+            options = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                ColorSource.entries
+            } else {
+                ColorSource.entries.filterNot { it == ColorSource.Wallpaper }
+            },
+            selected = generalSettings.colorSource,
             label = {
                 it.getTitle()
             },
@@ -267,33 +270,42 @@ private fun Success(
             shape = settingsMiddleItemShape,
             // Actions
             onSelectedChange = {
-                if (it == IconTint.Custom) {
-                    showIconTintPickerDialog = true
+                if (it == ColorSource.Custom) {
+                    showCustomSeedColorPickerDialog = true
                 } else {
-                    onUpdateGeneralSettings(generalSettings.copy(iconTint = it))
+                    onUpdateGeneralSettings(generalSettings.copy(colorSource = it))
                 }
             },
         )
 
-        when (generalSettings.iconTint) {
-            IconTint.Custom,
-            -> {
-                SettingsSwitchItem(
-                    // Content
-                    title = stringResource(R.string.fallback_icon_tint),
-                    subtitle = stringResource(R.string.use_the_fallback_icon_tint),
-                    // State
-                    checked = generalSettings.fallbackIconTint,
-                    // Appearance
-                    shape = settingsMiddleItemShape,
-                    // Callbacks
-                    onCheckedChange = {
-                        onUpdateGeneralSettings(generalSettings.copy(fallbackIconTint = it))
-                    },
-                )
-            }
+        SettingsSwitchItem(
+            // Content
+            title = stringResource(R.string.icon_tint),
+            subtitle = stringResource(R.string.tint_icons_using_the_selected_color_source),
+            // State
+            checked = generalSettings.iconTint,
+            // Appearance
+            shape = settingsMiddleItemShape,
+            // Callbacks
+            onCheckedChange = {
+                onUpdateGeneralSettings(generalSettings.copy(iconTint = it))
+            },
+        )
 
-            else -> Unit
+        if (generalSettings.iconTint) {
+            SettingsSwitchItem(
+                // Content
+                title = stringResource(R.string.fallback_icon_tint),
+                subtitle = stringResource(R.string.use_the_fallback_icon_tint),
+                // State
+                checked = generalSettings.fallbackIconTint,
+                // Appearance
+                shape = settingsMiddleItemShape,
+                // Callbacks
+                onCheckedChange = {
+                    onUpdateGeneralSettings(generalSettings.copy(fallbackIconTint = it))
+                },
+            )
         }
 
         SettingsColumnItem(
@@ -301,36 +313,16 @@ private fun Success(
             title = stringResource(R.string.icon_shape),
             subtitle = generalSettings.iconShape.getTitle(),
             // Layout
-            shape = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S || !isNotificationAccessGranted) {
-                settingsMiddleItemShape
-            } else {
+            shape = if (isNotificationAccessGranted) {
                 settingsLastItemShape
+            } else {
+                settingsMiddleItemShape
             },
             // Actions
             onClick = {
                 showIconShapeDialog = true
             },
         )
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            SettingsSwitchItem(
-                // Content
-                title = stringResource(R.string.dynamic_theme),
-                subtitle = stringResource(R.string.adapt_colors_to_your_wallpaper_automatically),
-                // State
-                checked = generalSettings.dynamicTheme,
-                // Appearance
-                shape = if (!isNotificationAccessGranted) {
-                    settingsMiddleItemShape
-                } else {
-                    settingsLastItemShape
-                },
-                // Callbacks
-                onCheckedChange = {
-                    onUpdateGeneralSettings(generalSettings.copy(dynamicTheme = it))
-                },
-            )
-        }
 
         if (!isNotificationAccessGranted) {
             SettingsColumnItem(
@@ -392,20 +384,21 @@ private fun Success(
         )
     }
 
-    if (showIconTintPickerDialog) {
+    if (showCustomSeedColorPickerDialog) {
         ColorPickerDialog(
             // Content
-            title = stringResource(R.string.icon_tint),
-            customColor = generalSettings.customIconTint,
+            title = stringResource(R.string.color_source),
+            customColor = generalSettings.customSeedColor,
+            showAlphaSlider = false,
             // Callbacks
             onDismissRequest = {
-                showIconTintPickerDialog = false
+                showCustomSeedColorPickerDialog = false
             },
             onSelectColor = {
                 onUpdateGeneralSettings(
                     generalSettings.copy(
-                        iconTint = IconTint.Custom,
-                        customIconTint = it,
+                        colorSource = ColorSource.Custom,
+                        customSeedColor = it,
                     ),
                 )
             },
@@ -456,6 +449,13 @@ private fun Theme.getTitle() = when (this) {
     Theme.System -> stringResource(commonR.string.system)
     Theme.Light -> stringResource(commonR.string.light)
     Theme.Dark -> stringResource(commonR.string.dark)
+}
+
+@Composable
+private fun ColorSource.getTitle() = when (this) {
+    ColorSource.None -> stringResource(commonR.string.none)
+    ColorSource.Wallpaper -> stringResource(R.string.wallpaper)
+    ColorSource.Custom -> stringResource(commonR.string.custom)
 }
 
 @Composable

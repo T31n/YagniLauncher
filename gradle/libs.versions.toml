@@ -23,6 +23,7 @@ kotlin = "2.3.20"
 kotlinxBenchmark = "0.4.18"
 kotlinxCoroutines = "1.10.2"
 kotlinxSerializationJson = "1.10.0"
+material = "1.14.0"
 ksp = "2.3.6"
 protobuf = "4.34.1"
 protobufPlugin = "0.9.6"
@@ -66,6 +67,7 @@ kotlinx-benchmark-runtime = { module = "org.jetbrains.kotlinx:kotlinx-benchmark-
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+google-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 protobuf-kotlin-lite = { group = "com.google.protobuf", name = "protobuf-kotlin-lite", version.ref = "protobuf" }
 protobuf-protoc = { group = "com.google.protobuf", name = "protoc", version.ref = "protobuf" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
