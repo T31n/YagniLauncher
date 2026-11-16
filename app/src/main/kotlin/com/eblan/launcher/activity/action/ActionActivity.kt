@@ -161,7 +161,6 @@ class ActionActivity : ComponentActivity() {
     }
 
     @Suppress("DEPRECATION")
-    @OptIn(ExperimentalUuidApi::class)
     private suspend fun createShortcutResult(
         resId: Int,
         eblanAction: EblanAction,

@@ -74,7 +74,6 @@ class AddPinWidgetToHomeScreenUseCase @Inject constructor(
      * @param preview The optional cached widget preview path.
      * @return The inserted grid item, or `null` if no region is available.
      */
-    @OptIn(ExperimentalUuidApi::class)
     suspend operator fun invoke(
         componentName: String,
         configure: String?,

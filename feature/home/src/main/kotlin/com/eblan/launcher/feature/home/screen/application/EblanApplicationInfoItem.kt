@@ -367,7 +367,6 @@ internal fun handleOnTapEblanApplicationInfoItem(
     )
 }
 
-@OptIn(ExperimentalUuidApi::class)
 internal fun handleDragEblanApplicationInfoItem(
     // Application Info
     eblanApplicationInfo: EblanApplicationInfo,

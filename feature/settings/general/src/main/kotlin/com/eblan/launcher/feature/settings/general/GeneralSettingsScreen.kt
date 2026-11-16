@@ -69,7 +69,6 @@ import com.eblan.launcher.ui.settings.rememberIsNotificationAccessGranted
 import com.eblan.launcher.ui.settings.settingsFirstItemShape
 import com.eblan.launcher.ui.settings.settingsLastItemShape
 import com.eblan.launcher.ui.settings.settingsMiddleItemShape
-import kotlinx.serialization.json.Json.Default.configuration
 import java.util.Locale
 import com.eblan.launcher.common.R as commonR
 

@@ -411,7 +411,6 @@ class SyncDataUseCase @Inject constructor(
     }
 
     /** Seeds the home grid and dock with system applications during the first launch only. */
-    @OptIn(ExperimentalUuidApi::class)
     private suspend fun insertApplicationInfoGridItems(
         eblanApplicationInfos: List<EblanApplicationInfo>,
         experimentalSettings: ExperimentalSettings,
@@ -441,7 +440,6 @@ class SyncDataUseCase @Inject constructor(
         val applicationInfoGridItems = mutableListOf<ApplicationInfoGridItem>()
 
         /** Creates a default grid record for one application at the specified grid position. */
-        @OptIn(ExperimentalUuidApi::class)
         fun insertApplicationInfoGridItem(
             index: Int,
             eblanApplicationInfo: EblanApplicationInfo,

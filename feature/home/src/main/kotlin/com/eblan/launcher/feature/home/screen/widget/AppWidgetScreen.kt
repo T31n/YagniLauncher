@@ -224,7 +224,6 @@ internal fun AppWidgetScreen(
     }
 }
 
-@OptIn(ExperimentalUuidApi::class)
 @Composable
 private fun EblanAppWidgetScreenItem(
     // Widget Info

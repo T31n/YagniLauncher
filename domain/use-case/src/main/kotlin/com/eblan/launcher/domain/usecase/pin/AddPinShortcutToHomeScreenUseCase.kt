@@ -61,7 +61,6 @@ class AddPinShortcutToHomeScreenUseCase @Inject constructor(
      * @param icon The cached shortcut icon path, if available.
      * @return The inserted grid item, or `null` if no region is available.
      */
-    @OptIn(ExperimentalUuidApi::class)
     suspend operator fun invoke(
         serialNumber: Long,
         shortcutId: String,

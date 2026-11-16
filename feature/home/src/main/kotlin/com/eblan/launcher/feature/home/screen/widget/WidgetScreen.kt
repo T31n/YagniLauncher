@@ -610,7 +610,6 @@ private fun EblanAppWidgetProviderInfoItem(
     }
 }
 
-@OptIn(ExperimentalUuidApi::class)
 private suspend fun handleOnLongPress(
     // Widget Info
     eblanAppWidgetProviderInfo: EblanAppWidgetProviderInfo,

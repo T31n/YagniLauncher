@@ -601,7 +601,6 @@ private suspend fun handleIsCloseFolder(
     )
 }
 
-@OptIn(ExperimentalUuidApi::class)
 private fun handleMoveFolderGridItemOutsideFolder(
     // Settings
     gridItemSettings: GridItemSettings,

@@ -464,7 +464,6 @@ private fun PreviewFolderEblanApplicationInfoItem(
     }
 }
 
-@OptIn(ExperimentalUuidApi::class)
 internal fun handleDragFolderEblanApplicationInfoItem(
     // Item Data
     folderEblanApplicationInfo: FolderEblanApplicationInfo,

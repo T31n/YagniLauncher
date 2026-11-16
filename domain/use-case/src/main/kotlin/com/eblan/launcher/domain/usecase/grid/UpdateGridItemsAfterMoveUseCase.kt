@@ -139,7 +139,6 @@ class UpdateGridItemsAfterMoveUseCase @Inject constructor(
     }
 
     /** Creates a new folder containing the conflicting item followed by the moved item. */
-    @OptIn(ExperimentalUuidApi::class)
     private suspend fun createNewFolder(
         conflictingGridItem: GridItem,
         movingGridItem: GridItem,

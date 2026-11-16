@@ -38,7 +38,6 @@ import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 import com.eblan.launcher.common.R as commonR
 
-@OptIn(ExperimentalUuidApi::class)
 @Composable
 fun AddFolderDialog(
     // Data
