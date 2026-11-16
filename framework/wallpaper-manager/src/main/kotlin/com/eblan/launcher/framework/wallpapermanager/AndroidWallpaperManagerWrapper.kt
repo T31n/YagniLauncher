@@ -17,7 +17,15 @@
  */
 package com.eblan.launcher.framework.wallpapermanager
 
+import kotlinx.coroutines.flow.Flow
+
 interface AndroidWallpaperManagerWrapper {
+    val hintSupportsDarkText: Int
+
+    val hintSupportsDarkTheme: Int
+
+    fun getColorsChanged(): Flow<Int?>
+
     fun setWallpaperOffsetSteps(xStep: Float, yStep: Float)
 
     fun setWallpaperOffsets(

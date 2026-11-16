@@ -33,13 +33,14 @@ import com.eblan.launcher.common.MaterialColorSchemeResolver
 import com.eblan.launcher.designsystem.theme.EblanLauncherTheme
 import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
+import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.feature.pin.PinScreen
 import com.eblan.launcher.framework.launcherapps.AndroidLauncherAppsWrapper
 import com.eblan.launcher.framework.launcherapps.PinItemRequestWrapper
 import com.eblan.launcher.framework.usermanager.AndroidUserManagerWrapper
+import com.eblan.launcher.framework.wallpapermanager.AndroidWallpaperManagerWrapper
 import com.eblan.launcher.framework.widgetmanager.AndroidAppWidgetHostWrapper
 import com.eblan.launcher.framework.widgetmanager.AndroidAppWidgetManagerWrapper
-import com.eblan.launcher.model.ActivityUiState
 import com.eblan.launcher.ui.local.LocalAppWidgetHost
 import com.eblan.launcher.ui.local.LocalAppWidgetManager
 import com.eblan.launcher.ui.local.LocalFileManager
@@ -49,7 +50,10 @@ import com.eblan.launcher.ui.local.LocalLauncherApps
 import com.eblan.launcher.ui.local.LocalMaterialColorSchemeResolver
 import com.eblan.launcher.ui.local.LocalPinItemRequest
 import com.eblan.launcher.ui.local.LocalUserManager
+import com.eblan.launcher.ui.local.LocalWallpaperManager
 import com.eblan.launcher.util.handleEdgeToEdge
+import com.eblan.launcher.util.produceApplicationThemeState
+import com.eblan.launcher.util.produceColorSchemeState
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -76,6 +80,9 @@ class PinActivity : ComponentActivity() {
 
     @Inject
     lateinit var androidUserManagerWrapper: AndroidUserManagerWrapper
+
+    @Inject
+    lateinit var androidWallpaperManagerWrapper: AndroidWallpaperManagerWrapper
 
     @Inject
     lateinit var fileManager: FileManager
@@ -108,26 +115,36 @@ class PinActivity : ComponentActivity() {
                     LocalUserManager provides androidUserManagerWrapper,
                     LocalFileManager provides fileManager,
                     LocalIconKeyGenerator provides iconKeyGenerator,
+                    LocalWallpaperManager provides androidWallpaperManagerWrapper,
                 ) {
                     val colorSchemeResolver = LocalMaterialColorSchemeResolver.current
-                    val activityUiState by viewModel.activityUiState.collectAsStateWithLifecycle()
+                    val generalSettings: GeneralSettings? by viewModel.generalSettingsFlow.collectAsStateWithLifecycle(initialValue = null)
+                    val applicationTheme by produceApplicationThemeState(
+                        theme = generalSettings?.theme,
+                        systemBarsTheme = generalSettings?.systemBarsTheme,
+                        colorSource = generalSettings?.colorSource,
+                        customSeedColor = generalSettings?.customSeedColor,
+                    )
+                    val colorScheme by produceColorSchemeState(
+                        theme = generalSettings?.theme,
+                        colorSource = generalSettings?.colorSource,
+                        customSeedColor = generalSettings?.customSeedColor,
+                    )
 
-                    when (val state = activityUiState) {
-                        ActivityUiState.Loading -> {}
+                    when {
+                        applicationTheme == null || colorScheme == null -> {}
 
-                        is ActivityUiState.Success -> {
+                        else -> {
+                            val resolvedApplicationTheme = checkNotNull(applicationTheme)
                             SideEffect {
                                 handleEdgeToEdge(
-                                    theme = state.applicationTheme.systemBarsTheme,
+                                    theme = resolvedApplicationTheme.systemBarsTheme,
                                     materialColorSchemeResolver = colorSchemeResolver,
                                 )
                             }
 
                             EblanLauncherTheme(
-                                theme = state.applicationTheme.theme,
-                                colorSource = state.applicationTheme.colorSource,
-                                customSeedColor = state.applicationTheme.customSeedColor,
-                                materialColorSchemeResolver = colorSchemeResolver,
+                                colorScheme = checkNotNull(colorScheme),
                             ) {
                                 PinScreen(
                                     // Data and State

@@ -36,7 +36,6 @@ import com.eblan.launcher.domain.model.grid.MoveFolderEblanApplicationInfoGridIt
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.model.home.PageItem
 import com.eblan.launcher.domain.model.launcherapps.PinItemRequestType
-import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.domain.repository.EblanAppWidgetProviderInfoRepository
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.usecase.application.GetEblanAppWidgetProviderInfosByLabelUseCase
@@ -54,7 +53,6 @@ import com.eblan.launcher.domain.usecase.grid.MoveGridItemUseCase
 import com.eblan.launcher.domain.usecase.grid.ResizeGridItemUseCase
 import com.eblan.launcher.domain.usecase.grid.UpdateGridItemsAfterMoveUseCase
 import com.eblan.launcher.domain.usecase.home.GetHomeDataUseCase
-import com.eblan.launcher.domain.usecase.home.GetTextColorUseCase
 import com.eblan.launcher.domain.usecase.launcherapps.AddPackageUseCase
 import com.eblan.launcher.domain.usecase.launcherapps.ChangePackageUseCase
 import com.eblan.launcher.domain.usecase.launcherapps.ChangeShortcutsUseCase
@@ -106,7 +104,6 @@ internal class HomeViewModel @Inject constructor(
     private val moveFolderGridItemUseCase: MoveFolderGridItemUseCase,
     private val iconKeyGenerator: IconKeyGenerator,
     private val deleteGridItemUseCase: DeleteGridItemUseCase,
-    getTextColorUseCase: GetTextColorUseCase,
     getFolderEblanApplicationInfoPopupsUseCase: GetFolderEblanApplicationInfoPopupsUseCase,
     private val moveFolderEblanApplicationInfoGridItemUseCase: MoveFolderEblanApplicationInfoGridItemUseCase,
     getEblanApplicationTagsUseCase: GetEblanApplicationTagsUseCase,
@@ -209,12 +206,6 @@ internal class HomeViewModel @Inject constructor(
 
     private val _isVisibleOverlay = MutableStateFlow(false)
     val isVisibleOverlay = _isVisibleOverlay.asStateFlow()
-
-    val textColor = getTextColorUseCase().stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = TextColor.System,
-    )
 
     val folderEblanApplicationInfoPopups =
         getFolderEblanApplicationInfoPopupsUseCase().stateIn(

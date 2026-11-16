@@ -52,7 +52,7 @@ val LocalPinItemRequest = staticCompositionLocalOf<PinItemRequestWrapper> {
 }
 
 val LocalWallpaperManager = staticCompositionLocalOf<AndroidWallpaperManagerWrapper> {
-    error("No WallpaperManagerWrapper provided")
+    error("No AndroidWallpaperManagerWrapper provided")
 }
 
 val LocalPackageManager = staticCompositionLocalOf<AndroidPackageManagerWrapper> {

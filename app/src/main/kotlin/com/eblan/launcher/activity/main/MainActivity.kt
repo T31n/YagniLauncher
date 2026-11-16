@@ -36,6 +36,7 @@ import com.eblan.launcher.common.MaterialColorSchemeResolver
 import com.eblan.launcher.designsystem.theme.EblanLauncherTheme
 import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
+import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.framework.accessibilitymanager.AndroidAccessibilityManagerWrapper
 import com.eblan.launcher.framework.iconpackmanager.AndroidIconPackManager
 import com.eblan.launcher.framework.launcherapps.AndroidLauncherAppsWrapper
@@ -47,7 +48,6 @@ import com.eblan.launcher.framework.usermanager.AndroidUserManagerWrapper
 import com.eblan.launcher.framework.wallpapermanager.AndroidWallpaperManagerWrapper
 import com.eblan.launcher.framework.widgetmanager.AndroidAppWidgetHostWrapper
 import com.eblan.launcher.framework.widgetmanager.AndroidAppWidgetManagerWrapper
-import com.eblan.launcher.model.ActivityUiState
 import com.eblan.launcher.navigation.MainNavHost
 import com.eblan.launcher.ui.local.LocalAccessibilityManager
 import com.eblan.launcher.ui.local.LocalAppWidgetHost
@@ -65,6 +65,8 @@ import com.eblan.launcher.ui.local.LocalStatusBarManager
 import com.eblan.launcher.ui.local.LocalUserManager
 import com.eblan.launcher.ui.local.LocalWallpaperManager
 import com.eblan.launcher.util.handleEdgeToEdge
+import com.eblan.launcher.util.produceApplicationThemeState
+import com.eblan.launcher.util.produceColorSchemeState
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -143,36 +145,46 @@ class MainActivity : AppCompatActivity() {
                 val colorSchemeResolver = LocalMaterialColorSchemeResolver.current
                 val navController = rememberNavController()
 
-                val mainActivityUiState by viewModel.activityUiState.collectAsStateWithLifecycle()
+                val generalSettings by viewModel.generalSettingsFlow.collectAsStateWithLifecycle(initialValue = null)
 
-                when (val state = mainActivityUiState) {
-                    ActivityUiState.Loading -> enableEdgeToEdge()
+                val applicationTheme by produceApplicationThemeState(
+                    theme = generalSettings?.theme,
+                    systemBarsTheme = generalSettings?.systemBarsTheme,
+                    colorSource = generalSettings?.colorSource,
+                    customSeedColor = generalSettings?.customSeedColor,
+                )
 
-                    is ActivityUiState.Success -> {
-                        SideEffect {
-                            handleEdgeToEdge(
-                                theme = state.applicationTheme.systemBarsTheme,
-                                materialColorSchemeResolver = colorSchemeResolver,
-                            )
-                        }
+                val colorScheme by produceColorSchemeState(
+                    theme = generalSettings?.theme,
+                    colorSource = generalSettings?.colorSource,
+                    customSeedColor = generalSettings?.customSeedColor,
+                )
 
-                        EblanLauncherTheme(
-                            theme = state.applicationTheme.theme,
-                            colorSource = state.applicationTheme.colorSource,
-                            customSeedColor = state.applicationTheme.customSeedColor,
+                if (applicationTheme == null && colorScheme == null) {
+                    enableEdgeToEdge()
+                } else {
+                    val resolvedApplicationTheme = checkNotNull(applicationTheme)
+
+                    SideEffect {
+                        handleEdgeToEdge(
+                            theme = resolvedApplicationTheme.systemBarsTheme,
                             materialColorSchemeResolver = colorSchemeResolver,
-                        ) {
-                            MainNavHost(
-                                configureResultCode = configureResultCode,
-                                navController = navController,
-                                onResetConfigureResultCode = {
-                                    configureResultCode = null
-                                },
-                                onSettings = {
-                                    startActivity(Intent(this, SettingsActivity::class.java))
-                                },
-                            )
-                        }
+                        )
+                    }
+
+                    EblanLauncherTheme(
+                        colorScheme = checkNotNull(colorScheme),
+                    ) {
+                        MainNavHost(
+                            configureResultCode = configureResultCode,
+                            navController = navController,
+                            onResetConfigureResultCode = {
+                                configureResultCode = null
+                            },
+                            onSettings = {
+                                startActivity(Intent(this, SettingsActivity::class.java))
+                            },
+                        )
                     }
                 }
             }

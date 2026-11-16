@@ -24,7 +24,6 @@ import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
 import androidx.annotation.ColorInt
-import androidx.annotation.RequiresApi
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
@@ -43,18 +42,34 @@ import javax.inject.Inject
 internal class DefaultMaterialColorSchemeResolver @Inject constructor(
     @param:ApplicationContext private val context: Context,
 ) : MaterialColorSchemeResolver {
-    override fun isDarkTheme(theme: Theme): Boolean = when (theme) {
-        Theme.System -> isSystemDarkTheme()
-        Theme.Light -> false
-        Theme.Dark -> true
-        Theme.Wallpaper -> getWallpaperDarkTheme() ?: isSystemDarkTheme()
+    override fun isDarkTheme(theme: Theme): Boolean {
+        fun isSystemDarkTheme(): Boolean = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK ==
+            Configuration.UI_MODE_NIGHT_YES
+
+        fun getWallpaperDarkTheme(): Boolean? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            WallpaperManager.getInstance(context)
+                .getWallpaperColors(WallpaperManager.FLAG_SYSTEM)
+                ?.colorHints
+                ?.let { colorHints ->
+                    colorHints and WallpaperColors.HINT_SUPPORTS_DARK_THEME != 0
+                }
+        } else {
+            null
+        }
+
+        return when (theme) {
+            Theme.System -> isSystemDarkTheme()
+            Theme.Light -> false
+            Theme.Dark -> true
+            Theme.Wallpaper -> getWallpaperDarkTheme() ?: isSystemDarkTheme()
+        }
     }
 
     override fun getWallpaperColorScheme(isDarkTheme: Boolean): ColorScheme? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         if (isDarkTheme) {
-            getDynamicDarkColorScheme()
+            dynamicDarkColorScheme(context)
         } else {
-            getDynamicLightColorScheme()
+            dynamicLightColorScheme(context)
         }
     } else {
         null
@@ -179,26 +194,6 @@ internal class DefaultMaterialColorSchemeResolver @Inject constructor(
             isDarkTheme = isDarkTheme,
         )
     }
-
-    private fun isSystemDarkTheme(): Boolean = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK ==
-        Configuration.UI_MODE_NIGHT_YES
-
-    private fun getWallpaperDarkTheme(): Boolean? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        WallpaperManager.getInstance(context)
-            .getWallpaperColors(WallpaperManager.FLAG_SYSTEM)
-            ?.colorHints
-            ?.let { colorHints ->
-                colorHints and WallpaperColors.HINT_SUPPORTS_DARK_THEME != 0
-            }
-    } else {
-        null
-    }
-
-    @RequiresApi(Build.VERSION_CODES.S)
-    private fun getDynamicLightColorScheme(): ColorScheme = dynamicLightColorScheme(context)
-
-    @RequiresApi(Build.VERSION_CODES.S)
-    private fun getDynamicDarkColorScheme(): ColorScheme = dynamicDarkColorScheme(context)
 
     private companion object {
         const val LIGHT_THEME_PRIMARY_COLOR = 0xFF4C662B.toInt()

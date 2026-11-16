@@ -18,21 +18,14 @@
 package com.eblan.launcher.activity.main
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.eblan.launcher.domain.usecase.home.GetApplicationThemeUseCase
-import com.eblan.launcher.model.ActivityUiState
+import com.eblan.launcher.domain.repository.UserDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
-class MainActivityViewModel @Inject constructor(getApplicationThemeUseCase: GetApplicationThemeUseCase) : ViewModel() {
-    val activityUiState =
-        getApplicationThemeUseCase().map(ActivityUiState::Success).stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = ActivityUiState.Loading,
-        )
+class MainActivityViewModel @Inject constructor(userDataRepository: UserDataRepository) : ViewModel() {
+    val generalSettingsFlow = userDataRepository.userDataFlow.map { userData ->
+        userData.generalSettings
+    }
 }
