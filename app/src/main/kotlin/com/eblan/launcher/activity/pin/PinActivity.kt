@@ -18,21 +18,26 @@
 package com.eblan.launcher.activity.pin
 
 import android.content.Intent
+import android.content.pm.LauncherApps.PinItemRequest
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.common.AndroidImageSerializer
 import com.eblan.launcher.common.MaterialColorSchemeResolver
-import com.eblan.launcher.designsystem.theme.EblanLauncherTheme
 import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
+import com.eblan.launcher.domain.model.userdata.ApplicationTheme
 import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.feature.pin.PinScreen
 import com.eblan.launcher.framework.launcherapps.AndroidLauncherAppsWrapper
@@ -117,49 +122,65 @@ class PinActivity : ComponentActivity() {
                     LocalIconKeyGenerator provides iconKeyGenerator,
                     LocalWallpaperManager provides androidWallpaperManagerWrapper,
                 ) {
-                    val colorSchemeResolver = LocalMaterialColorSchemeResolver.current
-                    val generalSettings: GeneralSettings? by viewModel.generalSettingsFlow.collectAsStateWithLifecycle(initialValue = null)
+                    val generalSettings: GeneralSettings? by viewModel.generalSettingsFlow.collectAsStateWithLifecycle(
+                        initialValue = null,
+                    )
+
                     val applicationTheme by produceApplicationThemeState(
                         theme = generalSettings?.theme,
                         systemBarsTheme = generalSettings?.systemBarsTheme,
                         colorSource = generalSettings?.colorSource,
                         customSeedColor = generalSettings?.customSeedColor,
                     )
+
                     val colorScheme by produceColorSchemeState(
                         theme = generalSettings?.theme,
                         colorSource = generalSettings?.colorSource,
                         customSeedColor = generalSettings?.customSeedColor,
                     )
 
-                    when {
-                        applicationTheme == null || colorScheme == null -> {}
+                    MainContent(
+                        applicationTheme = applicationTheme,
+                        colorScheme = colorScheme,
+                        pinItemRequest = pinItemRequest,
+                        homeIntent = homeIntent,
+                    )
+                }
+            }
+        }
+    }
 
-                        else -> {
-                            val resolvedApplicationTheme = checkNotNull(applicationTheme)
-                            SideEffect {
-                                handleEdgeToEdge(
-                                    theme = resolvedApplicationTheme.systemBarsTheme,
-                                    materialColorSchemeResolver = colorSchemeResolver,
-                                )
-                            }
+    @RequiresApi(Build.VERSION_CODES.O)
+    @Composable
+    private fun MainContent(
+        applicationTheme: ApplicationTheme?,
+        colorScheme: ColorScheme?,
+        pinItemRequest: PinItemRequest,
+        homeIntent: Intent,
+    ) {
+        when {
+            applicationTheme == null || colorScheme == null -> {}
 
-                            EblanLauncherTheme(
-                                colorScheme = checkNotNull(colorScheme),
-                            ) {
-                                PinScreen(
-                                    // Data and State
-                                    pinItemRequest = pinItemRequest,
-                                    // Callbacks
-                                    onDragStart = {
-                                        startActivity(homeIntent)
+            else -> {
+                val colorSchemeResolver = LocalMaterialColorSchemeResolver.current
+                SideEffect {
+                    handleEdgeToEdge(
+                        theme = applicationTheme.systemBarsTheme,
+                        materialColorSchemeResolver = colorSchemeResolver,
+                    )
+                }
 
-                                        finish()
-                                    },
-                                    onFinish = ::finish,
-                                )
-                            }
-                        }
-                    }
+                MaterialTheme(colorScheme = colorScheme) {
+                    PinScreen(
+                        // Data and State
+                        pinItemRequest = pinItemRequest,
+                        // Callbacks
+                        onDragStart = {
+                            startActivity(homeIntent)
+                            finish()
+                        },
+                        onFinish = ::finish,
+                    )
                 }
             }
         }

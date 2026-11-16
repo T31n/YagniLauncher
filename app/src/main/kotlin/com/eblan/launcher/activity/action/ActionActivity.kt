@@ -32,7 +32,10 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -43,10 +46,10 @@ import androidx.core.graphics.drawable.DrawableCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.activity.main.MainActivity
 import com.eblan.launcher.common.MaterialColorSchemeResolver
-import com.eblan.launcher.designsystem.theme.EblanLauncherTheme
 import com.eblan.launcher.designsystem.theme.getDefaultColorScheme
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
+import com.eblan.launcher.domain.model.userdata.ApplicationTheme
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.feature.action.ActionScreen
@@ -93,54 +96,63 @@ class ActionActivity : ComponentActivity() {
                 LocalMaterialColorSchemeResolver provides materialColorSchemeResolver,
                 LocalWallpaperManager provides androidWallpaperManagerWrapper,
             ) {
-                val colorSchemeResolver = LocalMaterialColorSchemeResolver.current
                 val generalSettings: GeneralSettings? by viewModel.generalSettingsFlow.collectAsStateWithLifecycle(initialValue = null)
+
                 val applicationTheme by produceApplicationThemeState(
                     theme = generalSettings?.theme,
                     systemBarsTheme = generalSettings?.systemBarsTheme,
                     colorSource = generalSettings?.colorSource,
                     customSeedColor = generalSettings?.customSeedColor,
                 )
+
                 val colorScheme by produceColorSchemeState(
                     theme = generalSettings?.theme,
                     colorSource = generalSettings?.colorSource,
                     customSeedColor = generalSettings?.customSeedColor,
                 )
 
-                when {
-                    applicationTheme == null || colorScheme == null -> {
-                        SideEffect {
-                            enableEdgeToEdge()
-                        }
+                MainContent(
+                    applicationTheme = applicationTheme,
+                    colorScheme = colorScheme,
+                )
+            }
+        }
+    }
 
-                        EblanLauncherTheme(
-                            colorScheme = getDefaultColorScheme(isSystemInDarkTheme()),
-                        ) {
-                            Surface(modifier = Modifier.fillMaxSize()) {
-                                Box(modifier = Modifier.fillMaxSize())
-                            }
-                        }
+    @Composable
+    private fun MainContent(
+        applicationTheme: ApplicationTheme?,
+        colorScheme: ColorScheme?,
+    ) {
+        when {
+            applicationTheme == null || colorScheme == null -> {
+                SideEffect {
+                    enableEdgeToEdge()
+                }
+
+                MaterialTheme(colorScheme = getDefaultColorScheme(isSystemInDarkTheme())) {
+                    Surface(modifier = Modifier.fillMaxSize()) {
+                        Box(modifier = Modifier.fillMaxSize())
                     }
+                }
+            }
 
-                    else -> {
-                        val resolvedApplicationTheme = checkNotNull(applicationTheme)
-                        SideEffect {
-                            handleEdgeToEdge(
-                                theme = resolvedApplicationTheme.systemBarsTheme,
-                                materialColorSchemeResolver = colorSchemeResolver,
-                            )
-                        }
+            else -> {
+                val colorSchemeResolver = LocalMaterialColorSchemeResolver.current
 
-                        EblanLauncherTheme(
-                            colorScheme = checkNotNull(colorScheme),
-                        ) {
-                            Surface {
-                                ActionScreen(
-                                    onFinish = ::finish,
-                                    onUpdateEblanAction = ::createShortcutResult,
-                                )
-                            }
-                        }
+                SideEffect {
+                    handleEdgeToEdge(
+                        theme = applicationTheme.systemBarsTheme,
+                        materialColorSchemeResolver = colorSchemeResolver,
+                    )
+                }
+
+                MaterialTheme(colorScheme = colorScheme) {
+                    Surface {
+                        ActionScreen(
+                            onFinish = ::finish,
+                            onUpdateEblanAction = ::createShortcutResult,
+                        )
                     }
                 }
             }

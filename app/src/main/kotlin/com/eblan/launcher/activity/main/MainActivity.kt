@@ -23,6 +23,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -33,10 +36,9 @@ import androidx.navigation.compose.rememberNavController
 import com.eblan.launcher.activity.settings.SettingsActivity
 import com.eblan.launcher.common.AndroidImageSerializer
 import com.eblan.launcher.common.MaterialColorSchemeResolver
-import com.eblan.launcher.designsystem.theme.EblanLauncherTheme
 import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
-import com.eblan.launcher.domain.model.userdata.GeneralSettings
+import com.eblan.launcher.domain.model.userdata.ApplicationTheme
 import com.eblan.launcher.framework.accessibilitymanager.AndroidAccessibilityManagerWrapper
 import com.eblan.launcher.framework.iconpackmanager.AndroidIconPackManager
 import com.eblan.launcher.framework.launcherapps.AndroidLauncherAppsWrapper
@@ -142,10 +144,9 @@ class MainActivity : AppCompatActivity() {
                 LocalIconKeyGenerator provides iconKeyGenerator,
                 LocalStatusBarManager provides androidStatusBarManagerWrapper,
             ) {
-                val colorSchemeResolver = LocalMaterialColorSchemeResolver.current
-                val navController = rememberNavController()
-
-                val generalSettings by viewModel.generalSettingsFlow.collectAsStateWithLifecycle(initialValue = null)
+                val generalSettings by viewModel.generalSettingsFlow.collectAsStateWithLifecycle(
+                    initialValue = null,
+                )
 
                 val applicationTheme by produceApplicationThemeState(
                     theme = generalSettings?.theme,
@@ -160,33 +161,10 @@ class MainActivity : AppCompatActivity() {
                     customSeedColor = generalSettings?.customSeedColor,
                 )
 
-                if (applicationTheme == null && colorScheme == null) {
-                    enableEdgeToEdge()
-                } else {
-                    val resolvedApplicationTheme = checkNotNull(applicationTheme)
-
-                    SideEffect {
-                        handleEdgeToEdge(
-                            theme = resolvedApplicationTheme.systemBarsTheme,
-                            materialColorSchemeResolver = colorSchemeResolver,
-                        )
-                    }
-
-                    EblanLauncherTheme(
-                        colorScheme = checkNotNull(colorScheme),
-                    ) {
-                        MainNavHost(
-                            configureResultCode = configureResultCode,
-                            navController = navController,
-                            onResetConfigureResultCode = {
-                                configureResultCode = null
-                            },
-                            onSettings = {
-                                startActivity(Intent(this, SettingsActivity::class.java))
-                            },
-                        )
-                    }
-                }
+                MainContent(
+                    applicationTheme = applicationTheme,
+                    colorScheme = colorScheme,
+                )
             }
         }
     }
@@ -197,6 +175,41 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == AndroidAppWidgetHostWrapper.CONFIGURE_REQUEST_CODE) {
             configureResultCode = resultCode
+        }
+    }
+
+    @Composable
+    private fun MainContent(
+        applicationTheme: ApplicationTheme?,
+        colorScheme: ColorScheme?,
+    ) {
+        when {
+            applicationTheme == null || colorScheme == null -> enableEdgeToEdge()
+
+            else -> {
+                val colorSchemeResolver = LocalMaterialColorSchemeResolver.current
+                val navController = rememberNavController()
+
+                SideEffect {
+                    handleEdgeToEdge(
+                        theme = applicationTheme.systemBarsTheme,
+                        materialColorSchemeResolver = colorSchemeResolver,
+                    )
+                }
+
+                MaterialTheme(colorScheme = colorScheme) {
+                    MainNavHost(
+                        configureResultCode = configureResultCode,
+                        navController = navController,
+                        onResetConfigureResultCode = {
+                            configureResultCode = null
+                        },
+                        onSettings = {
+                            startActivity(Intent(this, SettingsActivity::class.java))
+                        },
+                    )
+                }
+            }
         }
     }
 }
