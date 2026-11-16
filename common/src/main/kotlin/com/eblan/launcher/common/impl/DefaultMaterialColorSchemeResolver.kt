@@ -17,7 +17,6 @@
  */
 package com.eblan.launcher.common.impl
 
-import android.annotation.SuppressLint
 import android.app.WallpaperColors
 import android.app.WallpaperManager
 import android.content.Context
@@ -32,10 +31,9 @@ import androidx.compose.ui.graphics.toArgb
 import com.eblan.launcher.common.MaterialColorSchemeResolver
 import com.eblan.launcher.domain.model.userdata.ColorSource
 import com.eblan.launcher.domain.model.userdata.Theme
-import com.google.android.material.color.utilities.DynamicColor
-import com.google.android.material.color.utilities.Hct
-import com.google.android.material.color.utilities.MaterialDynamicColors
-import com.google.android.material.color.utilities.SchemeTonalSpot
+import com.materialkolor.PaletteStyle
+import com.materialkolor.dynamicColorScheme
+import com.materialkolor.dynamiccolor.ColorSpec
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
@@ -75,68 +73,18 @@ internal class DefaultMaterialColorSchemeResolver @Inject constructor(
         null
     }
 
-    @SuppressLint("RestrictedApi")
     override fun getCustomColorScheme(
         seedColor: Int,
         isDarkTheme: Boolean,
     ): ColorScheme {
         val opaqueSeedColor = (seedColor and 0x00FFFFFF) or 0xFF000000.toInt()
-        val sourceColor = Hct.fromInt(opaqueSeedColor)
-        val dynamicScheme = SchemeTonalSpot(sourceColor, isDarkTheme, 0.0)
-        val materialDynamicColors = MaterialDynamicColors()
-        val getColor = { dynamicColor: DynamicColor ->
-            Color(dynamicColor.getArgb(dynamicScheme))
-        }
 
-        return ColorScheme(
-            primary = getColor(materialDynamicColors.primary()),
-            onPrimary = getColor(materialDynamicColors.onPrimary()),
-            primaryContainer = getColor(materialDynamicColors.primaryContainer()),
-            onPrimaryContainer = getColor(materialDynamicColors.onPrimaryContainer()),
-            inversePrimary = getColor(materialDynamicColors.inversePrimary()),
-            secondary = getColor(materialDynamicColors.secondary()),
-            onSecondary = getColor(materialDynamicColors.onSecondary()),
-            secondaryContainer = getColor(materialDynamicColors.secondaryContainer()),
-            onSecondaryContainer = getColor(materialDynamicColors.onSecondaryContainer()),
-            tertiary = getColor(materialDynamicColors.tertiary()),
-            onTertiary = getColor(materialDynamicColors.onTertiary()),
-            tertiaryContainer = getColor(materialDynamicColors.tertiaryContainer()),
-            onTertiaryContainer = getColor(materialDynamicColors.onTertiaryContainer()),
-            background = getColor(materialDynamicColors.background()),
-            onBackground = getColor(materialDynamicColors.onBackground()),
-            surface = getColor(materialDynamicColors.surface()),
-            onSurface = getColor(materialDynamicColors.onSurface()),
-            surfaceVariant = getColor(materialDynamicColors.surfaceVariant()),
-            onSurfaceVariant = getColor(materialDynamicColors.onSurfaceVariant()),
-            surfaceTint = getColor(materialDynamicColors.surfaceTint()),
-            inverseSurface = getColor(materialDynamicColors.inverseSurface()),
-            inverseOnSurface = getColor(materialDynamicColors.inverseOnSurface()),
-            error = getColor(materialDynamicColors.error()),
-            onError = getColor(materialDynamicColors.onError()),
-            errorContainer = getColor(materialDynamicColors.errorContainer()),
-            onErrorContainer = getColor(materialDynamicColors.onErrorContainer()),
-            outline = getColor(materialDynamicColors.outline()),
-            outlineVariant = getColor(materialDynamicColors.outlineVariant()),
-            scrim = getColor(materialDynamicColors.scrim()),
-            surfaceBright = getColor(materialDynamicColors.surfaceBright()),
-            surfaceDim = getColor(materialDynamicColors.surfaceDim()),
-            surfaceContainer = getColor(materialDynamicColors.surfaceContainer()),
-            surfaceContainerHigh = getColor(materialDynamicColors.surfaceContainerHigh()),
-            surfaceContainerHighest = getColor(materialDynamicColors.surfaceContainerHighest()),
-            surfaceContainerLow = getColor(materialDynamicColors.surfaceContainerLow()),
-            surfaceContainerLowest = getColor(materialDynamicColors.surfaceContainerLowest()),
-            primaryFixed = getColor(materialDynamicColors.primaryFixed()),
-            primaryFixedDim = getColor(materialDynamicColors.primaryFixedDim()),
-            onPrimaryFixed = getColor(materialDynamicColors.onPrimaryFixed()),
-            onPrimaryFixedVariant = getColor(materialDynamicColors.onPrimaryFixedVariant()),
-            secondaryFixed = getColor(materialDynamicColors.secondaryFixed()),
-            secondaryFixedDim = getColor(materialDynamicColors.secondaryFixedDim()),
-            onSecondaryFixed = getColor(materialDynamicColors.onSecondaryFixed()),
-            onSecondaryFixedVariant = getColor(materialDynamicColors.onSecondaryFixedVariant()),
-            tertiaryFixed = getColor(materialDynamicColors.tertiaryFixed()),
-            tertiaryFixedDim = getColor(materialDynamicColors.tertiaryFixedDim()),
-            onTertiaryFixed = getColor(materialDynamicColors.onTertiaryFixed()),
-            onTertiaryFixedVariant = getColor(materialDynamicColors.onTertiaryFixedVariant()),
+        return dynamicColorScheme(
+            seedColor = Color(opaqueSeedColor),
+            isDark = isDarkTheme,
+            style = PaletteStyle.TonalSpot,
+            contrastLevel = 0.0,
+            specVersion = ColorSpec.SpecVersion.SPEC_2021,
         )
     }
 
@@ -147,6 +95,7 @@ internal class DefaultMaterialColorSchemeResolver @Inject constructor(
         theme: Theme,
     ): Int {
         val isDarkTheme = isDarkTheme(theme)
+
         val colorScheme = getColorScheme(
             colorSource = colorSource,
             customSeedColor = customSeedColor,
@@ -167,6 +116,7 @@ internal class DefaultMaterialColorSchemeResolver @Inject constructor(
         theme: Theme,
     ): Int {
         val isDarkTheme = isDarkTheme(theme)
+
         val colorScheme = getColorScheme(
             colorSource = colorSource,
             customSeedColor = customSeedColor,
