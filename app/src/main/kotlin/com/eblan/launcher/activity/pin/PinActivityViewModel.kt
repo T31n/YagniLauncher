@@ -19,8 +19,7 @@ package com.eblan.launcher.activity.pin
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.eblan.launcher.domain.model.userdata.ApplicationTheme
-import com.eblan.launcher.domain.repository.UserDataRepository
+import com.eblan.launcher.domain.usecase.home.GetApplicationThemeUseCase
 import com.eblan.launcher.model.ActivityUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -30,20 +29,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PinActivityViewModel @Inject constructor(
-    userDataRepository: UserDataRepository,
+    getApplicationThemeUseCase: GetApplicationThemeUseCase,
 ) : ViewModel() {
-    val activityUiState = userDataRepository.userDataFlow.map { userData ->
-        ActivityUiState.Success(
-            applicationTheme = ApplicationTheme(
-                theme = userData.generalSettings.theme,
-                systemBarsTheme = userData.generalSettings.systemBarsTheme,
-                colorSource = userData.generalSettings.colorSource,
-                customSeedColor = userData.generalSettings.customSeedColor,
-            ),
+    val activityUiState = getApplicationThemeUseCase()
+        .map(ActivityUiState::Success)
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = ActivityUiState.Loading,
         )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = ActivityUiState.Loading,
-    )
 }

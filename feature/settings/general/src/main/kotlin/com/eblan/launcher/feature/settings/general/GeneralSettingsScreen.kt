@@ -449,6 +449,7 @@ private fun Theme.getTitle() = when (this) {
     Theme.System -> stringResource(commonR.string.system)
     Theme.Light -> stringResource(commonR.string.light)
     Theme.Dark -> stringResource(commonR.string.dark)
+    Theme.Wallpaper -> stringResource(R.string.wallpaper)
 }
 
 @Composable

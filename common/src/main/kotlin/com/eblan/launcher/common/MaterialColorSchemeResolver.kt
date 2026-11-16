@@ -18,6 +18,8 @@
 package com.eblan.launcher.common
 
 import android.annotation.SuppressLint
+import android.app.WallpaperColors
+import android.app.WallpaperManager
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
@@ -36,6 +38,16 @@ import com.google.android.material.color.utilities.MaterialDynamicColors
 import com.google.android.material.color.utilities.SchemeTonalSpot
 
 object MaterialColorSchemeResolver {
+    fun isDarkTheme(
+        context: Context,
+        theme: Theme,
+    ): Boolean = when (theme) {
+        Theme.System -> isSystemDarkTheme(context)
+        Theme.Light -> false
+        Theme.Dark -> true
+        Theme.Wallpaper -> getWallpaperDarkTheme(context) ?: isSystemDarkTheme(context)
+    }
+
     fun getWallpaperColorScheme(
         context: Context,
         isDarkTheme: Boolean,
@@ -121,15 +133,7 @@ object MaterialColorSchemeResolver {
         customSeedColor: Int,
         theme: Theme,
     ): Int {
-        val isDarkTheme = when (theme) {
-            Theme.System ->
-                context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK ==
-                    Configuration.UI_MODE_NIGHT_YES
-
-            Theme.Light -> false
-
-            Theme.Dark -> true
-        }
+        val isDarkTheme = isDarkTheme(context, theme)
 
         return when (colorSource) {
             ColorSource.None -> if (isDarkTheme) {
@@ -159,6 +163,20 @@ object MaterialColorSchemeResolver {
 
     @RequiresApi(Build.VERSION_CODES.S)
     private fun getDynamicDarkColorScheme(context: Context): ColorScheme = dynamicDarkColorScheme(context)
+
+    private fun isSystemDarkTheme(context: Context): Boolean = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK ==
+        Configuration.UI_MODE_NIGHT_YES
+
+    private fun getWallpaperDarkTheme(context: Context): Boolean? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        WallpaperManager.getInstance(context)
+            .getWallpaperColors(WallpaperManager.FLAG_SYSTEM)
+            ?.colorHints
+            ?.let { colorHints ->
+                colorHints and WallpaperColors.HINT_SUPPORTS_DARK_THEME != 0
+            }
+    } else {
+        null
+    }
 
     private const val LIGHT_THEME_PRIMARY_COLOR = 0xFF4C662B.toInt()
     private const val DARK_THEME_PRIMARY_COLOR = 0xFFB1D18A.toInt()

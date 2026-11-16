@@ -19,7 +19,6 @@ package com.eblan.launcher.designsystem.theme
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -118,13 +117,9 @@ fun EblanLauncherTheme(
     content: @Composable () -> Unit,
 ) {
     val context = LocalContext.current
-    val isDarkTheme = when (theme) {
-        Theme.System -> isSystemInDarkTheme()
-        Theme.Light -> false
-        Theme.Dark -> true
-    }
+    val isDarkTheme = MaterialColorSchemeResolver.isDarkTheme(context, theme)
     val colorScheme = when (colorSource) {
-        ColorSource.None -> getGreenColorScheme(theme = theme)
+        ColorSource.None -> if (isDarkTheme) DarkColorScheme else LightColorScheme
 
         ColorSource.Wallpaper -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             getDynamicColorScheme(
@@ -132,7 +127,7 @@ fun EblanLauncherTheme(
                 isDarkTheme = isDarkTheme,
             )
         } else {
-            getGreenColorScheme(theme = theme)
+            if (isDarkTheme) DarkColorScheme else LightColorScheme
         }
 
         ColorSource.Custom -> remember(customSeedColor, isDarkTheme) {
@@ -150,12 +145,6 @@ fun EblanLauncherTheme(
 }
 
 @Composable
-private fun getGreenColorScheme(theme: Theme): ColorScheme = when (theme) {
-    Theme.System -> if (isSystemInDarkTheme()) DarkColorScheme else LightColorScheme
-    Theme.Light -> LightColorScheme
-    Theme.Dark -> DarkColorScheme
-}
-
 @RequiresApi(Build.VERSION_CODES.S)
 private fun getDynamicColorScheme(
     context: android.content.Context,

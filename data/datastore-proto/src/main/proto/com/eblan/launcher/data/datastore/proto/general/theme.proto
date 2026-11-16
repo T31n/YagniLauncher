@@ -7,4 +7,5 @@ enum ThemeProto {
   ThemeSystem = 0;
   ThemeLight = 1;
   ThemeDark = 2;
+  ThemeWallpaper = 3;
 }

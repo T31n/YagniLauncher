@@ -21,6 +21,7 @@ import android.graphics.Color
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
+import com.eblan.launcher.common.MaterialColorSchemeResolver
 import com.eblan.launcher.domain.model.userdata.Theme
 
 fun ComponentActivity.handleEdgeToEdge(theme: Theme) {
@@ -44,5 +45,13 @@ fun ComponentActivity.handleEdgeToEdge(theme: Theme) {
                 statusBarStyle = SystemBarStyle.dark(scrim = Color.TRANSPARENT),
                 navigationBarStyle = SystemBarStyle.dark(scrim = Color.TRANSPARENT),
             )
+
+        Theme.Wallpaper -> handleEdgeToEdge(
+            theme = if (MaterialColorSchemeResolver.isDarkTheme(this, theme)) {
+                Theme.Dark
+            } else {
+                Theme.Light
+            },
+        )
     }
 }

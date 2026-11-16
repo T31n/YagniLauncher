@@ -46,8 +46,8 @@ import javax.inject.Inject
 
 class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
     private val defaultGeneralSettingsProto = GeneralSettingsProto.newBuilder().apply {
-        themeProto = ThemeProto.ThemeSystem
-        systemBarsThemeProto = ThemeProto.ThemeSystem
+        themeProto = ThemeProto.ThemeWallpaper
+        systemBarsThemeProto = ThemeProto.ThemeWallpaper
         colorSourceProto = ColorSourceProto.ColorSourceNone
         customSeedColor = 0xFF6750A4.toInt()
         iconPackPackageName = ""

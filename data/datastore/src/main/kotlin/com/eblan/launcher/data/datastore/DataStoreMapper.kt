@@ -276,6 +276,7 @@ internal fun Theme.toThemeProto(): ThemeProto = when (this) {
     Theme.System -> ThemeProto.ThemeSystem
     Theme.Light -> ThemeProto.ThemeLight
     Theme.Dark -> ThemeProto.ThemeDark
+    Theme.Wallpaper -> ThemeProto.ThemeWallpaper
 }
 
 private fun PagerTransitionEffect.toPagerTransitionEffectProto(): PagerTransitionEffectProto = when (this) {
@@ -335,6 +336,7 @@ private fun ThemeProto.toTheme(): Theme = when (this) {
     ThemeProto.ThemeSystem, ThemeProto.UNRECOGNIZED -> Theme.System
     ThemeProto.ThemeLight -> Theme.Light
     ThemeProto.ThemeDark -> Theme.Dark
+    ThemeProto.ThemeWallpaper -> Theme.Wallpaper
 }
 
 private fun TextColor.toTextColorProto(): TextColorProto = when (this) {

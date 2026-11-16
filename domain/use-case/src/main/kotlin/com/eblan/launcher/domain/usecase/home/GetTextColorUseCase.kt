@@ -76,7 +76,9 @@ class GetTextColorUseCase @Inject constructor(
 
     /** Maps an explicit theme to its text color, consulting system resources for system mode. */
     private fun getTextColorFromSystemTheme(theme: Theme): TextColor = when (theme) {
-        Theme.System -> getTextColorFromSystemTheme(
+        Theme.System,
+        Theme.Wallpaper,
+        -> getTextColorFromSystemTheme(
             theme = if (resourcesWrapper.isDarkTheme()) {
                 Theme.Dark
             } else {

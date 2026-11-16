@@ -20,80 +20,59 @@ package com.eblan.launcher.domain.usecase.home
 import com.eblan.launcher.domain.framework.ResourcesWrapper
 import com.eblan.launcher.domain.framework.WallpaperManagerWrapper
 import com.eblan.launcher.domain.model.userdata.ApplicationTheme
-import com.eblan.launcher.domain.model.userdata.ColorSource
 import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.domain.repository.UserDataRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 
-/** Resolves the launcher theme from the user's preference and system wallpaper hints. */
+/** Resolves the launcher and system-bar themes from user preferences, device mode, and wallpaper hints. */
 class GetApplicationThemeUseCase @Inject constructor(
     private val userDataRepository: UserDataRepository,
     private val wallpaperManagerWrapper: WallpaperManagerWrapper,
     private val resourcesWrapper: ResourcesWrapper,
 ) {
-    /** Emits the selected theme and colors, updating when wallpaper color hints change. */
+    /** Emits resolved themes and colors, updating when wallpaper color hints change. */
     operator fun invoke(): Flow<ApplicationTheme> = combine(
         userDataRepository.userDataFlow,
         wallpaperManagerWrapper.getColorsChanged(),
     ) { userData, colorHints ->
-        when (userData.generalSettings.theme) {
-            Theme.System -> {
-                getApplicationThemeByColorHints(
-                    colorHints = colorHints,
-                    colorSource = userData.generalSettings.colorSource,
-                    customSeedColor = userData.generalSettings.customSeedColor,
-                    systemBarsTheme = userData.generalSettings.systemBarsTheme,
-                )
-            }
-
-            Theme.Light, Theme.Dark -> {
-                ApplicationTheme(
-                    theme = userData.generalSettings.theme,
-                    systemBarsTheme = userData.generalSettings.systemBarsTheme,
-                    colorSource = userData.generalSettings.colorSource,
-                    customSeedColor = userData.generalSettings.customSeedColor,
-                )
-            }
-        }
+        ApplicationTheme(
+            theme = resolveTheme(
+                theme = userData.generalSettings.theme,
+                colorHints = colorHints,
+            ),
+            systemBarsTheme = resolveTheme(
+                theme = userData.generalSettings.systemBarsTheme,
+                colorHints = colorHints,
+            ),
+            colorSource = userData.generalSettings.colorSource,
+            customSeedColor = userData.generalSettings.customSeedColor,
+        )
     }
 
-    /** Resolves system mode from wallpaper hints, falling back to the current system theme. */
-    private fun getApplicationThemeByColorHints(
+    private fun resolveTheme(
+        theme: Theme,
         colorHints: Int?,
-        colorSource: ColorSource,
-        customSeedColor: Int,
-        systemBarsTheme: Theme,
-    ): ApplicationTheme = if (colorHints != null) {
-        val hintSupportsDarkTheme =
-            colorHints and wallpaperManagerWrapper.hintSupportsDarkTheme != 0
+    ): Theme = when (theme) {
+        Theme.System -> getSystemTheme()
 
-        if (hintSupportsDarkTheme) {
-            ApplicationTheme(
-                theme = Theme.Dark,
-                systemBarsTheme = systemBarsTheme,
-                colorSource = colorSource,
-                customSeedColor = customSeedColor,
-            )
-        } else {
-            ApplicationTheme(
-                theme = Theme.Light,
-                systemBarsTheme = systemBarsTheme,
-                colorSource = colorSource,
-                customSeedColor = customSeedColor,
-            )
-        }
-    } else {
-        ApplicationTheme(
-            theme = if (resourcesWrapper.isDarkTheme()) {
+        Theme.Light -> Theme.Light
+
+        Theme.Dark -> Theme.Dark
+
+        Theme.Wallpaper -> colorHints?.let { wallpaperColorHints ->
+            if (wallpaperColorHints and wallpaperManagerWrapper.hintSupportsDarkTheme != 0) {
                 Theme.Dark
             } else {
                 Theme.Light
-            },
-            systemBarsTheme = systemBarsTheme,
-            colorSource = colorSource,
-            customSeedColor = customSeedColor,
-        )
+            }
+        } ?: getSystemTheme()
+    }
+
+    private fun getSystemTheme(): Theme = if (resourcesWrapper.isDarkTheme()) {
+        Theme.Dark
+    } else {
+        Theme.Light
     }
 }

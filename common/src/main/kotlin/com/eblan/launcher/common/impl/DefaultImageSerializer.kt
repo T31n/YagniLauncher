@@ -17,6 +17,7 @@
  */
 package com.eblan.launcher.common.impl
 
+import android.content.Context
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -36,11 +37,12 @@ import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.drawable.toDrawable
 import com.eblan.launcher.common.AndroidImageSerializer
+import com.eblan.launcher.common.MaterialColorSchemeResolver
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
-import com.eblan.launcher.domain.framework.ResourcesWrapper
 import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.Theme
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
@@ -51,7 +53,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 internal class DefaultImageSerializer @Inject constructor(
-    private val resourcesWrapper: ResourcesWrapper,
+    @param:ApplicationContext private val context: Context,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : AndroidImageSerializer {
@@ -497,11 +499,7 @@ internal class DefaultImageSerializer @Inject constructor(
         theme: Theme,
         iconTintColor: Int,
     ): Int {
-        val isDarkTheme = when (theme) {
-            Theme.System -> resourcesWrapper.isDarkTheme()
-            Theme.Light -> false
-            Theme.Dark -> true
-        }
+        val isDarkTheme = MaterialColorSchemeResolver.isDarkTheme(context, theme)
 
         val baseColor = if (isDarkTheme) Color.BLACK else Color.WHITE
         var tintAmount =

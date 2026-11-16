@@ -21,4 +21,5 @@ enum class Theme {
     System,
     Light,
     Dark,
+    Wallpaper,
 }
