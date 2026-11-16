@@ -47,13 +47,14 @@ import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.AppDrawerType
+import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.feature.settings.appdrawer.dialog.EditHorizontalGridDialog
 import com.eblan.launcher.feature.settings.appdrawer.dialog.EditVerticalGridDialog
 import com.eblan.launcher.feature.settings.appdrawer.dialog.HiddenEblanApplicationInfosDialog
 import com.eblan.launcher.feature.settings.appdrawer.dialog.ManageFoldersDialog
 import com.eblan.launcher.feature.settings.appdrawer.dialog.ManageTagsDialog
 import com.eblan.launcher.feature.settings.appdrawer.model.AppDrawerSettingsUiState
-import com.eblan.launcher.ui.dialog.BackgroundColorDialog
+import com.eblan.launcher.ui.dialog.ColorPickerDialog
 import com.eblan.launcher.ui.dialog.getTitle
 import com.eblan.launcher.ui.settings.GridItemSettings
 import com.eblan.launcher.ui.settings.SettingsColumnItem
@@ -162,7 +163,7 @@ private fun Success(
     var showVerticalGridDialog by remember { mutableStateOf(false) }
     var showHorizontalGridDialog by remember { mutableStateOf(false) }
     var showHiddenEblanApplicationInfosDialog by remember { mutableStateOf(false) }
-    var showBackgroundColorDialog by remember { mutableStateOf(false) }
+    var showBackgroundColorPickerDialog by remember { mutableStateOf(false) }
     var showManageTagsDialog by remember { mutableStateOf(false) }
     var showManageFoldersDialog by remember { mutableStateOf(false) }
 
@@ -239,15 +240,25 @@ private fun Success(
             )
         }
 
-        SettingsColumnItem(
+        SettingsDropdownItem(
             // Content
             title = stringResource(commonR.string.background_color),
-            subtitle = appDrawerSettings.backgroundColor.getTitle(),
+            options = BackgroundColor.entries,
+            selected = appDrawerSettings.backgroundColor,
+            label = {
+                it.getTitle()
+            },
             // Layout
             shape = settingsMiddleItemShape,
             // Actions
-            onClick = {
-                showBackgroundColorDialog = true
+            onSelectedChange = {
+                if (it == BackgroundColor.Custom) {
+                    showBackgroundColorPickerDialog = true
+                } else {
+                    onUpdateAppDrawerSettings(
+                        appDrawerSettings.copy(backgroundColor = it),
+                    )
+                }
             },
         )
 
@@ -405,22 +416,22 @@ private fun Success(
         )
     }
 
-    if (showBackgroundColorDialog) {
-        BackgroundColorDialog(
+    if (showBackgroundColorPickerDialog) {
+        ColorPickerDialog(
             // Content
             title = stringResource(commonR.string.background_color),
             // State
-            backgroundColor = appDrawerSettings.backgroundColor,
-            customBackgroundColor = appDrawerSettings.customBackgroundColor,
+            customColor = appDrawerSettings.customBackgroundColor,
+            showAlphaSlider = true,
             // Actions
             onDismissRequest = {
-                showBackgroundColorDialog = false
+                showBackgroundColorPickerDialog = false
             },
-            onUpdateClick = { backgroundColor, customColor ->
+            onSelectColor = {
                 onUpdateAppDrawerSettings(
                     appDrawerSettings.copy(
-                        backgroundColor = backgroundColor,
-                        customBackgroundColor = customColor,
+                        backgroundColor = BackgroundColor.Custom,
+                        customBackgroundColor = it,
                     ),
                 )
             },
