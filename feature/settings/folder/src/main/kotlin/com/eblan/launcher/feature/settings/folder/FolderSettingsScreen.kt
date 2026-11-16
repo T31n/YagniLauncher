@@ -305,6 +305,7 @@ private fun Success(
             title = stringResource(R.string.folder_border_color),
             // State
             customColor = folderSettings.customFolderBorderColor,
+            showAlphaSlider = true,
             // Callbacks
             onDismissRequest = {
                 showFolderBorderColorDialog = false

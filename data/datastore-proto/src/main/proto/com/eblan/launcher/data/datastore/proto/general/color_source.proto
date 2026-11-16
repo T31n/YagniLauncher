@@ -3,9 +3,8 @@ syntax = "proto3";
 option java_package = "com.eblan.launcher.data.datastore.proto.general";
 option java_multiple_files = true;
 
-enum IconTintProto {
-  IconTintNone = 0;
-  reserved 1;
-  reserved "IconTintSystem";
-  IconTintCustom = 2;
+enum ColorSourceProto {
+  ColorSourceNone = 0;
+  ColorSourceWallpaper = 1;
+  ColorSourceCustom = 2;
 }

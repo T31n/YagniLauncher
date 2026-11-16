@@ -24,14 +24,15 @@
     <string name="default_icon_pack">Domyślny</string>
     <string name="theme">Motyw</string>
     <string name="system_bars_theme">Motyw pasków systemowych</string>
-    <string name="dynamic_theme">Motyw dynamiczny</string>
+    <string name="color_source">Źródło kolorów</string>
+    <string name="wallpaper">Tapeta</string>
     <string name="language">Język</string>
     <string name="system_default">Domyślny systemowy</string>
     <string name="language_name">Polski</string>
     <string name="notification_dots">Kropki powiadomień</string>
     <string name="show_notification_dots">Pokazuj kropki powiadomień</string>
     <string name="apply_icons_from_supported_icon_packs">Zastosuj ikony ze wspieranych paczek ikon</string>
-    <string name="adapt_colors_to_your_wallpaper_automatically">Automatycznie dopasuj kolory do tapety</string>
+    <string name="tint_icons_using_the_selected_color_source">Barw ikony kolorem z wybranego źródła</string>
     <string name="icon_tint">Odcień ikon</string>
     <string name="fallback_icon_tint">Zapasowy odcień ikon</string>
     <string name="use_the_fallback_icon_tint">Użyj zapasowego odcienia ikon</string>

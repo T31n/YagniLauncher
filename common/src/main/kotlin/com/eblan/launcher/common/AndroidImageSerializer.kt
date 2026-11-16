@@ -19,8 +19,8 @@ package com.eblan.launcher.common
 
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import com.eblan.launcher.domain.model.userdata.ColorSource
 import com.eblan.launcher.domain.model.userdata.IconShape
-import com.eblan.launcher.domain.model.userdata.IconTint
 import com.eblan.launcher.domain.model.userdata.Theme
 import java.io.File
 
@@ -41,8 +41,8 @@ interface AndroidImageSerializer {
 
     fun getTintedAndShapedDrawable(
         drawable: Drawable,
-        iconTint: IconTint,
-        customIconTint: Int,
+        colorSource: ColorSource,
+        customSeedColor: Int,
         fallbackIconTint: Boolean,
         theme: Theme,
         iconShape: IconShape,

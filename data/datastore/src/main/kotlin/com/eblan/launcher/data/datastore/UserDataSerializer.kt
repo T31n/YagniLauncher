@@ -24,9 +24,9 @@ import com.eblan.launcher.data.datastore.proto.appdrawer.AppDrawerSettingsProto
 import com.eblan.launcher.data.datastore.proto.appdrawer.AppDrawerTypeProto
 import com.eblan.launcher.data.datastore.proto.experimental.ExperimentalSettingsProto
 import com.eblan.launcher.data.datastore.proto.folder.FolderSettingsProto
+import com.eblan.launcher.data.datastore.proto.general.ColorSourceProto
 import com.eblan.launcher.data.datastore.proto.general.GeneralSettingsProto
 import com.eblan.launcher.data.datastore.proto.general.IconShapeProto
-import com.eblan.launcher.data.datastore.proto.general.IconTintProto
 import com.eblan.launcher.data.datastore.proto.general.ThemeProto
 import com.eblan.launcher.data.datastore.proto.gesture.GestureSettingsProto
 import com.eblan.launcher.data.datastore.proto.home.GridItemSettingsProto
@@ -46,12 +46,12 @@ import javax.inject.Inject
 
 class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
     private val defaultGeneralSettingsProto = GeneralSettingsProto.newBuilder().apply {
-        themeProto = ThemeProto.ThemeSystem
-        systemBarsThemeProto = ThemeProto.ThemeSystem
-        dynamicTheme = false
+        themeProto = ThemeProto.ThemeWallpaper
+        systemBarsThemeProto = ThemeProto.ThemeWallpaper
+        colorSourceProto = ColorSourceProto.ColorSourceNone
+        customSeedColor = 0xFF6750A4.toInt()
         iconPackPackageName = ""
-        iconTintProto = IconTintProto.IconTintNone
-        customIconTint = 0
+        iconTint = false
         fallbackIconTint = false
         iconShapeProto = IconShapeProto.IconShapeNone
     }.build()

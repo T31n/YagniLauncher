@@ -28,5 +28,4 @@ android {
 dependencies {
     // Projects
     implementation(projects.domain.common)
-    implementation(projects.domain.framework)
 }

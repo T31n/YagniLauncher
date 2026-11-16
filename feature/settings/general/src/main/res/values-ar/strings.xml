@@ -27,7 +27,7 @@
     <string name="shield">درع</string>
     <string name="fallback_icon_tint">تظليل الايقونه</string>
     <string name="please_import_an_icon_pack_first">الرجاء استيراد حزمة الايقونات اولا</string>
-    <string name="adapt_colors_to_your_wallpaper_automatically">تكييف الالوان مع خلفية الشاشة</string>
+    <string name="tint_icons_using_the_selected_color_source">صبغ الأيقونات باستخدام مصدر اللون المحدد</string>
     <string name="select_icon_pack">اختار حزمة الايقونات</string>
     <string name="clover">ورقة شجر</string>
     <string name="flower">وردة</string>
@@ -36,7 +36,8 @@
     <string name="no_icon_packs">لا يوجد حزمة ايقونات</string>
     <string name="theme">المظهر العام</string>
     <string name="system_bars_theme">مظهر أشرطة النظام</string>
-    <string name="dynamic_theme">المظهر العام الدايناميكي</string>
+    <string name="color_source">مصدر اللون</string>
+    <string name="wallpaper">خلفية الشاشة</string>
     <string name="language">اللغة</string>
     <string name="system_default">افتراضي النظام</string>
     <string name="language_name">العربية</string>

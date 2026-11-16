@@ -21,6 +21,7 @@ import android.Manifest
 import android.os.Build
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -32,8 +33,10 @@ import androidx.compose.foundation.layout.union
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -65,6 +68,7 @@ import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfo
 import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfoByGroup
 import com.eblan.launcher.domain.model.userdata.HomeData
 import com.eblan.launcher.domain.model.userdata.TextColor
+import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
 import com.eblan.launcher.feature.home.dialog.TextDialog
 import com.eblan.launcher.feature.home.model.GridItemSource
@@ -74,6 +78,7 @@ import com.eblan.launcher.feature.home.screen.editpage.EditDockGridPageScreen
 import com.eblan.launcher.feature.home.screen.editpage.EditGridPageScreen
 import com.eblan.launcher.feature.home.screen.loading.LoadingScreen
 import com.eblan.launcher.feature.home.screen.pager.PagerScreen
+import com.eblan.launcher.ui.local.LocalWallpaperManager
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 
@@ -108,7 +113,6 @@ internal fun HomeRoute(
     val resizeGridItem by viewModel.resizeGridItem.collectAsStateWithLifecycle()
     val gridItemSource by viewModel.gridItemSource.collectAsStateWithLifecycle()
     val isVisibleOverlay by viewModel.isVisibleOverlay.collectAsStateWithLifecycle()
-    val textColor by viewModel.textColor.collectAsStateWithLifecycle()
     val folderEblanApplicationInfoPopups by viewModel.folderEblanApplicationInfoPopups.collectAsStateWithLifecycle()
     val folderEblanApplicationInfoEntries by viewModel.folderEblanApplicationInfoEntries.collectAsStateWithLifecycle()
     val moveFolderEblanApplicationInfoGridItemResult by viewModel.moveFolderEblanApplicationInfoGridItemResult.collectAsStateWithLifecycle()
@@ -117,7 +121,6 @@ internal fun HomeRoute(
         // General State
         homeUiState = homeUiState,
         screen = screen,
-        textColor = textColor,
         isVisibleOverlay = isVisibleOverlay,
         configureResultCode = configureResultCode,
         modifier = modifier,
@@ -204,7 +207,6 @@ internal fun HomeScreen(
     // General State
     homeUiState: HomeUiState,
     screen: Screen,
-    textColor: TextColor,
     isVisibleOverlay: Boolean,
     configureResultCode: Int?,
     modifier: Modifier = Modifier,
@@ -374,7 +376,6 @@ internal fun HomeScreen(
                 screenWidth = screenIntSize.width,
                 screenHeight = screenIntSize.height,
                 paddingValues = paddingValues,
-                textColor = textColor,
                 isVisibleOverlay = isVisibleOverlay,
                 configureResultCode = configureResultCode,
                 pageItems = pageItems,
@@ -470,7 +471,6 @@ private fun Success(
     screenWidth: Int,
     screenHeight: Int,
     paddingValues: PaddingValues,
-    textColor: TextColor,
     isVisibleOverlay: Boolean,
     configureResultCode: Int?,
     pageItems: List<PageItem>?,
@@ -627,6 +627,11 @@ private fun Success(
 ) {
     val activity = LocalActivity.current
     val homeSettings = homeData.userData.homeSettings
+
+    val textColor by produceHomeTextColorState(
+        configuredTextColor = homeData.userData.homeSettings.gridItemSettings.textColor,
+        theme = homeData.userData.generalSettings.theme,
+    )
 
     DisposableEffect(
         key1 = activity,
@@ -859,5 +864,49 @@ private fun RequestPermissionsEffect(modifier: Modifier = Modifier) {
                 showTextDialog = false
             },
         )
+    }
+}
+
+@Composable
+fun produceHomeTextColorState(
+    configuredTextColor: TextColor?,
+    theme: Theme?,
+): State<TextColor> {
+    val wallpaperManager = LocalWallpaperManager.current
+    val isSystemDarkTheme = isSystemInDarkTheme()
+
+    return produceState(
+        TextColor.System,
+        configuredTextColor,
+        theme,
+        wallpaperManager,
+        isSystemDarkTheme,
+    ) {
+        if (configuredTextColor == null || theme == null) {
+            value = TextColor.System
+            return@produceState
+        }
+
+        wallpaperManager.getColorsChanged().collect { colorHints ->
+            value = if (configuredTextColor != TextColor.System) {
+                configuredTextColor
+            } else if (colorHints != null) {
+                if (colorHints and wallpaperManager.hintSupportsDarkText != 0) {
+                    TextColor.Dark
+                } else {
+                    TextColor.Light
+                }
+            } else {
+                when (theme) {
+                    Theme.Light -> TextColor.Light
+
+                    Theme.Dark -> TextColor.Dark
+
+                    Theme.System,
+                    Theme.Wallpaper,
+                    -> if (isSystemDarkTheme) TextColor.Dark else TextColor.Light
+                }
+            }
+        }
     }
 }

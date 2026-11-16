@@ -17,19 +17,10 @@
  */
 package com.eblan.launcher.designsystem.theme
 
-import android.os.Build
-import androidx.annotation.RequiresApi
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import com.eblan.launcher.domain.model.userdata.Theme
 
 private val LightColorScheme = lightColorScheme(
     primary = Color(0xFF4C662B),
@@ -107,47 +98,4 @@ private val DarkColorScheme = darkColorScheme(
     surfaceContainerHighest = Color(0xFF33362E),
 )
 
-@Composable
-fun EblanLauncherTheme(
-    theme: Theme,
-    dynamicTheme: Boolean,
-    content: @Composable () -> Unit,
-) {
-    val colorScheme = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && dynamicTheme) {
-        getDynamicColorScheme(theme = theme)
-    } else {
-        getGreenColorScheme(theme = theme)
-    }
-
-    MaterialTheme(
-        colorScheme = colorScheme,
-        content = content,
-    )
-}
-
-@Composable
-private fun getGreenColorScheme(theme: Theme): ColorScheme = when (theme) {
-    Theme.System -> if (isSystemInDarkTheme()) DarkColorScheme else LightColorScheme
-    Theme.Light -> LightColorScheme
-    Theme.Dark -> DarkColorScheme
-}
-
-@RequiresApi(Build.VERSION_CODES.S)
-@Composable
-private fun getDynamicColorScheme(theme: Theme): ColorScheme {
-    val context = LocalContext.current
-
-    return when (theme) {
-        Theme.System -> if (isSystemInDarkTheme()) {
-            dynamicDarkColorScheme(context)
-        } else {
-            dynamicLightColorScheme(
-                context,
-            )
-        }
-
-        Theme.Light -> dynamicLightColorScheme(context)
-
-        Theme.Dark -> dynamicDarkColorScheme(context)
-    }
-}
+fun getDefaultColorScheme(isDarkTheme: Boolean): ColorScheme = if (isDarkTheme) DarkColorScheme else LightColorScheme

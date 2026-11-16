@@ -29,9 +29,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -41,17 +45,23 @@ import androidx.core.graphics.createBitmap
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.activity.main.MainActivity
-import com.eblan.launcher.designsystem.theme.EblanLauncherTheme
+import com.eblan.launcher.common.MaterialColorSchemeResolver
+import com.eblan.launcher.designsystem.theme.getDefaultColorScheme
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
+import com.eblan.launcher.domain.model.userdata.ApplicationTheme
 import com.eblan.launcher.domain.model.userdata.EblanAction
-import com.eblan.launcher.domain.model.userdata.Theme
+import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.feature.action.ActionScreen
 import com.eblan.launcher.framework.accessibilitymanager.AndroidAccessibilityManagerWrapper
-import com.eblan.launcher.model.ActivityUiState
+import com.eblan.launcher.framework.wallpapermanager.AndroidWallpaperManagerWrapper
 import com.eblan.launcher.ui.local.LocalAccessibilityManager
+import com.eblan.launcher.ui.local.LocalMaterialColorSchemeResolver
+import com.eblan.launcher.ui.local.LocalWallpaperManager
 import com.eblan.launcher.ui.settings.getEblanActionTypeSubtitle
 import com.eblan.launcher.util.handleEdgeToEdge
+import com.eblan.launcher.util.produceApplicationThemeState
+import com.eblan.launcher.util.produceColorSchemeState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -71,47 +81,78 @@ class ActionActivity : ComponentActivity() {
     @Inject
     lateinit var androidAccessibilityManagerWrapper: AndroidAccessibilityManagerWrapper
 
+    @Inject
+    lateinit var materialColorSchemeResolver: MaterialColorSchemeResolver
+
+    @Inject
+    lateinit var androidWallpaperManagerWrapper: AndroidWallpaperManagerWrapper
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
             CompositionLocalProvider(
                 LocalAccessibilityManager provides androidAccessibilityManagerWrapper,
+                LocalMaterialColorSchemeResolver provides materialColorSchemeResolver,
+                LocalWallpaperManager provides androidWallpaperManagerWrapper,
             ) {
-                val activityUiState by viewModel.activityUiState.collectAsStateWithLifecycle()
+                val generalSettings: GeneralSettings? by viewModel.generalSettingsFlow.collectAsStateWithLifecycle(initialValue = null)
 
-                when (val state = activityUiState) {
-                    ActivityUiState.Loading -> {
-                        SideEffect {
-                            enableEdgeToEdge()
-                        }
+                val applicationTheme by produceApplicationThemeState(
+                    theme = generalSettings?.theme,
+                    systemBarsTheme = generalSettings?.systemBarsTheme,
+                    colorSource = generalSettings?.colorSource,
+                    customSeedColor = generalSettings?.customSeedColor,
+                )
 
-                        EblanLauncherTheme(
-                            theme = Theme.System,
-                            dynamicTheme = false,
-                        ) {
-                            Surface(modifier = Modifier.fillMaxSize()) {
-                                Box(modifier = Modifier.fillMaxSize())
-                            }
-                        }
+                val colorScheme by produceColorSchemeState(
+                    theme = generalSettings?.theme,
+                    colorSource = generalSettings?.colorSource,
+                    customSeedColor = generalSettings?.customSeedColor,
+                )
+
+                MainContent(
+                    applicationTheme = applicationTheme,
+                    colorScheme = colorScheme,
+                )
+            }
+        }
+    }
+
+    @Composable
+    private fun MainContent(
+        applicationTheme: ApplicationTheme?,
+        colorScheme: ColorScheme?,
+    ) {
+        when {
+            applicationTheme == null || colorScheme == null -> {
+                SideEffect {
+                    enableEdgeToEdge()
+                }
+
+                MaterialTheme(colorScheme = getDefaultColorScheme(isSystemInDarkTheme())) {
+                    Surface(modifier = Modifier.fillMaxSize()) {
+                        Box(modifier = Modifier.fillMaxSize())
                     }
+                }
+            }
 
-                    is ActivityUiState.Success -> {
-                        SideEffect {
-                            handleEdgeToEdge(theme = state.applicationTheme.systemBarsTheme)
-                        }
+            else -> {
+                val colorSchemeResolver = LocalMaterialColorSchemeResolver.current
 
-                        EblanLauncherTheme(
-                            theme = state.applicationTheme.theme,
-                            dynamicTheme = state.applicationTheme.dynamicTheme,
-                        ) {
-                            Surface {
-                                ActionScreen(
-                                    onFinish = ::finish,
-                                    onUpdateEblanAction = ::createShortcutResult,
-                                )
-                            }
-                        }
+                SideEffect {
+                    handleEdgeToEdge(
+                        theme = applicationTheme.systemBarsTheme,
+                        materialColorSchemeResolver = colorSchemeResolver,
+                    )
+                }
+
+                MaterialTheme(colorScheme = colorScheme) {
+                    Surface {
+                        ActionScreen(
+                            onFinish = ::finish,
+                            onUpdateEblanAction = ::createShortcutResult,
+                        )
                     }
                 }
             }

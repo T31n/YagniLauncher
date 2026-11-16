@@ -30,4 +30,9 @@ dependencies {
     implementation(projects.domain.common)
     implementation(projects.domain.framework)
     implementation(projects.domain.model)
+
+    // Libraries
+    api(platform(libs.androidx.compose.bom))
+    api(libs.androidx.compose.material3)
+    implementation(libs.google.material)
 }

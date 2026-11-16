@@ -295,6 +295,7 @@ fun GridItemSettings(
             // Content
             title = stringResource(R.string.text_color),
             customColor = gridItemSettings.customTextColor,
+            showAlphaSlider = true,
             // Callbacks
             onDismissRequest = {
                 showTextColorPickerDialog = false
@@ -333,6 +334,7 @@ fun GridItemSettings(
             // Content
             title = stringResource(commonR.string.background_color),
             customColor = gridItemSettings.customBackgroundColor,
+            showAlphaSlider = true,
             // Callbacks
             onDismissRequest = {
                 showBackgroundColorDialog = false

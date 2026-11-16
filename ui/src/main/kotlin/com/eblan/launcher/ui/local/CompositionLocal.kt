@@ -19,6 +19,7 @@ package com.eblan.launcher.ui.local
 
 import androidx.compose.runtime.staticCompositionLocalOf
 import com.eblan.launcher.common.AndroidImageSerializer
+import com.eblan.launcher.common.MaterialColorSchemeResolver
 import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.framework.accessibilitymanager.AndroidAccessibilityManagerWrapper
@@ -51,7 +52,7 @@ val LocalPinItemRequest = staticCompositionLocalOf<PinItemRequestWrapper> {
 }
 
 val LocalWallpaperManager = staticCompositionLocalOf<AndroidWallpaperManagerWrapper> {
-    error("No WallpaperManagerWrapper provided")
+    error("No AndroidWallpaperManagerWrapper provided")
 }
 
 val LocalPackageManager = staticCompositionLocalOf<AndroidPackageManagerWrapper> {
@@ -60,6 +61,10 @@ val LocalPackageManager = staticCompositionLocalOf<AndroidPackageManagerWrapper>
 
 val LocalImageSerializer = staticCompositionLocalOf<AndroidImageSerializer> {
     error("No ImageSerializer provided")
+}
+
+val LocalMaterialColorSchemeResolver = staticCompositionLocalOf<MaterialColorSchemeResolver> {
+    error("No MaterialColorSchemeResolver provided")
 }
 
 val LocalUserManager = staticCompositionLocalOf<AndroidUserManagerWrapper> {

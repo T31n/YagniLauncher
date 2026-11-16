@@ -23,16 +23,13 @@ import android.content.Context
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import com.eblan.launcher.domain.framework.WallpaperManagerWrapper
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 
-internal class DefaultWallpaperManagerWrapper @Inject constructor(@param:ApplicationContext private val context: Context) :
-    WallpaperManagerWrapper,
-    AndroidWallpaperManagerWrapper {
+internal class DefaultWallpaperManagerWrapper @Inject constructor(@param:ApplicationContext private val context: Context) : AndroidWallpaperManagerWrapper {
     private val wallpaperManager = WallpaperManager.getInstance(context)
 
     override val hintSupportsDarkText = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {

@@ -32,15 +32,14 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
 import androidx.annotation.ColorInt
-import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.drawable.toDrawable
 import com.eblan.launcher.common.AndroidImageSerializer
+import com.eblan.launcher.common.MaterialColorSchemeResolver
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
-import com.eblan.launcher.domain.framework.ResourcesWrapper
+import com.eblan.launcher.domain.model.userdata.ColorSource
 import com.eblan.launcher.domain.model.userdata.IconShape
-import com.eblan.launcher.domain.model.userdata.IconTint
 import com.eblan.launcher.domain.model.userdata.Theme
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -52,7 +51,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 internal class DefaultImageSerializer @Inject constructor(
-    private val resourcesWrapper: ResourcesWrapper,
+    private val materialColorSchemeResolver: MaterialColorSchemeResolver,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : AndroidImageSerializer {
@@ -364,22 +363,19 @@ internal class DefaultImageSerializer @Inject constructor(
 
     override fun getTintedAndShapedDrawable(
         drawable: Drawable,
-        iconTint: IconTint,
-        customIconTint: Int,
+        colorSource: ColorSource,
+        customSeedColor: Int,
         fallbackIconTint: Boolean,
         theme: Theme,
         iconShape: IconShape,
     ): Drawable? {
-        val tintedDrawable = when (iconTint) {
-            IconTint.None -> drawable
-
-            IconTint.Custom -> getTintedDrawable(
-                drawable = drawable,
-                customIconTint = customIconTint,
-                fallbackIconTint = fallbackIconTint,
-                theme = theme,
-            ) ?: return null
-        }
+        val tintedDrawable = getTintedDrawable(
+            drawable = drawable,
+            colorSource = colorSource,
+            customSeedColor = customSeedColor,
+            fallbackIconTint = fallbackIconTint,
+            theme = theme,
+        ) ?: return null
 
         return getShapedDrawable(
             drawable = tintedDrawable,
@@ -421,10 +417,17 @@ internal class DefaultImageSerializer @Inject constructor(
 
     private fun getTintedDrawable(
         drawable: Drawable,
-        customIconTint: Int,
+        colorSource: ColorSource,
+        customSeedColor: Int,
         fallbackIconTint: Boolean,
         theme: Theme,
     ): Drawable? {
+        val primaryColor = materialColorSchemeResolver.getPrimaryColor(
+            colorSource = colorSource,
+            customSeedColor = customSeedColor,
+            theme = theme,
+        )
+
         val copy = drawable.constantState?.newDrawable()?.mutate() ?: drawable.mutate()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
@@ -432,23 +435,24 @@ internal class DefaultImageSerializer @Inject constructor(
         ) {
             copy.monochrome?.let {
                 return AdaptiveIconDrawable(
-                    adaptiveIconBackgroundColor(
+                    materialColorSchemeResolver.getSurfaceColor(
+                        colorSource = colorSource,
+                        customSeedColor = customSeedColor,
                         theme = theme,
-                        customIconColor = customIconTint,
                     ).toDrawable(),
-                    it.mutate().apply { setTint(customIconTint) },
+                    it.mutate().apply { setTint(primaryColor) },
                 )
             }
         }
 
         return if (fallbackIconTint) {
-            copy.tintedBitmap(customIconColor = customIconTint)
+            copy.tintedBitmap(iconTintColor = primaryColor)
         } else {
             copy
         }
     }
 
-    private fun Drawable.tintedBitmap(customIconColor: Int): Drawable? {
+    private fun Drawable.tintedBitmap(iconTintColor: Int): Drawable? {
         val width = if (bounds.isEmpty) {
             intrinsicWidth
         } else {
@@ -471,7 +475,7 @@ internal class DefaultImageSerializer @Inject constructor(
             val result = createBitmap(width, height)
 
             val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                colorFilter = luminanceTintFilter(customIconColor)
+                colorFilter = luminanceTintFilter(iconTintColor)
             }
 
             Canvas(result).drawBitmap(source, 0f, 0f, paint)
@@ -499,44 +503,7 @@ internal class DefaultImageSerializer @Inject constructor(
         )
     }
 
-    private fun adaptiveIconBackgroundColor(
-        theme: Theme,
-        customIconColor: Int,
-    ): Int {
-        val isDarkTheme = when (theme) {
-            Theme.System -> resourcesWrapper.isDarkTheme()
-            Theme.Light -> false
-            Theme.Dark -> true
-        }
-
-        val baseColor = if (isDarkTheme) Color.BLACK else Color.WHITE
-        var tintAmount =
-            if (isDarkTheme) DARK_BACKGROUND_TINT_AMOUNT else LIGHT_BACKGROUND_TINT_AMOUNT
-
-        while (tintAmount > 0f) {
-            val backgroundColor = ColorUtils.compositeColors(
-                ColorUtils.blendARGB(
-                    baseColor,
-                    customIconColor,
-                    tintAmount,
-                ),
-                baseColor,
-            )
-
-            if (ColorUtils.calculateContrast(customIconColor, backgroundColor) >= MIN_ICON_CONTRAST_RATIO) {
-                return backgroundColor
-            }
-
-            tintAmount /= 2f
-        }
-
-        return baseColor
-    }
-
     private companion object {
         const val ROUNDED_SQUARE_CORNER_RATIO = 0.2f
-        const val LIGHT_BACKGROUND_TINT_AMOUNT = 0.16f
-        const val DARK_BACKGROUND_TINT_AMOUNT = 0.36f
-        const val MIN_ICON_CONTRAST_RATIO = 3.0
     }
 }

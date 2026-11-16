@@ -70,35 +70,32 @@ import java.util.Locale
 import kotlin.math.ceil
 import com.eblan.launcher.common.R as commonR
 
-private val colorPresets = listOf(
-    Color(0xFFF44336),
-    Color(0xFFE91E63),
-    Color(0xFF9C27B0),
-    Color(0xFF673AB7),
-    Color(0xFF3F51B5),
-    Color(0xFF2196F3),
-    Color(0xFF03A9F4),
-    Color(0xFF00BCD4),
-    Color(0xFF009688),
-    Color(0xFF4CAF50),
-    Color(0xFF8BC34A),
-    Color(0xFFCDDC39),
-    Color(0xFFFFEB3B),
-    Color(0xFFFFC107),
-    Color(0xFFFF9800),
-    Color(0xFFFF5722),
-    Color(0xFF795548),
-    Color(0xFF9E9E9E),
-    Color(0xFF607D8B),
-    Color.White,
-    Color.Black,
-)
+private const val HUE_SEGMENT_COUNT = 6
+
+private val hueGradientColors = List(HUE_SEGMENT_COUNT + 1) { hueSegmentIndex ->
+    Color.hsv(hueSegmentIndex * 360f / HUE_SEGMENT_COUNT, 1f, 1f)
+}
+
+private const val COLOR_PRESET_HUE_COUNT = 16
+private const val COLOR_PRESET_NEUTRAL_COUNT = 5
+
+private val colorPresets = buildList(COLOR_PRESET_HUE_COUNT + COLOR_PRESET_NEUTRAL_COUNT) {
+    repeat(COLOR_PRESET_HUE_COUNT) { hueIndex ->
+        add(Color.hsv(hueIndex * 360f / COLOR_PRESET_HUE_COUNT, 1f, 1f))
+    }
+
+    repeat(COLOR_PRESET_NEUTRAL_COUNT) { neutralIndex ->
+        val neutralValue = neutralIndex / (COLOR_PRESET_NEUTRAL_COUNT - 1f)
+        add(Color.hsv(0f, 0f, neutralValue))
+    }
+}
 
 @Composable
 fun ColorPickerDialog(
     // Content
     title: String,
     customColor: Int,
+    showAlphaSlider: Boolean,
     // Layout
     modifier: Modifier = Modifier,
     // Callbacks
@@ -122,8 +119,10 @@ fun ColorPickerDialog(
 
     var alpha by remember { mutableFloatStateOf(Color(customColor).alpha) }
 
+    val selectedAlpha = if (showAlphaSlider) alpha else 1f
+
     val selectedColor = Color.hsv(hue, saturation, value)
-        .copy(alpha = alpha)
+        .copy(alpha = selectedAlpha)
         .toArgb()
 
     EblanDialog(
@@ -145,7 +144,8 @@ fun ColorPickerDialog(
                 hue = hue,
                 saturation = saturation,
                 value = value,
-                alpha = alpha,
+                alpha = selectedAlpha,
+                showAlphaSlider = showAlphaSlider,
                 modifier = Modifier.fillMaxWidth(),
                 onSaturationSelected = {
                     saturation = it
@@ -194,7 +194,7 @@ fun ColorPickerDialog(
                     onClick = {
                         onSelectColor(
                             Color.hsv(hue, saturation, value)
-                                .copy(alpha = alpha)
+                                .copy(alpha = selectedAlpha)
                                 .toArgb(),
                         )
 
@@ -215,6 +215,7 @@ private fun ColorPicker(
     saturation: Float,
     value: Float,
     alpha: Float,
+    showAlphaSlider: Boolean,
     // Modifier
     modifier: Modifier = Modifier,
     // Callbacks
@@ -249,16 +250,18 @@ private fun ColorPicker(
                     .height(barHeight),
             )
 
-            Spacer(Modifier.height(16.dp))
+            if (showAlphaSlider) {
+                Spacer(Modifier.height(16.dp))
 
-            AlphaCanvas(
-                color = Color.hsv(hue, saturation, value),
-                alpha = alpha,
-                onAlphaSelected = onAlphaSelected,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(barHeight),
-            )
+                AlphaCanvas(
+                    color = Color.hsv(hue, saturation, value),
+                    alpha = alpha,
+                    onAlphaSelected = onAlphaSelected,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(barHeight),
+                )
+            }
         }
     }
 }
@@ -363,18 +366,8 @@ private fun HueCanvas(
             .fillMaxWidth()
             .clip(RoundedCornerShape(5.dp)),
     ) {
-        val hueColors = listOf(
-            Color.Red,
-            Color.Yellow,
-            Color.Green,
-            Color.Cyan,
-            Color.Blue,
-            Color.Magenta,
-            Color.Red,
-        )
-
         drawRect(
-            brush = Brush.horizontalGradient(hueColors),
+            brush = Brush.horizontalGradient(hueGradientColors),
             size = size,
         )
 

@@ -52,8 +52,8 @@ import com.eblan.launcher.domain.model.launcherapps.LauncherAppsShortcutInfo
 import com.eblan.launcher.domain.model.launcherapps.ShortcutConfigActivityInfo
 import com.eblan.launcher.domain.model.launcherapps.ShortcutQuery
 import com.eblan.launcher.domain.model.launcherapps.ShortcutQueryFlag
+import com.eblan.launcher.domain.model.userdata.ColorSource
 import com.eblan.launcher.domain.model.userdata.IconShape
-import com.eblan.launcher.domain.model.userdata.IconTint
 import com.eblan.launcher.domain.model.userdata.Theme
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
@@ -91,9 +91,10 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
     }
 
     override suspend fun getActivityListWithCacheIcons(
-        iconTint: IconTint,
+        iconTint: Boolean,
+        colorSource: ColorSource,
+        customSeedColor: Int,
         iconShape: IconShape,
-        customIconTint: Int,
         fallbackIconTint: Boolean,
         theme: Theme,
     ): List<LauncherAppsActivityInfo> = withContext(ioDispatcher) {
@@ -110,8 +111,9 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
 
                     it.toLauncherAppsActivityInfo(
                         iconTint = iconTint,
+                        colorSource = colorSource,
+                        customSeedColor = customSeedColor,
                         iconShape = iconShape,
-                        customIconTint = customIconTint,
                         fallbackIconTint = fallbackIconTint,
                         theme = theme,
                     )
@@ -123,8 +125,9 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
 
                 it.toLauncherAppsActivityInfo(
                     iconTint = iconTint,
+                    colorSource = colorSource,
+                    customSeedColor = customSeedColor,
                     iconShape = iconShape,
-                    customIconTint = customIconTint,
                     fallbackIconTint = fallbackIconTint,
                     theme = theme,
                 )
@@ -159,9 +162,10 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
     override suspend fun getActivityListWithCacheIcons(
         serialNumber: Long,
         packageName: String,
-        iconTint: IconTint,
+        iconTint: Boolean,
+        colorSource: ColorSource,
+        customSeedColor: Int,
         iconShape: IconShape,
-        customIconTint: Int,
         fallbackIconTint: Boolean,
         theme: Theme,
     ): List<LauncherAppsActivityInfo> = withContext(ioDispatcher) {
@@ -172,8 +176,9 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
 
             it.toLauncherAppsActivityInfo(
                 iconTint = iconTint,
+                colorSource = colorSource,
+                customSeedColor = customSeedColor,
                 iconShape = iconShape,
-                customIconTint = customIconTint,
                 fallbackIconTint = fallbackIconTint,
                 theme = theme,
             )
@@ -322,9 +327,10 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
                     currentCoroutineContext().ensureActive()
 
                     it.toLauncherAppsActivityInfo(
-                        iconTint = IconTint.None,
+                        iconTint = false,
+                        colorSource = ColorSource.None,
+                        customSeedColor = 0,
                         iconShape = IconShape.None,
-                        customIconTint = 0,
                         fallbackIconTint = false,
                         theme = Theme.System,
                     )
@@ -524,9 +530,10 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             ?.getBoolean(LauncherUserInfo.PRIVATE_SPACE_ENTRYPOINT_HIDDEN) == true
 
     private suspend fun LauncherActivityInfo.toLauncherAppsActivityInfo(
-        iconTint: IconTint,
+        iconTint: Boolean,
+        colorSource: ColorSource,
+        customSeedColor: Int,
         iconShape: IconShape,
-        customIconTint: Int,
         fallbackIconTint: Boolean,
         theme: Theme,
     ): LauncherAppsActivityInfo {
@@ -543,9 +550,10 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             drawable = icon,
             userHandle = user,
             iconTint = iconTint,
+            colorSource = colorSource,
+            customSeedColor = customSeedColor,
             iconShape = iconShape,
             serialNumber = serialNumber,
-            customIconColor = customIconTint,
             fallbackIconColor = fallbackIconTint,
             theme = theme,
         )
@@ -639,18 +647,19 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         componentName: ComponentName,
         drawable: Drawable?,
         userHandle: UserHandle,
-        iconTint: IconTint,
+        iconTint: Boolean,
+        colorSource: ColorSource,
+        customSeedColor: Int,
         iconShape: IconShape,
         serialNumber: Long,
-        customIconColor: Int,
         fallbackIconColor: Boolean,
         theme: Theme,
     ): String? {
         if (drawable == null) return null
 
         val directoryName = when {
-            iconTint == IconTint.None && iconShape == IconShape.None -> FileManager.ICONS_DIR
-            iconTint == IconTint.None -> FileManager.SHAPED_ICONS_DIR
+            !iconTint && iconShape == IconShape.None -> FileManager.ICONS_DIR
+            !iconTint -> FileManager.SHAPED_ICONS_DIR
             iconShape == IconShape.None -> FileManager.TINTED_ICONS_DIR
             else -> FileManager.TINTED_SHAPED_ICONS_DIR
         }
@@ -665,17 +674,17 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             ),
         )
 
-        val transformedDrawable = when (iconTint) {
-            IconTint.None -> imageSerializer.getShapedDrawable(drawable, iconShape)
-
-            IconTint.Custom -> imageSerializer.getTintedAndShapedDrawable(
+        val transformedDrawable = if (iconTint) {
+            imageSerializer.getTintedAndShapedDrawable(
                 drawable = drawable,
-                iconTint = iconTint,
-                customIconTint = customIconColor,
+                colorSource = colorSource,
+                customSeedColor = customSeedColor,
                 fallbackIconTint = fallbackIconColor,
                 theme = theme,
                 iconShape = iconShape,
             )
+        } else {
+            imageSerializer.getShapedDrawable(drawable, iconShape)
         } ?: return null
 
         val badgedDrawable = try {

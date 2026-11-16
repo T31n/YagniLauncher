@@ -24,17 +24,18 @@ import com.eblan.launcher.domain.model.launcherapps.LauncherAppsActivityInfo
 import com.eblan.launcher.domain.model.launcherapps.LauncherAppsShortcutInfo
 import com.eblan.launcher.domain.model.launcherapps.ShortcutConfigActivityInfo
 import com.eblan.launcher.domain.model.launcherapps.ShortcutQuery
+import com.eblan.launcher.domain.model.userdata.ColorSource
 import com.eblan.launcher.domain.model.userdata.IconShape
-import com.eblan.launcher.domain.model.userdata.IconTint
 import com.eblan.launcher.domain.model.userdata.Theme
 
 interface LauncherAppsWrapper {
     val hasShortcutHostPermission: Boolean
 
     suspend fun getActivityListWithCacheIcons(
-        iconTint: IconTint,
+        iconTint: Boolean,
+        colorSource: ColorSource,
+        customSeedColor: Int,
         iconShape: IconShape,
-        customIconTint: Int,
         fallbackIconTint: Boolean,
         theme: Theme,
     ): List<LauncherAppsActivityInfo>
@@ -44,9 +45,10 @@ interface LauncherAppsWrapper {
     suspend fun getActivityListWithCacheIcons(
         serialNumber: Long,
         packageName: String,
-        iconTint: IconTint,
+        iconTint: Boolean,
+        colorSource: ColorSource,
+        customSeedColor: Int,
         iconShape: IconShape,
-        customIconTint: Int,
         fallbackIconTint: Boolean,
         theme: Theme,
     ): List<LauncherAppsActivityInfo>

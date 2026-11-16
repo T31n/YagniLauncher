@@ -38,7 +38,6 @@ import com.eblan.launcher.common.R.string.update
 import com.eblan.launcher.designsystem.component.EblanDialog
 import com.eblan.launcher.designsystem.component.EblanRadioButton
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
-import com.eblan.launcher.domain.model.userdata.IconTint
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -120,6 +119,7 @@ fun BackgroundColorDialog(
             // Content
             title = title,
             customColor = customBackgroundColor,
+            showAlphaSlider = true,
             // Callbacks
             onDismissRequest = {
                 showColorPickerDialog = false
@@ -138,10 +138,4 @@ fun BackgroundColor.getTitle() = when (this) {
     BackgroundColor.Light -> stringResource(commonR.string.light)
     BackgroundColor.Dark -> stringResource(commonR.string.dark)
     BackgroundColor.Custom -> stringResource(commonR.string.custom)
-}
-
-@Composable
-fun IconTint.getTitle() = when (this) {
-    IconTint.None -> stringResource(commonR.string.none)
-    IconTint.Custom -> stringResource(commonR.string.custom)
 }

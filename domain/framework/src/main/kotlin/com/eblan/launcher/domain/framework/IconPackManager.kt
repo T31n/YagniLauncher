@@ -18,8 +18,8 @@
 package com.eblan.launcher.domain.framework
 
 import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
+import com.eblan.launcher.domain.model.userdata.ColorSource
 import com.eblan.launcher.domain.model.userdata.IconShape
-import com.eblan.launcher.domain.model.userdata.IconTint
 import com.eblan.launcher.domain.model.userdata.Theme
 import java.io.File
 
@@ -30,9 +30,10 @@ interface IconPackManager {
         packageName: String,
         drawableName: String,
         file: File,
-        iconTint: IconTint,
+        iconTint: Boolean,
+        colorSource: ColorSource,
+        customSeedColor: Int,
         iconShape: IconShape,
-        customIconTint: Int,
         fallbackIconTint: Boolean,
         theme: Theme,
     ): String?

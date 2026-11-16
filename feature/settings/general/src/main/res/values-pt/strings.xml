@@ -24,14 +24,15 @@
     <string name="default_icon_pack">Padrão</string>
     <string name="theme">Tema</string>
     <string name="system_bars_theme">Tema das barras do sistema</string>
-    <string name="dynamic_theme">Tema dinâmico</string>
+    <string name="color_source">Origem da cor</string>
+    <string name="wallpaper">Papel de parede</string>
     <string name="language">Idioma</string>
     <string name="system_default">Padrão do sistema</string>
     <string name="language_name">Português</string>
     <string name="notification_dots">Pontos de notificação</string>
     <string name="show_notification_dots">Mostrar pontos de notificação</string>
     <string name="apply_icons_from_supported_icon_packs">Aplicar ícones de pacotes de ícones compatíveis</string>
-    <string name="adapt_colors_to_your_wallpaper_automatically">Adaptar cores ao papel de parede automaticamente</string>
+    <string name="tint_icons_using_the_selected_color_source">Colorir ícones com a origem de cor selecionada</string>
     <string name="icon_tint">Tonalidade do ícone</string>
     <string name="fallback_icon_tint">Tonalidade de ícone alternativa</string>
     <string name="use_the_fallback_icon_tint">Usar a tonalidade de ícone alternativa</string>
