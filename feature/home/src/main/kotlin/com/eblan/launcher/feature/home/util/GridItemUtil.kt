@@ -17,8 +17,18 @@
  */
 package com.eblan.launcher.feature.home.util
 
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
 import com.eblan.launcher.domain.model.grid.GridItemData
+
+internal fun getEblanApplicationInfoIconPath(
+    data: EblanApplicationInfo,
+    iconPackFilePath: String? = null,
+): String? = getApplicationInfoIconPath(
+    customIcon = data.customIcon,
+    iconPackFilePath = iconPackFilePath,
+    icon = data.icon,
+)
 
 internal fun getGridItemIconPath(
     data: GridItemData,
@@ -73,6 +83,8 @@ internal fun getGridItemLabel(data: GridItemData): String? = when (data) {
 
     is GridItemData.Widget -> data.label
 }
+
+internal fun getEblanApplicationInfoLabel(data: EblanApplicationInfo): String = data.customLabel ?: data.label
 
 internal fun getFolderGridItemLabel(data: FolderEblanApplicationInfoGridItemData): String = when (data) {
     is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> data.customLabel ?: data.label
