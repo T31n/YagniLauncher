@@ -17,7 +17,6 @@
  */
 package com.eblan.launcher.domain.usecase.home
 
-import com.eblan.launcher.domain.framework.ResourcesWrapper
 import com.eblan.launcher.domain.framework.WallpaperManagerWrapper
 import com.eblan.launcher.domain.model.userdata.ApplicationTheme
 import com.eblan.launcher.domain.model.userdata.Theme
@@ -26,11 +25,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 
-/** Resolves the launcher and system-bar themes from user preferences, device mode, and wallpaper hints. */
+/** Resolves explicit and wallpaper themes while leaving system themes to resolve at the point of use. */
 class GetApplicationThemeUseCase @Inject constructor(
     private val userDataRepository: UserDataRepository,
     private val wallpaperManagerWrapper: WallpaperManagerWrapper,
-    private val resourcesWrapper: ResourcesWrapper,
 ) {
     /** Emits resolved themes and colors, updating when wallpaper color hints change. */
     operator fun invoke(): Flow<ApplicationTheme> = combine(
@@ -55,7 +53,7 @@ class GetApplicationThemeUseCase @Inject constructor(
         theme: Theme,
         colorHints: Int?,
     ): Theme = when (theme) {
-        Theme.System -> getSystemTheme()
+        Theme.System -> Theme.System
 
         Theme.Light -> Theme.Light
 
@@ -67,12 +65,6 @@ class GetApplicationThemeUseCase @Inject constructor(
             } else {
                 Theme.Light
             }
-        } ?: getSystemTheme()
-    }
-
-    private fun getSystemTheme(): Theme = if (resourcesWrapper.isDarkTheme()) {
-        Theme.Dark
-    } else {
-        Theme.Light
+        } ?: Theme.System
     }
 }
