@@ -173,10 +173,10 @@ internal class DefaultMaterialColorSchemeResolver @Inject constructor(
             isDarkTheme = isDarkTheme,
         )
 
-        return colorScheme?.surface?.toArgb() ?: if (isDarkTheme) {
-            DARK_THEME_SURFACE_COLOR
+        return colorScheme?.surfaceContainerHighest?.toArgb() ?: if (isDarkTheme) {
+            DARK_THEME_SURFACE_CONTAINER_HIGHEST_COLOR
         } else {
-            LIGHT_THEME_SURFACE_COLOR
+            LIGHT_THEME_SURFACE_CONTAINER_HIGHEST_COLOR
         }
     }
 
@@ -198,7 +198,7 @@ internal class DefaultMaterialColorSchemeResolver @Inject constructor(
     private companion object {
         const val LIGHT_THEME_PRIMARY_COLOR = 0xFF4C662B.toInt()
         const val DARK_THEME_PRIMARY_COLOR = 0xFFB1D18A.toInt()
-        const val LIGHT_THEME_SURFACE_COLOR = 0xFFF9FAEF.toInt()
-        const val DARK_THEME_SURFACE_COLOR = 0xFF12140E.toInt()
+        const val LIGHT_THEME_SURFACE_CONTAINER_HIGHEST_COLOR = 0xFFE2E3D8.toInt()
+        const val DARK_THEME_SURFACE_CONTAINER_HIGHEST_COLOR = 0xFF33362E.toInt()
     }
 }
