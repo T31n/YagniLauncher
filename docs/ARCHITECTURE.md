@@ -30,13 +30,13 @@ The codebase has five main groups:
 
 1. **Domain** — Pure Kotlin models, repository and platform contracts, use cases, and grid algorithms. No Android SDK imports.
 2. **Data** — Persistence implementations: Room database, Proto DataStore preferences, and the repositories that combine them.
-3. **Platform** — Android system integrations and other platform-specific implementations. It implements Domain contracts where needed and exposes Android-facing wrappers to consumers that require them.
+3. **Platform** — Android system integrations and other platform-specific implementations. It implements Domain contracts where needed and exposes Android-facing wrappers to consumers that require them. This includes Android Service components (accessibility, notification listener, and icon-pack updates).
 4. **Presentation** — Compose UI and ViewModels: the `feature:*` screens plus the `ui` and `design-system` component libraries.
-5. **Android Entry Points** — `app` and `service`, which provide the Application, Activity, and Android Service components.
+5. **Android Entry Points** — `app`, which provides the Application, Activity, and root navigation graph.
 
 ## Dependency Rule
 
-Domain remains independent of Android, Data, Platform, Presentation, and the entry points. Data and Platform depend on Domain contracts; Presentation uses Domain and the platform APIs it needs; `app` composes the application graph. `service` is an Android entry point that depends on the Domain modules and Platform integrations required by its service components. This is a pragmatic modular architecture: Presentation can consume platform wrappers, while the Domain itself remains Android-independent.
+Domain remains independent of Android, Data, Platform, Presentation, and the entry points. Data and Platform depend on Domain contracts; Presentation uses Domain and the platform APIs it needs; `app` composes the application graph. This is a pragmatic modular architecture: Presentation can consume platform wrappers, while the Domain itself remains Android-independent.
 
 ## Module Groups
 
@@ -66,7 +66,12 @@ Concrete persistence implementations behind the `domain:repository` interfaces:
 
 ### Platform
 
-`platform` consolidates the former `framework:*` modules into one Android library. It owns integrations with APIs such as `LauncherApps`, `PackageManager`, `WallpaperManager`, `AppWidgetManager`, accessibility, locale, and notifications. It also owns Android-specific image serialization, material color-scheme resolution, file management, and icon-key generation, which were previously in `common`.
+`platform` is an Android library that owns integrations with system APIs such as `LauncherApps`, `PackageManager`, `WallpaperManager`, `AppWidgetManager`, accessibility, locale, and notifications. It also owns Android-specific image serialization, material color-scheme resolution, file management, and icon-key generation.
+
+Additionally, it contains Android Service components:
+- `EblanAccessibilityService` — global actions via accessibility
+- `EblanNotificationListenerService` — notification counts
+- `IconPackService` — icon pack cache updates
 
 `domain:platform` contains Android-independent contracts needed by domain logic. The `platform` module implements and binds the relevant contracts. Some Android-facing wrapper interfaces also live in `platform` for consumers such as `ui`.
 
@@ -80,12 +85,11 @@ Concrete persistence implementations behind the `domain:repository` interfaces:
 
 ### Android Entry Points
 
-`app` is the application composition root. `service` contains Android Service components and depends only on the Domain and Platform functionality those components require; it does not compose the application graph.
+`app` is the application composition root.
 
-| Module    | Responsibility                                                                                                                     |
-|-----------|------------------------------------------------------------------------------------------------------------------------------------|
-| `app`     | Application composition root: Hilt setup, `Application`, Activities, and the root navigation graph.                                |
-| `service` | Android Service components (accessibility, notification listener, and icon-pack updates), using required Domain and Platform APIs. |
+| Module | Responsibility                                                                                          |
+|--------|---------------------------------------------------------------------------------------------------------|
+| `app`  | Application composition root: Hilt setup, `Application`, Activities, and the root navigation graph.     |
 
 ### Shared Infrastructure
 
