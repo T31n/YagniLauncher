@@ -95,7 +95,6 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         colorSource: ColorSource,
         customSeedColor: Int,
         iconShape: IconShape,
-        fallbackIconTint: Boolean,
         theme: Theme,
         colorSchemeSettings: ColorSchemeSettings,
     ): List<LauncherAppsActivityInfo> = withContext(ioDispatcher) {
@@ -114,7 +113,6 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
                     colorSource = colorSource,
                     customSeedColor = customSeedColor,
                     iconShape = iconShape,
-                    fallbackIconTint = fallbackIconTint,
                     theme = theme,
                     colorSchemeSettings = colorSchemeSettings,
                 )
@@ -145,7 +143,6 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         colorSource: ColorSource,
         customSeedColor: Int,
         iconShape: IconShape,
-        fallbackIconTint: Boolean,
         theme: Theme,
         colorSchemeSettings: ColorSchemeSettings,
     ): List<LauncherAppsActivityInfo> = withContext(ioDispatcher) {
@@ -159,7 +156,6 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
                 colorSource = colorSource,
                 customSeedColor = customSeedColor,
                 iconShape = iconShape,
-                fallbackIconTint = fallbackIconTint,
                 theme = theme,
                 colorSchemeSettings = colorSchemeSettings,
             )
@@ -296,7 +292,6 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
                         colorSource = ColorSource.None,
                         customSeedColor = 0,
                         iconShape = IconShape.None,
-                        fallbackIconTint = false,
                         theme = Theme.System,
                     )
                 }
@@ -493,7 +488,6 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         colorSource: ColorSource,
         customSeedColor: Int,
         iconShape: IconShape,
-        fallbackIconTint: Boolean,
         theme: Theme,
         colorSchemeSettings: ColorSchemeSettings = ColorSchemeSettings(),
     ): LauncherAppsActivityInfo {
@@ -514,7 +508,6 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             customSeedColor = customSeedColor,
             iconShape = iconShape,
             serialNumber = serialNumber,
-            fallbackIconColor = fallbackIconTint,
             theme = theme,
             colorSchemeSettings = colorSchemeSettings,
         )
@@ -611,7 +604,6 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         customSeedColor: Int,
         iconShape: IconShape,
         serialNumber: Long,
-        fallbackIconColor: Boolean,
         theme: Theme,
         colorSchemeSettings: ColorSchemeSettings = ColorSchemeSettings(),
     ): String? {
@@ -639,7 +631,6 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
                 drawable = drawable,
                 colorSource = colorSource,
                 customSeedColor = customSeedColor,
-                fallbackIconTint = fallbackIconColor,
                 theme = theme,
                 iconShape = iconShape,
                 colorSchemeSettings = colorSchemeSettings,

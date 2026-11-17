@@ -44,7 +44,6 @@ interface AndroidImageSerializer {
         drawable: Drawable,
         colorSource: ColorSource,
         customSeedColor: Int,
-        fallbackIconTint: Boolean,
         theme: Theme,
         iconShape: IconShape,
         colorSchemeSettings: ColorSchemeSettings = ColorSchemeSettings(),

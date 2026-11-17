@@ -91,7 +91,6 @@ class AddPackageUseCase @Inject constructor(
                 colorSource = userData.generalSettings.colorSource,
                 customSeedColor = userData.generalSettings.customSeedColor,
                 iconShape = userData.generalSettings.iconShape,
-                fallbackIconTint = userData.generalSettings.fallbackIconTint,
                 theme = userData.generalSettings.theme,
                 colorSchemeSettings = userData.generalSettings.colorSchemeSettings,
             ).onEach {

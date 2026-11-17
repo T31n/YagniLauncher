@@ -25,7 +25,6 @@
     <string name="diamond">معين</string>
     <string name="icon_shape">شكل الايقونه</string>
     <string name="shield">درع</string>
-    <string name="fallback_icon_tint">تظليل الايقونه</string>
     <string name="please_import_an_icon_pack_first">الرجاء استيراد حزمة الايقونات اولا</string>
     <string name="tint_icons_using_the_selected_color_source">صبغ الأيقونات باستخدام مصدر اللون المحدد</string>
     <string name="select_icon_pack">اختار حزمة الايقونات</string>
@@ -61,7 +60,6 @@
     <string name="notification_dots">نقاط الإشعارات</string>
     <string name="show_notification_dots">إظهار نقاط الإشعارات</string>
     <string name="apply_icons_from_supported_icon_packs">تطبيق الأيقونات من حزم الأيقونات المدعومة</string>
-    <string name="use_the_fallback_icon_tint">استخدام لون بديل للايقونات</string>
     <string name="rounded_square">مربع مستدير</string>
     <string name="hexagon">سداسي</string>
     <string name="octagon">ثماني</string>

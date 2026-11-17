@@ -51,8 +51,6 @@
     <string name="apply_icons_from_supported_icon_packs">Aplicar ícones de pacotes de ícones compatíveis</string>
     <string name="tint_icons_using_the_selected_color_source">Colorir ícones com a origem de cor selecionada</string>
     <string name="icon_tint">Tonalidade do ícone</string>
-    <string name="fallback_icon_tint">Tonalidade de ícone alternativa</string>
-    <string name="use_the_fallback_icon_tint">Usar a tonalidade de ícone alternativa</string>
     <string name="none">Nenhum</string>
     <string name="circle">Círculo</string>
     <string name="square">Quadrado</string>

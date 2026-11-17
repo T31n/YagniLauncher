@@ -51,8 +51,6 @@
     <string name="apply_icons_from_supported_icon_packs">Aplicar iconas dos paquetes de iconas compatibles</string>
     <string name="tint_icons_using_the_selected_color_source">Tintar as iconas coa orixe da cor seleccionada</string>
     <string name="icon_tint">Tinte da icona</string>
-    <string name="fallback_icon_tint">Tinte de icona alternativo</string>
-    <string name="use_the_fallback_icon_tint">Usar o tinte de icona alternativo</string>
     <string name="none">Ningún</string>
     <string name="circle">Círculo</string>
     <string name="square">Cadrado</string>

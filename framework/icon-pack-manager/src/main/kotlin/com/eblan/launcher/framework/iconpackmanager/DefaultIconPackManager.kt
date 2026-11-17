@@ -103,7 +103,6 @@ internal class DefaultIconPackManager @Inject constructor(
         colorSource: ColorSource,
         customSeedColor: Int,
         iconShape: IconShape,
-        fallbackIconTint: Boolean,
         theme: Theme,
         colorSchemeSettings: ColorSchemeSettings,
     ): String? = withContext(ioDispatcher) {
@@ -125,7 +124,6 @@ internal class DefaultIconPackManager @Inject constructor(
                     drawable = drawable,
                     colorSource = colorSource,
                     customSeedColor = customSeedColor,
-                    fallbackIconTint = fallbackIconTint,
                     theme = theme,
                     iconShape = iconShape,
                     colorSchemeSettings = colorSchemeSettings,

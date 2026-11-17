@@ -35,7 +35,6 @@ interface IconPackManager {
         colorSource: ColorSource,
         customSeedColor: Int,
         iconShape: IconShape,
-        fallbackIconTint: Boolean,
         theme: Theme,
         colorSchemeSettings: ColorSchemeSettings = ColorSchemeSettings(),
     ): String?

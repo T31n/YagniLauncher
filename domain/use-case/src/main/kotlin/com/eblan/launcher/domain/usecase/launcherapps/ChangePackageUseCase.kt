@@ -83,7 +83,6 @@ class ChangePackageUseCase @Inject constructor(
                 colorSource = userData.generalSettings.colorSource,
                 customSeedColor = userData.generalSettings.customSeedColor,
                 iconShape = userData.generalSettings.iconShape,
-                fallbackIconColor = userData.generalSettings.fallbackIconTint,
                 theme = userData.generalSettings.theme,
                 colorSchemeSettings = userData.generalSettings.colorSchemeSettings,
             )
@@ -108,7 +107,6 @@ class ChangePackageUseCase @Inject constructor(
         colorSource: ColorSource,
         customSeedColor: Int,
         iconShape: IconShape,
-        fallbackIconColor: Boolean,
         theme: Theme,
         colorSchemeSettings: ColorSchemeSettings,
     ) {
@@ -119,7 +117,6 @@ class ChangePackageUseCase @Inject constructor(
             colorSource = colorSource,
             customSeedColor = customSeedColor,
             iconShape = iconShape,
-            fallbackIconTint = fallbackIconColor,
             theme = theme,
             colorSchemeSettings = colorSchemeSettings,
         )

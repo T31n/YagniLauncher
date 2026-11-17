@@ -353,22 +353,6 @@ private fun Success(
             },
         )
 
-        if (generalSettings.iconTint) {
-            SettingsSwitchItem(
-                // Content
-                title = stringResource(R.string.fallback_icon_tint),
-                subtitle = stringResource(R.string.use_the_fallback_icon_tint),
-                // State
-                checked = generalSettings.fallbackIconTint,
-                // Appearance
-                shape = settingsMiddleItemShape,
-                // Callbacks
-                onCheckedChange = {
-                    onUpdateGeneralSettings(generalSettings.copy(fallbackIconTint = it))
-                },
-            )
-        }
-
         SettingsDropdownItem(
             // Content
             title = stringResource(R.string.icon_shape),

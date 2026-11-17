@@ -45,7 +45,6 @@ internal suspend fun cacheIconPackFile(
             colorSource = generalSettings.colorSource,
             customSeedColor = generalSettings.customSeedColor,
             iconShape = generalSettings.iconShape,
-            fallbackIconTint = generalSettings.fallbackIconTint,
             theme = generalSettings.theme,
             colorSchemeSettings = generalSettings.colorSchemeSettings,
         )

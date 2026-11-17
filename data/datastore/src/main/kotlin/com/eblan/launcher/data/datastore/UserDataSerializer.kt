@@ -57,7 +57,6 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
         amoledBlack = false
         iconPackPackageName = ""
         iconTint = false
-        fallbackIconTint = false
         iconShapeProto = IconShapeProto.IconShapeNone
     }.build()
 

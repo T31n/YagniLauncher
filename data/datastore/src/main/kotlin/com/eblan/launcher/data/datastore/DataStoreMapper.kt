@@ -136,7 +136,6 @@ internal fun GeneralSettingsProto.toGeneralSettings(): GeneralSettings = General
     customSeedColor = customSeedColor,
     iconPackPackageName = iconPackPackageName,
     iconTint = iconTint,
-    fallbackIconTint = fallbackIconTint,
     iconShape = iconShapeProto.toIconShape(),
     colorSchemeSettings = ColorSchemeSettings(
         paletteStyle = colorSchemePaletteStyleProto.toColorSchemePaletteStyle(),
@@ -216,7 +215,6 @@ internal fun GeneralSettings.toGeneralSettingsProto(): GeneralSettingsProto = Ge
     builder.customSeedColor = customSeedColor
     builder.iconPackPackageName = iconPackPackageName
     builder.iconTint = iconTint
-    builder.fallbackIconTint = fallbackIconTint
     builder.iconShapeProto = iconShape.toIconShapeProto()
     builder.colorSchemePaletteStyleProto =
         colorSchemeSettings.paletteStyle.toColorSchemePaletteStyleProto()

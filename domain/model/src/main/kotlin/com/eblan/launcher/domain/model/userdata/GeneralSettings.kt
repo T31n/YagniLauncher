@@ -24,7 +24,6 @@ data class GeneralSettings(
     val customSeedColor: Int,
     val iconPackPackageName: String,
     val iconTint: Boolean,
-    val fallbackIconTint: Boolean,
     val iconShape: IconShape,
     val colorSchemeSettings: ColorSchemeSettings = ColorSchemeSettings(),
 )

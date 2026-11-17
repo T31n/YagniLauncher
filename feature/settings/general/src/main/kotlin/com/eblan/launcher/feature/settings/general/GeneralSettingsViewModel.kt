@@ -91,7 +91,6 @@ internal class GeneralSettingsViewModel @Inject constructor(
                     previousGeneralSettings.colorSource != generalSettings.colorSource ||
                         previousGeneralSettings.customSeedColor != generalSettings.customSeedColor ||
                         previousGeneralSettings.colorSchemeSettings != generalSettings.colorSchemeSettings ||
-                        previousGeneralSettings.fallbackIconTint != generalSettings.fallbackIconTint ||
                         previousGeneralSettings.theme != generalSettings.theme
                     )
             val iconTintSettingsChanged = previousGeneralSettings.iconTint != generalSettings.iconTint ||

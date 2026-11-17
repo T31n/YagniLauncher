@@ -21,17 +21,12 @@ import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.ColorFilter
-import android.graphics.ColorMatrixColorFilter
-import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import android.graphics.drawable.AdaptiveIconDrawable
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
-import androidx.annotation.ColorInt
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.drawable.toDrawable
 import com.eblan.launcher.common.AndroidImageSerializer
@@ -366,7 +361,6 @@ internal class DefaultImageSerializer @Inject constructor(
         drawable: Drawable,
         colorSource: ColorSource,
         customSeedColor: Int,
-        fallbackIconTint: Boolean,
         theme: Theme,
         iconShape: IconShape,
         colorSchemeSettings: ColorSchemeSettings,
@@ -375,7 +369,6 @@ internal class DefaultImageSerializer @Inject constructor(
             drawable = drawable,
             colorSource = colorSource,
             customSeedColor = customSeedColor,
-            fallbackIconTint = fallbackIconTint,
             theme = theme,
             colorSchemeSettings = colorSchemeSettings,
         ) ?: return null
@@ -422,7 +415,6 @@ internal class DefaultImageSerializer @Inject constructor(
         drawable: Drawable,
         colorSource: ColorSource,
         customSeedColor: Int,
-        fallbackIconTint: Boolean,
         theme: Theme,
         colorSchemeSettings: ColorSchemeSettings,
     ): Drawable? {
@@ -451,62 +443,7 @@ internal class DefaultImageSerializer @Inject constructor(
             }
         }
 
-        return if (fallbackIconTint) {
-            copy.tintedBitmap(iconTintColor = primaryColor)
-        } else {
-            copy
-        }
-    }
-
-    private fun Drawable.tintedBitmap(iconTintColor: Int): Drawable? {
-        val width = if (bounds.isEmpty) {
-            intrinsicWidth
-        } else {
-            bounds.width()
-        }
-
-        val height = if (bounds.isEmpty) {
-            intrinsicHeight
-        } else {
-            bounds.height()
-        }
-
-        return if (width > 0 && height > 0) {
-            val source = createBitmap(width, height)
-
-            setBounds(0, 0, width, height)
-
-            draw(Canvas(source))
-
-            val result = createBitmap(width, height)
-
-            val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                colorFilter = luminanceTintFilter(iconTintColor)
-            }
-
-            Canvas(result).drawBitmap(source, 0f, 0f, paint)
-
-            source.recycle()
-
-            result.toDrawable(Resources.getSystem())
-        } else {
-            null
-        }
-    }
-
-    private fun luminanceTintFilter(@ColorInt tint: Int): ColorFilter {
-        val r = Color.red(tint) / 255f
-        val g = Color.green(tint) / 255f
-        val b = Color.blue(tint) / 255f
-        // luminance = 0.213R + 0.715G + 0.072B, then scaled per channel by the tint
-        return ColorMatrixColorFilter(
-            floatArrayOf(
-                0.213f * r, 0.715f * r, 0.072f * r, 0f, 0f,
-                0.213f * g, 0.715f * g, 0.072f * g, 0f, 0f,
-                0.213f * b, 0.715f * b, 0.072f * b, 0f, 0f,
-                0f, 0f, 0f, 1f, 0f,
-            ),
-        )
+        return copy
     }
 
     private companion object {

@@ -51,8 +51,6 @@
     <string name="apply_icons_from_supported_icon_packs">Použít ikony z podporovaných balíčků ikon</string>
     <string name="tint_icons_using_the_selected_color_source">Obarvit ikony zvoleným zdrojem barev</string>
     <string name="icon_tint">Odstín ikon</string>
-    <string name="fallback_icon_tint">Záložní odstín ikon</string>
-    <string name="use_the_fallback_icon_tint">Použít záložní odstín ikon</string>
     <string name="none">Žádný</string>
     <string name="circle">Kruh</string>
     <string name="square">Čtverec</string>
