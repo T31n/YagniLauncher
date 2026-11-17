@@ -68,7 +68,10 @@ internal class OffsetNestedScrollConnection(
         available: Offset,
         source: NestedScrollSource,
     ): Offset {
-        if (available.y < 0f && swipeY > 0f) {
+        if (
+            source == NestedScrollSource.UserInput &&
+            available.y < 0f && swipeY > 0f
+        ) {
             onVerticalDrag(available.y)
 
             return Offset(
@@ -101,7 +104,9 @@ internal class OffsetNestedScrollConnection(
     }
 
     override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
-        onDragEnd()
+        if (swipeY > 0f) {
+            onDragEnd()
+        }
 
         return super.onPostFling(consumed, available)
     }

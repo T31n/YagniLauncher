@@ -234,13 +234,9 @@ internal class PagerScreenState(
     }
 
     val applicationScreenSwipeY by derivedStateOf {
-        if (swipeUpY.value < screenHeight.toFloat() &&
-            gestureSettings.swipeUp.eblanActionType == EblanActionType.OpenAppDrawer
-        ) {
+        if (swipeUpY.value < screenHeight.toFloat() && gestureSettings.swipeUp.eblanActionType == EblanActionType.OpenAppDrawer) {
             swipeUpY
-        } else if (swipeDownY.value < screenHeight.toFloat() &&
-            gestureSettings.swipeDown.eblanActionType == EblanActionType.OpenAppDrawer
-        ) {
+        } else if (swipeDownY.value < screenHeight.toFloat() && gestureSettings.swipeDown.eblanActionType == EblanActionType.OpenAppDrawer) {
             swipeDownY
         } else {
             Animatable(screenHeight.toFloat())
@@ -332,7 +328,9 @@ internal class PagerScreenState(
     var selectedGridItem by mutableStateOf<GridItem?>(null)
         private set
 
-    var selectedFolderEblanApplicationInfoGridItem by mutableStateOf<FolderEblanApplicationInfoGridItem?>(null)
+    var selectedFolderEblanApplicationInfoGridItem by mutableStateOf<FolderEblanApplicationInfoGridItem?>(
+        null,
+    )
         private set
 
     var isClosePrivateEblanApplicationInfoMenu by mutableStateOf(false)
@@ -556,8 +554,7 @@ internal class PagerScreenState(
 
     fun verticalDragStart() {
         showApplicationScreen =
-            gestureSettings.swipeUp.eblanActionType == EblanActionType.OpenAppDrawer ||
-            gestureSettings.swipeDown.eblanActionType == EblanActionType.OpenAppDrawer
+            gestureSettings.swipeUp.eblanActionType == EblanActionType.OpenAppDrawer || gestureSettings.swipeDown.eblanActionType == EblanActionType.OpenAppDrawer
     }
 
     fun verticalDrag(dragAmount: Float) {
@@ -578,13 +575,12 @@ internal class PagerScreenState(
             swipeY: Animatable<Float, AnimationVector1D>,
             isActiveSwipeOwner: Boolean,
         ) {
-            val targetValue = if (eblanAction.eblanActionType == EblanActionType.OpenAppDrawer &&
-                swipeY.value < screenHeight - swipeThreshold
-            ) {
-                0f
-            } else {
-                screenHeight.toFloat()
-            }
+            val targetValue =
+                if (eblanAction.eblanActionType == EblanActionType.OpenAppDrawer && swipeY.value < screenHeight - swipeThreshold) {
+                    0f
+                } else {
+                    screenHeight.toFloat()
+                }
 
             swipeY.animateTo(
                 targetValue = targetValue,
@@ -869,23 +865,21 @@ internal class PagerScreenState(
 
         val componentName = appWidgetProviderInfo.provider.flattenToString()
 
-        val preview =
-            appWidgetProviderInfo.loadPreviewImage(context, 0)?.let {
-                val directory =
-                    fileManager.getFilesDirectory(FileManager.WIDGETS_DIR)
+        val preview = appWidgetProviderInfo.loadPreviewImage(context, 0)?.let {
+            val directory = fileManager.getFilesDirectory(FileManager.WIDGETS_DIR)
 
-                val file = File(
-                    directory,
-                    iconKeyGenerator.getHashedName(name = componentName),
-                )
+            val file = File(
+                directory,
+                iconKeyGenerator.getHashedName(name = componentName),
+            )
 
-                androidImageSerializer.createDrawablePath(
-                    drawable = it,
-                    file = file,
-                )
+            androidImageSerializer.createDrawablePath(
+                drawable = it,
+                file = file,
+            )
 
-                file.absolutePath
-            }
+            file.absolutePath
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             onGetPinGridItem(
