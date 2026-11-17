@@ -15,7 +15,7 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.service
+package com.eblan.launcher.platform.service
 
 import android.app.Service
 import android.content.Intent
@@ -24,6 +24,7 @@ import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.eblan.launcher.domain.usecase.iconpack.UpdateIconPacksUseCase
+import com.eblan.launcher.platform.R
 import com.eblan.launcher.platform.notificationmanager.AndroidNotificationManagerWrapper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -56,7 +57,7 @@ class IconPackService : Service() {
 
             val notification =
                 NotificationCompat.Builder(this, AndroidNotificationManagerWrapper.CHANNEL_ID)
-                    .setSmallIcon(R.drawable.baseline_import_export_24)
+                    .setSmallIcon(R.drawable.outline_file_save_24)
                     .setContentTitle(getString(R.string.importing_into_cache, iconPackLabel))
                     .setContentText(getString(R.string.loading_icons_from_cache_is_faster))
                     .setOngoing(true)

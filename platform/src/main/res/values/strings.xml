@@ -16,9 +16,6 @@
   ~
   -->
 <resources>
-    <string name="accessibility_service_label">Yagni spouštěč</string>
-    <string name="accessibility_service_description">Akce gest pro Yagni spouštěč</string>
-    <string name="notification_listener_service">Služba naslouchání oznámením Yagni</string>
-    <string name="importing_into_cache">Importování %1$s do keše</string>
-    <string name="loading_icons_from_cache_is_faster">Načítání ikon z keše je rychlejší</string>
+    <string name="importing_into_cache">Importing %1$s into cache</string>
+    <string name="loading_icons_from_cache_is_faster">Loading icons from cache is faster</string>
 </resources>

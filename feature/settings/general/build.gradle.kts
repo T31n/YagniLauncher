@@ -32,5 +32,4 @@ dependencies {
     implementation(projects.domain.repository)
     implementation(projects.domain.useCase)
     implementation(projects.platform)
-    implementation(projects.service)
 }

@@ -70,7 +70,6 @@ dependencies {
     implementation(projects.feature.settings.home)
     implementation(projects.feature.settings.settings)
     implementation(projects.platform)
-    implementation(projects.service)
     implementation(projects.ui)
 
     // Libraries

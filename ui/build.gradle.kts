@@ -52,7 +52,6 @@ dependencies {
     implementation(projects.designSystem)
     implementation(projects.domain.platform)
     implementation(projects.domain.model)
-    implementation(projects.service)
 
     // Libraries
     implementation(libs.androidx.activity.compose)

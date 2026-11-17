@@ -30,6 +30,7 @@ dependencies {
     api(projects.domain.platform)
     api(projects.domain.model)
     implementation(projects.domain.common)
+    implementation(projects.domain.useCase)
 
     // Libraries
     api(platform(libs.androidx.compose.bom))

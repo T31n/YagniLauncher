@@ -54,7 +54,6 @@
             <option value="$PROJECT_DIR$/feature/settings/home" />
             <option value="$PROJECT_DIR$/feature/settings/settings" />
             <option value="$PROJECT_DIR$/platform" />
-            <option value="$PROJECT_DIR$/service" />
             <option value="$PROJECT_DIR$/ui" />
           </set>
         </option>

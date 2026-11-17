@@ -108,6 +108,7 @@
       <module name="YagniLauncher.framework.user-manager" target="21" />
       <module name="YagniLauncher.framework.wallpaper-manager" target="21" />
       <module name="YagniLauncher.framework.widget-manager" target="21" />
+      <module name="YagniLauncher.service" target="21" />
     </bytecodeTargetLevel>
   </component>
 </project>

@@ -15,7 +15,7 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.service
+package com.eblan.launcher.platform.service
 
 import android.content.Intent
 import android.os.Binder
