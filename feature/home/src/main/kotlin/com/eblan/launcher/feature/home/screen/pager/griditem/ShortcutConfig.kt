@@ -226,7 +226,7 @@ internal fun InteractiveShortcutConfigGridItem(
             modifier = Modifier
                 .padding(gridItemSettings.textPadding.dp)
                 .alpha(alpha = alpha),
-            text = label.toString(),
+            text = label,
             color = textColor,
             textAlign = TextAlign.Center,
             maxLines = maxLines,
@@ -241,7 +241,7 @@ internal fun InteractiveShortcutConfigGridItem(
                 .padding(gridItemSettings.textPadding.dp)
                 .then(iconModifier)
                 .alpha(alpha = alpha),
-            text = label.toString(),
+            text = label,
             color = textColor,
             textAlign = TextAlign.Center,
             maxLines = maxLines,

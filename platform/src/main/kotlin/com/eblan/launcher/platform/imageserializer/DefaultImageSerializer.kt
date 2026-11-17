@@ -370,7 +370,7 @@ internal class DefaultImageSerializer @Inject constructor(
             customSeedColor = customSeedColor,
             theme = theme,
             colorSchemeSettings = colorSchemeSettings,
-        ) ?: return null
+        )
 
         return getShapedDrawable(
             drawable = tintedDrawable,
@@ -416,7 +416,7 @@ internal class DefaultImageSerializer @Inject constructor(
         customSeedColor: Int,
         theme: Theme,
         colorSchemeSettings: ColorSchemeSettings,
-    ): Drawable? {
+    ): Drawable {
         val primaryColor = materialColorSchemeResolver.getPrimaryColor(
             colorSource = colorSource,
             customSeedColor = customSeedColor,
