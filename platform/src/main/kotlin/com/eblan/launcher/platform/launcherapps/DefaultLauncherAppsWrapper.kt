@@ -105,17 +105,23 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         }.flatMap { userHandle ->
             currentCoroutineContext().ensureActive()
 
-            launcherApps.getActivityList(null, userHandle).map {
-                currentCoroutineContext().ensureActive()
+            try {
+                launcherApps.getActivityList(null, userHandle).map {
+                    currentCoroutineContext().ensureActive()
 
-                it.toLauncherAppsActivityInfo(
-                    iconTint = iconTint,
-                    colorSource = colorSource,
-                    customSeedColor = customSeedColor,
-                    iconShape = iconShape,
-                    theme = theme,
-                    colorSchemeSettings = colorSchemeSettings,
-                )
+                    it.toLauncherAppsActivityInfo(
+                        iconTint = iconTint,
+                        colorSource = colorSource,
+                        customSeedColor = customSeedColor,
+                        iconShape = iconShape,
+                        theme = theme,
+                        colorSchemeSettings = colorSchemeSettings,
+                    )
+                }
+            } catch (_: IllegalStateException) {
+                emptyList()
+            } catch (_: SecurityException) {
+                emptyList()
             }
         }
     }
@@ -128,10 +134,16 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         }.flatMap { userHandle ->
             currentCoroutineContext().ensureActive()
 
-            launcherApps.getActivityList(null, userHandle).map {
-                currentCoroutineContext().ensureActive()
+            try {
+                launcherApps.getActivityList(null, userHandle).map {
+                    currentCoroutineContext().ensureActive()
 
-                it.toFastLauncherAppsActivityInfo()
+                    it.toFastLauncherAppsActivityInfo()
+                }
+            } catch (_: IllegalStateException) {
+                emptyList()
+            } catch (_: SecurityException) {
+                emptyList()
             }
         }
     }
@@ -148,17 +160,27 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
     ): List<LauncherAppsActivityInfo> = withContext(ioDispatcher) {
         val userHandle = androidUserManagerWrapper.getUserForSerialNumber(serialNumber)
 
-        launcherApps.getActivityList(packageName, userHandle).map {
-            currentCoroutineContext().ensureActive()
+        if (userHandle != null && isUserAvailable(userHandle = userHandle)) {
+            try {
+                launcherApps.getActivityList(packageName, userHandle).map {
+                    currentCoroutineContext().ensureActive()
 
-            it.toLauncherAppsActivityInfo(
-                iconTint = iconTint,
-                colorSource = colorSource,
-                customSeedColor = customSeedColor,
-                iconShape = iconShape,
-                theme = theme,
-                colorSchemeSettings = colorSchemeSettings,
-            )
+                    it.toLauncherAppsActivityInfo(
+                        iconTint = iconTint,
+                        colorSource = colorSource,
+                        customSeedColor = customSeedColor,
+                        iconShape = iconShape,
+                        theme = theme,
+                        colorSchemeSettings = colorSchemeSettings,
+                    )
+                }
+            } catch (_: IllegalStateException) {
+                emptyList()
+            } catch (_: SecurityException) {
+                emptyList()
+            }
+        } else {
+            emptyList()
         }
     }
 
@@ -168,10 +190,20 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
     ): List<FastLauncherAppsActivityInfo> = withContext(ioDispatcher) {
         val userHandle = androidUserManagerWrapper.getUserForSerialNumber(serialNumber)
 
-        launcherApps.getActivityList(packageName, userHandle).map {
-            currentCoroutineContext().ensureActive()
+        if (userHandle != null && isUserAvailable(userHandle = userHandle)) {
+            try {
+                launcherApps.getActivityList(packageName, userHandle).map {
+                    currentCoroutineContext().ensureActive()
 
-            it.toFastLauncherAppsActivityInfo()
+                    it.toFastLauncherAppsActivityInfo()
+                }
+            } catch (_: IllegalStateException) {
+                emptyList()
+            } catch (_: SecurityException) {
+                emptyList()
+            }
+        } else {
+            emptyList()
         }
     }
 
@@ -202,11 +234,17 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             }.flatMap { userHandle ->
                 currentCoroutineContext().ensureActive()
 
-                launcherApps.getShortcuts(shortcutQuery, userHandle)?.map {
-                    currentCoroutineContext().ensureActive()
+                try {
+                    launcherApps.getShortcuts(shortcutQuery, userHandle)?.map {
+                        currentCoroutineContext().ensureActive()
 
-                    it.toLauncherAppsShortcutInfo()
-                }.orEmpty()
+                        it.toLauncherAppsShortcutInfo()
+                    }.orEmpty()
+                } catch (_: IllegalStateException) {
+                    emptyList()
+                } catch (_: SecurityException) {
+                    emptyList()
+                }
             }
         } else {
             null
@@ -240,11 +278,17 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             }.flatMap { userHandle ->
                 currentCoroutineContext().ensureActive()
 
-                launcherApps.getShortcuts(shortcutQuery, userHandle)?.map {
-                    currentCoroutineContext().ensureActive()
+                try {
+                    launcherApps.getShortcuts(shortcutQuery, userHandle)?.map {
+                        currentCoroutineContext().ensureActive()
 
-                    it.toFastLauncherAppsShortcutInfo()
-                }.orEmpty()
+                        it.toFastLauncherAppsShortcutInfo()
+                    }.orEmpty()
+                } catch (_: IllegalStateException) {
+                    emptyList()
+                } catch (_: SecurityException) {
+                    emptyList()
+                }
             }
         } else {
             null
@@ -257,7 +301,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
     ): List<LauncherAppsShortcutInfo>? = withContext(ioDispatcher) {
         val userHandle = androidUserManagerWrapper.getUserForSerialNumber(serialNumber)
 
-        if (hasShortcutHostPermission && userHandle != null) {
+        if (hasShortcutHostPermission && userHandle != null && isUserAvailable(userHandle = userHandle)) {
             val shortcutQuery = LauncherApps.ShortcutQuery().apply {
                 setPackage(packageName)
 
@@ -266,10 +310,16 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
                 )
             }
 
-            launcherApps.getShortcuts(shortcutQuery, userHandle)?.map {
-                currentCoroutineContext().ensureActive()
+            try {
+                launcherApps.getShortcuts(shortcutQuery, userHandle)?.map {
+                    currentCoroutineContext().ensureActive()
 
-                it.toLauncherAppsShortcutInfo()
+                    it.toLauncherAppsShortcutInfo()
+                }
+            } catch (_: IllegalStateException) {
+                null
+            } catch (_: SecurityException) {
+                null
             }
         } else {
             null
@@ -282,19 +332,25 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
     ): List<ShortcutConfigActivityInfo> = withContext(ioDispatcher) {
         val userHandle = androidUserManagerWrapper.getUserForSerialNumber(serialNumber)
 
-        if (userHandle != null) {
-            launcherApps.getShortcutConfigActivityList(packageName, userHandle)
-                .map {
-                    currentCoroutineContext().ensureActive()
+        if (userHandle != null && isUserAvailable(userHandle = userHandle)) {
+            try {
+                launcherApps.getShortcutConfigActivityList(packageName, userHandle)
+                    .map {
+                        currentCoroutineContext().ensureActive()
 
-                    it.toLauncherAppsActivityInfo(
-                        iconTint = false,
-                        colorSource = ColorSource.None,
-                        customSeedColor = 0,
-                        iconShape = IconShape.None,
-                        theme = Theme.System,
-                    )
-                }
+                        it.toLauncherAppsActivityInfo(
+                            iconTint = false,
+                            colorSource = ColorSource.None,
+                            customSeedColor = 0,
+                            iconShape = IconShape.None,
+                            theme = Theme.System,
+                        )
+                    }
+            } catch (_: IllegalStateException) {
+                emptyList()
+            } catch (_: SecurityException) {
+                emptyList()
+            }
         } else {
             emptyList()
         }
@@ -316,7 +372,11 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
                     Bundle.EMPTY,
                 )
             }
+        } catch (e: ActivityNotFoundException) {
+            e.printStackTrace()
         } catch (e: SecurityException) {
+            e.printStackTrace()
+        } catch (e: IllegalStateException) {
             e.printStackTrace()
         }
     }
@@ -343,6 +403,10 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             }
         } catch (e: ActivityNotFoundException) {
             e.printStackTrace()
+        } catch (e: SecurityException) {
+            e.printStackTrace()
+        } catch (e: IllegalStateException) {
+            e.printStackTrace()
         }
     }
 
@@ -363,6 +427,10 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             }
         } catch (e: ActivityNotFoundException) {
             e.printStackTrace()
+        } catch (e: SecurityException) {
+            e.printStackTrace()
+        } catch (e: IllegalStateException) {
+            e.printStackTrace()
         }
     }
 
@@ -370,7 +438,13 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         shortcutInfo: ShortcutInfo?,
         density: Int,
     ): Drawable? = if (shortcutInfo != null) {
-        launcherApps.getShortcutBadgedIconDrawable(shortcutInfo, density)
+        try {
+            launcherApps.getShortcutBadgedIconDrawable(shortcutInfo, density)
+        } catch (_: IllegalStateException) {
+            null
+        } catch (_: SecurityException) {
+            null
+        }
     } else {
         null
     }
@@ -380,12 +454,24 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         componentName: String,
         sourceBounds: Rect,
     ) {
-        launcherApps.startAppDetailsActivity(
-            ComponentName.unflattenFromString(componentName),
-            androidUserManagerWrapper.getUserForSerialNumber(serialNumber),
-            sourceBounds,
-            Bundle.EMPTY,
-        )
+        val userHandle = androidUserManagerWrapper.getUserForSerialNumber(serialNumber) ?: return
+
+        try {
+            if (isUserAvailable(userHandle = userHandle)) {
+                launcherApps.startAppDetailsActivity(
+                    ComponentName.unflattenFromString(componentName),
+                    userHandle,
+                    sourceBounds,
+                    Bundle.EMPTY,
+                )
+            }
+        } catch (e: ActivityNotFoundException) {
+            e.printStackTrace()
+        } catch (e: SecurityException) {
+            e.printStackTrace()
+        } catch (e: IllegalStateException) {
+            e.printStackTrace()
+        }
     }
 
     override suspend fun getShortcutConfigIntent(
@@ -398,16 +484,28 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         return withContext(ioDispatcher) {
             val userHandle = androidUserManagerWrapper.getUserForSerialNumber(serialNumber)
 
-            val launcherActivityInfo = if (userHandle != null) {
-                launcherApps.getShortcutConfigActivityList(packageName, userHandle)
-                    .find {
-                        it.componentName.flattenToString() == componentName
-                    }
+            val launcherActivityInfo = if (userHandle != null && isUserAvailable(userHandle = userHandle)) {
+                try {
+                    launcherApps.getShortcutConfigActivityList(packageName, userHandle)
+                        .find {
+                            it.componentName.flattenToString() == componentName
+                        }
+                } catch (_: IllegalStateException) {
+                    null
+                } catch (_: SecurityException) {
+                    null
+                }
             } else {
                 null
             }
 
-            launcherActivityInfo?.let(launcherApps::getShortcutConfigActivityIntent)
+            try {
+                launcherActivityInfo?.let(launcherApps::getShortcutConfigActivityIntent)
+            } catch (_: IllegalStateException) {
+                null
+            } catch (_: SecurityException) {
+                null
+            }
         }
     }
 
@@ -420,7 +518,13 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             )
 
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-            val launcherUserInfo = launcherApps.getLauncherUserInfo(userHandle) ?: return EblanUser(
+            val launcherUserInfo = try {
+                launcherApps.getLauncherUserInfo(userHandle)
+            } catch (_: IllegalStateException) {
+                null
+            } catch (_: SecurityException) {
+                null
+            } ?: return EblanUser(
                 serialNumber = serialNumber,
                 eblanUserType = EblanUserType.Personal,
                 isPrivateSpaceEntryPointHidden = isPrivateSpaceEntryPointHidden(userHandle = userHandle),
@@ -440,7 +544,11 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             )
         } else {
             val isWorkProfile = withContext(ioDispatcher) {
-                packageManager.getUserBadgedLabel("", userHandle).isNotBlank()
+                try {
+                    packageManager.getUserBadgedLabel("", userHandle).isNotBlank()
+                } catch (_: Exception) {
+                    false
+                }
             }
             val eblanUserType = if (isWorkProfile) EblanUserType.Work else EblanUserType.Personal
 
@@ -460,16 +568,26 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         val userHandle = androidUserManagerWrapper.getUserForSerialNumber(serialNumber)
 
         if (userHandle != null && isUserAvailable(userHandle = userHandle)) {
-            launcherApps.pinShortcuts(
-                packageName,
-                shortcutIds,
-                userHandle,
-            )
+            try {
+                launcherApps.pinShortcuts(
+                    packageName,
+                    shortcutIds,
+                    userHandle,
+                )
+            } catch (e: IllegalStateException) {
+                e.printStackTrace()
+            } catch (e: SecurityException) {
+                e.printStackTrace()
+            }
         }
     }
 
     override fun getPrivateSpaceSettingsIntent(): IntentSender? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
-        launcherApps.privateSpaceSettingsIntent
+        try {
+            launcherApps.privateSpaceSettingsIntent
+        } catch (_: Exception) {
+            null
+        }
     } else {
         null
     }
@@ -479,9 +597,13 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         !androidUserManagerWrapper.isQuietModeEnabled(userHandle)
 
     private fun isPrivateSpaceEntryPointHidden(userHandle: UserHandle): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA &&
-        launcherApps.getLauncherUserInfo(userHandle)
-            ?.userConfig
-            ?.getBoolean(LauncherUserInfo.PRIVATE_SPACE_ENTRYPOINT_HIDDEN) == true
+        try {
+            launcherApps.getLauncherUserInfo(userHandle)
+                ?.userConfig
+                ?.getBoolean(LauncherUserInfo.PRIVATE_SPACE_ENTRYPOINT_HIDDEN) == true
+        } catch (_: Exception) {
+            false
+        }
 
     private suspend fun LauncherActivityInfo.toLauncherAppsActivityInfo(
         iconTint: Boolean,
@@ -496,6 +618,10 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         val icon = try {
             getIcon(0)?.takeIf { it.intrinsicWidth > 0 && it.intrinsicHeight > 0 }
         } catch (_: IllegalArgumentException) {
+            null
+        } catch (_: IllegalStateException) {
+            null
+        } catch (_: SecurityException) {
             null
         }
 
@@ -537,6 +663,10 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             launcherApps.getShortcutBadgedIconDrawable(this, 0)
                 ?.takeIf { it.intrinsicWidth > 0 && it.intrinsicHeight > 0 }
         } catch (_: IllegalArgumentException) {
+            null
+        } catch (_: IllegalStateException) {
+            null
+        } catch (_: SecurityException) {
             null
         }
 
@@ -642,6 +772,10 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         val badgedDrawable = try {
             packageManager.getUserBadgedIcon(transformedDrawable, userHandle)
         } catch (_: IllegalArgumentException) {
+            null
+        } catch (_: IllegalStateException) {
+            null
+        } catch (_: SecurityException) {
             null
         } ?: return null
 
