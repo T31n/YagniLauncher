@@ -18,7 +18,6 @@
 package com.eblan.launcher.platform.packagemanager
 
 import android.content.Context
-import android.content.Context.USER_SERVICE
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.LauncherApps
@@ -26,12 +25,12 @@ import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.graphics.drawable.Drawable
 import android.os.UserHandle
-import android.os.UserManager
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPack
 import com.eblan.launcher.domain.platform.PackageManagerWrapper
 import com.eblan.launcher.platform.imageserializer.AndroidImageSerializer
+import com.eblan.launcher.platform.usermanager.AndroidUserManagerWrapper
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -40,6 +39,7 @@ import javax.inject.Inject
 
 internal class DefaultPackageManagerWrapper @Inject constructor(
     @param:ApplicationContext private val context: Context,
+    private val androidUserManagerWrapper: AndroidUserManagerWrapper,
     private val imageSerializer: AndroidImageSerializer,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : PackageManagerWrapper,
@@ -47,7 +47,6 @@ internal class DefaultPackageManagerWrapper @Inject constructor(
     private val packageManager = context.packageManager
     private val launcherApps =
         context.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
-    private val userManager = context.getSystemService(USER_SERVICE) as UserManager
     override val hasSystemFeatureAppWidgets
         get() = packageManager.hasSystemFeature(PackageManager.FEATURE_APP_WIDGETS)
 
@@ -130,7 +129,7 @@ internal class DefaultPackageManagerWrapper @Inject constructor(
         serialNumber: Long?,
     ): ApplicationInfo? = try {
         if (serialNumber != null) {
-            val userHandle = userManager.getUserForSerialNumber(serialNumber)
+            val userHandle = androidUserManagerWrapper.getUserForSerialNumber(serialNumber = serialNumber)
 
             if (userHandle != null) {
                 launcherApps.getApplicationInfo(

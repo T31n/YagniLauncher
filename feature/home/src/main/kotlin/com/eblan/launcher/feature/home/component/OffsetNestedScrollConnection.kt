@@ -17,41 +17,36 @@
  */
 package com.eblan.launcher.feature.home.component
 
-import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.unit.Velocity
+
 @Composable
 internal fun rememberNestedScrollConnectionEffect(
     // Scroll State
-    scrollableState: ScrollableState,
+    canScrollBackward: Boolean,
     swipeY: Float,
     // Drag Callbacks
     onVerticalDrag: (Float) -> Unit,
     onDragEnd: () -> Unit,
 ): OffsetNestedScrollConnection {
-    val currentOnVerticalDrag by rememberUpdatedState(onVerticalDrag)
-    val currentOnDragEnd by rememberUpdatedState(onDragEnd)
-
-    val nestedScrollConnection = remember {
+    val nestedScrollConnection = remember(
+        key1 = onVerticalDrag,
+        key2 = onDragEnd,
+    ) {
         OffsetNestedScrollConnection(
-            onVerticalDrag = currentOnVerticalDrag,
-            onDragEnd = currentOnDragEnd,
+            onVerticalDrag = onVerticalDrag,
+            onDragEnd = onDragEnd,
         )
     }
 
-    LaunchedEffect(
-        key1 = swipeY,
-        key2 = scrollableState.canScrollBackward,
-    ) {
+    SideEffect {
         nestedScrollConnection.updateSwipeY(swipeY)
-        nestedScrollConnection.updateCanScrollBackward(scrollableState.canScrollBackward)
+        nestedScrollConnection.updateCanScrollBackward(canScrollBackward)
     }
 
     return nestedScrollConnection

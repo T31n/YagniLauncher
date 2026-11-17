@@ -21,13 +21,11 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProviderInfo
 import android.content.ComponentName
 import android.content.Context
-import android.content.Context.USER_SERVICE
 import android.content.pm.LauncherApps
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.UserHandle
-import android.os.UserManager
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.model.widget.AppWidgetManagerAppWidgetProviderInfo
@@ -35,6 +33,7 @@ import com.eblan.launcher.domain.platform.AppWidgetManagerWrapper
 import com.eblan.launcher.domain.platform.FileManager
 import com.eblan.launcher.domain.platform.IconKeyGenerator
 import com.eblan.launcher.platform.imageserializer.AndroidImageSerializer
+import com.eblan.launcher.platform.usermanager.AndroidUserManagerWrapper
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.currentCoroutineContext
@@ -45,6 +44,7 @@ import javax.inject.Inject
 
 internal class DefaultAppWidgetManagerWrapper @Inject constructor(
     @param:ApplicationContext private val context: Context,
+    private val androidUserManagerWrapper: AndroidUserManagerWrapper,
     private val imageSerializer: AndroidImageSerializer,
     private val fileManager: FileManager,
     private val iconKeyGenerator: IconKeyGenerator,
@@ -54,7 +54,6 @@ internal class DefaultAppWidgetManagerWrapper @Inject constructor(
     private val appWidgetManager = AppWidgetManager.getInstance(context)
     private val launcherApps =
         context.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
-    private val userManager = context.getSystemService(USER_SERVICE) as UserManager
     private val packageManager = context.packageManager
 
     override suspend fun getInstalledProvidersForProfilesWithCacheIcons(): List<AppWidgetManagerAppWidgetProviderInfo> = withContext(ioDispatcher) {
@@ -91,7 +90,7 @@ internal class DefaultAppWidgetManagerWrapper @Inject constructor(
     }
 
     private suspend fun AppWidgetProviderInfo.toEblanAppWidgetProviderInfo(): AppWidgetManagerAppWidgetProviderInfo {
-        val serialNumber = userManager.getSerialNumberForUser(profile)
+        val serialNumber = androidUserManagerWrapper.getSerialNumberForUser(userHandle = profile)
 
         val preview = loadPreviewImage(context, 0)?.let { drawable ->
             val directory = fileManager.getFilesDirectory(FileManager.WIDGETS_DIR)

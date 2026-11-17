@@ -507,7 +507,7 @@ private fun EblanApplicationInfos(
 
     val nestedScrollConnection = rememberNestedScrollConnectionEffect(
         // Scroll State
-        scrollableState = lazyGridState,
+        canScrollBackward = lazyGridState.canScrollBackward,
         swipeY = swipeY,
         // Drag Callbacks
         onVerticalDrag = onVerticalDrag,
