@@ -18,23 +18,23 @@
 package com.eblan.launcher.ui.local
 
 import androidx.compose.runtime.staticCompositionLocalOf
-import com.eblan.launcher.common.AndroidImageSerializer
-import com.eblan.launcher.common.MaterialColorSchemeResolver
-import com.eblan.launcher.domain.common.FileManager
-import com.eblan.launcher.domain.common.IconKeyGenerator
-import com.eblan.launcher.framework.accessibilitymanager.AndroidAccessibilityManagerWrapper
-import com.eblan.launcher.framework.iconpackmanager.AndroidIconPackManager
-import com.eblan.launcher.framework.launcherapps.AndroidLauncherAppsWrapper
-import com.eblan.launcher.framework.launcherapps.PinItemRequestWrapper
-import com.eblan.launcher.framework.locale.LocaleWrapper
-import com.eblan.launcher.framework.packagemanager.AndroidPackageManagerWrapper
-import com.eblan.launcher.framework.rolemanager.AndroidRoleManagerWrapper
-import com.eblan.launcher.framework.settings.AndroidSettingsWrapper
-import com.eblan.launcher.framework.statusbarmanager.AndroidStatusBarManagerWrapper
-import com.eblan.launcher.framework.usermanager.AndroidUserManagerWrapper
-import com.eblan.launcher.framework.wallpapermanager.AndroidWallpaperManagerWrapper
-import com.eblan.launcher.framework.widgetmanager.AndroidAppWidgetHostWrapper
-import com.eblan.launcher.framework.widgetmanager.AndroidAppWidgetManagerWrapper
+import com.eblan.launcher.domain.platform.FileManager
+import com.eblan.launcher.domain.platform.IconKeyGenerator
+import com.eblan.launcher.platform.accessibilitymanager.AndroidAccessibilityManagerWrapper
+import com.eblan.launcher.platform.colorscheme.MaterialColorSchemeResolver
+import com.eblan.launcher.platform.iconpackmanager.AndroidIconPackManager
+import com.eblan.launcher.platform.imageserializer.AndroidImageSerializer
+import com.eblan.launcher.platform.launcherapps.AndroidLauncherAppsWrapper
+import com.eblan.launcher.platform.launcherapps.PinItemRequestWrapper
+import com.eblan.launcher.platform.locale.LocaleWrapper
+import com.eblan.launcher.platform.packagemanager.AndroidPackageManagerWrapper
+import com.eblan.launcher.platform.rolemanager.AndroidRoleManagerWrapper
+import com.eblan.launcher.platform.settings.AndroidSettingsWrapper
+import com.eblan.launcher.platform.statusbarmanager.AndroidStatusBarManagerWrapper
+import com.eblan.launcher.platform.usermanager.AndroidUserManagerWrapper
+import com.eblan.launcher.platform.wallpapermanager.AndroidWallpaperManagerWrapper
+import com.eblan.launcher.platform.widgetmanager.AndroidAppWidgetHostWrapper
+import com.eblan.launcher.platform.widgetmanager.AndroidAppWidgetManagerWrapper
 
 val LocalAppWidgetHost = staticCompositionLocalOf<AndroidAppWidgetHostWrapper> {
     error("No AppWidgetHost provided")

@@ -17,8 +17,6 @@
  */
 package com.eblan.launcher.domain.usecase.util
 
-import com.eblan.launcher.domain.framework.AppWidgetHostWrapper
-import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.model.folder.FolderPopup
 import com.eblan.launcher.domain.model.grid.ApplicationInfoGridItem
 import com.eblan.launcher.domain.model.grid.FolderGridItem
@@ -32,6 +30,8 @@ import com.eblan.launcher.domain.model.launcherapps.ShortcutQuery
 import com.eblan.launcher.domain.model.launcherapps.ShortcutQueryFlag
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
+import com.eblan.launcher.domain.platform.AppWidgetHostWrapper
+import com.eblan.launcher.domain.platform.LauncherAppsWrapper
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlin.math.ceil

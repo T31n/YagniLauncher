@@ -37,23 +37,23 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import com.eblan.launcher.common.AndroidImageSerializer
-import com.eblan.launcher.domain.common.FileManager
-import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.model.launcherapps.PinItemRequestType
+import com.eblan.launcher.domain.platform.FileManager
+import com.eblan.launcher.domain.platform.IconKeyGenerator
 import com.eblan.launcher.feature.home.R
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.GridItemSource
 import com.eblan.launcher.feature.home.util.PAGE_INDICATOR_HEIGHT
 import com.eblan.launcher.feature.home.util.updateAppWidgetOptions
-import com.eblan.launcher.framework.launcherapps.AndroidLauncherAppsWrapper
-import com.eblan.launcher.framework.usermanager.AndroidUserManagerWrapper
-import com.eblan.launcher.framework.widgetmanager.AndroidAppWidgetHostWrapper
-import com.eblan.launcher.framework.widgetmanager.AndroidAppWidgetManagerWrapper
+import com.eblan.launcher.platform.imageserializer.AndroidImageSerializer
+import com.eblan.launcher.platform.launcherapps.AndroidLauncherAppsWrapper
+import com.eblan.launcher.platform.usermanager.AndroidUserManagerWrapper
+import com.eblan.launcher.platform.widgetmanager.AndroidAppWidgetHostWrapper
+import com.eblan.launcher.platform.widgetmanager.AndroidAppWidgetManagerWrapper
 import java.io.File
 
 internal suspend fun handleDropGridItem(

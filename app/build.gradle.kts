@@ -50,13 +50,12 @@ android {
 
 dependencies {
     // Projects
-    implementation(projects.common)
     implementation(projects.data.repository)
     implementation(projects.designSystem)
-    implementation(projects.domain.framework)
+    implementation(projects.domain.common)
+    implementation(projects.domain.platform)
     implementation(projects.domain.model)
     implementation(projects.domain.repository)
-    implementation(projects.domain.useCase)
     implementation(projects.feature.action)
     implementation(projects.feature.editApplicationInfo)
     implementation(projects.feature.editFolderApplicationInfo)
@@ -70,12 +69,7 @@ dependencies {
     implementation(projects.feature.settings.gestures)
     implementation(projects.feature.settings.home)
     implementation(projects.feature.settings.settings)
-    implementation(projects.framework.contentResolver)
-    implementation(projects.framework.jaroWinklerSimilarity)
-    implementation(projects.framework.notificationManager)
-    implementation(projects.framework.roleManager)
-    implementation(projects.framework.resources)
-    implementation(projects.service)
+    implementation(projects.platform)
     implementation(projects.ui)
 
     // Libraries

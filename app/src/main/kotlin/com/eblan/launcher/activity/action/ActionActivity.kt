@@ -44,7 +44,6 @@ import androidx.core.graphics.createBitmap
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.activity.main.MainActivity
-import com.eblan.launcher.common.MaterialColorSchemeResolver
 import com.eblan.launcher.designsystem.theme.getDefaultColorScheme
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
@@ -52,8 +51,9 @@ import com.eblan.launcher.domain.model.userdata.ApplicationTheme
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.feature.action.ActionScreen
-import com.eblan.launcher.framework.accessibilitymanager.AndroidAccessibilityManagerWrapper
-import com.eblan.launcher.framework.wallpapermanager.AndroidWallpaperManagerWrapper
+import com.eblan.launcher.platform.accessibilitymanager.AndroidAccessibilityManagerWrapper
+import com.eblan.launcher.platform.colorscheme.MaterialColorSchemeResolver
+import com.eblan.launcher.platform.wallpapermanager.AndroidWallpaperManagerWrapper
 import com.eblan.launcher.ui.local.LocalAccessibilityManager
 import com.eblan.launcher.ui.local.LocalMaterialColorSchemeResolver
 import com.eblan.launcher.ui.local.LocalWallpaperManager

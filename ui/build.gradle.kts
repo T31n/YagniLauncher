@@ -46,25 +46,13 @@ android {
 
 dependencies {
     // Projects
-    api(projects.framework.accessibilityManager)
-    api(projects.framework.iconPackManager)
-    api(projects.framework.launcherApps)
-    api(projects.framework.locale)
-    api(projects.framework.packageManager)
-    api(projects.framework.roleManager)
-    api(projects.framework.settings)
-    api(projects.framework.statusbarManager)
-    api(projects.framework.userManager)
-    api(projects.framework.wallpaperManager)
-    api(projects.framework.widgetManager)
+    api(projects.platform)
 
     implementation(projects.common)
     implementation(projects.designSystem)
-    implementation(projects.domain.common)
-    implementation(projects.domain.framework)
+    implementation(projects.domain.platform)
     implementation(projects.domain.model)
 
     // Libraries
     implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.activity.ktx)
 }

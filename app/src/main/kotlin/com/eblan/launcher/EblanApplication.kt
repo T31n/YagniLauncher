@@ -25,7 +25,7 @@ import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.FileProvider
-import com.eblan.launcher.framework.notificationmanager.AndroidNotificationManagerWrapper
+import com.eblan.launcher.platform.notificationmanager.AndroidNotificationManagerWrapper
 import dagger.hilt.android.HiltAndroidApp
 import java.io.File
 import javax.inject.Inject

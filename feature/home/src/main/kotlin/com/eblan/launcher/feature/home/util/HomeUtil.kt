@@ -38,10 +38,10 @@ import com.eblan.launcher.domain.model.grid.VerticalArrangement
 import com.eblan.launcher.domain.model.home.GlobalAction
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
-import com.eblan.launcher.framework.launcherapps.AndroidLauncherAppsWrapper
-import com.eblan.launcher.framework.statusbarmanager.AndroidStatusBarManagerWrapper
-import com.eblan.launcher.framework.usermanager.AndroidUserManagerWrapper
-import com.eblan.launcher.framework.widgetmanager.AndroidAppWidgetManagerWrapper
+import com.eblan.launcher.platform.launcherapps.AndroidLauncherAppsWrapper
+import com.eblan.launcher.platform.statusbarmanager.AndroidStatusBarManagerWrapper
+import com.eblan.launcher.platform.usermanager.AndroidUserManagerWrapper
+import com.eblan.launcher.platform.widgetmanager.AndroidAppWidgetManagerWrapper
 import kotlin.math.roundToInt
 
 internal fun handleEblanAction(

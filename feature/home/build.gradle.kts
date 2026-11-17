@@ -28,14 +28,11 @@ android {
 dependencies {
     // Projects
     implementation(projects.common)
-    implementation(projects.domain.framework)
+    implementation(projects.domain.platform)
     implementation(projects.domain.grid)
     implementation(projects.domain.repository)
     implementation(projects.domain.useCase)
-    implementation(projects.framework.settings)
-    implementation(projects.framework.statusbarManager)
-    implementation(projects.framework.userManager)
-    implementation(projects.service)
+    implementation(projects.platform)
 
     // Libraries
     implementation(libs.accompanist.permissions)

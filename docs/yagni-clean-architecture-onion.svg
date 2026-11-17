@@ -18,11 +18,10 @@
 
   <!-- Outer layer label -->
   <text x="450" y="224" text-anchor="middle" font-family="Consolas, Monaco, monospace" font-size="19" font-weight="700" fill="#1e40af">:app</text>
-  <text x="450" y="248" text-anchor="middle" font-family="Consolas, Monaco, monospace" font-size="19" font-weight="700" fill="#1e40af">:service</text>
 
   <!-- Merged middle layer — feature / framework / data stacked -->
   <text x="450" y="314" text-anchor="middle" font-family="Consolas, Monaco, monospace" font-size="18" font-weight="700" fill="#166534">:feature</text>
-  <text x="450" y="336" text-anchor="middle" font-family="Consolas, Monaco, monospace" font-size="18" font-weight="700" fill="#166534">:framework</text>
+  <text x="450" y="336" text-anchor="middle" font-family="Consolas, Monaco, monospace" font-size="18" font-weight="700" fill="#166534">:platform</text>
   <text x="450" y="358" text-anchor="middle" font-family="Consolas, Monaco, monospace" font-size="18" font-weight="700" fill="#166534">:data</text>
 
   <!-- Domain label -->

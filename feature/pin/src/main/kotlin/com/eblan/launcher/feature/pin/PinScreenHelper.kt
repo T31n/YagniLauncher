@@ -27,8 +27,8 @@ import android.os.UserHandle
 import androidx.activity.result.ActivityResult
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
-import com.eblan.launcher.framework.widgetmanager.AndroidAppWidgetHostWrapper
-import com.eblan.launcher.framework.widgetmanager.AndroidAppWidgetManagerWrapper
+import com.eblan.launcher.platform.widgetmanager.AndroidAppWidgetHostWrapper
+import com.eblan.launcher.platform.widgetmanager.AndroidAppWidgetManagerWrapper
 
 internal fun handleGridItem(
     // Item

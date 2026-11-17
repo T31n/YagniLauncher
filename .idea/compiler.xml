@@ -88,11 +88,27 @@
       <module name="YagniLauncher.data.cache" target="21" />
       <module name="YagniLauncher.data.network" target="21" />
       <module name="YagniLauncher.feature.settings.ai-organizer" target="21" />
+      <module name="YagniLauncher.framework.accessibility-manager" target="21" />
+      <module name="YagniLauncher.framework.content-resolver" target="21" />
       <module name="YagniLauncher.framework.file-manager" target="21" />
+      <module name="YagniLauncher.framework.icon-pack-manager" target="21" />
       <module name="YagniLauncher.framework.image-serializer" target="21" />
+      <module name="YagniLauncher.framework.jaro-winkler-similarity" target="21" />
+      <module name="YagniLauncher.framework.launcher-apps" target="21" />
+      <module name="YagniLauncher.framework.locale" target="21" />
+      <module name="YagniLauncher.framework.notification-manager" target="21" />
+      <module name="YagniLauncher.framework.package-manager" target="21" />
       <module name="YagniLauncher.framework.power-manager" target="21" />
+      <module name="YagniLauncher.framework.resources" target="21" />
+      <module name="YagniLauncher.framework.role-manager" target="21" />
+      <module name="YagniLauncher.framework.settings" target="21" />
       <module name="YagniLauncher.framework.shortcut-manager" target="21" />
+      <module name="YagniLauncher.framework.statusbar-manager" target="21" />
       <module name="YagniLauncher.framework.transliterator" target="21" />
+      <module name="YagniLauncher.framework.user-manager" target="21" />
+      <module name="YagniLauncher.framework.wallpaper-manager" target="21" />
+      <module name="YagniLauncher.framework.widget-manager" target="21" />
+      <module name="YagniLauncher.service" target="21" />
     </bytecodeTargetLevel>
   </component>
 </project>

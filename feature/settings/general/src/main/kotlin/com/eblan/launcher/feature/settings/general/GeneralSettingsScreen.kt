@@ -58,7 +58,7 @@ import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.feature.settings.general.dialog.ImportIconPackInfoDialog
 import com.eblan.launcher.feature.settings.general.dialog.SelectIconPackInfoDialog
 import com.eblan.launcher.feature.settings.general.model.GeneralSettingsUiState
-import com.eblan.launcher.service.IconPackService
+import com.eblan.launcher.platform.service.IconPackService
 import com.eblan.launcher.ui.dialog.ColorPickerDialog
 import com.eblan.launcher.ui.local.LocalLocaleWrapper
 import com.eblan.launcher.ui.settings.SettingsColumnItem
