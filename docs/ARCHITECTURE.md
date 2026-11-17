@@ -1,6 +1,6 @@
 # Yagni Launcher Architecture
 
-This document describes how Yagni Launcher's Gradle modules are organized and how they map onto Clean Architecture. It focuses on stable module responsibilities and dependency rules rather than an inventory of classes, which changes far more often than the architecture itself.
+This document describes Yagni Launcher's Gradle module responsibilities and dependency rules. The architecture is inspired by Clean Architecture, but the module boundaries are pragmatic rather than a strict one-to-one mapping to concentric layers.
 
 This module structure follows [The Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
 
@@ -15,7 +15,7 @@ This module structure follows [The Clean Architecture](https://blog.cleancoder.c
 - [Module Groups](#module-groups)
     - [Domain](#domain)
     - [Data](#data)
-    - [Framework](#framework)
+    - [Platform](#platform)
     - [Presentation](#presentation)
     - [Android Entry Points](#android-entry-points)
     - [Shared Infrastructure](#shared-infrastructure)
@@ -26,17 +26,17 @@ This module structure follows [The Clean Architecture](https://blog.cleancoder.c
 
 ## Clean Architecture Layers
 
-The codebase is split into five layers:
+The codebase has five main groups:
 
-1. **Domain** — Pure Kotlin entities, repository/framework interfaces, use cases, and grid algorithms. No Android SDK imports.
+1. **Domain** — Pure Kotlin models, repository and platform contracts, use cases, and grid algorithms. No Android SDK imports.
 2. **Data** — Persistence implementations: Room database, Proto DataStore preferences, and the repositories that combine them.
-3. **Framework** — Modules that own integrations with Android system APIs (`PackageManager`, `LauncherApps`, `WallpaperManager`, `AppWidgetManager`, etc.). They implement Domain abstractions where the Domain needs those capabilities.
+3. **Platform** — Android system integrations and other platform-specific implementations. It implements Domain contracts where needed and exposes Android-facing wrappers to consumers that require them.
 4. **Presentation** — Compose UI and ViewModels: the `feature:*` screens plus the `ui` and `design-system` component libraries.
-5. **Android Entry Points** — The outermost layer: `app` and `service`, the two modules Android itself talks to (the `Application`/Activity graph and background `Service` components). They wire every other module together and are the only modules allowed to depend on the whole graph at once.
+5. **Android Entry Points** — `app` and `service`, which provide the Application, Activity, and Android Service components.
 
 ## Dependency Rule
 
-Dependencies point **inward**: Android Entry Points compose the graph; Presentation depends on Domain and the framework capabilities it uses; Data and Framework implement contracts from Domain. Domain does not depend on Android, Data, Framework, Presentation, or the entry points.
+Domain remains independent of Android, Data, Platform, Presentation, and the entry points. Data and Platform depend on Domain contracts; Presentation uses Domain and the platform APIs it needs; `app` composes the application graph. `service` is an Android entry point that depends on the Domain modules and Platform integrations required by its service components. This is a pragmatic modular architecture: Presentation can consume platform wrappers, while the Domain itself remains Android-independent.
 
 ## Module Groups
 
@@ -46,12 +46,12 @@ Pure Kotlin modules with no Android dependency, so their logic is fully unit-tes
 
 | Module              | Responsibility                                                                                           |
 |---------------------|----------------------------------------------------------------------------------------------------------|
-| `domain:model`      | Entity and value-object definitions shared by every other layer.                                         |
-| `domain:repository` | Repository interfaces describing the data operations the domain needs; implemented by `data:repository`. |
-| `domain:framework`  | Interfaces abstracting Android system services; implemented by the `framework:*` modules.                |
-| `domain:use-case`   | Application business logic, composed from repositories and framework interfaces.                         |
+| `domain:model`      | Entity and value-object definitions shared by other layers.                                              |
+| `domain:repository` | Repository interfaces describing required data operations; implemented by `data:repository`.             |
+| `domain:platform`   | Android-independent contracts for platform capabilities needed by the Domain; implemented by `platform`. |
+| `domain:use-case`   | Application business logic composed from repositories and platform contracts.                            |
 | `domain:grid`       | Grid layout and collision-resolution algorithms used when moving or resizing items.                      |
-| `domain:common`     | Cross-cutting abstractions such as coroutine dispatcher qualifiers.                                      |
+| `domain:common`     | Cross-cutting contracts and qualifiers, including coroutine dispatcher qualifiers.                       |
 
 ### Data
 
@@ -64,11 +64,11 @@ Concrete persistence implementations behind the `domain:repository` interfaces:
 | `data:datastore`       | User settings persistence via Proto DataStore.                                          |
 | `data:datastore-proto` | The `.proto` schema definitions consumed by `data:datastore`.                           |
 
-### Framework
+### Platform
 
-Each `framework:*` module owns its Android integration. Current modules are `framework:accessibility-manager`, `framework:content-resolver`, `framework:icon-pack-manager`, `framework:jaro-winkler-similarity`, `framework:launcher-apps`, `framework:locale`, `framework:notification-manager`, `framework:package-manager`, `framework:resources`, `framework:settings`, `framework:statusbar-manager`, `framework:user-manager`, `framework:wallpaper-manager`, and `framework:widget-manager`.
+`platform` consolidates the former `framework:*` modules into one Android library. It owns integrations with APIs such as `LauncherApps`, `PackageManager`, `WallpaperManager`, `AppWidgetManager`, accessibility, locale, and notifications. It also owns Android-specific image serialization and material color-scheme resolution, which were previously in `common`.
 
-When the Domain needs a capability, its abstraction is declared in `domain:framework` and the owning framework module binds its implementation with Hilt. Framework modules generally call Android APIs directly; `AndroidUserManagerWrapper` is declared in `framework:user-manager`, which also provides its Hilt implementation. `ui` exposes that module through an API dependency, while `feature:home` and `service` depend on it directly.
+`domain:platform` contains Android-independent contracts needed by domain logic. The `platform` module implements and binds the relevant contracts. Some Android-facing wrapper interfaces also live in `platform` for consumers such as `ui`.
 
 ### Presentation
 
@@ -80,19 +80,19 @@ When the Domain needs a capability, its abstraction is declared in `domain:frame
 
 ### Android Entry Points
 
-The outermost layer. `app` and `service` are the only modules the Android OS talks to directly, so they're the two places allowed to reach across the whole module graph to wire things together:
+`app` is the application composition root. `service` contains Android Service components and depends only on the Domain and Platform functionality those components require; it does not compose the application graph.
 
-| Module    | Responsibility                                                                                        |
-|-----------|-------------------------------------------------------------------------------------------------------|
-| `app`     | Wires every module together: Hilt setup, `Application` class, and the root Activity/navigation graph. |
-| `service` | Background Android services (accessibility, notification listener, icon pack updates).                |
+| Module    | Responsibility                                                                                                                     |
+|-----------|------------------------------------------------------------------------------------------------------------------------------------|
+| `app`     | Application composition root: Hilt setup, `Application`, Activities, and the root navigation graph.                                |
+| `service` | Android Service components (accessibility, notification listener, and icon-pack updates), using required Domain and Platform APIs. |
 
 ### Shared Infrastructure
 
-| Module        | Responsibility                                                                                                                                      |
-|---------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
-| `common`      | Shared Android infrastructure: image serialization, file and icon-key utilities, and dispatcher bindings. |
-| `build-logic` | Gradle convention plugins that standardize module build configuration.                                                                              |
+| Module        | Responsibility                                                                                            |
+|---------------|-----------------------------------------------------------------------------------------------------------|
+| `common`      | Shared Android utilities: file and icon-key implementations, with Hilt bindings and dispatcher providers. |
+| `build-logic` | Gradle convention plugins that standardize module build configuration.                                    |
 
 ---
 
@@ -101,8 +101,8 @@ The outermost layer. `app` and `service` are the only modules the Android OS tal
 These three module groups all sit in the Presentation layer, but each has a distinct responsibility:
 
 - **`design-system`** contains generic, reusable visual primitives — theming, icons, animations, dialogs, and other Compose building blocks that carry no knowledge of the launcher's domain models or features. It is model-free: it has no dependency on `domain:model` or any other domain module.
-- **`ui`** contains shared, *application-aware* UI: composites built from `design-system` primitives that are reused across multiple features (dialogs like `SelectApplicationDialog`, settings composables, etc.). It depends on `design-system`, `domain:model`, and the framework modules needed by its shared UI, which it exposes as API dependencies.
-- **`feature:*`** modules contain screens, ViewModels, and UI state specific to one feature. They depend on both `design-system` and `ui` (added automatically by the `feature` Gradle convention plugin), plus any `domain:*` or framework modules they use directly.
+- **`ui`** contains shared, *application-aware* UI: composites built from `design-system` primitives that are reused across features (dialogs, settings composables, etc.). It exposes `platform` as an API dependency.
+- **`feature:*`** modules contain screens, ViewModels, and UI state specific to one feature. They depend on both `design-system` and `ui` (added automatically by the Android feature convention plugin), plus the `domain:*` modules they use directly.
 
 ---
 
