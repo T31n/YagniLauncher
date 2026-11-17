@@ -50,12 +50,10 @@ dependencies {
 
     implementation(projects.common)
     implementation(projects.designSystem)
-    implementation(projects.domain.common)
     implementation(projects.domain.platform)
     implementation(projects.domain.model)
     implementation(projects.service)
 
     // Libraries
     implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.activity.ktx)
 }

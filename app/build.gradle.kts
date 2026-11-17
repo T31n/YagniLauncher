@@ -50,13 +50,12 @@ android {
 
 dependencies {
     // Projects
-    implementation(projects.common)
     implementation(projects.data.repository)
     implementation(projects.designSystem)
+    implementation(projects.domain.common)
     implementation(projects.domain.platform)
     implementation(projects.domain.model)
     implementation(projects.domain.repository)
-    implementation(projects.domain.useCase)
     implementation(projects.feature.action)
     implementation(projects.feature.editApplicationInfo)
     implementation(projects.feature.editFolderApplicationInfo)

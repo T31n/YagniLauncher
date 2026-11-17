@@ -26,10 +26,6 @@ android {
 }
 
 dependencies {
-    // Projects
-    implementation(projects.common)
-    implementation(projects.domain.model)
-
     // Libraries
     api(libs.androidx.compose.foundation)
     api(libs.androidx.compose.foundation.layout)
