@@ -20,6 +20,8 @@ package com.eblan.launcher.platform.di
 import com.eblan.launcher.domain.platform.AppWidgetHostWrapper
 import com.eblan.launcher.domain.platform.AppWidgetManagerWrapper
 import com.eblan.launcher.domain.platform.ContentResolverWrapper
+import com.eblan.launcher.domain.platform.FileManager
+import com.eblan.launcher.domain.platform.IconKeyGenerator
 import com.eblan.launcher.domain.platform.IconPackManager
 import com.eblan.launcher.domain.platform.JaroWinklerSimilarityWrapper
 import com.eblan.launcher.domain.platform.LauncherAppsWrapper
@@ -29,6 +31,8 @@ import com.eblan.launcher.platform.accessibilitymanager.DefaultAccessibilityMana
 import com.eblan.launcher.platform.colorscheme.DefaultMaterialColorSchemeResolver
 import com.eblan.launcher.platform.colorscheme.MaterialColorSchemeResolver
 import com.eblan.launcher.platform.contentresolver.DefaultContentResolverWrapper
+import com.eblan.launcher.platform.filemanager.DefaultFileManager
+import com.eblan.launcher.platform.iconkeygenerator.DefaultIconKeyGenerator
 import com.eblan.launcher.platform.iconpackmanager.AndroidIconPackManager
 import com.eblan.launcher.platform.iconpackmanager.DefaultIconPackManager
 import com.eblan.launcher.platform.imageserializer.AndroidImageSerializer
@@ -74,6 +78,14 @@ internal interface PlatformModule {
     @Binds
     @Singleton
     fun contentResolverWrapper(impl: DefaultContentResolverWrapper): ContentResolverWrapper
+
+    @Binds
+    @Singleton
+    fun fileManager(impl: DefaultFileManager): FileManager
+
+    @Binds
+    @Singleton
+    fun iconKeyGenerator(impl: DefaultIconKeyGenerator): IconKeyGenerator
 
     @Binds
     @Singleton

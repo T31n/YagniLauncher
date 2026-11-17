@@ -19,10 +19,10 @@ package com.eblan.launcher.domain.usecase.folder
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
-import com.eblan.launcher.domain.common.FileManager
-import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.platform.ContentResolverWrapper
+import com.eblan.launcher.domain.platform.FileManager
+import com.eblan.launcher.domain.platform.IconKeyGenerator
 import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
 import com.eblan.launcher.domain.usecase.util.getCustomIcon
 import kotlinx.coroutines.CoroutineDispatcher

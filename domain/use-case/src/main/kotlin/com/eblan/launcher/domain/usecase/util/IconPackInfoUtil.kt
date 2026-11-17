@@ -17,10 +17,10 @@
  */
 package com.eblan.launcher.domain.usecase.util
 
-import com.eblan.launcher.domain.common.FileManager
-import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
 import com.eblan.launcher.domain.model.userdata.GeneralSettings
+import com.eblan.launcher.domain.platform.FileManager
+import com.eblan.launcher.domain.platform.IconKeyGenerator
 import com.eblan.launcher.domain.platform.IconPackManager
 import java.io.File
 

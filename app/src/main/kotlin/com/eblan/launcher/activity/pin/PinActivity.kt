@@ -31,10 +31,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.eblan.launcher.domain.common.FileManager
-import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.model.userdata.ApplicationTheme
 import com.eblan.launcher.domain.model.userdata.GeneralSettings
+import com.eblan.launcher.domain.platform.FileManager
+import com.eblan.launcher.domain.platform.IconKeyGenerator
 import com.eblan.launcher.feature.pin.PinScreen
 import com.eblan.launcher.platform.colorscheme.MaterialColorSchemeResolver
 import com.eblan.launcher.platform.imageserializer.AndroidImageSerializer

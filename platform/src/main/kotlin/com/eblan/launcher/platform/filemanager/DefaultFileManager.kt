@@ -15,12 +15,12 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.common.impl
+package com.eblan.launcher.platform.filemanager
 
 import android.content.Context
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
-import com.eblan.launcher.domain.common.FileManager
+import com.eblan.launcher.domain.platform.FileManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext

@@ -15,7 +15,7 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.domain.common
+package com.eblan.launcher.domain.platform
 
 import java.io.File
 

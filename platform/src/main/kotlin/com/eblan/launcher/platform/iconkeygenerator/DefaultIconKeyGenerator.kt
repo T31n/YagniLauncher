@@ -15,12 +15,12 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.common.impl
+package com.eblan.launcher.platform.iconkeygenerator
 
 import android.util.Base64
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
-import com.eblan.launcher.domain.common.IconKeyGenerator
+import com.eblan.launcher.domain.platform.IconKeyGenerator
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import java.security.MessageDigest

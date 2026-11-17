@@ -66,7 +66,7 @@ Concrete persistence implementations behind the `domain:repository` interfaces:
 
 ### Platform
 
-`platform` consolidates the former `framework:*` modules into one Android library. It owns integrations with APIs such as `LauncherApps`, `PackageManager`, `WallpaperManager`, `AppWidgetManager`, accessibility, locale, and notifications. It also owns Android-specific image serialization and material color-scheme resolution, which were previously in `common`.
+`platform` consolidates the former `framework:*` modules into one Android library. It owns integrations with APIs such as `LauncherApps`, `PackageManager`, `WallpaperManager`, `AppWidgetManager`, accessibility, locale, and notifications. It also owns Android-specific image serialization, material color-scheme resolution, file management, and icon-key generation, which were previously in `common`.
 
 `domain:platform` contains Android-independent contracts needed by domain logic. The `platform` module implements and binds the relevant contracts. Some Android-facing wrapper interfaces also live in `platform` for consumers such as `ui`.
 
@@ -91,7 +91,7 @@ Concrete persistence implementations behind the `domain:repository` interfaces:
 
 | Module        | Responsibility                                                                                            |
 |---------------|-----------------------------------------------------------------------------------------------------------|
-| `common`      | Shared Android utilities: file and icon-key implementations, with Hilt bindings and dispatcher providers. |
+| `common`      | Shared coroutine dispatcher providers.                                                                  |
 | `build-logic` | Gradle convention plugins that standardize module build configuration.                                    |
 
 ---

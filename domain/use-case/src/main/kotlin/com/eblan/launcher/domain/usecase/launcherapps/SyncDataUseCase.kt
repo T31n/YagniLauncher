@@ -19,8 +19,6 @@ package com.eblan.launcher.domain.usecase.launcherapps
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
-import com.eblan.launcher.domain.common.FileManager
-import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.application.SyncEblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.ApplicationInfoGridItem
@@ -33,6 +31,8 @@ import com.eblan.launcher.domain.model.userdata.FolderSettings
 import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.domain.platform.AppWidgetManagerWrapper
+import com.eblan.launcher.domain.platform.FileManager
+import com.eblan.launcher.domain.platform.IconKeyGenerator
 import com.eblan.launcher.domain.platform.LauncherAppsWrapper
 import com.eblan.launcher.domain.platform.PackageManagerWrapper
 import com.eblan.launcher.domain.repository.ApplicationInfoGridItemRepository

@@ -34,9 +34,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.eblan.launcher.activity.settings.SettingsActivity
-import com.eblan.launcher.domain.common.FileManager
-import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.model.userdata.ApplicationTheme
+import com.eblan.launcher.domain.platform.FileManager
+import com.eblan.launcher.domain.platform.IconKeyGenerator
 import com.eblan.launcher.navigation.MainNavHost
 import com.eblan.launcher.platform.accessibilitymanager.AndroidAccessibilityManagerWrapper
 import com.eblan.launcher.platform.colorscheme.MaterialColorSchemeResolver

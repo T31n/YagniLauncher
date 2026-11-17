@@ -15,7 +15,7 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.domain.common
+package com.eblan.launcher.domain.platform
 
 interface IconKeyGenerator {
     suspend fun getActivityIconKey(

@@ -15,27 +15,25 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.common.di
+package com.eblan.launcher.common
 
-import com.eblan.launcher.common.impl.DefaultFileManager
-import com.eblan.launcher.common.impl.DefaultIconKeyGenerator
-import com.eblan.launcher.domain.common.FileManager
-import com.eblan.launcher.domain.common.IconKeyGenerator
-import dagger.Binds
+import com.eblan.launcher.domain.common.Dispatcher
+import com.eblan.launcher.domain.common.EblanDispatchers
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal interface CommonModule {
+object DispatchersModule {
+    @Provides
+    @Dispatcher(EblanDispatchers.IO)
+    fun providesIODispatcher(): CoroutineDispatcher = Dispatchers.IO
 
-    @Binds
-    @Singleton
-    fun iconKeyGenerator(impl: DefaultIconKeyGenerator): IconKeyGenerator
-
-    @Binds
-    @Singleton
-    fun fileManager(impl: DefaultFileManager): FileManager
+    @Provides
+    @Dispatcher(EblanDispatchers.Default)
+    fun providesDefaultDispatcher(): CoroutineDispatcher = Dispatchers.Default
 }

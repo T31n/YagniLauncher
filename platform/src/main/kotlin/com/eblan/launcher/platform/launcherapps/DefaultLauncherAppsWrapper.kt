@@ -37,8 +37,6 @@ import android.os.UserHandle
 import android.os.UserManager
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
-import com.eblan.launcher.domain.common.FileManager
-import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.model.launcherapps.EblanUser
 import com.eblan.launcher.domain.model.launcherapps.EblanUserType
 import com.eblan.launcher.domain.model.launcherapps.FastLauncherAppsActivityInfo
@@ -52,6 +50,8 @@ import com.eblan.launcher.domain.model.userdata.ColorSchemeSettings
 import com.eblan.launcher.domain.model.userdata.ColorSource
 import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.Theme
+import com.eblan.launcher.domain.platform.FileManager
+import com.eblan.launcher.domain.platform.IconKeyGenerator
 import com.eblan.launcher.domain.platform.LauncherAppsWrapper
 import com.eblan.launcher.platform.imageserializer.AndroidImageSerializer
 import com.eblan.launcher.platform.usermanager.AndroidUserManagerWrapper

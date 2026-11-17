@@ -30,10 +30,10 @@ import android.os.UserHandle
 import android.os.UserManager
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
-import com.eblan.launcher.domain.common.FileManager
-import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.model.widget.AppWidgetManagerAppWidgetProviderInfo
 import com.eblan.launcher.domain.platform.AppWidgetManagerWrapper
+import com.eblan.launcher.domain.platform.FileManager
+import com.eblan.launcher.domain.platform.IconKeyGenerator
 import com.eblan.launcher.platform.imageserializer.AndroidImageSerializer
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher

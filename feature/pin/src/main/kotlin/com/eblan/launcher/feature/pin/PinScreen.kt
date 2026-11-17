@@ -71,9 +71,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
-import com.eblan.launcher.domain.common.FileManager
-import com.eblan.launcher.domain.common.IconKeyGenerator
 import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.platform.FileManager
+import com.eblan.launcher.domain.platform.IconKeyGenerator
 import com.eblan.launcher.platform.imageserializer.AndroidImageSerializer
 import com.eblan.launcher.platform.launcherapps.AndroidLauncherAppsWrapper
 import com.eblan.launcher.platform.usermanager.AndroidUserManagerWrapper

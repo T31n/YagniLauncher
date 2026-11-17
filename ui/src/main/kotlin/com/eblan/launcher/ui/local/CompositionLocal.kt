@@ -18,8 +18,8 @@
 package com.eblan.launcher.ui.local
 
 import androidx.compose.runtime.staticCompositionLocalOf
-import com.eblan.launcher.domain.common.FileManager
-import com.eblan.launcher.domain.common.IconKeyGenerator
+import com.eblan.launcher.domain.platform.FileManager
+import com.eblan.launcher.domain.platform.IconKeyGenerator
 import com.eblan.launcher.platform.accessibilitymanager.AndroidAccessibilityManagerWrapper
 import com.eblan.launcher.platform.colorscheme.MaterialColorSchemeResolver
 import com.eblan.launcher.platform.iconpackmanager.AndroidIconPackManager
