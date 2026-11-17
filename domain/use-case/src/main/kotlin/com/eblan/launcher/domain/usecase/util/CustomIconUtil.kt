@@ -19,7 +19,7 @@ package com.eblan.launcher.domain.usecase.util
 
 import com.eblan.launcher.domain.common.FileManager
 import com.eblan.launcher.domain.common.IconKeyGenerator
-import com.eblan.launcher.domain.framework.ContentResolverWrapper
+import com.eblan.launcher.domain.platform.ContentResolverWrapper
 import java.io.File
 import java.io.IOException
 import kotlin.uuid.Uuid

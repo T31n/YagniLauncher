@@ -24,7 +24,7 @@ import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.eblan.launcher.domain.usecase.iconpack.UpdateIconPacksUseCase
-import com.eblan.launcher.framework.notificationmanager.AndroidNotificationManagerWrapper
+import com.eblan.launcher.platform.notificationmanager.AndroidNotificationManagerWrapper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

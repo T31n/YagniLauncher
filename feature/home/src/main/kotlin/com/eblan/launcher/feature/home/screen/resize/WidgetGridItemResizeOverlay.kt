@@ -51,7 +51,7 @@ import com.eblan.launcher.feature.home.component.dashedResizeOutline
 import com.eblan.launcher.feature.home.component.resizeHandleModifier
 import com.eblan.launcher.feature.home.util.DRAG_HANDLE_SIZE
 import com.eblan.launcher.feature.home.util.updateAppWidgetOptions
-import com.eblan.launcher.framework.widgetmanager.AndroidAppWidgetManagerWrapper
+import com.eblan.launcher.platform.widgetmanager.AndroidAppWidgetManagerWrapper
 import com.eblan.launcher.ui.local.LocalAppWidgetManager
 import kotlinx.coroutines.launch
 import kotlin.Int

@@ -24,7 +24,7 @@ dependencies {
     // Projects
     api(projects.domain.common)
     api(projects.domain.model)
-    implementation(projects.domain.framework)
+    implementation(projects.domain.platform)
     implementation(projects.domain.grid)
     implementation(projects.domain.repository)
 

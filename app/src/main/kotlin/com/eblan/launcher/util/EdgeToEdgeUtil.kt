@@ -21,8 +21,8 @@ import android.graphics.Color
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
-import com.eblan.launcher.common.MaterialColorSchemeResolver
 import com.eblan.launcher.domain.model.userdata.Theme
+import com.eblan.launcher.platform.colorscheme.MaterialColorSchemeResolver
 
 fun ComponentActivity.handleEdgeToEdge(
     theme: Theme,
