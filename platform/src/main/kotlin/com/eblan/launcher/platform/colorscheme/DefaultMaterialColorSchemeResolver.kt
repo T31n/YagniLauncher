@@ -32,8 +32,8 @@ import com.eblan.launcher.domain.model.userdata.ColorSchemePaletteStyle
 import com.eblan.launcher.domain.model.userdata.ColorSchemeSettings
 import com.eblan.launcher.domain.model.userdata.ColorSource
 import com.eblan.launcher.domain.model.userdata.Theme
-import com.materialkolor.dynamicColorScheme
 import com.materialkolor.dynamiccolor.ColorSpec
+import com.materialkolor.material3.dynamicColorScheme
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import com.materialkolor.PaletteStyle as MaterialKolorPaletteStyle

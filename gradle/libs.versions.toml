@@ -19,7 +19,7 @@ hilt = "2.59.2"
 javaxInject = "1"
 jmh = "1.37"
 junit-jupiter = "5.14.1"
-materialKolor = "5.0.1"
+materialKolor = "6.0.0"
 kotlin = "2.4.10"
 kotlinxBenchmark = "0.4.18"
 kotlinxCoroutines = "1.10.2"
@@ -69,7 +69,8 @@ kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-cor
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 kotlin-metadata-jvm = { group = "org.jetbrains.kotlin", name = "kotlin-metadata-jvm", version.ref = "kotlinMetadataJvm" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
-material-kolor = { group = "com.materialkolor", name = "material-kolor", version.ref = "materialKolor" }
+material-kolor-core = { group = "com.materialkolor", name = "material-kolor-core", version.ref = "materialKolor" }
+material-kolor-material3 = { group = "com.materialkolor", name = "material-kolor-material3", version.ref = "materialKolor" }
 protobuf-kotlin-lite = { group = "com.google.protobuf", name = "protobuf-kotlin-lite", version.ref = "protobuf" }
 protobuf-protoc = { group = "com.google.protobuf", name = "protoc", version.ref = "protobuf" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }

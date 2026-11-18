@@ -39,5 +39,5 @@ dependencies {
     implementation(libs.androidx.core.core)
     implementation(libs.apache.commons.text)
     implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.material.kolor)
+    implementation(libs.material.kolor.material3)
 }

@@ -37,5 +37,5 @@ dependencies {
     // Libraries
     implementation(libs.accompanist.permissions)
     implementation(libs.androidx.core.core)
-    implementation(libs.material.kolor)
+    implementation(libs.material.kolor.core)
 }
