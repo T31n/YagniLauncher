@@ -52,8 +52,6 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import com.eblan.launcher.designsystem.component.popupSpringAnimationSpec
-import com.eblan.launcher.designsystem.component.springAnimationSpec
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
 import com.eblan.launcher.domain.model.grid.GridItem
@@ -185,14 +183,8 @@ internal fun FolderGridItemPopup(
                 y = y,
             ),
             visibleState = transitionState,
-            enter = fadeIn(animationSpec = springAnimationSpec()) + scaleIn(
-                initialScale = 0.8f,
-                animationSpec = popupSpringAnimationSpec(),
-            ),
-            exit = fadeOut(animationSpec = springAnimationSpec()) + scaleOut(
-                targetScale = 0.8f,
-                animationSpec = popupSpringAnimationSpec(),
-            ),
+            enter = fadeIn() + scaleIn(initialScale = 0.8f),
+            exit = fadeOut() + scaleOut(targetScale = 0.8f),
         ) {
             FolderGridItemPopupContent(
                 // Item and Settings

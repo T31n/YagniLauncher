@@ -53,8 +53,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
-import com.eblan.launcher.designsystem.component.popupSpringAnimationSpec
-import com.eblan.launcher.designsystem.component.springAnimationSpec
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.GridItem
@@ -123,14 +121,8 @@ internal fun SettingsPopup(
     ) {
         AnimatedVisibility(
             visibleState = transitionState,
-            enter = fadeIn(animationSpec = springAnimationSpec()) + scaleIn(
-                initialScale = 0.8f,
-                animationSpec = popupSpringAnimationSpec(),
-            ),
-            exit = fadeOut(animationSpec = springAnimationSpec()) + scaleOut(
-                targetScale = 0.8f,
-                animationSpec = popupSpringAnimationSpec(),
-            ),
+            enter = fadeIn() + scaleIn(initialScale = 0.8f),
+            exit = fadeOut() + scaleOut(targetScale = 0.8f),
         ) {
             Column(
                 modifier = Modifier.width(IntrinsicSize.Max),

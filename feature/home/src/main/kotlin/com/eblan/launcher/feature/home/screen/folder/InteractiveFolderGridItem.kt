@@ -154,8 +154,6 @@ internal fun InteractiveFolderGridItem(
         gridItemSettings
     }
 
-    val folderGridItemAnimationProgress = progress.coerceIn(0f, 1f)
-
     val currentTextColor = getGridItemTextColorFromBackgroundColor(
         // Container Background Color
         backgroundColor = folderBackgroundColor,
@@ -168,19 +166,19 @@ internal fun InteractiveFolderGridItem(
     )
 
     val padding = if (animations) {
-        lerp(1.dp, currentGridItemSettings.padding.dp, folderGridItemAnimationProgress)
+        lerp(1.dp, currentGridItemSettings.padding.dp, progress)
     } else {
         currentGridItemSettings.padding.dp
     }
 
     val iconPadding = if (animations) {
-        lerp(0.dp, currentGridItemSettings.iconPadding.dp, folderGridItemAnimationProgress)
+        lerp(0.dp, currentGridItemSettings.iconPadding.dp, progress)
     } else {
         currentGridItemSettings.iconPadding.dp
     }
 
     val textPadding = if (animations) {
-        lerp(0.dp, currentGridItemSettings.textPadding.dp, folderGridItemAnimationProgress)
+        lerp(0.dp, currentGridItemSettings.textPadding.dp, progress)
     } else {
         currentGridItemSettings.textPadding.dp
     }
@@ -192,7 +190,7 @@ internal fun InteractiveFolderGridItem(
                 FOLDER_PREVIEW_ROWS,
             ),
             currentGridItemSettings.iconSize.dp,
-            folderGridItemAnimationProgress,
+            progress,
         )
     } else {
         currentGridItemSettings.iconSize.dp

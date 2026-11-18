@@ -148,13 +148,11 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
         systemCustomTextColor = systemCustomTextColor,
     )
 
-    val folderEblanApplicationInfoAnimationProgress = progress.coerceIn(0f, 1f)
-
     val padding = if (animations) {
         lerp(
             1.dp,
             appDrawerSettings.gridItemSettings.padding.dp,
-            folderEblanApplicationInfoAnimationProgress,
+            progress,
         )
     } else {
         appDrawerSettings.gridItemSettings.padding.dp
@@ -164,7 +162,7 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
         lerp(
             0.dp,
             appDrawerSettings.gridItemSettings.iconPadding.dp,
-            folderEblanApplicationInfoAnimationProgress,
+            progress,
         )
     } else {
         appDrawerSettings.gridItemSettings.iconPadding.dp
@@ -174,7 +172,7 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
         lerp(
             0.dp,
             appDrawerSettings.gridItemSettings.textPadding.dp,
-            folderEblanApplicationInfoAnimationProgress,
+            progress,
         )
     } else {
         appDrawerSettings.gridItemSettings.textPadding.dp
@@ -187,7 +185,7 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
                 FOLDER_PREVIEW_ROWS,
             ),
             appDrawerSettings.gridItemSettings.iconSize.dp,
-            folderEblanApplicationInfoAnimationProgress,
+            progress,
         )
     } else {
         appDrawerSettings.gridItemSettings.iconSize.dp
