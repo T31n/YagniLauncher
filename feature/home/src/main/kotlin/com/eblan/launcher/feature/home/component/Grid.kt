@@ -101,8 +101,7 @@ internal fun SparkleGridLayout(
     // Grid Structure
     columns: Int,
     rows: Int,
-    // Grid Item
-    gridItem: GridItem,
+    // Grid Item Settings
     gridItemSettings: GridItemSettings,
     // Drag and Style
     dragIntOffset: IntOffset,
@@ -112,22 +111,13 @@ internal fun SparkleGridLayout(
 ) {
     var gridPositionInRoot by remember { mutableStateOf(Offset.Zero) }
 
-    val currentGridItemSettings = if (gridItem.override) {
-        gridItem.gridItemSettings
-    } else {
-        gridItemSettings
-    }
-
     val currentTextColor = getGridItemTextColor(
         // Grid Item Text Colors
-        gridItemTextColor = currentGridItemSettings.textColor,
-        gridItemCustomTextColor = currentGridItemSettings.customTextColor,
+        gridItemTextColor = gridItemSettings.textColor,
+        gridItemCustomTextColor = gridItemSettings.customTextColor,
         // System Text Colors
         systemTextColor = textColor,
         systemCustomTextColor = gridItemSettings.customTextColor,
-        // Background Color
-        backgroundColor = currentGridItemSettings.backgroundColor,
-        customBackgroundColor = currentGridItemSettings.customBackgroundColor,
     )
 
     Canvas(

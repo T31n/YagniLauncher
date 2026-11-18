@@ -924,8 +924,7 @@ internal fun PagerScreen(
                         // Grid Structure
                         columns = homeSettings.columns,
                         rows = homeSettings.rows,
-                        // Grid Item
-                        gridItem = moveGridItemResult.movingGridItem,
+                        // Grid Item Settings
                         gridItemSettings = homeSettings.gridItemSettings,
                         // Drag and Style
                         dragIntOffset = pagerScreenState.dragIntOffset,
@@ -1109,8 +1108,7 @@ internal fun PagerScreen(
                                 // Grid Structure
                                 columns = homeSettings.dockColumns,
                                 rows = homeSettings.dockRows,
-                                // Grid Item
-                                gridItem = moveGridItemResult.movingGridItem,
+                                // Grid Item Settings
                                 gridItemSettings = homeSettings.dockGridItemSettings,
                                 // Drag and Style
                                 dragIntOffset = pagerScreenState.dragIntOffset,
