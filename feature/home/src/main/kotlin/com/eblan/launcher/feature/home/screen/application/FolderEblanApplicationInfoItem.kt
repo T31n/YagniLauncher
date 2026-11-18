@@ -42,7 +42,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
@@ -82,6 +81,8 @@ import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
+import com.eblan.launcher.feature.home.util.getBackgroundColor
+import com.eblan.launcher.feature.home.util.getFolderBorderColor
 import com.eblan.launcher.feature.home.util.getGridItemBackgroundColor
 import com.eblan.launcher.feature.home.util.getGridItemTextColorFromBackgroundColor
 import com.eblan.launcher.feature.home.util.getHorizontalAlignment
@@ -115,6 +116,7 @@ internal fun FolderEblanApplicationInfoItem(
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
+    folderBorderColor: BackgroundColor,
     customFolderBorderColor: Int,
     folderBorderWidth: Int,
     // Interaction
@@ -304,11 +306,18 @@ internal fun FolderEblanApplicationInfoItem(
             Surface(
                 modifier = commonModifier,
                 shape = RoundedCornerShape(folderCornerRadius.dp),
-                border = BorderStroke(width = folderBorderWidth.dp, color = Color(customFolderBorderColor)),
-                color = when (folderBackgroundColor) {
-                    BackgroundColor.System -> MaterialTheme.colorScheme.surface
-                    BackgroundColor.Custom -> Color(customFolderBackgroundColor)
-                },
+                border = BorderStroke(
+                    width = folderBorderWidth.dp,
+                    color = getFolderBorderColor(
+                        folderBorderColor = folderBorderColor,
+                        customFolderBorderColor = customFolderBorderColor,
+                    ),
+                ),
+                color = getBackgroundColor(
+                    backgroundColor = folderBackgroundColor,
+                    customBackgroundColor = customFolderBackgroundColor,
+                    defaultColor = MaterialTheme.colorScheme.surface,
+                ),
             ) {
                 PreviewFolderGridLayout(
                     // Data

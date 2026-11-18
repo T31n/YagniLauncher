@@ -194,6 +194,23 @@ internal fun getGridItemBackgroundColor(
     BackgroundColor.Custom -> Color(gridItemSettings.customBackgroundColor)
 }
 
+internal fun getFolderBorderColor(
+    folderBorderColor: BackgroundColor,
+    customFolderBorderColor: Int,
+): Color = when (folderBorderColor) {
+    BackgroundColor.System -> Color.Transparent
+    BackgroundColor.Custom -> Color(customFolderBorderColor)
+}
+
+internal fun getBackgroundColor(
+    backgroundColor: BackgroundColor,
+    customBackgroundColor: Int,
+    defaultColor: Color = Color.Transparent,
+): Color = when (backgroundColor) {
+    BackgroundColor.System -> defaultColor
+    BackgroundColor.Custom -> Color(customBackgroundColor)
+}
+
 private fun getTextColorByContrast(
     // Colors
     customBackgroundColor: Color,

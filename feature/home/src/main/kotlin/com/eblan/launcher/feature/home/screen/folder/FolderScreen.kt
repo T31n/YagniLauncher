@@ -45,7 +45,6 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
@@ -70,6 +69,8 @@ import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.PageDirection
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.getAnimatedRect
+import com.eblan.launcher.feature.home.util.getBackgroundColor
+import com.eblan.launcher.feature.home.util.getFolderBorderColor
 import com.eblan.launcher.feature.home.util.getFolderPopupLayoutInfo
 import com.eblan.launcher.feature.home.util.handleAnimateScrollToPage
 import com.eblan.launcher.feature.home.util.handleDropFolderGridItem
@@ -102,6 +103,7 @@ internal fun FolderScreen(
     folderBackgroundColor: BackgroundColor,
     folderCornerRadius: Int,
     customFolderBackgroundColor: Int,
+    folderBorderColor: BackgroundColor,
     customFolderBorderColor: Int,
     folderBorderWidth: Int,
     // Drag and Drop State
@@ -445,12 +447,19 @@ internal fun FolderScreen(
                 }
                 .clipToBounds(),
             shape = RoundedCornerShape(folderCornerRadius.dp),
-            color = when (folderBackgroundColor) {
-                BackgroundColor.System -> MaterialTheme.colorScheme.surface
-                BackgroundColor.Custom -> Color(customFolderBackgroundColor)
-            },
+            color = getBackgroundColor(
+                backgroundColor = folderBackgroundColor,
+                customBackgroundColor = customFolderBackgroundColor,
+                defaultColor = MaterialTheme.colorScheme.surface,
+            ),
             shadowElevation = 2.dp,
-            border = BorderStroke(width = folderBorderWidth.dp, color = Color(customFolderBorderColor)),
+            border = BorderStroke(
+                width = folderBorderWidth.dp,
+                color = getFolderBorderColor(
+                    folderBorderColor = folderBorderColor,
+                    customFolderBorderColor = customFolderBorderColor,
+                ),
+            ),
         ) {
             Column(
                 modifier = Modifier.size(
@@ -506,6 +515,7 @@ internal fun FolderScreen(
                                 folderCornerRadius = folderCornerRadius,
                                 folderBackgroundColor = folderBackgroundColor,
                                 customFolderBackgroundColor = customFolderBackgroundColor,
+                                folderBorderColor = folderBorderColor,
                                 customFolderBorderColor = customFolderBorderColor,
                                 folderBorderWidth = folderBorderWidth,
                                 // Callbacks

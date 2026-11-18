@@ -17,20 +17,16 @@
  */
 package com.eblan.launcher.feature.settings.folder
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -40,8 +36,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -57,7 +51,6 @@ import com.eblan.launcher.ui.dialog.EditBorderWidthDialog
 import com.eblan.launcher.ui.dialog.EditCornerRadiusDialog
 import com.eblan.launcher.ui.settings.SettingsColumnItem
 import com.eblan.launcher.ui.settings.SettingsDropdownItem
-import com.eblan.launcher.ui.settings.SettingsItemCard
 import com.eblan.launcher.ui.settings.getTitle
 import com.eblan.launcher.ui.settings.settingsFirstItemShape
 import com.eblan.launcher.ui.settings.settingsLastItemShape
@@ -216,16 +209,25 @@ private fun Success(
             },
         )
 
-        CustomBorderColor(
+        SettingsDropdownItem(
             // Content
             title = stringResource(R.string.folder_border_color),
-            // Appearance
-            customBorderColor = folderSettings.customFolderBorderColor,
+            options = BackgroundColor.entries,
+            selected = folderSettings.folderBorderColor,
+            label = {
+                it.getTitle()
+            },
             // Layout
             shape = settingsLastItemShape,
             // Actions
-            onClick = {
-                showFolderBorderColorDialog = true
+            onSelectedChange = {
+                if (it == BackgroundColor.Custom) {
+                    showFolderBorderColorDialog = true
+                } else {
+                    onUpdateFolderSettings(
+                        folderSettings.copy(folderBorderColor = it),
+                    )
+                }
             },
         )
     }
@@ -324,6 +326,7 @@ private fun Success(
             onSelectColor = {
                 onUpdateFolderSettings(
                     folderSettings.copy(
+                        folderBorderColor = BackgroundColor.Custom,
                         customFolderBorderColor = it,
                     ),
                 )
@@ -348,42 +351,6 @@ private fun Success(
                     ),
                 )
             },
-        )
-    }
-}
-
-@Composable
-private fun CustomBorderColor(
-    // Item Data
-    title: String,
-    // Appearance
-    customBorderColor: Int,
-    shape: Shape,
-    // Layout
-    modifier: Modifier = Modifier,
-    // Actions
-    onClick: () -> Unit,
-) {
-    SettingsItemCard(
-        // Modifier and Layout
-        modifier = modifier,
-        horizontalArrangement = Arrangement.SpaceBetween,
-        shape = shape,
-        // Actions and Content
-        onClick = onClick,
-    ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium,
-        )
-
-        Box(
-            modifier = Modifier
-                .size(40.dp)
-                .background(
-                    color = Color(customBorderColor),
-                    shape = CircleShape,
-                ),
         )
     }
 }

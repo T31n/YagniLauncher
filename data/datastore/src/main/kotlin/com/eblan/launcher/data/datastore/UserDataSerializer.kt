@@ -158,6 +158,7 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
         folderCornerRadius = 5
         folderBackgroundColorProto = BackgroundColorProto.BackgroundColorSystem
         customFolderBackgroundColor = 0x00000000
+        folderBorderColorProto = BackgroundColorProto.BackgroundColorSystem
         customFolderBorderColor = 0x00000000
         borderWidth = 0
     }.build()

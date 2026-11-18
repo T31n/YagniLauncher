@@ -52,6 +52,8 @@ import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.GridItemLayoutType
 import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
+import com.eblan.launcher.feature.home.util.getBackgroundColor
+import com.eblan.launcher.feature.home.util.getFolderBorderColor
 import com.eblan.launcher.feature.home.util.getGridItemBackgroundColor
 import com.eblan.launcher.feature.home.util.getGridItemIconPath
 import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
@@ -71,6 +73,7 @@ internal fun FolderGridItem(
     textColor: Color,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
+    folderBorderColor: BackgroundColor,
     customFolderBorderColor: Int,
     folderBorderWidth: Int,
     systemTextColor: TextColor,
@@ -115,11 +118,18 @@ internal fun FolderGridItem(
             Surface(
                 modifier = commonModifier,
                 shape = RoundedCornerShape(folderCornerRadius.dp),
-                border = BorderStroke(width = folderBorderWidth.dp, color = Color(customFolderBorderColor)),
-                color = when (folderBackgroundColor) {
-                    BackgroundColor.System -> MaterialTheme.colorScheme.surface
-                    BackgroundColor.Custom -> Color(customFolderBackgroundColor)
-                },
+                border = BorderStroke(
+                    width = folderBorderWidth.dp,
+                    color = getFolderBorderColor(
+                        folderBorderColor = folderBorderColor,
+                        customFolderBorderColor = customFolderBorderColor,
+                    ),
+                ),
+                color = getBackgroundColor(
+                    backgroundColor = folderBackgroundColor,
+                    customBackgroundColor = customFolderBackgroundColor,
+                    defaultColor = MaterialTheme.colorScheme.surface,
+                ),
             ) {
                 PreviewFolderGridLayout(
                     // Data

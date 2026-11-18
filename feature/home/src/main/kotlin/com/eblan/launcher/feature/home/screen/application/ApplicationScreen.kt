@@ -67,7 +67,6 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
@@ -102,6 +101,7 @@ import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.screen.application.horizontal.HorizontalApplicationScreen
 import com.eblan.launcher.feature.home.screen.application.vertical.VerticalApplicationScreen
 import com.eblan.launcher.feature.home.util.getApplicationScreenTextColor
+import com.eblan.launcher.feature.home.util.getBackgroundColor
 import com.eblan.launcher.ui.local.LocalUserManager
 import com.eblan.launcher.ui.settings.rememberIsDefaultLauncher
 import kotlinx.coroutines.FlowPreview
@@ -133,6 +133,7 @@ internal fun ApplicationScreen(
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
+    folderBorderColor: BackgroundColor,
     customFolderBorderColor: Int,
     folderBorderWidth: Int,
     isVisibleFolderEblanApplicationInfos: Boolean,
@@ -238,10 +239,11 @@ internal fun ApplicationScreen(
                     this
                 }
             },
-        color = when (appDrawerSettings.backgroundColor) {
-            BackgroundColor.System -> MaterialTheme.colorScheme.surface
-            BackgroundColor.Custom -> Color(appDrawerSettings.customBackgroundColor)
-        },
+        color = getBackgroundColor(
+            backgroundColor = appDrawerSettings.backgroundColor,
+            customBackgroundColor = appDrawerSettings.customBackgroundColor,
+            defaultColor = MaterialTheme.colorScheme.surface,
+        ),
     ) {
         when (appDrawerSettings.appDrawerType) {
             AppDrawerType.Vertical -> {
@@ -262,6 +264,7 @@ internal fun ApplicationScreen(
                     folderCornerRadius = folderCornerRadius,
                     folderBackgroundColor = folderBackgroundColor,
                     customFolderBackgroundColor = customFolderBackgroundColor,
+                    folderBorderColor = folderBorderColor,
                     customFolderBorderColor = customFolderBorderColor,
                     folderBorderWidth = folderBorderWidth,
                     isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
@@ -474,10 +477,11 @@ internal fun EblanApplicationInfoTabRow(
         }
     }
 
-    val containerColor = when (backgroundColor) {
-        BackgroundColor.System -> MaterialTheme.colorScheme.surface
-        BackgroundColor.Custom -> Color(customBackgroundColor)
-    }
+    val containerColor = getBackgroundColor(
+        backgroundColor = backgroundColor,
+        customBackgroundColor = customBackgroundColor,
+        defaultColor = MaterialTheme.colorScheme.surface,
+    )
 
     val contentColor = getApplicationScreenTextColor(
         // Background Colors

@@ -25,6 +25,7 @@ data class FolderSettings(
     val folderCornerRadius: Int,
     val folderBackgroundColor: BackgroundColor,
     val customFolderBackgroundColor: Int,
+    val folderBorderColor: BackgroundColor,
     val customFolderBorderColor: Int,
     val borderWidth: Int,
 )

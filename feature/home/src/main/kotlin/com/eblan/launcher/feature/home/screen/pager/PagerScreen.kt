@@ -115,7 +115,6 @@ import com.eblan.launcher.domain.model.shortcutconfig.EblanShortcutConfig
 import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfo
 import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfoByGroup
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
-import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
@@ -147,6 +146,7 @@ import com.eblan.launcher.feature.home.screen.widget.AppWidgetScreen
 import com.eblan.launcher.feature.home.screen.widget.WidgetScreen
 import com.eblan.launcher.feature.home.util.PAGE_INDICATOR_HEIGHT
 import com.eblan.launcher.feature.home.util.calculatePage
+import com.eblan.launcher.feature.home.util.getBackgroundColor
 import com.eblan.launcher.feature.home.util.getTextColor
 import com.eblan.launcher.platform.service.EblanNotificationListenerService
 import com.eblan.launcher.platform.usermanager.AndroidUserManagerWrapper
@@ -990,6 +990,7 @@ internal fun PagerScreen(
                                 folderCornerRadius = folderSettings.folderCornerRadius,
                                 folderBackgroundColor = folderSettings.folderBackgroundColor,
                                 customFolderBackgroundColor = folderSettings.customFolderBackgroundColor,
+                                folderBorderColor = folderSettings.folderBorderColor,
                                 customFolderBorderColor = folderSettings.customFolderBorderColor,
                                 folderBorderWidth = folderSettings.borderWidth,
                                 systemCustomTextColor = homeSettings.gridItemSettings.customTextColor,
@@ -1090,10 +1091,10 @@ internal fun PagerScreen(
                                     },
                                 )
                                 .background(
-                                    color = when (homeSettings.dockBackgroundColor) {
-                                        BackgroundColor.System -> Color.Transparent
-                                        BackgroundColor.Custom -> Color(homeSettings.dockCustomBackgroundColor)
-                                    },
+                                    color = getBackgroundColor(
+                                        backgroundColor = homeSettings.dockBackgroundColor,
+                                        customBackgroundColor = homeSettings.dockCustomBackgroundColor,
+                                    ),
                                     shape = RoundedCornerShape(
                                         topStart = homeSettings.dockTopStartCornerRadius.dp,
                                         topEnd = homeSettings.dockTopEndCornerRadius.dp,
@@ -1179,6 +1180,7 @@ internal fun PagerScreen(
                                         folderCornerRadius = folderSettings.folderCornerRadius,
                                         folderBackgroundColor = folderSettings.folderBackgroundColor,
                                         customFolderBackgroundColor = folderSettings.customFolderBackgroundColor,
+                                        folderBorderColor = folderSettings.folderBorderColor,
                                         customFolderBorderColor = folderSettings.customFolderBorderColor,
                                         folderBorderWidth = folderSettings.borderWidth,
                                         systemCustomTextColor = homeSettings.dockGridItemSettings.customTextColor,
@@ -1332,6 +1334,7 @@ internal fun PagerScreen(
                     folderBackgroundColor = folderSettings.folderBackgroundColor,
                     folderCornerRadius = folderSettings.folderCornerRadius,
                     customFolderBackgroundColor = folderSettings.customFolderBackgroundColor,
+                    folderBorderColor = folderSettings.folderBorderColor,
                     customFolderBorderColor = folderSettings.customFolderBorderColor,
                     folderBorderWidth = folderSettings.borderWidth,
                     // Drag and Drop State
@@ -1459,6 +1462,7 @@ internal fun PagerScreen(
                 folderCornerRadius = folderSettings.folderCornerRadius,
                 folderBackgroundColor = folderSettings.folderBackgroundColor,
                 customFolderBackgroundColor = folderSettings.customFolderBackgroundColor,
+                folderBorderColor = folderSettings.folderBorderColor,
                 customFolderBorderColor = folderSettings.customFolderBorderColor,
                 folderBorderWidth = folderSettings.borderWidth,
                 isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
@@ -1756,6 +1760,7 @@ internal fun PagerScreen(
                     folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                     folderBackgroundColor = folderSettings.folderBackgroundColor,
                     customFolderBackgroundColor = folderSettings.customFolderBackgroundColor,
+                    folderBorderColor = folderSettings.folderBorderColor,
                     customFolderBorderColor = folderSettings.customFolderBorderColor,
                     folderBorderWidth = folderSettings.borderWidth,
                     appDrawerSettings = appDrawerSettings,

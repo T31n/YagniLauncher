@@ -255,6 +255,7 @@ internal fun FolderSettingsProto.toFolderSettings(): FolderSettings = FolderSett
     folderCornerRadius = folderCornerRadius,
     folderBackgroundColor = folderBackgroundColorProto.toBackgroundColor(),
     customFolderBackgroundColor = customFolderBackgroundColor,
+    folderBorderColor = folderBorderColorProto.toBackgroundColor(),
     customFolderBorderColor = customFolderBorderColor,
     borderWidth = borderWidth,
 )
@@ -267,6 +268,7 @@ internal fun FolderSettings.toFolderSettingsProto(): FolderSettingsProto = Folde
     builder.folderCornerRadius = folderCornerRadius
     builder.folderBackgroundColorProto = folderBackgroundColor.toBackgroundColorProto()
     builder.customFolderBackgroundColor = customFolderBackgroundColor
+    builder.folderBorderColorProto = folderBorderColor.toBackgroundColorProto()
     builder.customFolderBorderColor = customFolderBorderColor
     builder.borderWidth = borderWidth
 }.build()
