@@ -227,6 +227,7 @@ fun <T> SettingsDropdownItem(
         Text(
             modifier = Modifier.weight(1f),
             text = title,
+            style = MaterialTheme.typography.titleMedium,
         )
 
         Spacer(modifier = Modifier.width(10.dp))
@@ -235,7 +236,8 @@ fun <T> SettingsDropdownItem(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = label(selected),
-                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium,
                 )
 
                 Icon(
@@ -326,6 +328,7 @@ private fun SettingsItemText(
 
     Text(
         text = subtitle,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
         style = MaterialTheme.typography.bodyMedium,
     )
 }
@@ -338,7 +341,8 @@ fun SettingsCategoryText(
     Text(
         modifier = modifier.padding(15.dp),
         text = text,
-        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.primary,
+        style = MaterialTheme.typography.titleSmall,
     )
 }
 

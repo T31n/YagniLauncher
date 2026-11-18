@@ -27,7 +27,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -55,6 +54,7 @@ import com.eblan.launcher.ui.dialog.IconPackInfoFilesDialog
 import com.eblan.launcher.ui.settings.CustomIcon
 import com.eblan.launcher.ui.settings.EblanActionSettings
 import com.eblan.launcher.ui.settings.GridItemSettings
+import com.eblan.launcher.ui.settings.SettingsCategoryText
 import com.eblan.launcher.ui.settings.SettingsColumnItem
 import com.eblan.launcher.ui.settings.SettingsSwitchItem
 import com.eblan.launcher.ui.settings.settingsFirstItemShape
@@ -278,11 +278,7 @@ private fun Success(
             )
         }
 
-        Text(
-            modifier = Modifier.padding(15.dp),
-            text = stringResource(R.string.grid_item_actions),
-            style = MaterialTheme.typography.bodySmall,
-        )
+        SettingsCategoryText(text = stringResource(R.string.grid_item_actions))
 
         EblanActionSettings(
             // Actions

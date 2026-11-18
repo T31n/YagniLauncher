@@ -306,7 +306,7 @@ private fun EblanAppWidgetScreenItem(
             Text(
                 text = label,
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.titleMedium,
             )
 
             Spacer(modifier = Modifier.height(10.dp))
@@ -316,7 +316,7 @@ private fun EblanAppWidgetScreenItem(
             Text(
                 text = description,
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
             )
 
             Spacer(modifier = Modifier.height(10.dp))
@@ -325,6 +325,7 @@ private fun EblanAppWidgetScreenItem(
         if (text != null) {
             Text(
                 text = text,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.bodySmall,
             )

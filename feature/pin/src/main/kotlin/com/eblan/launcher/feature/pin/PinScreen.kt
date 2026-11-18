@@ -443,7 +443,10 @@ private fun PinBottomSheet(
                 modifier = modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(text = label, style = MaterialTheme.typography.bodyLarge)
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.titleMedium,
+                )
 
                 Spacer(modifier = Modifier.height(10.dp))
 
@@ -451,6 +454,7 @@ private fun PinBottomSheet(
                     modifier = Modifier.fillMaxWidth(),
                     text = stringResource(R.string.touch_and_hold_the_widget_to_move_it_around_the_home_screen),
                     textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyMedium,
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
