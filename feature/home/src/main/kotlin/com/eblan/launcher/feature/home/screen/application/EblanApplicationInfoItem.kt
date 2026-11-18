@@ -37,7 +37,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
@@ -72,6 +71,7 @@ import com.eblan.launcher.feature.home.component.GridItemLayoutType
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
+import com.eblan.launcher.feature.home.util.getGridItemBackgroundColor
 import com.eblan.launcher.feature.home.util.getHorizontalAlignment
 import com.eblan.launcher.feature.home.util.getHorizontalArrangement
 import com.eblan.launcher.feature.home.util.getIconPath
@@ -205,7 +205,7 @@ internal fun EblanApplicationInfoItem(
     val itemModifier = modifier
         .padding(gridItemSettings.padding.dp)
         .background(
-            color = Color(gridItemSettings.customBackgroundColor),
+            color = getGridItemBackgroundColor(gridItemSettings),
             shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
         )
         .run {

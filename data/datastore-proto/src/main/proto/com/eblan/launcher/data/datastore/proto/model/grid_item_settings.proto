@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 import "com/eblan/launcher/data/datastore/proto/home/text_color.proto";
+import "com/eblan/launcher/data/datastore/proto/model/background_color.proto";
 
 option java_package = "com.eblan.launcher.data.datastore.proto.home";
 option java_multiple_files = true;
@@ -21,6 +22,7 @@ message GridItemSettingsProto {
   optional VerticalAlignmentProto verticalAlignmentProto = 14;
   optional int32 iconPadding = 15;
   optional int32 textPadding = 16;
+  optional BackgroundColorProto backgroundColorProto = 17;
 }
 
 enum HorizontalAlignmentProto {

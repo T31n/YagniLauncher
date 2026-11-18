@@ -66,6 +66,7 @@ import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.component.swipeGestures
 import com.eblan.launcher.feature.home.component.whiteBox
 import com.eblan.launcher.feature.home.model.SharedElementKey
+import com.eblan.launcher.feature.home.util.getGridItemBackgroundColor
 import com.eblan.launcher.feature.home.util.getGridItemIconPath
 import com.eblan.launcher.feature.home.util.getGridItemLabel
 import com.eblan.launcher.feature.home.util.handleEblanAction
@@ -136,7 +137,7 @@ internal fun InteractiveShortcutInfoGridItem(
         .fillMaxSize()
         .padding(gridItemSettings.padding.dp)
         .background(
-            color = Color(gridItemSettings.customBackgroundColor),
+            color = getGridItemBackgroundColor(gridItemSettings),
             shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
         )
         .whiteBox(

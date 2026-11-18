@@ -68,6 +68,7 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
         horizontalAlignmentProto = HorizontalAlignmentProto.HorizontalAlignmentCenterHorizontally
         verticalArrangementProto = VerticalArrangementProto.VerticalArrangementTop
         customTextColor = 0x00000000
+        backgroundColorProto = BackgroundColorProto.BackgroundColorSystem
         customBackgroundColor = 0x00000000
         padding = 0
         cornerRadius = 0

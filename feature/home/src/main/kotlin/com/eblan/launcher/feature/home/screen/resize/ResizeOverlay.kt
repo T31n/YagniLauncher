@@ -61,6 +61,9 @@ internal fun ResizeOverlay(
             // System Text Colors
             systemTextColor = textColor,
             systemCustomTextColor = gridItemSettings.customTextColor,
+            // Background Color
+            backgroundColor = gridItem.gridItemSettings.backgroundColor,
+            customBackgroundColor = gridItem.gridItemSettings.customBackgroundColor,
         )
     } else {
         getTextColor(

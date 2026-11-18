@@ -89,6 +89,7 @@ import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.component.swipeGestures
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
+import com.eblan.launcher.feature.home.util.getGridItemBackgroundColor
 import com.eblan.launcher.feature.home.util.getHorizontalAlignment
 import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
 import com.eblan.launcher.feature.home.util.getVerticalArrangement
@@ -456,7 +457,7 @@ private fun InteractiveApplicationInfoGridItem(
             .fillMaxSize()
             .padding(padding)
             .background(
-                color = Color(gridItemSettings.customBackgroundColor),
+                color = getGridItemBackgroundColor(gridItemSettings),
                 shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
             )
             .run {
@@ -643,7 +644,7 @@ private fun InteractiveShortcutInfoGridItem(
             .fillMaxSize()
             .padding(padding)
             .background(
-                color = Color(gridItemSettings.customBackgroundColor),
+                color = getGridItemBackgroundColor(gridItemSettings),
                 shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
             )
             .run {
@@ -841,7 +842,7 @@ private fun InteractiveShortcutConfigGridItem(
             .fillMaxSize()
             .padding(padding)
             .background(
-                color = Color(gridItemSettings.customBackgroundColor),
+                color = getGridItemBackgroundColor(gridItemSettings),
                 shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
             )
             .run {
@@ -1006,7 +1007,7 @@ private fun InteractiveNestedFolderGridItem(
             .fillMaxSize()
             .padding(padding)
             .background(
-                color = Color(gridItemSettings.customBackgroundColor),
+                color = getGridItemBackgroundColor(gridItemSettings),
                 shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
             )
             .run {

@@ -42,6 +42,7 @@ import coil3.size.Size
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.feature.home.component.GridItemLayoutType
+import com.eblan.launcher.feature.home.util.getGridItemBackgroundColor
 import com.eblan.launcher.feature.home.util.getGridItemIconPath
 import com.eblan.launcher.feature.home.util.getGridItemLabel
 
@@ -73,7 +74,7 @@ internal fun ShortcutInfoGridItem(
         .fillMaxSize()
         .padding(gridItemSettings.padding.dp)
         .background(
-            color = Color(gridItemSettings.customBackgroundColor),
+            color = getGridItemBackgroundColor(gridItemSettings),
             shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
         )
     val commonModifier = Modifier

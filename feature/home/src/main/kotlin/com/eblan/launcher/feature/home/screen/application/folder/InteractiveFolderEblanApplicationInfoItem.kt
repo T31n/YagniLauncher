@@ -84,6 +84,7 @@ import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
+import com.eblan.launcher.feature.home.util.getGridItemBackgroundColor
 import com.eblan.launcher.feature.home.util.getHorizontalAlignment
 import com.eblan.launcher.feature.home.util.getIconPath
 import com.eblan.launcher.feature.home.util.getLabel
@@ -374,7 +375,7 @@ private fun InteractiveEblanApplicationInfoItem(
             .fillMaxSize()
             .padding(padding)
             .background(
-                color = Color(appDrawerSettings.gridItemSettings.customBackgroundColor),
+                color = getGridItemBackgroundColor(appDrawerSettings.gridItemSettings),
                 shape = RoundedCornerShape(
                     size = appDrawerSettings.gridItemSettings.cornerRadius.dp,
                 ),
@@ -527,7 +528,7 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
             .fillMaxSize()
             .padding(padding)
             .background(
-                color = Color(appDrawerSettings.gridItemSettings.customBackgroundColor),
+                color = getGridItemBackgroundColor(appDrawerSettings.gridItemSettings),
                 shape = RoundedCornerShape(
                     size = appDrawerSettings.gridItemSettings.cornerRadius.dp,
                 ),

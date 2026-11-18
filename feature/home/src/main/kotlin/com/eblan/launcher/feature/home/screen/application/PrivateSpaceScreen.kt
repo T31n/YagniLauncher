@@ -75,6 +75,7 @@ import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.R
 import com.eblan.launcher.feature.home.component.GridItemLayoutType
 import com.eblan.launcher.feature.home.util.getApplicationScreenTextColor
+import com.eblan.launcher.feature.home.util.getGridItemBackgroundColor
 import com.eblan.launcher.feature.home.util.getHorizontalAlignment
 import com.eblan.launcher.feature.home.util.getHorizontalArrangement
 import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
@@ -308,7 +309,7 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
         .height(appDrawerRowsHeight)
         .padding(gridItemSettings.padding.dp)
         .background(
-            color = Color(gridItemSettings.customBackgroundColor),
+            color = getGridItemBackgroundColor(gridItemSettings),
             shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
         )
         .pointerInput(key1 = isVisibleOverlay) {

@@ -23,6 +23,7 @@ import com.eblan.launcher.domain.model.grid.HorizontalArrangement
 import com.eblan.launcher.domain.model.grid.LayoutType
 import com.eblan.launcher.domain.model.grid.VerticalAlignment
 import com.eblan.launcher.domain.model.grid.VerticalArrangement
+import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
 
 fun getGridItemSettings() = GridItemSettings(
@@ -33,6 +34,7 @@ fun getGridItemSettings() = GridItemSettings(
     horizontalAlignment = HorizontalAlignment.CenterHorizontally,
     verticalArrangement = VerticalArrangement.Center,
     customTextColor = 0,
+    backgroundColor = BackgroundColor.System,
     customBackgroundColor = 0,
     padding = 0,
     cornerRadius = 0,

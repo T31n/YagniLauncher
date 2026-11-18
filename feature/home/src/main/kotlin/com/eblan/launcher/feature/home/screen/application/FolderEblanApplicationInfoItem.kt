@@ -82,6 +82,7 @@ import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
+import com.eblan.launcher.feature.home.util.getGridItemBackgroundColor
 import com.eblan.launcher.feature.home.util.getHorizontalAlignment
 import com.eblan.launcher.feature.home.util.getHorizontalArrangement
 import com.eblan.launcher.feature.home.util.getIconPath
@@ -216,7 +217,7 @@ internal fun FolderEblanApplicationInfoItem(
         .height(appDrawerSettings.appDrawerRowsHeight.dp)
         .padding(appDrawerSettings.gridItemSettings.padding.dp)
         .background(
-            color = Color(appDrawerSettings.gridItemSettings.customBackgroundColor),
+            color = getGridItemBackgroundColor(appDrawerSettings.gridItemSettings),
             shape = RoundedCornerShape(
                 size = appDrawerSettings.gridItemSettings.cornerRadius.dp,
             ),

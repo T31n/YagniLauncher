@@ -17,22 +17,14 @@
  */
 package com.eblan.launcher.ui.settings
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.domain.model.grid.GridItemSettings
@@ -41,6 +33,7 @@ import com.eblan.launcher.domain.model.grid.HorizontalArrangement
 import com.eblan.launcher.domain.model.grid.LayoutType
 import com.eblan.launcher.domain.model.grid.VerticalAlignment
 import com.eblan.launcher.domain.model.grid.VerticalArrangement
+import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.ui.R
 import com.eblan.launcher.ui.dialog.ColorPickerDialog
@@ -136,12 +129,23 @@ fun GridItemSettings(
             },
         )
 
-        CustomBackgroundColor(
+        SettingsDropdownItem(
+            // Content
             title = stringResource(commonR.string.background_color),
-            customBackgroundColor = gridItemSettings.customBackgroundColor,
+            options = BackgroundColor.entries,
+            selected = gridItemSettings.backgroundColor,
+            label = {
+                it.getTitle()
+            },
+            // Layout
             shape = settingsMiddleItemShape,
-            onClick = {
-                showBackgroundColorDialog = true
+            // Actions
+            onSelectedChange = {
+                if (it == BackgroundColor.Custom) {
+                    showBackgroundColorDialog = true
+                } else {
+                    onUpdateGridItemSettings(gridItemSettings.copy(backgroundColor = it))
+                }
             },
         )
 
@@ -342,7 +346,12 @@ fun GridItemSettings(
                 showBackgroundColorDialog = false
             },
             onSelectColor = {
-                onUpdateGridItemSettings(gridItemSettings.copy(customBackgroundColor = it))
+                onUpdateGridItemSettings(
+                    gridItemSettings.copy(
+                        backgroundColor = BackgroundColor.Custom,
+                        customBackgroundColor = it,
+                    ),
+                )
             },
         )
     }
@@ -429,42 +438,6 @@ fun TextColor.getSubtitle(): String = when (this) {
     TextColor.Light -> stringResource(commonR.string.light)
     TextColor.Dark -> stringResource(commonR.string.dark)
     TextColor.Custom -> stringResource(commonR.string.custom)
-}
-
-@Composable
-fun CustomBackgroundColor(
-    // Item Data
-    title: String,
-    // Appearance
-    customBackgroundColor: Int,
-    shape: Shape,
-    // Layout
-    modifier: Modifier = Modifier,
-    // Actions
-    onClick: () -> Unit,
-) {
-    SettingsItemCard(
-        // Modifier and Layout
-        modifier = modifier,
-        horizontalArrangement = Arrangement.SpaceBetween,
-        shape = shape,
-        // Actions and Content
-        onClick = onClick,
-    ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium,
-        )
-
-        Box(
-            modifier = Modifier
-                .size(40.dp)
-                .background(
-                    color = Color(customBackgroundColor),
-                    shape = CircleShape,
-                ),
-        )
-    }
 }
 
 @Composable

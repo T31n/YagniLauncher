@@ -125,6 +125,9 @@ internal fun SparkleGridLayout(
         // System Text Colors
         systemTextColor = textColor,
         systemCustomTextColor = gridItemSettings.customTextColor,
+        // Background Color
+        backgroundColor = currentGridItemSettings.backgroundColor,
+        customBackgroundColor = currentGridItemSettings.customBackgroundColor,
     )
 
     Canvas(

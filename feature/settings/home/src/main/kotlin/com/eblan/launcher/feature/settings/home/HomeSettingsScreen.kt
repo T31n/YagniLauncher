@@ -17,16 +17,20 @@
  */
 package com.eblan.launcher.feature.settings.home
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -36,6 +40,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -50,11 +56,11 @@ import com.eblan.launcher.feature.settings.home.dialog.EditDockPaddingDialog
 import com.eblan.launcher.feature.settings.home.dialog.EditGridDialog
 import com.eblan.launcher.feature.settings.home.model.HomeSettingsUiState
 import com.eblan.launcher.ui.dialog.ColorPickerDialog
-import com.eblan.launcher.ui.settings.CustomBackgroundColor
 import com.eblan.launcher.ui.settings.GridItemSettings
 import com.eblan.launcher.ui.settings.SettingsCategoryText
 import com.eblan.launcher.ui.settings.SettingsColumnItem
 import com.eblan.launcher.ui.settings.SettingsDropdownItem
+import com.eblan.launcher.ui.settings.SettingsItemCard
 import com.eblan.launcher.ui.settings.SettingsSwitchItem
 import com.eblan.launcher.ui.settings.settingsFirstItemShape
 import com.eblan.launcher.ui.settings.settingsLastItemShape
@@ -541,4 +547,40 @@ private fun PagerTransitionEffect.getTitle(): String = when (this) {
     PagerTransitionEffect.Flip -> stringResource(R.string.transition_effect_flip)
     PagerTransitionEffect.Parallax -> stringResource(R.string.transition_effect_parallax)
     PagerTransitionEffect.Stack -> stringResource(R.string.transition_effect_stack)
+}
+
+@Composable
+private fun CustomBackgroundColor(
+    // Item Data
+    title: String,
+    // Appearance
+    customBackgroundColor: Int,
+    shape: Shape,
+    // Layout
+    modifier: Modifier = Modifier,
+    // Actions
+    onClick: () -> Unit,
+) {
+    SettingsItemCard(
+        // Modifier and Layout
+        modifier = modifier,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        shape = shape,
+        // Actions and Content
+        onClick = onClick,
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+        )
+
+        Box(
+            modifier = Modifier
+                .size(40.dp)
+                .background(
+                    color = Color(customBackgroundColor),
+                    shape = CircleShape,
+                ),
+        )
+    }
 }
