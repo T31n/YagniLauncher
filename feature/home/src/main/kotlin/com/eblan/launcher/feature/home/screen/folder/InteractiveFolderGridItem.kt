@@ -90,6 +90,7 @@ import com.eblan.launcher.feature.home.component.swipeGestures
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.getGridItemBackgroundColor
+import com.eblan.launcher.feature.home.util.getGridItemTextColorFromBackgroundColor
 import com.eblan.launcher.feature.home.util.getHorizontalAlignment
 import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
 import com.eblan.launcher.feature.home.util.getVerticalArrangement
@@ -155,15 +156,15 @@ internal fun InteractiveFolderGridItem(
 
     val folderGridItemAnimationProgress = progress.coerceIn(0f, 1f)
 
-    val currentTextColor = getTextColorFromBackgroundColor(
-        // Background Color
+    val currentTextColor = getGridItemTextColorFromBackgroundColor(
+        // Container Background Color
         backgroundColor = folderBackgroundColor,
         customBackgroundColor = customFolderBackgroundColor,
+        // Grid Item Settings
+        gridItemSettings = currentGridItemSettings,
         // Text Color
-        textColor = currentGridItemSettings.textColor,
-        customTextColor = currentGridItemSettings.customTextColor,
-        systemCustomTextColor = systemCustomTextColor,
         systemTextColor = systemTextColor,
+        systemCustomTextColor = systemCustomTextColor,
     )
 
     val padding = if (animations) {

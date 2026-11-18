@@ -561,5 +561,3 @@ private fun PagerTransitionEffect.getTitle(): String = when (this) {
     PagerTransitionEffect.Parallax -> stringResource(R.string.transition_effect_parallax)
     PagerTransitionEffect.Stack -> stringResource(R.string.transition_effect_stack)
 }
-
-

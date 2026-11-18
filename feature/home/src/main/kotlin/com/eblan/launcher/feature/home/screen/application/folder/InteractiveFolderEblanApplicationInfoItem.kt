@@ -85,6 +85,7 @@ import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.getGridItemBackgroundColor
+import com.eblan.launcher.feature.home.util.getGridItemTextColorFromBackgroundColor
 import com.eblan.launcher.feature.home.util.getHorizontalAlignment
 import com.eblan.launcher.feature.home.util.getIconPath
 import com.eblan.launcher.feature.home.util.getLabel
@@ -136,15 +137,15 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
     val isSelected =
         moveFolderEblanApplicationInfoGridItemResult != null && moveFolderEblanApplicationInfoGridItemResult.folderEblanApplicationInfoGridItem.id == folderEblanApplicationInfoGridItem.id
 
-    val textColor = getTextColorFromBackgroundColor(
-        // Background Color
+    val textColor = getGridItemTextColorFromBackgroundColor(
+        // Container Background Color
         backgroundColor = folderBackgroundColor,
         customBackgroundColor = customFolderBackgroundColor,
+        // Grid Item Settings
+        gridItemSettings = appDrawerSettings.gridItemSettings,
         // Text Color
-        textColor = appDrawerSettings.gridItemSettings.textColor,
-        customTextColor = appDrawerSettings.gridItemSettings.customTextColor,
-        systemCustomTextColor = systemCustomTextColor,
         systemTextColor = systemTextColor,
+        systemCustomTextColor = systemCustomTextColor,
     )
 
     val folderEblanApplicationInfoAnimationProgress = progress.coerceIn(0f, 1f)

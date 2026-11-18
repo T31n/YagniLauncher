@@ -72,11 +72,11 @@ import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.getGridItemBackgroundColor
+import com.eblan.launcher.feature.home.util.getGridItemTextColorFromBackgroundColor
 import com.eblan.launcher.feature.home.util.getHorizontalAlignment
 import com.eblan.launcher.feature.home.util.getHorizontalArrangement
 import com.eblan.launcher.feature.home.util.getIconPath
 import com.eblan.launcher.feature.home.util.getLabel
-import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
 import com.eblan.launcher.feature.home.util.getVerticalAlignment
 import com.eblan.launcher.feature.home.util.getVerticalArrangement
 import com.eblan.launcher.platform.launcherapps.AndroidLauncherAppsWrapper
@@ -133,15 +133,15 @@ internal fun EblanApplicationInfoItem(
 
     val gridItemSettings = appDrawerSettings.gridItemSettings
 
-    val textColor = getTextColorFromBackgroundColor(
-        // Background Color
+    val textColor = getGridItemTextColorFromBackgroundColor(
+        // Container Background Color
         backgroundColor = appDrawerSettings.backgroundColor,
         customBackgroundColor = appDrawerSettings.customBackgroundColor,
+        // Grid Item Settings
+        gridItemSettings = gridItemSettings,
         // Text Color
-        textColor = gridItemSettings.textColor,
-        customTextColor = gridItemSettings.customTextColor,
-        systemCustomTextColor = systemCustomTextColor,
         systemTextColor = systemTextColor,
+        systemCustomTextColor = systemCustomTextColor,
     )
 
     val maxLines = if (gridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE

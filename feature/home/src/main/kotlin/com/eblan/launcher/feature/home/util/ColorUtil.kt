@@ -114,6 +114,51 @@ internal fun getTextColorFromBackgroundColor(
     }
 }
 
+internal fun getGridItemTextColorFromBackgroundColor(
+    // Container Background Color
+    backgroundColor: BackgroundColor,
+    customBackgroundColor: Int,
+    // Grid Item Settings
+    gridItemSettings: GridItemSettings,
+    // Text Color
+    systemTextColor: TextColor,
+    systemCustomTextColor: Int,
+    // Default Color
+    defaultColor: Color = Color.Unspecified,
+): Color {
+    val containerTextColor = getTextColorFromBackgroundColor(
+        // Background Color
+        backgroundColor = backgroundColor,
+        customBackgroundColor = customBackgroundColor,
+        // Text Color
+        textColor = gridItemSettings.textColor,
+        customTextColor = gridItemSettings.customTextColor,
+        systemCustomTextColor = systemCustomTextColor,
+        systemTextColor = systemTextColor,
+        // Default Color
+        defaultColor = defaultColor,
+    )
+
+    return when (gridItemSettings.backgroundColor) {
+        BackgroundColor.System -> containerTextColor
+
+        BackgroundColor.Custom -> {
+            val textColorByContrast = getTextColorByContrast(
+                // Colors
+                customBackgroundColor = Color(gridItemSettings.customBackgroundColor),
+                systemTextColor = containerTextColor,
+            )
+
+            getTextColor(
+                // Text Colors
+                textColor = gridItemSettings.textColor,
+                customTextColor = gridItemSettings.customTextColor,
+                defaultColor = textColorByContrast,
+            )
+        }
+    }
+}
+
 internal fun getApplicationScreenTextColor(
     // Background Colors
     backgroundColor: BackgroundColor,
