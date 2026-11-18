@@ -17,20 +17,16 @@
  */
 package com.eblan.launcher.feature.settings.home
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -40,13 +36,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
+import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.domain.model.userdata.PagerTransitionEffect
 import com.eblan.launcher.feature.settings.home.dialog.EditDockCornerRadiusDialog
@@ -60,8 +55,8 @@ import com.eblan.launcher.ui.settings.GridItemSettings
 import com.eblan.launcher.ui.settings.SettingsCategoryText
 import com.eblan.launcher.ui.settings.SettingsColumnItem
 import com.eblan.launcher.ui.settings.SettingsDropdownItem
-import com.eblan.launcher.ui.settings.SettingsItemCard
 import com.eblan.launcher.ui.settings.SettingsSwitchItem
+import com.eblan.launcher.ui.settings.getTitle
 import com.eblan.launcher.ui.settings.settingsFirstItemShape
 import com.eblan.launcher.ui.settings.settingsLastItemShape
 import com.eblan.launcher.ui.settings.settingsMiddleItemShape
@@ -342,12 +337,25 @@ private fun Success(
             },
         )
 
-        CustomBackgroundColor(
+        SettingsDropdownItem(
+            // Content
             title = stringResource(R.string.dock_background_color),
-            customBackgroundColor = homeSettings.dockCustomBackgroundColor,
+            options = BackgroundColor.entries,
+            selected = homeSettings.dockBackgroundColor,
+            label = {
+                it.getTitle()
+            },
+            // Layout
             shape = settingsMiddleItemShape,
-            onClick = {
-                showDockCustomBackgroundColorDialog = true
+            // Actions
+            onSelectedChange = {
+                if (it == BackgroundColor.Custom) {
+                    showDockCustomBackgroundColorDialog = true
+                } else {
+                    onUpdateHomeSettings(
+                        homeSettings.copy(dockBackgroundColor = it),
+                    )
+                }
             },
         )
 
@@ -489,7 +497,12 @@ private fun Success(
                 showDockCustomBackgroundColorDialog = false
             },
             onSelectColor = {
-                onUpdateHomeSettings(homeSettings.copy(dockCustomBackgroundColor = it))
+                onUpdateHomeSettings(
+                    homeSettings.copy(
+                        dockBackgroundColor = BackgroundColor.Custom,
+                        dockCustomBackgroundColor = it,
+                    ),
+                )
             },
         )
     }
@@ -549,38 +562,4 @@ private fun PagerTransitionEffect.getTitle(): String = when (this) {
     PagerTransitionEffect.Stack -> stringResource(R.string.transition_effect_stack)
 }
 
-@Composable
-private fun CustomBackgroundColor(
-    // Item Data
-    title: String,
-    // Appearance
-    customBackgroundColor: Int,
-    shape: Shape,
-    // Layout
-    modifier: Modifier = Modifier,
-    // Actions
-    onClick: () -> Unit,
-) {
-    SettingsItemCard(
-        // Modifier and Layout
-        modifier = modifier,
-        horizontalArrangement = Arrangement.SpaceBetween,
-        shape = shape,
-        // Actions and Content
-        onClick = onClick,
-    ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium,
-        )
 
-        Box(
-            modifier = Modifier
-                .size(40.dp)
-                .background(
-                    color = Color(customBackgroundColor),
-                    shape = CircleShape,
-                ),
-        )
-    }
-}

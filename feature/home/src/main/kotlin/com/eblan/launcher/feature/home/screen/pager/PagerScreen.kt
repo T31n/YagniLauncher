@@ -115,6 +115,7 @@ import com.eblan.launcher.domain.model.shortcutconfig.EblanShortcutConfig
 import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfo
 import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfoByGroup
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
+import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
@@ -1090,7 +1091,10 @@ internal fun PagerScreen(
                                     },
                                 )
                                 .background(
-                                    color = Color(homeSettings.dockCustomBackgroundColor),
+                                    color = when (homeSettings.dockBackgroundColor) {
+                                        BackgroundColor.System -> Color.Transparent
+                                        BackgroundColor.Custom -> Color(homeSettings.dockCustomBackgroundColor)
+                                    },
                                     shape = RoundedCornerShape(
                                         topStart = homeSettings.dockTopStartCornerRadius.dp,
                                         topEnd = homeSettings.dockTopEndCornerRadius.dp,

@@ -2,6 +2,7 @@ syntax = "proto3";
 
 import "com/eblan/launcher/data/datastore/proto/model/grid_item_settings.proto";
 import "com/eblan/launcher/data/datastore/proto/home/pager_transition_effect.proto";
+import "com/eblan/launcher/data/datastore/proto/model/background_color.proto";
 
 option java_package = "com.eblan.launcher.data.datastore.proto.home";
 option java_multiple_files = true;
@@ -35,4 +36,5 @@ message HomeSettingsProto {
   optional bool showNavigationBar = 32;
   GridItemSettingsProto dockGridItemSettingsProto = 33;
   optional bool enableDock = 34;
+  optional BackgroundColorProto dockBackgroundColorProto = 35;
 }

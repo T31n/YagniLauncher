@@ -93,6 +93,7 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
         dockInfiniteScroll = false
         addNewAppsToHomeScreen = true
         showPageIndicator = true
+        dockBackgroundColorProto = BackgroundColorProto.BackgroundColorSystem
         dockCustomBackgroundColor = 0x00000000
         dockPadding = 0
         dockTopStartCornerRadius = 0
