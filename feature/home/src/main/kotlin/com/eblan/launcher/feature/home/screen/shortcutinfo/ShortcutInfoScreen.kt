@@ -47,7 +47,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
-import coil3.compose.AsyncImage
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
@@ -55,6 +54,7 @@ import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfo
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
+import com.eblan.launcher.feature.home.component.AsyncFilePathImage
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import kotlinx.coroutines.launch
 import kotlin.uuid.Uuid
@@ -64,6 +64,7 @@ internal fun ShortcutInfoScreen(
     // Data
     eblanShortcutInfosGroup: List<EblanShortcutInfo>,
     gridItemSettings: GridItemSettings,
+    lastModifiedFilePaths: Map<String, Long>,
     // Appearance
     icon: String?,
     isVisibleOverlay: Boolean,
@@ -92,6 +93,7 @@ internal fun ShortcutInfoScreen(
             ShortcutInfoMenuItem(
                 // Shortcut Info
                 eblanShortcutInfo = eblanShortcutInfo,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 // Item Appearance
                 icon = icon,
                 isVisibleOverlay = isVisibleOverlay,
@@ -109,6 +111,7 @@ internal fun ShortcutInfoScreen(
 internal fun PrivateShortcutInfoMenu(
     // Shortcut Data
     eblanShortcutInfosGroup: List<EblanShortcutInfo>,
+    lastModifiedFilePaths: Map<String, Long>,
     // Layout
     modifier: Modifier = Modifier,
     // Actions
@@ -127,6 +130,7 @@ internal fun PrivateShortcutInfoMenu(
             PrivateShortcutInfoMenuItem(
                 // Shortcut Info
                 eblanShortcutInfo = eblanShortcutInfo,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 // Callbacks
                 onTapShortcutInfo = onTapShortcutInfo,
             )
@@ -138,6 +142,7 @@ internal fun PrivateShortcutInfoMenu(
 private fun ShortcutInfoMenuItem(
     // Shortcut Info
     eblanShortcutInfo: EblanShortcutInfo,
+    lastModifiedFilePaths: Map<String, Long>,
     // Item Appearance
     icon: String?,
     isVisibleOverlay: Boolean,
@@ -175,9 +180,10 @@ private fun ShortcutInfoMenuItem(
             Text(text = eblanShortcutInfo.shortLabel)
         },
         leadingContent = {
-            AsyncImage(
-                model = eblanShortcutInfo.icon,
-                contentDescription = null,
+            AsyncFilePathImage(
+                filePath = eblanShortcutInfo.icon,
+                lastModifiedFilePaths = lastModifiedFilePaths,
+                size = null,
                 modifier = Modifier
                     .size(30.dp)
                     .onGloballyPositioned {
@@ -224,6 +230,7 @@ private fun ShortcutInfoMenuItem(
 private fun PrivateShortcutInfoMenuItem(
     // Shortcut Info
     eblanShortcutInfo: EblanShortcutInfo,
+    lastModifiedFilePaths: Map<String, Long>,
     // Modifiers
     modifier: Modifier = Modifier,
     // Callbacks
@@ -242,9 +249,10 @@ private fun PrivateShortcutInfoMenuItem(
             Text(text = eblanShortcutInfo.shortLabel)
         },
         leadingContent = {
-            AsyncImage(
-                model = eblanShortcutInfo.icon,
-                contentDescription = null,
+            AsyncFilePathImage(
+                filePath = eblanShortcutInfo.icon,
+                lastModifiedFilePaths = lastModifiedFilePaths,
+                size = null,
                 modifier = Modifier.size(30.dp),
             )
         },

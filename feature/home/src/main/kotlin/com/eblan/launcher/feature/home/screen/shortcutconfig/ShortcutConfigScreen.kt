@@ -79,7 +79,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
-import coil3.compose.AsyncImage
 import com.eblan.launcher.designsystem.component.VerticalSlideReveal
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
@@ -91,6 +90,7 @@ import com.eblan.launcher.domain.model.launcherapps.EblanUser
 import com.eblan.launcher.domain.model.shortcutconfig.EblanShortcutConfig
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
+import com.eblan.launcher.feature.home.component.AsyncFilePathImage
 import com.eblan.launcher.feature.home.component.ScreenEffect
 import com.eblan.launcher.feature.home.component.getEblanUserTypeTitle
 import com.eblan.launcher.feature.home.component.rememberNestedScrollConnectionEffect
@@ -106,6 +106,7 @@ internal fun ShortcutConfigScreen(
     // Configuration
     eblanShortcutConfigs: Map<EblanUser, Map<EblanApplicationInfoGroup, List<EblanShortcutConfig>>>,
     gridItemSettings: GridItemSettings,
+    lastModifiedFilePaths: Map<String, Long>,
     // Layout
     paddingValues: PaddingValues,
     screenHeight: Int,
@@ -235,6 +236,7 @@ internal fun ShortcutConfigScreen(
                         // Configuration
                         eblanShortcutConfigs = eblanShortcutConfigs,
                         gridItemSettings = gridItemSettings,
+                        lastModifiedFilePaths = lastModifiedFilePaths,
                         // State
                         index = index,
                         paddingValues = paddingValues,
@@ -251,6 +253,7 @@ internal fun ShortcutConfigScreen(
                     // Configuration
                     eblanShortcutConfigs = eblanShortcutConfigs,
                     gridItemSettings = gridItemSettings,
+                    lastModifiedFilePaths = lastModifiedFilePaths,
                     // State
                     index = 0,
                     paddingValues = paddingValues,
@@ -299,6 +302,7 @@ private fun EblanShortcutConfigsPage(
     // Configuration
     eblanShortcutConfigs: Map<EblanUser, Map<EblanApplicationInfoGroup, List<EblanShortcutConfig>>>,
     gridItemSettings: GridItemSettings,
+    lastModifiedFilePaths: Map<String, Long>,
     // State
     index: Int,
     paddingValues: PaddingValues,
@@ -352,6 +356,7 @@ private fun EblanShortcutConfigsPage(
                         // Application Info
                         eblanApplicationInfoGroup = eblanApplicationInfoGroup,
                         eblanShortcutConfigs = eblanShortcutConfigs[serialNumber].orEmpty(),
+                        lastModifiedFilePaths = lastModifiedFilePaths,
                         // Grid and Visibility
                         gridItemSettings = gridItemSettings,
                         isVisibleOverlay = isVisibleOverlay,
@@ -371,6 +376,7 @@ private fun EblanApplicationInfoItem(
     // Application Info
     eblanApplicationInfoGroup: EblanApplicationInfoGroup,
     eblanShortcutConfigs: Map<EblanApplicationInfoGroup, List<EblanShortcutConfig>>,
+    lastModifiedFilePaths: Map<String, Long>,
     // Grid and Visibility
     gridItemSettings: GridItemSettings,
     isVisibleOverlay: Boolean,
@@ -404,9 +410,10 @@ private fun EblanApplicationInfoItem(
         ListItem(
             headlineContent = { Text(text = eblanApplicationInfoGroup.label.toString()) },
             leadingContent = {
-                AsyncImage(
-                    model = eblanApplicationInfoGroup.icon,
-                    contentDescription = null,
+                AsyncFilePathImage(
+                    filePath = eblanApplicationInfoGroup.icon,
+                    lastModifiedFilePaths = lastModifiedFilePaths,
+                    size = null,
                     modifier = Modifier.size(40.dp),
                 )
             },
@@ -433,6 +440,7 @@ private fun EblanApplicationInfoItem(
                         // Shortcut and Grid Configuration
                         eblanShortcutConfig = eblanShortcutConfig,
                         gridItemSettings = gridItemSettings,
+                        lastModifiedFilePaths = lastModifiedFilePaths,
                         // Display Settings
                         isVisibleOverlay = isVisibleOverlay,
                         // Actions
@@ -449,6 +457,7 @@ private fun EblanShortcutConfigItem(
     // Shortcut and Grid Configuration
     eblanShortcutConfig: EblanShortcutConfig,
     gridItemSettings: GridItemSettings,
+    lastModifiedFilePaths: Map<String, Long>,
     // Display Settings
     isVisibleOverlay: Boolean,
     modifier: Modifier = Modifier,
@@ -501,9 +510,10 @@ private fun EblanShortcutConfigItem(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        AsyncImage(
-            model = eblanShortcutConfig.activityIcon,
-            contentDescription = null,
+        AsyncFilePathImage(
+            filePath = eblanShortcutConfig.activityIcon,
+            lastModifiedFilePaths = lastModifiedFilePaths,
+            size = null,
             modifier = Modifier
                 .size(gridItemSettings.iconSize.dp)
                 .onGloballyPositioned {

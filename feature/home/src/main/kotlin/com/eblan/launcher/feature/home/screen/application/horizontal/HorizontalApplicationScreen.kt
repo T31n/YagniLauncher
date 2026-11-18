@@ -87,6 +87,7 @@ internal fun HorizontalApplicationScreen(
     // Application Info and Data
     eblanApplicationInfoTags: List<EblanApplicationInfoTag>,
     getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
+    lastModifiedFilePaths: Map<String, Long>,
     horizontalPagerState: PagerState,
     textFieldState: TextFieldState,
     selectedEblanApplicationInfoTagId: Long?,
@@ -217,6 +218,7 @@ internal fun HorizontalApplicationScreen(
                 // Application Info and Drawer
                 appDrawerSettings = appDrawerSettings,
                 getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 index = index,
                 // State and UI Flags
                 isVisibleOverlay = isVisibleOverlay,
@@ -249,6 +251,7 @@ private fun EblanApplicationInfosPage(
     // Application Info and Drawer
     appDrawerSettings: AppDrawerSettings,
     getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
+    lastModifiedFilePaths: Map<String, Long>,
     index: Int,
     // State and UI Flags
     isVisibleOverlay: Boolean,
@@ -332,6 +335,7 @@ private fun EblanApplicationInfosPage(
                 animations = animations,
                 // Data and State
                 getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 isVisibleOverlay = isVisibleOverlay,
                 drag = drag,
                 swipeY = swipeY,
@@ -385,6 +389,7 @@ private fun EblanApplicationInfos(
     animations: Boolean,
     // Data and State
     getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
+    lastModifiedFilePaths: Map<String, Long>,
     isVisibleOverlay: Boolean,
     drag: Drag,
     swipeY: Float,
@@ -426,6 +431,7 @@ private fun EblanApplicationInfos(
                         eblanApplicationInfo = it,
                         appDrawerSettings = appDrawerSettings,
                         iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
+                        lastModifiedFilePaths = lastModifiedFilePaths,
                         // Layout and UI State
                         sharedTransitionScope = sharedTransitionScope,
                         drag = drag,
@@ -451,6 +457,7 @@ private fun EblanApplicationInfos(
                         // Settings and Styling
                         appDrawerSettings = appDrawerSettings,
                         iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
+                        lastModifiedFilePaths = lastModifiedFilePaths,
                         isVisibleOverlay = isVisibleOverlay,
                         systemTextColor = systemTextColor,
                         systemCustomTextColor = systemCustomTextColor,

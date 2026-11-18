@@ -53,6 +53,7 @@ import com.eblan.launcher.domain.usecase.grid.MoveGridItemUseCase
 import com.eblan.launcher.domain.usecase.grid.ResizeGridItemUseCase
 import com.eblan.launcher.domain.usecase.grid.UpdateGridItemsAfterMoveUseCase
 import com.eblan.launcher.domain.usecase.home.GetHomeDataUseCase
+import com.eblan.launcher.domain.usecase.home.GetLastModifiedFilePathsUseCase
 import com.eblan.launcher.domain.usecase.launcherapps.AddPackageUseCase
 import com.eblan.launcher.domain.usecase.launcherapps.ChangePackageUseCase
 import com.eblan.launcher.domain.usecase.launcherapps.ChangeShortcutsUseCase
@@ -109,6 +110,7 @@ internal class HomeViewModel @Inject constructor(
     getEblanApplicationTagsUseCase: GetEblanApplicationTagsUseCase,
     private val getRecursiveFolderEblanApplicationInfosUseCase: GetRecursiveFolderEblanApplicationInfosUseCase,
     private val deleteFolderEblanApplicationInfoGridItemsUseCase: DeleteFolderEblanApplicationInfoGridItemsUseCase,
+    private val getLastModifiedFilePathsUseCase: GetLastModifiedFilePathsUseCase,
 ) : ViewModel() {
     val homeUiState = getHomeDataUseCase().map(HomeUiState::Success).stateIn(
         scope = viewModelScope,
@@ -222,6 +224,9 @@ internal class HomeViewModel @Inject constructor(
         MutableStateFlow<MoveFolderEblanApplicationInfoGridItemResult?>(null)
     val moveFolderEblanApplicationInfoGridItemResult =
         _moveFolderEblanApplicationInfoGridItemResult.asStateFlow()
+
+    private val _lastModifiedFilePaths = MutableStateFlow<Map<String, Long>>(emptyMap())
+    val lastModifiedFilePaths = _lastModifiedFilePaths.asStateFlow()
 
     fun moveGridItem(
         movingGridItem: GridItem,
@@ -500,8 +505,14 @@ internal class HomeViewModel @Inject constructor(
     }
 
     fun startSyncData() {
+        syncDataJob?.cancel()
+
         syncDataJob = viewModelScope.launch {
             syncDataUseCase()
+
+            _lastModifiedFilePaths.update {
+                getLastModifiedFilePathsUseCase()
+            }
         }
     }
 
@@ -669,6 +680,10 @@ internal class HomeViewModel @Inject constructor(
                 serialNumber = serialNumber,
                 packageName = packageName,
             )
+
+            _lastModifiedFilePaths.update {
+                getLastModifiedFilePathsUseCase()
+            }
         }
     }
 
@@ -683,6 +698,10 @@ internal class HomeViewModel @Inject constructor(
                 serialNumber = serialNumber,
                 packageName = packageName,
             )
+
+            _lastModifiedFilePaths.update {
+                getLastModifiedFilePathsUseCase()
+            }
         }
     }
 
@@ -697,6 +716,10 @@ internal class HomeViewModel @Inject constructor(
                 serialNumber = serialNumber,
                 packageName = packageName,
             )
+
+            _lastModifiedFilePaths.update {
+                getLastModifiedFilePathsUseCase()
+            }
         }
     }
 
@@ -711,6 +734,10 @@ internal class HomeViewModel @Inject constructor(
                 serialNumber = serialNumber,
                 packageName = packageName,
             )
+
+            _lastModifiedFilePaths.update {
+                getLastModifiedFilePathsUseCase()
+            }
         }
     }
 

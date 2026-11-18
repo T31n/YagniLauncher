@@ -48,7 +48,6 @@ import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -57,10 +56,6 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
-import coil3.request.ImageRequest.Builder
-import coil3.request.addLastModifiedToFileCacheKey
-import coil3.size.Size
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
@@ -76,6 +71,7 @@ import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.domain.model.userdata.TextColor
+import com.eblan.launcher.feature.home.component.AsyncFilePathImage
 import com.eblan.launcher.feature.home.component.GridItemLayoutType
 import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
@@ -102,6 +98,7 @@ internal fun FolderEblanApplicationInfoItem(
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     folderEblanApplicationInfoEntries: List<FolderEntry>,
     iconPackFilePaths: Map<String, String?>,
+    lastModifiedFilePaths: Map<String, Long>,
     // Animation and Transition
     sharedTransitionScope: SharedTransitionScope,
     animations: Boolean,
@@ -297,9 +294,9 @@ internal fun FolderEblanApplicationInfoItem(
             .alpha(alpha = iconAlpha)
 
         if (icon != null) {
-            AsyncImage(
-                model = icon,
-                contentDescription = null,
+            AsyncFilePathImage(
+                filePath = icon,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 modifier = commonModifier,
             )
         } else {
@@ -333,6 +330,7 @@ internal fun FolderEblanApplicationInfoItem(
                             // Item Settings
                             gridItemSettings = appDrawerSettings.gridItemSettings,
                             iconPackFilePaths = iconPackFilePaths,
+                            lastModifiedFilePaths = lastModifiedFilePaths,
                             // Folder Colors
                             folderBackgroundColor = folderBackgroundColor,
                             customFolderBackgroundColor = customFolderBackgroundColor,
@@ -398,6 +396,7 @@ private fun PreviewFolderEblanApplicationInfoItem(
     // Item Settings
     gridItemSettings: GridItemSettings,
     iconPackFilePaths: Map<String, String?>,
+    lastModifiedFilePaths: Map<String, Long>,
     // Folder Colors
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
@@ -408,8 +407,6 @@ private fun PreviewFolderEblanApplicationInfoItem(
     modifier: Modifier = Modifier,
 ) {
     key(folderEblanApplicationInfoGridItem.id) {
-        val context = LocalContext.current
-
         val folderIconTint = getTextColorFromBackgroundColor(
             // Background Color
             backgroundColor = folderBackgroundColor,
@@ -433,13 +430,9 @@ private fun PreviewFolderEblanApplicationInfoItem(
                     icon = data.icon,
                 )
 
-                AsyncImage(
-                    model = Builder(context)
-                        .data(iconPath)
-                        .addLastModifiedToFileCacheKey(true)
-                        .size(Size.ORIGINAL)
-                        .build(),
-                    contentDescription = null,
+                AsyncFilePathImage(
+                    filePath = iconPath,
+                    lastModifiedFilePaths = lastModifiedFilePaths,
                     modifier = commonModifier,
                 )
             }
@@ -448,13 +441,9 @@ private fun PreviewFolderEblanApplicationInfoItem(
                 val icon = data.icon
 
                 if (icon != null) {
-                    AsyncImage(
-                        model = Builder(context)
-                            .data(icon)
-                            .addLastModifiedToFileCacheKey(true)
-                            .size(Size.ORIGINAL)
-                            .build(),
-                        contentDescription = null,
+                    AsyncFilePathImage(
+                        filePath = icon,
+                        lastModifiedFilePaths = lastModifiedFilePaths,
                         modifier = commonModifier,
                     )
                 } else {

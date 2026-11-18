@@ -83,7 +83,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
-import coil3.compose.AsyncImage
 import com.eblan.launcher.designsystem.component.VerticalSlideReveal
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
@@ -92,6 +91,7 @@ import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.launcherapps.EblanUser
 import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
 import com.eblan.launcher.feature.home.R
+import com.eblan.launcher.feature.home.component.AsyncFilePathImage
 import com.eblan.launcher.feature.home.component.ScreenEffect
 import com.eblan.launcher.feature.home.component.getEblanUserTypeTitle
 import com.eblan.launcher.feature.home.component.rememberNestedScrollConnectionEffect
@@ -116,6 +116,7 @@ internal fun WidgetScreen(
     isVisibleOverlay: Boolean,
     swipeY: Float,
     eblanAppWidgetProviderInfos: Map<EblanUser, Map<EblanApplicationInfoGroup, List<EblanAppWidgetProviderInfo>>>,
+    lastModifiedFilePaths: Map<String, Long>,
     // Interaction
     drag: Drag,
     modifier: Modifier = Modifier,
@@ -237,6 +238,7 @@ internal fun WidgetScreen(
                     EblanAppWidgetProvidersPage(
                         // Configuration
                         eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfos,
+                        lastModifiedFilePaths = lastModifiedFilePaths,
                         // Layout
                         index = index,
                         paddingValues = paddingValues,
@@ -259,6 +261,7 @@ internal fun WidgetScreen(
                 EblanAppWidgetProvidersPage(
                     // Configuration
                     eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfos,
+                    lastModifiedFilePaths = lastModifiedFilePaths,
                     // Layout
                     index = 0,
                     paddingValues = paddingValues,
@@ -313,6 +316,7 @@ private fun EblanAppWidgetProviderInfoTabRow(
 private fun EblanAppWidgetProvidersPage(
     // Configuration
     eblanAppWidgetProviderInfos: Map<EblanUser, Map<EblanApplicationInfoGroup, List<EblanAppWidgetProviderInfo>>>,
+    lastModifiedFilePaths: Map<String, Long>,
     // Layout
     index: Int,
     paddingValues: PaddingValues,
@@ -367,6 +371,7 @@ private fun EblanAppWidgetProvidersPage(
                         // Application Info
                         eblanApplicationInfoGroup = eblanApplicationInfoGroup,
                         eblanAppWidgetProviderInfos = eblanApplicationInfoGroups,
+                        lastModifiedFilePaths = lastModifiedFilePaths,
                         // Layout Dimensions
                         screenWidth = screenWidth,
                         screenHeight = screenHeight,
@@ -389,6 +394,7 @@ private fun EblanApplicationInfoItem(
     // Application Info
     eblanApplicationInfoGroup: EblanApplicationInfoGroup,
     eblanAppWidgetProviderInfos: Map<EblanApplicationInfoGroup, List<EblanAppWidgetProviderInfo>>,
+    lastModifiedFilePaths: Map<String, Long>,
     // Layout Dimensions
     screenWidth: Int,
     screenHeight: Int,
@@ -426,9 +432,10 @@ private fun EblanApplicationInfoItem(
         ListItem(
             headlineContent = { Text(text = eblanApplicationInfoGroup.label.toString()) },
             leadingContent = {
-                AsyncImage(
-                    model = eblanApplicationInfoGroup.icon,
-                    contentDescription = null,
+                AsyncFilePathImage(
+                    filePath = eblanApplicationInfoGroup.icon,
+                    lastModifiedFilePaths = lastModifiedFilePaths,
+                    size = null,
                     modifier = Modifier.size(40.dp),
                 )
             },
@@ -454,6 +461,7 @@ private fun EblanApplicationInfoItem(
                     EblanAppWidgetProviderInfoItem(
                         // Widget Info
                         eblanAppWidgetProviderInfo = eblanAppWidgetProviderInfo,
+                        lastModifiedFilePaths = lastModifiedFilePaths,
                         // Dimensions
                         columns = columns,
                         rows = rows,
@@ -475,6 +483,7 @@ private fun EblanApplicationInfoItem(
 private fun EblanAppWidgetProviderInfoItem(
     // Widget Info
     eblanAppWidgetProviderInfo: EblanAppWidgetProviderInfo,
+    lastModifiedFilePaths: Map<String, Long>,
     // Dimensions
     columns: Int,
     rows: Int,
@@ -552,11 +561,12 @@ private fun EblanAppWidgetProviderInfoItem(
                 },
             contentAlignment = Alignment.Center,
         ) {
-            AsyncImage(
-                model = eblanAppWidgetProviderInfo.preview
+            AsyncFilePathImage(
+                filePath = eblanAppWidgetProviderInfo.preview
                     ?: eblanAppWidgetProviderInfo.applicationIcon,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 contentScale = ContentScale.Fit,
-                contentDescription = null,
+                size = null,
             )
         }
 

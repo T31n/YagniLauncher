@@ -93,6 +93,7 @@ internal fun EditGridPageScreen(
     pageItems: List<PageItem>?,
     folderPopupGridItems: Map<String, FolderPopup>,
     iconPackFilePaths: Map<String, String?>,
+    lastModifiedFilePaths: Map<String, Long>,
     // Layout
     paddingValues: PaddingValues,
     screenWidth: Int,
@@ -242,6 +243,7 @@ internal fun EditGridPageScreen(
                                 folderCornerRadius = folderSettings.folderCornerRadius,
                                 // Assets and Styling
                                 iconPackFilePaths = iconPackFilePaths,
+                                lastModifiedFilePaths = lastModifiedFilePaths,
                             )
                         },
                     )
@@ -359,6 +361,7 @@ internal fun EditDockGridPageScreen(
     customFolderBorderColor: Int,
     folderBorderWidth: Int,
     iconPackFilePaths: Map<String, String?>,
+    lastModifiedFilePaths: Map<String, Long>,
     // Layout
     paddingValues: PaddingValues,
     modifier: Modifier = Modifier,
@@ -485,6 +488,7 @@ internal fun EditDockGridPageScreen(
                                     folderCornerRadius = folderSettings.folderCornerRadius,
                                     // Assets and Styling
                                     iconPackFilePaths = iconPackFilePaths,
+                                    lastModifiedFilePaths = lastModifiedFilePaths,
                                 )
                             },
                         )

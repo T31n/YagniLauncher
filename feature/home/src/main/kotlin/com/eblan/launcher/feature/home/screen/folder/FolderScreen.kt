@@ -95,6 +95,7 @@ internal fun FolderScreen(
     folderCellHeight: Int,
     folderPopups: Map<String, FolderPopup>,
     iconPackFilePaths: Map<String, String?>,
+    lastModifiedFilePaths: Map<String, Long>,
     statusBarNotifications: Map<String, Int>,
     // Appearance and Style
     animations: Boolean,
@@ -509,6 +510,7 @@ internal fun FolderScreen(
                                 ),
                                 isInProgress = isInProgress,
                                 iconPackFilePaths = iconPackFilePaths,
+                                lastModifiedFilePaths = lastModifiedFilePaths,
                                 animations = animations,
                                 systemTextColor = systemTextColor,
                                 systemCustomTextColor = systemCustomTextColor,

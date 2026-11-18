@@ -43,7 +43,6 @@ import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -55,10 +54,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
-import coil3.request.addLastModifiedToFileCacheKey
-import coil3.request.crossfade
+import coil3.size.Size
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.GridItem
@@ -67,6 +63,7 @@ import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.domain.model.userdata.TextColor
+import com.eblan.launcher.feature.home.component.AsyncFilePathImage
 import com.eblan.launcher.feature.home.component.GridItemLayoutType
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.model.Drag
@@ -90,6 +87,7 @@ internal fun EblanApplicationInfoItem(
     eblanApplicationInfo: EblanApplicationInfo,
     appDrawerSettings: AppDrawerSettings,
     iconPackFilePaths: Map<String, String?>,
+    lastModifiedFilePaths: Map<String, Long>,
     // Layout and UI State
     sharedTransitionScope: SharedTransitionScope,
     drag: Drag,
@@ -114,7 +112,6 @@ internal fun EblanApplicationInfoItem(
 ) {
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
-    val context = LocalContext.current
     val launcherApps = LocalLauncherApps.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -274,14 +271,10 @@ internal fun EblanApplicationInfoItem(
         }
 
     val iconContent: @Composable () -> Unit = {
-        AsyncImage(
-            model = ImageRequest.Builder(context)
-                .data(iconPath)
-                .addLastModifiedToFileCacheKey(true)
-                .size(iconSizePx)
-                .crossfade(false)
-                .build(),
-            contentDescription = null,
+        AsyncFilePathImage(
+            filePath = iconPath,
+            lastModifiedFilePaths = lastModifiedFilePaths,
+            size = Size(iconSizePx, iconSizePx),
             modifier = Modifier
                 .size(gridItemSettings.iconSize.dp)
                 .padding(gridItemSettings.iconPadding.dp)

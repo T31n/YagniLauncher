@@ -68,10 +68,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
-import coil3.request.ImageRequest.Builder
-import coil3.request.addLastModifiedToFileCacheKey
-import coil3.size.Size
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.folder.FolderEntry
 import com.eblan.launcher.domain.model.folder.FolderPopup
@@ -84,6 +80,7 @@ import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_COLUMNS
 import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_ROWS
+import com.eblan.launcher.feature.home.component.AsyncFilePathImage
 import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.component.swipeGestures
@@ -123,6 +120,7 @@ internal fun InteractiveFolderGridItem(
     sharedElementKey: SharedElementKey,
     isInProgress: Boolean,
     iconPackFilePaths: Map<String, String?>,
+    lastModifiedFilePaths: Map<String, Long>,
     animations: Boolean,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
@@ -248,6 +246,7 @@ internal fun InteractiveFolderGridItem(
                 // State and Appearance
                 statusBarNotifications = statusBarNotifications,
                 iconPackFilePaths = iconPackFilePaths,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 isScrollInProgress = isScrollInProgress,
                 isSelected = isSelected,
                 isVisibleOverlay = isVisibleOverlay,
@@ -279,6 +278,7 @@ internal fun InteractiveFolderGridItem(
                 gridItem = gridItem,
                 data = data,
                 gridItemSettings = currentGridItemSettings,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 hasShortcutHostPermission = hasShortcutHostPermission,
                 // State
                 isScrollInProgress = isScrollInProgress,
@@ -313,6 +313,7 @@ internal fun InteractiveFolderGridItem(
                 gridItem = gridItem,
                 data = data,
                 gridItemSettings = currentGridItemSettings,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 // State
                 isSelected = isSelected,
                 isVisibleOverlay = isVisibleOverlay,
@@ -360,6 +361,7 @@ internal fun InteractiveFolderGridItem(
                 padding = padding,
                 iconSize = iconSize,
                 iconPackFilePaths = iconPackFilePaths,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 textColor = currentTextColor,
                 folderCornerRadius = folderCornerRadius,
                 folderBackgroundColor = folderBackgroundColor,
@@ -396,6 +398,7 @@ private fun InteractiveApplicationInfoGridItem(
     // State and Appearance
     statusBarNotifications: Map<String, Int>,
     iconPackFilePaths: Map<String, String?>,
+    lastModifiedFilePaths: Map<String, Long>,
     isScrollInProgress: Boolean,
     isSelected: Boolean,
     isVisibleOverlay: Boolean,
@@ -522,10 +525,9 @@ private fun InteractiveApplicationInfoGridItem(
                 .size(iconSize)
                 .alpha(alpha),
         ) {
-            AsyncImage(
-                model = Builder(context).data(iconPath)
-                    .addLastModifiedToFileCacheKey(true).size(Size.ORIGINAL).build(),
-                contentDescription = null,
+            AsyncFilePathImage(
+                filePath = iconPath,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 modifier = Modifier
                     .matchParentSize()
                     .padding(iconPadding)
@@ -584,6 +586,7 @@ private fun InteractiveShortcutInfoGridItem(
     gridItem: GridItem,
     data: GridItemData.ShortcutInfo,
     gridItemSettings: GridItemSettings,
+    lastModifiedFilePaths: Map<String, Long>,
     hasShortcutHostPermission: Boolean,
     // State
     isScrollInProgress: Boolean,
@@ -713,9 +716,9 @@ private fun InteractiveShortcutInfoGridItem(
         Box(
             modifier = Modifier.size(iconSize),
         ) {
-            AsyncImage(
-                model = Builder(context).data(iconPath).addLastModifiedToFileCacheKey(true)
-                    .size(Size.ORIGINAL).build(),
+            AsyncFilePathImage(
+                filePath = iconPath,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 modifier = Modifier
                     .matchParentSize()
                     .padding(iconPadding)
@@ -743,17 +746,15 @@ private fun InteractiveShortcutInfoGridItem(
 
                         drawLayer(graphicsLayer)
                     },
-                contentDescription = null,
             )
 
-            AsyncImage(
-                model = Builder(context).data(data.eblanApplicationInfoIcon).size(Size.ORIGINAL)
-                    .build(),
+            AsyncFilePathImage(
+                filePath = data.eblanApplicationInfoIcon,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 modifier = Modifier
                     .size(iconSize * 0.25f)
                     .alpha(alpha)
                     .align(Alignment.BottomEnd),
-                contentDescription = null,
             )
         }
 
@@ -777,6 +778,7 @@ private fun InteractiveShortcutConfigGridItem(
     gridItem: GridItem,
     data: GridItemData.ShortcutConfig,
     gridItemSettings: GridItemSettings,
+    lastModifiedFilePaths: Map<String, Long>,
     // State
     isSelected: Boolean,
     isVisibleOverlay: Boolean,
@@ -900,10 +902,9 @@ private fun InteractiveShortcutConfigGridItem(
         horizontalAlignment = horizontalAlignment,
         verticalArrangement = verticalArrangement,
     ) {
-        AsyncImage(
-            model = Builder(context).data(iconPath).addLastModifiedToFileCacheKey(true)
-                .size(Size.ORIGINAL).build(),
-            contentDescription = null,
+        AsyncFilePathImage(
+            filePath = iconPath,
+            lastModifiedFilePaths = lastModifiedFilePaths,
             modifier = Modifier
                 .size(iconSize)
                 .padding(iconPadding)
@@ -965,6 +966,7 @@ private fun InteractiveNestedFolderGridItem(
     padding: Dp,
     iconSize: Dp,
     iconPackFilePaths: Map<String, String?>,
+    lastModifiedFilePaths: Map<String, Long>,
     textColor: Color,
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
@@ -1099,9 +1101,9 @@ private fun InteractiveNestedFolderGridItem(
             .alpha(iconAlpha)
 
         if (data.icon != null) {
-            AsyncImage(
-                model = data.icon,
-                contentDescription = null,
+            AsyncFilePathImage(
+                filePath = data.icon,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 modifier = commonModifier,
             )
         } else {
@@ -1137,6 +1139,7 @@ private fun InteractiveNestedFolderGridItem(
                             hasShortcutHostPermission = hasShortcutHostPermission,
                             // Assets and Styling
                             iconPackFilePaths = iconPackFilePaths,
+                            lastModifiedFilePaths = lastModifiedFilePaths,
                             alpha = iconAlpha,
                             folderBackgroundColor = folderBackgroundColor,
                             customFolderBackgroundColor = customFolderBackgroundColor,
@@ -1171,6 +1174,7 @@ private fun PreviewNestedFolderGridItem(
     hasShortcutHostPermission: Boolean,
     // Assets and Styling
     iconPackFilePaths: Map<String, String?>,
+    lastModifiedFilePaths: Map<String, Long>,
     alpha: Float,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
@@ -1179,8 +1183,6 @@ private fun PreviewNestedFolderGridItem(
     // Layout
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
-
     key(gridItem.id) {
         val currentGridItemSettings = if (gridItem.override) {
             gridItem.gridItemSettings
@@ -1231,10 +1233,9 @@ private fun PreviewNestedFolderGridItem(
                     else -> null
                 }
 
-                AsyncImage(
-                    model = Builder(context).data(iconPath)
-                        .addLastModifiedToFileCacheKey(true).size(Size.ORIGINAL).build(),
-                    contentDescription = null,
+                AsyncFilePathImage(
+                    filePath = iconPath,
+                    lastModifiedFilePaths = lastModifiedFilePaths,
                     modifier = commonModifier,
                 )
             }
@@ -1247,29 +1248,26 @@ private fun PreviewNestedFolderGridItem(
                     else -> data.applicationIcon
                 }
 
-                AsyncImage(
-                    model = Builder(context).data(icon).addLastModifiedToFileCacheKey(true)
-                        .size(Size.ORIGINAL).build(),
-                    contentDescription = null,
+                AsyncFilePathImage(
+                    filePath = icon,
+                    lastModifiedFilePaths = lastModifiedFilePaths,
                     modifier = commonModifier,
                 )
             }
 
             is GridItemData.ShortcutInfo -> {
-                AsyncImage(
-                    model = Builder(context).data(data.customIcon ?: data.icon)
-                        .addLastModifiedToFileCacheKey(true).size(Size.ORIGINAL).build(),
-                    contentDescription = null,
+                AsyncFilePathImage(
+                    filePath = data.customIcon ?: data.icon,
+                    lastModifiedFilePaths = lastModifiedFilePaths,
                     modifier = commonModifier,
                 )
             }
 
             is GridItemData.Folder -> {
                 if (data.icon != null) {
-                    AsyncImage(
-                        model = Builder(context).data(data.icon).addLastModifiedToFileCacheKey(true)
-                            .size(Size.ORIGINAL).build(),
-                        contentDescription = null,
+                    AsyncFilePathImage(
+                        filePath = data.icon,
+                        lastModifiedFilePaths = lastModifiedFilePaths,
                         modifier = commonModifier,
                     )
                 } else {

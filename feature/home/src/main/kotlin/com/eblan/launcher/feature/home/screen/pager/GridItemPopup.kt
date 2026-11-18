@@ -70,6 +70,7 @@ internal fun GridItemPopup(
     // Grid Item Details
     gridItem: GridItem?,
     gridItemSettings: GridItemSettings,
+    lastModifiedFilePaths: Map<String, Long>,
     isCloseGridItemPopup: Boolean,
     popupIntOffset: IntOffset?,
     popupIntSize: IntSize?,
@@ -187,6 +188,7 @@ internal fun GridItemPopup(
                 // Item Details
                 gridItem = gridItem,
                 gridItemSettings = gridItemSettings,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 // Visibility and Permissions
                 isVisibleOverlay = isVisibleOverlay,
                 hasShortcutHostPermission = hasShortcutHostPermission,
@@ -228,6 +230,7 @@ private fun GridItemPopupContent(
     // Item Details
     gridItem: GridItem,
     gridItemSettings: GridItemSettings,
+    lastModifiedFilePaths: Map<String, Long>,
     // Visibility and Permissions
     isVisibleOverlay: Boolean,
     hasShortcutHostPermission: Boolean,
@@ -271,6 +274,7 @@ private fun GridItemPopupContent(
                         // Basic Information
                         icon = data.icon,
                         gridItemSettings = gridItemSettings,
+                        lastModifiedFilePaths = lastModifiedFilePaths,
                         // Visibility and Permissions
                         isVisibleOverlay = isVisibleOverlay,
                         hasShortcutHostPermission = hasShortcutHostPermission,
@@ -384,6 +388,7 @@ private fun ApplicationInfoGridItemMenu(
     // Basic Information
     icon: String?,
     gridItemSettings: GridItemSettings,
+    lastModifiedFilePaths: Map<String, Long>,
     // Visibility and Permissions
     isVisibleOverlay: Boolean,
     hasShortcutHostPermission: Boolean,
@@ -422,6 +427,7 @@ private fun ApplicationInfoGridItemMenu(
                 // Data
                 eblanShortcutInfosGroup = eblanShortcutInfosByPackageName,
                 gridItemSettings = gridItemSettings,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 // Appearance
                 icon = icon,
                 isVisibleOverlay = isVisibleOverlay,

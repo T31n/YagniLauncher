@@ -71,6 +71,7 @@ internal fun FolderGridItemPopup(
     // Grid Item
     gridItemSettings: GridItemSettings,
     folderGridItem: GridItem?,
+    lastModifiedFilePaths: Map<String, Long>,
     // Permission and Visibility
     hasShortcutHostPermission: Boolean,
     isVisibleOverlay: Boolean,
@@ -190,6 +191,7 @@ internal fun FolderGridItemPopup(
                 // Item and Settings
                 folderGridItem = folderGridItem,
                 gridItemSettings = gridItemSettings,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 // Content Providers
                 eblanAppWidgetProviderInfosGroup = eblanAppWidgetProviderInfosGroup,
                 eblanShortcutInfosGroup = eblanShortcutInfosGroup,
@@ -230,6 +232,7 @@ private fun FolderGridItemPopupContent(
     // Item and Settings
     folderGridItem: GridItem,
     gridItemSettings: GridItemSettings,
+    lastModifiedFilePaths: Map<String, Long>,
     // Content Providers
     eblanAppWidgetProviderInfosGroup: Map<String, List<EblanAppWidgetProviderInfo>>,
     eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
@@ -268,6 +271,7 @@ private fun FolderGridItemPopupContent(
                         // Item Details
                         icon = data.icon,
                         gridItemSettings = gridItemSettings,
+                        lastModifiedFilePaths = lastModifiedFilePaths,
                         // App Data
                         eblanAppWidgetProviderInfosByPackageName = eblanAppWidgetProviderInfosGroup[data.packageName],
                         eblanShortcutInfosByPackageName = eblanShortcutInfosGroup[
@@ -358,6 +362,7 @@ private fun ApplicationInfoFolderGridItemPopupContent(
     // Item Details
     icon: String?,
     gridItemSettings: GridItemSettings,
+    lastModifiedFilePaths: Map<String, Long>,
     // App Data
     eblanAppWidgetProviderInfosByPackageName: List<EblanAppWidgetProviderInfo>?,
     eblanShortcutInfosByPackageName: List<EblanShortcutInfo>?,
@@ -398,6 +403,7 @@ private fun ApplicationInfoFolderGridItemPopupContent(
                         // Data
                         eblanShortcutInfosGroup = eblanShortcutInfosByPackageName,
                         gridItemSettings = gridItemSettings,
+                        lastModifiedFilePaths = lastModifiedFilePaths,
                         // Appearance
                         icon = icon,
                         isVisibleOverlay = isVisibleOverlay,

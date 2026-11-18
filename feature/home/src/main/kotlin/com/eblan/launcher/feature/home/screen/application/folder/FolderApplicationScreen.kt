@@ -111,6 +111,7 @@ internal fun FolderApplicationScreen(
     folderCellWidth: Int,
     folderCellHeight: Int,
     iconPackFilePaths: Map<String, String?>,
+    lastModifiedFilePaths: Map<String, Long>,
     // Drag and Drop State
     moveFolderEblanApplicationInfoGridItemResult: MoveFolderEblanApplicationInfoGridItemResult?,
     drag: Drag,
@@ -506,6 +507,7 @@ internal fun FolderApplicationScreen(
                                 appDrawerSettings = appDrawerSettings,
                                 paddingValues = paddingValues,
                                 iconPackFilePaths = iconPackFilePaths,
+                                lastModifiedFilePaths = lastModifiedFilePaths,
                                 // State and Progress
                                 isVisibleOverlay = isVisibleOverlay,
                                 isScrollInProgress = folderGridHorizontalPagerState.isScrollInProgress,

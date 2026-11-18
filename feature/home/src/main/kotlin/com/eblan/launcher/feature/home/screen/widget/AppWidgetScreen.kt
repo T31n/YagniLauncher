@@ -68,11 +68,11 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
-import coil3.compose.AsyncImage
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
+import com.eblan.launcher.feature.home.component.AsyncFilePathImage
 import com.eblan.launcher.feature.home.component.HomeHandler
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
@@ -86,6 +86,7 @@ internal fun AppWidgetScreen(
     // Data
     eblanAppWidgetProviderInfosGroup: Map<String, List<EblanAppWidgetProviderInfo>>,
     eblanApplicationInfoGroup: EblanApplicationInfoGroup?,
+    lastModifiedFilePaths: Map<String, Long>,
     // Grid
     columns: Int,
     rows: Int,
@@ -184,9 +185,10 @@ internal fun AppWidgetScreen(
             ) {
                 DragHandle()
 
-                AsyncImage(
-                    model = eblanApplicationInfoGroup.icon,
-                    contentDescription = null,
+                AsyncFilePathImage(
+                    filePath = eblanApplicationInfoGroup.icon,
+                    lastModifiedFilePaths = lastModifiedFilePaths,
+                    size = null,
                     modifier = Modifier.size(40.dp),
                 )
 
@@ -204,6 +206,7 @@ internal fun AppWidgetScreen(
                         EblanAppWidgetScreenItem(
                             // Widget Info
                             eblanAppWidgetProviderInfo = eblanAppWidgetProviderInfo,
+                            lastModifiedFilePaths = lastModifiedFilePaths,
                             // Dimensions
                             columns = columns,
                             rows = rows,
@@ -226,6 +229,7 @@ internal fun AppWidgetScreen(
 private fun EblanAppWidgetScreenItem(
     // Widget Info
     eblanAppWidgetProviderInfo: EblanAppWidgetProviderInfo,
+    lastModifiedFilePaths: Map<String, Long>,
     // Dimensions
     columns: Int,
     rows: Int,
@@ -352,11 +356,12 @@ private fun EblanAppWidgetScreenItem(
                 },
             contentAlignment = Alignment.Center,
         ) {
-            AsyncImage(
-                model = eblanAppWidgetProviderInfo.preview
+            AsyncFilePathImage(
+                filePath = eblanAppWidgetProviderInfo.preview
                     ?: eblanAppWidgetProviderInfo.applicationIcon,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 contentScale = ContentScale.Fit,
-                contentDescription = null,
+                size = null,
             )
         }
     }

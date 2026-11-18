@@ -194,6 +194,7 @@ internal fun PagerScreen(
     folderPopups: Map<String, FolderPopup>,
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     iconPackFilePaths: Map<String, String?>,
+    lastModifiedFilePaths: Map<String, Long>,
     getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
     // State
     configureResultCode: Int?,
@@ -995,6 +996,7 @@ internal fun PagerScreen(
                                 folderBorderWidth = folderSettings.borderWidth,
                                 systemCustomTextColor = homeSettings.gridItemSettings.customTextColor,
                                 iconPackFilePaths = iconPackFilePaths,
+                                lastModifiedFilePaths = lastModifiedFilePaths,
                                 // Animation and Transition
                                 sharedTransitionScope = this@SharedTransitionLayout,
                                 animations = experimentalSettings.gridItemAnimation,
@@ -1185,6 +1187,7 @@ internal fun PagerScreen(
                                         folderBorderWidth = folderSettings.borderWidth,
                                         systemCustomTextColor = homeSettings.dockGridItemSettings.customTextColor,
                                         iconPackFilePaths = iconPackFilePaths,
+                                        lastModifiedFilePaths = lastModifiedFilePaths,
                                         // Animation and Transition
                                         sharedTransitionScope = this@SharedTransitionLayout,
                                         animations = experimentalSettings.gridItemAnimation,
@@ -1257,6 +1260,7 @@ internal fun PagerScreen(
                 popupIntSize = pagerScreenState.menuIntSize,
                 isVisibleOverlay = isVisibleOverlay,
                 paddingValues = paddingValues,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 // Shortcut and Widget Data
                 eblanAppWidgetProviderInfosGroup = eblanAppWidgetProviderInfosGroup,
                 eblanShortcutInfosGroup = eblanShortcutInfosGroup,
@@ -1326,6 +1330,7 @@ internal fun PagerScreen(
                     folderCellHeight = folderSettings.folderCellHeight,
                     folderPopups = folderPopups,
                     iconPackFilePaths = iconPackFilePaths,
+                    lastModifiedFilePaths = lastModifiedFilePaths,
                     statusBarNotifications = statusBarNotifications,
                     // Appearance and Style
                     animations = experimentalSettings.gridItemAnimation,
@@ -1400,6 +1405,7 @@ internal fun PagerScreen(
                 // Grid Item
                 gridItemSettings = homeSettings.gridItemSettings,
                 folderGridItem = pagerScreenState.selectedGridItem,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 // Permission and Visibility
                 hasShortcutHostPermission = hasShortcutHostPermission,
                 isVisibleOverlay = isVisibleOverlay,
@@ -1457,6 +1463,7 @@ internal fun PagerScreen(
                 eblanApplicationInfoTags = eblanApplicationInfoTags,
                 getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
                 appDrawerSettings = appDrawerSettings,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 // Folder Settings
                 folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                 folderCornerRadius = folderSettings.folderCornerRadius,
@@ -1548,6 +1555,7 @@ internal fun PagerScreen(
                 eblanApplicationInfo = pagerScreenState.selectedEblanApplicationInfo,
                 eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfosGroup,
                 eblanShortcutInfosGroup = eblanShortcutInfosGroup,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 // Settings and State
                 gridItemSettings = appDrawerSettings.gridItemSettings,
                 hasShortcutHostPermission = hasShortcutHostPermission,
@@ -1594,6 +1602,7 @@ internal fun PagerScreen(
                 eblanApplicationInfo = pagerScreenState.selectedEblanApplicationInfo,
                 eblanShortcutInfosGroup = eblanShortcutInfosGroup,
                 hasShortcutHostPermission = hasShortcutHostPermission,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 // Popup Layout
                 popupIntOffset = pagerScreenState.menuIntOffset,
                 popupIntSize = pagerScreenState.menuIntSize,
@@ -1620,6 +1629,7 @@ internal fun PagerScreen(
                 isVisibleOverlay = isVisibleOverlay,
                 swipeY = pagerScreenState.widgetScreenSwipeY.value,
                 eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfos,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 // Interaction
                 drag = pagerScreenState.drag,
                 // Actions
@@ -1650,6 +1660,7 @@ internal fun PagerScreen(
                 // Configuration
                 eblanShortcutConfigs = eblanShortcutConfigs,
                 gridItemSettings = homeSettings.gridItemSettings,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 // Layout
                 paddingValues = paddingValues,
                 screenHeight = screenHeight,
@@ -1686,6 +1697,7 @@ internal fun PagerScreen(
                 // Data
                 eblanAppWidgetProviderInfosGroup = eblanAppWidgetProviderInfosGroup,
                 eblanApplicationInfoGroup = pagerScreenState.eblanApplicationInfoGroup,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 // Grid
                 columns = homeSettings.columns,
                 rows = homeSettings.rows,
@@ -1768,6 +1780,7 @@ internal fun PagerScreen(
                     folderCellWidth = folderSettings.folderCellWidth,
                     folderCellHeight = folderSettings.folderCellHeight,
                     iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
+                    lastModifiedFilePaths = lastModifiedFilePaths,
                     // Drag and Drop State
                     moveFolderEblanApplicationInfoGridItemResult = moveFolderEblanApplicationInfoGridItemResult,
                     drag = pagerScreenState.drag,
@@ -1850,6 +1863,7 @@ internal fun PagerScreen(
                 eblanAppWidgetProviderInfosGroup = eblanAppWidgetProviderInfosGroup,
                 eblanShortcutInfosGroup = eblanShortcutInfosGroup,
                 gridItemSettings = appDrawerSettings.gridItemSettings,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 // Popup Configuration
                 popupIntOffset = pagerScreenState.menuIntOffset,
                 popupIntSize = pagerScreenState.menuIntSize,

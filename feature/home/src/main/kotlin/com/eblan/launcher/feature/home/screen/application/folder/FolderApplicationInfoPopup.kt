@@ -186,6 +186,7 @@ internal fun FolderApplicationInfoGridItemPopup(
     eblanAppWidgetProviderInfosGroup: Map<String, List<EblanAppWidgetProviderInfo>>,
     eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
     gridItemSettings: GridItemSettings,
+    lastModifiedFilePaths: Map<String, Long>,
     // Popup Configuration
     popupIntOffset: IntOffset?,
     popupIntSize: IntSize?,
@@ -295,6 +296,7 @@ internal fun FolderApplicationInfoGridItemPopup(
                 // Item Data
                 folderEblanApplicationInfoGridItem = folderEblanApplicationInfoGridItem,
                 gridItemSettings = gridItemSettings,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 // Providers and Shortcuts
                 eblanAppWidgetProviderInfosGroup = eblanAppWidgetProviderInfosGroup,
                 eblanShortcutInfosGroup = eblanShortcutInfosGroup,
@@ -324,6 +326,7 @@ private fun FolderApplicationInfoGridItemPopupContent(
     // Item Data
     folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
     gridItemSettings: GridItemSettings,
+    lastModifiedFilePaths: Map<String, Long>,
     // Providers and Shortcuts
     eblanAppWidgetProviderInfosGroup: Map<String, List<EblanAppWidgetProviderInfo>>,
     eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
@@ -367,6 +370,7 @@ private fun FolderApplicationInfoGridItemPopupContent(
                 isVisibleOverlay = isVisibleOverlay,
                 hasShortcutHostPermission = hasShortcutHostPermission,
                 gridItemSettings = gridItemSettings,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 eblanShortcutInfosGroup = eblanShortcutInfosGroup[
                     EblanShortcutInfoByGroup(
                         serialNumber = data.serialNumber,

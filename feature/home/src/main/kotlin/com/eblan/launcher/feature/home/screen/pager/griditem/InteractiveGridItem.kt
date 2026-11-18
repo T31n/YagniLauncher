@@ -43,7 +43,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.viewinterop.AndroidView
-import coil3.compose.AsyncImage
 import com.eblan.launcher.domain.model.folder.FolderEntry
 import com.eblan.launcher.domain.model.folder.FolderPopup
 import com.eblan.launcher.domain.model.grid.GridItem
@@ -52,6 +51,7 @@ import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
+import com.eblan.launcher.feature.home.component.AsyncFilePathImage
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.component.whiteBox
 import com.eblan.launcher.feature.home.model.Drag
@@ -87,6 +87,7 @@ internal fun InteractiveGridItem(
     folderBorderWidth: Int,
     systemCustomTextColor: Int,
     iconPackFilePaths: Map<String, String?>,
+    lastModifiedFilePaths: Map<String, Long>,
     // Animation and Transition
     sharedTransitionScope: SharedTransitionScope,
     animations: Boolean,
@@ -200,6 +201,7 @@ internal fun InteractiveGridItem(
                 animations = animations,
                 statusBarNotifications = statusBarNotifications,
                 iconPackFilePaths = iconPackFilePaths,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 // Appearance
                 textColor = currentTextColor,
                 maxLines = maxLines,
@@ -227,6 +229,7 @@ internal fun InteractiveGridItem(
                 // Data
                 data = data,
                 gridItem = gridItem,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 // Transition
                 sharedElementKey = sharedElementKey,
                 sharedTransitionScope = sharedTransitionScope,
@@ -250,6 +253,7 @@ internal fun InteractiveGridItem(
                 data = data,
                 gridItem = gridItem,
                 gridItemSettings = currentGridItemSettings,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 // State
                 hasShortcutHostPermission = hasShortcutHostPermission,
                 isScrollInProgress = isScrollInProgress,
@@ -288,6 +292,7 @@ internal fun InteractiveGridItem(
                 sharedElementKey = sharedElementKey,
                 // Configuration
                 iconPackFilePaths = iconPackFilePaths,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 folderPopups = folderPopups,
                 gridItemSettings = currentGridItemSettings,
                 // State
@@ -334,6 +339,7 @@ internal fun InteractiveGridItem(
                 gridItem = gridItem,
                 data = data,
                 gridItemSettings = currentGridItemSettings,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 // State Flags
                 isScrollInProgress = isScrollInProgress,
                 isVisibleFolders = isVisibleFolderGridItems,
@@ -367,6 +373,7 @@ private fun InteractiveWidgetGridItem(
     // Data
     data: GridItemData.Widget,
     gridItem: GridItem,
+    lastModifiedFilePaths: Map<String, Long>,
     // Transition
     sharedElementKey: SharedElementKey,
     sharedTransitionScope: SharedTransitionScope,
@@ -457,9 +464,10 @@ private fun InteractiveWidgetGridItem(
                 },
             )
         } else {
-            AsyncImage(
-                model = data.preview ?: data.icon,
-                contentDescription = null,
+            AsyncFilePathImage(
+                filePath = data.preview ?: data.icon,
+                lastModifiedFilePaths = lastModifiedFilePaths,
+                size = null,
                 modifier = commonModifier.pointerInput(key1 = isVisibleOverlay) {
                     detectTapGestures(
                         onLongPress = if (!isVisibleOverlay) {

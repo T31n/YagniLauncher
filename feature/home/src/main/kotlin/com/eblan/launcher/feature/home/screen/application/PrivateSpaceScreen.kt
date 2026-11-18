@@ -44,12 +44,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -62,10 +59,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
-import coil3.request.addLastModifiedToFileCacheKey
-import coil3.request.crossfade
+import coil3.size.Size
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.launcherapps.EblanUser
@@ -73,6 +67,7 @@ import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.R
+import com.eblan.launcher.feature.home.component.AsyncFilePathImage
 import com.eblan.launcher.feature.home.component.GridItemLayoutType
 import com.eblan.launcher.feature.home.util.getApplicationScreenTextColor
 import com.eblan.launcher.feature.home.util.getGridItemBackgroundColor
@@ -93,6 +88,7 @@ internal fun LazyGridScope.privateSpace(
     // App Drawer and Appearance Settings
     appDrawerSettings: AppDrawerSettings,
     iconPackFilePaths: Map<String, String?>,
+    lastModifiedFilePaths: Map<String, Long>,
     // Space State
     isQuietModeEnabled: Boolean,
     isVisibleOverlay: Boolean,
@@ -132,6 +128,7 @@ internal fun LazyGridScope.privateSpace(
                 // Settings and Styling
                 appDrawerSettings = appDrawerSettings,
                 iconPackFilePaths = iconPackFilePaths,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 isVisibleOverlay = isVisibleOverlay,
                 systemTextColor = systemTextColor,
                 systemCustomTextColor = systemCustomTextColor,
@@ -241,6 +238,7 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
     // Settings and Styling
     appDrawerSettings: AppDrawerSettings,
     iconPackFilePaths: Map<String, String?>,
+    lastModifiedFilePaths: Map<String, Long>,
     isVisibleOverlay: Boolean,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
@@ -253,7 +251,6 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
         intSize: IntSize,
     ) -> Unit,
 ) {
-    val context = LocalContext.current
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
     val launcherApps = LocalLauncherApps.current
@@ -367,17 +364,11 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
         }
 
     val iconContent: @Composable () -> Unit = {
-        AsyncImage(
-            model = ImageRequest.Builder(context)
-                .data(eblanApplicationInfo.customIcon ?: icon)
-                .addLastModifiedToFileCacheKey(true)
-                .size(iconSizePx)
-                .crossfade(false)
-                .build(),
-            contentDescription = null,
+        AsyncFilePathImage(
+            filePath = eblanApplicationInfo.customIcon ?: icon,
+            lastModifiedFilePaths = lastModifiedFilePaths,
+            size = Size(iconSizePx, iconSizePx),
             modifier = iconModifier,
-            placeholder = ColorPainter(Color.Transparent),
-            error = ColorPainter(Color.Transparent),
         )
     }
 

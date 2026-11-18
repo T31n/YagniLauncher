@@ -116,6 +116,7 @@ internal fun HomeRoute(
     val folderEblanApplicationInfoPopups by viewModel.folderEblanApplicationInfoPopups.collectAsStateWithLifecycle()
     val folderEblanApplicationInfoEntries by viewModel.folderEblanApplicationInfoEntries.collectAsStateWithLifecycle()
     val moveFolderEblanApplicationInfoGridItemResult by viewModel.moveFolderEblanApplicationInfoGridItemResult.collectAsStateWithLifecycle()
+    val lastModifiedFilePaths by viewModel.lastModifiedFilePaths.collectAsStateWithLifecycle()
 
     HomeScreen(
         // General State
@@ -123,6 +124,7 @@ internal fun HomeRoute(
         screen = screen,
         isVisibleOverlay = isVisibleOverlay,
         configureResultCode = configureResultCode,
+        lastModifiedFilePaths = lastModifiedFilePaths,
         modifier = modifier,
         // Pages and Grid Data
         pageItems = pageItems,
@@ -209,6 +211,7 @@ internal fun HomeScreen(
     screen: Screen,
     isVisibleOverlay: Boolean,
     configureResultCode: Int?,
+    lastModifiedFilePaths: Map<String, Long>,
     modifier: Modifier = Modifier,
     // Pages and Grid Data
     pageItems: List<PageItem>?,
@@ -379,6 +382,7 @@ internal fun HomeScreen(
                 isVisibleOverlay = isVisibleOverlay,
                 configureResultCode = configureResultCode,
                 pageItems = pageItems,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 // Data Providers
                 eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfos,
                 eblanAppWidgetProviderInfosGroup = eblanAppWidgetProviderInfosGroup,
@@ -474,6 +478,7 @@ private fun Success(
     isVisibleOverlay: Boolean,
     configureResultCode: Int?,
     pageItems: List<PageItem>?,
+    lastModifiedFilePaths: Map<String, Long>,
     // Data Providers
     eblanAppWidgetProviderInfos: Map<EblanUser, Map<EblanApplicationInfoGroup, List<EblanAppWidgetProviderInfo>>>,
     eblanAppWidgetProviderInfosGroup: Map<String, List<EblanAppWidgetProviderInfo>>,
@@ -694,6 +699,7 @@ private fun Success(
                     folderPopups = folderPopups,
                     folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                     iconPackFilePaths = homeData.iconPackFilePaths,
+                    lastModifiedFilePaths = lastModifiedFilePaths,
                     getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
                     // State
                     configureResultCode = configureResultCode,
@@ -771,6 +777,7 @@ private fun Success(
                     pageItems = pageItems,
                     folderPopupGridItems = folderPopups,
                     iconPackFilePaths = homeData.iconPackFilePaths,
+                    lastModifiedFilePaths = lastModifiedFilePaths,
                     // Layout
                     paddingValues = paddingValues,
                     screenWidth = screenWidth,
@@ -813,6 +820,7 @@ private fun Success(
                     customFolderBorderColor = homeData.userData.folderSettings.customFolderBorderColor,
                     folderBorderWidth = homeData.userData.folderSettings.borderWidth,
                     iconPackFilePaths = homeData.iconPackFilePaths,
+                    lastModifiedFilePaths = lastModifiedFilePaths,
                     // Layout
                     paddingValues = paddingValues,
                     // Callbacks

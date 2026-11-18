@@ -128,6 +128,7 @@ internal fun ApplicationScreen(
     eblanApplicationInfoTags: List<EblanApplicationInfoTag>,
     getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
     appDrawerSettings: AppDrawerSettings,
+    lastModifiedFilePaths: Map<String, Long>,
     // Folder Settings
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     folderCornerRadius: Int,
@@ -255,6 +256,7 @@ internal fun ApplicationScreen(
                     // Application Info
                     eblanApplicationInfoTags = eblanApplicationInfoTags,
                     getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
+                    lastModifiedFilePaths = lastModifiedFilePaths,
                     horizontalPagerState = horizontalPagerState,
                     textFieldState = textFieldState,
                     selectedEblanApplicationInfoTagId = selectedEblanApplicationInfoTagId,
@@ -303,6 +305,7 @@ internal fun ApplicationScreen(
                     // Application Info and Data
                     eblanApplicationInfoTags = eblanApplicationInfoTags,
                     getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
+                    lastModifiedFilePaths = lastModifiedFilePaths,
                     horizontalPagerState = horizontalPagerState,
                     textFieldState = textFieldState,
                     selectedEblanApplicationInfoTagId = selectedEblanApplicationInfoTagId,

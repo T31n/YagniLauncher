@@ -52,14 +52,11 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
-import coil3.request.ImageRequest.Builder
-import coil3.request.addLastModifiedToFileCacheKey
-import coil3.size.Size
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.userdata.EblanActionType
+import com.eblan.launcher.feature.home.component.AsyncFilePathImage
 import com.eblan.launcher.feature.home.component.GridItemLayoutType
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.component.swipeGestures
@@ -78,6 +75,7 @@ internal fun InteractiveShortcutConfigGridItem(
     gridItem: GridItem,
     data: GridItemData.ShortcutConfig,
     gridItemSettings: GridItemSettings,
+    lastModifiedFilePaths: Map<String, Long>,
     // State Flags
     isScrollInProgress: Boolean,
     isVisibleFolders: Boolean,
@@ -207,13 +205,9 @@ internal fun InteractiveShortcutConfigGridItem(
         }
 
     val iconContent: @Composable () -> Unit = {
-        AsyncImage(
-            model = Builder(context = context)
-                .data(iconPath)
-                .addLastModifiedToFileCacheKey(true)
-                .size(Size.ORIGINAL)
-                .build(),
-            contentDescription = null,
+        AsyncFilePathImage(
+            filePath = iconPath,
+            lastModifiedFilePaths = lastModifiedFilePaths,
             modifier = Modifier
                 .size(gridItemSettings.iconSize.dp)
                 .padding(gridItemSettings.iconPadding.dp)

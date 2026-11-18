@@ -31,18 +31,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
-import coil3.request.ImageRequest.Builder
-import coil3.request.addLastModifiedToFileCacheKey
-import coil3.size.Size
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
+import com.eblan.launcher.feature.home.component.AsyncFilePathImage
 import com.eblan.launcher.feature.home.component.GridItemLayoutType
 import com.eblan.launcher.feature.home.util.getGridItemBackgroundColor
 import com.eblan.launcher.feature.home.util.getGridItemIconPath
@@ -54,6 +50,7 @@ internal fun ShortcutConfigGridItem(
     data: GridItemData.ShortcutConfig,
     // Settings
     gridItemSettings: GridItemSettings,
+    lastModifiedFilePaths: Map<String, Long>,
     textColor: Color,
     maxLines: Int,
     // Layout
@@ -63,8 +60,6 @@ internal fun ShortcutConfigGridItem(
     verticalAlignment: Alignment.Vertical,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
-
     val iconPath = getGridItemIconPath(data = data)
     val label = getGridItemLabel(data = data).toString()
 
@@ -82,13 +77,9 @@ internal fun ShortcutConfigGridItem(
 
     val iconContent: @Composable () -> Unit = {
         Box(modifier = commonModifier) {
-            AsyncImage(
-                model = Builder(context)
-                    .data(iconPath)
-                    .addLastModifiedToFileCacheKey(true)
-                    .size(Size.ORIGINAL)
-                    .build(),
-                contentDescription = null,
+            AsyncFilePathImage(
+                filePath = iconPath,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 modifier = Modifier.matchParentSize(),
             )
 

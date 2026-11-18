@@ -57,10 +57,6 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
-import coil3.request.ImageRequest.Builder
-import coil3.request.addLastModifiedToFileCacheKey
-import coil3.size.Size
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.folder.FolderEntry
 import com.eblan.launcher.domain.model.folder.FolderPopup
@@ -71,6 +67,7 @@ import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.domain.model.userdata.TextColor
+import com.eblan.launcher.feature.home.component.AsyncFilePathImage
 import com.eblan.launcher.feature.home.component.GridItemLayoutType
 import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
@@ -98,6 +95,7 @@ internal fun InteractiveFolderGridItem(
     sharedElementKey: SharedElementKey,
     // Configuration
     iconPackFilePaths: Map<String, String?>,
+    lastModifiedFilePaths: Map<String, Long>,
     folderPopups: Map<String, FolderPopup>,
     gridItemSettings: GridItemSettings,
     // State
@@ -286,9 +284,9 @@ internal fun InteractiveFolderGridItem(
             .alpha(alpha = iconAlpha)
 
         if (icon != null) {
-            AsyncImage(
-                model = icon,
-                contentDescription = null,
+            AsyncFilePathImage(
+                filePath = icon,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 modifier = commonModifier,
             )
         } else {
@@ -337,6 +335,7 @@ internal fun InteractiveFolderGridItem(
                             systemTextColor = systemTextColor,
                             systemCustomTextColor = systemCustomTextColor,
                             iconPackFilePaths = iconPackFilePaths,
+                            lastModifiedFilePaths = lastModifiedFilePaths,
                             // Actions
                             onResetGrid = onResetGrid,
                         )
@@ -413,14 +412,13 @@ private fun PreviewFolderGridItem(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     iconPackFilePaths: Map<String, String?>,
+    lastModifiedFilePaths: Map<String, Long>,
     // Modifier
     modifier: Modifier = Modifier,
     // Actions
     onResetGrid: () -> Unit,
 ) {
     key(gridItem.id) {
-        val context = LocalContext.current
-
         val currentGridItemSettings = if (gridItem.override) {
             gridItem.gridItemSettings
         } else {
@@ -504,13 +502,9 @@ private fun PreviewFolderGridItem(
                     iconPackFilePath = iconPackFilePaths[data.componentName],
                 )
 
-                AsyncImage(
-                    model = Builder(context)
-                        .data(iconPath)
-                        .addLastModifiedToFileCacheKey(true)
-                        .size(Size.ORIGINAL)
-                        .build(),
-                    contentDescription = null,
+                AsyncFilePathImage(
+                    filePath = iconPath,
+                    lastModifiedFilePaths = lastModifiedFilePaths,
                     modifier = commonModifier,
                 )
             }
@@ -518,13 +512,9 @@ private fun PreviewFolderGridItem(
             is GridItemData.ShortcutConfig -> {
                 val iconPath = getGridItemIconPath(data = data)
 
-                AsyncImage(
-                    model = Builder(context)
-                        .data(iconPath)
-                        .addLastModifiedToFileCacheKey(true)
-                        .size(Size.ORIGINAL)
-                        .build(),
-                    contentDescription = null,
+                AsyncFilePathImage(
+                    filePath = iconPath,
+                    lastModifiedFilePaths = lastModifiedFilePaths,
                     modifier = commonModifier,
                 )
             }
@@ -532,13 +522,9 @@ private fun PreviewFolderGridItem(
             is GridItemData.ShortcutInfo -> {
                 val iconPath = getGridItemIconPath(data = data)
 
-                AsyncImage(
-                    model = Builder(context)
-                        .data(iconPath)
-                        .addLastModifiedToFileCacheKey(true)
-                        .size(Size.ORIGINAL)
-                        .build(),
-                    contentDescription = null,
+                AsyncFilePathImage(
+                    filePath = iconPath,
+                    lastModifiedFilePaths = lastModifiedFilePaths,
                     modifier = commonModifier,
                 )
             }
@@ -547,13 +533,9 @@ private fun PreviewFolderGridItem(
                 val icon = data.icon
 
                 if (icon != null) {
-                    AsyncImage(
-                        model = Builder(context)
-                            .data(icon)
-                            .addLastModifiedToFileCacheKey(true)
-                            .size(Size.ORIGINAL)
-                            .build(),
-                        contentDescription = null,
+                    AsyncFilePathImage(
+                        filePath = icon,
+                        lastModifiedFilePaths = lastModifiedFilePaths,
                         modifier = commonModifier,
                     )
                 } else {

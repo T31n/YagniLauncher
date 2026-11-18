@@ -20,13 +20,13 @@ package com.eblan.launcher.feature.home.screen.editpage.griditem
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import coil3.compose.AsyncImage
 import com.eblan.launcher.domain.model.folder.FolderPopup
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
+import com.eblan.launcher.feature.home.component.AsyncFilePathImage
 import com.eblan.launcher.feature.home.util.getGridItemTextColor
 import com.eblan.launcher.feature.home.util.getHorizontalAlignment
 import com.eblan.launcher.feature.home.util.getHorizontalArrangement
@@ -52,6 +52,7 @@ internal fun PageGridItem(
     folderCornerRadius: Int,
     // Assets and Styling
     iconPackFilePaths: Map<String, String?>,
+    lastModifiedFilePaths: Map<String, Long>,
     modifier: Modifier = Modifier,
 ) {
     val currentGridItemSettings = if (gridItem.override) {
@@ -92,6 +93,7 @@ internal fun PageGridItem(
                 // Appearance
                 textColor = currentTextColor,
                 iconPackFilePaths = iconPackFilePaths,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 maxLines = maxLines,
                 // Layout
                 horizontalAlignment = horizontalAlignment,
@@ -104,6 +106,7 @@ internal fun PageGridItem(
         is GridItemData.Widget -> WidgetGridItem(
             modifier = modifier,
             data = data,
+            lastModifiedFilePaths = lastModifiedFilePaths,
         )
 
         is GridItemData.ShortcutInfo ->
@@ -112,6 +115,7 @@ internal fun PageGridItem(
                 data = data,
                 gridItemSettings = currentGridItemSettings,
                 hasShortcutHostPermission = hasShortcutHostPermission,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 // Appearance
                 textColor = currentTextColor,
                 maxLines = maxLines,
@@ -132,6 +136,7 @@ internal fun PageGridItem(
                 // Settings and Configuration
                 gridItemSettings = currentGridItemSettings,
                 iconPackFilePaths = iconPackFilePaths,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 hasShortcutHostPermission = hasShortcutHostPermission,
                 folderPopupGridItems = folderPopupGridItems,
                 maxLines = maxLines,
@@ -160,6 +165,7 @@ internal fun PageGridItem(
                 data = data,
                 // Settings
                 gridItemSettings = currentGridItemSettings,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 textColor = currentTextColor,
                 maxLines = maxLines,
                 // Layout
@@ -173,10 +179,15 @@ internal fun PageGridItem(
 }
 
 @Composable
-private fun WidgetGridItem(modifier: Modifier = Modifier, data: GridItemData.Widget) {
-    AsyncImage(
-        model = data.preview ?: data.icon,
-        contentDescription = null,
+private fun WidgetGridItem(
+    data: GridItemData.Widget,
+    lastModifiedFilePaths: Map<String, Long>,
+    modifier: Modifier = Modifier,
+) {
+    AsyncFilePathImage(
+        filePath = data.preview ?: data.icon,
+        lastModifiedFilePaths = lastModifiedFilePaths,
+        size = null,
         modifier = modifier.fillMaxSize(),
     )
 }

@@ -75,6 +75,7 @@ internal fun ApplicationInfoPopup(
     eblanApplicationInfo: EblanApplicationInfo?,
     eblanAppWidgetProviderInfos: Map<String, List<EblanAppWidgetProviderInfo>>,
     eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
+    lastModifiedFilePaths: Map<String, Long>,
     // Settings and State
     gridItemSettings: GridItemSettings,
     hasShortcutHostPermission: Boolean,
@@ -185,6 +186,7 @@ internal fun ApplicationInfoPopup(
                 isVisibleOverlay = isVisibleOverlay,
                 hasShortcutHostPermission = hasShortcutHostPermission,
                 gridItemSettings = gridItemSettings,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 eblanShortcutInfosGroup = eblanShortcutInfosGroup[
                     EblanShortcutInfoByGroup(
                         serialNumber = eblanApplicationInfo.serialNumber,
@@ -272,6 +274,7 @@ internal fun PrivateApplicationInfoPopup(
     // Application Info
     eblanApplicationInfo: EblanApplicationInfo?,
     eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
+    lastModifiedFilePaths: Map<String, Long>,
     hasShortcutHostPermission: Boolean,
     // Popup Layout
     popupIntOffset: IntOffset?,
@@ -374,6 +377,7 @@ internal fun PrivateApplicationInfoPopup(
                         packageName = eblanApplicationInfo.packageName,
                     ),
                 ],
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 // Callbacks
                 onUninstall = {
                     handleOnUninstall(
@@ -442,6 +446,7 @@ internal fun ApplicationInfoMenu(
     isVisibleOverlay: Boolean,
     hasShortcutHostPermission: Boolean,
     gridItemSettings: GridItemSettings,
+    lastModifiedFilePaths: Map<String, Long>,
     eblanShortcutInfosGroup: List<EblanShortcutInfo>?,
     eblanAppWidgetProviderInfosByPackageName: List<EblanAppWidgetProviderInfo>?,
     // Modifier
@@ -477,6 +482,7 @@ internal fun ApplicationInfoMenu(
                         // Data
                         eblanShortcutInfosGroup = eblanShortcutInfosGroup,
                         gridItemSettings = gridItemSettings,
+                        lastModifiedFilePaths = lastModifiedFilePaths,
                         // Appearance
                         icon = icon,
                         isVisibleOverlay = isVisibleOverlay,
@@ -541,6 +547,7 @@ private fun PrivateApplicationInfoMenu(
     hasShortcutHostPermission: Boolean,
     isUserInstalled: Boolean,
     eblanShortcutInfosGroup: List<EblanShortcutInfo>?,
+    lastModifiedFilePaths: Map<String, Long>,
     // Modifier
     modifier: Modifier = Modifier,
     // Callbacks
@@ -565,6 +572,7 @@ private fun PrivateApplicationInfoMenu(
                     PrivateShortcutInfoMenu(
                         // Shortcut Data
                         eblanShortcutInfosGroup = eblanShortcutInfosGroup,
+                        lastModifiedFilePaths = lastModifiedFilePaths,
                         // Layout
                         modifier = Modifier.weight(1f, fill = false),
                         // Actions

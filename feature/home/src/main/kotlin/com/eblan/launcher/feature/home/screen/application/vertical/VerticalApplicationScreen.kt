@@ -100,6 +100,7 @@ internal fun VerticalApplicationScreen(
     // Application Info
     eblanApplicationInfoTags: List<EblanApplicationInfoTag>,
     getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
+    lastModifiedFilePaths: Map<String, Long>,
     horizontalPagerState: PagerState,
     textFieldState: TextFieldState,
     selectedEblanApplicationInfoTagId: Long?,
@@ -248,6 +249,7 @@ internal fun VerticalApplicationScreen(
                 // Settings and Data
                 appDrawerSettings = appDrawerSettings,
                 getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                 // Folder Appearance
                 folderCornerRadius = folderCornerRadius,
@@ -294,6 +296,7 @@ private fun EblanApplicationInfosPage(
     // Settings and Data
     appDrawerSettings: AppDrawerSettings,
     getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
+    lastModifiedFilePaths: Map<String, Long>,
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     // Folder Appearance
     folderCornerRadius: Int,
@@ -392,6 +395,7 @@ private fun EblanApplicationInfosPage(
                 appDrawerSettings = appDrawerSettings,
                 eblanUserPageKey = eblanUserPageKey,
                 getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
+                lastModifiedFilePaths = lastModifiedFilePaths,
                 isVisibleOverlay = isVisibleOverlay,
                 systemTextColor = systemTextColor,
                 systemCustomTextColor = systemCustomTextColor,
@@ -459,6 +463,7 @@ private fun EblanApplicationInfos(
     appDrawerSettings: AppDrawerSettings,
     eblanUserPageKey: EblanUserPageKey,
     getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
+    lastModifiedFilePaths: Map<String, Long>,
     isVisibleOverlay: Boolean,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
@@ -555,6 +560,7 @@ private fun EblanApplicationInfos(
                             folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                             folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
                             iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
+                            lastModifiedFilePaths = lastModifiedFilePaths,
                             // Animation and Transition
                             sharedTransitionScope = sharedTransitionScope,
                             animations = animations,
@@ -591,6 +597,7 @@ private fun EblanApplicationInfos(
                             eblanApplicationInfo = it,
                             appDrawerSettings = appDrawerSettings,
                             iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
+                            lastModifiedFilePaths = lastModifiedFilePaths,
                             // Layout and UI State
                             sharedTransitionScope = sharedTransitionScope,
                             drag = drag,
@@ -616,6 +623,7 @@ private fun EblanApplicationInfos(
                         // App Drawer and Appearance Settings
                         appDrawerSettings = appDrawerSettings,
                         iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
+                        lastModifiedFilePaths = lastModifiedFilePaths,
                         // Space State
                         isQuietModeEnabled = privateIsQuiteModeEnabled,
                         isVisibleOverlay = isVisibleOverlay,
@@ -643,6 +651,7 @@ private fun EblanApplicationInfos(
                             eblanApplicationInfo = it,
                             appDrawerSettings = appDrawerSettings,
                             iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
+                            lastModifiedFilePaths = lastModifiedFilePaths,
                             // Layout and UI State
                             sharedTransitionScope = sharedTransitionScope,
                             drag = drag,
