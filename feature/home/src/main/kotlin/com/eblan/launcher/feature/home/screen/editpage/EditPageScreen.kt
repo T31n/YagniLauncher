@@ -607,28 +607,19 @@ internal fun ExpandableFloatingActionButton(
                 verticalArrangement = Arrangement.spacedBy(5.dp),
             ) {
                 ElevatedButton(onClick = onAdd) {
-                    Text(
-                        text = stringResource(commonR.string.add),
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
+                    Text(text = stringResource(commonR.string.add))
                 }
 
                 ElevatedButton(
                     onClick = onSave,
                 ) {
-                    Text(
-                        text = stringResource(commonR.string.save),
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
+                    Text(text = stringResource(commonR.string.save))
                 }
 
                 ElevatedButton(
                     onClick = onCancel,
                 ) {
-                    Text(
-                        text = stringResource(commonR.string.cancel),
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
+                    Text(text = stringResource(commonR.string.cancel))
                 }
             }
         }

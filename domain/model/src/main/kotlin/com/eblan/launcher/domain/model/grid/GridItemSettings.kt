@@ -17,6 +17,7 @@
  */
 package com.eblan.launcher.domain.model.grid
 
+import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
 
 data class GridItemSettings(
@@ -27,6 +28,7 @@ data class GridItemSettings(
     val horizontalAlignment: HorizontalAlignment,
     val verticalArrangement: VerticalArrangement,
     val customTextColor: Int,
+    val backgroundColor: BackgroundColor,
     val customBackgroundColor: Int,
     val padding: Int,
     val cornerRadius: Int,

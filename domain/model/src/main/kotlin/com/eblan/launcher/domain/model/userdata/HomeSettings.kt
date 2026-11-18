@@ -36,6 +36,7 @@ data class HomeSettings(
     val dockInitialPage: Int,
     val addNewAppsToHomeScreen: Boolean,
     val showPageIndicator: Boolean,
+    val dockBackgroundColor: BackgroundColor,
     val dockCustomBackgroundColor: Int,
     val dockPadding: Int,
     val dockTopStartCornerRadius: Int,

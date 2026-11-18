@@ -386,6 +386,7 @@ internal fun QuiteModeScreen(
             text = stringResource(R.string.you_won_t_receive_notifications_from_your_work_apps),
             color = textColor,
             textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyMedium,
         )
 
         if (isDefaultLauncher && userHandle != null) {

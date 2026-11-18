@@ -83,7 +83,7 @@ internal fun <T> FolderTitle(
                 Text(
                     text = label,
                     color = color,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.titleSmall,
                 )
 
                 PageIndicator(
@@ -100,7 +100,7 @@ internal fun <T> FolderTitle(
                 modifier = Modifier.align(Alignment.Center),
                 text = label,
                 color = color,
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.titleSmall,
             )
         }
     }

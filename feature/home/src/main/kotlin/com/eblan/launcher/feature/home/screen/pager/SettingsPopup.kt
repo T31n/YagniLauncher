@@ -253,7 +253,7 @@ private fun PopupMenuRow(
 
             Text(
                 text = title,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.labelLarge,
             )
         }
     }

@@ -583,7 +583,7 @@ private fun EblanAppWidgetProviderInfoItem(
             Text(
                 text = label,
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.titleMedium,
             )
         }
 
@@ -592,6 +592,7 @@ private fun EblanAppWidgetProviderInfoItem(
 
             Text(
                 text = text,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.bodySmall,
             )
@@ -603,7 +604,7 @@ private fun EblanAppWidgetProviderInfoItem(
             Text(
                 text = description,
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
             )
         }
     }

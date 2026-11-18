@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
+import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.domain.model.userdata.PagerTransitionEffect
 import com.eblan.launcher.feature.settings.home.dialog.EditDockCornerRadiusDialog
@@ -50,12 +51,12 @@ import com.eblan.launcher.feature.settings.home.dialog.EditDockPaddingDialog
 import com.eblan.launcher.feature.settings.home.dialog.EditGridDialog
 import com.eblan.launcher.feature.settings.home.model.HomeSettingsUiState
 import com.eblan.launcher.ui.dialog.ColorPickerDialog
-import com.eblan.launcher.ui.settings.CustomBackgroundColor
 import com.eblan.launcher.ui.settings.GridItemSettings
 import com.eblan.launcher.ui.settings.SettingsCategoryText
 import com.eblan.launcher.ui.settings.SettingsColumnItem
 import com.eblan.launcher.ui.settings.SettingsDropdownItem
 import com.eblan.launcher.ui.settings.SettingsSwitchItem
+import com.eblan.launcher.ui.settings.getTitle
 import com.eblan.launcher.ui.settings.settingsFirstItemShape
 import com.eblan.launcher.ui.settings.settingsLastItemShape
 import com.eblan.launcher.ui.settings.settingsMiddleItemShape
@@ -336,12 +337,25 @@ private fun Success(
             },
         )
 
-        CustomBackgroundColor(
+        SettingsDropdownItem(
+            // Content
             title = stringResource(R.string.dock_background_color),
-            customBackgroundColor = homeSettings.dockCustomBackgroundColor,
+            options = BackgroundColor.entries,
+            selected = homeSettings.dockBackgroundColor,
+            label = {
+                it.getTitle()
+            },
+            // Layout
             shape = settingsMiddleItemShape,
-            onClick = {
-                showDockCustomBackgroundColorDialog = true
+            // Actions
+            onSelectedChange = {
+                if (it == BackgroundColor.Custom) {
+                    showDockCustomBackgroundColorDialog = true
+                } else {
+                    onUpdateHomeSettings(
+                        homeSettings.copy(dockBackgroundColor = it),
+                    )
+                }
             },
         )
 
@@ -483,7 +497,12 @@ private fun Success(
                 showDockCustomBackgroundColorDialog = false
             },
             onSelectColor = {
-                onUpdateHomeSettings(homeSettings.copy(dockCustomBackgroundColor = it))
+                onUpdateHomeSettings(
+                    homeSettings.copy(
+                        dockBackgroundColor = BackgroundColor.Custom,
+                        dockCustomBackgroundColor = it,
+                    ),
+                )
             },
         )
     }

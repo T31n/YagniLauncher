@@ -68,6 +68,7 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
         horizontalAlignmentProto = HorizontalAlignmentProto.HorizontalAlignmentCenterHorizontally
         verticalArrangementProto = VerticalArrangementProto.VerticalArrangementTop
         customTextColor = 0x00000000
+        backgroundColorProto = BackgroundColorProto.BackgroundColorSystem
         customBackgroundColor = 0x00000000
         padding = 0
         cornerRadius = 0
@@ -92,6 +93,7 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
         dockInfiniteScroll = false
         addNewAppsToHomeScreen = true
         showPageIndicator = true
+        dockBackgroundColorProto = BackgroundColorProto.BackgroundColorSystem
         dockCustomBackgroundColor = 0x00000000
         dockPadding = 0
         dockTopStartCornerRadius = 0

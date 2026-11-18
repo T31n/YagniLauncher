@@ -115,6 +115,7 @@ import com.eblan.launcher.domain.model.shortcutconfig.EblanShortcutConfig
 import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfo
 import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfoByGroup
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
+import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
@@ -923,8 +924,7 @@ internal fun PagerScreen(
                         // Grid Structure
                         columns = homeSettings.columns,
                         rows = homeSettings.rows,
-                        // Grid Item
-                        gridItem = moveGridItemResult.movingGridItem,
+                        // Grid Item Settings
                         gridItemSettings = homeSettings.gridItemSettings,
                         // Drag and Style
                         dragIntOffset = pagerScreenState.dragIntOffset,
@@ -1090,7 +1090,10 @@ internal fun PagerScreen(
                                     },
                                 )
                                 .background(
-                                    color = Color(homeSettings.dockCustomBackgroundColor),
+                                    color = when (homeSettings.dockBackgroundColor) {
+                                        BackgroundColor.System -> Color.Transparent
+                                        BackgroundColor.Custom -> Color(homeSettings.dockCustomBackgroundColor)
+                                    },
                                     shape = RoundedCornerShape(
                                         topStart = homeSettings.dockTopStartCornerRadius.dp,
                                         topEnd = homeSettings.dockTopEndCornerRadius.dp,
@@ -1105,8 +1108,7 @@ internal fun PagerScreen(
                                 // Grid Structure
                                 columns = homeSettings.dockColumns,
                                 rows = homeSettings.dockRows,
-                                // Grid Item
-                                gridItem = moveGridItemResult.movingGridItem,
+                                // Grid Item Settings
                                 gridItemSettings = homeSettings.dockGridItemSettings,
                                 // Drag and Style
                                 dragIntOffset = pagerScreenState.dragIntOffset,

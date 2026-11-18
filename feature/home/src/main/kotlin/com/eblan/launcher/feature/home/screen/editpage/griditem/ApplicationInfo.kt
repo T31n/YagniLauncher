@@ -44,6 +44,7 @@ import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.feature.home.component.GridItemLayoutType
+import com.eblan.launcher.feature.home.util.getGridItemBackgroundColor
 import com.eblan.launcher.feature.home.util.getGridItemIconPath
 import com.eblan.launcher.feature.home.util.getGridItemLabel
 
@@ -75,7 +76,7 @@ internal fun ApplicationInfoGridItem(
         .fillMaxSize()
         .padding(gridItemSettings.padding.dp)
         .background(
-            color = Color(gridItemSettings.customBackgroundColor),
+            color = getGridItemBackgroundColor(gridItemSettings),
             shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
         )
 

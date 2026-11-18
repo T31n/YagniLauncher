@@ -18,6 +18,7 @@
 package com.eblan.launcher.feature.home.util
 
 import androidx.compose.ui.graphics.Color
+import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.materialkolor.ktx.contrastRatio
@@ -29,21 +30,39 @@ internal fun getGridItemTextColor(
     // System Text Colors
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
+    // Background Color
+    backgroundColor: BackgroundColor = BackgroundColor.System,
+    customBackgroundColor: Int = 0,
     // Default Color
     defaultColor: Color = Color.Unspecified,
-): Color = when (gridItemTextColor) {
-    TextColor.System -> getTextColor(
-        // Text Colors
-        textColor = systemTextColor,
-        customTextColor = systemCustomTextColor,
+): Color = when (backgroundColor) {
+    BackgroundColor.System -> when (gridItemTextColor) {
+        TextColor.System -> getTextColor(
+            // Text Colors
+            textColor = systemTextColor,
+            customTextColor = systemCustomTextColor,
+            defaultColor = defaultColor,
+        )
+
+        TextColor.Light -> Color.White
+
+        TextColor.Dark -> Color.Black
+
+        TextColor.Custom -> Color(gridItemCustomTextColor)
+    }
+
+    BackgroundColor.Custom -> getTextColorFromBackgroundColor(
+        // Background Color
+        backgroundColor = BackgroundColor.Custom,
+        customBackgroundColor = customBackgroundColor,
+        // Text Color
+        textColor = gridItemTextColor,
+        customTextColor = gridItemCustomTextColor,
+        systemCustomTextColor = systemCustomTextColor,
+        systemTextColor = systemTextColor,
+        // Default Color
         defaultColor = defaultColor,
     )
-
-    TextColor.Light -> Color.White
-
-    TextColor.Dark -> Color.Black
-
-    TextColor.Custom -> Color(gridItemCustomTextColor)
 }
 
 internal fun getTextColor(
@@ -95,6 +114,51 @@ internal fun getTextColorFromBackgroundColor(
     }
 }
 
+internal fun getGridItemTextColorFromBackgroundColor(
+    // Container Background Color
+    backgroundColor: BackgroundColor,
+    customBackgroundColor: Int,
+    // Grid Item Settings
+    gridItemSettings: GridItemSettings,
+    // Text Color
+    systemTextColor: TextColor,
+    systemCustomTextColor: Int,
+    // Default Color
+    defaultColor: Color = Color.Unspecified,
+): Color {
+    val containerTextColor = getTextColorFromBackgroundColor(
+        // Background Color
+        backgroundColor = backgroundColor,
+        customBackgroundColor = customBackgroundColor,
+        // Text Color
+        textColor = gridItemSettings.textColor,
+        customTextColor = gridItemSettings.customTextColor,
+        systemCustomTextColor = systemCustomTextColor,
+        systemTextColor = systemTextColor,
+        // Default Color
+        defaultColor = defaultColor,
+    )
+
+    return when (gridItemSettings.backgroundColor) {
+        BackgroundColor.System -> containerTextColor
+
+        BackgroundColor.Custom -> {
+            val textColorByContrast = getTextColorByContrast(
+                // Colors
+                customBackgroundColor = Color(gridItemSettings.customBackgroundColor),
+                systemTextColor = containerTextColor,
+            )
+
+            getTextColor(
+                // Text Colors
+                textColor = gridItemSettings.textColor,
+                customTextColor = gridItemSettings.customTextColor,
+                defaultColor = textColorByContrast,
+            )
+        }
+    }
+}
+
 internal fun getApplicationScreenTextColor(
     // Background Colors
     backgroundColor: BackgroundColor,
@@ -121,6 +185,13 @@ internal fun getApplicationScreenTextColor(
             systemTextColor = gridItemTextColor,
         )
     }
+}
+
+internal fun getGridItemBackgroundColor(
+    gridItemSettings: GridItemSettings,
+): Color = when (gridItemSettings.backgroundColor) {
+    BackgroundColor.System -> Color.Transparent
+    BackgroundColor.Custom -> Color(gridItemSettings.customBackgroundColor)
 }
 
 private fun getTextColorByContrast(

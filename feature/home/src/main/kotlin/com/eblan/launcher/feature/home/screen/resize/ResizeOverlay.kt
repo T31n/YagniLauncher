@@ -23,7 +23,6 @@ import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.util.getGridItemTextColor
-import com.eblan.launcher.feature.home.util.getTextColor
 
 @Composable
 internal fun ResizeOverlay(
@@ -53,22 +52,23 @@ internal fun ResizeOverlay(
         rows: Int,
     ) -> Unit,
 ) {
-    val currentTextColor = if (gridItem.override) {
-        getGridItemTextColor(
-            // Grid Item Text Colors
-            gridItemTextColor = gridItem.gridItemSettings.textColor,
-            gridItemCustomTextColor = gridItem.gridItemSettings.customTextColor,
-            // System Text Colors
-            systemTextColor = textColor,
-            systemCustomTextColor = gridItemSettings.customTextColor,
-        )
+    val currentGridItemSettings = if (gridItem.override) {
+        gridItem.gridItemSettings
     } else {
-        getTextColor(
-            // Text Colors
-            textColor = textColor,
-            customTextColor = gridItemSettings.customTextColor,
-        )
+        gridItemSettings
     }
+
+    val currentTextColor = getGridItemTextColor(
+        // Grid Item Text Colors
+        gridItemTextColor = currentGridItemSettings.textColor,
+        gridItemCustomTextColor = currentGridItemSettings.customTextColor,
+        // System Text Colors
+        systemTextColor = textColor,
+        systemCustomTextColor = gridItemSettings.customTextColor,
+        // Background Color
+        backgroundColor = currentGridItemSettings.backgroundColor,
+        customBackgroundColor = currentGridItemSettings.customBackgroundColor,
+    )
 
     when (val data = gridItem.data) {
         is GridItemData.ApplicationInfo,
