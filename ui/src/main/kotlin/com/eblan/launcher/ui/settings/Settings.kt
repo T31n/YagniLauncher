@@ -261,6 +261,16 @@ fun <T> SettingsDropdownItem(
                             expanded = false
                             onSelectedChange(option)
                         },
+                        trailingIcon = if (option == selected) {
+                            {
+                                Icon(
+                                    imageVector = EblanLauncherIcons.Done,
+                                    contentDescription = null,
+                                )
+                            }
+                        } else {
+                            null
+                        },
                     )
                 }
             }
