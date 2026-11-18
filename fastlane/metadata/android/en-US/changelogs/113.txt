@@ -1,0 +1,5 @@
+- Dynamic wallpaper theming, custom seed colors, palette styles, and contrast presets (#1124, #1125)
+- Grid item background color, dock background color, and folder border color settings (#1130)
+- Increased minimum SDK to 29 and updated target/compile SDK to 37 (#1125, #1126)
+- Clean architecture refactor consolidating platform modules (#1127)
+- Fixes for LauncherApps user availability checks, nested scroll drag/fling handling, and UI polish
