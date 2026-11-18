@@ -197,18 +197,6 @@ private fun Success(
             },
         )
 
-        SettingsColumnItem(
-            // Content
-            title = stringResource(R.string.folder_border_width),
-            subtitle = "${folderSettings.borderWidth}",
-            // Layout
-            shape = settingsMiddleItemShape,
-            // Actions
-            onClick = {
-                showFolderBorderWidthDialog = true
-            },
-        )
-
         SettingsDropdownItem(
             // Content
             title = stringResource(R.string.folder_border_color),
@@ -218,7 +206,11 @@ private fun Success(
                 it.getTitle()
             },
             // Layout
-            shape = settingsLastItemShape,
+            shape = if (folderSettings.folderBorderColor == BackgroundColor.System) {
+                settingsLastItemShape
+            } else {
+                settingsMiddleItemShape
+            },
             // Actions
             onSelectedChange = {
                 if (it == BackgroundColor.Custom) {
@@ -230,6 +222,20 @@ private fun Success(
                 }
             },
         )
+
+        if (folderSettings.folderBorderColor == BackgroundColor.Custom) {
+            SettingsColumnItem(
+                // Content
+                title = stringResource(R.string.folder_border_width),
+                subtitle = "${folderSettings.borderWidth}",
+                // Layout
+                shape = settingsLastItemShape,
+                // Actions
+                onClick = {
+                    showFolderBorderWidthDialog = true
+                },
+            )
+        }
     }
 
     if (showFolderCellDimensionDialog) {
