@@ -61,6 +61,7 @@ import com.eblan.launcher.ui.settings.SettingsDropdownItem
 import com.eblan.launcher.ui.settings.SettingsSwitchItem
 import com.eblan.launcher.ui.settings.getTitle
 import com.eblan.launcher.ui.settings.settingsFirstItemShape
+import com.eblan.launcher.ui.settings.settingsLastItemShape
 import com.eblan.launcher.ui.settings.settingsMiddleItemShape
 import com.eblan.launcher.common.R as commonR
 
@@ -317,7 +318,11 @@ private fun Success(
             // State
             checked = appDrawerSettings.fuzzySearch,
             // Appearance
-            shape = settingsMiddleItemShape,
+            shape = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+                settingsLastItemShape
+            } else {
+                settingsMiddleItemShape
+            },
             // Callbacks
             onCheckedChange = {
                 onUpdateAppDrawerSettings(
@@ -336,7 +341,7 @@ private fun Success(
                 // State
                 checked = appDrawerSettings.blurBehind,
                 // Appearance
-                shape = settingsMiddleItemShape,
+                shape = settingsLastItemShape,
                 // Callbacks
                 onCheckedChange = {
                     onUpdateAppDrawerSettings(

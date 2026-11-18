@@ -390,7 +390,7 @@ private fun Success(
             // State
             checked = homeSettings.addDockBottomPadding,
             // Appearance
-            shape = settingsMiddleItemShape,
+            shape = settingsLastItemShape,
             // Callbacks
             onCheckedChange = {
                 onUpdateHomeSettings(
