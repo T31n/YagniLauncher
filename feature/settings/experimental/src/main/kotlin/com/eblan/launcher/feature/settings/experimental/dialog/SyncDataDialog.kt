@@ -23,13 +23,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.component.EblanDialog
 import com.eblan.launcher.feature.settings.experimental.R
 import com.eblan.launcher.ui.settings.SettingsSwitch
@@ -56,24 +56,21 @@ internal fun SyncDataDialog(
 
         Column(
             modifier = Modifier.verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Text(
                 text = stringResource(R.string.disable_background_sync_description),
             )
 
-            ElevatedCard(
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                SettingsSwitch(
-                    // Content
-                    title = stringResource(R.string.sync_data),
-                    subtitle = stringResource(R.string.keep_data_up_to_date),
-                    // State
-                    checked = syncData,
-                    // Callbacks
-                    onCheckedChange = onUpdateSyncData,
-                )
-            }
+            SettingsSwitch(
+                // Content
+                title = stringResource(R.string.sync_data),
+                subtitle = stringResource(R.string.keep_data_up_to_date),
+                // State
+                checked = syncData,
+                // Callbacks
+                onCheckedChange = onUpdateSyncData,
+            )
         }
 
         Row(

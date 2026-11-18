@@ -302,7 +302,7 @@ private fun SaturationValueCanvas(
                     )
                 }
                 .matchParentSize()
-                .clip(RoundedCornerShape(5.dp)),
+                .clip(MaterialTheme.shapes.extraSmall),
         ) {
             drawRect(color = Color.hsv(hue, 1f, 1f))
 
@@ -364,7 +364,7 @@ private fun HueCanvas(
                 )
             }
             .fillMaxWidth()
-            .clip(RoundedCornerShape(5.dp)),
+            .clip(MaterialTheme.shapes.extraSmall),
     ) {
         drawRect(
             brush = Brush.horizontalGradient(hueGradientColors),
@@ -395,7 +395,7 @@ private fun AlphaCanvas(
                 }
             }
             .fillMaxWidth()
-            .clip(RoundedCornerShape(5.dp)),
+            .clip(MaterialTheme.shapes.extraSmall),
     ) {
         val squareSize = size.height / 2
 

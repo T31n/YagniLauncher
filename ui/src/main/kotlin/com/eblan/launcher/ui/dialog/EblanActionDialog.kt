@@ -19,6 +19,7 @@ package com.eblan.launcher.ui.dialog
 
 import android.content.Intent
 import android.provider.Settings
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,7 +30,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -175,31 +175,24 @@ internal fun EblanActionDialog(
 private fun AccessibilityServiceCard(modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
-    ElevatedCard(
+    Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(10.dp),
-        onClick = {
-            val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-
-            context.startActivity(intent)
-        },
+            .clickable {
+                val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+                context.startActivity(intent)
+            }
+            .padding(15.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(15.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(imageVector = EblanLauncherIcons.Info, contentDescription = null)
+        Icon(imageVector = EblanLauncherIcons.Info, contentDescription = null)
 
-            Spacer(modifier = Modifier.width(5.dp))
+        Spacer(modifier = Modifier.width(5.dp))
 
-            Text(
-                modifier = Modifier,
-                text = stringResource(R.string.enable_the_accessibility_service_permission_to_use_additional_actions),
-                style = MaterialTheme.typography.bodySmall,
-            )
-        }
+        Text(
+            modifier = Modifier,
+            text = stringResource(R.string.enable_the_accessibility_service_permission_to_use_additional_actions),
+            style = MaterialTheme.typography.bodySmall,
+        )
     }
 }

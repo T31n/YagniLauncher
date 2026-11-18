@@ -155,7 +155,7 @@ internal fun AppWidgetScreen(
                 .padding(
                     top = paddingValues.calculateTopPadding(),
                 )
-                .clip(RoundedCornerShape(20.dp)),
+                .clip(MaterialTheme.shapes.large),
         ) {
             Column(
                 modifier = Modifier

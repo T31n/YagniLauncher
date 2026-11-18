@@ -25,7 +25,7 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -222,7 +222,7 @@ internal fun WidgetGridItemResizeOverlay(
             .size(width = borderWidth, height = borderHeight)
             .background(
                 color = color.copy(alpha = 0.08f),
-                shape = RoundedCornerShape(12.dp),
+                shape = MaterialTheme.shapes.medium,
             )
             .dashedResizeOutline(color),
     ) {

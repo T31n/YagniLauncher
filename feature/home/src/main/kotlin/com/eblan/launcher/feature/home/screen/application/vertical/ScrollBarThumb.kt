@@ -122,7 +122,7 @@ internal fun ScrollBarThumb(
                 .matchParentSize()
                 .background(
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
-                    shape = RoundedCornerShape(10.dp),
+                    shape = MaterialTheme.shapes.medium,
                 )
                 .pointerInput(lazyGridState) {
                     detectTapGestures(
@@ -156,7 +156,7 @@ internal fun ScrollBarThumb(
                     }
                     .background(
                         color = MaterialTheme.colorScheme.primary,
-                        shape = RoundedCornerShape(10.dp),
+                        shape = MaterialTheme.shapes.medium,
                     )
                     .pointerInput(key1 = lazyGridState) {
                         detectDragGestures(

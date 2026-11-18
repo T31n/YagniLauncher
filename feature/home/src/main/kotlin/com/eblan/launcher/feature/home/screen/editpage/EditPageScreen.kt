@@ -220,7 +220,7 @@ internal fun EditGridPageScreen(
                             .weight(1f)
                             .background(
                                 color = MaterialTheme.colorScheme.primary.copy(alpha = 0.25f),
-                                shape = RoundedCornerShape(8.dp),
+                                shape = MaterialTheme.shapes.small,
                             ),
                         // Content
                         content = {
@@ -451,7 +451,7 @@ internal fun EditDockGridPageScreen(
                             .fillMaxWidth()
                             .background(
                                 color = MaterialTheme.colorScheme.primary.copy(alpha = 0.25f),
-                                shape = RoundedCornerShape(8.dp),
+                                shape = MaterialTheme.shapes.small,
                             ),
                     ) {
                         GridLayout(
@@ -554,7 +554,7 @@ internal fun PageButtons(
 ) {
     Surface(
         modifier = modifier,
-        shape = RoundedCornerShape(30.dp),
+        shape = MaterialTheme.shapes.extraLarge,
         tonalElevation = 10.dp,
     ) {
         Row(
