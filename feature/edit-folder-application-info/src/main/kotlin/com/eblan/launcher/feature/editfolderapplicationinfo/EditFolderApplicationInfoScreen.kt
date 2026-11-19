@@ -91,6 +91,7 @@ internal fun EditFolderApplicationInfoRoute(
         onUpdateIconPackPackageName = viewModel::updateIconPackPackageName,
         onResetFolderEblanApplicationInfoCustomIcon = viewModel::resetFolderEblanApplicationInfoCustomIcon,
         onUpdateFolderEblanApplicationInfoCustomIcon = viewModel::updateFolderEblanApplicationInfoCustomIcon,
+        onUpdateFolderEblanApplicationInfoCustomIconPath = viewModel::updateFolderEblanApplicationInfoCustomIconPath,
         onResetIconPackPackageName = viewModel::resetIconPackPackageName,
         onSearchIconPackInfoComponent = viewModel::searchIconPackInfoComponent,
         onUpdateFolderEblanApplicationInfo = viewModel::updateFolderEblanApplicationInfo,
@@ -117,6 +118,10 @@ internal fun EditFolderApplicationInfoScreen(
     onUpdateFolderEblanApplicationInfoCustomIcon: (
         folderEblanApplicationInfo: FolderEblanApplicationInfo,
         uri: String,
+    ) -> Unit,
+    onUpdateFolderEblanApplicationInfoCustomIconPath: (
+        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        icon: String,
     ) -> Unit,
     onResetIconPackPackageName: () -> Unit,
     onSearchIconPackInfoComponent: (String) -> Unit,
@@ -164,6 +169,7 @@ internal fun EditFolderApplicationInfoScreen(
                     onUpdateIconPackPackageName = onUpdateIconPackPackageName,
                     onResetFolderEblanApplicationInfoCustomIcon = onResetFolderEblanApplicationInfoCustomIcon,
                     onUpdateFolderEblanApplicationInfoCustomIcon = onUpdateFolderEblanApplicationInfoCustomIcon,
+                    onUpdateFolderEblanApplicationInfoCustomIconPath = onUpdateFolderEblanApplicationInfoCustomIconPath,
                     onResetIconPackPackageName = onResetIconPackPackageName,
                     onSearchIconPackInfoComponent = onSearchIconPackInfoComponent,
                     onUpdateFolderEblanApplicationInfo = onUpdateFolderEblanApplicationInfo,
@@ -192,6 +198,10 @@ internal fun Success(
     onUpdateFolderEblanApplicationInfoCustomIcon: (
         folderEblanApplicationInfo: FolderEblanApplicationInfo,
         uri: String,
+    ) -> Unit,
+    onUpdateFolderEblanApplicationInfoCustomIconPath: (
+        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        icon: String,
     ) -> Unit,
     onResetIconPackPackageName: () -> Unit,
     onSearchIconPackInfoComponent: (String) -> Unit,
@@ -273,12 +283,13 @@ internal fun Success(
 
                     showCustomIconDialog = false
                 },
-                onUpdateIcon = {
-                    onUpdateFolderEblanApplicationInfo(
-                        folderEblanApplicationInfo.copy(
-                            icon = it,
-                        ),
-                    )
+                onUpdateIcon = { path ->
+                    if (path != null) {
+                        onUpdateFolderEblanApplicationInfoCustomIconPath(
+                            folderEblanApplicationInfo,
+                            path,
+                        )
+                    }
                 },
                 onSearchIconPackInfoComponent = onSearchIconPackInfoComponent,
             )

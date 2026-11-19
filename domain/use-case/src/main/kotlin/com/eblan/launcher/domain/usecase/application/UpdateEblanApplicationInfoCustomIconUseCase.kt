@@ -24,25 +24,29 @@ import com.eblan.launcher.domain.platform.ContentResolverWrapper
 import com.eblan.launcher.domain.platform.FileManager
 import com.eblan.launcher.domain.platform.IconKeyGenerator
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
+import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
+import com.eblan.launcher.domain.repository.GridRepository
+import com.eblan.launcher.domain.usecase.util.deleteCustomIconsIfUnreferenced
 import com.eblan.launcher.domain.usecase.util.getCustomIcon
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
-import java.io.File
 import javax.inject.Inject
 
-/** Replaces an application's custom icon using an image referenced by a content URI. */
+/** Replaces an application's custom icon using an image referenced by a content URI or file path. */
 class UpdateEblanApplicationInfoCustomIconUseCase @Inject constructor(
     private val fileManager: FileManager,
     private val iconKeyGenerator: IconKeyGenerator,
     private val contentResolverWrapper: ContentResolverWrapper,
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
+    private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
+    private val gridRepository: GridRepository,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     /**
-     * Saves the image at [uri] and updates the application record with its new icon path.
+     * Saves the image at [uri], updates the application record, then deletes the previous icon if
+     * unreferenced.
      *
-     * Any existing custom icon file is removed first. If the URI cannot be read, no repository
-     * update is made.
+     * If the URI cannot be read, no repository update or file deletion is made.
      *
      * @param eblanApplicationInfo The application whose icon should be replaced.
      * @param uri The URI of the replacement image.
@@ -51,14 +55,6 @@ class UpdateEblanApplicationInfoCustomIconUseCase @Inject constructor(
         eblanApplicationInfo: EblanApplicationInfo,
         uri: String,
     ) = withContext(ioDispatcher) {
-        eblanApplicationInfo.customIcon?.let {
-            val customIconFile = File(it)
-
-            if (customIconFile.exists()) {
-                customIconFile.delete()
-            }
-        }
-
         val customIcon = getCustomIcon(
             contentResolverWrapper = contentResolverWrapper,
             fileManager = fileManager,
@@ -71,5 +67,36 @@ class UpdateEblanApplicationInfoCustomIconUseCase @Inject constructor(
                 customIcon = customIcon,
             ),
         )
+
+        deleteCustomIconsIfUnreferenced(
+            iconPaths = listOf(eblanApplicationInfo.customIcon),
+            eblanApplicationInfoRepository = eblanApplicationInfoRepository,
+            folderEblanApplicationInfoRepository = folderEblanApplicationInfoRepository,
+            gridRepository = gridRepository,
+        )
+    }
+
+    /**
+     * Updates the application's custom icon path and deletes the previous icon file when changed
+     * and no longer referenced.
+     */
+    suspend fun updateCustomIconPath(
+        eblanApplicationInfo: EblanApplicationInfo,
+        customIcon: String,
+    ) = withContext(ioDispatcher) {
+        eblanApplicationInfoRepository.updateEblanApplicationInfo(
+            eblanApplicationInfo = eblanApplicationInfo.copy(
+                customIcon = customIcon,
+            ),
+        )
+
+        if (eblanApplicationInfo.customIcon != customIcon) {
+            deleteCustomIconsIfUnreferenced(
+                iconPaths = listOf(eblanApplicationInfo.customIcon),
+                eblanApplicationInfoRepository = eblanApplicationInfoRepository,
+                folderEblanApplicationInfoRepository = folderEblanApplicationInfoRepository,
+                gridRepository = gridRepository,
+            )
+        }
     }
 }

@@ -289,6 +289,7 @@ private fun PinWidgetScreen(
     val userManager = LocalUserManager.current
     val fileManager = LocalFileManager.current
     val iconKeyGenerator = LocalIconKeyGenerator.current
+    val imageSerializer = LocalImageSerializer.current
 
     val paddingValues = WindowInsets.safeDrawing.asPaddingValues()
 
@@ -383,6 +384,8 @@ private fun PinWidgetScreen(
             // Actions
             onAdd = {
                 addPinWidgetToHomeScreen(
+                    // Context
+                    context = context,
                     // Widget Info
                     appWidgetProviderInfo = appWidgetProviderInfo,
                     // Dimensions
@@ -391,6 +394,7 @@ private fun PinWidgetScreen(
                     // Dependencies
                     fileManager = fileManager,
                     iconKeyGenerator = iconKeyGenerator,
+                    imageSerializer = imageSerializer,
                     userManager = userManager,
                     // Callback
                     onAddPinWidgetToHomeScreen = onAddPinWidgetToHomeScreen,
@@ -608,6 +612,8 @@ private suspend fun addPinShortcutToHomeScreen(
 }
 
 private suspend fun addPinWidgetToHomeScreen(
+    // Context
+    context: Context,
     // Widget Info
     appWidgetProviderInfo: AppWidgetProviderInfo,
     // Dimensions
@@ -616,6 +622,7 @@ private suspend fun addPinWidgetToHomeScreen(
     // Dependencies
     fileManager: FileManager,
     iconKeyGenerator: IconKeyGenerator,
+    imageSerializer: AndroidImageSerializer,
     userManager: AndroidUserManagerWrapper,
     // Callback
     onAddPinWidgetToHomeScreen: (
@@ -637,17 +644,26 @@ private suspend fun addPinWidgetToHomeScreen(
         preview: String?,
     ) -> Unit,
 ) {
+    val serialNumber = userManager.getSerialNumberForUser(userHandle = appWidgetProviderInfo.profile)
+
     val componentName = appWidgetProviderInfo.provider.flattenToString()
 
-    val directory =
-        fileManager.getFilesDirectory(FileManager.WIDGETS_DIR)
+    val preview = appWidgetProviderInfo.loadPreviewImage(context, 0)?.let { drawable ->
+        val directory =
+            fileManager.getFilesDirectory(FileManager.WIDGETS_DIR)
 
-    val file = File(
-        directory,
-        iconKeyGenerator.getHashedName(name = componentName),
-    )
+        val file = File(
+            directory,
+            iconKeyGenerator.getHashedName(name = "$serialNumber:$componentName"),
+        )
 
-    val preview = file.absolutePath
+        imageSerializer.createDrawablePath(
+            drawable = drawable,
+            file = file,
+        )
+
+        file.absolutePath
+    }
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         onAddPinWidgetToHomeScreen(

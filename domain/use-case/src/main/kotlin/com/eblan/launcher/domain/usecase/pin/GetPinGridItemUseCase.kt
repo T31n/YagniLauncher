@@ -26,25 +26,20 @@ import com.eblan.launcher.domain.model.grid.GridItemData.Widget
 import com.eblan.launcher.domain.model.launcherapps.PinItemRequestType
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
-import com.eblan.launcher.domain.platform.FileManager
-import com.eblan.launcher.domain.platform.IconKeyGenerator
-import com.eblan.launcher.domain.platform.LauncherAppsWrapper
 import com.eblan.launcher.domain.platform.PackageManagerWrapper
 import com.eblan.launcher.domain.repository.UserDataRepository
+import com.eblan.launcher.domain.usecase.application.ResolveApplicationIconUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
-import java.io.File
 import javax.inject.Inject
 import kotlin.uuid.Uuid
 
 /** Converts a system pin-item request into an unpersisted home-screen grid item. */
 class GetPinGridItemUseCase @Inject constructor(
-    private val fileManager: FileManager,
     private val userDataRepository: UserDataRepository,
-    private val launcherAppsWrapper: LauncherAppsWrapper,
     private val packageManagerWrapper: PackageManagerWrapper,
-    private val iconKeyGenerator: IconKeyGenerator,
+    private val resolveApplicationIconUseCase: ResolveApplicationIconUseCase,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     /**
@@ -60,24 +55,10 @@ class GetPinGridItemUseCase @Inject constructor(
 
         when (pinItemRequestType) {
             is PinItemRequestType.Widget -> {
-                val eblanApplicationInfoIcon =
-                    launcherAppsWrapper.getFastActivityList(
-                        serialNumber = pinItemRequestType.serialNumber,
-                        packageName = pinItemRequestType.packageName,
-                    ).firstOrNull()?.componentName
-                        ?.let {
-                            val directory = fileManager.getFilesDirectory(FileManager.ICONS_DIR)
-
-                            val file = File(
-                                directory,
-                                iconKeyGenerator.getActivityIconKey(
-                                    serialNumber = pinItemRequestType.serialNumber,
-                                    componentName = it,
-                                ),
-                            )
-
-                            file.absolutePath
-                        }
+                val eblanApplicationInfoIcon = resolveApplicationIconUseCase(
+                    serialNumber = pinItemRequestType.serialNumber,
+                    packageName = pinItemRequestType.packageName,
+                )
 
                 val data = Widget(
                     appWidgetId = 0,
@@ -133,24 +114,10 @@ class GetPinGridItemUseCase @Inject constructor(
             }
 
             is PinItemRequestType.ShortcutInfo -> {
-                val eblanApplicationInfoIcon =
-                    launcherAppsWrapper.getFastActivityList(
-                        serialNumber = pinItemRequestType.serialNumber,
-                        packageName = pinItemRequestType.packageName,
-                    ).firstOrNull()?.componentName
-                        ?.let {
-                            val directory = fileManager.getFilesDirectory(FileManager.ICONS_DIR)
-
-                            val file = File(
-                                directory,
-                                iconKeyGenerator.getActivityIconKey(
-                                    serialNumber = pinItemRequestType.serialNumber,
-                                    componentName = it,
-                                ),
-                            )
-
-                            file.absolutePath
-                        }
+                val eblanApplicationInfoIcon = resolveApplicationIconUseCase(
+                    serialNumber = pinItemRequestType.serialNumber,
+                    packageName = pinItemRequestType.packageName,
+                )
 
                 val data = ShortcutInfo(
                     shortcutId = pinItemRequestType.shortcutId,

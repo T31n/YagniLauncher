@@ -22,6 +22,7 @@ import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
+import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.GridRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -31,10 +32,12 @@ import javax.inject.Inject
 class DeleteGridItemCustomIconUseCase @Inject constructor(
     private val gridRepository: GridRepository,
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
+    private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     /**
-     * Deletes the referenced icon file, clears the matching custom-icon field, and saves the item.
+     * Clears the matching custom-icon field, saves the item, and deletes the referenced icon file
+     * if no remaining items reference it.
      *
      * For application items, the application record is also updated when it still exists.
      *
@@ -67,8 +70,13 @@ class DeleteGridItemCustomIconUseCase @Inject constructor(
             else -> error("Unsupported Grid Item")
         }
 
-        deleteGridItemCustomIconFile(gridItem = gridItem)
-
         gridRepository.updateGridItem(gridItem = gridItem.copy(data = newData))
+
+        deleteGridItemCustomIconFile(
+            gridItem = gridItem,
+            eblanApplicationInfoRepository = eblanApplicationInfoRepository,
+            folderEblanApplicationInfoRepository = folderEblanApplicationInfoRepository,
+            gridRepository = gridRepository,
+        )
     }
 }

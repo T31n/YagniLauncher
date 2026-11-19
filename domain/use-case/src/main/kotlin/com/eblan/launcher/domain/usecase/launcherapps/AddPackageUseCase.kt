@@ -200,7 +200,6 @@ class AddPackageUseCase @Inject constructor(
 
                 it.toEblanAppWidgetProviderInfo(
                     fileManager = fileManager,
-                    launcherAppsWrapper = launcherAppsWrapper,
                     packageManagerWrapper = packageManagerWrapper,
                     iconKeyGenerator = iconKeyGenerator,
                 )
@@ -244,7 +243,6 @@ class AddPackageUseCase @Inject constructor(
 
             it.toEblanShortcutConfig(
                 fileManager = fileManager,
-                launcherAppsWrapper = launcherAppsWrapper,
                 packageManagerWrapper = packageManagerWrapper,
                 iconKeyGenerator = iconKeyGenerator,
             )

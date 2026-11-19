@@ -20,33 +20,36 @@ package com.eblan.launcher.domain.usecase.folder
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
+import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
+import com.eblan.launcher.domain.repository.GridRepository
+import com.eblan.launcher.domain.usecase.util.deleteCustomIconsIfUnreferenced
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
-import java.io.File
 import javax.inject.Inject
 
 /** Removes a folder's saved icon file and clears its icon reference. */
 class DeleteFolderEblanApplicationInfoCustomIconUseCase @Inject constructor(
+    private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
     private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
+    private val gridRepository: GridRepository,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     /**
-     * Deletes the current folder icon file, if present, and persists the folder without an icon.
+     * Persists the folder without an icon and deletes the current folder icon file if unreferenced.
      *
      * @param folderEblanApplicationInfo The folder whose icon should be removed.
      */
     suspend operator fun invoke(folderEblanApplicationInfo: FolderEblanApplicationInfo) = withContext(ioDispatcher) {
-        folderEblanApplicationInfo.icon?.let {
-            val customIconFile = File(it)
-
-            if (customIconFile.exists()) {
-                customIconFile.delete()
-            }
-        }
-
         folderEblanApplicationInfoRepository.upsertFolderEblanApplicationInfo(
             folderEblanApplicationInfo = folderEblanApplicationInfo.copy(icon = null),
+        )
+
+        deleteCustomIconsIfUnreferenced(
+            iconPaths = listOf(folderEblanApplicationInfo.icon),
+            eblanApplicationInfoRepository = eblanApplicationInfoRepository,
+            folderEblanApplicationInfoRepository = folderEblanApplicationInfoRepository,
+            gridRepository = gridRepository,
         )
     }
 }

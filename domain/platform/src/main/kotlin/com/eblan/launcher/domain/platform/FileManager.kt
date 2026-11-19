@@ -33,6 +33,8 @@ interface FileManager {
         const val TINTED_ICONS_DIR = "tinted_icons"
         const val SHAPED_ICONS_DIR = "shaped_icons"
         const val TINTED_SHAPED_ICONS_DIR = "tinted_shaped_icons"
+        const val APPLICATION_ICONS_DIR = "application_icons"
+        const val SHORTCUT_CONFIG_ICONS_DIR = "shortcut_config_icons"
         const val WIDGETS_DIR = "widgets"
         const val SHORTCUTS_DIR = "shortcuts"
         const val ICON_PACKS_DIR = "iconpacks"

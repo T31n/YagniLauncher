@@ -854,6 +854,10 @@ internal class PagerScreenState(
     private suspend fun PinItemRequest.handleAppWidgetRequestType() {
         val appWidgetProviderInfo = getAppWidgetProviderInfo(context) ?: return
 
+        val serialNumber = androidUserManagerWrapper.getSerialNumberForUser(
+            userHandle = appWidgetProviderInfo.profile,
+        )
+
         val componentName = appWidgetProviderInfo.provider.flattenToString()
 
         val preview = appWidgetProviderInfo.loadPreviewImage(context, 0)?.let {
@@ -861,7 +865,7 @@ internal class PagerScreenState(
 
             val file = File(
                 directory,
-                iconKeyGenerator.getHashedName(name = componentName),
+                iconKeyGenerator.getHashedName(name = "$serialNumber:$componentName"),
             )
 
             androidImageSerializer.createDrawablePath(

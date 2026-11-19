@@ -23,10 +23,14 @@ import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.home.PageItem
 import com.eblan.launcher.domain.platform.AppWidgetHostWrapper
 import com.eblan.launcher.domain.platform.LauncherAppsWrapper
+import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
+import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.FolderGridItemRepository
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.folder.asPreviewFolders
+import com.eblan.launcher.domain.usecase.util.collectCustomIconPaths
+import com.eblan.launcher.domain.usecase.util.deleteCustomIconsIfUnreferenced
 import com.eblan.launcher.domain.usecase.util.deleteGridItemData
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
@@ -40,6 +44,8 @@ class UpdatePageItemsUseCase @Inject constructor(
     private val appWidgetHostWrapper: AppWidgetHostWrapper,
     private val launcherAppsWrapper: LauncherAppsWrapper,
     private val folderGridItemRepository: FolderGridItemRepository,
+    private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
+    private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     /**
@@ -59,14 +65,23 @@ class UpdatePageItemsUseCase @Inject constructor(
         withContext(defaultDispatcher) {
             val userData = userDataRepository.userDataFlow.first()
 
+            val previewFolderGridItems =
+                folderGridItemRepository.getFolderGridItemWrappers()
+                    .asPreviewFolders(
+                        maxFolderColumns = userData.folderSettings.maxFolderColumns,
+                        maxFolderRows = userData.folderSettings.maxFolderRows,
+                    )
+
+            val customIconPaths = mutableListOf<String>()
+
             pageItemsToDelete.forEach { pageItem ->
                 pageItem.gridItems.forEach { gridItem ->
-                    val previewFolderGridItems =
-                        folderGridItemRepository.getFolderGridItemWrappers()
-                            .asPreviewFolders(
-                                maxFolderColumns = userData.folderSettings.maxFolderColumns,
-                                maxFolderRows = userData.folderSettings.maxFolderRows,
-                            )
+                    customIconPaths.addAll(
+                        collectCustomIconPaths(
+                            gridItem = gridItem,
+                            folderPopupGridItems = previewFolderGridItems,
+                        ),
+                    )
 
                     deleteGridItemData(
                         gridItem = gridItem,
@@ -78,6 +93,13 @@ class UpdatePageItemsUseCase @Inject constructor(
 
                 gridRepository.deleteGridItems(gridItems = pageItem.gridItems)
             }
+
+            deleteCustomIconsIfUnreferenced(
+                iconPaths = customIconPaths,
+                eblanApplicationInfoRepository = eblanApplicationInfoRepository,
+                folderEblanApplicationInfoRepository = folderEblanApplicationInfoRepository,
+                gridRepository = gridRepository,
+            )
 
             val gridItems = pageItems.flatMapIndexed { index, pageItem ->
                 pageItem.gridItems.map { gridItem ->

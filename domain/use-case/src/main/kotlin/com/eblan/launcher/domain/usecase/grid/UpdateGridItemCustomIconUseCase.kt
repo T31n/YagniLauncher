@@ -24,22 +24,27 @@ import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.platform.ContentResolverWrapper
 import com.eblan.launcher.domain.platform.FileManager
 import com.eblan.launcher.domain.platform.IconKeyGenerator
+import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
+import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.usecase.util.getCustomIcon
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-/** Replaces a supported grid item's custom icon using an image referenced by a content URI. */
+/** Replaces a supported grid item's custom icon using an image referenced by a content URI or file path. */
 class UpdateGridItemCustomIconUseCase @Inject constructor(
     private val fileManager: FileManager,
     private val iconKeyGenerator: IconKeyGenerator,
     private val contentResolverWrapper: ContentResolverWrapper,
+    private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
+    private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
     private val gridRepository: GridRepository,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     /**
-     * Saves the image at [uri], updates the item's icon reference, then deletes its previous icon.
+     * Saves the image at [uri], updates the item's icon reference, then deletes its previous icon
+     * when unreferenced.
      *
      * If the URI cannot be read, the grid item is left unchanged.
      *
@@ -50,15 +55,7 @@ class UpdateGridItemCustomIconUseCase @Inject constructor(
         gridItem: GridItem,
         uri: String,
     ) = withContext(ioDispatcher) {
-        val data = when (val data = gridItem.data) {
-            is GridItemData.ApplicationInfo,
-            is GridItemData.Folder,
-            is GridItemData.ShortcutConfig,
-            is GridItemData.ShortcutInfo,
-            -> data
-
-            else -> error("Unsupported Grid Item")
-        }
+        validateSupportedGridItem(data = gridItem.data)
 
         val customIcon = getCustomIcon(
             contentResolverWrapper = contentResolverWrapper,
@@ -67,17 +64,80 @@ class UpdateGridItemCustomIconUseCase @Inject constructor(
             uri = uri,
         ) ?: return@withContext
 
-        val newData = when (data) {
+        gridRepository.updateGridItem(
+            gridItem = withCustomIcon(
+                gridItem = gridItem,
+                customIcon = customIcon,
+            ),
+        )
+
+        deleteGridItemCustomIconFile(
+            gridItem = gridItem,
+            eblanApplicationInfoRepository = eblanApplicationInfoRepository,
+            folderEblanApplicationInfoRepository = folderEblanApplicationInfoRepository,
+            gridRepository = gridRepository,
+        )
+    }
+
+    /**
+     * Updates a supported grid item's custom icon path and deletes its previous icon file when
+     * changed and no longer referenced.
+     */
+    suspend fun updateCustomIconPath(
+        gridItem: GridItem,
+        customIcon: String,
+    ) = withContext(ioDispatcher) {
+        val oldCustomIcon = getOldCustomIconPath(data = gridItem.data)
+
+        gridRepository.updateGridItem(
+            gridItem = withCustomIcon(
+                gridItem = gridItem,
+                customIcon = customIcon,
+            ),
+        )
+
+        if (oldCustomIcon != customIcon) {
+            deleteGridItemCustomIconFile(
+                gridItem = gridItem,
+                eblanApplicationInfoRepository = eblanApplicationInfoRepository,
+                folderEblanApplicationInfoRepository = folderEblanApplicationInfoRepository,
+                gridRepository = gridRepository,
+            )
+        }
+    }
+
+    private fun validateSupportedGridItem(data: GridItemData) {
+        when (data) {
+            is GridItemData.ApplicationInfo,
+            is GridItemData.Folder,
+            is GridItemData.ShortcutConfig,
+            is GridItemData.ShortcutInfo,
+            -> Unit
+
+            else -> error("Unsupported Grid Item")
+        }
+    }
+
+    private fun getOldCustomIconPath(data: GridItemData): String? = when (data) {
+        is GridItemData.ApplicationInfo -> data.customIcon
+        is GridItemData.Folder -> data.icon
+        is GridItemData.ShortcutConfig -> data.customIcon
+        is GridItemData.ShortcutInfo -> data.customIcon
+        else -> error("Unsupported Grid Item")
+    }
+
+    private fun withCustomIcon(
+        gridItem: GridItem,
+        customIcon: String,
+    ): GridItem {
+        val newData = when (val data = gridItem.data) {
             is GridItemData.ApplicationInfo -> data.copy(customIcon = customIcon)
             is GridItemData.Folder -> data.copy(icon = customIcon)
             is GridItemData.ShortcutConfig -> data.copy(customIcon = customIcon)
             is GridItemData.ShortcutInfo -> data.copy(customIcon = customIcon)
-            else -> data
+            else -> error("Unsupported Grid Item")
         }
 
-        gridRepository.updateGridItem(gridItem = gridItem.copy(data = newData))
-
-        // Delete the old custom icon after successfully updated the new grid item
-        deleteGridItemCustomIconFile(gridItem = gridItem)
+        return gridItem.copy(data = newData)
     }
 }

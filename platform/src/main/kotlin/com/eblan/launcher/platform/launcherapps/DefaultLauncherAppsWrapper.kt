@@ -344,6 +344,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
                             customSeedColor = 0,
                             iconShape = IconShape.None,
                             theme = Theme.System,
+                            directoryNameOverride = FileManager.SHORTCUT_CONFIG_ICONS_DIR,
                         )
                     }
             } catch (_: IllegalStateException) {
@@ -612,6 +613,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         iconShape: IconShape,
         theme: Theme,
         colorSchemeSettings: ColorSchemeSettings = ColorSchemeSettings(),
+        directoryNameOverride: String? = null,
     ): LauncherAppsActivityInfo {
         val serialNumber = androidUserManagerWrapper.getSerialNumberForUser(user)
 
@@ -636,6 +638,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             serialNumber = serialNumber,
             theme = theme,
             colorSchemeSettings = colorSchemeSettings,
+            directoryNameOverride = directoryNameOverride,
         )
 
         return LauncherAppsActivityInfo(
@@ -736,10 +739,11 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         serialNumber: Long,
         theme: Theme,
         colorSchemeSettings: ColorSchemeSettings = ColorSchemeSettings(),
+        directoryNameOverride: String? = null,
     ): String? {
         if (drawable == null) return null
 
-        val directoryName = when {
+        val directoryName = directoryNameOverride ?: when {
             !iconTint && iconShape == IconShape.None -> FileManager.ICONS_DIR
             !iconTint -> FileManager.SHAPED_ICONS_DIR
             iconShape == IconShape.None -> FileManager.TINTED_ICONS_DIR

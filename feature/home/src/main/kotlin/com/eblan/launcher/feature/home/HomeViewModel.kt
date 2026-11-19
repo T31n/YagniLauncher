@@ -33,9 +33,6 @@ import com.eblan.launcher.domain.model.grid.MoveFolderEblanApplicationInfoGridIt
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.model.home.PageItem
 import com.eblan.launcher.domain.model.launcherapps.PinItemRequestType
-import com.eblan.launcher.domain.platform.FileManager
-import com.eblan.launcher.domain.platform.IconKeyGenerator
-import com.eblan.launcher.domain.platform.LauncherAppsWrapper
 import com.eblan.launcher.domain.repository.EblanAppWidgetProviderInfoRepository
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.usecase.application.GetEblanAppWidgetProviderInfosByLabelUseCase
@@ -43,6 +40,7 @@ import com.eblan.launcher.domain.usecase.application.GetEblanApplicationInfosByL
 import com.eblan.launcher.domain.usecase.application.GetEblanApplicationTagsUseCase
 import com.eblan.launcher.domain.usecase.application.GetEblanShortcutConfigsByLabelUseCase
 import com.eblan.launcher.domain.usecase.application.GetEblanShortcutInfosUseCase
+import com.eblan.launcher.domain.usecase.application.ResolveApplicationIconUseCase
 import com.eblan.launcher.domain.usecase.folder.DeleteFolderEblanApplicationInfoGridItemsUseCase
 import com.eblan.launcher.domain.usecase.folder.GetFolderEblanApplicationInfoPopupsUseCase
 import com.eblan.launcher.domain.usecase.folder.GetRecursiveFolderEblanApplicationInfosUseCase
@@ -76,7 +74,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.io.File
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -89,8 +86,6 @@ internal class HomeViewModel @Inject constructor(
     private val updatePageItemsUseCase: UpdatePageItemsUseCase,
     private val updateGridItemsAfterMoveUseCase: UpdateGridItemsAfterMoveUseCase,
     private val getPinGridItemUseCase: GetPinGridItemUseCase,
-    private val fileManager: FileManager,
-    private val launcherAppsWrapper: LauncherAppsWrapper,
     getEblanShortcutInfosUseCase: GetEblanShortcutInfosUseCase,
     eblanAppWidgetProviderInfoRepository: EblanAppWidgetProviderInfoRepository,
     getEblanApplicationInfosByLabelAndTagUseCase: GetEblanApplicationInfosByLabelAndTagUseCase,
@@ -103,7 +98,6 @@ internal class HomeViewModel @Inject constructor(
     private val changePackageUseCase: ChangePackageUseCase,
     private val changeShortcutsUseCase: ChangeShortcutsUseCase,
     private val moveFolderGridItemUseCase: MoveFolderGridItemUseCase,
-    private val iconKeyGenerator: IconKeyGenerator,
     private val deleteGridItemUseCase: DeleteGridItemUseCase,
     getFolderEblanApplicationInfoPopupsUseCase: GetFolderEblanApplicationInfoPopupsUseCase,
     private val moveFolderEblanApplicationInfoGridItemUseCase: MoveFolderEblanApplicationInfoGridItemUseCase,
@@ -111,6 +105,7 @@ internal class HomeViewModel @Inject constructor(
     private val getRecursiveFolderEblanApplicationInfosUseCase: GetRecursiveFolderEblanApplicationInfosUseCase,
     private val deleteFolderEblanApplicationInfoGridItemsUseCase: DeleteFolderEblanApplicationInfoGridItemsUseCase,
     private val getLastModifiedFilePathsUseCase: GetLastModifiedFilePathsUseCase,
+    private val resolveApplicationIconUseCase: ResolveApplicationIconUseCase,
 ) : ViewModel() {
     val homeUiState = getHomeDataUseCase().map(HomeUiState::Success).stateIn(
         scope = viewModelScope,
@@ -456,24 +451,10 @@ internal class HomeViewModel @Inject constructor(
 
             gridRepository.deleteGridItemById(gridItem = movingGridItem)
 
-            val eblanApplicationInfoIcon =
-                launcherAppsWrapper.getFastActivityList(
-                    serialNumber = pinItemRequestType.serialNumber,
-                    packageName = pinItemRequestType.packageName,
-                ).firstOrNull()?.componentName
-                    ?.let { componentName ->
-                        val directory = fileManager.getFilesDirectory(FileManager.ICONS_DIR)
-
-                        val file = File(
-                            directory,
-                            iconKeyGenerator.getActivityIconKey(
-                                serialNumber = pinItemRequestType.serialNumber,
-                                componentName = componentName,
-                            ),
-                        )
-
-                        file.absolutePath
-                    }
+            val eblanApplicationInfoIcon = resolveApplicationIconUseCase(
+                serialNumber = pinItemRequestType.serialNumber,
+                packageName = pinItemRequestType.packageName,
+            )
 
             val data = ShortcutInfo(
                 shortcutId = pinItemRequestType.shortcutId,

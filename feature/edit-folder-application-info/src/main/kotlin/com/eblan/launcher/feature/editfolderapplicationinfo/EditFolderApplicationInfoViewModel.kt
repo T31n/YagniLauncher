@@ -163,6 +163,20 @@ internal class EditFolderApplicationInfoViewModel @Inject constructor(
         }
     }
 
+    fun updateFolderEblanApplicationInfoCustomIconPath(
+        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        icon: String,
+    ) {
+        viewModelScope.launch {
+            updateFolderEblanApplicationInfoCustomIconUseCase.updateCustomIconPath(
+                folderEblanApplicationInfo = folderEblanApplicationInfo,
+                icon = icon,
+            )
+
+            getFolderApplicationInfo()
+        }
+    }
+
     fun addFolderEblanApplicationInfo(folderEblanApplicationInfo: FolderEblanApplicationInfo) {
         viewModelScope.launch {
             folderEblanApplicationInfoRepository.insertFolderEblanApplicationInfo(

@@ -165,6 +165,20 @@ internal class EditGridItemViewModel @Inject constructor(
         }
     }
 
+    fun updateGridItemCustomIconPath(
+        gridItem: GridItem,
+        customIcon: String,
+    ) {
+        viewModelScope.launch {
+            updateGridItemCustomIconUseCase.updateCustomIconPath(
+                gridItem = gridItem,
+                customIcon = customIcon,
+            )
+
+            getGridItem()
+        }
+    }
+
     private fun getGridItem() {
         viewModelScope.launch {
             _editGridItemUiState.update {

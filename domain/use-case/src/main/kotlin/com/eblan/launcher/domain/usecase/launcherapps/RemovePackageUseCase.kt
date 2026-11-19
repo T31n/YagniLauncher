@@ -19,18 +19,27 @@ package com.eblan.launcher.domain.usecase.launcherapps
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
+import com.eblan.launcher.domain.model.application.DeleteEblanApplicationInfo
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
+import com.eblan.launcher.domain.model.grid.ApplicationInfoGridItem
+import com.eblan.launcher.domain.model.grid.ShortcutConfigGridItem
+import com.eblan.launcher.domain.model.grid.ShortcutInfoGridItem
+import com.eblan.launcher.domain.model.shortcutconfig.EblanShortcutConfig
+import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
 import com.eblan.launcher.domain.platform.FileManager
 import com.eblan.launcher.domain.platform.IconKeyGenerator
-import com.eblan.launcher.domain.platform.LauncherAppsWrapper
 import com.eblan.launcher.domain.repository.ApplicationInfoGridItemRepository
 import com.eblan.launcher.domain.repository.EblanAppWidgetProviderInfoRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.EblanShortcutConfigRepository
 import com.eblan.launcher.domain.repository.EblanShortcutInfoRepository
+import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
+import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.repository.ShortcutConfigGridItemRepository
 import com.eblan.launcher.domain.repository.ShortcutInfoGridItemRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.repository.WidgetGridItemRepository
+import com.eblan.launcher.domain.usecase.util.deleteCustomIconsIfUnreferenced
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
@@ -51,7 +60,8 @@ class RemovePackageUseCase @Inject constructor(
     private val eblanShortcutInfoRepository: EblanShortcutInfoRepository,
     private val eblanShortcutConfigRepository: EblanShortcutConfigRepository,
     private val shortcutConfigGridItemRepository: ShortcutConfigGridItemRepository,
-    private val launcherAppsWrapper: LauncherAppsWrapper,
+    private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
+    private val gridRepository: GridRepository,
     private val iconKeyGenerator: IconKeyGenerator,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
@@ -66,33 +76,55 @@ class RemovePackageUseCase @Inject constructor(
         packageName: String,
     ) {
         withContext(ioDispatcher) {
-            deleteEblanApplicationInfoFiles(
-                packageName = packageName,
-                serialNumber = serialNumber,
-            )
+            val deleteEblanApplicationInfos =
+                eblanApplicationInfoRepository.getEblanApplicationInfosByPackageName(
+                    serialNumber = serialNumber,
+                    packageName = packageName,
+                )
 
-            deleteEblanAppWidgetProviderInfoFiles(
-                serialNumber = serialNumber,
-                packageName = packageName,
-            )
+            val deleteEblanAppWidgetProviderInfos =
+                eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos()
+                    .filter {
+                        it.serialNumber == serialNumber && it.packageName == packageName
+                    }
 
-            deleteEblaShortcutInfoFiles(
-                serialNumber = serialNumber,
-                packageName = packageName,
-            )
+            val deleteEblanShortcutInfos =
+                eblanShortcutInfoRepository.getEblanShortcutInfosByPackageName(
+                    serialNumber = serialNumber,
+                    packageName = packageName,
+                )
 
-            deleteEblanShortcutConfigFiles(
-                serialNumber = serialNumber,
-                packageName = packageName,
-            )
+            val deleteEblanShortcutConfigs =
+                eblanShortcutConfigRepository.getEblanShortcutConfigsByPackageName(
+                    serialNumber = serialNumber,
+                    packageName = packageName,
+                )
+
+            val deleteApplicationInfoGridItems =
+                applicationInfoGridItemRepository.getApplicationInfoGridItemsByPackageName(
+                    serialNumber = serialNumber,
+                    packageName = packageName,
+                )
+
+            val deleteShortcutInfoGridItems =
+                shortcutInfoGridItemRepository.getShortcutInfoGridItemsByPackageName(
+                    serialNumber = serialNumber,
+                    packageName = packageName,
+                )
+
+            val deleteShortcutConfigGridItems =
+                shortcutConfigGridItemRepository.getShortcutConfigGridItemsByPackageName(
+                    serialNumber = serialNumber,
+                    packageName = packageName,
+                )
 
             eblanApplicationInfoRepository.deleteEblanApplicationInfoByPackageName(
                 serialNumber = serialNumber,
                 packageName = packageName,
             )
 
-            eblanAppWidgetProviderInfoRepository.deleteEblanAppWidgetProviderInfoByPackageName(
-                packageName = packageName,
+            eblanAppWidgetProviderInfoRepository.deleteEblanAppWidgetProviderInfos(
+                eblanAppWidgetProviderInfos = deleteEblanAppWidgetProviderInfos,
             )
 
             eblanShortcutInfoRepository.deleteEblanShortcutInfos(
@@ -124,77 +156,133 @@ class RemovePackageUseCase @Inject constructor(
                 serialNumber = serialNumber,
                 packageName = packageName,
             )
+
+            val remainingEblanApplicationInfos =
+                eblanApplicationInfoRepository.getEblanApplicationInfos()
+            val remainingEblanAppWidgetProviderInfos =
+                eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos()
+            val remainingEblanShortcutInfos =
+                eblanShortcutInfoRepository.getEblanShortcutInfos()
+            val remainingEblanShortcutConfigs =
+                eblanShortcutConfigRepository.getEblanShortcutConfigs()
+            val remainingApplicationInfoGridItems =
+                applicationInfoGridItemRepository.getApplicationInfoGridItems()
+            val remainingWidgetGridItems =
+                widgetGridItemRepository.getWidgetGridItems()
+            val remainingShortcutConfigGridItems =
+                shortcutConfigGridItemRepository.getShortcutConfigGridItems()
+            val remainingShortcutInfoGridItems =
+                shortcutInfoGridItemRepository.getShortcutInfoGridItems()
+
+            deleteEblanApplicationInfoFiles(
+                deleteEblanApplicationInfos = deleteEblanApplicationInfos,
+                remainingEblanApplicationInfos = remainingEblanApplicationInfos,
+                remainingEblanAppWidgetProviderInfos = remainingEblanAppWidgetProviderInfos,
+                remainingEblanShortcutConfigs = remainingEblanShortcutConfigs,
+                remainingApplicationInfoGridItems = remainingApplicationInfoGridItems,
+                remainingWidgetGridItems = remainingWidgetGridItems,
+                remainingShortcutConfigGridItems = remainingShortcutConfigGridItems,
+                remainingShortcutInfoGridItems = remainingShortcutInfoGridItems,
+            )
+
+            deleteEblanAppWidgetProviderInfoIcons(
+                eblanApplicationInfos = remainingEblanApplicationInfos,
+                eblanAppWidgetProviderInfos = remainingEblanAppWidgetProviderInfos,
+                eblanShortcutConfigs = remainingEblanShortcutConfigs,
+                applicationInfoGridItems = remainingApplicationInfoGridItems,
+                widgetGridItems = remainingWidgetGridItems,
+                shortcutConfigGridItems = remainingShortcutConfigGridItems,
+                shortcutInfoGridItems = remainingShortcutInfoGridItems,
+                deleteEblanAppWidgetProviderInfos = deleteEblanAppWidgetProviderInfos,
+            )
+
+            deleteEblanShortInfoIcons(
+                eblanShortcutInfos = remainingEblanShortcutInfos,
+                deleteEblanShortcutInfos = deleteEblanShortcutInfos,
+            )
+
+            deleteEblanShortcutConfigIcons(
+                eblanApplicationInfos = remainingEblanApplicationInfos,
+                eblanAppWidgetProviderInfos = remainingEblanAppWidgetProviderInfos,
+                eblanShortcutConfigs = remainingEblanShortcutConfigs,
+                applicationInfoGridItems = remainingApplicationInfoGridItems,
+                widgetGridItems = remainingWidgetGridItems,
+                shortcutConfigGridItems = remainingShortcutConfigGridItems,
+                shortcutInfoGridItems = remainingShortcutInfoGridItems,
+                deleteEblanShortcutConfigs = deleteEblanShortcutConfigs,
+            )
+
+            val customIconCandidates = buildList {
+                deleteEblanApplicationInfos.mapNotNullTo(this) { it.customIcon }
+                deleteApplicationInfoGridItems.mapNotNullTo(this) { it.customIcon }
+                deleteShortcutInfoGridItems.mapNotNullTo(this) { it.customIcon }
+                deleteShortcutConfigGridItems.mapNotNullTo(this) { it.customIcon }
+                deleteShortcutConfigGridItems.mapNotNullTo(this) { it.shortcutIntentIcon }
+            }
+
+            deleteCustomIconsIfUnreferenced(
+                iconPaths = customIconCandidates,
+                eblanApplicationInfoRepository = eblanApplicationInfoRepository,
+                folderEblanApplicationInfoRepository = folderEblanApplicationInfoRepository,
+                gridRepository = gridRepository,
+            )
         }
     }
 
-    /** Deletes unreferenced application icons and custom icons for the package's grid items. */
+    /** Deletes unreferenced application icons and icon-pack files for removed activities. */
     private suspend fun deleteEblanApplicationInfoFiles(
-        packageName: String,
-        serialNumber: Long,
+        deleteEblanApplicationInfos: List<EblanApplicationInfo>,
+        remainingEblanApplicationInfos: List<EblanApplicationInfo>,
+        remainingEblanAppWidgetProviderInfos: List<EblanAppWidgetProviderInfo>,
+        remainingEblanShortcutConfigs: List<EblanShortcutConfig>,
+        remainingApplicationInfoGridItems: List<ApplicationInfoGridItem>,
+        remainingWidgetGridItems: List<com.eblan.launcher.domain.model.grid.WidgetGridItem>,
+        remainingShortcutConfigGridItems: List<ShortcutConfigGridItem>,
+        remainingShortcutInfoGridItems: List<ShortcutInfoGridItem>,
     ) {
         val iconPackPackageName =
             userDataRepository.userDataFlow.first().generalSettings.iconPackPackageName
 
-        val componentName = launcherAppsWrapper.getFastActivityList(
-            serialNumber = serialNumber,
-            packageName = packageName,
-        ).firstOrNull()?.componentName
-
-        eblanApplicationInfoRepository.getEblanApplicationInfosByPackageName(
-            serialNumber = serialNumber,
-            packageName = packageName,
-        ).forEach { eblanApplicationInfoByPackageName ->
-            currentCoroutineContext().ensureActive()
-
-            val icon = eblanApplicationInfoByPackageName.icon
-
-            val hasNoIconReference = icon != null &&
-                eblanApplicationInfoRepository.getEblanApplicationInfos()
-                    .none {
-                        it.icon == icon
-                    }
-
-            if (hasNoIconReference) {
-                val iconFile = File(icon)
-
-                if (iconFile.exists()) {
-                    iconFile.delete()
-                }
-
-                deleteIconPackFile(
-                    componentName = componentName,
-                    iconPackPackageName = iconPackPackageName,
+        deleteEblanApplicationInfoIcons(
+            eblanApplicationInfos = remainingEblanApplicationInfos,
+            eblanAppWidgetProviderInfos = remainingEblanAppWidgetProviderInfos,
+            eblanShortcutConfigs = remainingEblanShortcutConfigs,
+            applicationInfoGridItems = remainingApplicationInfoGridItems,
+            widgetGridItems = remainingWidgetGridItems,
+            shortcutConfigGridItems = remainingShortcutConfigGridItems,
+            shortcutInfoGridItems = remainingShortcutInfoGridItems,
+            oldDeleteEblanApplicationInfos = deleteEblanApplicationInfos.map {
+                DeleteEblanApplicationInfo(
+                    serialNumber = it.serialNumber,
+                    componentName = it.componentName,
+                    packageName = it.packageName,
+                    icon = it.icon,
                 )
-            }
-        }
+            },
+        )
 
-        applicationInfoGridItemRepository.getApplicationInfoGridItemsByPackageName(
-            serialNumber = serialNumber,
-            packageName = packageName,
-        ).forEach { applicationInfoGridItem ->
+        deleteEblanApplicationInfos.forEach { eblanApplicationInfo ->
             currentCoroutineContext().ensureActive()
 
-            applicationInfoGridItem.customIcon?.let {
-                val customIconFile = File(it)
-
-                if (customIconFile.exists()) {
-                    customIconFile.delete()
-                }
-            }
+            deleteIconPackFile(
+                componentName = eblanApplicationInfo.componentName,
+                iconPackPackageName = iconPackPackageName,
+                remainingEblanApplicationInfos = remainingEblanApplicationInfos,
+            )
         }
     }
 
     /** Deletes a cached icon-pack file when no remaining application references its component. */
     private suspend fun deleteIconPackFile(
-        componentName: String?,
+        componentName: String,
         iconPackPackageName: String,
+        remainingEblanApplicationInfos: List<EblanApplicationInfo>,
     ) {
-        if (componentName == null) return
+        if (iconPackPackageName.isEmpty()) return
 
-        val hasNoIconPackInfoReference = eblanApplicationInfoRepository.getEblanApplicationInfos()
-            .none {
-                it.componentName == componentName
-            }
+        val hasNoIconPackInfoReference = remainingEblanApplicationInfos.none {
+            it.componentName == componentName
+        }
 
         if (hasNoIconPackInfoReference) {
             val iconPacksDirectory = File(
@@ -209,148 +297,6 @@ class RemovePackageUseCase @Inject constructor(
 
             if (iconPackFile.exists()) {
                 iconPackFile.delete()
-            }
-        }
-    }
-
-    /** Deletes widget provider and preview files associated with the package. */
-    private suspend fun deleteEblanAppWidgetProviderInfoFiles(
-        serialNumber: Long,
-        packageName: String,
-    ) {
-        val eblanAppWidgetProviderInfos =
-            eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos()
-
-        val deleteEblanAppWidgetProviderInfos =
-            eblanAppWidgetProviderInfos.filter {
-                it.serialNumber == serialNumber && it.packageName == packageName
-            }
-
-        deleteEblanAppWidgetProviderInfoIcons(
-            eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos()
-                .filterNot {
-                    it.serialNumber == serialNumber && it.packageName == packageName
-                },
-            eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfos.filterNot {
-                it.serialNumber == serialNumber && it.packageName == packageName
-            },
-            eblanShortcutConfigs = eblanShortcutConfigRepository.getEblanShortcutConfigs()
-                .filterNot {
-                    it.serialNumber == serialNumber && it.packageName == packageName
-                },
-            applicationInfoGridItems = applicationInfoGridItemRepository.getApplicationInfoGridItems()
-                .filterNot {
-                    it.serialNumber == serialNumber && it.packageName == packageName
-                },
-            widgetGridItems = widgetGridItemRepository.getWidgetGridItems()
-                .filterNot {
-                    it.serialNumber == serialNumber && it.packageName == packageName
-                },
-            shortcutConfigGridItems = shortcutConfigGridItemRepository.getShortcutConfigGridItems()
-                .filterNot {
-                    it.serialNumber == serialNumber && it.packageName == packageName
-                },
-            shortcutInfoGridItems = shortcutInfoGridItemRepository.getShortcutInfoGridItems()
-                .filterNot {
-                    it.serialNumber == serialNumber && it.packageName == packageName
-                },
-            deleteEblanAppWidgetProviderInfos = deleteEblanAppWidgetProviderInfos,
-        )
-    }
-
-    /** Deletes unreferenced shortcut icons and custom icons for the package's shortcut items. */
-    private suspend fun deleteEblaShortcutInfoFiles(
-        serialNumber: Long,
-        packageName: String,
-    ) {
-        eblanShortcutInfoRepository.getEblanShortcutInfosByPackageName(
-            serialNumber = serialNumber,
-            packageName = packageName,
-        ).forEach { eblanShortcutInfoByPackageName ->
-            currentCoroutineContext().ensureActive()
-
-            val icon = eblanShortcutInfoByPackageName.icon
-
-            val hasNoIconReference = icon != null &&
-                eblanShortcutInfoRepository.getEblanShortcutInfos().none {
-                    currentCoroutineContext().ensureActive()
-
-                    it.icon == icon
-                }
-
-            if (hasNoIconReference) {
-                val iconFile = File(icon)
-
-                if (iconFile.exists()) {
-                    iconFile.delete()
-                }
-            }
-        }
-
-        shortcutInfoGridItemRepository.getShortcutInfoGridItemsByPackageName(
-            serialNumber = serialNumber,
-            packageName = packageName,
-        ).forEach { shortcutInfoGridItem ->
-            currentCoroutineContext().ensureActive()
-
-            shortcutInfoGridItem.customIcon?.let {
-                val customIconFile = File(it)
-
-                if (customIconFile.exists()) {
-                    customIconFile.delete()
-                }
-            }
-        }
-    }
-
-    /** Deletes unreferenced shortcut-configuration icons and shortcut-intent icon files. */
-    private suspend fun deleteEblanShortcutConfigFiles(
-        serialNumber: Long,
-        packageName: String,
-    ) {
-        eblanShortcutConfigRepository.getEblanShortcutConfigsByPackageName(
-            serialNumber = serialNumber,
-            packageName = packageName,
-        ).forEach { eblanShortcutConfigByPackageName ->
-            currentCoroutineContext().ensureActive()
-
-            val activityIcon = eblanShortcutConfigByPackageName.activityIcon
-
-            val hasNoIconReference = activityIcon != null &&
-                eblanShortcutConfigRepository.getEblanShortcutConfigs()
-                    .none {
-                        it.activityIcon == activityIcon
-                    }
-
-            if (hasNoIconReference) {
-                val activityIconFile = File(activityIcon)
-
-                if (activityIconFile.exists()) {
-                    activityIconFile.delete()
-                }
-
-                eblanShortcutConfigByPackageName.applicationIcon?.let {
-                    val applicationIconFile = File(it)
-
-                    if (applicationIconFile.exists()) {
-                        applicationIconFile.delete()
-                    }
-                }
-            }
-        }
-
-        shortcutConfigGridItemRepository.getShortcutConfigGridItemsByPackageName(
-            serialNumber = serialNumber,
-            packageName = packageName,
-        ).forEach { shortcutConfigGridItem ->
-            currentCoroutineContext().ensureActive()
-
-            shortcutConfigGridItem.shortcutIntentIcon?.let {
-                val shortcutIntentIconFile = File(it)
-
-                if (shortcutIntentIconFile.exists()) {
-                    shortcutIntentIconFile.delete()
-                }
             }
         }
     }

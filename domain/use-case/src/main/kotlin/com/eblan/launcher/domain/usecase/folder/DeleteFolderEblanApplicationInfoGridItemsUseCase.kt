@@ -24,23 +24,25 @@ import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
+import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
+import com.eblan.launcher.domain.usecase.util.deleteCustomIconsIfUnreferenced
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
-import java.io.File
 import javax.inject.Inject
 
-/** Deletes a folder tree, clears child application folder links, and removes its icon files. */
+/** Deletes a folder tree, clears child application folder links, and removes its unreferenced icon files. */
 class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
     private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
     private val userDataRepository: UserDataRepository,
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
+    private val gridRepository: GridRepository,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     /**
      * Removes all descendants of [folderId], restores contained applications to the top level, and
-     * deletes the folder and its icon.
+     * deletes the folder and its unreferenced icon files.
      *
      * @param icon The icon path of the folder being deleted, if any.
      * @param folderId The ID of the folder to delete.
@@ -57,6 +59,8 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
                     maxFolderColumns = userData.folderSettings.maxFolderColumns,
                     maxFolderRows = userData.folderSettings.maxFolderRows,
                 )
+
+        val customIconPaths = mutableListOf<String>()
 
         getRecursiveFolderGridItems(
             folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
@@ -80,14 +84,21 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
                 }
 
                 is FolderEblanApplicationInfoGridItemData.Folder -> {
-                    deleteCustomIcon(icon = data.icon)
+                    data.icon?.let(customIconPaths::add)
                 }
             }
         }
 
-        deleteCustomIcon(icon = icon)
+        icon?.let(customIconPaths::add)
 
         folderEblanApplicationInfoRepository.deleteFolderEblanApplicationInfoById(id = folderId)
+
+        deleteCustomIconsIfUnreferenced(
+            iconPaths = customIconPaths,
+            eblanApplicationInfoRepository = eblanApplicationInfoRepository,
+            folderEblanApplicationInfoRepository = folderEblanApplicationInfoRepository,
+            gridRepository = gridRepository,
+        )
     }
 
     /** Collects a folder and all nested descendants from the preview-folder map. */
@@ -119,17 +130,6 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
                     )
                 }
             }
-        }
-    }
-
-    /** Deletes an icon file when a path is available and the file exists. */
-    private fun deleteCustomIcon(icon: String?) {
-        if (icon == null) return
-
-        val customIconFile = File(icon)
-
-        if (customIconFile.exists()) {
-            customIconFile.delete()
         }
     }
 }

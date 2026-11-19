@@ -22,30 +22,36 @@ import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.platform.AppWidgetHostWrapper
 import com.eblan.launcher.domain.platform.LauncherAppsWrapper
+import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
+import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.FolderGridItemRepository
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.folder.asPreviewFolders
+import com.eblan.launcher.domain.usecase.util.collectCustomIconPaths
+import com.eblan.launcher.domain.usecase.util.deleteCustomIconsIfUnreferenced
 import com.eblan.launcher.domain.usecase.util.deleteGridItemData
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-/** Removes a grid item and releases any associated system resources. */
+/** Removes a grid item and releases any associated system resources and unreferenced custom icons. */
 class DeleteGridItemUseCase @Inject constructor(
     private val userDataRepository: UserDataRepository,
     private val gridRepository: GridRepository,
     private val appWidgetHostWrapper: AppWidgetHostWrapper,
     private val launcherAppsWrapper: LauncherAppsWrapper,
     private val folderGridItemRepository: FolderGridItemRepository,
+    private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
+    private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     /**
-     * Deletes the item's nested resources and persisted grid record.
+     * Deletes the item's nested resources, persisted grid record, and any unreferenced custom icon files.
      *
-     * Folder contents are expanded so pinned shortcuts and widgets inside nested folders are
-     * released before the folder's grid item is removed.
+     * Folder contents are expanded so pinned shortcuts, widgets, and custom icons inside nested folders are
+     * cleaned up when the folder's grid item is removed.
      *
      * @param gridItem The item to delete.
      */
@@ -59,6 +65,11 @@ class DeleteGridItemUseCase @Inject constructor(
                     maxFolderRows = userData.folderSettings.maxFolderRows,
                 )
 
+        val customIconPaths = collectCustomIconPaths(
+            gridItem = gridItem,
+            folderPopupGridItems = previewFolderGridItems,
+        )
+
         deleteGridItemData(
             gridItem = gridItem,
             folderPopupGridItems = previewFolderGridItems,
@@ -67,5 +78,12 @@ class DeleteGridItemUseCase @Inject constructor(
         )
 
         gridRepository.deleteGridItem(gridItem = gridItem)
+
+        deleteCustomIconsIfUnreferenced(
+            iconPaths = customIconPaths,
+            eblanApplicationInfoRepository = eblanApplicationInfoRepository,
+            folderEblanApplicationInfoRepository = folderEblanApplicationInfoRepository,
+            gridRepository = gridRepository,
+        )
     }
 }

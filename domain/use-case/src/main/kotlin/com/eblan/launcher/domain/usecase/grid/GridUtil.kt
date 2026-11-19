@@ -19,49 +19,30 @@ package com.eblan.launcher.domain.usecase.grid
 
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
-import java.io.File
+import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
+import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
+import com.eblan.launcher.domain.repository.GridRepository
+import com.eblan.launcher.domain.usecase.util.deleteCustomIconsIfUnreferenced
 
-/** Deletes the custom icon file referenced by a supported grid-item type, if it exists. */
-internal fun deleteGridItemCustomIconFile(gridItem: GridItem) = when (val data = gridItem.data) {
-    is GridItemData.ApplicationInfo -> {
-        data.customIcon?.let {
-            val customIconFile = File(it)
+/** Deletes the custom icon file referenced by a supported grid-item type when unreferenced. */
+internal suspend fun deleteGridItemCustomIconFile(
+    gridItem: GridItem,
+    eblanApplicationInfoRepository: EblanApplicationInfoRepository,
+    folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
+    gridRepository: GridRepository,
+) {
+    val customIconPath = when (val data = gridItem.data) {
+        is GridItemData.ApplicationInfo -> data.customIcon
+        is GridItemData.ShortcutConfig -> data.customIcon
+        is GridItemData.ShortcutInfo -> data.customIcon
+        is GridItemData.Folder -> data.icon
+        else -> null
+    } ?: return
 
-            if (customIconFile.exists()) {
-                customIconFile.delete()
-            }
-        }
-    }
-
-    is GridItemData.ShortcutConfig -> {
-        data.customIcon?.let {
-            val customIconFile = File(it)
-
-            if (customIconFile.exists()) {
-                customIconFile.delete()
-            }
-        }
-    }
-
-    is GridItemData.ShortcutInfo -> {
-        data.customIcon?.let {
-            val customIconFile = File(it)
-
-            if (customIconFile.exists()) {
-                customIconFile.delete()
-            }
-        }
-    }
-
-    is GridItemData.Folder -> {
-        data.icon?.let {
-            val iconFile = File(it)
-
-            if (iconFile.exists()) {
-                iconFile.delete()
-            }
-        }
-    }
-
-    else -> Unit
+    deleteCustomIconsIfUnreferenced(
+        iconPaths = listOf(customIconPath),
+        eblanApplicationInfoRepository = eblanApplicationInfoRepository,
+        folderEblanApplicationInfoRepository = folderEblanApplicationInfoRepository,
+        gridRepository = gridRepository,
+    )
 }

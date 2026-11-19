@@ -25,27 +25,22 @@ import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
-import com.eblan.launcher.domain.platform.FileManager
-import com.eblan.launcher.domain.platform.IconKeyGenerator
-import com.eblan.launcher.domain.platform.LauncherAppsWrapper
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
+import com.eblan.launcher.domain.usecase.application.ResolveApplicationIconUseCase
 import com.eblan.launcher.domain.usecase.util.isTopLevel
 import com.eblan.launcher.domain.usecase.util.toGridItems
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
-import java.io.File
 import javax.inject.Inject
 import kotlin.uuid.Uuid
 
 /** Creates a home-screen grid item for a pinned shortcut when a free region is available. */
 class AddPinShortcutToHomeScreenUseCase @Inject constructor(
     private val userDataRepository: UserDataRepository,
-    private val fileManager: FileManager,
     private val gridRepository: GridRepository,
-    private val launcherAppsWrapper: LauncherAppsWrapper,
-    private val iconKeyGenerator: IconKeyGenerator,
+    private val resolveApplicationIconUseCase: ResolveApplicationIconUseCase,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     /**
@@ -79,24 +74,10 @@ class AddPinShortcutToHomeScreenUseCase @Inject constructor(
 
         val initialPage = homeSettings.initialPage
 
-        val eblanApplicationInfoIcon =
-            launcherAppsWrapper.getFastActivityList(
-                serialNumber = serialNumber,
-                packageName = packageName,
-            ).firstOrNull()?.componentName
-                ?.let {
-                    val directory = fileManager.getFilesDirectory(FileManager.ICONS_DIR)
-
-                    val file = File(
-                        directory,
-                        iconKeyGenerator.getActivityIconKey(
-                            serialNumber = serialNumber,
-                            componentName = it,
-                        ),
-                    )
-
-                    file.absolutePath
-                }
+        val eblanApplicationInfoIcon = resolveApplicationIconUseCase(
+            serialNumber = serialNumber,
+            packageName = packageName,
+        )
 
         val data = GridItemData.ShortcutInfo(
             shortcutId = shortcutId,

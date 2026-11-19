@@ -78,6 +78,7 @@ internal suspend fun deleteGridItemData(
         )
 
         is GridItemData.Folder -> getRecursiveFolderGridItems(
+            gridItem = gridItem,
             folderPopupGridItems = folderPopupGridItems,
             folderId = gridItem.id,
         ).forEach {
@@ -86,6 +87,41 @@ internal suspend fun deleteGridItemData(
                 appWidgetHostWrapper = appWidgetHostWrapper,
                 launcherAppsWrapper = launcherAppsWrapper,
             )
+        }
+    }
+}
+
+/** Collects custom-icon, folder-icon, and shortcut-intent-icon paths owned by [gridItem] and any nested folder descendants. */
+internal fun collectCustomIconPaths(
+    gridItem: GridItem,
+    folderPopupGridItems: Map<String, FolderPopup>,
+): List<String> {
+    val items = when (gridItem.data) {
+        is GridItemData.Folder -> getRecursiveFolderGridItems(
+            gridItem = gridItem,
+            folderPopupGridItems = folderPopupGridItems,
+            folderId = gridItem.id,
+        )
+
+        else -> listOf(gridItem)
+    }
+
+    return buildList {
+        items.forEach { item ->
+            when (val data = item.data) {
+                is GridItemData.ApplicationInfo -> data.customIcon?.let(::add)
+
+                is GridItemData.ShortcutInfo -> data.customIcon?.let(::add)
+
+                is GridItemData.ShortcutConfig -> {
+                    data.customIcon?.let(::add)
+                    data.shortcutIntentIcon?.let(::add)
+                }
+
+                is GridItemData.Folder -> data.icon?.let(::add)
+
+                is GridItemData.Widget -> Unit
+            }
         }
     }
 }

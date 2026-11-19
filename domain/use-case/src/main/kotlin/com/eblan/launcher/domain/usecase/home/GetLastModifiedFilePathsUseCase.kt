@@ -44,6 +44,8 @@ class GetLastModifiedFilePathsUseCase @Inject constructor(
             FileManager.TINTED_ICONS_DIR,
             FileManager.SHAPED_ICONS_DIR,
             FileManager.TINTED_SHAPED_ICONS_DIR,
+            FileManager.APPLICATION_ICONS_DIR,
+            FileManager.SHORTCUT_CONFIG_ICONS_DIR,
             FileManager.WIDGETS_DIR,
             FileManager.SHORTCUTS_DIR,
             FileManager.ICON_PACKS_DIR,

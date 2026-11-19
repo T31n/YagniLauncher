@@ -20,6 +20,11 @@ package com.eblan.launcher.domain.usecase.util
 import com.eblan.launcher.domain.platform.ContentResolverWrapper
 import com.eblan.launcher.domain.platform.FileManager
 import com.eblan.launcher.domain.platform.IconKeyGenerator
+import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
+import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
+import com.eblan.launcher.domain.repository.GridRepository
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import java.io.File
 import java.io.IOException
 import kotlin.uuid.Uuid
@@ -49,4 +54,47 @@ internal suspend fun getCustomIcon(
     newFile.absolutePath
 } catch (_: IOException) {
     null
+}
+
+/**
+ * Deletes each candidate custom-icon, folder-icon, or shortcut-intent-icon file in [iconPaths]
+ * when it is no longer referenced by any application, folder, or grid item.
+ */
+internal suspend fun deleteCustomIconsIfUnreferenced(
+    iconPaths: Iterable<String?>,
+    eblanApplicationInfoRepository: EblanApplicationInfoRepository,
+    folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
+    gridRepository: GridRepository,
+) {
+    val candidates = iconPaths.filterNotNull().distinct()
+
+    if (candidates.isEmpty()) return
+
+    val referencedPaths = buildSet {
+        eblanApplicationInfoRepository.getEblanApplicationInfos()
+            .mapNotNullTo(this) { it.customIcon }
+
+        folderEblanApplicationInfoRepository.getFolderEblanApplicationInfos()
+            .mapNotNullTo(this) { it.icon }
+
+        val gridItems = gridRepository.getGridItems()
+
+        gridItems.applicationInfoGridItems.mapNotNullTo(this) { it.customIcon }
+        gridItems.shortcutInfoGridItems.mapNotNullTo(this) { it.customIcon }
+        gridItems.shortcutConfigGridItems.mapNotNullTo(this) { it.customIcon }
+        gridItems.shortcutConfigGridItems.mapNotNullTo(this) { it.shortcutIntentIcon }
+        gridItems.folderGridItems.mapNotNullTo(this) { it.icon }
+    }
+
+    candidates.forEach { path ->
+        currentCoroutineContext().ensureActive()
+
+        if (path !in referencedPaths) {
+            val file = File(path)
+
+            if (file.exists()) {
+                file.delete()
+            }
+        }
+    }
 }

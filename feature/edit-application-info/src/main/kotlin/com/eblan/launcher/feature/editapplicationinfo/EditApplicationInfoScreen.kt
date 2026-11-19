@@ -107,6 +107,7 @@ internal fun EditApplicationInfoRoute(
         onUpdateEblanApplicationInfo = viewModel::updateEblanApplicationInfo,
         onResetEblanApplicationInfoCustomIcon = viewModel::resetEblanApplicationInfoCustomIcon,
         onUpdateEblanApplicationInfoCustomIcon = viewModel::updateEblanApplicationInfoCustomIcon,
+        onUpdateEblanApplicationInfoCustomIconPath = viewModel::updateEblanApplicationInfoCustomIconPath,
         onAddEblanApplicationInfoCrossRef = viewModel::addEblanApplicationInfoTagCrossRef,
         onDeleteEblanApplicationInfoCrossRef = viewModel::deleteEblanApplicationInfoTagCrossRef,
         onAddEblanApplicationInfoTag = viewModel::addEblanApplicationInfoTag,
@@ -139,6 +140,10 @@ internal fun EditApplicationInfoScreen(
     onUpdateEblanApplicationInfoCustomIcon: (
         eblanApplicationInfo: EblanApplicationInfo,
         uri: String,
+    ) -> Unit,
+    onUpdateEblanApplicationInfoCustomIconPath: (
+        eblanApplicationInfo: EblanApplicationInfo,
+        customIcon: String,
     ) -> Unit,
     onAddEblanApplicationInfoCrossRef: (Long) -> Unit,
     onDeleteEblanApplicationInfoCrossRef: (Long) -> Unit,
@@ -200,6 +205,7 @@ internal fun EditApplicationInfoScreen(
                     onUpdateIconPackPackageName = onUpdateIconPackPackageName,
                     onResetEblanApplicationInfoCustomIcon = onResetEblanApplicationInfoCustomIcon,
                     onUpdateEblanApplicationInfoCustomIcon = onUpdateEblanApplicationInfoCustomIcon,
+                    onUpdateEblanApplicationInfoCustomIconPath = onUpdateEblanApplicationInfoCustomIconPath,
                     onAddFolderEblanApplicationInfo = onAddFolderEblanApplicationInfo,
                 )
             }
@@ -234,6 +240,10 @@ private fun Success(
     onUpdateEblanApplicationInfoCustomIcon: (
         eblanApplicationInfo: EblanApplicationInfo,
         uri: String,
+    ) -> Unit,
+    onUpdateEblanApplicationInfoCustomIconPath: (
+        eblanApplicationInfo: EblanApplicationInfo,
+        customIcon: String,
     ) -> Unit,
     onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
 ) {
@@ -333,15 +343,17 @@ private fun Success(
             iconPackComponents = iconPackComponents,
             iconPackPackageName = iconPackPackageName,
             iconPackInfoLabel = iconPackInfoLabel,
-            iconName = eblanApplicationInfo.componentName,
+            iconName = "${eblanApplicationInfo.serialNumber}:${eblanApplicationInfo.componentName}",
             // Callbacks
             onDismissRequest = {
                 onResetIconPackPackageName()
 
                 showCustomIconDialog = false
             },
-            onUpdateIcon = {
-                onUpdateEblanApplicationInfo(eblanApplicationInfo.copy(customIcon = it))
+            onUpdateIcon = { path ->
+                if (path != null) {
+                    onUpdateEblanApplicationInfoCustomIconPath(eblanApplicationInfo, path)
+                }
             },
             onSearchIconPackInfoComponent = onSearchIconPackInfoComponent,
         )
