@@ -37,11 +37,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -56,6 +61,7 @@ import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.cache.CacheInfo
 import com.eblan.launcher.feature.settings.cache.model.CacheSettingsUiState
 import com.eblan.launcher.platform.service.IconPackService
+import kotlinx.coroutines.launch
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -82,8 +88,14 @@ internal fun CacheSettingsScreen(
     onNavigateUp: () -> Unit,
     onCleanUpCache: () -> Unit,
 ) {
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
     Scaffold(
         modifier = modifier,
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
         topBar = {
             TopAppBar(
                 title = {
@@ -116,6 +128,11 @@ internal fun CacheSettingsScreen(
                         isCleaningUp = cacheSettingsUiState.isCleaningUp,
                         freedSize = cacheSettingsUiState.freedSize,
                         onCleanUpCache = onCleanUpCache,
+                        onShowSnackbar = { message ->
+                            scope.launch {
+                                snackbarHostState.showSnackbar(message = message)
+                            }
+                        },
                     )
                 }
             }
@@ -130,9 +147,21 @@ private fun Success(
     isCleaningUp: Boolean,
     freedSize: Long?,
     onCleanUpCache: () -> Unit,
+    onShowSnackbar: (String) -> Unit,
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+
+    if (!isCleaningUp && freedSize != null) {
+        val message = stringResource(
+            R.string.freed_size,
+            Formatter.formatShortFileSize(context, freedSize),
+        )
+
+        LaunchedEffect(key1 = freedSize) {
+            onShowSnackbar(message)
+        }
+    }
 
     DisposableEffect(key1 = lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -197,17 +226,6 @@ private fun Success(
             } else {
                 Text(text = stringResource(R.string.nothing_to_clean_up))
             }
-        }
-
-        if (freedSize != null) {
-            Text(
-                text = stringResource(
-                    R.string.freed_size,
-                    Formatter.formatShortFileSize(context, freedSize),
-                ),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.primary,
-            )
         }
     }
 }
