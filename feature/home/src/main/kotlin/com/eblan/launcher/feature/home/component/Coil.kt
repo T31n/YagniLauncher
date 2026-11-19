@@ -24,7 +24,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
-import coil3.request.addLastModifiedToFileCacheKey
 import coil3.size.Size
 
 @Composable
@@ -54,7 +53,6 @@ internal fun AsyncFilePathImage(
 
                 size?.let(::size)
             }
-            .addLastModifiedToFileCacheKey(enable = true)
             .build()
     }
 
