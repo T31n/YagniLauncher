@@ -559,7 +559,7 @@ internal fun PagerScreen(
             pagerScreenState.showShortcutConfigScreen ||
             pagerScreenState.eblanApplicationInfoGroup != null
 
-    val statusBarNotifications by rememberStatusBarNotifications()
+    val statusBarNotifications by produceStatusBarNotificationsState()
 
     val isVisibleFolderEblanApplicationInfoGridItemMenu =
         pagerScreenState.showFolderEblanApplicationInfoGridItemMenu &&
@@ -2123,7 +2123,7 @@ private fun GridPagerIndicator(
 }
 
 @Composable
-private fun rememberStatusBarNotifications(): State<Map<String, Int>> {
+private fun produceStatusBarNotificationsState(): State<Map<String, Int>> {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 

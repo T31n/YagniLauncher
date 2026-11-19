@@ -74,7 +74,7 @@ import com.eblan.launcher.feature.home.util.getGridItemLabel
 import com.eblan.launcher.feature.home.util.handleEblanAction
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import com.eblan.launcher.ui.local.LocalStatusBarManager
-import com.eblan.launcher.ui.settings.rememberIsNotificationAccessGranted
+import com.eblan.launcher.ui.settings.produceIsNotificationAccessGrantedState
 
 @Composable
 internal fun InteractiveApplicationInfoGridItem(
@@ -135,7 +135,7 @@ internal fun InteractiveApplicationInfoGridItem(
     val label = getGridItemLabel(data = data).toString()
 
     val hasNotifications = (statusBarNotifications[data.packageName] ?: 0) > 0
-    val isNotificationAccessGranted by rememberIsNotificationAccessGranted()
+    val isNotificationAccessGranted by produceIsNotificationAccessGrantedState()
 
     val itemModifier = modifier
         .fillMaxSize()

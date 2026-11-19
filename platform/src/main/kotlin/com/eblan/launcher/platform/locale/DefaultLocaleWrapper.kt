@@ -20,13 +20,18 @@ package com.eblan.launcher.platform.locale
 import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
+import com.eblan.launcher.domain.common.Dispatcher
+import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.platform.R
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 import org.xmlpull.v1.XmlPullParser
 import javax.inject.Inject
 
 internal class DefaultLocaleWrapper @Inject constructor(
     @param:ApplicationContext private val context: Context,
+    @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : LocaleWrapper {
     override fun getApplicationLanguageTag(): String = AppCompatDelegate.getApplicationLocales().toLanguageTags()
 
@@ -39,22 +44,22 @@ internal class DefaultLocaleWrapper @Inject constructor(
         AppCompatDelegate.setApplicationLocales(applicationLocales)
     }
 
-    override fun getSupportedLanguageTags(): List<String> {
-        val supportedLanguageTags = mutableListOf<String>()
-
-        context.resources.getXml(R.xml.locales_config).use { xmlResourceParser ->
-            while (xmlResourceParser.next() != XmlPullParser.END_DOCUMENT) {
-                if (xmlResourceParser.eventType == XmlPullParser.START_TAG && xmlResourceParser.name == "locale") {
-                    supportedLanguageTags.add(
-                        xmlResourceParser.getAttributeValue(
-                            "http://schemas.android.com/apk/res/android",
-                            "name",
-                        ),
-                    )
+    override suspend fun getSupportedLanguageTags(): List<String> {
+        return withContext(ioDispatcher) {
+            buildList {
+                context.resources.getXml(R.xml.locales_config).use { xmlResourceParser ->
+                    while (xmlResourceParser.next() != XmlPullParser.END_DOCUMENT) {
+                        if (xmlResourceParser.eventType == XmlPullParser.START_TAG && xmlResourceParser.name == "locale") {
+                            add(
+                                xmlResourceParser.getAttributeValue(
+                                    "http://schemas.android.com/apk/res/android",
+                                    "name",
+                                ),
+                            )
+                        }
+                    }
                 }
             }
         }
-
-        return supportedLanguageTags
     }
 }

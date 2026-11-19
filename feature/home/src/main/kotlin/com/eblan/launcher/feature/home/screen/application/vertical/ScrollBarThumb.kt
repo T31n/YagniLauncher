@@ -77,7 +77,7 @@ internal fun ScrollBarThumb(
         }
     }
 
-    val headerHeightPx by rememberHasPrivateSpaceStickyHeader(
+    val headerHeightPx by produceHeaderHeightPxState(
         // State
         lazyGridState = lazyGridState,
         // Configuration
@@ -197,7 +197,7 @@ internal fun ScrollBarThumb(
 }
 
 @Composable
-private fun rememberHasPrivateSpaceStickyHeader(
+private fun produceHeaderHeightPxState(
     // State
     lazyGridState: LazyGridState,
     // Configuration

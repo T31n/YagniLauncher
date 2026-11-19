@@ -104,7 +104,7 @@ import com.eblan.launcher.feature.home.screen.application.vertical.VerticalAppli
 import com.eblan.launcher.feature.home.util.getApplicationScreenTextColor
 import com.eblan.launcher.feature.home.util.getBackgroundColor
 import com.eblan.launcher.ui.local.LocalUserManager
-import com.eblan.launcher.ui.settings.rememberIsDefaultLauncher
+import com.eblan.launcher.ui.settings.produceIsDefaultLauncherState
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.debounce
@@ -351,7 +351,7 @@ internal fun QuiteModeScreen(
 
     val userManager = LocalUserManager.current
 
-    val isDefaultLauncher by rememberIsDefaultLauncher()
+    val isDefaultLauncher by produceIsDefaultLauncherState()
 
     val textColor = getApplicationScreenTextColor(
         // Background Colors
@@ -545,7 +545,7 @@ internal fun EblanApplicationInfoTabRow(
 
 @SuppressLint("WrongConstant")
 @Composable
-internal fun rememberIsQuietModeEnabled(userHandle: UserHandle?): State<Boolean> {
+internal fun produceIsQuietModeEnabledState(userHandle: UserHandle?): State<Boolean> {
     val context = LocalContext.current
     val userManager = LocalUserManager.current
 
@@ -602,7 +602,7 @@ internal fun rememberIsQuietModeEnabled(userHandle: UserHandle?): State<Boolean>
 
 @SuppressLint("WrongConstant")
 @Composable
-internal fun rememberIsPrivateQuietModeEnabled(eblanUser: EblanUser?): State<Boolean> {
+internal fun produceIsPrivateQuietModeEnabledState(eblanUser: EblanUser?): State<Boolean> {
     val context = LocalContext.current
 
     val userManager = LocalUserManager.current

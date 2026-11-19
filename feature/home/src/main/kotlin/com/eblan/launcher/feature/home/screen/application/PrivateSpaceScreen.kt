@@ -83,7 +83,7 @@ import com.eblan.launcher.feature.home.util.getVerticalAlignment
 import com.eblan.launcher.feature.home.util.getVerticalArrangement
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import com.eblan.launcher.ui.local.LocalUserManager
-import com.eblan.launcher.ui.settings.rememberIsDefaultLauncher
+import com.eblan.launcher.ui.settings.produceIsDefaultLauncherState
 import kotlinx.coroutines.launch
 
 internal fun LazyGridScope.privateSpace(
@@ -168,7 +168,7 @@ internal fun PrivateSpaceStickyHeader(
         contract = ActivityResultContracts.StartIntentSenderForResult(),
     ) {}
 
-    val isDefaultLauncher by rememberIsDefaultLauncher()
+    val isDefaultLauncher by produceIsDefaultLauncherState()
 
     val contentColor = getApplicationScreenTextColor(
         // Background Colors

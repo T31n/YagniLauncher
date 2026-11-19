@@ -71,10 +71,10 @@ import com.eblan.launcher.feature.home.screen.application.EblanApplicationInfoTa
 import com.eblan.launcher.feature.home.screen.application.PrivateSpaceEblanApplicationInfoItem
 import com.eblan.launcher.feature.home.screen.application.QuiteModeScreen
 import com.eblan.launcher.feature.home.screen.application.TagElevatedFilterChip
-import com.eblan.launcher.feature.home.screen.application.rememberIsQuietModeEnabled
+import com.eblan.launcher.feature.home.screen.application.produceIsQuietModeEnabledState
 import com.eblan.launcher.feature.home.util.getApplicationScreenTextColor
 import com.eblan.launcher.ui.local.LocalUserManager
-import com.eblan.launcher.ui.settings.rememberIsDefaultLauncher
+import com.eblan.launcher.ui.settings.produceIsDefaultLauncherState
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -306,9 +306,9 @@ private fun EblanApplicationInfosPage(
     val userHandle =
         userManager.getUserForSerialNumber(serialNumber = eblanUserPageKey.eblanUser.serialNumber)
 
-    val isDefaultLauncher by rememberIsDefaultLauncher()
+    val isDefaultLauncher by produceIsDefaultLauncherState()
 
-    val isQuietModeEnabled by rememberIsQuietModeEnabled(userHandle = userHandle)
+    val isQuietModeEnabled by produceIsQuietModeEnabledState(userHandle = userHandle)
 
     Box(modifier = modifier.fillMaxSize()) {
         if (isQuietModeEnabled) {

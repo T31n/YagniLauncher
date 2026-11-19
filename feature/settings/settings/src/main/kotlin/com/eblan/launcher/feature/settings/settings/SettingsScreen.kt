@@ -61,7 +61,7 @@ import com.eblan.launcher.designsystem.theme.EblanShapes
 import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.ui.local.LocalRoleManager
 import com.eblan.launcher.ui.settings.SettingsRowItem
-import com.eblan.launcher.ui.settings.rememberIsDefaultLauncher
+import com.eblan.launcher.ui.settings.produceIsDefaultLauncherState
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -123,7 +123,7 @@ internal fun SettingsScreen(
         }
     }
 
-    val isDefaultLauncher by rememberIsDefaultLauncher()
+    val isDefaultLauncher by produceIsDefaultLauncherState()
 
     BackHandler {
         onFinish()

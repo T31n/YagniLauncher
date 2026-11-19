@@ -35,8 +35,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -66,7 +68,7 @@ import com.eblan.launcher.ui.local.LocalLocaleWrapper
 import com.eblan.launcher.ui.settings.SettingsColumnItem
 import com.eblan.launcher.ui.settings.SettingsDropdownItem
 import com.eblan.launcher.ui.settings.SettingsSwitchItem
-import com.eblan.launcher.ui.settings.rememberIsNotificationAccessGranted
+import com.eblan.launcher.ui.settings.produceIsNotificationAccessGrantedState
 import java.util.Locale
 import com.eblan.launcher.common.R as commonR
 
@@ -162,11 +164,12 @@ private fun Success(
 ) {
     val context = LocalContext.current
     val localeWrapper = LocalLocaleWrapper.current
-    val applicationLanguageTags = remember {
-        listOf("") + localeWrapper.getSupportedLanguageTags()
+    val supportedLanguageTags by produceSupportedLanguageTagsState()
+    val applicationLanguageTags = remember(supportedLanguageTags) {
+        listOf("") + supportedLanguageTags
     }
 
-    val isNotificationAccessGranted by rememberIsNotificationAccessGranted()
+    val isNotificationAccessGranted by produceIsNotificationAccessGrantedState()
 
     var showImportIconPackDialog by remember { mutableStateOf(false) }
     var selectIconPackDialog by remember { mutableStateOf(false) }
@@ -516,5 +519,17 @@ private fun getLanguageLabel(languageTag: String): String {
         }
 
         context.createConfigurationContext(languageConfiguration).getString(R.string.language_name)
+    }
+}
+
+@Composable
+private fun produceSupportedLanguageTagsState(): State<List<String>> {
+    val localeWrapper = LocalLocaleWrapper.current
+
+    return produceState(
+        initialValue = emptyList(),
+        key1 = localeWrapper,
+    ) {
+        value = localeWrapper.getSupportedLanguageTags()
     }
 }

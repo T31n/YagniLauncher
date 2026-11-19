@@ -99,7 +99,7 @@ import com.eblan.launcher.feature.home.util.getVerticalArrangement
 import com.eblan.launcher.feature.home.util.handleEblanAction
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import com.eblan.launcher.ui.local.LocalStatusBarManager
-import com.eblan.launcher.ui.settings.rememberIsNotificationAccessGranted
+import com.eblan.launcher.ui.settings.produceIsNotificationAccessGrantedState
 
 @Composable
 internal fun InteractiveFolderGridItem(
@@ -442,7 +442,7 @@ private fun InteractiveApplicationInfoGridItem(
 
     val alpha = if (hasInteraction) 0f else 1f
 
-    val isNotificationAccessGranted by rememberIsNotificationAccessGranted()
+    val isNotificationAccessGranted by produceIsNotificationAccessGrantedState()
 
     val iconPackFilePath = iconPackFilePaths[data.componentName] ?: data.icon
     val icon = data.icon

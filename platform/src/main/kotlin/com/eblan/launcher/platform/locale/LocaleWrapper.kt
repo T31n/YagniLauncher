@@ -31,5 +31,5 @@ interface LocaleWrapper {
     /**
      * Returns the BCP 47 language tags supported by this app, as declared in res/xml/locales_config.xml.
      */
-    fun getSupportedLanguageTags(): List<String>
+    suspend fun getSupportedLanguageTags(): List<String>
 }

@@ -361,7 +361,7 @@ fun SettingsCategoryText(
 }
 
 @Composable
-fun rememberIsDefaultLauncher(): State<Boolean> {
+fun produceIsDefaultLauncherState(): State<Boolean> {
     val androidRoleManagerWrapper = LocalRoleManager.current
 
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -378,7 +378,7 @@ fun rememberIsDefaultLauncher(): State<Boolean> {
 }
 
 @Composable
-fun rememberIsNotificationAccessGranted(): State<Boolean> {
+fun produceIsNotificationAccessGrantedState(): State<Boolean> {
     val settingsWrapper = LocalSettings.current
 
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -395,7 +395,7 @@ fun rememberIsNotificationAccessGranted(): State<Boolean> {
 }
 
 @Composable
-fun rememberIsAccessibilityServiceEnabled(): State<Boolean> {
+fun produceIsAccessibilityServiceEnabledState(): State<Boolean> {
     val accessibilityManager = LocalAccessibilityManager.current
 
     val lifecycleOwner = LocalLifecycleOwner.current
