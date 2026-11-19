@@ -25,9 +25,7 @@ import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
-import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPack
 import com.eblan.launcher.domain.platform.IconPackManager
-import com.eblan.launcher.domain.platform.PackageManagerWrapper
 import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
 import com.eblan.launcher.domain.usecase.folder.GetFolderEblanApplicationInfoPopupsUseCase
 import com.eblan.launcher.domain.usecase.folder.GetFolderEblanApplicationInfosByIdUseCase
@@ -49,7 +47,6 @@ import javax.inject.Inject
 @HiltViewModel
 internal class EditFolderApplicationInfoViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    packageManagerWrapper: PackageManagerWrapper,
     private val iconPackManager: IconPackManager,
     private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
     private val updateFolderEblanApplicationInfoCustomIconUseCase: UpdateFolderEblanApplicationInfoCustomIconUseCase,
@@ -68,18 +65,6 @@ internal class EditFolderApplicationInfoViewModel @Inject constructor(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = EditFolderApplicationInfoUiState.Loading,
-    )
-
-    private val _packageManagerIconPackInfos =
-        MutableStateFlow(emptyList<PackageManagerIconPack>())
-    val packageManagerIconPackInfos = _packageManagerIconPackInfos.onStart {
-        _packageManagerIconPackInfos.update {
-            packageManagerWrapper.getIconPackInfos()
-        }
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = emptyList(),
     )
 
     private val _iconPackComponents = MutableStateFlow(emptyList<IconPackComponent>())

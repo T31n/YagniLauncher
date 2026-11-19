@@ -48,7 +48,6 @@ import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
-import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPack
 import com.eblan.launcher.feature.editgriditem.dialog.EditFolderLabelDialog
 import com.eblan.launcher.feature.editgriditem.model.EditGridItemUiState
 import com.eblan.launcher.ui.dialog.EditCustomLabelDialog
@@ -68,7 +67,6 @@ internal fun EditGridItemRoute(
     onNavigateUp: () -> Unit,
 ) {
     val editUiState by viewModel.editGridItemUiState.collectAsStateWithLifecycle()
-    val packageManagerIconPackInfos by viewModel.packageManagerIconPackInfos.collectAsStateWithLifecycle()
     val iconPackInfoComponents by viewModel.iconPackInfoComponents.collectAsStateWithLifecycle()
     val eblanApplicationInfos by viewModel.eblanApplicationInfos.collectAsStateWithLifecycle()
 
@@ -77,7 +75,6 @@ internal fun EditGridItemRoute(
         editGridItemUiState = editUiState,
         eblanApplicationInfos = eblanApplicationInfos,
         iconPackComponents = iconPackInfoComponents,
-        packageManagerIconPacks = packageManagerIconPackInfos,
         modifier = modifier,
         // Actions
         onNavigateUp = onNavigateUp,
@@ -97,7 +94,6 @@ internal fun EditGridItemScreen(
     editGridItemUiState: EditGridItemUiState,
     eblanApplicationInfos: List<EblanApplicationInfo>,
     iconPackComponents: List<IconPackComponent>,
-    packageManagerIconPacks: List<PackageManagerIconPack>,
     modifier: Modifier = Modifier,
     // Actions
     onNavigateUp: () -> Unit,
@@ -147,7 +143,6 @@ internal fun EditGridItemScreen(
                     eblanApplicationInfos = eblanApplicationInfos,
                     gridItem = editGridItemUiState.gridItem,
                     iconPackComponents = iconPackComponents,
-                    packageManagerIconPacks = packageManagerIconPacks,
                     // Actions
                     onResetIconPackPackageName = onResetIconPackPackageName,
                     onSearchIconPackComponent = onSearchIconPackInfoComponent,
@@ -167,7 +162,6 @@ private fun Success(
     eblanApplicationInfos: List<EblanApplicationInfo>,
     gridItem: GridItem,
     iconPackComponents: List<IconPackComponent>,
-    packageManagerIconPacks: List<PackageManagerIconPack>,
     // Modifier
     modifier: Modifier = Modifier,
     // Actions
@@ -195,7 +189,6 @@ private fun Success(
                     gridItem = gridItem,
                     data = data,
                     // Icon Packs
-                    packageManagerIconPacks = packageManagerIconPacks,
                     iconPackComponents = iconPackComponents,
                     // Callbacks
                     onUpdateGridItem = onUpdateGridItem,
@@ -214,7 +207,6 @@ private fun Success(
                     data = data,
                     // Icon Packs
                     iconPackComponents = iconPackComponents,
-                    packageManagerIconPacks = packageManagerIconPacks,
                     // Actions
                     onUpdateGridItem = onUpdateGridItem,
                     onResetGridItemCustomIcon = onResetGridItemCustomIcon,
@@ -232,7 +224,6 @@ private fun Success(
                     data = data,
                     // Icon Packs
                     iconPackComponents = iconPackComponents,
-                    packageManagerIconPacks = packageManagerIconPacks,
                     // Actions
                     onResetIconPackPackageName = onResetIconPackPackageName,
                     onSearchIconPackInfoComponent = onSearchIconPackComponent,
@@ -250,7 +241,6 @@ private fun Success(
                     data = data,
                     // Icon Packs
                     iconPackComponents = iconPackComponents,
-                    packageManagerIconPacks = packageManagerIconPacks,
                     // Actions
                     onResetIconPackPackageName = onResetIconPackPackageName,
                     onSearchIconPackInfoComponent = onSearchIconPackComponent,
@@ -306,7 +296,6 @@ private fun EditApplicationInfo(
     gridItem: GridItem,
     data: GridItemData.ApplicationInfo,
     // Icon Packs
-    packageManagerIconPacks: List<PackageManagerIconPack>,
     iconPackComponents: List<IconPackComponent>,
     // Modifier
     modifier: Modifier = Modifier,
@@ -327,7 +316,6 @@ private fun EditApplicationInfo(
         gridItem = gridItem,
         customIcon = data.customIcon,
         iconPackComponents = iconPackComponents,
-        packageManagerIconPacks = packageManagerIconPacks,
         modifier = modifier,
         onResetIconPackPackageName = onResetIconPackPackageName,
         onSearchIconPackInfoComponent = onSearchIconPackComponent,
@@ -381,7 +369,6 @@ private fun EditFolder(
     modifier: Modifier = Modifier,
     // Icon Packs
     iconPackComponents: List<IconPackComponent>,
-    packageManagerIconPacks: List<PackageManagerIconPack>,
     // Actions
     onUpdateGridItem: (GridItem) -> Unit,
     onResetGridItemCustomIcon: (GridItem) -> Unit,
@@ -399,7 +386,6 @@ private fun EditFolder(
         gridItem = gridItem,
         customIcon = data.icon,
         iconPackComponents = iconPackComponents,
-        packageManagerIconPacks = packageManagerIconPacks,
         modifier = modifier,
         onResetIconPackPackageName = onResetIconPackPackageName,
         onSearchIconPackInfoComponent = onSearchIconPackInfoComponent,
@@ -449,7 +435,6 @@ private fun EditShortcutInfo(
     data: GridItemData.ShortcutInfo,
     // Icon Packs
     iconPackComponents: List<IconPackComponent>,
-    packageManagerIconPacks: List<PackageManagerIconPack>,
     // Layout
     modifier: Modifier = Modifier,
     // Actions
@@ -469,7 +454,6 @@ private fun EditShortcutInfo(
         gridItem = gridItem,
         customIcon = data.customIcon,
         iconPackComponents = iconPackComponents,
-        packageManagerIconPacks = packageManagerIconPacks,
         modifier = modifier,
         onResetIconPackPackageName = onResetIconPackPackageName,
         onSearchIconPackInfoComponent = onSearchIconPackInfoComponent,
@@ -522,7 +506,6 @@ private fun EditShortcutConfig(
     data: GridItemData.ShortcutConfig,
     // Icon Packs
     iconPackComponents: List<IconPackComponent>,
-    packageManagerIconPacks: List<PackageManagerIconPack>,
     // Modifier
     modifier: Modifier = Modifier,
     // Actions
@@ -542,7 +525,6 @@ private fun EditShortcutConfig(
         gridItem = gridItem,
         customIcon = data.customIcon,
         iconPackComponents = iconPackComponents,
-        packageManagerIconPacks = packageManagerIconPacks,
         modifier = modifier,
         onResetIconPackPackageName = onResetIconPackPackageName,
         onSearchIconPackInfoComponent = onSearchIconPackInfoComponent,
@@ -593,7 +575,6 @@ private fun EditCustomIcon(
     gridItem: GridItem,
     customIcon: String?,
     iconPackComponents: List<IconPackComponent>,
-    packageManagerIconPacks: List<PackageManagerIconPack>,
     modifier: Modifier = Modifier,
     onResetIconPackPackageName: () -> Unit,
     onSearchIconPackInfoComponent: (String) -> Unit,
@@ -613,7 +594,6 @@ private fun EditCustomIcon(
     CustomIcon(
         customIcon = customIcon,
         shape = EblanShapes.first,
-        packageManagerIconPacks = packageManagerIconPacks,
         modifier = modifier,
         onUpdateIconPackPackageName = { packageName, label ->
             iconPackPackageName = packageName

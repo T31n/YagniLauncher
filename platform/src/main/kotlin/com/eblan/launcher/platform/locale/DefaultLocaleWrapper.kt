@@ -44,19 +44,17 @@ internal class DefaultLocaleWrapper @Inject constructor(
         AppCompatDelegate.setApplicationLocales(applicationLocales)
     }
 
-    override suspend fun getSupportedLanguageTags(): List<String> {
-        return withContext(ioDispatcher) {
-            buildList {
-                context.resources.getXml(R.xml.locales_config).use { xmlResourceParser ->
-                    while (xmlResourceParser.next() != XmlPullParser.END_DOCUMENT) {
-                        if (xmlResourceParser.eventType == XmlPullParser.START_TAG && xmlResourceParser.name == "locale") {
-                            add(
-                                xmlResourceParser.getAttributeValue(
-                                    "http://schemas.android.com/apk/res/android",
-                                    "name",
-                                ),
-                            )
-                        }
+    override suspend fun getSupportedLanguageTags(): List<String> = withContext(ioDispatcher) {
+        buildList {
+            context.resources.getXml(R.xml.locales_config).use { xmlResourceParser ->
+                while (xmlResourceParser.next() != XmlPullParser.END_DOCUMENT) {
+                    if (xmlResourceParser.eventType == XmlPullParser.START_TAG && xmlResourceParser.name == "locale") {
+                        add(
+                            xmlResourceParser.getAttributeValue(
+                                "http://schemas.android.com/apk/res/android",
+                                "name",
+                            ),
+                        )
                     }
                 }
             }

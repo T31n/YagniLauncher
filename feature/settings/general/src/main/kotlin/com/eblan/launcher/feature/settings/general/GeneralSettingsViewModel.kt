@@ -20,19 +20,14 @@ package com.eblan.launcher.feature.settings.general
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eblan.launcher.domain.model.iconpackinfo.EblanIconPackInfo
-import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPack
 import com.eblan.launcher.domain.model.userdata.GeneralSettings
-import com.eblan.launcher.domain.platform.PackageManagerWrapper
 import com.eblan.launcher.domain.repository.EblanIconPackInfoRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.feature.settings.general.model.GeneralSettingsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -40,7 +35,6 @@ import javax.inject.Inject
 internal class GeneralSettingsViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository,
     private val eblanIconPackInfoRepository: EblanIconPackInfoRepository,
-    packageManagerWrapper: PackageManagerWrapper,
 ) : ViewModel() {
     val generalSettingsUiState = userDataRepository.userDataFlow.map { userData ->
         GeneralSettingsUiState.Success(generalSettings = userData.generalSettings)
@@ -48,19 +42,6 @@ internal class GeneralSettingsViewModel @Inject constructor(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = GeneralSettingsUiState.Loading,
-    )
-
-    private val _packageManagerIconPacks =
-        MutableStateFlow(emptyList<PackageManagerIconPack>())
-
-    val packageManagerIconPackInfos = _packageManagerIconPacks.onStart {
-        _packageManagerIconPacks.update {
-            packageManagerWrapper.getIconPackInfos()
-        }
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = emptyList(),
     )
 
     val eblanIconPacks = eblanIconPackInfoRepository.eblanIconPacksFlow.stateIn(

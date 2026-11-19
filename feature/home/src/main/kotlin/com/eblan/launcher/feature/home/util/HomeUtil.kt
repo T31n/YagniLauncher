@@ -35,10 +35,10 @@ import com.eblan.launcher.domain.model.grid.HorizontalAlignment
 import com.eblan.launcher.domain.model.grid.HorizontalArrangement
 import com.eblan.launcher.domain.model.grid.VerticalAlignment
 import com.eblan.launcher.domain.model.grid.VerticalArrangement
-import com.eblan.launcher.domain.model.home.GlobalAction
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.platform.launcherapps.AndroidLauncherAppsWrapper
+import com.eblan.launcher.platform.model.GlobalAction
 import com.eblan.launcher.platform.statusbarmanager.AndroidStatusBarManagerWrapper
 import com.eblan.launcher.platform.usermanager.AndroidUserManagerWrapper
 import com.eblan.launcher.platform.widgetmanager.AndroidAppWidgetManagerWrapper

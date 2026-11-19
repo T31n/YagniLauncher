@@ -25,9 +25,7 @@ import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
-import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPack
 import com.eblan.launcher.domain.platform.IconPackManager
-import com.eblan.launcher.domain.platform.PackageManagerWrapper
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.usecase.application.GetEblanApplicationInfosUseCase
 import com.eblan.launcher.domain.usecase.grid.DeleteGridItemCustomIconUseCase
@@ -51,7 +49,6 @@ import javax.inject.Inject
 internal class EditGridItemViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val iconPackManager: IconPackManager,
-    packageManagerWrapper: PackageManagerWrapper,
     private val gridRepository: GridRepository,
     getEblanApplicationInfosUseCase: GetEblanApplicationInfosUseCase,
     private val updateGridItemCustomIconUseCase: UpdateGridItemCustomIconUseCase,
@@ -70,19 +67,6 @@ internal class EditGridItemViewModel @Inject constructor(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = EditGridItemUiState.Loading,
-    )
-
-    private val _packageManagerIconPackInfos =
-        MutableStateFlow(emptyList<PackageManagerIconPack>())
-
-    val packageManagerIconPackInfos = _packageManagerIconPackInfos.onStart {
-        _packageManagerIconPackInfos.update {
-            packageManagerWrapper.getIconPackInfos()
-        }
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = emptyList(),
     )
 
     val eblanApplicationInfos = getEblanApplicationInfosUseCase().stateIn(

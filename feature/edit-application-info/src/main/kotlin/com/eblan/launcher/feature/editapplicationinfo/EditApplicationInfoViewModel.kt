@@ -28,9 +28,7 @@ import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTagCrossRef
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
-import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPack
 import com.eblan.launcher.domain.platform.IconPackManager
-import com.eblan.launcher.domain.platform.PackageManagerWrapper
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoTagCrossRefRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoTagRepository
@@ -57,7 +55,6 @@ import javax.inject.Inject
 internal class EditApplicationInfoViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
-    packageManagerWrapper: PackageManagerWrapper,
     private val iconPackManager: IconPackManager,
     getEblanApplicationInfosTagsUiUseCase: GetEblanApplicationInfosTagsUiUseCase,
     private val eblanApplicationInfoTagRepository: EblanApplicationInfoTagRepository,
@@ -79,18 +76,6 @@ internal class EditApplicationInfoViewModel @Inject constructor(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = EditApplicationInfoUiState.Loading,
-    )
-
-    private val _packageManagerIconPackInfos =
-        MutableStateFlow(emptyList<PackageManagerIconPack>())
-    val packageManagerIconPackInfos = _packageManagerIconPackInfos.onStart {
-        _packageManagerIconPackInfos.update {
-            packageManagerWrapper.getIconPackInfos()
-        }
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = emptyList(),
     )
 
     private val _iconPackComponents = MutableStateFlow(emptyList<IconPackComponent>())

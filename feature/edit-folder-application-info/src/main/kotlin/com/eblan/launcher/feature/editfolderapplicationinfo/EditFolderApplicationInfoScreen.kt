@@ -54,7 +54,6 @@ import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
-import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPack
 import com.eblan.launcher.feature.editfolderapplicationinfo.dialog.EditFolderLabelDialog
 import com.eblan.launcher.feature.editfolderapplicationinfo.model.EditFolderApplicationInfoUiState
 import com.eblan.launcher.ui.dialog.AddFolderDialog
@@ -71,7 +70,6 @@ internal fun EditFolderApplicationInfoRoute(
     onNavigateUp: () -> Unit,
 ) {
     val editFolderApplicationInfoUiState by viewModel.editFolderApplicationInfoUiState.collectAsStateWithLifecycle()
-    val packageManagerIconPackInfos by viewModel.packageManagerIconPackInfos.collectAsStateWithLifecycle()
     val iconPackInfoComponents by viewModel.iconPackInfoComponents.collectAsStateWithLifecycle()
     val folderEblanApplicationInfos by viewModel.folderEblanApplicationInfos.collectAsStateWithLifecycle()
     val folderEblanApplicationInfoPopups by viewModel.folderEblanApplicationInfoPopups.collectAsStateWithLifecycle()
@@ -81,7 +79,6 @@ internal fun EditFolderApplicationInfoRoute(
         editFolderApplicationInfoUiState = editFolderApplicationInfoUiState,
         // Data
         iconPackComponents = iconPackInfoComponents,
-        packageManagerIconPacks = packageManagerIconPackInfos,
         folderEblanApplicationInfos = folderEblanApplicationInfos,
         folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
         // Layout
@@ -104,7 +101,6 @@ internal fun EditFolderApplicationInfoScreen(
     editFolderApplicationInfoUiState: EditFolderApplicationInfoUiState,
     // Data
     iconPackComponents: List<IconPackComponent>,
-    packageManagerIconPacks: List<PackageManagerIconPack>,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     // Layout
@@ -157,7 +153,6 @@ internal fun EditFolderApplicationInfoScreen(
                     folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                     // Icon Packs
                     iconPackComponents = iconPackComponents,
-                    packageManagerIconPacks = packageManagerIconPacks,
                     // Callbacks
                     onUpdateIconPackPackageName = onUpdateIconPackPackageName,
                     onUpdateFolderEblanApplicationInfoCustomIcon = onUpdateFolderEblanApplicationInfoCustomIcon,
@@ -180,7 +175,6 @@ internal fun Success(
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     // Icon Packs
     iconPackComponents: List<IconPackComponent>,
-    packageManagerIconPacks: List<PackageManagerIconPack>,
     // Modifier
     modifier: Modifier = Modifier,
     // Callbacks
@@ -223,7 +217,6 @@ internal fun Success(
         CustomIcon(
             customIcon = folderEblanApplicationInfo.icon,
             shape = EblanShapes.first,
-            packageManagerIconPacks = packageManagerIconPacks,
             onUpdateIconPackPackageName = { packageName, label ->
                 iconPackPackageName = packageName
                 iconPackInfoLabel = label

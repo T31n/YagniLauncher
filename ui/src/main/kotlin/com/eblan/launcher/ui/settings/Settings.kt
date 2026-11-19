@@ -34,6 +34,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -64,10 +65,11 @@ import coil3.compose.AsyncImage
 import com.eblan.launcher.designsystem.component.VerticalSlideReveal
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.designsystem.theme.EblanSpacing
-import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPack
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
+import com.eblan.launcher.platform.model.PackageManagerIconPack
 import com.eblan.launcher.ui.R
 import com.eblan.launcher.ui.local.LocalAccessibilityManager
+import com.eblan.launcher.ui.local.LocalPackageManager
 import com.eblan.launcher.ui.local.LocalRoleManager
 import com.eblan.launcher.ui.local.LocalSettings
 import com.eblan.launcher.common.R as commonR
@@ -412,11 +414,22 @@ fun produceIsAccessibilityServiceEnabledState(): State<Boolean> {
 }
 
 @Composable
+fun produceIconPackInfosState(): State<List<PackageManagerIconPack>?> {
+    val packageManager = LocalPackageManager.current
+
+    return produceState(
+        initialValue = null,
+        key1 = packageManager,
+    ) {
+        value = packageManager.getIconPackInfos()
+    }
+}
+
+@Composable
 fun CustomIcon(
     // Icon Data
     customIcon: String?,
     shape: Shape,
-    packageManagerIconPacks: List<PackageManagerIconPack>,
     // Layout
     modifier: Modifier = Modifier,
     // Callbacks
@@ -428,6 +441,8 @@ fun CustomIcon(
     onResetCustomIcon: () -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
+
+    val packageManagerIconPacks by produceIconPackInfosState()
 
     val context = LocalContext.current
 
@@ -505,20 +520,30 @@ fun CustomIcon(
                         },
                     )
 
-                    packageManagerIconPacks.forEach { packageManagerIconPackInfo ->
-                        IconPackItem(
-                            // Item Data
-                            icon = packageManagerIconPackInfo.icon,
-                            label = packageManagerIconPackInfo.label,
-                            packageName = packageManagerIconPackInfo.packageName,
-                            // Action
-                            onClick = {
-                                onUpdateIconPackPackageName(
-                                    packageManagerIconPackInfo.packageName,
-                                    packageManagerIconPackInfo.label,
-                                )
-                            },
+                    val iconPacks = packageManagerIconPacks
+
+                    if (iconPacks == null) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(EblanSpacing.medium),
                         )
+                    } else {
+                        iconPacks.forEach { packageManagerIconPackInfo ->
+                            IconPackItem(
+                                // Item Data
+                                icon = packageManagerIconPackInfo.icon,
+                                label = packageManagerIconPackInfo.label,
+                                packageName = packageManagerIconPackInfo.packageName,
+                                // Action
+                                onClick = {
+                                    onUpdateIconPackPackageName(
+                                        packageManagerIconPackInfo.packageName,
+                                        packageManagerIconPackInfo.label,
+                                    )
+                                },
+                            )
+                        }
                     }
 
                     if (customIcon != null) {

@@ -52,7 +52,6 @@ import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.designsystem.theme.EblanShapes
 import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.domain.model.iconpackinfo.EblanIconPackInfo
-import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPack
 import com.eblan.launcher.domain.model.userdata.ColorSchemeContrastPreset
 import com.eblan.launcher.domain.model.userdata.ColorSchemePaletteStyle
 import com.eblan.launcher.domain.model.userdata.ColorSource
@@ -79,7 +78,6 @@ internal fun GeneralSettingsRoute(
     onNavigateUp: () -> Unit,
 ) {
     val generalSettingsUiState by viewModel.generalSettingsUiState.collectAsStateWithLifecycle()
-    val packageManagerIconPackInfos by viewModel.packageManagerIconPackInfos.collectAsStateWithLifecycle()
     val eblanIconPackInfos by viewModel.eblanIconPacks.collectAsStateWithLifecycle()
 
     GeneralSettingsScreen(
@@ -87,7 +85,6 @@ internal fun GeneralSettingsRoute(
         generalSettingsUiState = generalSettingsUiState,
         // Content
         eblanIconPackInfos = eblanIconPackInfos,
-        packageManagerIconPacks = packageManagerIconPackInfos,
         modifier = modifier,
         // Actions
         onDeleteEblanIconPackInfo = viewModel::deleteIconPackInfo,
@@ -103,7 +100,6 @@ internal fun GeneralSettingsScreen(
     generalSettingsUiState: GeneralSettingsUiState,
     // Content
     eblanIconPackInfos: List<EblanIconPackInfo>,
-    packageManagerIconPacks: List<PackageManagerIconPack>,
     modifier: Modifier = Modifier,
     // Actions
     onDeleteEblanIconPackInfo: (EblanIconPackInfo) -> Unit,
@@ -137,7 +133,6 @@ internal fun GeneralSettingsScreen(
                 Success(
                     // Icon Packs
                     eblanIconPackInfos = eblanIconPackInfos,
-                    packageManagerIconPacks = packageManagerIconPacks,
                     // Settings
                     generalSettings = generalSettingsUiState.generalSettings,
                     // Callbacks
@@ -153,7 +148,6 @@ internal fun GeneralSettingsScreen(
 private fun Success(
     // Icon Packs
     eblanIconPackInfos: List<EblanIconPackInfo>,
-    packageManagerIconPacks: List<PackageManagerIconPack>,
     // Settings
     generalSettings: GeneralSettings,
     // UI
@@ -395,8 +389,6 @@ private fun Success(
 
     if (showImportIconPackDialog) {
         ImportIconPackInfoDialog(
-            // Data
-            packageManagerIconPacks = packageManagerIconPacks,
             // Actions
             onDismissRequest = {
                 showImportIconPackDialog = false

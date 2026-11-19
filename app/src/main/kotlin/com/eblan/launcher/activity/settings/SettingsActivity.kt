@@ -38,8 +38,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.eblan.launcher.activity.main.MainActivity
 import com.eblan.launcher.designsystem.theme.getDefaultColorScheme
-import com.eblan.launcher.domain.model.userdata.ApplicationTheme
 import com.eblan.launcher.domain.model.userdata.GeneralSettings
+import com.eblan.launcher.model.ApplicationTheme
 import com.eblan.launcher.navigation.SettingsNavHost
 import com.eblan.launcher.platform.accessibilitymanager.AndroidAccessibilityManagerWrapper
 import com.eblan.launcher.platform.colorscheme.MaterialColorSchemeResolver

@@ -15,7 +15,7 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.domain.model.iconpackinfo
+package com.eblan.launcher.platform.model
 
 data class PackageManagerIconPack(
     val packageName: String,

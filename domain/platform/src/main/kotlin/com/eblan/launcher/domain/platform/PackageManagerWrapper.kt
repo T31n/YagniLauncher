@@ -17,7 +17,6 @@
  */
 package com.eblan.launcher.domain.platform
 
-import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPack
 import java.io.File
 
 interface PackageManagerWrapper {
@@ -33,8 +32,6 @@ interface PackageManagerWrapper {
         packageName: String,
         serialNumber: Long,
     ): String?
-
-    suspend fun getIconPackInfos(): List<PackageManagerIconPack>
 
     fun isSystem(flags: Int): Boolean
 }

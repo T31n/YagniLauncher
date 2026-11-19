@@ -47,10 +47,10 @@ import com.eblan.launcher.activity.main.MainActivity
 import com.eblan.launcher.designsystem.theme.getDefaultColorScheme
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
-import com.eblan.launcher.domain.model.userdata.ApplicationTheme
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.feature.action.ActionScreen
+import com.eblan.launcher.model.ApplicationTheme
 import com.eblan.launcher.platform.accessibilitymanager.AndroidAccessibilityManagerWrapper
 import com.eblan.launcher.platform.colorscheme.MaterialColorSchemeResolver
 import com.eblan.launcher.platform.wallpapermanager.AndroidWallpaperManagerWrapper

@@ -15,11 +15,17 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.domain.model.userdata
+package com.eblan.launcher.platform.model
 
-data class ApplicationTheme(
-    val theme: Theme,
-    val systemBarsTheme: Theme,
-    val colorSource: ColorSource,
-    val customSeedColor: Int,
-)
+enum class GlobalAction {
+    Notifications,
+    QuickSettings,
+    LockScreen,
+    Recents,
+    ;
+
+    companion object {
+        const val NAME = "GlobalAction"
+        const val GLOBAL_ACTION_TYPE = "GlobalActionType"
+    }
+}

@@ -19,11 +19,14 @@ package com.eblan.launcher.platform.packagemanager
 
 import android.graphics.drawable.Drawable
 import android.os.UserHandle
+import com.eblan.launcher.platform.model.PackageManagerIconPack
 
 interface AndroidPackageManagerWrapper {
     suspend fun getUserBadgedLabel(label: CharSequence, userHandle: UserHandle): CharSequence
 
     suspend fun getUserBadgedIcon(drawable: Drawable, userHandle: UserHandle): Drawable?
+
+    suspend fun getIconPackInfos(): List<PackageManagerIconPack>
 
     fun isUserInstalled(flags: Int): Boolean
 }

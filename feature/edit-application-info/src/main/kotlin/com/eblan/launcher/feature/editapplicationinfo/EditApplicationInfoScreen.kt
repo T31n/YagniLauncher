@@ -61,7 +61,6 @@ import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
-import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPack
 import com.eblan.launcher.feature.editapplicationinfo.R.string.hide_from_drawer
 import com.eblan.launcher.feature.editapplicationinfo.R.string.view_hidden_apps_in_app_drawer_settings
 import com.eblan.launcher.feature.editapplicationinfo.dialog.AddTagDialog
@@ -83,7 +82,6 @@ internal fun EditApplicationInfoRoute(
     onNavigateUp: () -> Unit,
 ) {
     val editApplicationInfoUiState by viewModel.editApplicationInfoUiState.collectAsStateWithLifecycle()
-    val packageManagerIconPackInfos by viewModel.packageManagerIconPackInfos.collectAsStateWithLifecycle()
     val iconPackInfoComponents by viewModel.iconPackInfoComponents.collectAsStateWithLifecycle()
     val eblanApplicationInfoTagsUi by viewModel.eblanApplicationInfoTagsUi.collectAsStateWithLifecycle()
     val folderEblanApplicationInfos by viewModel.folderEblanApplicationInfos.collectAsStateWithLifecycle()
@@ -98,7 +96,6 @@ internal fun EditApplicationInfoRoute(
         topLevelFolderEblanApplicationInfos = topLevelFolderEblanApplicationInfos,
         folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
         iconPackComponents = iconPackInfoComponents,
-        packageManagerIconPacks = packageManagerIconPackInfos,
         // Modifier
         modifier = modifier,
         // Callbacks
@@ -127,7 +124,6 @@ internal fun EditApplicationInfoScreen(
     topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     iconPackComponents: List<IconPackComponent>,
-    packageManagerIconPacks: List<PackageManagerIconPack>,
     // Modifier
     modifier: Modifier = Modifier,
     // Callbacks
@@ -184,7 +180,6 @@ internal fun EditApplicationInfoScreen(
                     topLevelFolderEblanApplicationInfos = topLevelFolderEblanApplicationInfos,
                     // Icon Pack
                     iconPackComponents = iconPackComponents,
-                    packageManagerIconPacks = packageManagerIconPacks,
                     // Callbacks
                     onAddEblanApplicationInfoCrossRef = onAddEblanApplicationInfoCrossRef,
                     onAddEblanApplicationInfoTag = onAddEblanApplicationInfoTag,
@@ -213,7 +208,6 @@ private fun Success(
     topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     // Icon Pack
     iconPackComponents: List<IconPackComponent>,
-    packageManagerIconPacks: List<PackageManagerIconPack>,
     // Modifier
     modifier: Modifier = Modifier,
     // Callbacks
@@ -275,7 +269,6 @@ private fun Success(
         CustomIcon(
             customIcon = eblanApplicationInfo.customIcon,
             shape = EblanShapes.first,
-            packageManagerIconPacks = packageManagerIconPacks,
             onUpdateIconPackPackageName = { packageName, label ->
                 iconPackPackageName = packageName
                 iconPackInfoLabel = label
