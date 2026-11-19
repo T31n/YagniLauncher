@@ -42,6 +42,8 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.component.VerticalSlideReveal
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
+import com.eblan.launcher.designsystem.theme.EblanShapes
+import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
@@ -57,9 +59,6 @@ import com.eblan.launcher.ui.settings.GridItemSettings
 import com.eblan.launcher.ui.settings.SettingsCategoryText
 import com.eblan.launcher.ui.settings.SettingsColumnItem
 import com.eblan.launcher.ui.settings.SettingsSwitchItem
-import com.eblan.launcher.ui.settings.settingsFirstItemShape
-import com.eblan.launcher.ui.settings.settingsLastItemShape
-import com.eblan.launcher.ui.settings.settingsMiddleItemShape
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -186,7 +185,7 @@ private fun Success(
         modifier = modifier
             .verticalScroll(rememberScrollState())
             .fillMaxSize()
-            .padding(15.dp),
+            .padding(EblanSpacing.large),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         when (val data = gridItem.data) {
@@ -343,7 +342,7 @@ private fun EditApplicationInfo(
         title = stringResource(commonR.string.custom_label),
         subtitle = data.customLabel ?: stringResource(commonR.string.none),
         // Layout
-        shape = settingsMiddleItemShape,
+        shape = EblanShapes.middle,
         modifier = modifier,
         // Actions
         onClick = {
@@ -415,7 +414,7 @@ private fun EditFolder(
         title = stringResource(commonR.string.edit_label),
         subtitle = data.label,
         // Layout
-        shape = settingsMiddleItemShape,
+        shape = EblanShapes.middle,
         modifier = modifier,
         // Actions
         onClick = {
@@ -485,7 +484,7 @@ private fun EditShortcutInfo(
         title = stringResource(R.string.custom_short_label),
         subtitle = data.customShortLabel ?: stringResource(commonR.string.none),
         // Layout
-        shape = settingsMiddleItemShape,
+        shape = EblanShapes.middle,
         modifier = modifier,
         // Actions
         onClick = {
@@ -558,7 +557,7 @@ private fun EditShortcutConfig(
         title = stringResource(commonR.string.custom_label),
         subtitle = data.customLabel ?: stringResource(commonR.string.none),
         // Layout
-        shape = settingsMiddleItemShape,
+        shape = EblanShapes.middle,
         modifier = modifier,
         // Actions
         onClick = {
@@ -613,7 +612,7 @@ private fun EditCustomIcon(
 
     CustomIcon(
         customIcon = customIcon,
-        shape = settingsFirstItemShape,
+        shape = EblanShapes.first,
         packageManagerIconPacks = packageManagerIconPacks,
         modifier = modifier,
         onUpdateIconPackPackageName = { packageName, label ->
@@ -670,7 +669,7 @@ private fun EditOverrideSwitch(
         // State
         checked = gridItem.override,
         // Appearance
-        shape = settingsLastItemShape,
+        shape = EblanShapes.last,
         modifier = modifier,
         // Callbacks
         onCheckedChange = {

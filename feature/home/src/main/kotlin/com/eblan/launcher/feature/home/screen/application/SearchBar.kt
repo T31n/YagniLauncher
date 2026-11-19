@@ -38,8 +38,8 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
+import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.util.getApplicationScreenTextColor
@@ -79,7 +79,11 @@ internal fun ApplicationSearchBar(
         state = searchBarState,
         modifier = modifier
             .fillMaxWidth()
-            .padding(10.dp),
+            .padding(
+                start = EblanSpacing.medium,
+                end = EblanSpacing.medium,
+                bottom = EblanSpacing.small,
+            ),
         colors = searchBarColors,
         inputField = {
             SearchBarDefaults.InputField(

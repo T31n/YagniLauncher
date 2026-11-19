@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.eblan.launcher.designsystem.component.EblanDialog
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
+import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
 import com.eblan.launcher.domain.platform.FileManager
 import com.eblan.launcher.ui.local.LocalFileManager
@@ -141,7 +142,7 @@ fun IconPackInfoFilesDialog(
                 CircularProgressIndicator(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(10.dp),
+                        .padding(EblanSpacing.medium),
                 )
             }
 
@@ -168,6 +169,7 @@ fun IconPackInfoFilesDialog(
                             model = drawable,
                             contentDescription = null,
                             modifier = Modifier
+                                .size(48.dp)
                                 .clickable {
                                     scope.launch {
                                         val icon = drawable?.let { currentDrawable ->
@@ -195,8 +197,7 @@ fun IconPackInfoFilesDialog(
                                         onDismissRequest()
                                     }
                                 }
-                                .size(40.dp)
-                                .padding(2.dp),
+                                .padding(EblanSpacing.extraSmall),
                         )
                     }
                 }

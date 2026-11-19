@@ -57,12 +57,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
+import com.eblan.launcher.designsystem.theme.EblanShapes
+import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.ui.local.LocalRoleManager
 import com.eblan.launcher.ui.settings.SettingsRowItem
 import com.eblan.launcher.ui.settings.rememberIsDefaultLauncher
-import com.eblan.launcher.ui.settings.settingsFirstItemShape
-import com.eblan.launcher.ui.settings.settingsLastItemShape
-import com.eblan.launcher.ui.settings.settingsMiddleItemShape
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -156,13 +155,13 @@ internal fun SettingsScreen(
             Column(
                 modifier = Modifier
                     .verticalScroll(rememberScrollState())
-                    .matchParentSize()
-                    .padding(15.dp),
+                    .fillMaxSize()
+                    .padding(EblanSpacing.large),
                 verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
                 AlphaWarningCard()
 
-                Spacer(modifier = Modifier.height(5.dp))
+                Spacer(modifier = Modifier.height(EblanSpacing.small))
 
                 if (!isDefaultLauncher) {
                     SettingsRowItem(
@@ -171,7 +170,7 @@ internal fun SettingsScreen(
                         subtitle = stringResource(R.string.choose_yagni_launcher),
                         imageVector = EblanLauncherIcons.Info,
                         // Appearance
-                        shape = settingsFirstItemShape,
+                        shape = EblanShapes.first,
                         // Action
                         onClick = {
                             if (shouldOpenHomeSettingsOnNextClick ||
@@ -193,7 +192,7 @@ internal fun SettingsScreen(
                     subtitle = stringResource(R.string.themes_icon_packs),
                     imageVector = EblanLauncherIcons.Settings,
                     // Appearance
-                    shape = if (!isDefaultLauncher) settingsMiddleItemShape else settingsFirstItemShape,
+                    shape = if (!isDefaultLauncher) EblanShapes.middle else EblanShapes.first,
                     // Action
                     onClick = onGeneral,
                 )
@@ -204,7 +203,7 @@ internal fun SettingsScreen(
                     subtitle = stringResource(R.string.grid_icon_dock_and_more),
                     imageVector = EblanLauncherIcons.Home,
                     // Appearance
-                    shape = settingsMiddleItemShape,
+                    shape = EblanShapes.middle,
                     // Action
                     onClick = onHome,
                 )
@@ -215,7 +214,7 @@ internal fun SettingsScreen(
                     subtitle = stringResource(R.string.corner_radius_background_color_and_more),
                     imageVector = EblanLauncherIcons.Folder,
                     // Appearance
-                    shape = settingsMiddleItemShape,
+                    shape = EblanShapes.middle,
                     // Action
                     onClick = onFolder,
                 )
@@ -226,7 +225,7 @@ internal fun SettingsScreen(
                     subtitle = stringResource(R.string.columns_and_rows_count),
                     imageVector = EblanLauncherIcons.Apps,
                     // Appearance
-                    shape = settingsMiddleItemShape,
+                    shape = EblanShapes.middle,
                     // Action
                     onClick = onAppDrawer,
                 )
@@ -237,7 +236,7 @@ internal fun SettingsScreen(
                     subtitle = stringResource(R.string.swipe_gesture_actions),
                     imageVector = EblanLauncherIcons.Gesture,
                     // Appearance
-                    shape = settingsMiddleItemShape,
+                    shape = EblanShapes.middle,
                     // Action
                     onClick = onGestures,
                 )
@@ -248,7 +247,7 @@ internal fun SettingsScreen(
                     subtitle = stringResource(R.string.clean_up_unused_icons_and_previews),
                     imageVector = EblanLauncherIcons.Storage,
                     // Appearance
-                    shape = settingsMiddleItemShape,
+                    shape = EblanShapes.middle,
                     // Action
                     onClick = onCache,
                 )
@@ -259,7 +258,7 @@ internal fun SettingsScreen(
                     subtitle = stringResource(R.string.advanced_options_for_power_users),
                     imageVector = EblanLauncherIcons.DeveloperMode,
                     // Appearance
-                    shape = settingsLastItemShape,
+                    shape = EblanShapes.last,
                     // Action
                     onClick = onExperimental,
                 )
@@ -279,9 +278,9 @@ private fun AlphaWarningCard(modifier: Modifier = Modifier) {
     ElevatedCard(modifier = modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier
-                .padding(20.dp)
+                .padding(EblanSpacing.extraLarge)
                 .fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(20.dp),
+            verticalArrangement = Arrangement.spacedBy(EblanSpacing.large),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(

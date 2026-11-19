@@ -41,6 +41,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
+import com.eblan.launcher.designsystem.theme.EblanShapes
+import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.FolderSettings
 import com.eblan.launcher.feature.settings.folder.dialog.EditFolderCellDimensionDialog
@@ -52,9 +54,6 @@ import com.eblan.launcher.ui.dialog.EditCornerRadiusDialog
 import com.eblan.launcher.ui.settings.SettingsColumnItem
 import com.eblan.launcher.ui.settings.SettingsDropdownItem
 import com.eblan.launcher.ui.settings.getTitle
-import com.eblan.launcher.ui.settings.settingsFirstItemShape
-import com.eblan.launcher.ui.settings.settingsLastItemShape
-import com.eblan.launcher.ui.settings.settingsMiddleItemShape
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -136,7 +135,7 @@ private fun Success(
         modifier = modifier
             .verticalScroll(rememberScrollState())
             .fillMaxSize()
-            .padding(15.dp),
+            .padding(EblanSpacing.large),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         SettingsColumnItem(
@@ -144,7 +143,7 @@ private fun Success(
             title = stringResource(R.string.folder_cell_dimension),
             subtitle = "${folderSettings.folderCellWidth}x${folderSettings.folderCellHeight}",
             // Layout
-            shape = settingsFirstItemShape,
+            shape = EblanShapes.first,
             // Actions
             onClick = {
                 showFolderCellDimensionDialog = true
@@ -156,7 +155,7 @@ private fun Success(
             title = stringResource(R.string.folder_max_grid),
             subtitle = "${folderSettings.maxFolderColumns}x${folderSettings.maxFolderRows}",
             // Layout
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Actions
             onClick = {
                 showFolderMaxGridDialog = true
@@ -168,7 +167,7 @@ private fun Success(
             title = stringResource(R.string.folder_corner_radius),
             subtitle = "${folderSettings.folderCornerRadius}",
             // Layout
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Actions
             onClick = {
                 showFolderCornerRadiusGridDialog = true
@@ -184,7 +183,7 @@ private fun Success(
                 it.getTitle()
             },
             // Layout
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Actions
             onSelectedChange = {
                 if (it == BackgroundColor.Custom) {
@@ -207,9 +206,9 @@ private fun Success(
             },
             // Layout
             shape = if (folderSettings.folderBorderColor == BackgroundColor.System) {
-                settingsLastItemShape
+                EblanShapes.last
             } else {
-                settingsMiddleItemShape
+                EblanShapes.middle
             },
             // Actions
             onSelectedChange = {
@@ -229,7 +228,7 @@ private fun Success(
                 title = stringResource(R.string.folder_border_width),
                 subtitle = "${folderSettings.borderWidth}",
                 // Layout
-                shape = settingsLastItemShape,
+                shape = EblanShapes.last,
                 // Actions
                 onClick = {
                     showFolderBorderWidthDialog = true

@@ -35,8 +35,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.component.EblanDialog
+import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.feature.settings.appdrawer.R
 import com.eblan.launcher.ui.lazylist.DraggableColumnItem
@@ -95,22 +95,21 @@ internal fun ManageFoldersDialog(
                             fill = false,
                         ),
                     state = lazyListState,
+                    verticalArrangement = Arrangement.spacedBy(EblanSpacing.extraSmall),
                 ) {
                     itemsIndexed(
                         items = currentFolderEblanApplicationInfos,
                         key = { _, folderEblanApplicationInfo -> folderEblanApplicationInfo.id },
                     ) { index, folderEblanApplicationInfo ->
                         DraggableColumnItem(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp),
+                            modifier = Modifier.fillMaxWidth(),
                             lazyColumnDragDropState = lazyColumnDragDropState,
                             index = index,
                         ) {
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(13.dp),
+                                    .padding(EblanSpacing.medium),
                             ) {
                                 Text(
                                     text = folderEblanApplicationInfo.label,

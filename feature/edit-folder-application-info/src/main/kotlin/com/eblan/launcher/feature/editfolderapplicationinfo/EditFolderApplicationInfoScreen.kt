@@ -48,6 +48,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
+import com.eblan.launcher.designsystem.theme.EblanShapes
+import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
@@ -60,8 +62,6 @@ import com.eblan.launcher.ui.dialog.IconPackInfoFilesDialog
 import com.eblan.launcher.ui.settings.CustomIcon
 import com.eblan.launcher.ui.settings.SettingsCategoryText
 import com.eblan.launcher.ui.settings.SettingsColumnItem
-import com.eblan.launcher.ui.settings.settingsFirstItemShape
-import com.eblan.launcher.ui.settings.settingsLastItemShape
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -204,7 +204,7 @@ internal fun Success(
         modifier = modifier
             .verticalScroll(rememberScrollState())
             .fillMaxSize()
-            .padding(15.dp),
+            .padding(EblanSpacing.large),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         SettingsCategoryText(text = stringResource(commonR.string.folders))
@@ -222,7 +222,7 @@ internal fun Success(
 
         CustomIcon(
             customIcon = folderEblanApplicationInfo.icon,
-            shape = settingsFirstItemShape,
+            shape = EblanShapes.first,
             packageManagerIconPacks = packageManagerIconPacks,
             onUpdateIconPackPackageName = { packageName, label ->
                 iconPackPackageName = packageName
@@ -249,7 +249,7 @@ internal fun Success(
             title = stringResource(commonR.string.edit_label),
             subtitle = folderEblanApplicationInfo.label,
             // Layout
-            shape = settingsLastItemShape,
+            shape = EblanShapes.last,
             // Actions
             onClick = {
                 showEditLabelDialog = true

@@ -70,6 +70,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.core.util.Consumer
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
+import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.domain.model.folder.FolderPopup
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.home.PageItem
@@ -205,7 +206,7 @@ internal fun EditGridPageScreen(
                             width = gridWidthDp,
                             height = gridHeightDp,
                         )
-                        .padding(10.dp),
+                        .padding(EblanSpacing.medium),
                     lazyRowDragDropState = lazyRowDragDropState,
                     index = index,
                 ) {
@@ -251,7 +252,7 @@ internal fun EditGridPageScreen(
                         selectedId = selectedId,
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
-                            .padding(5.dp),
+                            .padding(EblanSpacing.extraSmall),
                         onDeleteClick = {
                             currentPageItems = currentPageItems.toMutableList().apply {
                                 removeIf { currentPageItem ->
@@ -444,7 +445,7 @@ internal fun EditDockGridPageScreen(
                 DraggableColumnItem(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(10.dp),
+                        .padding(EblanSpacing.medium),
                     lazyColumnDragDropState = lazyColumnDragDropState,
                     index = index,
                 ) {
@@ -494,7 +495,7 @@ internal fun EditDockGridPageScreen(
                             selectedId = selectedId,
                             modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
-                                .padding(5.dp),
+                                .padding(EblanSpacing.extraSmall),
                             onDeleteClick = {
                                 currentPageItems = currentPageItems.toMutableList().apply {
                                     removeIf { currentPageItem ->
@@ -561,7 +562,7 @@ internal fun PageButtons(
         tonalElevation = 10.dp,
     ) {
         Row(
-            modifier = Modifier.padding(5.dp),
+            modifier = Modifier.padding(EblanSpacing.extraSmall),
             horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
             IconButton(
@@ -599,7 +600,7 @@ internal fun ExpandableFloatingActionButton(
     onSave: () -> Unit,
     onCancel: () -> Unit,
 ) {
-    Column(modifier = modifier.padding(15.dp)) {
+    Column(modifier = modifier.padding(EblanSpacing.large)) {
         AnimatedVisibility(
             visible = expanded,
             enter = fadeIn() + slideInHorizontally { it },

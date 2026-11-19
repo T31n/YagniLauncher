@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.eblan.launcher.designsystem.theme.EblanShapes
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
@@ -72,7 +73,7 @@ fun EblanActionSettings(
                 componentName = doubleTap.componentName,
             ),
             // Layout
-            shape = settingsFirstItemShape,
+            shape = EblanShapes.first,
             // Actions
             onClick = {
                 showDoubleTapDialog = true
@@ -87,7 +88,7 @@ fun EblanActionSettings(
                 componentName = swipeUp.componentName,
             ),
             // Layout
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Actions
             onClick = {
                 showSwipeUpDialog = true
@@ -102,7 +103,7 @@ fun EblanActionSettings(
                 componentName = swipeDown.componentName,
             ),
             // Layout
-            shape = settingsLastItemShape,
+            shape = EblanShapes.last,
             // Actions
             onClick = {
                 showSwipeDownDialog = true

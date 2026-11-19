@@ -34,7 +34,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -65,6 +64,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import coil3.compose.AsyncImage
 import com.eblan.launcher.designsystem.component.VerticalSlideReveal
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
+import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPack
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.ui.R
@@ -93,7 +93,7 @@ fun SettingsSwitch(
                 },
             )
             .fillMaxWidth()
-            .padding(15.dp),
+            .padding(EblanSpacing.large),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f)) {
@@ -130,7 +130,7 @@ fun SettingsItemCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(15.dp),
+                .padding(EblanSpacing.large),
             horizontalArrangement = horizontalArrangement,
             verticalAlignment = Alignment.CenterVertically,
             content = content,
@@ -349,7 +349,12 @@ fun SettingsCategoryText(
     text: String,
 ) {
     Text(
-        modifier = modifier.padding(15.dp),
+        modifier = modifier.padding(
+            start = EblanSpacing.large,
+            top = EblanSpacing.large,
+            end = EblanSpacing.large,
+            bottom = EblanSpacing.small,
+        ),
         text = text,
         color = MaterialTheme.colorScheme.primary,
         style = MaterialTheme.typography.titleSmall,
@@ -410,22 +415,6 @@ fun rememberIsAccessibilityServiceEnabled(
     }
 }
 
-val settingsFirstItemShape: Shape = RoundedCornerShape(
-    topStart = 28.dp,
-    topEnd = 28.dp,
-    bottomStart = 4.dp,
-    bottomEnd = 4.dp,
-)
-
-val settingsMiddleItemShape: Shape = RoundedCornerShape(size = 4.dp)
-
-val settingsLastItemShape: Shape = RoundedCornerShape(
-    topStart = 4.dp,
-    topEnd = 4.dp,
-    bottomStart = 28.dp,
-    bottomEnd = 28.dp,
-)
-
 @Composable
 fun CustomIcon(
     // Icon Data
@@ -465,7 +454,7 @@ fun CustomIcon(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(15.dp),
+                    .padding(EblanSpacing.large),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (customIcon != null) {
@@ -565,7 +554,7 @@ private fun SettingsColumn(
         modifier = modifier
             .clickable(onClick = onClick)
             .fillMaxWidth()
-            .padding(15.dp),
+            .padding(EblanSpacing.large),
     ) {
         SettingsItemText(
             title = title,
@@ -589,7 +578,7 @@ private fun IconPackItem(
         modifier = modifier
             .clickable(onClick = onClick)
             .fillMaxWidth()
-            .padding(15.dp),
+            .padding(EblanSpacing.large),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         AsyncImage(

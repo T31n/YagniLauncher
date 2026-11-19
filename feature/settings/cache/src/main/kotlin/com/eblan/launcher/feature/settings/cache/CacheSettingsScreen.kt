@@ -23,13 +23,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -58,6 +61,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
+import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.domain.model.cache.CacheInfo
 import com.eblan.launcher.feature.settings.cache.model.CacheSettingsUiState
 import com.eblan.launcher.platform.service.IconPackService
@@ -186,13 +190,13 @@ private fun Success(
         modifier = modifier
             .verticalScroll(rememberScrollState())
             .fillMaxSize()
-            .padding(15.dp),
-        verticalArrangement = Arrangement.spacedBy(15.dp),
+            .padding(EblanSpacing.large),
+        verticalArrangement = Arrangement.spacedBy(EblanSpacing.large),
     ) {
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(
-                modifier = Modifier.padding(15.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
+                modifier = Modifier.padding(EblanSpacing.large),
+                verticalArrangement = Arrangement.spacedBy(EblanSpacing.medium),
             ) {
                 CacheSizeRow(
                     label = stringResource(R.string.total_cache),
@@ -218,14 +222,13 @@ private fun Success(
         ) {
             if (isCleaningUp) {
                 CircularProgressIndicator(
-                    modifier = Modifier.size(18.dp),
+                    modifier = Modifier.size(ButtonDefaults.IconSize),
                     strokeWidth = 2.dp,
                 )
 
-                Text(
-                    modifier = Modifier.padding(start = 10.dp),
-                    text = stringResource(R.string.cleaning_up),
-                )
+                Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
+
+                Text(text = stringResource(R.string.cleaning_up))
             } else if (cacheInfo.reclaimableSize > 0L) {
                 Text(text = stringResource(R.string.clean_up))
             } else {

@@ -47,6 +47,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
+import com.eblan.launcher.designsystem.theme.EblanShapes
+import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.domain.model.iconpackinfo.EblanIconPackInfo
 import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPack
 import com.eblan.launcher.domain.model.userdata.ColorSchemeContrastPreset
@@ -65,9 +67,6 @@ import com.eblan.launcher.ui.settings.SettingsColumnItem
 import com.eblan.launcher.ui.settings.SettingsDropdownItem
 import com.eblan.launcher.ui.settings.SettingsSwitchItem
 import com.eblan.launcher.ui.settings.rememberIsNotificationAccessGranted
-import com.eblan.launcher.ui.settings.settingsFirstItemShape
-import com.eblan.launcher.ui.settings.settingsLastItemShape
-import com.eblan.launcher.ui.settings.settingsMiddleItemShape
 import java.util.Locale
 import com.eblan.launcher.common.R as commonR
 
@@ -178,7 +177,7 @@ private fun Success(
         modifier = modifier
             .verticalScroll(rememberScrollState())
             .fillMaxSize()
-            .padding(15.dp),
+            .padding(EblanSpacing.large),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         SettingsColumnItem(
@@ -186,7 +185,7 @@ private fun Success(
             title = stringResource(R.string.import_icon_pack),
             subtitle = stringResource(R.string.apply_icons_from_supported_icon_packs),
             // Layout
-            shape = settingsFirstItemShape,
+            shape = EblanShapes.first,
             // Actions
             onClick = {
                 showImportIconPackDialog = true
@@ -200,7 +199,7 @@ private fun Success(
                 stringResource(R.string.default_icon_pack)
             },
             // Layout
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Actions
             onClick = {
                 selectIconPackDialog = true
@@ -216,7 +215,7 @@ private fun Success(
                 getLanguageLabel(it)
             },
             // Layout
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Actions
             onSelectedChange = {
                 localeWrapper.setApplicationLanguageTag(languageTag = it)
@@ -232,7 +231,7 @@ private fun Success(
                 it.getTitle()
             },
             // Layout
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Actions
             onSelectedChange = {
                 onUpdateGeneralSettings(generalSettings.copy(theme = it))
@@ -248,7 +247,7 @@ private fun Success(
                 it.getTitle()
             },
             // Layout
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Actions
             onSelectedChange = {
                 onUpdateGeneralSettings(generalSettings.copy(systemBarsTheme = it))
@@ -268,7 +267,7 @@ private fun Success(
                 it.getTitle()
             },
             // Layout
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Actions
             onSelectedChange = {
                 if (it == ColorSource.Custom) {
@@ -289,7 +288,7 @@ private fun Success(
                     it.getTitle()
                 },
                 // Layout
-                shape = settingsMiddleItemShape,
+                shape = EblanShapes.middle,
                 // Actions
                 onSelectedChange = {
                     onUpdateGeneralSettings(
@@ -309,7 +308,7 @@ private fun Success(
                     it.getTitle()
                 },
                 // Layout
-                shape = settingsMiddleItemShape,
+                shape = EblanShapes.middle,
                 // Actions
                 onSelectedChange = {
                     onUpdateGeneralSettings(
@@ -327,7 +326,7 @@ private fun Success(
                 // State
                 checked = generalSettings.colorSchemeSettings.amoledBlack,
                 // Appearance
-                shape = settingsMiddleItemShape,
+                shape = EblanShapes.middle,
                 // Callbacks
                 onCheckedChange = {
                     onUpdateGeneralSettings(
@@ -346,7 +345,7 @@ private fun Success(
             // State
             checked = generalSettings.iconTint,
             // Appearance
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Callbacks
             onCheckedChange = {
                 onUpdateGeneralSettings(generalSettings.copy(iconTint = it))
@@ -363,9 +362,9 @@ private fun Success(
             },
             // Layout
             shape = if (isNotificationAccessGranted) {
-                settingsLastItemShape
+                EblanShapes.last
             } else {
-                settingsMiddleItemShape
+                EblanShapes.middle
             },
             // Actions
             onSelectedChange = {
@@ -379,7 +378,7 @@ private fun Success(
                 title = stringResource(R.string.notification_dots),
                 subtitle = stringResource(R.string.show_notification_dots),
                 // Layout
-                shape = settingsLastItemShape,
+                shape = EblanShapes.last,
                 // Actions
                 onClick = {
                     context.startActivity(

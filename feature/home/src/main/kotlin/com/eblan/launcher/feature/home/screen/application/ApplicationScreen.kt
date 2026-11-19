@@ -80,6 +80,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
+import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
@@ -366,7 +367,7 @@ internal fun QuiteModeScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(10.dp)
+            .padding(EblanSpacing.medium)
             .pointerInput(key1 = Unit) {
                 detectVerticalDragGestures(
                     onVerticalDrag = { _, dragAmount ->
@@ -422,7 +423,7 @@ internal fun TagElevatedFilterChip(
     onUpdateEblanApplicationInfoTag: (Long?) -> Unit,
 ) {
     ElevatedFilterChip(
-        modifier = modifier.padding(5.dp),
+        modifier = modifier,
         onClick = {
             if (eblanApplicationInfoTag.id == selectedEblanApplicationInfoTag) {
                 onUpdateEblanApplicationInfoTag(null)

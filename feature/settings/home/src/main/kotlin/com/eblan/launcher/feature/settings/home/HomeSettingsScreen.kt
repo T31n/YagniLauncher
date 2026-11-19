@@ -41,6 +41,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
+import com.eblan.launcher.designsystem.theme.EblanShapes
+import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.domain.model.userdata.PagerTransitionEffect
@@ -57,9 +59,6 @@ import com.eblan.launcher.ui.settings.SettingsColumnItem
 import com.eblan.launcher.ui.settings.SettingsDropdownItem
 import com.eblan.launcher.ui.settings.SettingsSwitchItem
 import com.eblan.launcher.ui.settings.getTitle
-import com.eblan.launcher.ui.settings.settingsFirstItemShape
-import com.eblan.launcher.ui.settings.settingsLastItemShape
-import com.eblan.launcher.ui.settings.settingsMiddleItemShape
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -136,7 +135,7 @@ private fun Success(
         modifier = modifier
             .verticalScroll(rememberScrollState())
             .fillMaxSize()
-            .padding(15.dp),
+            .padding(EblanSpacing.large),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         SettingsColumnItem(
@@ -144,7 +143,7 @@ private fun Success(
             title = stringResource(commonR.string.grid),
             subtitle = "${homeSettings.columns}x${homeSettings.rows}",
             // Layout
-            shape = settingsFirstItemShape,
+            shape = EblanShapes.first,
             // Actions
             onClick = {
                 showGridDialog = true
@@ -160,7 +159,7 @@ private fun Success(
                 it.getTitle()
             },
             // Layout
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Actions
             onSelectedChange = {
                 onUpdateHomeSettings(homeSettings.copy(pagerTransitionEffect = it))
@@ -174,7 +173,7 @@ private fun Success(
             // State
             checked = homeSettings.infiniteScroll,
             // Appearance
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Callbacks
             onCheckedChange = {
                 onUpdateHomeSettings(
@@ -190,7 +189,7 @@ private fun Success(
             // State
             checked = homeSettings.wallpaperScroll,
             // Appearance
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Callbacks
             onCheckedChange = {
                 onUpdateHomeSettings(
@@ -206,7 +205,7 @@ private fun Success(
             // State
             checked = homeSettings.lockScreenOrientation,
             // Appearance
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Callbacks
             onCheckedChange = {
                 onUpdateHomeSettings(
@@ -222,7 +221,7 @@ private fun Success(
             // State
             checked = homeSettings.addNewAppsToHomeScreen,
             // Appearance
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Callbacks
             onCheckedChange = {
                 onUpdateHomeSettings(
@@ -238,7 +237,7 @@ private fun Success(
             // State
             checked = homeSettings.showPageIndicator,
             // Appearance
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Callbacks
             onCheckedChange = {
                 onUpdateHomeSettings(
@@ -254,7 +253,7 @@ private fun Success(
             // State
             checked = homeSettings.showStatusBar,
             // Appearance
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Callbacks
             onCheckedChange = {
                 onUpdateHomeSettings(
@@ -270,7 +269,7 @@ private fun Success(
             // State
             checked = homeSettings.showNavigationBar,
             // Appearance
-            shape = settingsLastItemShape,
+            shape = EblanShapes.last,
             // Callbacks
             onCheckedChange = {
                 onUpdateHomeSettings(
@@ -288,7 +287,7 @@ private fun Success(
             // State
             checked = homeSettings.enableDock,
             // Appearance
-            shape = settingsFirstItemShape,
+            shape = EblanShapes.first,
             // Callbacks
             onCheckedChange = {
                 onUpdateHomeSettings(
@@ -302,7 +301,7 @@ private fun Success(
             title = stringResource(R.string.dock_grid),
             subtitle = "${homeSettings.dockColumns}x${homeSettings.dockRows}",
             // Layout
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Actions
             onClick = {
                 showDockGridDialog = true
@@ -314,7 +313,7 @@ private fun Success(
             title = stringResource(R.string.dock_height),
             subtitle = "${homeSettings.dockHeight}",
             // Layout
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Actions
             onClick = {
                 showDockHeightDialog = true
@@ -328,7 +327,7 @@ private fun Success(
             // State
             checked = homeSettings.dockInfiniteScroll,
             // Appearance
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Callbacks
             onCheckedChange = {
                 onUpdateHomeSettings(
@@ -346,7 +345,7 @@ private fun Success(
                 it.getTitle()
             },
             // Layout
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Actions
             onSelectedChange = {
                 if (it == BackgroundColor.Custom) {
@@ -364,7 +363,7 @@ private fun Success(
             title = stringResource(R.string.dock_padding),
             subtitle = "${homeSettings.dockPadding}",
             // Layout
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Actions
             onClick = {
                 showDockPaddingDialog = true
@@ -376,7 +375,7 @@ private fun Success(
             title = stringResource(R.string.dock_corner_radius),
             subtitle = stringResource(R.string.set_the_radius_for_each_dock_corner),
             // Layout
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Actions
             onClick = {
                 showDockCornerRadiusDialog = true
@@ -390,7 +389,7 @@ private fun Success(
             // State
             checked = homeSettings.addDockBottomPadding,
             // Appearance
-            shape = settingsLastItemShape,
+            shape = EblanShapes.last,
             // Callbacks
             onCheckedChange = {
                 onUpdateHomeSettings(

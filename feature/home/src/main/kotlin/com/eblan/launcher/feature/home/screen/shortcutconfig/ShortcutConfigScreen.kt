@@ -82,6 +82,7 @@ import androidx.compose.ui.unit.round
 import coil3.compose.AsyncImage
 import com.eblan.launcher.designsystem.component.VerticalSlideReveal
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
+import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.GridItem
@@ -199,7 +200,11 @@ internal fun ShortcutConfigScreen(
                 state = searchBarState,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(10.dp),
+                    .padding(
+                        start = EblanSpacing.medium,
+                        end = EblanSpacing.medium,
+                        bottom = EblanSpacing.small,
+                    ),
                 inputField = {
                     SearchBarDefaults.InputField(
                         textFieldState = textFieldState,
@@ -473,7 +478,7 @@ private fun EblanShortcutConfigItem(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(20.dp)
+            .padding(EblanSpacing.extraLarge)
             .pointerInput(
                 key1 = isVisibleOverlay,
                 key2 = gridItemSettings,

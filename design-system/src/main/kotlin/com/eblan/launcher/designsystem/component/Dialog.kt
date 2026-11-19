@@ -26,8 +26,8 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.eblan.launcher.designsystem.theme.EblanSpacing
 
 @Composable
 fun EblanDialog(
@@ -43,8 +43,8 @@ fun EblanDialog(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(10.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
+                    .padding(EblanSpacing.large),
+                verticalArrangement = Arrangement.spacedBy(EblanSpacing.medium),
                 content = content,
             )
         }

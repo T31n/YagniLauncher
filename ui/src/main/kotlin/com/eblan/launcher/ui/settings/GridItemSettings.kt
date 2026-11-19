@@ -27,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.eblan.launcher.designsystem.theme.EblanShapes
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.grid.HorizontalAlignment
 import com.eblan.launcher.domain.model.grid.HorizontalArrangement
@@ -78,7 +79,7 @@ fun GridItemSettings(
                 it.getSubtitle()
             },
             // Layout
-            shape = settingsFirstItemShape,
+            shape = EblanShapes.first,
             // Actions
             onSelectedChange = {
                 onUpdateGridItemSettings(gridItemSettings.copy(layoutType = it))
@@ -90,7 +91,7 @@ fun GridItemSettings(
             title = stringResource(R.string.icon_size),
             subtitle = "${gridItemSettings.iconSize}",
             // Layout
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Actions
             onClick = {
                 showIconSizeDialog = true
@@ -106,7 +107,7 @@ fun GridItemSettings(
                 it.getSubtitle()
             },
             // Layout
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Actions
             onSelectedChange = {
                 if (it == TextColor.Custom) {
@@ -122,7 +123,7 @@ fun GridItemSettings(
             title = stringResource(R.string.text_size),
             subtitle = "${gridItemSettings.textSize}",
             // Layout
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Actions
             onClick = {
                 showTextSizeDialog = true
@@ -138,7 +139,7 @@ fun GridItemSettings(
                 it.getTitle()
             },
             // Layout
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Actions
             onSelectedChange = {
                 if (it == BackgroundColor.Custom) {
@@ -154,7 +155,7 @@ fun GridItemSettings(
             title = stringResource(R.string.padding),
             subtitle = "${gridItemSettings.padding}",
             // Layout
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Actions
             onClick = {
                 showPaddingDialog = true
@@ -166,7 +167,7 @@ fun GridItemSettings(
             title = stringResource(R.string.corner_radius),
             subtitle = "${gridItemSettings.cornerRadius}",
             // Layout
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Actions
             onClick = {
                 showCornerRadiusDialog = true
@@ -180,7 +181,7 @@ fun GridItemSettings(
             // State
             checked = gridItemSettings.singleLineLabel,
             // Appearance
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Callbacks
             onCheckedChange = {
                 onUpdateGridItemSettings(
@@ -198,7 +199,7 @@ fun GridItemSettings(
                 it.getSubtitle()
             },
             // Layout
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Actions
             onSelectedChange = {
                 onUpdateGridItemSettings(gridItemSettings.copy(horizontalAlignment = it))
@@ -214,7 +215,7 @@ fun GridItemSettings(
                 it.getSubtitle()
             },
             // Layout
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Actions
             onSelectedChange = {
                 onUpdateGridItemSettings(gridItemSettings.copy(verticalArrangement = it))
@@ -230,7 +231,7 @@ fun GridItemSettings(
                 it.getSubtitle()
             },
             // Layout
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Actions
             onSelectedChange = {
                 onUpdateGridItemSettings(gridItemSettings.copy(horizontalArrangement = it))
@@ -246,7 +247,7 @@ fun GridItemSettings(
                 it.getSubtitle()
             },
             // Layout
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Actions
             onSelectedChange = {
                 onUpdateGridItemSettings(gridItemSettings.copy(verticalAlignment = it))
@@ -258,7 +259,7 @@ fun GridItemSettings(
             title = stringResource(R.string.icon_padding),
             subtitle = "${gridItemSettings.iconPadding}",
             // Layout
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Actions
             onClick = {
                 showIconPaddingDialog = true
@@ -270,7 +271,7 @@ fun GridItemSettings(
             title = stringResource(R.string.text_padding),
             subtitle = "${gridItemSettings.textPadding}",
             // Layout
-            shape = settingsLastItemShape,
+            shape = EblanShapes.last,
             // Actions
             onClick = {
                 showTextPaddingDialog = true

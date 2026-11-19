@@ -54,13 +54,11 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
+import com.eblan.launcher.designsystem.theme.EblanShapes
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.feature.home.R
 import com.eblan.launcher.feature.home.component.HomeHandler
-import com.eblan.launcher.ui.settings.settingsFirstItemShape
-import com.eblan.launcher.ui.settings.settingsLastItemShape
-import com.eblan.launcher.ui.settings.settingsMiddleItemShape
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -131,7 +129,7 @@ internal fun SettingsPopup(
                 PopupMenuRow(
                     title = stringResource(commonR.string.settings),
                     imageVector = EblanLauncherIcons.Settings,
-                    shape = settingsFirstItemShape,
+                    shape = EblanShapes.first,
                     onClick = {
                         onSettings()
 
@@ -142,7 +140,7 @@ internal fun SettingsPopup(
                 PopupMenuRow(
                     title = stringResource(R.string.edit_pages),
                     imageVector = EblanLauncherIcons.Pages,
-                    shape = settingsMiddleItemShape,
+                    shape = EblanShapes.middle,
                     onClick = {
                         onEditPage(
                             gridItems,
@@ -157,7 +155,7 @@ internal fun SettingsPopup(
                     PopupMenuRow(
                         title = stringResource(R.string.edit_dock_pages),
                         imageVector = EblanLauncherIcons.Pages,
-                        shape = settingsMiddleItemShape,
+                        shape = EblanShapes.middle,
                         onClick = {
                             onEditPage(
                                 gridItems,
@@ -173,7 +171,7 @@ internal fun SettingsPopup(
                     PopupMenuRow(
                         title = stringResource(R.string.widgets),
                         imageVector = EblanLauncherIcons.Widgets,
-                        shape = settingsMiddleItemShape,
+                        shape = EblanShapes.middle,
                         onClick = {
                             onWidgets()
 
@@ -185,7 +183,7 @@ internal fun SettingsPopup(
                 PopupMenuRow(
                     title = stringResource(R.string.shortcuts),
                     imageVector = EblanLauncherIcons.Shortcut,
-                    shape = settingsMiddleItemShape,
+                    shape = EblanShapes.middle,
                     onClick = {
                         onShortcutConfigActivities()
 
@@ -196,7 +194,7 @@ internal fun SettingsPopup(
                 PopupMenuRow(
                     title = stringResource(R.string.wallpaper),
                     imageVector = EblanLauncherIcons.Image,
-                    shape = settingsLastItemShape,
+                    shape = EblanShapes.last,
                     onClick = {
                         val intent = Intent(ACTION_SET_WALLPAPER)
 

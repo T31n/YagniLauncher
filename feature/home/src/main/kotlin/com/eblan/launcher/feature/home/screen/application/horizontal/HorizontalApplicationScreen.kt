@@ -19,6 +19,7 @@ package com.eblan.launcher.feature.home.screen.application.horizontal
 
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -50,8 +51,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
+import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
@@ -175,7 +176,11 @@ internal fun HorizontalApplicationScreen(
         )
 
         if (eblanApplicationInfoTags.isNotEmpty()) {
-            LazyRow(modifier = Modifier.fillMaxWidth()) {
+            LazyRow(
+                modifier = Modifier.fillMaxWidth(),
+                contentPadding = PaddingValues(horizontal = EblanSpacing.medium),
+                horizontalArrangement = Arrangement.spacedBy(EblanSpacing.small),
+            ) {
                 items(eblanApplicationInfoTags) { eblanApplicationInfoTag ->
                     TagElevatedFilterChip(
                         // Data
@@ -350,8 +355,8 @@ private fun EblanApplicationInfosPage(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .padding(
-                            end = 10.dp,
-                            bottom = paddingValues.calculateBottomPadding() + 10.dp,
+                            end = EblanSpacing.large,
+                            bottom = paddingValues.calculateBottomPadding() + EblanSpacing.large,
                         ),
                     onClick = {
                         scope.launch {

@@ -41,14 +41,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
+import com.eblan.launcher.designsystem.theme.EblanShapes
+import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
 import com.eblan.launcher.feature.settings.experimental.dialog.SyncDataDialog
 import com.eblan.launcher.feature.settings.experimental.model.ExperimentalSettingsUiState
 import com.eblan.launcher.ui.settings.SettingsColumnItem
 import com.eblan.launcher.ui.settings.SettingsSwitchItem
-import com.eblan.launcher.ui.settings.settingsFirstItemShape
-import com.eblan.launcher.ui.settings.settingsLastItemShape
-import com.eblan.launcher.ui.settings.settingsMiddleItemShape
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -120,7 +119,7 @@ private fun Success(
         modifier = modifier
             .verticalScroll(rememberScrollState())
             .fillMaxSize()
-            .padding(15.dp),
+            .padding(EblanSpacing.large),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         SettingsColumnItem(
@@ -128,7 +127,7 @@ private fun Success(
             title = stringResource(R.string.sync_data),
             subtitle = stringResource(R.string.enable_or_disable_sync_data),
             // Layout
-            shape = settingsFirstItemShape,
+            shape = EblanShapes.first,
             // Actions
             onClick = {
                 showSyncDataDialog = true
@@ -142,7 +141,7 @@ private fun Success(
             // State
             checked = experimentalSettings.lockMovement,
             // Appearance
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Callbacks
             onCheckedChange = {
                 onUpdateExperimentalSettings(
@@ -160,7 +159,7 @@ private fun Success(
             // State
             checked = experimentalSettings.gridItemAnimation,
             // Appearance
-            shape = settingsLastItemShape,
+            shape = EblanShapes.last,
             // Callbacks
             onCheckedChange = {
                 onUpdateExperimentalSettings(

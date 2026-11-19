@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.component.EblanDialog
 import com.eblan.launcher.designsystem.component.EblanRadioButton
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
+import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
@@ -182,12 +183,12 @@ private fun AccessibilityServiceCard(modifier: Modifier = Modifier) {
                 val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
                 context.startActivity(intent)
             }
-            .padding(15.dp),
+            .padding(EblanSpacing.large),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(imageVector = EblanLauncherIcons.Info, contentDescription = null)
 
-        Spacer(modifier = Modifier.width(5.dp))
+        Spacer(modifier = Modifier.width(EblanSpacing.small))
 
         Text(
             modifier = Modifier,

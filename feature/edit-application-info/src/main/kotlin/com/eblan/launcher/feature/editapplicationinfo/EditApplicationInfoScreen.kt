@@ -52,6 +52,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.common.R.string.custom_label
 import com.eblan.launcher.common.R.string.none
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
+import com.eblan.launcher.designsystem.theme.EblanShapes
+import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTagUi
@@ -72,9 +74,6 @@ import com.eblan.launcher.ui.settings.CustomIcon
 import com.eblan.launcher.ui.settings.SettingsCategoryText
 import com.eblan.launcher.ui.settings.SettingsColumnItem
 import com.eblan.launcher.ui.settings.SettingsSwitchItem
-import com.eblan.launcher.ui.settings.settingsFirstItemShape
-import com.eblan.launcher.ui.settings.settingsLastItemShape
-import com.eblan.launcher.ui.settings.settingsMiddleItemShape
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -243,7 +242,7 @@ private fun Success(
         modifier = modifier
             .verticalScroll(rememberScrollState())
             .fillMaxSize()
-            .padding(15.dp),
+            .padding(EblanSpacing.large),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         SettingsCategoryText(text = stringResource(R.string.tags))
@@ -275,7 +274,7 @@ private fun Success(
 
         CustomIcon(
             customIcon = eblanApplicationInfo.customIcon,
-            shape = settingsFirstItemShape,
+            shape = EblanShapes.first,
             packageManagerIconPacks = packageManagerIconPacks,
             onUpdateIconPackPackageName = { packageName, label ->
                 iconPackPackageName = packageName
@@ -297,7 +296,7 @@ private fun Success(
             subtitle = eblanApplicationInfo.customLabel
                 ?: stringResource(none),
             // Layout
-            shape = settingsMiddleItemShape,
+            shape = EblanShapes.middle,
             // Actions
             onClick = {
                 showCustomLabelDialog = true
@@ -311,7 +310,7 @@ private fun Success(
             // State
             checked = eblanApplicationInfo.isHidden,
             // Appearance
-            shape = settingsLastItemShape,
+            shape = EblanShapes.last,
             // Callbacks
             onCheckedChange = {
                 onUpdateEblanApplicationInfo(

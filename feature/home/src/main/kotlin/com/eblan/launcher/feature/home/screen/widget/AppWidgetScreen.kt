@@ -69,6 +69,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import coil3.compose.AsyncImage
+import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemSettings
@@ -256,7 +257,7 @@ private fun EblanAppWidgetScreenItem(
     Column(
         modifier = modifier
             .size(200.dp)
-            .padding(20.dp)
+            .padding(EblanSpacing.extraLarge)
             .pointerInput(
                 key1 = isVisibleOverlay,
                 key2 = gridItemSettings,
