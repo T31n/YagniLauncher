@@ -26,6 +26,7 @@ import com.eblan.launcher.data.room.dao.EblanApplicationInfoTagDao
 import com.eblan.launcher.data.room.dao.EblanIconPackInfoDao
 import com.eblan.launcher.data.room.dao.EblanShortcutConfigDao
 import com.eblan.launcher.data.room.dao.EblanShortcutInfoDao
+import com.eblan.launcher.data.room.dao.FileReferenceDao
 import com.eblan.launcher.data.room.dao.FolderEblanApplicationInfoDao
 import com.eblan.launcher.data.room.dao.FolderGridItemDao
 import com.eblan.launcher.data.room.dao.ShortcutConfigGridItemDao
@@ -92,4 +93,8 @@ internal object DaoModule {
     @Provides
     @Singleton
     fun folderEblanApplicationInfoDao(eblanDatabase: EblanDatabase): FolderEblanApplicationInfoDao = eblanDatabase.folderEblanApplicationInfoDao()
+
+    @Provides
+    @Singleton
+    fun fileReferenceDao(eblanDatabase: EblanDatabase): FileReferenceDao = eblanDatabase.fileReferenceDao()
 }

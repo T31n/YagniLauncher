@@ -29,12 +29,12 @@ interface EblanIconPackInfoDao {
     @Query("SELECT * FROM EblanIconPackInfoEntity")
     fun getEblanIconPackInfoEntitiesFlow(): Flow<List<EblanIconPackInfoEntity>>
 
+    @Query("SELECT * FROM EblanIconPackInfoEntity")
+    suspend fun getEblanIconPackInfoEntities(): List<EblanIconPackInfoEntity>
+
     @Upsert
     suspend fun upsertEblanIconPackInfoEntity(entity: EblanIconPackInfoEntity): Long
 
     @Delete
     suspend fun deleteEblanIconPackInfoEntity(entity: EblanIconPackInfoEntity)
-
-    @Query("SELECT * FROM EblanIconPackInfoEntity WHERE packageName = :packageName")
-    suspend fun getEblanIconPackInfoEntity(packageName: String): EblanIconPackInfoEntity?
 }

@@ -105,7 +105,6 @@ internal fun EditApplicationInfoRoute(
         // Callbacks
         onNavigateUp = onNavigateUp,
         onUpdateEblanApplicationInfo = viewModel::updateEblanApplicationInfo,
-        onResetEblanApplicationInfoCustomIcon = viewModel::resetEblanApplicationInfoCustomIcon,
         onUpdateEblanApplicationInfoCustomIcon = viewModel::updateEblanApplicationInfoCustomIcon,
         onAddEblanApplicationInfoCrossRef = viewModel::addEblanApplicationInfoTagCrossRef,
         onDeleteEblanApplicationInfoCrossRef = viewModel::deleteEblanApplicationInfoTagCrossRef,
@@ -135,7 +134,6 @@ internal fun EditApplicationInfoScreen(
     // Callbacks
     onNavigateUp: () -> Unit,
     onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
-    onResetEblanApplicationInfoCustomIcon: (EblanApplicationInfo) -> Unit,
     onUpdateEblanApplicationInfoCustomIcon: (
         eblanApplicationInfo: EblanApplicationInfo,
         uri: String,
@@ -198,7 +196,6 @@ internal fun EditApplicationInfoScreen(
                     onUpdateEblanApplicationInfo = onUpdateEblanApplicationInfo,
                     onUpdateEblanApplicationInfoTag = onUpdateEblanApplicationInfoTag,
                     onUpdateIconPackPackageName = onUpdateIconPackPackageName,
-                    onResetEblanApplicationInfoCustomIcon = onResetEblanApplicationInfoCustomIcon,
                     onUpdateEblanApplicationInfoCustomIcon = onUpdateEblanApplicationInfoCustomIcon,
                     onAddFolderEblanApplicationInfo = onAddFolderEblanApplicationInfo,
                 )
@@ -230,7 +227,6 @@ private fun Success(
     onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
     onUpdateEblanApplicationInfoTag: (EblanApplicationInfoTag) -> Unit,
     onUpdateIconPackPackageName: (String) -> Unit,
-    onResetEblanApplicationInfoCustomIcon: (EblanApplicationInfo) -> Unit,
     onUpdateEblanApplicationInfoCustomIcon: (
         eblanApplicationInfo: EblanApplicationInfo,
         uri: String,
@@ -291,7 +287,7 @@ private fun Success(
                 onUpdateEblanApplicationInfoCustomIcon(eblanApplicationInfo, it)
             },
             onResetCustomIcon = {
-                onResetEblanApplicationInfoCustomIcon(eblanApplicationInfo)
+                onUpdateEblanApplicationInfo(eblanApplicationInfo.copy(customIcon = null))
             },
         )
 

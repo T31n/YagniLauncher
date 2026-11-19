@@ -39,7 +39,7 @@ class UpdateGridItemCustomIconUseCase @Inject constructor(
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     /**
-     * Saves the image at [uri], updates the item's icon reference, then deletes its previous icon.
+     * Saves the image at [uri] and updates the item's icon reference.
      *
      * If the URI cannot be read, the grid item is left unchanged.
      *
@@ -76,8 +76,5 @@ class UpdateGridItemCustomIconUseCase @Inject constructor(
         }
 
         gridRepository.updateGridItem(gridItem = gridItem.copy(data = newData))
-
-        // Delete the old custom icon after successfully updated the new grid item
-        deleteGridItemCustomIconFile(gridItem = gridItem)
     }
 }

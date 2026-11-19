@@ -25,6 +25,7 @@ import com.eblan.launcher.data.repository.impl.DefaultEblanApplicationInfoTagRep
 import com.eblan.launcher.data.repository.impl.DefaultEblanIconPackInfoRepository
 import com.eblan.launcher.data.repository.impl.DefaultEblanShortcutConfigRepository
 import com.eblan.launcher.data.repository.impl.DefaultEblanShortcutInfoRepository
+import com.eblan.launcher.data.repository.impl.DefaultFileReferenceRepository
 import com.eblan.launcher.data.repository.impl.DefaultFolderEblanApplicationInfoRepository
 import com.eblan.launcher.data.repository.impl.DefaultFolderGridItemRepository
 import com.eblan.launcher.data.repository.impl.DefaultFolderGridItemTransaction
@@ -41,6 +42,7 @@ import com.eblan.launcher.domain.repository.EblanApplicationInfoTagRepository
 import com.eblan.launcher.domain.repository.EblanIconPackInfoRepository
 import com.eblan.launcher.domain.repository.EblanShortcutConfigRepository
 import com.eblan.launcher.domain.repository.EblanShortcutInfoRepository
+import com.eblan.launcher.domain.repository.FileReferenceRepository
 import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.FolderGridItemRepository
 import com.eblan.launcher.domain.repository.FolderGridItemTransaction
@@ -121,4 +123,8 @@ internal interface RepositoryModule {
     @Binds
     @Singleton
     fun folderGridItemTransaction(impl: DefaultFolderGridItemTransaction): FolderGridItemTransaction
+
+    @Binds
+    @Singleton
+    fun fileReferenceRepository(impl: DefaultFileReferenceRepository): FileReferenceRepository
 }

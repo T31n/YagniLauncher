@@ -861,15 +861,9 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    fun deleteFolderEblanApplicationInfoGridItems(
-        icon: String?,
-        folderId: String,
-    ) {
+    fun deleteFolderEblanApplicationInfoGridItems(folderId: String) {
         viewModelScope.launch {
-            deleteFolderEblanApplicationInfoGridItemsUseCase(
-                icon = icon,
-                folderId = folderId,
-            )
+            deleteFolderEblanApplicationInfoGridItemsUseCase(folderId = folderId)
         }
     }
 

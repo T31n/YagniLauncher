@@ -34,4 +34,5 @@
     <string name="star_on_github">Star on GitHub</string>
     <string name="note_this_informational_card_will_be_removed_in_future_stable_releases">Note: This informational card will be removed in future stable releases</string>
     <string name="corner_radius_background_color_and_more">Corner radius, background color</string>
+    <string name="clean_up_unused_icons_and_previews">Clean up unused icons and previews</string>
 </resources>

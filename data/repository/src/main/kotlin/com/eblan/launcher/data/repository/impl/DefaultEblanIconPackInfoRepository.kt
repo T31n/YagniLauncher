@@ -33,11 +33,11 @@ internal class DefaultEblanIconPackInfoRepository @Inject constructor(private va
             }
         }
 
+    override suspend fun getEblanIconPacks(): List<EblanIconPackInfo> = eblanIconPackInfoDao.getEblanIconPackInfoEntities().map { it.asModel() }
+
     override suspend fun upsertEblanIconPackInfo(eblanIconPackInfo: EblanIconPackInfo): Long = eblanIconPackInfoDao.upsertEblanIconPackInfoEntity(entity = eblanIconPackInfo.asEntity())
 
     override suspend fun deleteEblanIconPackInfo(eblanIconPackInfo: EblanIconPackInfo) {
         eblanIconPackInfoDao.deleteEblanIconPackInfoEntity(entity = eblanIconPackInfo.asEntity())
     }
-
-    override suspend fun getEblanIconPackInfo(packageName: String): EblanIconPackInfo? = eblanIconPackInfoDao.getEblanIconPackInfoEntity(packageName = packageName)?.asModel()
 }

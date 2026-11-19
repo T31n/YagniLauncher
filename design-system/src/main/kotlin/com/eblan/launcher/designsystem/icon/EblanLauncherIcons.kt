@@ -43,6 +43,7 @@ import androidx.compose.material.icons.filled.OpenInFull
 import androidx.compose.material.icons.filled.Pages
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Storage
 import androidx.compose.material.icons.filled.Widgets
 import androidx.compose.material.icons.filled.Work
 import androidx.compose.material.icons.filled.WorkOff
@@ -76,4 +77,5 @@ object EblanLauncherIcons {
     val BrokenImage = Icons.Default.BrokenImage
     val KeyboardArrowUp = Icons.Default.KeyboardArrowUp
     val KeyboardArrowDown = Icons.Default.KeyboardArrowDown
+    val Storage = Icons.Default.Storage
 }

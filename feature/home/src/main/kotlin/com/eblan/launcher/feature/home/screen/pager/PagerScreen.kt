@@ -288,10 +288,7 @@ internal fun PagerScreen(
         folderEblanApplicationInfo: FolderEblanApplicationInfo,
         movingGridItem: GridItem,
     ) -> Unit,
-    onDeleteFolderEblanApplicationInfoGridItems: (
-        icon: String?,
-        folderId: String,
-    ) -> Unit,
+    onDeleteFolderEblanApplicationInfoGridItems: (String) -> Unit,
     // Callbacks - Application Info Actions
     onEditApplicationInfo: (
         serialNumber: Long,

@@ -180,17 +180,6 @@ class SyncDataUseCase @Inject constructor(
             applicationInfoGridItemRepository = applicationInfoGridItemRepository,
         )
 
-        deleteEblanApplicationInfoIcons(
-            eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos(),
-            eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos(),
-            eblanShortcutConfigs = eblanShortcutConfigRepository.getEblanShortcutConfigs(),
-            applicationInfoGridItems = applicationInfoGridItemRepository.getApplicationInfoGridItems(),
-            widgetGridItems = widgetGridItemRepository.getWidgetGridItems(),
-            shortcutConfigGridItems = shortcutConfigGridItemRepository.getShortcutConfigGridItems(),
-            shortcutInfoGridItems = shortcutInfoGridItemRepository.getShortcutInfoGridItems(),
-            oldDeleteEblanApplicationInfos = oldDeleteEblanApplicationInfos,
-        )
-
         insertApplicationInfoGridItems(
             eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos(),
             experimentalSettings = experimentalSettings,
@@ -287,15 +276,6 @@ class SyncDataUseCase @Inject constructor(
                     it.serialNumber to it.componentName
                 }
 
-        val deleteEblanAppWidgetProviderInfoPreviews =
-            oldEblanAppWidgetProviderInfos.filter { oldEblanAppWidgetProviderInfo ->
-                newEblanAppWidgetProviderInfos.none { newEblanAppWidgetProviderInfo ->
-                    newEblanAppWidgetProviderInfo.serialNumber == oldEblanAppWidgetProviderInfo.serialNumber &&
-                        newEblanAppWidgetProviderInfo.componentName == oldEblanAppWidgetProviderInfo.componentName &&
-                        newEblanAppWidgetProviderInfo.preview == oldEblanAppWidgetProviderInfo.preview
-                }
-            }
-
         eblanAppWidgetProviderInfoRepository.deleteEblanAppWidgetProviderInfos(
             eblanAppWidgetProviderInfos = deleteEblanAppWidgetProviderInfos,
         )
@@ -311,17 +291,6 @@ class SyncDataUseCase @Inject constructor(
             packageManagerWrapper = packageManagerWrapper,
             widgetGridItemRepository = widgetGridItemRepository,
             iconKeyGenerator = iconKeyGenerator,
-        )
-
-        deleteEblanAppWidgetProviderInfoFiles(
-            eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos(),
-            eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos(),
-            eblanShortcutConfigs = eblanShortcutConfigRepository.getEblanShortcutConfigs(),
-            applicationInfoGridItems = applicationInfoGridItemRepository.getApplicationInfoGridItems(),
-            widgetGridItems = widgetGridItemRepository.getWidgetGridItems(),
-            shortcutConfigGridItems = shortcutConfigGridItemRepository.getShortcutConfigGridItems(),
-            shortcutInfoGridItems = shortcutInfoGridItemRepository.getShortcutInfoGridItems(),
-            deleteEblanAppWidgetProviderInfos = deleteEblanAppWidgetProviderInfoPreviews,
         )
     }
 
@@ -349,11 +318,6 @@ class SyncDataUseCase @Inject constructor(
 
         eblanShortcutInfoRepository.upsertEblanShortcutInfos(
             eblanShortcutInfos = newEblanShortcutInfos,
-        )
-
-        deleteEblanShortInfoIcons(
-            eblanShortcutInfos = eblanShortcutInfoRepository.getEblanShortcutInfos(),
-            deleteEblanShortcutInfos = deleteEblanShortcutInfos,
         )
 
         updateShortcutInfoGridItems(
@@ -394,17 +358,6 @@ class SyncDataUseCase @Inject constructor(
             launcherAppsWrapper = launcherAppsWrapper,
             packageManagerWrapper = packageManagerWrapper,
             iconKeyGenerator = iconKeyGenerator,
-        )
-
-        deleteEblanShortcutConfigIcons(
-            eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos(),
-            eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos(),
-            eblanShortcutConfigs = eblanShortcutConfigRepository.getEblanShortcutConfigs(),
-            applicationInfoGridItems = applicationInfoGridItemRepository.getApplicationInfoGridItems(),
-            widgetGridItems = widgetGridItemRepository.getWidgetGridItems(),
-            shortcutConfigGridItems = shortcutConfigGridItemRepository.getShortcutConfigGridItems(),
-            shortcutInfoGridItems = shortcutInfoGridItemRepository.getShortcutInfoGridItems(),
-            deleteEblanShortcutConfigs = deleteEblanShortcutConfigs,
         )
     }
 

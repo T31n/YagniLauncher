@@ -346,10 +346,7 @@ internal fun HomeScreen(
         movingGridItem: GridItem,
     ) -> Unit,
     onResetFolderEblanApplicationInfoPopupEntries: () -> Unit,
-    onDeleteFolderEblanApplicationInfoGridItems: (
-        icon: String?,
-        folderId: String,
-    ) -> Unit,
+    onDeleteFolderEblanApplicationInfoGridItems: (String) -> Unit,
     onUpdateGridItemsAfterMoveNewFolder: (
         folderGridItems: List<GridItem>,
         moveGridItemResult: MoveGridItemResult,
@@ -598,10 +595,7 @@ private fun Success(
         folderEblanApplicationInfo: FolderEblanApplicationInfo,
         movingGridItem: GridItem,
     ) -> Unit,
-    onDeleteFolderEblanApplicationInfoGridItems: (
-        icon: String?,
-        folderId: String,
-    ) -> Unit,
+    onDeleteFolderEblanApplicationInfoGridItems: (String) -> Unit,
     // Package Lifecycle Actions
     onPackageAdded: (
         serialNumber: Long,

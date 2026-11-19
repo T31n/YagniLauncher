@@ -89,7 +89,6 @@ internal fun EditFolderApplicationInfoRoute(
         // Actions
         onNavigateUp = onNavigateUp,
         onUpdateIconPackPackageName = viewModel::updateIconPackPackageName,
-        onResetFolderEblanApplicationInfoCustomIcon = viewModel::resetFolderEblanApplicationInfoCustomIcon,
         onUpdateFolderEblanApplicationInfoCustomIcon = viewModel::updateFolderEblanApplicationInfoCustomIcon,
         onResetIconPackPackageName = viewModel::resetIconPackPackageName,
         onSearchIconPackInfoComponent = viewModel::searchIconPackInfoComponent,
@@ -113,7 +112,6 @@ internal fun EditFolderApplicationInfoScreen(
     // Actions
     onNavigateUp: () -> Unit,
     onUpdateIconPackPackageName: (String) -> Unit,
-    onResetFolderEblanApplicationInfoCustomIcon: (FolderEblanApplicationInfo) -> Unit,
     onUpdateFolderEblanApplicationInfoCustomIcon: (
         folderEblanApplicationInfo: FolderEblanApplicationInfo,
         uri: String,
@@ -162,7 +160,6 @@ internal fun EditFolderApplicationInfoScreen(
                     packageManagerIconPacks = packageManagerIconPacks,
                     // Callbacks
                     onUpdateIconPackPackageName = onUpdateIconPackPackageName,
-                    onResetFolderEblanApplicationInfoCustomIcon = onResetFolderEblanApplicationInfoCustomIcon,
                     onUpdateFolderEblanApplicationInfoCustomIcon = onUpdateFolderEblanApplicationInfoCustomIcon,
                     onResetIconPackPackageName = onResetIconPackPackageName,
                     onSearchIconPackInfoComponent = onSearchIconPackInfoComponent,
@@ -188,7 +185,6 @@ internal fun Success(
     modifier: Modifier = Modifier,
     // Callbacks
     onUpdateIconPackPackageName: (String) -> Unit,
-    onResetFolderEblanApplicationInfoCustomIcon: (FolderEblanApplicationInfo) -> Unit,
     onUpdateFolderEblanApplicationInfoCustomIcon: (
         folderEblanApplicationInfo: FolderEblanApplicationInfo,
         uri: String,
@@ -242,8 +238,8 @@ internal fun Success(
                 )
             },
             onResetCustomIcon = {
-                onResetFolderEblanApplicationInfoCustomIcon(
-                    folderEblanApplicationInfo,
+                onUpdateFolderEblanApplicationInfo(
+                    folderEblanApplicationInfo.copy(icon = null),
                 )
             },
         )

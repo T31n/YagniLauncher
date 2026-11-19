@@ -89,7 +89,7 @@ internal fun GeneralSettingsRoute(
         packageManagerIconPacks = packageManagerIconPackInfos,
         modifier = modifier,
         // Actions
-        onDeleteEblanIconPackInfo = viewModel::deleteIconPack,
+        onDeleteEblanIconPackInfo = viewModel::deleteIconPackInfo,
         onNavigateUp = onNavigateUp,
         onUpdateGeneralSettings = viewModel::updateGeneralSettings,
     )
@@ -105,7 +105,7 @@ internal fun GeneralSettingsScreen(
     packageManagerIconPacks: List<PackageManagerIconPack>,
     modifier: Modifier = Modifier,
     // Actions
-    onDeleteEblanIconPackInfo: (String) -> Unit,
+    onDeleteEblanIconPackInfo: (EblanIconPackInfo) -> Unit,
     onNavigateUp: () -> Unit,
     onUpdateGeneralSettings: (GeneralSettings) -> Unit,
 ) {
@@ -158,7 +158,7 @@ private fun Success(
     // UI
     modifier: Modifier = Modifier,
     // Callbacks
-    onDeleteEblanIconPackInfo: (String) -> Unit,
+    onDeleteEblanIconPackInfo: (EblanIconPackInfo) -> Unit,
     onUpdateGeneralSettings: (GeneralSettings) -> Unit,
 ) {
     val context = LocalContext.current

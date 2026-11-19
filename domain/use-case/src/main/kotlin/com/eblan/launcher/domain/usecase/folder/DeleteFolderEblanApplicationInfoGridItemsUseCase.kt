@@ -28,10 +28,9 @@ import com.eblan.launcher.domain.repository.UserDataRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
-import java.io.File
 import javax.inject.Inject
 
-/** Deletes a folder tree, clears child application folder links, and removes its icon files. */
+/** Deletes a folder tree and clears child application folder links. */
 class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
     private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
     private val userDataRepository: UserDataRepository,
@@ -40,13 +39,11 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
 ) {
     /**
      * Removes all descendants of [folderId], restores contained applications to the top level, and
-     * deletes the folder and its icon.
+     * deletes the folder.
      *
-     * @param icon The icon path of the folder being deleted, if any.
      * @param folderId The ID of the folder to delete.
      */
     suspend operator fun invoke(
-        icon: String?,
         folderId: String,
     ) = withContext(defaultDispatcher) {
         val userData = userDataRepository.userDataFlow.first()
@@ -79,13 +76,9 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
                     eblanApplicationInfoRepository.updateEblanApplicationInfos(eblanApplicationInfos = eblanApplicationInfos)
                 }
 
-                is FolderEblanApplicationInfoGridItemData.Folder -> {
-                    deleteCustomIcon(icon = data.icon)
-                }
+                is FolderEblanApplicationInfoGridItemData.Folder -> Unit
             }
         }
-
-        deleteCustomIcon(icon = icon)
 
         folderEblanApplicationInfoRepository.deleteFolderEblanApplicationInfoById(id = folderId)
     }
@@ -119,17 +112,6 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
                     )
                 }
             }
-        }
-    }
-
-    /** Deletes an icon file when a path is available and the file exists. */
-    private fun deleteCustomIcon(icon: String?) {
-        if (icon == null) return
-
-        val customIconFile = File(icon)
-
-        if (customIconFile.exists()) {
-            customIconFile.delete()
         }
     }
 }

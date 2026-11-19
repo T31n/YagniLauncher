@@ -85,7 +85,7 @@ class UpdateIconPacksUseCase @Inject constructor(
         }
     }
 
-    /** Generates cache files for installed activities and removes stale cached files. */
+    /** Generates cache files for installed activities. */
     private suspend fun updateIconPackInfos(
         iconPackPackageName: String,
         fileManager: FileManager,
@@ -103,38 +103,22 @@ class UpdateIconPacksUseCase @Inject constructor(
 
         val appFilter = iconPackManager.getIconPackComponents(packageName = iconPackPackageName)
 
-        val installedComponentHashedNames = buildSet {
-            fastLauncherAppsActivityInfos.forEach {
-                currentCoroutineContext().ensureActive()
+        fastLauncherAppsActivityInfos.forEach {
+            currentCoroutineContext().ensureActive()
 
-                val file = File(
-                    iconPackInfoDirectory,
-                    iconKeyGenerator.getHashedName(name = it.componentName),
-                )
+            val file = File(
+                iconPackInfoDirectory,
+                iconKeyGenerator.getHashedName(name = it.componentName),
+            )
 
-                cacheIconPackFile(
-                    iconPackManager = iconPackManager,
-                    appFilter = appFilter,
-                    iconPackPackageName = iconPackPackageName,
-                    file = file,
-                    componentName = it.componentName,
-                    generalSettings = generalSettings,
-                )
-
-                add(iconKeyGenerator.getHashedName(name = it.componentName))
-            }
+            cacheIconPackFile(
+                iconPackManager = iconPackManager,
+                appFilter = appFilter,
+                iconPackPackageName = iconPackPackageName,
+                file = file,
+                componentName = it.componentName,
+                generalSettings = generalSettings,
+            )
         }
-
-        iconPackInfoDirectory.listFiles()
-            ?.filter {
-                currentCoroutineContext().ensureActive()
-
-                it.isFile && it.name !in installedComponentHashedNames
-            }
-            ?.forEach {
-                currentCoroutineContext().ensureActive()
-
-                it.delete()
-            }
     }
 }

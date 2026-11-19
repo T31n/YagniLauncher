@@ -19,12 +19,12 @@ package com.eblan.launcher.feature.settings.general
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.eblan.launcher.domain.model.iconpackinfo.EblanIconPackInfo
 import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPack
 import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.domain.platform.PackageManagerWrapper
 import com.eblan.launcher.domain.repository.EblanIconPackInfoRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
-import com.eblan.launcher.domain.usecase.iconpack.DeleteIconPackInfoUseCase
 import com.eblan.launcher.feature.settings.general.model.GeneralSettingsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,8 +39,7 @@ import javax.inject.Inject
 @HiltViewModel
 internal class GeneralSettingsViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository,
-    eblanIconPackInfoRepository: EblanIconPackInfoRepository,
-    private val deleteIconPackInfosUseCase: DeleteIconPackInfoUseCase,
+    private val eblanIconPackInfoRepository: EblanIconPackInfoRepository,
     packageManagerWrapper: PackageManagerWrapper,
 ) : ViewModel() {
     val generalSettingsUiState = userDataRepository.userDataFlow.map { userData ->
@@ -70,9 +69,9 @@ internal class GeneralSettingsViewModel @Inject constructor(
         initialValue = emptyList(),
     )
 
-    fun deleteIconPack(iconPackPackageName: String) {
+    fun deleteIconPackInfo(eblanIconPackInfo: EblanIconPackInfo) {
         viewModelScope.launch {
-            deleteIconPackInfosUseCase(iconPackPackageName = iconPackPackageName)
+            eblanIconPackInfoRepository.deleteEblanIconPackInfo(eblanIconPackInfo = eblanIconPackInfo)
         }
     }
 

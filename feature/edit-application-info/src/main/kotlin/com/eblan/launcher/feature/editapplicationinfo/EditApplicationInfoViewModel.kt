@@ -35,7 +35,6 @@ import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoTagCrossRefRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoTagRepository
 import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
-import com.eblan.launcher.domain.usecase.application.DeleteEblanApplicationInfoCustomIconUseCase
 import com.eblan.launcher.domain.usecase.application.GetEblanApplicationInfosTagsUiUseCase
 import com.eblan.launcher.domain.usecase.application.UpdateEblanApplicationInfoCustomIconUseCase
 import com.eblan.launcher.domain.usecase.folder.GetFolderEblanApplicationInfoPopupsUseCase
@@ -64,7 +63,6 @@ internal class EditApplicationInfoViewModel @Inject constructor(
     private val eblanApplicationInfoTagRepository: EblanApplicationInfoTagRepository,
     private val eblanApplicationInfoTagCrossRefRepository: EblanApplicationInfoTagCrossRefRepository,
     private val updateEblanApplicationInfoCustomIconUseCase: UpdateEblanApplicationInfoCustomIconUseCase,
-    private val deleteEblanApplicationInfoCustomIconUseCase: DeleteEblanApplicationInfoCustomIconUseCase,
     private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
     getFolderEblanApplicationInfoPopupsUseCase: GetFolderEblanApplicationInfoPopupsUseCase,
     getTopLevelFolderEblanApplicationInfosUseCase: GetTopLevelFolderEblanApplicationInfosUseCase,
@@ -161,14 +159,6 @@ internal class EditApplicationInfoViewModel @Inject constructor(
         }
 
         lastIconPackComponents = emptyList()
-    }
-
-    fun resetEblanApplicationInfoCustomIcon(eblanApplicationInfo: EblanApplicationInfo) {
-        viewModelScope.launch {
-            deleteEblanApplicationInfoCustomIconUseCase(eblanApplicationInfo = eblanApplicationInfo)
-
-            getApplicationInfo()
-        }
     }
 
     fun searchIconPackInfoComponent(component: String) {
