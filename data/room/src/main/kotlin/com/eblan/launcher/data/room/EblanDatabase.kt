@@ -67,7 +67,7 @@ import com.eblan.launcher.data.room.migration.AutoMigration9To10
         EblanApplicationInfoTagEntity::class,
         FolderEblanApplicationInfoEntity::class,
     ],
-    version = 23,
+    version = 24,
     exportSchema = true,
     autoMigrations = [
         AutoMigration(

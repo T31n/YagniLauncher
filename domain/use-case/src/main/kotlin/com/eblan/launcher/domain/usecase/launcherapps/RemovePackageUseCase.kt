@@ -60,6 +60,7 @@ class RemovePackageUseCase @Inject constructor(
             )
 
             eblanAppWidgetProviderInfoRepository.deleteEblanAppWidgetProviderInfoByPackageName(
+                serialNumber = serialNumber,
                 packageName = packageName,
             )
 

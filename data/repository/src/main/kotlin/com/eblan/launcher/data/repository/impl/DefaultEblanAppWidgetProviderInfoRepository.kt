@@ -55,14 +55,22 @@ class DefaultEblanAppWidgetProviderInfoRepository @Inject constructor(private va
         )
     }
 
-    override suspend fun getEblanAppWidgetProviderInfosByPackageName(packageName: String): List<EblanAppWidgetProviderInfo> = eblanAppWidgetProviderInfoDao.getEblanAppWidgetProviderInfoEntitiesByPackageName(
+    override suspend fun getEblanAppWidgetProviderInfosByPackageName(
+        serialNumber: Long,
+        packageName: String,
+    ): List<EblanAppWidgetProviderInfo> = eblanAppWidgetProviderInfoDao.getEblanAppWidgetProviderInfoEntitiesByPackageName(
+        serialNumber = serialNumber,
         packageName = packageName,
     ).map {
         it.asModel()
     }
 
-    override suspend fun deleteEblanAppWidgetProviderInfoByPackageName(packageName: String) {
+    override suspend fun deleteEblanAppWidgetProviderInfoByPackageName(
+        serialNumber: Long,
+        packageName: String,
+    ) {
         eblanAppWidgetProviderInfoDao.deleteEblanAppWidgetProviderInfoEntityByPackageName(
+            serialNumber = serialNumber,
             packageName = packageName,
         )
     }

@@ -19,11 +19,10 @@ package com.eblan.launcher.data.room.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 
-@Entity
+@Entity(primaryKeys = ["serialNumber", "componentName"])
 data class EblanAppWidgetProviderInfoEntity(
-    @PrimaryKey val componentName: String,
+    val componentName: String,
     val serialNumber: Long,
     val configure: String?,
     val packageName: String,

@@ -52,8 +52,8 @@ class GetCacheInfoUseCase @Inject constructor(
         )
 
         CacheInfo(
-            totalSize = cacheSnapshot.allFiles.sumOf { it.length() },
-            reclaimableSize = cacheSnapshot.unreferencedFiles.sumOf { it.length() },
+            totalSize = cacheSnapshot.totalSize,
+            reclaimableSize = cacheSnapshot.reclaimableSize,
         )
     }
 }

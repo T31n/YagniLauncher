@@ -39,9 +39,15 @@ interface EblanAppWidgetProviderInfoDao {
     @Delete
     suspend fun deleteEblanAppWidgetProviderInfoEntities(entities: List<EblanAppWidgetProviderInfoEntity>)
 
-    @Query("SELECT * FROM EblanAppWidgetProviderInfoEntity WHERE packageName = :packageName")
-    suspend fun getEblanAppWidgetProviderInfoEntitiesByPackageName(packageName: String): List<EblanAppWidgetProviderInfoEntity>
+    @Query("SELECT * FROM EblanAppWidgetProviderInfoEntity WHERE serialNumber = :serialNumber AND packageName = :packageName")
+    suspend fun getEblanAppWidgetProviderInfoEntitiesByPackageName(
+        serialNumber: Long,
+        packageName: String,
+    ): List<EblanAppWidgetProviderInfoEntity>
 
-    @Query("DELETE FROM EblanAppWidgetProviderInfoEntity WHERE packageName = :packageName")
-    suspend fun deleteEblanAppWidgetProviderInfoEntityByPackageName(packageName: String)
+    @Query("DELETE FROM EblanAppWidgetProviderInfoEntity WHERE serialNumber = :serialNumber AND packageName = :packageName")
+    suspend fun deleteEblanAppWidgetProviderInfoEntityByPackageName(
+        serialNumber: Long,
+        packageName: String,
+    )
 }

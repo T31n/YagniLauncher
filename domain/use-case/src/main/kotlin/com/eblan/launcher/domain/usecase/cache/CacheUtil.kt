@@ -43,67 +43,15 @@ internal val referenceCheckedDirectoryNames = listOf(
 /**
  * The result of scanning the cache.
  *
- * @property allFiles Every file stored in the managed cache directories.
+ * @property totalSize Total size in bytes of all files in the managed cache directories.
+ * @property reclaimableSize Total size in bytes of unreferenced files that can be deleted.
  * @property unreferencedFiles The files that are not used anymore and can be deleted.
  */
 internal data class CacheSnapshot(
-    val allFiles: List<File>,
+    val totalSize: Long,
+    val reclaimableSize: Long,
     val unreferencedFiles: List<File>,
 )
-
-/**
- * Splits the cached files into the ones that are still in use and the ones that can be deleted.
- *
- * @param referenceCheckedDirectories Flat directories whose files are tracked by the database.
- * @param iconPacksDirectory Directory containing one sub directory per icon pack.
- * @param referencedPaths File paths that are referenced by the database.
- * @param keptIconPackPackageNames Icon packs that must keep their cache directory.
- * @param installedIconPackFileNames File names an icon pack may contain for the installed activities.
- */
-internal fun scanCache(
-    referenceCheckedDirectories: List<File>,
-    iconPacksDirectory: File,
-    referencedPaths: Collection<String>,
-    keptIconPackPackageNames: Set<String>,
-    installedIconPackFileNames: Set<String>,
-): CacheSnapshot {
-    fun File.toCacheKey(): String = "${parentFile?.name.orEmpty()}/$name"
-
-    val referencedKeys = referencedPaths.mapTo(hashSetOf()) { File(it).toCacheKey() }
-
-    val allFiles = mutableListOf<File>()
-
-    val unreferencedFiles = mutableListOf<File>()
-
-    referenceCheckedDirectories.forEach { directory ->
-        directory.listFiles()?.filter { it.isFile }?.forEach { file ->
-            allFiles += file
-
-            if (file.toCacheKey() !in referencedKeys) {
-                unreferencedFiles += file
-            }
-        }
-    }
-
-    iconPacksDirectory.listFiles()?.filter { it.isDirectory }?.forEach { iconPackDirectory ->
-        val isKept = iconPackDirectory.name in keptIconPackPackageNames
-
-        iconPackDirectory.listFiles()?.filter { it.isFile }?.forEach { file ->
-            allFiles += file
-
-            val isInUse = isKept && file.name in installedIconPackFileNames
-
-            if (!isInUse) {
-                unreferencedFiles += file
-            }
-        }
-    }
-
-    return CacheSnapshot(
-        allFiles = allFiles,
-        unreferencedFiles = unreferencedFiles,
-    )
-}
 
 /** Loads everything [scanCache] needs from the file system, the database and the settings. */
 internal suspend fun getCacheSnapshot(
@@ -139,5 +87,66 @@ internal suspend fun getCacheSnapshot(
         referencedPaths = fileReferenceRepository.getReferencedFilePaths(),
         keptIconPackPackageNames = keptIconPackPackageNames,
         installedIconPackFileNames = installedIconPackFileNames,
+    )
+}
+
+/**
+ * Splits the cached files into the ones that are still in use and the ones that can be deleted.
+ *
+ * @param referenceCheckedDirectories Flat directories whose files are tracked by the database.
+ * @param iconPacksDirectory Directory containing one sub directory per icon pack.
+ * @param referencedPaths File paths that are referenced by the database.
+ * @param keptIconPackPackageNames Icon packs that must keep their cache directory.
+ * @param installedIconPackFileNames File names an icon pack may contain for the installed activities.
+ */
+private fun scanCache(
+    referenceCheckedDirectories: List<File>,
+    iconPacksDirectory: File,
+    referencedPaths: Collection<String>,
+    keptIconPackPackageNames: Set<String>,
+    installedIconPackFileNames: Set<String>,
+): CacheSnapshot {
+    fun File.toCacheKey(): String = "${parentFile?.name.orEmpty()}/$name"
+
+    val referencedKeys = referencedPaths.mapTo(hashSetOf()) { File(it).toCacheKey() }
+
+    var totalSize = 0L
+
+    var reclaimableSize = 0L
+
+    val unreferencedFiles = mutableListOf<File>()
+
+    referenceCheckedDirectories.forEach { directory ->
+        directory.listFiles()?.filter { it.isFile }?.forEach { file ->
+            val fileSize = file.length()
+            totalSize += fileSize
+
+            if (file.toCacheKey() !in referencedKeys) {
+                unreferencedFiles += file
+                reclaimableSize += fileSize
+            }
+        }
+    }
+
+    iconPacksDirectory.listFiles()?.filter { it.isDirectory }?.forEach { iconPackDirectory ->
+        val isKept = iconPackDirectory.name in keptIconPackPackageNames
+
+        iconPackDirectory.listFiles()?.filter { it.isFile }?.forEach { file ->
+            val fileSize = file.length()
+            totalSize += fileSize
+
+            val isInUse = isKept && file.name in installedIconPackFileNames
+
+            if (!isInUse) {
+                unreferencedFiles += file
+                reclaimableSize += fileSize
+            }
+        }
+    }
+
+    return CacheSnapshot(
+        totalSize = totalSize,
+        reclaimableSize = reclaimableSize,
+        unreferencedFiles = unreferencedFiles,
     )
 }
