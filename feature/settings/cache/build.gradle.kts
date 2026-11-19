@@ -29,4 +29,5 @@ dependencies {
     // Projects
     implementation(projects.common)
     implementation(projects.domain.useCase)
+    implementation(projects.platform)
 }

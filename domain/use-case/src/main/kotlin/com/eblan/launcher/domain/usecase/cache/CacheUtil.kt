@@ -28,12 +28,6 @@ import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.first
 import java.io.File
 
-/**
- * Files younger than this are never treated as unreferenced, because some flows write a cache file
- * a moment before the database row that references it is inserted.
- */
-internal const val MINIMUM_UNREFERENCED_FILE_AGE_MILLIS = 60_000L
-
 /** Cache directories whose files are tracked by a path column in the database. */
 internal val referenceCheckedDirectoryNames = listOf(
     FileManager.ICONS_DIR,
@@ -65,7 +59,6 @@ internal data class CacheSnapshot(
  * @param referencedPaths File paths that are referenced by the database.
  * @param keptIconPackPackageNames Icon packs that must keep their cache directory.
  * @param installedIconPackFileNames File names an icon pack may contain for the installed activities.
- * @param now The current time in milliseconds.
  */
 internal fun scanCache(
     referenceCheckedDirectories: List<File>,
@@ -73,10 +66,7 @@ internal fun scanCache(
     referencedPaths: Collection<String>,
     keptIconPackPackageNames: Set<String>,
     installedIconPackFileNames: Set<String>,
-    now: Long,
 ): CacheSnapshot {
-    fun File.isOldEnough(): Boolean = now - lastModified() >= MINIMUM_UNREFERENCED_FILE_AGE_MILLIS
-
     fun File.toCacheKey(): String = "${parentFile?.name.orEmpty()}/$name"
 
     val referencedKeys = referencedPaths.mapTo(hashSetOf()) { File(it).toCacheKey() }
@@ -89,7 +79,7 @@ internal fun scanCache(
         directory.listFiles()?.filter { it.isFile }?.forEach { file ->
             allFiles += file
 
-            if (file.toCacheKey() !in referencedKeys && file.isOldEnough()) {
+            if (file.toCacheKey() !in referencedKeys) {
                 unreferencedFiles += file
             }
         }
@@ -103,7 +93,7 @@ internal fun scanCache(
 
             val isInUse = isKept && file.name in installedIconPackFileNames
 
-            if (!isInUse && file.isOldEnough()) {
+            if (!isInUse) {
                 unreferencedFiles += file
             }
         }
@@ -149,6 +139,5 @@ internal suspend fun getCacheSnapshot(
         referencedPaths = fileReferenceRepository.getReferencedFilePaths(),
         keptIconPackPackageNames = keptIconPackPackageNames,
         installedIconPackFileNames = installedIconPackFileNames,
-        now = System.currentTimeMillis(),
     )
 }

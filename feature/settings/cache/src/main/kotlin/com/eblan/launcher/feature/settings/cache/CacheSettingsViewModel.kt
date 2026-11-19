@@ -24,8 +24,10 @@ import com.eblan.launcher.domain.usecase.cache.GetCacheInfoUseCase
 import com.eblan.launcher.feature.settings.cache.model.CacheSettingsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -38,14 +40,13 @@ internal class CacheSettingsViewModel @Inject constructor(
         MutableStateFlow<CacheSettingsUiState>(CacheSettingsUiState.Loading)
 
     val cacheSettingsUiState: StateFlow<CacheSettingsUiState> =
-        _cacheSettingsUiState.asStateFlow()
-
-    init {
-        viewModelScope.launch {
-            _cacheSettingsUiState.value =
-                CacheSettingsUiState.Success(cacheInfo = getCacheInfoUseCase())
-        }
-    }
+        _cacheSettingsUiState.onStart {
+            refreshCacheInfo()
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = CacheSettingsUiState.Loading,
+        )
 
     fun cleanUpCache() {
         val currentState = _cacheSettingsUiState.value as? CacheSettingsUiState.Success
@@ -60,6 +61,22 @@ internal class CacheSettingsViewModel @Inject constructor(
             _cacheSettingsUiState.value = CacheSettingsUiState.Success(
                 cacheInfo = getCacheInfoUseCase(),
                 freedSize = freedSize,
+            )
+        }
+    }
+
+    private fun refreshCacheInfo() {
+        val currentState = _cacheSettingsUiState.value as? CacheSettingsUiState.Success
+        if (currentState?.isCleaningUp == true) return
+
+        viewModelScope.launch {
+            val cacheInfo = getCacheInfoUseCase()
+            val latestState = _cacheSettingsUiState.value as? CacheSettingsUiState.Success
+            if (latestState?.isCleaningUp == true) return@launch
+
+            _cacheSettingsUiState.value = CacheSettingsUiState.Success(
+                cacheInfo = cacheInfo,
+                freedSize = latestState?.freedSize,
             )
         }
     }
