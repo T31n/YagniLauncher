@@ -17,7 +17,6 @@
  */
 package com.eblan.launcher.ui.settings
 
-import android.accessibilityservice.AccessibilityService
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -396,9 +395,7 @@ fun rememberIsNotificationAccessGranted(): State<Boolean> {
 }
 
 @Composable
-fun rememberIsAccessibilityServiceEnabled(
-    accessibilityServiceClass: Class<out AccessibilityService>,
-): State<Boolean> {
+fun rememberIsAccessibilityServiceEnabled(): State<Boolean> {
     val accessibilityManager = LocalAccessibilityManager.current
 
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -407,10 +404,9 @@ fun rememberIsAccessibilityServiceEnabled(
         initialValue = false,
         key1 = lifecycleOwner,
         key2 = accessibilityManager,
-        key3 = accessibilityServiceClass,
     ) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-            value = accessibilityManager.isAccessibilityServiceEnabled(accessibilityServiceClass)
+            value = accessibilityManager.isAccessibilityServiceEnabled()
         }
     }
 }

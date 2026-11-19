@@ -17,12 +17,12 @@
  */
 package com.eblan.launcher.platform.accessibilitymanager
 
-import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.Context
 import android.view.accessibility.AccessibilityManager
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
+import com.eblan.launcher.platform.service.EblanAccessibilityService
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -35,9 +35,7 @@ internal class DefaultAccessibilityManagerWrapper @Inject constructor(
     private val accessibilityManager = context.getSystemService(Context.ACCESSIBILITY_SERVICE)
         as AccessibilityManager
 
-    override suspend fun isAccessibilityServiceEnabled(
-        accessibilityServiceClass: Class<out AccessibilityService>,
-    ): Boolean = withContext(ioDispatcher) {
+    override suspend fun isAccessibilityServiceEnabled(): Boolean = withContext(ioDispatcher) {
         accessibilityManager.isEnabled &&
             accessibilityManager
                 .getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK)
@@ -45,7 +43,7 @@ internal class DefaultAccessibilityManagerWrapper @Inject constructor(
                     val resolvedInfo = it.resolveInfo.serviceInfo
 
                     resolvedInfo.packageName == context.packageName &&
-                        resolvedInfo.name == accessibilityServiceClass.name
+                        resolvedInfo.name == EblanAccessibilityService::class.java.name
                 }
     }
 }

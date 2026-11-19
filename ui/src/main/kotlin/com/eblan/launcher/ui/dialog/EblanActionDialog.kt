@@ -51,7 +51,6 @@ import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
-import com.eblan.launcher.platform.service.EblanAccessibilityService
 import com.eblan.launcher.ui.R
 import com.eblan.launcher.ui.settings.getEblanActionTypeSubtitle
 import com.eblan.launcher.ui.settings.rememberIsAccessibilityServiceEnabled
@@ -75,9 +74,7 @@ internal fun EblanActionDialog(
 
     var showSelectApplicationDialog by remember { mutableStateOf(false) }
 
-    val isAccessibilityServiceEnabled by rememberIsAccessibilityServiceEnabled(
-        EblanAccessibilityService::class.java,
-    )
+    val isAccessibilityServiceEnabled by rememberIsAccessibilityServiceEnabled()
 
     EblanDialog(
         modifier = modifier,
