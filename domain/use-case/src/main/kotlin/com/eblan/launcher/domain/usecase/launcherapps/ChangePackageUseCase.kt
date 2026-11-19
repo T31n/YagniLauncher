@@ -257,7 +257,7 @@ class ChangePackageUseCase @Inject constructor(
             iconKeyGenerator = iconKeyGenerator,
         )
 
-        deleteEblanAppWidgetProviderInfoIcons(
+        deleteEblanAppWidgetProviderInfoFiles(
             eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos(),
             eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos(),
             eblanShortcutConfigs = eblanShortcutConfigRepository.getEblanShortcutConfigs(),

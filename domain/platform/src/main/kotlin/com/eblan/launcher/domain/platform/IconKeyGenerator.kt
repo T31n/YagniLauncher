@@ -29,5 +29,10 @@ interface IconKeyGenerator {
         id: String,
     ): String
 
+    suspend fun getWidgetPreviewKey(
+        serialNumber: Long,
+        componentName: String,
+    ): String
+
     suspend fun getHashedName(name: String): String
 }

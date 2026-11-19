@@ -104,7 +104,7 @@ internal suspend fun deleteEblanApplicationInfoIcons(
 }
 
 /** Deletes unreferenced widget application icons and all removed widget preview files. */
-internal suspend fun deleteEblanAppWidgetProviderInfoIcons(
+internal suspend fun deleteEblanAppWidgetProviderInfoFiles(
     eblanApplicationInfos: List<EblanApplicationInfo>,
     eblanAppWidgetProviderInfos: List<EblanAppWidgetProviderInfo>,
     eblanShortcutConfigs: List<EblanShortcutConfig>,
