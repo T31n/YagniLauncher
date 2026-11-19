@@ -77,6 +77,7 @@ internal fun CacheSettingsRoute(
         cacheSettingsUiState = cacheSettingsUiState,
         onNavigateUp = onNavigateUp,
         onCleanUpCache = viewModel::cleanUpCache,
+        onConsumeFreedSize = viewModel::consumeFreedSize,
     )
 }
 
@@ -87,6 +88,7 @@ internal fun CacheSettingsScreen(
     cacheSettingsUiState: CacheSettingsUiState,
     onNavigateUp: () -> Unit,
     onCleanUpCache: () -> Unit,
+    onConsumeFreedSize: () -> Unit,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -133,6 +135,7 @@ internal fun CacheSettingsScreen(
                                 snackbarHostState.showSnackbar(message = message)
                             }
                         },
+                        onConsumeFreedSize = onConsumeFreedSize,
                     )
                 }
             }
@@ -148,6 +151,7 @@ private fun Success(
     freedSize: Long?,
     onCleanUpCache: () -> Unit,
     onShowSnackbar: (String) -> Unit,
+    onConsumeFreedSize: () -> Unit,
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -160,6 +164,7 @@ private fun Success(
 
         LaunchedEffect(key1 = freedSize) {
             onShowSnackbar(message)
+            onConsumeFreedSize()
         }
     }
 

@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -49,35 +50,64 @@ internal class CacheSettingsViewModel @Inject constructor(
         )
 
     fun cleanUpCache() {
-        val currentState = _cacheSettingsUiState.value as? CacheSettingsUiState.Success
+        val currentState = _cacheSettingsUiState.value
 
-        if (currentState == null || currentState.isCleaningUp) return
+        if (currentState !is CacheSettingsUiState.Success || currentState.isCleaningUp) return
 
         viewModelScope.launch {
-            _cacheSettingsUiState.value = currentState.copy(isCleaningUp = true)
+            _cacheSettingsUiState.update { state ->
+                when (state) {
+                    CacheSettingsUiState.Loading -> state
+
+                    is CacheSettingsUiState.Success -> state.copy(
+                        isCleaningUp = true,
+                        freedSize = null,
+                    )
+                }
+            }
 
             val freedSize = cleanUpCacheUseCase()
 
-            _cacheSettingsUiState.value = CacheSettingsUiState.Success(
-                cacheInfo = getCacheInfoUseCase(),
-                freedSize = freedSize,
-            )
+            _cacheSettingsUiState.update {
+                CacheSettingsUiState.Success(
+                    cacheInfo = getCacheInfoUseCase(),
+                    freedSize = freedSize,
+                )
+            }
+        }
+    }
+
+    fun consumeFreedSize() {
+        _cacheSettingsUiState.update { state ->
+            when (state) {
+                CacheSettingsUiState.Loading -> state
+                is CacheSettingsUiState.Success -> state.copy(freedSize = null)
+            }
         }
     }
 
     private fun refreshCacheInfo() {
-        val currentState = _cacheSettingsUiState.value as? CacheSettingsUiState.Success
-        if (currentState?.isCleaningUp == true) return
+        val currentState = _cacheSettingsUiState.value
+        if (currentState is CacheSettingsUiState.Success && currentState.isCleaningUp) return
 
         viewModelScope.launch {
             val cacheInfo = getCacheInfoUseCase()
-            val latestState = _cacheSettingsUiState.value as? CacheSettingsUiState.Success
-            if (latestState?.isCleaningUp == true) return@launch
 
-            _cacheSettingsUiState.value = CacheSettingsUiState.Success(
-                cacheInfo = cacheInfo,
-                freedSize = latestState?.freedSize,
-            )
+            _cacheSettingsUiState.update { state ->
+                when (state) {
+                    CacheSettingsUiState.Loading -> CacheSettingsUiState.Success(
+                        cacheInfo = cacheInfo,
+                    )
+
+                    is CacheSettingsUiState.Success -> {
+                        if (state.isCleaningUp) {
+                            state
+                        } else {
+                            state.copy(cacheInfo = cacheInfo)
+                        }
+                    }
+                }
+            }
         }
     }
 }
