@@ -57,7 +57,7 @@ class AddPinShortcutToHomeScreenUseCase @Inject constructor(
      * @param shortLabel The shortcut's short label.
      * @param longLabel The shortcut's long label.
      * @param isEnabled Whether the shortcut is enabled.
-     * @param icon The cached shortcut icon path, if available.
+     * @param icon The badged shortcut icon bytes, if available.
      * @return The inserted grid item, or `null` if no region is available.
      */
     suspend operator fun invoke(
@@ -67,7 +67,7 @@ class AddPinShortcutToHomeScreenUseCase @Inject constructor(
         shortLabel: String,
         longLabel: String,
         isEnabled: Boolean,
-        icon: String?,
+        icon: ByteArray?,
     ): GridItem? = withContext(ioDispatcher) {
         val homeSettings = userDataRepository.userDataFlow.first().homeSettings
 
@@ -104,7 +104,7 @@ class AddPinShortcutToHomeScreenUseCase @Inject constructor(
             serialNumber = serialNumber,
             shortLabel = shortLabel,
             longLabel = longLabel,
-            icon = icon,
+            icon = null,
             isEnabled = isEnabled,
             eblanApplicationInfoIcon = eblanApplicationInfoIcon,
             customIcon = null,
@@ -149,9 +149,29 @@ class AddPinShortcutToHomeScreenUseCase @Inject constructor(
         )
 
         if (newGridItem != null) {
-            gridRepository.insertGridItem(gridItem = newGridItem)
-        }
+            val iconPath = icon?.let { byteArray ->
+                val directory = fileManager.getFilesDirectory(FileManager.SHORTCUTS_DIR)
 
-        newGridItem
+                fileManager.updateAndGetFilePath(
+                    directory = directory,
+                    name = iconKeyGenerator.getShortcutIconKey(
+                        serialNumber = serialNumber,
+                        packageName = packageName,
+                        id = shortcutId,
+                    ),
+                    byteArray = byteArray,
+                )
+            }
+
+            val updatedGridItem = newGridItem.copy(
+                data = data.copy(icon = iconPath),
+            )
+
+            gridRepository.insertGridItem(gridItem = updatedGridItem)
+
+            updatedGridItem
+        } else {
+            null
+        }
     }
 }

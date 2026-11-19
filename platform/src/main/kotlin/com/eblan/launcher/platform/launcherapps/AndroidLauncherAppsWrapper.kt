@@ -22,7 +22,6 @@ import android.content.IntentSender
 import android.content.pm.LauncherApps
 import android.content.pm.ShortcutInfo
 import android.graphics.Rect
-import android.graphics.drawable.Drawable
 import android.os.Handler
 
 interface AndroidLauncherAppsWrapper {
@@ -48,10 +47,10 @@ interface AndroidLauncherAppsWrapper {
         sourceBounds: Rect,
     )
 
-    fun getShortcutBadgedIconDrawable(
+    suspend fun getShortcutBadgedIconByteArray(
         shortcutInfo: ShortcutInfo?,
         density: Int,
-    ): Drawable?
+    ): ByteArray?
 
     fun startAppDetailsActivity(
         serialNumber: Long,

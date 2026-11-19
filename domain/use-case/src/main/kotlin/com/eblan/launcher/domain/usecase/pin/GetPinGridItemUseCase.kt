@@ -152,13 +152,27 @@ class GetPinGridItemUseCase @Inject constructor(
                             file.absolutePath
                         }
 
+                val icon = pinItemRequestType.icon?.let { byteArray ->
+                    val directory = fileManager.getFilesDirectory(FileManager.SHORTCUTS_DIR)
+
+                    fileManager.updateAndGetFilePath(
+                        directory = directory,
+                        name = iconKeyGenerator.getShortcutIconKey(
+                            serialNumber = pinItemRequestType.serialNumber,
+                            packageName = pinItemRequestType.packageName,
+                            id = pinItemRequestType.shortcutId,
+                        ),
+                        byteArray = byteArray,
+                    )
+                }
+
                 val data = ShortcutInfo(
                     shortcutId = pinItemRequestType.shortcutId,
                     packageName = pinItemRequestType.packageName,
                     serialNumber = pinItemRequestType.serialNumber,
                     shortLabel = pinItemRequestType.shortLabel,
                     longLabel = pinItemRequestType.longLabel,
-                    icon = pinItemRequestType.icon,
+                    icon = icon,
                     isEnabled = pinItemRequestType.isEnabled,
                     eblanApplicationInfoIcon = eblanApplicationInfoIcon,
                     customIcon = null,

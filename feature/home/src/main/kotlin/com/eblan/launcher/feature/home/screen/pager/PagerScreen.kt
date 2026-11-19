@@ -153,7 +153,6 @@ import com.eblan.launcher.platform.usermanager.AndroidUserManagerWrapper
 import com.eblan.launcher.ui.local.LocalAppWidgetHost
 import com.eblan.launcher.ui.local.LocalAppWidgetManager
 import com.eblan.launcher.ui.local.LocalFileManager
-import com.eblan.launcher.ui.local.LocalIconKeyGenerator
 import com.eblan.launcher.ui.local.LocalImageSerializer
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import com.eblan.launcher.ui.local.LocalPinItemRequest
@@ -334,7 +333,6 @@ internal fun PagerScreen(
     val androidAppWidgetManagerWrapper = LocalAppWidgetManager.current
     val fileManager = LocalFileManager.current
     val androidAppWidgetHostWrapper = LocalAppWidgetHost.current
-    val iconKeyGenerator = LocalIconKeyGenerator.current
 
     val scope = rememberCoroutineScope()
 
@@ -454,11 +452,8 @@ internal fun PagerScreen(
                 moveGridItemResult = currentMoveGridItemResult.value,
                 result = it,
                 // Dependencies
-                androidImageSerializer = androidImageSerializer,
                 androidLauncherAppsWrapper = androidLauncherAppsWrapper,
                 androidUserManagerWrapper = androidUserManagerWrapper,
-                fileManager = fileManager,
-                iconKeyGenerator = iconKeyGenerator,
                 // Callbacks
                 onDeleteGridItem = onResetGridAfterDeleteGridItem,
                 onUpdateShortcutConfigIntoShortcutInfoGridItem = onUpdateShortcutConfigIntoShortcutInfoGridItem,

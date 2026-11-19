@@ -434,19 +434,24 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         }
     }
 
-    override fun getShortcutBadgedIconDrawable(
+    override suspend fun getShortcutBadgedIconByteArray(
         shortcutInfo: ShortcutInfo?,
         density: Int,
-    ): Drawable? = if (shortcutInfo != null) {
-        try {
-            launcherApps.getShortcutBadgedIconDrawable(shortcutInfo, density)
-        } catch (_: IllegalStateException) {
-            null
-        } catch (_: SecurityException) {
+    ): ByteArray? = withContext(ioDispatcher) {
+        if (shortcutInfo != null) {
+            try {
+                launcherApps.getShortcutBadgedIconDrawable(shortcutInfo, density)
+                    ?.let { drawable ->
+                        imageSerializer.createByteArray(drawable = drawable)
+                    }
+            } catch (_: IllegalStateException) {
+                null
+            } catch (_: SecurityException) {
+                null
+            }
+        } else {
             null
         }
-    } else {
-        null
     }
 
     override fun startAppDetailsActivity(

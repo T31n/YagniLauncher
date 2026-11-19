@@ -812,34 +812,14 @@ internal class PagerScreenState(
         val serialNumber =
             androidUserManagerWrapper.getSerialNumberForUser(userHandle = shortcutInfo.userHandle)
 
-        val icon = androidLauncherAppsWrapper.getShortcutBadgedIconDrawable(
+        val icon = androidLauncherAppsWrapper.getShortcutBadgedIconByteArray(
             shortcutInfo = shortcutInfo,
             density = 0,
-        )?.let {
-            val directory = fileManager.getFilesDirectory(FileManager.SHORTCUTS_DIR)
-
-            val file = File(
-                directory,
-                iconKeyGenerator.getShortcutIconKey(
-                    serialNumber = serialNumber,
-                    packageName = shortcutInfo.`package`,
-                    id = shortcutInfo.id,
-                ),
-            )
-
-            androidImageSerializer.createDrawablePath(
-                drawable = it,
-                file = file,
-            )
-
-            file.absolutePath
-        }
+        )
 
         onGetPinGridItem(
             PinItemRequestType.ShortcutInfo(
-                serialNumber = androidUserManagerWrapper.getSerialNumberForUser(
-                    userHandle = shortcutInfo.userHandle,
-                ),
+                serialNumber = serialNumber,
                 shortcutId = shortcutInfo.id,
                 packageName = shortcutInfo.`package`,
                 shortLabel = shortcutInfo.shortLabel.toString(),

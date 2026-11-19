@@ -43,7 +43,6 @@ import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.model.launcherapps.PinItemRequestType
 import com.eblan.launcher.domain.platform.FileManager
-import com.eblan.launcher.domain.platform.IconKeyGenerator
 import com.eblan.launcher.feature.home.R
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.GridItemSource
@@ -54,7 +53,6 @@ import com.eblan.launcher.platform.launcherapps.AndroidLauncherAppsWrapper
 import com.eblan.launcher.platform.usermanager.AndroidUserManagerWrapper
 import com.eblan.launcher.platform.widgetmanager.AndroidAppWidgetHostWrapper
 import com.eblan.launcher.platform.widgetmanager.AndroidAppWidgetManagerWrapper
-import java.io.File
 
 internal suspend fun handleDropGridItem(
     // Context and Environment
@@ -482,11 +480,8 @@ internal suspend fun handleShortcutConfigIntentSenderLauncherResult(
     moveGridItemResult: MoveGridItemResult?,
     result: ActivityResult,
     // Dependencies
-    androidImageSerializer: AndroidImageSerializer,
     androidLauncherAppsWrapper: AndroidLauncherAppsWrapper,
     androidUserManagerWrapper: AndroidUserManagerWrapper,
-    fileManager: FileManager,
-    iconKeyGenerator: IconKeyGenerator,
     // Callbacks
     onDeleteGridItem: (GridItem) -> Unit,
     onUpdateShortcutConfigIntoShortcutInfoGridItem: (
@@ -525,28 +520,10 @@ internal suspend fun handleShortcutConfigIntentSenderLauncherResult(
         val serialNumber =
             androidUserManagerWrapper.getSerialNumberForUser(userHandle = shortcutInfo.userHandle)
 
-        val icon = androidLauncherAppsWrapper.getShortcutBadgedIconDrawable(
+        val icon = androidLauncherAppsWrapper.getShortcutBadgedIconByteArray(
             shortcutInfo = shortcutInfo,
             density = 0,
-        )?.let {
-            val directory = fileManager.getFilesDirectory(FileManager.SHORTCUTS_DIR)
-
-            val file = File(
-                directory,
-                iconKeyGenerator.getShortcutIconKey(
-                    serialNumber = serialNumber,
-                    packageName = shortcutInfo.`package`,
-                    id = shortcutInfo.id,
-                ),
-            )
-
-            androidImageSerializer.createDrawablePath(
-                drawable = it,
-                file = file,
-            )
-
-            file.absolutePath
-        }
+        )
 
         val pinItemRequestType = PinItemRequestType.ShortcutInfo(
             serialNumber = serialNumber,

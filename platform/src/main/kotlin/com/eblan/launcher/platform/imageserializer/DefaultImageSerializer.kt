@@ -51,8 +51,10 @@ internal class DefaultImageSerializer @Inject constructor(
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : AndroidImageSerializer {
     override suspend fun createByteArray(drawable: Drawable): ByteArray? = withContext(defaultDispatcher) {
+        val bitmap = drawable.toBitmap() ?: return@withContext null
+
         ByteArrayOutputStream().use { stream ->
-            drawable.toBitmap()?.compress(
+            bitmap.compress(
                 Bitmap.CompressFormat.PNG,
                 100,
                 stream,
@@ -62,9 +64,11 @@ internal class DefaultImageSerializer @Inject constructor(
         }
     }
 
-    override suspend fun createByteArray(bitmap: Bitmap?): ByteArray? = ByteArrayOutputStream().use { stream ->
-        withContext(defaultDispatcher) {
-            bitmap?.compress(Bitmap.CompressFormat.PNG, 100, stream)
+    override suspend fun createByteArray(bitmap: Bitmap?): ByteArray? = withContext(defaultDispatcher) {
+        if (bitmap == null) return@withContext null
+
+        ByteArrayOutputStream().use { stream ->
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
 
             stream.toByteArray()
         }

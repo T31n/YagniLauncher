@@ -57,6 +57,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -159,7 +160,7 @@ private fun PinShortcutScreen(
         shortLabel: String,
         longLabel: String,
         isEnabled: Boolean,
-        icon: String?,
+        icon: ByteArray?,
     ) -> Unit,
     onDeleteShortcutGridItem: (GridItem) -> Unit,
     onDragStart: () -> Unit,
@@ -170,16 +171,17 @@ private fun PinShortcutScreen(
 
     val pinItemRequestWrapper = LocalPinItemRequest.current
     val androidLauncherAppsWrapper = LocalLauncherApps.current
-    val imageSerializer = LocalImageSerializer.current
     val androidUserManagerWrapper = LocalUserManager.current
-    val fileManager = LocalFileManager.current
     val context = LocalContext.current
-    val iconKeyGenerator = LocalIconKeyGenerator.current
 
     val scope = rememberCoroutineScope()
 
-    val icon = remember {
-        androidLauncherAppsWrapper.getShortcutBadgedIconDrawable(
+    val icon by produceState<ByteArray?>(
+        initialValue = null,
+        key1 = shortcutInfo,
+        key2 = androidLauncherAppsWrapper,
+    ) {
+        value = androidLauncherAppsWrapper.getShortcutBadgedIconByteArray(
             shortcutInfo = shortcutInfo,
             density = 0,
         )
@@ -222,10 +224,6 @@ private fun PinShortcutScreen(
                             // System Wrappers
                             androidUserManagerWrapper = androidUserManagerWrapper,
                             androidLauncherAppsWrapper = androidLauncherAppsWrapper,
-                            // File and Image Processing
-                            fileManager = fileManager,
-                            iconKeyGenerator = iconKeyGenerator,
-                            imageSerializer = imageSerializer,
                             // Callbacks
                             onAddPinShortcutToHomeScreen = onAddPinShortcutToHomeScreen,
                         )
@@ -557,10 +555,6 @@ private suspend fun addPinShortcutToHomeScreen(
     // System Wrappers
     androidUserManagerWrapper: AndroidUserManagerWrapper,
     androidLauncherAppsWrapper: AndroidLauncherAppsWrapper,
-    // File and Image Processing
-    fileManager: FileManager,
-    iconKeyGenerator: IconKeyGenerator,
-    imageSerializer: AndroidImageSerializer,
     // Callbacks
     onAddPinShortcutToHomeScreen: (
         serialNumber: Long,
@@ -569,35 +563,16 @@ private suspend fun addPinShortcutToHomeScreen(
         shortLabel: String,
         longLabel: String,
         isEnabled: Boolean,
-        icon: String?,
+        icon: ByteArray?,
     ) -> Unit,
 ) {
     val serialNumber =
         androidUserManagerWrapper.getSerialNumberForUser(userHandle = shortcutInfo.userHandle)
 
-    val icon = androidLauncherAppsWrapper.getShortcutBadgedIconDrawable(
+    val icon = androidLauncherAppsWrapper.getShortcutBadgedIconByteArray(
         shortcutInfo = shortcutInfo,
         density = 0,
-    )?.let { drawable ->
-        val directory =
-            fileManager.getFilesDirectory(FileManager.SHORTCUTS_DIR)
-
-        val file = File(
-            directory,
-            iconKeyGenerator.getShortcutIconKey(
-                serialNumber = serialNumber,
-                packageName = shortcutInfo.`package`,
-                id = shortcutInfo.id,
-            ),
-        )
-
-        imageSerializer.createDrawablePath(
-            drawable = drawable,
-            file = file,
-        )
-
-        file.absolutePath
-    }
+    )
 
     onAddPinShortcutToHomeScreen(
         serialNumber,
