@@ -276,7 +276,6 @@ internal fun Success(
                 iconPackComponents = iconPackComponents,
                 iconPackPackageName = iconPackPackageName,
                 iconPackInfoLabel = iconPackInfoLabel,
-                iconName = folderEblanApplicationInfo.id,
                 // Callbacks
                 onDismissRequest = {
                     onResetIconPackPackageName()

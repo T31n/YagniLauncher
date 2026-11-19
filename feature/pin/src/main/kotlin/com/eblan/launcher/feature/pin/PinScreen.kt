@@ -669,7 +669,7 @@ private suspend fun addPinWidgetToHomeScreen(
         onAddPinWidgetToHomeScreen(
             userManager.getSerialNumberForUser(userHandle = appWidgetProviderInfo.profile),
             componentName,
-            appWidgetProviderInfo.configure.flattenToString(),
+            appWidgetProviderInfo.configure?.flattenToString(),
             appWidgetProviderInfo.provider.packageName,
             appWidgetProviderInfo.targetCellHeight,
             appWidgetProviderInfo.targetCellWidth,
@@ -688,7 +688,7 @@ private suspend fun addPinWidgetToHomeScreen(
         onAddPinWidgetToHomeScreen(
             userManager.getSerialNumberForUser(userHandle = appWidgetProviderInfo.profile),
             appWidgetProviderInfo.provider.flattenToString(),
-            appWidgetProviderInfo.configure.flattenToString(),
+            appWidgetProviderInfo.configure?.flattenToString(),
             appWidgetProviderInfo.provider.packageName,
             0,
             0,

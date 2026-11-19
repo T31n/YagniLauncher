@@ -64,6 +64,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.io.File
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.uuid.Uuid
 import com.eblan.launcher.common.R as commonR
 
 @OptIn(ExperimentalMaterial3Api::class, FlowPreview::class)
@@ -73,7 +74,6 @@ fun IconPackInfoFilesDialog(
     iconPackComponents: List<IconPackComponent>,
     iconPackPackageName: String?,
     iconPackInfoLabel: String?,
-    iconName: String,
     // Modifier
     modifier: Modifier = Modifier,
     // Callbacks
@@ -177,7 +177,7 @@ fun IconPackInfoFilesDialog(
 
                                             val file = File(
                                                 directory,
-                                                iconKeyGenerator.getHashedName(name = iconName),
+                                                iconKeyGenerator.getHashedName(name = Uuid.random().toHexString()),
                                             )
 
                                             byteArray.createDrawablePath(

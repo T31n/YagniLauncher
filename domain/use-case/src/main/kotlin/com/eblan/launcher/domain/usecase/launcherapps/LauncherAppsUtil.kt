@@ -161,9 +161,10 @@ internal suspend fun deleteEblanAppWidgetProviderInfoIcons(
     }
 }
 
-/** Deletes shortcut icon files that are no longer referenced by any stored shortcut. */
+/** Deletes shortcut icon files that are no longer referenced by any stored shortcut or grid item. */
 internal suspend fun deleteEblanShortInfoIcons(
     eblanShortcutInfos: List<EblanShortcutInfo>,
+    shortcutInfoGridItems: List<ShortcutInfoGridItem>,
     deleteEblanShortcutInfos: List<EblanShortcutInfo>,
 ) {
     deleteEblanShortcutInfos.forEach { deleteEblanShortcutInfo ->
@@ -173,6 +174,8 @@ internal suspend fun deleteEblanShortInfoIcons(
 
         val hasNoIconReference =
             icon != null && eblanShortcutInfos.none {
+                it.icon == icon
+            } && shortcutInfoGridItems.none {
                 it.icon == icon
             }
 

@@ -73,6 +73,16 @@ class ChangeShortcutsUseCase @Inject constructor(
                     Triple(it.serialNumber, it.shortcutId, it.packageName)
                 }
 
+            val obsoleteEblanShortcutInfoIcons = oldEblanShortcutInfos.filter { old ->
+                old.icon != null &&
+                    newEblanShortcutInfos.none { new ->
+                        new.serialNumber == old.serialNumber &&
+                            new.shortcutId == old.shortcutId &&
+                            new.packageName == old.packageName &&
+                            new.icon == old.icon
+                    }
+            }
+
             eblanShortcutInfoRepository.upsertEblanShortcutInfos(
                 eblanShortcutInfos = newEblanShortcutInfos,
             )
@@ -81,17 +91,20 @@ class ChangeShortcutsUseCase @Inject constructor(
                 eblanShortcutInfos = deleteEblanShortcutInfos,
             )
 
-            deleteEblanShortInfoIcons(
-                eblanShortcutInfos = eblanShortcutInfoRepository.getEblanShortcutInfos(),
-                deleteEblanShortcutInfos = deleteEblanShortcutInfos,
-            )
+            val updatedEblanShortcutInfos = eblanShortcutInfoRepository.getEblanShortcutInfos()
 
             updateShortcutInfoGridItems(
-                eblanShortcutInfos = eblanShortcutInfoRepository.getEblanShortcutInfos(),
+                eblanShortcutInfos = updatedEblanShortcutInfos,
                 shortcutInfoGridItemRepository = shortcutInfoGridItemRepository,
                 fileManager = fileManager,
                 packageManagerWrapper = packageManagerWrapper,
                 iconKeyGenerator = iconKeyGenerator,
+            )
+
+            deleteEblanShortInfoIcons(
+                eblanShortcutInfos = updatedEblanShortcutInfos,
+                shortcutInfoGridItems = shortcutInfoGridItemRepository.getShortcutInfoGridItems(),
+                deleteEblanShortcutInfos = obsoleteEblanShortcutInfoIcons,
             )
         }
     }

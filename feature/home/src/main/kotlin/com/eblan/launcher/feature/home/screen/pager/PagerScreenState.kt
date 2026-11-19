@@ -885,7 +885,7 @@ internal class PagerScreenState(
                     serialNumber = androidUserManagerWrapper.getSerialNumberForUser(
                         userHandle = appWidgetProviderInfo.profile,
                     ),
-                    configure = appWidgetProviderInfo.configure.flattenToString(),
+                    configure = appWidgetProviderInfo.configure?.flattenToString(),
                     minWidth = appWidgetProviderInfo.minWidth,
                     minHeight = appWidgetProviderInfo.minHeight,
                     resizeMode = appWidgetProviderInfo.resizeMode,
@@ -907,7 +907,7 @@ internal class PagerScreenState(
                     serialNumber = androidUserManagerWrapper.getSerialNumberForUser(
                         userHandle = appWidgetProviderInfo.profile,
                     ),
-                    configure = appWidgetProviderInfo.configure.flattenToString(),
+                    configure = appWidgetProviderInfo.configure?.flattenToString(),
                     minWidth = appWidgetProviderInfo.minWidth,
                     minHeight = appWidgetProviderInfo.minHeight,
                     resizeMode = appWidgetProviderInfo.resizeMode,

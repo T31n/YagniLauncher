@@ -343,7 +343,6 @@ private fun Success(
             iconPackComponents = iconPackComponents,
             iconPackPackageName = iconPackPackageName,
             iconPackInfoLabel = iconPackInfoLabel,
-            iconName = "${eblanApplicationInfo.serialNumber}:${eblanApplicationInfo.componentName}",
             // Callbacks
             onDismissRequest = {
                 onResetIconPackPackageName()

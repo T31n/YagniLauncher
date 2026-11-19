@@ -198,6 +198,7 @@ class RemovePackageUseCase @Inject constructor(
 
             deleteEblanShortInfoIcons(
                 eblanShortcutInfos = remainingEblanShortcutInfos,
+                shortcutInfoGridItems = remainingShortcutInfoGridItems,
                 deleteEblanShortcutInfos = deleteEblanShortcutInfos,
             )
 

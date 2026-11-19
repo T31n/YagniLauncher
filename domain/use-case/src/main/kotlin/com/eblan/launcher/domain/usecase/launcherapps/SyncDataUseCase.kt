@@ -298,12 +298,13 @@ class SyncDataUseCase @Inject constructor(
                     it.serialNumber to it.componentName
                 }
 
-        val deleteEblanAppWidgetProviderInfoPreviews =
+        val obsoleteEblanAppWidgetProviderInfoPreviews =
             oldEblanAppWidgetProviderInfos.filter { oldEblanAppWidgetProviderInfo ->
                 newEblanAppWidgetProviderInfos.none { newEblanAppWidgetProviderInfo ->
                     newEblanAppWidgetProviderInfo.serialNumber == oldEblanAppWidgetProviderInfo.serialNumber &&
                         newEblanAppWidgetProviderInfo.componentName == oldEblanAppWidgetProviderInfo.componentName &&
-                        newEblanAppWidgetProviderInfo.preview == oldEblanAppWidgetProviderInfo.preview
+                        newEblanAppWidgetProviderInfo.preview == oldEblanAppWidgetProviderInfo.preview &&
+                        newEblanAppWidgetProviderInfo.applicationIcon == oldEblanAppWidgetProviderInfo.applicationIcon
                 }
             }
 
@@ -331,7 +332,7 @@ class SyncDataUseCase @Inject constructor(
             widgetGridItems = widgetGridItemRepository.getWidgetGridItems(),
             shortcutConfigGridItems = shortcutConfigGridItemRepository.getShortcutConfigGridItems(),
             shortcutInfoGridItems = shortcutInfoGridItemRepository.getShortcutInfoGridItems(),
-            deleteEblanAppWidgetProviderInfos = deleteEblanAppWidgetProviderInfoPreviews,
+            deleteEblanAppWidgetProviderInfos = obsoleteEblanAppWidgetProviderInfoPreviews,
         )
     }
 
@@ -353,6 +354,16 @@ class SyncDataUseCase @Inject constructor(
                 Triple(it.serialNumber, it.shortcutId, it.packageName)
             }
 
+        val obsoleteEblanShortcutInfoIcons = oldEblanShortcutInfos.filter { old ->
+            old.icon != null &&
+                newEblanShortcutInfos.none { new ->
+                    new.serialNumber == old.serialNumber &&
+                        new.shortcutId == old.shortcutId &&
+                        new.packageName == old.packageName &&
+                        new.icon == old.icon
+                }
+        }
+
         eblanShortcutInfoRepository.deleteEblanShortcutInfos(
             eblanShortcutInfos = deleteEblanShortcutInfos,
         )
@@ -361,17 +372,20 @@ class SyncDataUseCase @Inject constructor(
             eblanShortcutInfos = newEblanShortcutInfos,
         )
 
-        deleteEblanShortInfoIcons(
-            eblanShortcutInfos = eblanShortcutInfoRepository.getEblanShortcutInfos(),
-            deleteEblanShortcutInfos = deleteEblanShortcutInfos,
-        )
+        val updatedEblanShortcutInfos = eblanShortcutInfoRepository.getEblanShortcutInfos()
 
         updateShortcutInfoGridItems(
-            eblanShortcutInfos = eblanShortcutInfoRepository.getEblanShortcutInfos(),
+            eblanShortcutInfos = updatedEblanShortcutInfos,
             shortcutInfoGridItemRepository = shortcutInfoGridItemRepository,
             fileManager = fileManager,
             packageManagerWrapper = packageManagerWrapper,
             iconKeyGenerator = iconKeyGenerator,
+        )
+
+        deleteEblanShortInfoIcons(
+            eblanShortcutInfos = updatedEblanShortcutInfos,
+            shortcutInfoGridItems = shortcutInfoGridItemRepository.getShortcutInfoGridItems(),
+            deleteEblanShortcutInfos = obsoleteEblanShortcutInfoIcons,
         )
     }
 

@@ -45,7 +45,7 @@ class DeleteGridItemUseCase @Inject constructor(
     private val folderGridItemRepository: FolderGridItemRepository,
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
     private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
-    @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
+    @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     /**
      * Deletes the item's nested resources, persisted grid record, and any unreferenced custom icon files.
@@ -55,7 +55,7 @@ class DeleteGridItemUseCase @Inject constructor(
      *
      * @param gridItem The item to delete.
      */
-    suspend operator fun invoke(gridItem: GridItem) = withContext(defaultDispatcher) {
+    suspend operator fun invoke(gridItem: GridItem) = withContext(ioDispatcher) {
         val userData = userDataRepository.userDataFlow.first()
 
         val previewFolderGridItems =

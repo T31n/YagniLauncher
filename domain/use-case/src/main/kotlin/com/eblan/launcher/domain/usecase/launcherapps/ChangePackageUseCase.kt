@@ -19,11 +19,14 @@ package com.eblan.launcher.domain.usecase.launcherapps
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
+import com.eblan.launcher.domain.model.application.DeleteEblanApplicationInfo
 import com.eblan.launcher.domain.model.shortcutconfig.EblanShortcutConfig
+import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfo
 import com.eblan.launcher.domain.model.userdata.ColorSchemeSettings
 import com.eblan.launcher.domain.model.userdata.ColorSource
 import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.Theme
+import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
 import com.eblan.launcher.domain.platform.AppWidgetManagerWrapper
 import com.eblan.launcher.domain.platform.FileManager
 import com.eblan.launcher.domain.platform.IconKeyGenerator
@@ -76,25 +79,79 @@ class ChangePackageUseCase @Inject constructor(
         withContext(ioDispatcher) {
             val userData = userDataRepository.userDataFlow.first()
 
-            updateEblanApplicationInfo(
-                packageName = packageName,
-                serialNumber = serialNumber,
-                iconTint = userData.generalSettings.iconTint,
-                colorSource = userData.generalSettings.colorSource,
-                customSeedColor = userData.generalSettings.customSeedColor,
-                iconShape = userData.generalSettings.iconShape,
-                theme = userData.generalSettings.theme,
-                colorSchemeSettings = userData.generalSettings.colorSchemeSettings,
+            val (obsoleteEblanApplicationInfoIcons, obsoleteEblanShortcutConfigIcons) =
+                updateEblanApplicationInfo(
+                    packageName = packageName,
+                    serialNumber = serialNumber,
+                    iconTint = userData.generalSettings.iconTint,
+                    colorSource = userData.generalSettings.colorSource,
+                    customSeedColor = userData.generalSettings.customSeedColor,
+                    iconShape = userData.generalSettings.iconShape,
+                    theme = userData.generalSettings.theme,
+                    colorSchemeSettings = userData.generalSettings.colorSchemeSettings,
+                )
+
+            val obsoleteEblanAppWidgetProviderInfoFiles =
+                updateEblanAppWidgetProviderInfo(
+                    serialNumber = serialNumber,
+                    packageName = packageName,
+                )
+
+            val obsoleteEblanShortcutInfoIcons =
+                updateEblanShortcutInfo(
+                    serialNumber = serialNumber,
+                    packageName = packageName,
+                )
+
+            val eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos()
+            val eblanAppWidgetProviderInfos =
+                eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos()
+            val eblanShortcutInfos = eblanShortcutInfoRepository.getEblanShortcutInfos()
+            val eblanShortcutConfigs = eblanShortcutConfigRepository.getEblanShortcutConfigs()
+            val applicationInfoGridItems =
+                applicationInfoGridItemRepository.getApplicationInfoGridItems()
+            val widgetGridItems = widgetGridItemRepository.getWidgetGridItems()
+            val shortcutConfigGridItems =
+                shortcutConfigGridItemRepository.getShortcutConfigGridItems()
+            val shortcutInfoGridItems = shortcutInfoGridItemRepository.getShortcutInfoGridItems()
+
+            deleteEblanApplicationInfoIcons(
+                eblanApplicationInfos = eblanApplicationInfos,
+                eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfos,
+                eblanShortcutConfigs = eblanShortcutConfigs,
+                applicationInfoGridItems = applicationInfoGridItems,
+                widgetGridItems = widgetGridItems,
+                shortcutConfigGridItems = shortcutConfigGridItems,
+                shortcutInfoGridItems = shortcutInfoGridItems,
+                oldDeleteEblanApplicationInfos = obsoleteEblanApplicationInfoIcons,
             )
 
-            updateEblanAppWidgetProviderInfo(
-                serialNumber = serialNumber,
-                packageName = packageName,
+            deleteEblanShortcutConfigIcons(
+                eblanApplicationInfos = eblanApplicationInfos,
+                eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfos,
+                eblanShortcutConfigs = eblanShortcutConfigs,
+                applicationInfoGridItems = applicationInfoGridItems,
+                widgetGridItems = widgetGridItems,
+                shortcutConfigGridItems = shortcutConfigGridItems,
+                shortcutInfoGridItems = shortcutInfoGridItems,
+                deleteEblanShortcutConfigs = obsoleteEblanShortcutConfigIcons,
             )
 
-            updateEblanShortcutInfo(
-                serialNumber = serialNumber,
-                packageName = packageName,
+            deleteEblanAppWidgetProviderInfoIcons(
+                eblanApplicationInfos = eblanApplicationInfos,
+                eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfos,
+                eblanShortcutConfigs = eblanShortcutConfigs,
+                applicationInfoGridItems = applicationInfoGridItems,
+                widgetGridItems = widgetGridItems,
+                shortcutConfigGridItems = shortcutConfigGridItems,
+                shortcutInfoGridItems = shortcutInfoGridItems,
+                deleteEblanAppWidgetProviderInfos = obsoleteEblanAppWidgetProviderInfoFiles,
+            )
+
+            deleteEblanShortInfoIcons(
+                eblanShortcutInfos = eblanShortcutInfos,
+                shortcutInfoGridItems = shortcutInfoGridItems,
+                deleteEblanShortcutInfos = obsoleteEblanShortcutInfoIcons,
             )
         }
     }
@@ -109,7 +166,7 @@ class ChangePackageUseCase @Inject constructor(
         iconShape: IconShape,
         theme: Theme,
         colorSchemeSettings: ColorSchemeSettings,
-    ) {
+    ): Pair<List<DeleteEblanApplicationInfo>, List<EblanShortcutConfig>> {
         val launcherAppsActivityInfosByPackageName = launcherAppsWrapper.getActivityListWithCacheIcons(
             serialNumber = serialNumber,
             packageName = packageName,
@@ -188,30 +245,21 @@ class ChangePackageUseCase @Inject constructor(
             applicationInfoGridItemRepository = applicationInfoGridItemRepository,
         )
 
-        updateEblanShortcutConfigs(
+        val obsoleteEblanShortcutConfigIcons = updateEblanShortcutConfigs(
             serialNumber = serialNumber,
             packageName = packageName,
             newEblanShortcutConfigs = newEblanShortcutConfigs,
         )
 
-        deleteEblanApplicationInfoIcons(
-            eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos(),
-            eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos(),
-            eblanShortcutConfigs = eblanShortcutConfigRepository.getEblanShortcutConfigs(),
-            applicationInfoGridItems = applicationInfoGridItemRepository.getApplicationInfoGridItems(),
-            widgetGridItems = widgetGridItemRepository.getWidgetGridItems(),
-            shortcutConfigGridItems = shortcutConfigGridItemRepository.getShortcutConfigGridItems(),
-            shortcutInfoGridItems = shortcutInfoGridItemRepository.getShortcutInfoGridItems(),
-            oldDeleteEblanApplicationInfos = obsoleteEblanApplicationInfoIcons,
-        )
+        return obsoleteEblanApplicationInfoIcons to obsoleteEblanShortcutConfigIcons
     }
 
     /** Reconciles widget-provider metadata and updates or removes related grid-item data. */
     private suspend fun updateEblanAppWidgetProviderInfo(
         serialNumber: Long,
         packageName: String,
-    ) {
-        if (!packageManagerWrapper.hasSystemFeatureAppWidgets) return
+    ): List<EblanAppWidgetProviderInfo> {
+        if (!packageManagerWrapper.hasSystemFeatureAppWidgets) return emptyList()
 
         val appWidgetManagerAppWidgetProviderInfosByPackageName =
             appWidgetManagerWrapper.getInstalledProvidersForProfilesWithCacheIcons()
@@ -242,12 +290,13 @@ class ChangePackageUseCase @Inject constructor(
                     it.serialNumber to it.componentName
                 }
 
-        val obsoleteEblanAppWidgetProviderInfoFiles =
+        val obsoleteEblanAppWidgetProviderInfoPreviews =
             oldEblanAppWidgetProviderInfosByPackageName.filter { oldEblanAppWidgetProviderInfo ->
                 newEblanAppWidgetProviderInfosByPackageName.none { newEblanAppWidgetProviderInfo ->
                     newEblanAppWidgetProviderInfo.serialNumber == oldEblanAppWidgetProviderInfo.serialNumber &&
                         newEblanAppWidgetProviderInfo.componentName == oldEblanAppWidgetProviderInfo.componentName &&
-                        newEblanAppWidgetProviderInfo.preview == oldEblanAppWidgetProviderInfo.preview
+                        newEblanAppWidgetProviderInfo.preview == oldEblanAppWidgetProviderInfo.preview &&
+                        newEblanAppWidgetProviderInfo.applicationIcon == oldEblanAppWidgetProviderInfo.applicationIcon
                 }
             }
 
@@ -267,29 +316,20 @@ class ChangePackageUseCase @Inject constructor(
             iconKeyGenerator = iconKeyGenerator,
         )
 
-        deleteEblanAppWidgetProviderInfoIcons(
-            eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos(),
-            eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos(),
-            eblanShortcutConfigs = eblanShortcutConfigRepository.getEblanShortcutConfigs(),
-            applicationInfoGridItems = applicationInfoGridItemRepository.getApplicationInfoGridItems(),
-            widgetGridItems = widgetGridItemRepository.getWidgetGridItems(),
-            shortcutConfigGridItems = shortcutConfigGridItemRepository.getShortcutConfigGridItems(),
-            shortcutInfoGridItems = shortcutInfoGridItemRepository.getShortcutInfoGridItems(),
-            deleteEblanAppWidgetProviderInfos = obsoleteEblanAppWidgetProviderInfoFiles,
-        )
+        return obsoleteEblanAppWidgetProviderInfoPreviews
     }
 
     /** Reconciles launcher shortcuts and updates or removes their grid-item data. */
     private suspend fun updateEblanShortcutInfo(
         serialNumber: Long,
         packageName: String,
-    ) {
-        if (!launcherAppsWrapper.hasShortcutHostPermission) return
+    ): List<EblanShortcutInfo> {
+        if (!launcherAppsWrapper.hasShortcutHostPermission) return emptyList()
 
         val launcherAppsShortcutInfosByPackageName = launcherAppsWrapper.getShortcutsByPackageNameWithCacheIcons(
             serialNumber = serialNumber,
             packageName = packageName,
-        ) ?: return
+        ) ?: return emptyList()
 
         val oldEblanShortcutInfosByPackageName =
             eblanShortcutInfoRepository.getEblanShortcutInfosByPackageName(
@@ -308,17 +348,22 @@ class ChangePackageUseCase @Inject constructor(
                     Triple(it.serialNumber, it.shortcutId, it.packageName)
                 }
 
+        val obsoleteEblanShortcutInfoIcons = oldEblanShortcutInfosByPackageName.filter { old ->
+            old.icon != null &&
+                newEblanShortcutInfosByPackageName.none { new ->
+                    new.serialNumber == old.serialNumber &&
+                        new.shortcutId == old.shortcutId &&
+                        new.packageName == old.packageName &&
+                        new.icon == old.icon
+                }
+        }
+
         eblanShortcutInfoRepository.upsertEblanShortcutInfos(
             eblanShortcutInfos = newEblanShortcutInfosByPackageName,
         )
 
         eblanShortcutInfoRepository.deleteEblanShortcutInfos(
             eblanShortcutInfos = deleteEblanShortcutInfos,
-        )
-
-        deleteEblanShortInfoIcons(
-            eblanShortcutInfos = eblanShortcutInfoRepository.getEblanShortcutInfos(),
-            deleteEblanShortcutInfos = deleteEblanShortcutInfos,
         )
 
         updateShortcutInfoGridItems(
@@ -328,6 +373,8 @@ class ChangePackageUseCase @Inject constructor(
             packageManagerWrapper = packageManagerWrapper,
             iconKeyGenerator = iconKeyGenerator,
         )
+
+        return obsoleteEblanShortcutInfoIcons
     }
 
     /** Reconciles shortcut-configuration activities and their grid-item data for this package. */
@@ -335,7 +382,7 @@ class ChangePackageUseCase @Inject constructor(
         serialNumber: Long,
         packageName: String,
         newEblanShortcutConfigs: List<EblanShortcutConfig>,
-    ) {
+    ): List<EblanShortcutConfig> {
         val oldEblanShortcutConfigsByPackageName =
             eblanShortcutConfigRepository.getEblanShortcutConfigsByPackageName(
                 serialNumber = serialNumber,
@@ -372,15 +419,6 @@ class ChangePackageUseCase @Inject constructor(
             iconKeyGenerator = iconKeyGenerator,
         )
 
-        deleteEblanShortcutConfigIcons(
-            eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos(),
-            eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos(),
-            eblanShortcutConfigs = eblanShortcutConfigRepository.getEblanShortcutConfigs(),
-            applicationInfoGridItems = applicationInfoGridItemRepository.getApplicationInfoGridItems(),
-            widgetGridItems = widgetGridItemRepository.getWidgetGridItems(),
-            shortcutConfigGridItems = shortcutConfigGridItemRepository.getShortcutConfigGridItems(),
-            shortcutInfoGridItems = shortcutInfoGridItemRepository.getShortcutInfoGridItems(),
-            deleteEblanShortcutConfigs = obsoleteEblanShortcutConfigIcons,
-        )
+        return obsoleteEblanShortcutConfigIcons
     }
 }

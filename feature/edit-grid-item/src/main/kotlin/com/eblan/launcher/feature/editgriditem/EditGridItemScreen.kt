@@ -670,7 +670,6 @@ private fun EditCustomIcon(
             iconPackComponents = iconPackComponents,
             iconPackPackageName = iconPackPackageName,
             iconPackInfoLabel = iconPackLabel,
-            iconName = gridItem.id,
             // Callbacks
             onDismissRequest = {
                 onResetIconPackPackageName()

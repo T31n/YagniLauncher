@@ -46,7 +46,7 @@ class UpdatePageItemsUseCase @Inject constructor(
     private val folderGridItemRepository: FolderGridItemRepository,
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
     private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
-    @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
+    @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     /**
      * Deletes requested pages, reindexes retained items, updates page settings, and saves the result.
@@ -62,7 +62,7 @@ class UpdatePageItemsUseCase @Inject constructor(
         pageItemsToDelete: List<PageItem>,
         associate: Associate,
     ) {
-        withContext(defaultDispatcher) {
+        withContext(ioDispatcher) {
             val userData = userDataRepository.userDataFlow.first()
 
             val previewFolderGridItems =

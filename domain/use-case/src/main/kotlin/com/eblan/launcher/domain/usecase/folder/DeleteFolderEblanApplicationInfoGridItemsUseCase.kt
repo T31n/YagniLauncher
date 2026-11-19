@@ -38,7 +38,7 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
     private val userDataRepository: UserDataRepository,
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
     private val gridRepository: GridRepository,
-    @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
+    @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     /**
      * Removes all descendants of [folderId], restores contained applications to the top level, and
@@ -50,7 +50,7 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
     suspend operator fun invoke(
         icon: String?,
         folderId: String,
-    ) = withContext(defaultDispatcher) {
+    ) = withContext(ioDispatcher) {
         val userData = userDataRepository.userDataFlow.first()
 
         val folderEblanApplicationInfoPopups =
