@@ -21,6 +21,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.XmlResourceParser
 import android.graphics.drawable.Drawable
+import androidx.core.content.res.ResourcesCompat
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
@@ -114,10 +115,11 @@ internal class DefaultIconPackManager @Inject constructor(
         val resId = resources.getIdentifier(drawableName, "drawable", packageName)
 
         if (resId != 0) {
-            val drawable = resources.getDrawable(
+            val drawable = ResourcesCompat.getDrawable(
+                resources,
                 resId,
                 packageContext.theme,
-            )
+            ) ?: return@withContext null
 
             val transformedDrawable = if (iconTint) {
                 imageSerializer.getTintedAndShapedDrawable(
@@ -158,7 +160,8 @@ internal class DefaultIconPackManager @Inject constructor(
         val resId = resources.getIdentifier(drawableName, "drawable", packageName)
 
         if (resId != 0) {
-            resources.getDrawable(
+            ResourcesCompat.getDrawable(
+                resources,
                 resId,
                 packageContext.theme,
             )
