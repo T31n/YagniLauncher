@@ -1,0 +1,2 @@
+- Manual cache validation
+- Bug fixes and stability improvements
