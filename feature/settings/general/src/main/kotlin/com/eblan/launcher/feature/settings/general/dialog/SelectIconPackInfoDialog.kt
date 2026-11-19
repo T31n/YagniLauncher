@@ -51,7 +51,7 @@ internal fun SelectIconPackInfoDialog(
     // Layout
     modifier: Modifier = Modifier,
     // Actions
-    onDeleteEblanIconPackInfo: (String) -> Unit,
+    onDeleteEblanIconPackInfo: (EblanIconPackInfo) -> Unit,
     onDismissRequest: () -> Unit,
     onReset: () -> Unit,
     onUpdateIconPackPackageName: (String) -> Unit,
@@ -95,9 +95,7 @@ internal fun SelectIconPackInfoDialog(
                             trailingContent = {
                                 IconButton(
                                     onClick = {
-                                        onDeleteEblanIconPackInfo(
-                                            eblanIconPackInfo.packageName,
-                                        )
+                                        onDeleteEblanIconPackInfo(eblanIconPackInfo)
                                     },
                                     enabled = iconPackPackageName != eblanIconPackInfo.packageName,
                                 ) {

@@ -28,6 +28,7 @@ import com.eblan.launcher.data.room.dao.EblanApplicationInfoTagDao
 import com.eblan.launcher.data.room.dao.EblanIconPackInfoDao
 import com.eblan.launcher.data.room.dao.EblanShortcutConfigDao
 import com.eblan.launcher.data.room.dao.EblanShortcutInfoDao
+import com.eblan.launcher.data.room.dao.FileReferenceDao
 import com.eblan.launcher.data.room.dao.FolderEblanApplicationInfoDao
 import com.eblan.launcher.data.room.dao.FolderGridItemDao
 import com.eblan.launcher.data.room.dao.ShortcutConfigGridItemDao
@@ -66,7 +67,7 @@ import com.eblan.launcher.data.room.migration.AutoMigration9To10
         EblanApplicationInfoTagEntity::class,
         FolderEblanApplicationInfoEntity::class,
     ],
-    version = 23,
+    version = 24,
     exportSchema = true,
     autoMigrations = [
         AutoMigration(
@@ -124,6 +125,8 @@ internal abstract class EblanDatabase : RoomDatabase() {
     abstract fun eblanApplicationInfoTagDao(): EblanApplicationInfoTagDao
 
     abstract fun folderEblanApplicationInfoDao(): FolderEblanApplicationInfoDao
+
+    abstract fun fileReferenceDao(): FileReferenceDao
 
     companion object {
         const val DATABASE_NAME = "Eblan.db"

@@ -19,18 +19,16 @@ package com.eblan.launcher.feature.settings.general
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.eblan.launcher.domain.model.iconpackinfo.EblanIconPackInfo
 import com.eblan.launcher.domain.model.iconpackinfo.PackageManagerIconPack
 import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.domain.platform.PackageManagerWrapper
 import com.eblan.launcher.domain.repository.EblanIconPackInfoRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
-import com.eblan.launcher.domain.usecase.iconpack.DeleteIconPackInfoUseCase
-import com.eblan.launcher.domain.usecase.launcherapps.SyncDataUseCase
 import com.eblan.launcher.feature.settings.general.model.GeneralSettingsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
@@ -41,9 +39,7 @@ import javax.inject.Inject
 @HiltViewModel
 internal class GeneralSettingsViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository,
-    eblanIconPackInfoRepository: EblanIconPackInfoRepository,
-    private val deleteIconPackInfosUseCase: DeleteIconPackInfoUseCase,
-    private val syncDataUseCase: SyncDataUseCase,
+    private val eblanIconPackInfoRepository: EblanIconPackInfoRepository,
     packageManagerWrapper: PackageManagerWrapper,
 ) : ViewModel() {
     val generalSettingsUiState = userDataRepository.userDataFlow.map { userData ->
@@ -73,32 +69,15 @@ internal class GeneralSettingsViewModel @Inject constructor(
         initialValue = emptyList(),
     )
 
-    fun deleteIconPack(iconPackPackageName: String) {
+    fun deleteIconPackInfo(eblanIconPackInfo: EblanIconPackInfo) {
         viewModelScope.launch {
-            deleteIconPackInfosUseCase(iconPackPackageName = iconPackPackageName)
+            eblanIconPackInfoRepository.deleteEblanIconPackInfo(eblanIconPackInfo = eblanIconPackInfo)
         }
     }
 
     fun updateGeneralSettings(generalSettings: GeneralSettings) {
         viewModelScope.launch {
-            val previousGeneralSettings = userDataRepository.userDataFlow.first().generalSettings
-
             userDataRepository.updateGeneralSettings(generalSettings = generalSettings)
-
-            val iconTintAppearanceChanged = previousGeneralSettings.iconTint &&
-                generalSettings.iconTint &&
-                (
-                    previousGeneralSettings.colorSource != generalSettings.colorSource ||
-                        previousGeneralSettings.customSeedColor != generalSettings.customSeedColor ||
-                        previousGeneralSettings.colorSchemeSettings != generalSettings.colorSchemeSettings ||
-                        previousGeneralSettings.theme != generalSettings.theme
-                    )
-            val iconTintSettingsChanged = previousGeneralSettings.iconTint != generalSettings.iconTint ||
-                iconTintAppearanceChanged
-
-            if (iconTintSettingsChanged) {
-                syncDataUseCase()
-            }
         }
     }
 }

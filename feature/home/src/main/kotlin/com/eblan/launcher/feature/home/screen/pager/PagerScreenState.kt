@@ -856,12 +856,19 @@ internal class PagerScreenState(
 
         val componentName = appWidgetProviderInfo.provider.flattenToString()
 
+        val serialNumber = androidUserManagerWrapper.getSerialNumberForUser(
+            userHandle = appWidgetProviderInfo.profile,
+        )
+
         val preview = appWidgetProviderInfo.loadPreviewImage(context, 0)?.let {
             val directory = fileManager.getFilesDirectory(FileManager.WIDGETS_DIR)
 
             val file = File(
                 directory,
-                iconKeyGenerator.getHashedName(name = componentName),
+                iconKeyGenerator.getWidgetPreviewKey(
+                    serialNumber = serialNumber,
+                    componentName = componentName,
+                ),
             )
 
             androidImageSerializer.createDrawablePath(

@@ -79,10 +79,7 @@ internal fun FolderApplicationInfoPopup(
     // Actions
     onDismissRequest: () -> Unit,
     onEditFolderApplicationInfo: (String) -> Unit,
-    onDeleteFolderEblanApplicationInfoGridItems: (
-        icon: String?,
-        folderId: String,
-    ) -> Unit,
+    onDeleteFolderEblanApplicationInfoGridItems: (String) -> Unit,
 ) {
     requireNotNull(popupIntOffset)
 
@@ -162,10 +159,7 @@ internal fun FolderApplicationInfoPopup(
         ) {
             FolderApplicationInfoMenu(
                 onDelete = {
-                    onDeleteFolderEblanApplicationInfoGridItems(
-                        folderEblanApplicationInfo.icon,
-                        folderEblanApplicationInfo.id,
-                    )
+                    onDeleteFolderEblanApplicationInfoGridItems(folderEblanApplicationInfo.id)
 
                     transitionState.targetState = false
                 },
@@ -203,10 +197,7 @@ internal fun FolderApplicationInfoGridItemPopup(
     ) -> Unit,
     onWidgets: (EblanApplicationInfoGroup) -> Unit,
     onResetFolderEblanApplicationInfoPopupEntries: () -> Unit,
-    onDeleteFolderEblanApplicationInfoGridItems: (
-        icon: String?,
-        folderId: String,
-    ) -> Unit,
+    onDeleteFolderEblanApplicationInfoGridItems: (String) -> Unit,
     onDragShortcutInfo: (
         gridItem: GridItem,
         imageBitmap: ImageBitmap,
@@ -339,10 +330,7 @@ private fun FolderApplicationInfoGridItemPopupContent(
     onWidgets: (EblanApplicationInfoGroup) -> Unit,
     onEditApplicationInfo: (Long, String) -> Unit,
     onEditFolderApplicationInfo: (String) -> Unit,
-    onDeleteFolderEblanApplicationInfoGridItems: (
-        icon: String?,
-        folderId: String,
-    ) -> Unit,
+    onDeleteFolderEblanApplicationInfoGridItems: (String) -> Unit,
     onResetFolderEblanApplicationInfoPopupEntries: () -> Unit,
     onDismiss: () -> Unit,
     onDragShortcutInfo: (
@@ -455,10 +443,7 @@ private fun FolderApplicationInfoGridItemPopupContent(
             FolderApplicationInfoMenu(
                 modifier = modifier,
                 onDelete = {
-                    onDeleteFolderEblanApplicationInfoGridItems(
-                        data.icon,
-                        folderEblanApplicationInfoGridItem.id,
-                    )
+                    onDeleteFolderEblanApplicationInfoGridItems(folderEblanApplicationInfoGridItem.id)
 
                     onDismiss()
                 },

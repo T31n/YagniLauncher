@@ -23,9 +23,9 @@ import kotlinx.coroutines.flow.Flow
 interface EblanIconPackInfoRepository {
     val eblanIconPacksFlow: Flow<List<EblanIconPackInfo>>
 
+    suspend fun getEblanIconPacks(): List<EblanIconPackInfo>
+
     suspend fun upsertEblanIconPackInfo(eblanIconPackInfo: EblanIconPackInfo): Long
 
     suspend fun deleteEblanIconPackInfo(eblanIconPackInfo: EblanIconPackInfo)
-
-    suspend fun getEblanIconPackInfo(packageName: String): EblanIconPackInfo?
 }

@@ -27,7 +27,6 @@ import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
 import com.eblan.launcher.domain.usecase.util.getCustomIcon
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
-import java.io.File
 import javax.inject.Inject
 
 /** Replaces an application's custom icon using an image referenced by a content URI. */
@@ -41,8 +40,7 @@ class UpdateEblanApplicationInfoCustomIconUseCase @Inject constructor(
     /**
      * Saves the image at [uri] and updates the application record with its new icon path.
      *
-     * Any existing custom icon file is removed first. If the URI cannot be read, no repository
-     * update is made.
+     * If the URI cannot be read, no repository update is made.
      *
      * @param eblanApplicationInfo The application whose icon should be replaced.
      * @param uri The URI of the replacement image.
@@ -51,14 +49,6 @@ class UpdateEblanApplicationInfoCustomIconUseCase @Inject constructor(
         eblanApplicationInfo: EblanApplicationInfo,
         uri: String,
     ) = withContext(ioDispatcher) {
-        eblanApplicationInfo.customIcon?.let {
-            val customIconFile = File(it)
-
-            if (customIconFile.exists()) {
-                customIconFile.delete()
-            }
-        }
-
         val customIcon = getCustomIcon(
             contentResolverWrapper = contentResolverWrapper,
             fileManager = fileManager,

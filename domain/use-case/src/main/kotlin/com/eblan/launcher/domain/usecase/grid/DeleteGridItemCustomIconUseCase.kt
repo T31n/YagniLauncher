@@ -27,14 +27,14 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-/** Removes a grid item's custom icon and clears its icon reference in persisted grid data. */
+/** Clears a grid item's custom icon reference in persisted grid data. */
 class DeleteGridItemCustomIconUseCase @Inject constructor(
     private val gridRepository: GridRepository,
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     /**
-     * Deletes the referenced icon file, clears the matching custom-icon field, and saves the item.
+     * Clears the matching custom-icon field and saves the item.
      *
      * For application items, the application record is also updated when it still exists.
      *
@@ -66,8 +66,6 @@ class DeleteGridItemCustomIconUseCase @Inject constructor(
 
             else -> error("Unsupported Grid Item")
         }
-
-        deleteGridItemCustomIconFile(gridItem = gridItem)
 
         gridRepository.updateGridItem(gridItem = gridItem.copy(data = newData))
     }

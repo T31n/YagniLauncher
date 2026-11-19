@@ -40,6 +40,11 @@ internal class DefaultIconKeyGenerator @Inject constructor(
         id: String,
     ) = getHashedName("$serialNumber:$packageName:$id")
 
+    override suspend fun getWidgetPreviewKey(
+        serialNumber: Long,
+        componentName: String,
+    ) = getHashedName("$serialNumber:$componentName")
+
     override suspend fun getHashedName(name: String): String = withContext(defaultDispatcher) {
         val digest = MessageDigest.getInstance("SHA-256")
             .digest(name.toByteArray())

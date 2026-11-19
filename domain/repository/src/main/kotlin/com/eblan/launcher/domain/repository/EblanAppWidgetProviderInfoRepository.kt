@@ -29,7 +29,13 @@ interface EblanAppWidgetProviderInfoRepository {
 
     suspend fun deleteEblanAppWidgetProviderInfos(eblanAppWidgetProviderInfos: List<EblanAppWidgetProviderInfo>)
 
-    suspend fun getEblanAppWidgetProviderInfosByPackageName(packageName: String): List<EblanAppWidgetProviderInfo>
+    suspend fun getEblanAppWidgetProviderInfosByPackageName(
+        serialNumber: Long,
+        packageName: String,
+    ): List<EblanAppWidgetProviderInfo>
 
-    suspend fun deleteEblanAppWidgetProviderInfoByPackageName(packageName: String)
+    suspend fun deleteEblanAppWidgetProviderInfoByPackageName(
+        serialNumber: Long,
+        packageName: String,
+    )
 }

@@ -23,6 +23,7 @@ import com.eblan.launcher.feature.settings.settings.SettingsRoute
 
 fun NavGraphBuilder.settingsScreen(
     onAppDrawer: () -> Unit,
+    onCache: () -> Unit,
     onExperimental: () -> Unit,
     onFinish: () -> Unit,
     onGeneral: () -> Unit,
@@ -34,6 +35,7 @@ fun NavGraphBuilder.settingsScreen(
         SettingsRoute(
             // Navigation Actions
             onAppDrawer = onAppDrawer,
+            onCache = onCache,
             onExperimental = onExperimental,
             onFinish = onFinish,
             onGeneral = onGeneral,

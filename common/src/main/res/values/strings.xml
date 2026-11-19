@@ -47,4 +47,5 @@
     <string name="folders">Folders</string>
     <string name="folder">Folder</string>
     <string name="custom">Custom</string>
+    <string name="cache">Cache</string>
 </resources>
