@@ -25,12 +25,10 @@ import com.eblan.launcher.domain.platform.PackageManagerWrapper
 import com.eblan.launcher.domain.repository.EblanIconPackInfoRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.iconpack.DeleteIconPackInfoUseCase
-import com.eblan.launcher.domain.usecase.launcherapps.SyncDataUseCase
 import com.eblan.launcher.feature.settings.general.model.GeneralSettingsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
@@ -43,7 +41,6 @@ internal class GeneralSettingsViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository,
     eblanIconPackInfoRepository: EblanIconPackInfoRepository,
     private val deleteIconPackInfosUseCase: DeleteIconPackInfoUseCase,
-    private val syncDataUseCase: SyncDataUseCase,
     packageManagerWrapper: PackageManagerWrapper,
 ) : ViewModel() {
     val generalSettingsUiState = userDataRepository.userDataFlow.map { userData ->
@@ -81,24 +78,7 @@ internal class GeneralSettingsViewModel @Inject constructor(
 
     fun updateGeneralSettings(generalSettings: GeneralSettings) {
         viewModelScope.launch {
-            val previousGeneralSettings = userDataRepository.userDataFlow.first().generalSettings
-
             userDataRepository.updateGeneralSettings(generalSettings = generalSettings)
-
-            val iconTintAppearanceChanged = previousGeneralSettings.iconTint &&
-                generalSettings.iconTint &&
-                (
-                    previousGeneralSettings.colorSource != generalSettings.colorSource ||
-                        previousGeneralSettings.customSeedColor != generalSettings.customSeedColor ||
-                        previousGeneralSettings.colorSchemeSettings != generalSettings.colorSchemeSettings ||
-                        previousGeneralSettings.theme != generalSettings.theme
-                    )
-            val iconTintSettingsChanged = previousGeneralSettings.iconTint != generalSettings.iconTint ||
-                iconTintAppearanceChanged
-
-            if (iconTintSettingsChanged) {
-                syncDataUseCase()
-            }
         }
     }
 }
