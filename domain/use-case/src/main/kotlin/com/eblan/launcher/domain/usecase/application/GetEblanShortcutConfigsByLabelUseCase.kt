@@ -46,25 +46,25 @@ class GetEblanShortcutConfigsByLabelUseCase @Inject constructor(
         eblanShortcutConfigRepository.eblanShortcutConfigsFlow,
         labelFlow,
     ) { eblanShortcutConfigs, label ->
-        eblanShortcutConfigs.filter {
-            it.applicationLabel?.contains(
+        eblanShortcutConfigs.filter { currentEblanShortcutConfig ->
+            currentEblanShortcutConfig.applicationLabel?.contains(
                 other = label,
                 ignoreCase = true,
             ) == true
         }.sortedWith(
             compareBy(
-                { it.serialNumber },
-                { it.applicationLabel?.lowercase() },
+                { currentEblanShortcutConfig -> currentEblanShortcutConfig.serialNumber },
+                { currentEblanShortcutConfig -> currentEblanShortcutConfig.applicationLabel?.lowercase() },
             ),
-        ).groupBy {
-            launcherAppsWrapper.getUser(serialNumber = it.serialNumber)
+        ).groupBy { currentEblanShortcutConfig ->
+            launcherAppsWrapper.getUser(serialNumber = currentEblanShortcutConfig.serialNumber)
         }.mapValues { entry ->
-            entry.value.groupBy {
+            entry.value.groupBy { currentEblanShortcutConfig ->
                 EblanApplicationInfoGroup(
-                    serialNumber = it.serialNumber,
-                    packageName = it.packageName,
-                    icon = it.applicationIcon,
-                    label = it.applicationLabel,
+                    serialNumber = currentEblanShortcutConfig.serialNumber,
+                    packageName = currentEblanShortcutConfig.packageName,
+                    icon = currentEblanShortcutConfig.applicationIcon,
+                    label = currentEblanShortcutConfig.applicationLabel,
                 )
             }
         }

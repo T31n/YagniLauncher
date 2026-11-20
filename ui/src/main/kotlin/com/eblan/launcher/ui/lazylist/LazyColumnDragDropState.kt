@@ -91,7 +91,9 @@ class LazyColumnDragDropState(
         } ?: 0f
 
     private val draggingItemLayoutInfo: LazyListItemInfo?
-        get() = state.layoutInfo.visibleItemsInfo.firstOrNull { it.index == draggingItemIndex }
+        get() = state.layoutInfo.visibleItemsInfo.firstOrNull { currentLazyListItemInfo ->
+            currentLazyListItemInfo.index == draggingItemIndex
+        }
 
     var previousIndexOfDraggedItem by mutableStateOf<Int?>(null)
         private set
@@ -101,9 +103,9 @@ class LazyColumnDragDropState(
 
     fun onDragStart(offset: Offset) {
         state.layoutInfo.visibleItemsInfo.firstOrNull { item -> offset.y.toInt() in item.offset..(item.offset + item.size) }
-            ?.also {
-                draggingItemIndex = it.index
-                draggingItemInitialOffset = it.offset
+            ?.also { currentLazyListItemInfo ->
+                draggingItemIndex = currentLazyListItemInfo.index
+                draggingItemInitialOffset = currentLazyListItemInfo.offset
             }
     }
 
@@ -173,7 +175,7 @@ fun Modifier.dragColumnContainer(lazyColumnDragDropState: LazyColumnDragDropStat
             change.consume()
             lazyColumnDragDropState.onDrag(offset = offset)
         },
-        onDragStart = { lazyColumnDragDropState.onDragStart(it) },
+        onDragStart = { currentOffset -> lazyColumnDragDropState.onDragStart(currentOffset) },
         onDragEnd = { lazyColumnDragDropState.onDragInterrupted() },
         onDragCancel = { lazyColumnDragDropState.onDragInterrupted() },
     )

@@ -72,8 +72,8 @@ internal fun EditFolderCellDimensionDialog(
         ) {
             TextField(
                 value = currentFolderCellWidth,
-                onValueChange = {
-                    currentFolderCellWidth = it
+                onValueChange = { currentFolderCellWidthString ->
+                    currentFolderCellWidth = currentFolderCellWidthString
                     isErrorFolderCellWidth = false
                 },
                 modifier = Modifier.weight(1f),
@@ -93,8 +93,8 @@ internal fun EditFolderCellDimensionDialog(
 
             TextField(
                 value = currentFolderCellHeight,
-                onValueChange = {
-                    currentFolderCellHeight = it
+                onValueChange = { currentFolderCellHeightString ->
+                    currentFolderCellHeight = currentFolderCellHeightString
                     isErrorFolderCellHeight = false
                 },
                 modifier = Modifier.weight(1f),

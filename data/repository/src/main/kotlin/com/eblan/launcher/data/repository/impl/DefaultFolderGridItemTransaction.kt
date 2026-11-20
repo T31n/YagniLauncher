@@ -41,14 +41,22 @@ internal class DefaultFolderGridItemTransaction @Inject constructor(
     override val folderGridItemsFlow: Flow<FolderGridItems> =
         folderGridItemEntityTransaction.folderGridItemEntitiesFlow.map { folderGridItemEntities ->
             FolderGridItems(
-                eblanApplicationInfos = folderGridItemEntities.eblanApplicationInfoEntities.map { it.asModel() },
-                folderEblanApplicationInfos = folderGridItemEntities.folderEblanApplicationInfoEntities.map { it.asModel() },
+                eblanApplicationInfos = folderGridItemEntities.eblanApplicationInfoEntities.map { currentEblanApplicationInfoEntity ->
+                    currentEblanApplicationInfoEntity.asModel()
+                },
+                folderEblanApplicationInfos = folderGridItemEntities.folderEblanApplicationInfoEntities.map { currentFolderEblanApplicationInfoEntity ->
+                    currentFolderEblanApplicationInfoEntity.asModel()
+                },
             )
         }
 
     override suspend fun getFolderGridItems(): FolderGridItems = FolderGridItems(
-        eblanApplicationInfos = folderGridItemEntityTransaction.getFolderGridItemEntities().eblanApplicationInfoEntities.map { it.asModel() },
-        folderEblanApplicationInfos = folderGridItemEntityTransaction.getFolderGridItemEntities().folderEblanApplicationInfoEntities.map { it.asModel() },
+        eblanApplicationInfos = folderGridItemEntityTransaction.getFolderGridItemEntities().eblanApplicationInfoEntities.map { currentEblanApplicationInfoEntity ->
+            currentEblanApplicationInfoEntity.asModel()
+        },
+        folderEblanApplicationInfos = folderGridItemEntityTransaction.getFolderGridItemEntities().folderEblanApplicationInfoEntities.map { currentFolderEblanApplicationInfoEntity ->
+            currentFolderEblanApplicationInfoEntity.asModel()
+        },
     )
 
     override suspend fun upsertFolderGridItemsTransaction(folderEblanApplicationInfos: List<FolderEblanApplicationInfoGridItem>) {

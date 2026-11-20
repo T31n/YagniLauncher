@@ -75,14 +75,14 @@ fun GridItemSettings(
             title = stringResource(R.string.layout_type),
             options = LayoutType.entries,
             selected = gridItemSettings.layoutType,
-            label = {
-                it.getSubtitle()
+            label = { currentLayoutType ->
+                currentLayoutType.getSubtitle()
             },
             // Layout
             shape = EblanShapes.first,
             // Actions
-            onSelectedChange = {
-                onUpdateGridItemSettings(gridItemSettings.copy(layoutType = it))
+            onSelectedChange = { currentLayoutType ->
+                onUpdateGridItemSettings(gridItemSettings.copy(layoutType = currentLayoutType))
             },
         )
 
@@ -103,17 +103,17 @@ fun GridItemSettings(
             title = stringResource(R.string.text_color),
             options = TextColor.entries,
             selected = gridItemSettings.textColor,
-            label = {
-                it.getSubtitle()
+            label = { currentTextColor ->
+                currentTextColor.getSubtitle()
             },
             // Layout
             shape = EblanShapes.middle,
             // Actions
-            onSelectedChange = {
-                if (it == TextColor.Custom) {
+            onSelectedChange = { currentTextColor ->
+                if (currentTextColor == TextColor.Custom) {
                     showTextColorPickerDialog = true
                 } else {
-                    onUpdateGridItemSettings(gridItemSettings.copy(textColor = it))
+                    onUpdateGridItemSettings(gridItemSettings.copy(textColor = currentTextColor))
                 }
             },
         )
@@ -135,17 +135,19 @@ fun GridItemSettings(
             title = stringResource(commonR.string.background_color),
             options = BackgroundColor.entries,
             selected = gridItemSettings.backgroundColor,
-            label = {
-                it.getTitle()
+            label = { currentBackgroundColor ->
+                currentBackgroundColor.getTitle()
             },
             // Layout
             shape = EblanShapes.middle,
             // Actions
-            onSelectedChange = {
-                if (it == BackgroundColor.Custom) {
+            onSelectedChange = { currentBackgroundColor ->
+                if (currentBackgroundColor == BackgroundColor.Custom) {
                     showBackgroundColorDialog = true
                 } else {
-                    onUpdateGridItemSettings(gridItemSettings.copy(backgroundColor = it))
+                    onUpdateGridItemSettings(
+                        gridItemSettings.copy(backgroundColor = currentBackgroundColor),
+                    )
                 }
             },
         )
@@ -183,9 +185,9 @@ fun GridItemSettings(
             // Appearance
             shape = EblanShapes.middle,
             // Callbacks
-            onCheckedChange = {
+            onCheckedChange = { currentSingleLineLabel ->
                 onUpdateGridItemSettings(
-                    gridItemSettings.copy(singleLineLabel = it),
+                    gridItemSettings.copy(singleLineLabel = currentSingleLineLabel),
                 )
             },
         )
@@ -195,14 +197,16 @@ fun GridItemSettings(
             title = stringResource(R.string.horizontal_alignment),
             options = HorizontalAlignment.entries,
             selected = gridItemSettings.horizontalAlignment,
-            label = {
-                it.getSubtitle()
+            label = { currentHorizontalAlignment ->
+                currentHorizontalAlignment.getSubtitle()
             },
             // Layout
             shape = EblanShapes.middle,
             // Actions
-            onSelectedChange = {
-                onUpdateGridItemSettings(gridItemSettings.copy(horizontalAlignment = it))
+            onSelectedChange = { currentHorizontalAlignment ->
+                onUpdateGridItemSettings(
+                    gridItemSettings.copy(horizontalAlignment = currentHorizontalAlignment),
+                )
             },
         )
 
@@ -211,14 +215,16 @@ fun GridItemSettings(
             title = stringResource(R.string.vertical_arrangement),
             options = VerticalArrangement.entries,
             selected = gridItemSettings.verticalArrangement,
-            label = {
-                it.getSubtitle()
+            label = { currentVerticalArrangement ->
+                currentVerticalArrangement.getSubtitle()
             },
             // Layout
             shape = EblanShapes.middle,
             // Actions
-            onSelectedChange = {
-                onUpdateGridItemSettings(gridItemSettings.copy(verticalArrangement = it))
+            onSelectedChange = { currentVerticalArrangement ->
+                onUpdateGridItemSettings(
+                    gridItemSettings.copy(verticalArrangement = currentVerticalArrangement),
+                )
             },
         )
 
@@ -227,14 +233,16 @@ fun GridItemSettings(
             title = stringResource(R.string.horizontal_arrangement),
             options = HorizontalArrangement.entries,
             selected = gridItemSettings.horizontalArrangement,
-            label = {
-                it.getSubtitle()
+            label = { currentHorizontalArrangement ->
+                currentHorizontalArrangement.getSubtitle()
             },
             // Layout
             shape = EblanShapes.middle,
             // Actions
-            onSelectedChange = {
-                onUpdateGridItemSettings(gridItemSettings.copy(horizontalArrangement = it))
+            onSelectedChange = { currentHorizontalArrangement ->
+                onUpdateGridItemSettings(
+                    gridItemSettings.copy(horizontalArrangement = currentHorizontalArrangement),
+                )
             },
         )
 
@@ -243,14 +251,16 @@ fun GridItemSettings(
             title = stringResource(R.string.vertical_alignment),
             options = VerticalAlignment.entries,
             selected = gridItemSettings.verticalAlignment,
-            label = {
-                it.getSubtitle()
+            label = { currentVerticalAlignment ->
+                currentVerticalAlignment.getSubtitle()
             },
             // Layout
             shape = EblanShapes.middle,
             // Actions
-            onSelectedChange = {
-                onUpdateGridItemSettings(gridItemSettings.copy(verticalAlignment = it))
+            onSelectedChange = { currentVerticalAlignment ->
+                onUpdateGridItemSettings(
+                    gridItemSettings.copy(verticalAlignment = currentVerticalAlignment),
+                )
             },
         )
 
@@ -287,10 +297,10 @@ fun GridItemSettings(
             onDismissRequest = {
                 showIconSizeDialog = false
             },
-            onUpdateIconSize = {
+            onUpdateIconSize = { currentIconSize ->
                 onUpdateGridItemSettings(
                     gridItemSettings.copy(
-                        iconSize = it,
+                        iconSize = currentIconSize,
                     ),
                 )
             },
@@ -307,11 +317,11 @@ fun GridItemSettings(
             onDismissRequest = {
                 showTextColorPickerDialog = false
             },
-            onSelectColor = {
+            onSelectColor = { currentCustomTextColor ->
                 onUpdateGridItemSettings(
                     gridItemSettings.copy(
                         textColor = TextColor.Custom,
-                        customTextColor = it,
+                        customTextColor = currentCustomTextColor,
                     ),
                 )
             },
@@ -326,10 +336,10 @@ fun GridItemSettings(
             onDismissRequest = {
                 showTextSizeDialog = false
             },
-            onUpdateTextSize = {
+            onUpdateTextSize = { currentTextSize ->
                 onUpdateGridItemSettings(
                     gridItemSettings.copy(
-                        textSize = it,
+                        textSize = currentTextSize,
                     ),
                 )
             },
@@ -346,11 +356,11 @@ fun GridItemSettings(
             onDismissRequest = {
                 showBackgroundColorDialog = false
             },
-            onSelectColor = {
+            onSelectColor = { currentCustomBackgroundColor ->
                 onUpdateGridItemSettings(
                     gridItemSettings.copy(
                         backgroundColor = BackgroundColor.Custom,
-                        customBackgroundColor = it,
+                        customBackgroundColor = currentCustomBackgroundColor,
                     ),
                 )
             },
@@ -366,10 +376,10 @@ fun GridItemSettings(
             onDismissRequest = {
                 showPaddingDialog = false
             },
-            onUpdatePadding = {
+            onUpdatePadding = { currentPadding ->
                 onUpdateGridItemSettings(
                     gridItemSettings.copy(
-                        padding = it,
+                        padding = currentPadding,
                     ),
                 )
             },
@@ -384,10 +394,10 @@ fun GridItemSettings(
             onDismissRequest = {
                 showCornerRadiusDialog = false
             },
-            onUpdateCornerRadius = {
+            onUpdateCornerRadius = { currentCornerRadius ->
                 onUpdateGridItemSettings(
                     gridItemSettings.copy(
-                        cornerRadius = it,
+                        cornerRadius = currentCornerRadius,
                     ),
                 )
             },
@@ -403,10 +413,10 @@ fun GridItemSettings(
             onDismissRequest = {
                 showIconPaddingDialog = false
             },
-            onUpdatePadding = {
+            onUpdatePadding = { currentIconPadding ->
                 onUpdateGridItemSettings(
                     gridItemSettings.copy(
-                        iconPadding = it,
+                        iconPadding = currentIconPadding,
                     ),
                 )
             },
@@ -422,10 +432,10 @@ fun GridItemSettings(
             onDismissRequest = {
                 showTextPaddingDialog = false
             },
-            onUpdatePadding = {
+            onUpdatePadding = { currentTextPadding ->
                 onUpdateGridItemSettings(
                     gridItemSettings.copy(
-                        textPadding = it,
+                        textPadding = currentTextPadding,
                     ),
                 )
             },

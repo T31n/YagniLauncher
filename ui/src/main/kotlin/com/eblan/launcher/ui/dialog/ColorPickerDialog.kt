@@ -146,17 +146,17 @@ fun ColorPickerDialog(
                 alpha = selectedAlpha,
                 showAlphaSlider = showAlphaSlider,
                 modifier = Modifier.fillMaxWidth(),
-                onSaturationSelected = {
-                    saturation = it
+                onSaturationSelected = { currentSaturation ->
+                    saturation = currentSaturation
                 },
-                onValueSelected = {
-                    value = it
+                onValueSelected = { currentValue ->
+                    value = currentValue
                 },
-                onHueSelected = {
-                    hue = it
+                onHueSelected = { currentHue ->
+                    hue = currentHue
                 },
-                onAlphaSelected = {
-                    alpha = it
+                onAlphaSelected = { currentAlpha ->
+                    alpha = currentAlpha
                 },
             )
 
@@ -284,10 +284,10 @@ private fun SaturationValueCanvas(
             modifier = Modifier
                 .pointerInput(key1 = Unit) {
                     detectTapGestures(
-                        onTap = {
-                            onSaturationSelected((it.x / size.width).coerceIn(0f, 1f))
+                        onTap = { currentOffset ->
+                            onSaturationSelected((currentOffset.x / size.width).coerceIn(0f, 1f))
 
-                            onValueSelected(1f - (it.y / size.height).coerceIn(0f, 1f))
+                            onValueSelected(1f - (currentOffset.y / size.height).coerceIn(0f, 1f))
                         },
                     )
                 }
@@ -350,8 +350,8 @@ private fun HueCanvas(
         modifier = modifier
             .pointerInput(key1 = Unit) {
                 detectTapGestures(
-                    onTap = {
-                        onHueSelected((it.x / size.width).coerceIn(0f, 1f) * 360f)
+                    onTap = { currentOffset ->
+                        onHueSelected((currentOffset.x / size.width).coerceIn(0f, 1f) * 360f)
                     },
                 )
             }

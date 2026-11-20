@@ -68,22 +68,24 @@ internal fun EblanApplicationInfo.asFolderEblanApplicationInfoGridItem(): Folder
 internal suspend fun List<FolderEblanApplicationInfoWrapper>.asPreviewFolderEblanApplicationInfos(
     maxFolderColumns: Int,
     maxFolderRows: Int,
-): Map<String, FolderEblanApplicationInfoPopup> = associate {
-    it.folderEblanApplicationInfo.id to it.asPreviewFolderEblanApplicationInfo(
-        maxFolderColumns = maxFolderColumns,
-        maxFolderRows = maxFolderRows,
-    )
+): Map<String, FolderEblanApplicationInfoPopup> = associate { currentFolderEblanApplicationInfoWrapper ->
+    currentFolderEblanApplicationInfoWrapper.folderEblanApplicationInfo.id to
+        currentFolderEblanApplicationInfoWrapper.asPreviewFolderEblanApplicationInfo(
+            maxFolderColumns = maxFolderColumns,
+            maxFolderRows = maxFolderRows,
+        )
 }
 
 /** Builds a preview popup for each grid folder and indexes the results by folder ID. */
 internal suspend fun List<FolderGridItemWrapper>.asPreviewFolders(
     maxFolderColumns: Int,
     maxFolderRows: Int,
-): Map<String, FolderPopup> = associate {
-    it.folderGridItem.id to it.asPreviewFolder(
-        maxFolderColumns = maxFolderColumns,
-        maxFolderRows = maxFolderRows,
-    )
+): Map<String, FolderPopup> = associate { currentFolderGridItemWrapper ->
+    currentFolderGridItemWrapper.folderGridItem.id to
+        currentFolderGridItemWrapper.asPreviewFolder(
+            maxFolderColumns = maxFolderColumns,
+            maxFolderRows = maxFolderRows,
+        )
 }
 
 /** Builds all grid-folder previews from one complete grid-items snapshot. */
@@ -91,10 +93,18 @@ internal suspend fun GridItems.asPreviewFolders(
     maxFolderColumns: Int,
     maxFolderRows: Int,
 ): Map<String, FolderPopup> {
-    val applicationInfoGridItemsByFolderId = applicationInfoGridItems.groupBy { it.folderId }
-    val shortcutInfoGridItemsByFolderId = shortcutInfoGridItems.groupBy { it.folderId }
-    val shortcutConfigGridItemsByFolderId = shortcutConfigGridItems.groupBy { it.folderId }
-    val folderGridItemsByFolderId = folderGridItems.groupBy { it.folderId }
+    val applicationInfoGridItemsByFolderId = applicationInfoGridItems.groupBy { currentApplicationInfoGridItem ->
+        currentApplicationInfoGridItem.folderId
+    }
+    val shortcutInfoGridItemsByFolderId = shortcutInfoGridItems.groupBy { currentShortcutInfoGridItem ->
+        currentShortcutInfoGridItem.folderId
+    }
+    val shortcutConfigGridItemsByFolderId = shortcutConfigGridItems.groupBy { currentShortcutConfigGridItem ->
+        currentShortcutConfigGridItem.folderId
+    }
+    val folderGridItemsByFolderId = folderGridItems.groupBy { currentFolderGridItem ->
+        currentFolderGridItem.folderId
+    }
 
     return folderGridItems.map { folderGridItem ->
         FolderGridItemWrapper(
@@ -119,13 +129,19 @@ internal suspend fun FolderGridItemWrapper.asPreviewFolder(
     maxFolderRows: Int,
 ): FolderPopup {
     val folderGridItems = (
-        applicationInfoGridItems.map {
-            it.asGridItem()
-        } + shortcutInfoGridItems.map { it.asGridItem() } +
-            shortcutConfigGridItems.map { it.asGridItem() } +
-            folderGridItems.map { it.asGridItem() }
-        ).sortedBy {
-        when (val data = it.data) {
+        applicationInfoGridItems.map { currentApplicationInfoGridItem ->
+            currentApplicationInfoGridItem.asGridItem()
+        } + shortcutInfoGridItems.map { currentShortcutInfoGridItem ->
+            currentShortcutInfoGridItem.asGridItem()
+        } +
+            shortcutConfigGridItems.map { currentShortcutConfigGridItem ->
+                currentShortcutConfigGridItem.asGridItem()
+            } +
+            folderGridItems.map { currentFolderGridItem ->
+                currentFolderGridItem.asGridItem()
+            }
+        ).sortedBy { currentGridItem ->
+        when (val data = currentGridItem.data) {
             is GridItemData.ApplicationInfo -> data.index
             is GridItemData.ShortcutInfo -> data.index
             is GridItemData.ShortcutConfig -> data.index
@@ -169,13 +185,13 @@ private suspend fun FolderEblanApplicationInfoWrapper.asPreviewFolderEblanApplic
     maxFolderRows: Int,
 ): FolderEblanApplicationInfoPopup {
     val folderEblanApplicationInfoGridItems = (
-        folderEblanApplicationInfos.map {
-            it.asFolderEblanApplicationInfoGridItem()
-        } + eblanApplicationInfos.map {
-            it.asFolderEblanApplicationInfoGridItem()
+        folderEblanApplicationInfos.map { currentFolderEblanApplicationInfo ->
+            currentFolderEblanApplicationInfo.asFolderEblanApplicationInfoGridItem()
+        } + eblanApplicationInfos.map { currentEblanApplicationInfo ->
+            currentEblanApplicationInfo.asFolderEblanApplicationInfoGridItem()
         }
-        ).sortedBy {
-        when (val data = it.data) {
+        ).sortedBy { currentFolderEblanApplicationInfoGridItem ->
+        when (val data = currentFolderEblanApplicationInfoGridItem.data) {
             is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> data.folderIndex
             is FolderEblanApplicationInfoGridItemData.Folder -> data.folderIndex
         }

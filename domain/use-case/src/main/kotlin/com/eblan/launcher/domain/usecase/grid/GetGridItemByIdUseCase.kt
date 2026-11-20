@@ -38,6 +38,8 @@ class GetGridItemByIdUseCase @Inject constructor(
      * @return The matching item, or `null` if no item has that ID.
      */
     suspend operator fun invoke(id: String): GridItem? = withContext(defaultDispatcher) {
-        gridRepository.getGridItems().toGridItems().firstOrNull { it.id == id }
+        gridRepository.getGridItems().toGridItems().firstOrNull { currentGridItem ->
+            currentGridItem.id == id
+        }
     }
 }

@@ -59,23 +59,29 @@ class GetHomeDataUseCase @Inject constructor(
         userDataRepository.userDataFlow,
         gridRepository.gridItemsFlow,
     ) { userData, gridItems ->
-        val currentGridItems = gridItems.toGridItems().filter { it.isTopLevel() }
+        val currentGridItems = gridItems.toGridItems().filter { currentGridItem ->
+            currentGridItem.isTopLevel()
+        }
 
-        val gridItemsByPage = currentGridItems.filter {
+        val gridItemsByPage = currentGridItems.filter { currentGridItem ->
             isGridItemSpanWithinBounds(
-                gridItem = it,
+                gridItem = currentGridItem,
                 columns = userData.homeSettings.columns,
                 rows = userData.homeSettings.rows,
-            ) && it.associate == Associate.Grid
-        }.groupBy { it.page }
+            ) && currentGridItem.associate == Associate.Grid
+        }.groupBy { currentGridItem ->
+            currentGridItem.page
+        }
 
-        val dockGridItemsByPage = currentGridItems.filter {
+        val dockGridItemsByPage = currentGridItems.filter { currentGridItem ->
             isGridItemSpanWithinBounds(
-                gridItem = it,
+                gridItem = currentGridItem,
                 columns = userData.homeSettings.dockColumns,
                 rows = userData.homeSettings.dockRows,
-            ) && it.associate == Associate.Dock
-        }.groupBy { it.page }
+            ) && currentGridItem.associate == Associate.Dock
+        }.groupBy { currentGridItem ->
+            currentGridItem.page
+        }
 
         val folderPopups = gridItems.asPreviewFolders(
             maxFolderColumns = userData.folderSettings.maxFolderColumns,
@@ -84,7 +90,9 @@ class GetHomeDataUseCase @Inject constructor(
 
         val iconPackFilePaths = getIconPackFilePaths(
             iconPackPackageName = userData.generalSettings.iconPackPackageName,
-            componentNames = gridItems.applicationInfoGridItems.map { it.componentName },
+            componentNames = gridItems.applicationInfoGridItems.map { currentApplicationInfoGridItem ->
+                currentApplicationInfoGridItem.componentName
+            },
             fileManager = fileManager,
             iconKeyGenerator = iconKeyGenerator,
         )

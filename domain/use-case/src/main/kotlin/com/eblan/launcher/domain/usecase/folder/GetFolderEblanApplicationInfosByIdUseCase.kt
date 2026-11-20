@@ -39,6 +39,8 @@ class GetFolderEblanApplicationInfosByIdUseCase @Inject constructor(
      * @return A flow of the remaining folders.
      */
     operator fun invoke(id: String): Flow<List<FolderEblanApplicationInfo>> = folderEblanApplicationInfoRepository.folderEblanApplicationInfosFlow.map { folderEblanApplicationInfos ->
-        folderEblanApplicationInfos.filterNot { it.id == id }
+        folderEblanApplicationInfos.filterNot { currentFolderEblanApplicationInfo ->
+            currentFolderEblanApplicationInfo.id == id
+        }
     }.flowOn(defaultDispatcher)
 }

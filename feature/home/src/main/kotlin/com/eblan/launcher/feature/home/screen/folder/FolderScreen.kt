@@ -387,8 +387,8 @@ internal fun FolderScreen(
             lockMovement = currentLockMovement.value,
             isInProgress = isInProgress,
             // Callbacks
-            onUpdateFolderPageDirection = {
-                pageDirection = it
+            onUpdateFolderPageDirection = { currentPageDirection ->
+                pageDirection = currentPageDirection
             },
         )
     }
@@ -483,11 +483,11 @@ internal fun FolderScreen(
                         animate = isVisibleOverlay && !isInProgress && animations,
                         modifier = Modifier.fillMaxSize(),
                         // Callbacks
-                        slotId = { it.id },
-                        content = {
+                        slotId = { currentFolderGridItem -> currentFolderGridItem.id },
+                        content = { currentFolderGridItem ->
                             InteractiveFolderGridItem(
                                 // Grid Item
-                                gridItem = it,
+                                gridItem = currentFolderGridItem,
                                 gridItemSettings = gridItemSettings,
                                 folderGridItemEntries = folderGridItemEntries,
                                 sharedTransitionScope = sharedTransitionScope,
@@ -504,7 +504,7 @@ internal fun FolderScreen(
                                 minCellHeightPx = folderPopupLayoutInfo.minCellHeightPx,
                                 paddingValues = paddingValues,
                                 sharedElementKey = SharedElementKey(
-                                    id = it.id,
+                                    id = currentFolderGridItem.id,
                                     parent = SharedElementKey.Parent.Folder,
                                 ),
                                 isInProgress = isInProgress,

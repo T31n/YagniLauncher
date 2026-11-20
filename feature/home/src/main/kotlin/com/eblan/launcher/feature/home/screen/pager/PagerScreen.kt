@@ -405,12 +405,12 @@ internal fun PagerScreen(
 
     val appWidgetLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
-    ) {
+    ) { currentActivityResult ->
         handleAppWidgetLauncherResult(
             // Result and Manager
             androidAppWidgetManagerWrapper = androidAppWidgetManagerWrapper,
             moveGridItemResult = currentMoveGridItemResult.value,
-            result = it,
+            result = currentActivityResult,
             lastAppWidgetId = pagerScreenState.lastAppWidgetId,
             // Screen and Grid Configuration
             columns = homeSettings.columns,
@@ -430,11 +430,11 @@ internal fun PagerScreen(
 
     val shortcutConfigLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
-    ) {
+    ) { currentActivityResult ->
         scope.launch {
             handleShortcutConfigLauncherResult(
                 // Result Parameters
-                result = it,
+                result = currentActivityResult,
                 moveGridItemResult = currentMoveGridItemResult.value,
                 // Dependencies
                 androidImageSerializer = androidImageSerializer,
@@ -447,12 +447,12 @@ internal fun PagerScreen(
 
     val shortcutConfigIntentSenderLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartIntentSenderForResult(),
-    ) {
+    ) { currentActivityResult ->
         scope.launch {
             handleShortcutConfigIntentSenderLauncherResult(
                 // Results
                 moveGridItemResult = currentMoveGridItemResult.value,
-                result = it,
+                result = currentActivityResult,
                 // Dependencies
                 androidLauncherAppsWrapper = androidLauncherAppsWrapper,
                 androidUserManagerWrapper = androidUserManagerWrapper,
@@ -808,8 +808,8 @@ internal fun PagerScreen(
         key1 = activity,
         key2 = pagerScreenState,
     ) {
-        val listener = Consumer<Intent> {
-            pagerScreenState.handleEblanActionIntent(intent = it)
+        val listener = Consumer<Intent> { currentIntent ->
+            pagerScreenState.handleEblanActionIntent(intent = currentIntent)
         }
 
         activity.addOnNewIntentListener(listener)
@@ -852,8 +852,8 @@ internal fun PagerScreen(
     SharedTransitionLayout(
         modifier = modifier
             .fillMaxSize()
-            .onGloballyPositioned {
-                sharedTransitionLayoutCoordinates = it
+            .onGloballyPositioned { currentLayoutCoordinates ->
+                sharedTransitionLayoutCoordinates = currentLayoutCoordinates
             }
             .pointerInput(key1 = pagerScreenState) {
                 detectDragGesturesAfterLongPress(
@@ -875,8 +875,8 @@ internal fun PagerScreen(
                 )
             }
             .dragAndDropTarget(
-                shouldStartDragAndDrop = {
-                    it.mimeTypes().contains(ClipDescription.MIMETYPE_TEXT_PLAIN)
+                shouldStartDragAndDrop = { currentDragAndDropEvent ->
+                    currentDragAndDropEvent.mimeTypes().contains(ClipDescription.MIMETYPE_TEXT_PLAIN)
                 },
                 target = pagerScreenState.target,
             ),
@@ -906,8 +906,8 @@ internal fun PagerScreen(
                         onDoubleTap = {
                             pagerScreenState.updateHasDoubleTap(value = true)
                         },
-                        onLongPress = {
-                            pagerScreenState.showSettingsMenu(offset = it)
+                        onLongPress = { currentOffset ->
+                            pagerScreenState.showSettingsMenu(offset = currentOffset)
                         },
                     )
                 },
@@ -963,13 +963,13 @@ internal fun PagerScreen(
                                 effect = homeSettings.pagerTransitionEffect,
                             ),
                         // Content
-                        content = {
+                        content = { currentGridItem ->
                             InteractiveGridItem(
                                 // Item Data
-                                gridItem = it,
+                                gridItem = currentGridItem,
                                 gridItemSettings = homeSettings.gridItemSettings,
                                 sharedElementKey = SharedElementKey(
-                                    id = it.id,
+                                    id = currentGridItem.id,
                                     parent = SharedElementKey.Parent.Grid,
                                 ),
                                 statusBarNotifications = statusBarNotifications,
@@ -1152,13 +1152,13 @@ internal fun PagerScreen(
                                     effect = homeSettings.pagerTransitionEffect,
                                 ),
                             // Content
-                            content = {
+                            content = { currentDockGridItem ->
                                 InteractiveGridItem(
                                     // Item Data
-                                    gridItem = it,
+                                    gridItem = currentDockGridItem,
                                     gridItemSettings = homeSettings.dockGridItemSettings,
                                     sharedElementKey = SharedElementKey(
-                                        id = it.id,
+                                        id = currentDockGridItem.id,
                                         parent = SharedElementKey.Parent.Dock,
                                     ),
                                     statusBarNotifications = statusBarNotifications,
@@ -1295,7 +1295,7 @@ internal fun PagerScreen(
         }
 
         if (isVisibleFolderGridItems) {
-            folderGridItemEntries.forEach {
+            folderGridItemEntries.forEach { currentFolderEntry ->
                 FolderScreen(
                     // Transition and Layout
                     sharedTransitionScope = this@SharedTransitionLayout,
@@ -1305,7 +1305,7 @@ internal fun PagerScreen(
                     screenHeight = screenHeight,
                     screenWidth = screenWidth,
                     // Folder Content and Settings
-                    folderEntry = it,
+                    folderEntry = currentFolderEntry,
                     folderGridItemEntries = folderGridItemEntries,
                     gridItemSettings = homeSettings.gridItemSettings,
                     folderCellWidth = folderSettings.folderCellWidth,
@@ -1469,9 +1469,9 @@ internal fun PagerScreen(
                         onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
                     )
                 },
-                onDragApplicationInfo = {
+                onDragApplicationInfo = { currentApplicationGridItem ->
                     pagerScreenState.dragEblanApplicationInfo(
-                        gridItem = it,
+                        gridItem = currentApplicationGridItem,
                         onUpdateGridItemSource = onUpdateGridItemSource,
                         onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
                     )
@@ -1509,9 +1509,9 @@ internal fun PagerScreen(
                         intSize = intSize,
                     )
                 },
-                onTapFolderApplicationInfo = {
+                onTapFolderApplicationInfo = { currentFolderEntry ->
                     pagerScreenState.tapFolderEblanApplicationInfo(
-                        folderEntry = it,
+                        folderEntry = currentFolderEntry,
                         onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
                     )
                 },
@@ -1674,11 +1674,11 @@ internal fun PagerScreen(
         }
 
         if (isVisibleFolderEblanApplicationInfos) {
-            folderEblanApplicationInfoEntries.forEach {
+            folderEblanApplicationInfoEntries.forEach { currentFolderEntry ->
                 FolderApplicationScreen(
                     // Core State and Layout
                     sharedTransitionScope = this,
-                    folderEntry = it,
+                    folderEntry = currentFolderEntry,
                     paddingValues = paddingValues,
                     safeDrawingHeight = safeDrawingHeight,
                     safeDrawingWidth = safeDrawingWidth,
@@ -2060,7 +2060,7 @@ private fun GridPagerIndicator(
     LaunchedEffect(key1 = gridHorizontalPagerState) {
         snapshotFlow { gridHorizontalPagerState.isScrollInProgress }
             .debounce(100L.milliseconds)
-            .onEach { isScrollInProgress = it }
+            .onEach { currentIsScrollInProgress -> isScrollInProgress = currentIsScrollInProgress }
             .collect()
     }
 
@@ -2113,8 +2113,8 @@ private fun produceStatusBarNotificationsState(): State<Map<String, Int>> {
 
                 launch {
                     lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        listener.statusBarNotifications.collect {
-                            value = it
+                        listener.statusBarNotifications.collect { currentStatusBarNotifications ->
+                            value = currentStatusBarNotifications
                         }
                     }
                 }

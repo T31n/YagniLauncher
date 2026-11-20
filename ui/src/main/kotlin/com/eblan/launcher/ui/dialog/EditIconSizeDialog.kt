@@ -62,8 +62,8 @@ internal fun EditIconSizeDialog(
 
         TextField(
             value = currentIconSize,
-            onValueChange = {
-                currentIconSize = it
+            onValueChange = { currentIconSizeString ->
+                currentIconSize = currentIconSizeString
                 isErrorIconSize = false
             },
             modifier = Modifier.fillMaxWidth(),

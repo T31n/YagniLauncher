@@ -288,8 +288,8 @@ private fun Success(
                 showCustomIconDialog = true
                 onUpdateIconPackPackageName(packageName)
             },
-            onUpdateUri = {
-                onUpdateEblanApplicationInfoCustomIcon(eblanApplicationInfo, it)
+            onUpdateUri = { currentIconUri ->
+                onUpdateEblanApplicationInfoCustomIcon(eblanApplicationInfo, currentIconUri)
             },
             onResetCustomIcon = {
                 onUpdateEblanApplicationInfo(eblanApplicationInfo.copy(customIcon = null))
@@ -318,10 +318,10 @@ private fun Success(
             // Appearance
             shape = EblanShapes.last,
             // Callbacks
-            onCheckedChange = {
+            onCheckedChange = { currentIsHidden ->
                 onUpdateEblanApplicationInfo(
                     eblanApplicationInfo.copy(
-                        isHidden = it,
+                        isHidden = currentIsHidden,
                     ),
                 )
             },
@@ -341,10 +341,10 @@ private fun Success(
 
                 showCustomIconDialog = false
             },
-            onUpdateIcon = {
+            onUpdateIcon = { currentIconByteArray ->
                 onUpdateEblanApplicationInfoCustomIconByteArray(
                     eblanApplicationInfo,
-                    it,
+                    currentIconByteArray,
                 )
             },
             onSearchIconPackInfoComponent = onSearchIconPackInfoComponent,
@@ -359,8 +359,8 @@ private fun Success(
             onDismissRequest = {
                 showCustomLabelDialog = false
             },
-            onUpdateCustomLabel = {
-                onUpdateEblanApplicationInfo(eblanApplicationInfo.copy(customLabel = it))
+            onUpdateCustomLabel = { currentCustomLabel ->
+                onUpdateEblanApplicationInfo(eblanApplicationInfo.copy(customLabel = currentCustomLabel))
             },
         )
     }
@@ -398,10 +398,10 @@ private fun Tags(
                 // Actions
                 onAddEblanApplicationInfoCrossRef = onAddEblanApplicationInfoCrossRef,
                 onDeleteEblanApplicationInfoCrossRef = onDeleteEblanApplicationInfoCrossRef,
-                onShowUpdateTagDialog = {
+                onShowUpdateTagDialog = { currentEblanApplicationInfoTagUi ->
                     showUpdateTagDialog = true
 
-                    selectedEblanApplicationInfoTagUi = it
+                    selectedEblanApplicationInfoTagUi = currentEblanApplicationInfoTagUi
                 },
             )
         }
@@ -535,10 +535,10 @@ private fun Folders(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        folderEblanApplicationInfos.forEach {
+        folderEblanApplicationInfos.forEach { currentFolderEblanApplicationInfo ->
             FolderEblanApplicationInfoItem(
                 // Application Info
-                folderEblanApplicationInfo = it,
+                folderEblanApplicationInfo = currentFolderEblanApplicationInfo,
                 eblanApplicationInfo = eblanApplicationInfo,
                 folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                 // Callbacks
@@ -581,8 +581,8 @@ private fun FolderEblanApplicationInfoItem(
         key1 = folderEblanApplicationInfoPopups,
         key2 = folderEblanApplicationInfo,
     ) {
-        folderEblanApplicationInfoPopups[folderEblanApplicationInfo.id]?.folderEblanApplicationInfoGridItems?.maxOfOrNull {
-            when (val data = it.data) {
+        folderEblanApplicationInfoPopups[folderEblanApplicationInfo.id]?.folderEblanApplicationInfoGridItems?.maxOfOrNull { currentFolderEblanApplicationInfoGridItem ->
+            when (val data = currentFolderEblanApplicationInfoGridItem.data) {
                 is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> data.folderIndex + 1
                 is FolderEblanApplicationInfoGridItemData.Folder -> data.folderIndex + 1
             }

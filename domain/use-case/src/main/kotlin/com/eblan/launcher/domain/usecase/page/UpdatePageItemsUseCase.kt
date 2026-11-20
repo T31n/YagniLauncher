@@ -85,7 +85,9 @@ class UpdatePageItemsUseCase @Inject constructor(
                 }
             }
 
-            val newInitialPage = pageItems.indexOfFirst { it.id == id }
+            val newInitialPage = pageItems.indexOfFirst { currentPageItem ->
+                currentPageItem.id == id
+            }
 
             when (associate) {
                 Associate.Grid -> {

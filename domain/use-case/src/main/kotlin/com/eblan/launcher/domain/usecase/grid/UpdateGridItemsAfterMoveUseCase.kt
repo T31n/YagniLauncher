@@ -98,8 +98,8 @@ class UpdateGridItemsAfterMoveUseCase @Inject constructor(
         movingGridItem: GridItem,
         folderGridItems: List<GridItem>,
     ) {
-        val index = folderGridItems.maxOfOrNull {
-            when (val folderData = it.data) {
+        val index = folderGridItems.maxOfOrNull { currentGridItem ->
+            when (val folderData = currentGridItem.data) {
                 is GridItemData.ApplicationInfo -> folderData.index + 1
                 is GridItemData.ShortcutConfig -> folderData.index + 1
                 is GridItemData.ShortcutInfo -> folderData.index + 1

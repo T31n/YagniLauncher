@@ -65,13 +65,15 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
                         eblanApplicationInfoRepository.getEblanApplicationInfosByPackageName(
                             serialNumber = data.serialNumber,
                             packageName = data.packageName,
-                        ).filter { it.componentName == data.componentName && it.folderId != null }
-                            .map {
-                                it.copy(
-                                    folderIndex = -1,
-                                    folderId = null,
-                                )
-                            }
+                        ).filter { currentEblanApplicationInfo ->
+                            currentEblanApplicationInfo.componentName == data.componentName &&
+                                currentEblanApplicationInfo.folderId != null
+                        }.map { currentEblanApplicationInfo ->
+                            currentEblanApplicationInfo.copy(
+                                folderIndex = -1,
+                                folderId = null,
+                            )
+                        }
 
                     eblanApplicationInfoRepository.updateEblanApplicationInfos(eblanApplicationInfos = eblanApplicationInfos)
                 }
@@ -96,18 +98,18 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
             add(folderEblanApplicationInfoGridItem)
         }
 
-        previewFolderEblanApplicationInfo.folderEblanApplicationInfoGridItems.forEach {
-            when (it.data) {
+        previewFolderEblanApplicationInfo.folderEblanApplicationInfoGridItems.forEach { currentFolderEblanApplicationInfoGridItem ->
+            when (currentFolderEblanApplicationInfoGridItem.data) {
                 is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
-                    add(it)
+                    add(currentFolderEblanApplicationInfoGridItem)
                 }
 
                 is FolderEblanApplicationInfoGridItemData.Folder -> {
                     addAll(
                         getRecursiveFolderGridItems(
-                            folderEblanApplicationInfoGridItem = it,
+                            folderEblanApplicationInfoGridItem = currentFolderEblanApplicationInfoGridItem,
                             folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
-                            folderId = it.id,
+                            folderId = currentFolderEblanApplicationInfoGridItem.id,
                         ),
                     )
                 }

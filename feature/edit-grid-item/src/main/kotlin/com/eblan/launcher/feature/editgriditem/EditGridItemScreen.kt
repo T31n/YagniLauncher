@@ -282,8 +282,8 @@ private fun Success(
                 // Content
                 title = stringResource(com.eblan.launcher.ui.R.string.grid_item),
                 // Actions
-                onUpdateGridItemSettings = {
-                    onUpdateGridItem(gridItem.copy(gridItemSettings = it))
+                onUpdateGridItemSettings = { currentGridItemSettings ->
+                    onUpdateGridItem(gridItem.copy(gridItemSettings = currentGridItemSettings))
                 },
             )
         }
@@ -298,14 +298,14 @@ private fun Success(
             // Application Info
             eblanApplicationInfos = eblanApplicationInfos,
             // Action Callbacks
-            onUpdateDoubleTap = {
-                onUpdateGridItem(gridItem.copy(doubleTap = it))
+            onUpdateDoubleTap = { currentDoubleTapEblanAction ->
+                onUpdateGridItem(gridItem.copy(doubleTap = currentDoubleTapEblanAction))
             },
-            onUpdateSwipeUp = {
-                onUpdateGridItem(gridItem.copy(swipeUp = it))
+            onUpdateSwipeUp = { currentSwipeUpEblanAction ->
+                onUpdateGridItem(gridItem.copy(swipeUp = currentSwipeUpEblanAction))
             },
-            onUpdateSwipeDown = {
-                onUpdateGridItem(gridItem.copy(swipeDown = it))
+            onUpdateSwipeDown = { currentSwipeDownEblanAction ->
+                onUpdateGridItem(gridItem.copy(swipeDown = currentSwipeDownEblanAction))
             },
         )
     }
@@ -379,8 +379,8 @@ private fun EditApplicationInfo(
             onDismissRequest = {
                 showCustomLabelDialog = false
             },
-            onUpdateCustomLabel = {
-                val newData = data.copy(customLabel = it)
+            onUpdateCustomLabel = { currentCustomLabel ->
+                val newData = data.copy(customLabel = currentCustomLabel)
 
                 onUpdateGridItem(gridItem.copy(data = newData))
             },
@@ -529,8 +529,8 @@ private fun EditShortcutInfo(
             onDismissRequest = {
                 showCustomShortLabelDialog = false
             },
-            onUpdateCustomLabel = {
-                val newData = data.copy(customShortLabel = it)
+            onUpdateCustomLabel = { currentCustomShortLabel ->
+                val newData = data.copy(customShortLabel = currentCustomShortLabel)
 
                 onUpdateGridItem(gridItem.copy(data = newData))
             },
@@ -606,8 +606,8 @@ private fun EditShortcutConfig(
             onDismissRequest = {
                 showCustomLabelDialog = false
             },
-            onUpdateCustomLabel = {
-                val newData = data.copy(customLabel = it)
+            onUpdateCustomLabel = { currentCustomLabel ->
+                val newData = data.copy(customLabel = currentCustomLabel)
 
                 onUpdateGridItem(gridItem.copy(data = newData))
             },
@@ -651,8 +651,8 @@ private fun EditCustomIcon(
 
             onUpdateIconPackPackageName(packageName)
         },
-        onUpdateUri = {
-            onUpdateGridItemCustomIcon(gridItem, it)
+        onUpdateUri = { currentIconUri ->
+            onUpdateGridItemCustomIcon(gridItem, currentIconUri)
         },
         onResetCustomIcon = {
             onResetGridItemCustomIcon(gridItem)
@@ -672,10 +672,10 @@ private fun EditCustomIcon(
 
                 showCustomIconDialog = false
             },
-            onUpdateIcon = {
+            onUpdateIcon = { currentIconByteArray ->
                 onUpdateGridItemCustomIconByteArray(
                     gridItem,
-                    it,
+                    currentIconByteArray,
                 )
             },
             onSearchIconPackInfoComponent = onSearchIconPackInfoComponent,
@@ -699,10 +699,10 @@ private fun EditOverrideSwitch(
         shape = EblanShapes.last,
         modifier = modifier,
         // Callbacks
-        onCheckedChange = {
+        onCheckedChange = { currentOverride ->
             onUpdateGridItem(
                 gridItem.copy(
-                    override = it,
+                    override = currentOverride,
                 ),
             )
         },

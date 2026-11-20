@@ -80,14 +80,14 @@ internal class DefaultIconPackManager @Inject constructor(
                 else -> packageContext.assets.open("appfilter.xml")
             }
 
-            autoCloseable.use {
-                when (it) {
-                    is XmlResourceParser -> parseXml(xmlPullParser = it)
+            autoCloseable.use { currentAutoCloseable ->
+                when (currentAutoCloseable) {
+                    is XmlResourceParser -> parseXml(xmlPullParser = currentAutoCloseable)
 
                     is InputStream -> {
                         val xmlPullParser = XmlPullParserFactory.newInstance().newPullParser()
 
-                        xmlPullParser.setInput(it.reader())
+                        xmlPullParser.setInput(currentAutoCloseable.reader())
 
                         parseXml(xmlPullParser = xmlPullParser)
                     }

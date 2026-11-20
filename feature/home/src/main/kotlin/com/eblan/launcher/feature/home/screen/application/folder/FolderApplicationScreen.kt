@@ -391,8 +391,8 @@ internal fun FolderApplicationScreen(
             lockMovement = currentLockMovement.value,
             isInProgress = isInProgress,
             // Callbacks
-            onUpdateFolderPageDirection = {
-                pageDirection = it
+            onUpdateFolderPageDirection = { currentPageDirection ->
+                pageDirection = currentPageDirection
             },
         )
     }
@@ -483,14 +483,16 @@ internal fun FolderApplicationScreen(
                         animate = isVisibleOverlay && !isInProgress && animations,
                         modifier = Modifier.fillMaxSize(),
                         // Callbacks
-                        slotId = { it.id },
-                        content = {
+                        slotId = { currentFolderEblanApplicationInfoGridItem ->
+                            currentFolderEblanApplicationInfoGridItem.id
+                        },
+                        content = { currentFolderEblanApplicationInfoGridItem ->
                             InteractiveFolderEblanApplicationInfoItem(
                                 // Scope and Animation
                                 sharedTransitionScope = sharedTransitionScope,
                                 animations = animations,
                                 // Folder Item and Content
-                                folderEblanApplicationInfoGridItem = it,
+                                folderEblanApplicationInfoGridItem = currentFolderEblanApplicationInfoGridItem,
                                 folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                                 folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
                                 // Styling and Colors

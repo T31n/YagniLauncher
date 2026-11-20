@@ -166,8 +166,8 @@ internal fun InteractiveShortcutConfigGridItem(
                             )
                         },
                         onTap = {
-                            data.shortcutIntentUri?.let {
-                                context.startActivity(parseUri(it, 0))
+                            data.shortcutIntentUri?.let { currentShortcutIntentUri ->
+                                context.startActivity(parseUri(currentShortcutIntentUri, 0))
                             }
                         },
                     )
@@ -186,9 +186,9 @@ internal fun InteractiveShortcutConfigGridItem(
 
     val iconModifier = Modifier
         .onGloballyPositioned(
-            onGloballyPositioned = {
-                intOffset = it.positionInRoot().round()
-                intSize = it.size
+            onGloballyPositioned = { currentLayoutCoordinates ->
+                intOffset = currentLayoutCoordinates.positionInRoot().round()
+                intSize = currentLayoutCoordinates.size
             },
         )
         .gridItemSharedElement(

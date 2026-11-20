@@ -54,7 +54,9 @@ internal fun AddTagDialog(
     onAddEblanApplicationInfoTag: (EblanApplicationInfoTag) -> Unit,
 ) {
     val maxIndex = remember(key1 = eblanApplicationInfoTagsUi) {
-        eblanApplicationInfoTagsUi.maxOfOrNull { it.index } ?: 0
+        eblanApplicationInfoTagsUi.maxOfOrNull { currentEblanApplicationInfoTagUi ->
+            currentEblanApplicationInfoTagUi.index
+        } ?: 0
     }
 
     var value by remember { mutableStateOf("") }
@@ -72,8 +74,8 @@ internal fun AddTagDialog(
 
         TextField(
             value = value,
-            onValueChange = {
-                value = it
+            onValueChange = { currentTagName ->
+                value = currentTagName
                 isError = false
             },
             modifier = Modifier.fillMaxWidth(),
@@ -172,8 +174,8 @@ internal fun UpdateTagDialog(
 
         TextField(
             value = value,
-            onValueChange = {
-                value = it
+            onValueChange = { currentTagName ->
+                value = currentTagName
                 isError = false
             },
             modifier = Modifier.fillMaxWidth(),

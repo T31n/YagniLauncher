@@ -180,10 +180,10 @@ private fun ShortcutInfoMenuItem(
                 contentDescription = null,
                 modifier = Modifier
                     .size(30.dp)
-                    .onGloballyPositioned {
-                        intOffset = it.positionInRoot().round()
+                    .onGloballyPositioned { currentLayoutCoordinates ->
+                        intOffset = currentLayoutCoordinates.positionInRoot().round()
 
-                        intSize = it.size
+                        intSize = currentLayoutCoordinates.size
                     }
                     .drawWithContent {
                         graphicsLayer.record {

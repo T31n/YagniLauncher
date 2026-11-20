@@ -93,16 +93,16 @@ class AddPackageUseCase @Inject constructor(
                 iconShape = userData.generalSettings.iconShape,
                 theme = userData.generalSettings.theme,
                 colorSchemeSettings = userData.generalSettings.colorSchemeSettings,
-            ).onEach {
+            ).onEach { currentLauncherAppsActivityInfo ->
                 addEblanApplicationInfo(
                     homeSettings = userData.homeSettings,
-                    serialNumber = it.serialNumber,
-                    componentName = it.componentName,
-                    packageName = it.packageName,
-                    activityIcon = it.activityIcon,
-                    activityLabel = it.activityLabel,
-                    lastUpdateTime = it.lastUpdateTime,
-                    flags = it.flags,
+                    serialNumber = currentLauncherAppsActivityInfo.serialNumber,
+                    componentName = currentLauncherAppsActivityInfo.componentName,
+                    packageName = currentLauncherAppsActivityInfo.packageName,
+                    activityIcon = currentLauncherAppsActivityInfo.activityIcon,
+                    activityLabel = currentLauncherAppsActivityInfo.activityLabel,
+                    lastUpdateTime = currentLauncherAppsActivityInfo.lastUpdateTime,
+                    flags = currentLauncherAppsActivityInfo.flags,
                     applicationInfoGridItems = newApplicationInfoGridItems,
                     folderSettings = userData.folderSettings,
                 )
@@ -168,8 +168,8 @@ class AddPackageUseCase @Inject constructor(
         if (!homeSettings.addNewAppsToHomeScreen) return
 
         val gridItems = gridRepository.getGridItems().toGridItems()
-            .filter {
-                it.isTopLevel() && it.associate == Associate.Grid
+            .filter { currentGridItem ->
+                currentGridItem.isTopLevel() && currentGridItem.associate == Associate.Grid
             }
             .toMutableList()
 
@@ -192,13 +192,13 @@ class AddPackageUseCase @Inject constructor(
         packageName: String,
     ) {
         val eblanAppWidgetProviderInfos = appWidgetManagerWrapper.getInstalledProvidersForProfilesWithCacheIcons()
-            .filter {
-                it.serialNumber == serialNumber &&
-                    it.packageName == packageName
-            }.map {
+            .filter { currentAppWidgetManagerAppWidgetProviderInfo ->
+                currentAppWidgetManagerAppWidgetProviderInfo.serialNumber == serialNumber &&
+                    currentAppWidgetManagerAppWidgetProviderInfo.packageName == packageName
+            }.map { currentAppWidgetManagerAppWidgetProviderInfo ->
                 currentCoroutineContext().ensureActive()
 
-                it.toEblanAppWidgetProviderInfo(
+                currentAppWidgetManagerAppWidgetProviderInfo.toEblanAppWidgetProviderInfo(
                     fileManager = fileManager,
                     launcherAppsWrapper = launcherAppsWrapper,
                     packageManagerWrapper = packageManagerWrapper,
@@ -220,8 +220,8 @@ class AddPackageUseCase @Inject constructor(
             launcherAppsWrapper.getShortcutsByPackageNameWithCacheIcons(
                 serialNumber = serialNumber,
                 packageName = packageName,
-            )?.map {
-                it.toEblanShortcutInfo()
+            )?.map { currentLauncherAppsShortcutInfo ->
+                currentLauncherAppsShortcutInfo.toEblanShortcutInfo()
             }
 
         if (eblanShortcutInfos != null) {
@@ -239,10 +239,10 @@ class AddPackageUseCase @Inject constructor(
         val eblanShortcutConfigs = launcherAppsWrapper.getShortcutConfigActivityListWithCacheIcons(
             serialNumber = serialNumber,
             packageName = packageName,
-        ).map {
+        ).map { currentShortcutConfigActivityInfo ->
             currentCoroutineContext().ensureActive()
 
-            it.toEblanShortcutConfig(
+            currentShortcutConfigActivityInfo.toEblanShortcutConfig(
                 fileManager = fileManager,
                 launcherAppsWrapper = launcherAppsWrapper,
                 packageManagerWrapper = packageManagerWrapper,
@@ -271,12 +271,12 @@ class AddPackageUseCase @Inject constructor(
         val appFilter =
             iconPackManager.getIconPackComponents(packageName = iconPackPackageName)
 
-        launcherAppsActivityInfos.forEach {
+        launcherAppsActivityInfos.forEach { currentLauncherAppsActivityInfo ->
             currentCoroutineContext().ensureActive()
 
             val file = File(
                 iconPackInfoDirectory,
-                iconKeyGenerator.getHashedName(name = it.componentName),
+                iconKeyGenerator.getHashedName(name = currentLauncherAppsActivityInfo.componentName),
             )
 
             cacheIconPackFile(
@@ -284,7 +284,7 @@ class AddPackageUseCase @Inject constructor(
                 appFilter = appFilter,
                 iconPackPackageName = iconPackPackageName,
                 file = file,
-                componentName = it.componentName,
+                componentName = currentLauncherAppsActivityInfo.componentName,
                 generalSettings = generalSettings,
             )
         }

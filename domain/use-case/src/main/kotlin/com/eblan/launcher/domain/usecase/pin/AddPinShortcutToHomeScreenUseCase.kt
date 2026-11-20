@@ -84,14 +84,14 @@ class AddPinShortcutToHomeScreenUseCase @Inject constructor(
                 serialNumber = serialNumber,
                 packageName = packageName,
             ).firstOrNull()?.componentName
-                ?.let {
+                ?.let { currentComponentName ->
                     val directory = fileManager.getFilesDirectory(FileManager.ICONS_DIR)
 
                     val file = File(
                         directory,
                         iconKeyGenerator.getActivityIconKey(
                             serialNumber = serialNumber,
-                            componentName = it,
+                            componentName = currentComponentName,
                         ),
                     )
 
@@ -136,8 +136,8 @@ class AddPinShortcutToHomeScreenUseCase @Inject constructor(
         )
 
         val gridItems = gridRepository.getGridItems().toGridItems()
-            .filter {
-                it.isTopLevel() && it.associate == Associate.Grid
+            .filter { currentGridItem ->
+                currentGridItem.isTopLevel() && currentGridItem.associate == Associate.Grid
             }
 
         val newGridItem = findAvailableRegionByPage(

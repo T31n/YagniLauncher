@@ -80,9 +80,9 @@ internal suspend fun deleteGridItemData(
         is GridItemData.Folder -> getRecursiveFolderGridItems(
             folderPopupGridItems = folderPopupGridItems,
             folderId = gridItem.id,
-        ).forEach {
+        ).forEach { currentGridItem ->
             delete(
-                gridItem = it,
+                gridItem = currentGridItem,
                 appWidgetHostWrapper = appWidgetHostWrapper,
                 launcherAppsWrapper = launcherAppsWrapper,
             )
@@ -135,14 +135,30 @@ internal fun getRecursiveFolderGridItems(
 /** Converts the repository's grid-item collections into a single domain grid-item list. */
 internal fun GridItems.toGridItems(): List<GridItem> = buildList {
     addAll(
-        applicationInfoGridItems.map {
-            it.asGridItem()
+        applicationInfoGridItems.map { currentApplicationInfoGridItem ->
+            currentApplicationInfoGridItem.asGridItem()
         },
     )
-    addAll(widgetGridItems.map { it.asGridItem() })
-    addAll(shortcutInfoGridItems.map { it.asGridItem() })
-    addAll(shortcutConfigGridItems.map { it.asGridItem() })
-    addAll(folderGridItems.map { it.asGridItem() })
+    addAll(
+        widgetGridItems.map { currentWidgetGridItem ->
+            currentWidgetGridItem.asGridItem()
+        },
+    )
+    addAll(
+        shortcutInfoGridItems.map { currentShortcutInfoGridItem ->
+            currentShortcutInfoGridItem.asGridItem()
+        },
+    )
+    addAll(
+        shortcutConfigGridItems.map { currentShortcutConfigGridItem ->
+            currentShortcutConfigGridItem.asGridItem()
+        },
+    )
+    addAll(
+        folderGridItems.map { currentFolderGridItem ->
+            currentFolderGridItem.asGridItem()
+        },
+    )
 }
 
 /** Returns whether this item is not contained in another folder. */
@@ -375,7 +391,9 @@ private suspend fun updatePinShortcutsByPackageName(
             packageName = data.packageName,
             shortcutQueryFlag = ShortcutQueryFlag.Pinned,
         ),
-    )?.map { it.shortcutId } ?: return
+    )?.map { currentFastLauncherAppsShortcutInfo ->
+        currentFastLauncherAppsShortcutInfo.shortcutId
+    } ?: return
 
     if (data.shortcutId !in shortcutIds) return
 

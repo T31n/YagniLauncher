@@ -258,9 +258,9 @@ internal fun InteractiveFolderGridItem(
 
     val iconModifier = Modifier
         .onGloballyPositioned(
-            onGloballyPositioned = {
-                intOffset = it.positionInRoot().round()
-                intSize = it.size
+            onGloballyPositioned = { currentLayoutCoordinates ->
+                intOffset = currentLayoutCoordinates.positionInRoot().round()
+                intSize = currentLayoutCoordinates.size
             },
         )
         .gridItemSharedElement(
@@ -314,12 +314,12 @@ internal fun InteractiveFolderGridItem(
                     // Layout
                     modifier = Modifier.fillMaxSize(),
                     // Callbacks
-                    slotId = { it.id },
-                    content = {
+                    slotId = { currentPreviewFolderGridItem -> currentPreviewFolderGridItem.id },
+                    content = { currentPreviewFolderGridItem ->
                         PreviewFolderGridItem(
                             // Grid Item
                             sharedTransitionScope = sharedTransitionScope,
-                            gridItem = it,
+                            gridItem = currentPreviewFolderGridItem,
                             parent = sharedElementKey.parent,
                             gridItemSettings = gridItemSettings,
                             moveGridItemResult = moveGridItemResult,
@@ -490,7 +490,7 @@ private fun PreviewFolderGridItem(
             if ((drag == Drag.Cancel || drag == Drag.End) &&
                 id != null &&
                 folderGridItems != null &&
-                folderGridItems.any { it.id == id } &&
+                folderGridItems.any { currentFolderGridItem -> currentFolderGridItem.id == id } &&
                 !isVisibleFolders
             ) {
                 onResetGrid()

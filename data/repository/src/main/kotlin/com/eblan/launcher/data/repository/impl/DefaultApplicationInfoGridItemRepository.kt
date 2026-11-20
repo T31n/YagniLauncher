@@ -28,8 +28,8 @@ import javax.inject.Inject
 internal class DefaultApplicationInfoGridItemRepository @Inject constructor(
     private val applicationInfoGridItemDao: ApplicationInfoGridItemDao,
 ) : ApplicationInfoGridItemRepository {
-    override suspend fun getApplicationInfoGridItems(): List<ApplicationInfoGridItem> = applicationInfoGridItemDao.getApplicationInfoGridItemEntities().map {
-        it.asModel()
+    override suspend fun getApplicationInfoGridItems(): List<ApplicationInfoGridItem> = applicationInfoGridItemDao.getApplicationInfoGridItemEntities().map { currentApplicationInfoGridItemEntity ->
+        currentApplicationInfoGridItemEntity.asModel()
     }
 
     override suspend fun updateApplicationInfoGridItem(applicationInfoGridItem: ApplicationInfoGridItem) {
@@ -39,8 +39,8 @@ internal class DefaultApplicationInfoGridItemRepository @Inject constructor(
     }
 
     override suspend fun deleteApplicationInfoGridItems(applicationInfoGridItems: List<ApplicationInfoGridItem>) {
-        val entities = applicationInfoGridItems.map {
-            it.asEntity()
+        val entities = applicationInfoGridItems.map { currentApplicationInfoGridItem ->
+            currentApplicationInfoGridItem.asEntity()
         }
 
         applicationInfoGridItemDao.deleteApplicationInfoGridItemEntities(entities = entities)
@@ -56,8 +56,8 @@ internal class DefaultApplicationInfoGridItemRepository @Inject constructor(
     ): List<ApplicationInfoGridItem> = applicationInfoGridItemDao.getApplicationInfoGridItemEntitiesByPackageName(
         serialNumber = serialNumber,
         packageName = packageName,
-    ).map {
-        it.asModel()
+    ).map { currentApplicationInfoGridItemEntity ->
+        currentApplicationInfoGridItemEntity.asModel()
     }
 
     override suspend fun deleteApplicationInfoGridItem(
@@ -77,8 +77,8 @@ internal class DefaultApplicationInfoGridItemRepository @Inject constructor(
     }
 
     override suspend fun insertApplicationInfoGridItems(applicationInfoGridItems: List<ApplicationInfoGridItem>) {
-        val entities = applicationInfoGridItems.map {
-            it.asEntity()
+        val entities = applicationInfoGridItems.map { currentApplicationInfoGridItem ->
+            currentApplicationInfoGridItem.asEntity()
         }
 
         applicationInfoGridItemDao.insertApplicationInfoGridItemEntities(entities = entities)

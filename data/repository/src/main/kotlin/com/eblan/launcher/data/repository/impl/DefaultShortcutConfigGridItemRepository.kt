@@ -26,8 +26,8 @@ import com.eblan.launcher.domain.repository.ShortcutConfigGridItemRepository
 import javax.inject.Inject
 
 internal class DefaultShortcutConfigGridItemRepository @Inject constructor(private val shortcutConfigGridItemDao: ShortcutConfigGridItemDao) : ShortcutConfigGridItemRepository {
-    override suspend fun getShortcutConfigGridItems(): List<ShortcutConfigGridItem> = shortcutConfigGridItemDao.getShortcutConfigGridItemEntities().map {
-        it.asModel()
+    override suspend fun getShortcutConfigGridItems(): List<ShortcutConfigGridItem> = shortcutConfigGridItemDao.getShortcutConfigGridItemEntities().map { currentShortcutConfigGridItemEntity ->
+        currentShortcutConfigGridItemEntity.asModel()
     }
 
     override suspend fun updateShortcutConfigGridItem(shortcutConfigGridItem: ShortcutConfigGridItem) {
@@ -37,8 +37,8 @@ internal class DefaultShortcutConfigGridItemRepository @Inject constructor(priva
     }
 
     override suspend fun deleteShortcutConfigGridItems(shortcutConfigGridItems: List<ShortcutConfigGridItem>) {
-        val entities = shortcutConfigGridItems.map {
-            it.asEntity()
+        val entities = shortcutConfigGridItems.map { currentShortcutConfigGridItem ->
+            currentShortcutConfigGridItem.asEntity()
         }
 
         shortcutConfigGridItemDao.deleteShortcutConfigGridItemEntities(entities = entities)
@@ -54,8 +54,8 @@ internal class DefaultShortcutConfigGridItemRepository @Inject constructor(priva
     ): List<ShortcutConfigGridItem> = shortcutConfigGridItemDao.getShortcutConfigGridItemEntitiesByPackageName(
         serialNumber = serialNumber,
         packageName = packageName,
-    ).map {
-        it.asModel()
+    ).map { currentShortcutConfigGridItemEntity ->
+        currentShortcutConfigGridItemEntity.asModel()
     }
 
     override suspend fun deleteShortcutConfigGridItemByPackageName(

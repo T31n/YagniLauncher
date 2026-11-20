@@ -511,10 +511,10 @@ private fun EblanShortcutConfigItem(
             contentDescription = null,
             modifier = Modifier
                 .size(gridItemSettings.iconSize.dp)
-                .onGloballyPositioned {
-                    intOffset = it.positionInRoot().round()
+                .onGloballyPositioned { currentLayoutCoordinates ->
+                    intOffset = currentLayoutCoordinates.positionInRoot().round()
 
-                    intSize = it.size
+                    intSize = currentLayoutCoordinates.size
                 }
                 .drawWithContent {
                     graphicsLayer.record {

@@ -73,8 +73,8 @@ internal fun EditHorizontalGridDialog(
         ) {
             TextField(
                 value = currentHorizontalAppDrawerColumns,
-                onValueChange = {
-                    currentHorizontalAppDrawerColumns = it
+                onValueChange = { currentHorizontalAppDrawerColumnsString ->
+                    currentHorizontalAppDrawerColumns = currentHorizontalAppDrawerColumnsString
                     isErrorHorizontalAppDrawerColumns = false
                 },
                 modifier = Modifier.weight(1f),
@@ -94,8 +94,8 @@ internal fun EditHorizontalGridDialog(
 
             TextField(
                 value = currentHorizontalAppDrawerRows,
-                onValueChange = {
-                    currentHorizontalAppDrawerRows = it
+                onValueChange = { currentHorizontalAppDrawerRowsString ->
+                    currentHorizontalAppDrawerRows = currentHorizontalAppDrawerRowsString
                     isErrorHorizontalAppDrawerRows = false
                 },
                 modifier = Modifier.weight(1f),

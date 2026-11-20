@@ -61,8 +61,8 @@ internal fun EditDockHeightDialog(
 
         TextField(
             value = currentDockHeight,
-            onValueChange = {
-                currentDockHeight = it
+            onValueChange = { currentDockHeightString ->
+                currentDockHeight = currentDockHeightString
                 isErrorDockHeight = false
             },
             modifier = Modifier.fillMaxWidth(),

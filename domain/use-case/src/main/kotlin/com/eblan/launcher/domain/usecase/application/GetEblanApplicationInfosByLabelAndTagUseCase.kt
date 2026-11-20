@@ -88,7 +88,9 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
 
         val iconPackFilePaths = getIconPackFilePaths(
             iconPackPackageName = iconPackPackageName,
-            componentNames = eblanApplicationInfos.map { it.componentName },
+            componentNames = eblanApplicationInfos.map { currentEblanApplicationInfo ->
+                currentEblanApplicationInfo.componentName
+            },
             fileManager = fileManager,
             iconKeyGenerator = iconKeyGenerator,
         )
@@ -121,19 +123,25 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
         iconPackFilePaths: Map<String, String?>,
     ): GetEblanApplicationInfosByLabelAndTag {
         val groupedEblanApplicationInfos = eblanApplicationInfos
-            .groupBy {
+            .groupBy { currentEblanApplicationInfo ->
                 EblanUserPageKey(
-                    eblanUser = launcherAppsWrapper.getUser(serialNumber = it.serialNumber),
+                    eblanUser = launcherAppsWrapper.getUser(serialNumber = currentEblanApplicationInfo.serialNumber),
                     page = 0,
                 )
             }
-            .toSortedMap(nullsLast(compareBy { it.eblanUser.serialNumber }))
+            .toSortedMap(
+                nullsLast(
+                    compareBy { currentEblanUserPageKey ->
+                        currentEblanUserPageKey.eblanUser.serialNumber
+                    },
+                ),
+            )
 
         val groupedEblanApplicationInfosWithFolders =
             if (
                 folderEblanApplicationInfos.isNotEmpty() &&
-                groupedEblanApplicationInfos.keys.none {
-                    it.eblanUser.eblanUserType == EblanUserType.Personal
+                groupedEblanApplicationInfos.keys.none { currentEblanUserPageKey ->
+                    currentEblanUserPageKey.eblanUser.eblanUserType == EblanUserType.Personal
                 }
             ) {
                 val personalEblanUserPageKey = EblanUserPageKey(
@@ -147,13 +155,15 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
             }
 
         val privateEblanUserPageKey =
-            groupedEblanApplicationInfosWithFolders.keys.firstOrNull {
-                it.eblanUser.eblanUserType == EblanUserType.Private
+            groupedEblanApplicationInfosWithFolders.keys.firstOrNull { currentEblanUserPageKey ->
+                currentEblanUserPageKey.eblanUser.eblanUserType == EblanUserType.Private
             }
 
         return GetEblanApplicationInfosByLabelAndTag(
             eblanApplicationInfos = groupedEblanApplicationInfosWithFolders
-                .filterKeys { it != privateEblanUserPageKey },
+                .filterKeys { currentEblanUserPageKey ->
+                    currentEblanUserPageKey != privateEblanUserPageKey
+                },
             privateEblanUser = privateEblanUserPageKey?.eblanUser,
             privateEblanApplicationInfos = groupedEblanApplicationInfos[privateEblanUserPageKey].orEmpty(),
             iconPackFilePaths = iconPackFilePaths,
@@ -168,9 +178,15 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
         eblanApplicationInfos: List<EblanApplicationInfo>,
         iconPackFilePaths: Map<String, String?>,
     ): GetEblanApplicationInfosByLabelAndTag {
-        val groupedEblanApplicationInfos = eblanApplicationInfos.groupBy {
-            launcherAppsWrapper.getUser(serialNumber = it.serialNumber)
-        }.toSortedMap(nullsLast(compareBy { it.serialNumber }))
+        val groupedEblanApplicationInfos = eblanApplicationInfos.groupBy { currentEblanApplicationInfo ->
+            launcherAppsWrapper.getUser(serialNumber = currentEblanApplicationInfo.serialNumber)
+        }.toSortedMap(
+            nullsLast(
+                compareBy { currentEblanUser ->
+                    currentEblanUser.serialNumber
+                },
+            ),
+        )
             .flatMap { (eblanUser, eblanApplicationInfos) ->
                 eblanApplicationInfos.chunked(horizontalAppDrawerColumns * horizontalAppDrawerRows)
                     .mapIndexed { index, eblanApplicationInfos ->
@@ -209,13 +225,17 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
                 eblanApplicationInfoRepository.getEblanApplicationInfosWithoutTag()
 
             else -> eblanApplicationInfos
-        }.filterNot { it.isHidden || it.folderId != null }
+        }.filterNot { currentEblanApplicationInfo ->
+            currentEblanApplicationInfo.isHidden || currentEblanApplicationInfo.folderId != null
+        }
 
         return getItemsByLabel(
             items = eblanApplicationInfosByTag,
             fuzzySearch = fuzzySearch,
             label = label,
-            getLabel = { it.customLabel ?: it.label },
+            getLabel = { currentEblanApplicationInfo ->
+                currentEblanApplicationInfo.customLabel ?: currentEblanApplicationInfo.label
+            },
         )
     }
 
@@ -227,7 +247,9 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
         tagId: Long?,
     ): List<FolderEblanApplicationInfo> {
         val folderEblanApplicationInfosByTag = if (tagId == null) {
-            folderEblanApplicationInfos.filterNot { it.folderId != null }
+            folderEblanApplicationInfos.filterNot { currentFolderEblanApplicationInfo ->
+                currentFolderEblanApplicationInfo.folderId != null
+            }
         } else {
             emptyList()
         }
@@ -236,8 +258,12 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
             items = folderEblanApplicationInfosByTag,
             fuzzySearch = fuzzySearch,
             label = label,
-            getLabel = { it.label },
-        ).sortedBy { it.index }
+            getLabel = { currentFolderEblanApplicationInfo ->
+                currentFolderEblanApplicationInfo.label
+            },
+        ).sortedBy { currentFolderEblanApplicationInfo ->
+            currentFolderEblanApplicationInfo.index
+        }
     }
 
     /**
@@ -255,8 +281,8 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
         label: String,
         getLabel: (T) -> String,
     ): List<T> {
-        val itemsByLabel = items.filter {
-            getLabel(it).contains(
+        val itemsByLabel = items.filter { currentItem ->
+            getLabel(currentItem).contains(
                 other = label,
                 ignoreCase = true,
             )
@@ -265,10 +291,10 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
         return if (fuzzySearch || itemsByLabel.isNotEmpty()) {
             val fuzzyMatches = if (fuzzySearch) {
                 (items - itemsByLabel.toSet())
-                    .map {
-                        it to jaroWinklerSimilarityWrapper.apply(
+                    .map { currentItem ->
+                        currentItem to jaroWinklerSimilarityWrapper.apply(
                             left = normalize(text = label),
-                            right = normalize(text = getLabel(it)),
+                            right = normalize(text = getLabel(currentItem)),
                         )
                     }
                     .filter { (_, score) -> score >= 0.85 }
@@ -278,8 +304,8 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
                 emptyList()
             }
 
-            itemsByLabel.sortedBy {
-                getLabel(it).lowercase()
+            itemsByLabel.sortedBy { currentItem ->
+                getLabel(currentItem).lowercase()
             } + fuzzyMatches
         } else {
             emptyList()

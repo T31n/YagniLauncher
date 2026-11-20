@@ -160,7 +160,7 @@ internal fun InteractiveGridItem(
         key2 = folderGridItemEntries,
         key3 = isVisibleFolderGridItems,
     ) {
-        isVisibleFolderGridItems && folderGridItemEntries.any { it.id == gridItem.id }
+        isVisibleFolderGridItems && folderGridItemEntries.any { currentFolderEntry -> currentFolderEntry.id == gridItem.id }
     }
 
     val horizontalAlignment =
@@ -409,10 +409,10 @@ private fun InteractiveWidgetGridItem(
     ) {
         val commonModifier = Modifier
             .matchParentSize()
-            .onGloballyPositioned {
-                intOffset = it.positionInRoot().round()
+            .onGloballyPositioned { currentLayoutCoordinates ->
+                intOffset = currentLayoutCoordinates.positionInRoot().round()
 
-                intSize = it.size
+                intSize = currentLayoutCoordinates.size
             }
             .gridItemSharedElement(
                 // Transition State
@@ -440,9 +440,9 @@ private fun InteractiveWidgetGridItem(
                     )
                 },
                 modifier = commonModifier,
-                update = {
+                update = { currentAppWidgetHostView ->
                     if (!isVisibleOverlay) {
-                        it.setOnLongClickListener {
+                        currentAppWidgetHostView.setOnLongClickListener {
                             currentOnLongPressGridItem(
                                 gridItem,
                                 { graphicsLayer.toImageBitmap() },

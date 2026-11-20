@@ -60,8 +60,8 @@ internal fun EditFolderLabelDialog(
 
         TextField(
             value = value,
-            onValueChange = {
-                value = it
+            onValueChange = { currentFolderLabel ->
+                value = currentFolderLabel
                 isError = false
             },
             modifier = Modifier.fillMaxWidth(),

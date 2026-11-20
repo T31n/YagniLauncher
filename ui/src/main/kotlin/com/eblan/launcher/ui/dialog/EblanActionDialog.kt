@@ -156,11 +156,11 @@ internal fun EblanActionDialog(
             onDismissRequest = {
                 showSelectApplicationDialog = false
             },
-            onClick = {
+            onClick = { currentEblanApplicationInfo ->
                 selectedEblanAction = EblanAction(
                     eblanActionType = EblanActionType.OpenApp,
-                    serialNumber = it.serialNumber,
-                    componentName = it.componentName,
+                    serialNumber = currentEblanApplicationInfo.serialNumber,
+                    componentName = currentEblanApplicationInfo.componentName,
                 )
 
                 showSelectApplicationDialog = false

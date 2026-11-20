@@ -69,8 +69,8 @@ class MoveFolderEblanApplicationInfoGridItemUseCase @Inject constructor(
             folderGridItemPopup.folderEblanApplicationInfoGridItems.toMutableList()
 
         val movingIndex =
-            folderEblanApplicationInfoGridItems.indexOfFirst {
-                it.id == folderEblanApplicationInfoGridItem.id
+            folderEblanApplicationInfoGridItems.indexOfFirst { currentFolderEblanApplicationInfoGridItem ->
+                currentFolderEblanApplicationInfoGridItem.id == folderEblanApplicationInfoGridItem.id
             }
 
         if (movingIndex != -1) {

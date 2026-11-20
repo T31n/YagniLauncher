@@ -196,7 +196,7 @@ internal fun EblanApplicationInfoItem(
             isLongPress = isLongPress,
             isSwiping = isSwiping,
             // Callbacks
-            onUpdateIsLongPress = { isLongPress = it },
+            onUpdateIsLongPress = { currentIsLongPress -> isLongPress = currentIsLongPress },
             onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
             onDragApplicationInfo = onDragApplicationInfo,
         )
@@ -251,9 +251,9 @@ internal fun EblanApplicationInfoItem(
         }
 
     val iconModifier = Modifier
-        .onGloballyPositioned {
-            intOffset = it.positionInRoot().round()
-            intSize = it.size
+        .onGloballyPositioned { currentLayoutCoordinates ->
+            intOffset = currentLayoutCoordinates.positionInRoot().round()
+            intSize = currentLayoutCoordinates.size
         }
         .gridItemSharedElement(
             // Transition State

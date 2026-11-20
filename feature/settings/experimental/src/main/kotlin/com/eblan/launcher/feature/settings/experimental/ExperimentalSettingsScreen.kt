@@ -143,10 +143,10 @@ private fun Success(
             // Appearance
             shape = EblanShapes.middle,
             // Callbacks
-            onCheckedChange = {
+            onCheckedChange = { currentLockMovement ->
                 onUpdateExperimentalSettings(
                     experimentalSettings.copy(
-                        lockMovement = it,
+                        lockMovement = currentLockMovement,
                     ),
                 )
             },
@@ -161,10 +161,10 @@ private fun Success(
             // Appearance
             shape = EblanShapes.last,
             // Callbacks
-            onCheckedChange = {
+            onCheckedChange = { currentGridItemAnimation ->
                 onUpdateExperimentalSettings(
                     experimentalSettings.copy(
-                        gridItemAnimation = it,
+                        gridItemAnimation = currentGridItemAnimation,
                     ),
                 )
             },
@@ -179,8 +179,8 @@ private fun Success(
             onDismissRequest = {
                 showSyncDataDialog = false
             },
-            onUpdateSyncData = {
-                onUpdateExperimentalSettings(experimentalSettings.copy(syncData = it))
+            onUpdateSyncData = { currentSyncData ->
+                onUpdateExperimentalSettings(experimentalSettings.copy(syncData = currentSyncData))
             },
         )
     }

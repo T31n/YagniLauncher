@@ -68,8 +68,8 @@ class MoveFolderGridItemUseCase @Inject constructor(
         val folderGridItems = folderPopup.folderGridItems.toMutableList()
 
         val movingIndex =
-            folderGridItems.indexOfFirst {
-                it.id == movingGridItem.id
+            folderGridItems.indexOfFirst { currentGridItem ->
+                currentGridItem.id == movingGridItem.id
             }
 
         if (movingIndex != -1) {

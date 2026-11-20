@@ -27,27 +27,27 @@ import javax.inject.Inject
 class DefaultEblanAppWidgetProviderInfoRepository @Inject constructor(private val eblanAppWidgetProviderInfoDao: EblanAppWidgetProviderInfoDao) : EblanAppWidgetProviderInfoRepository {
     override val eblanAppWidgetProviderInfosFlow =
         eblanAppWidgetProviderInfoDao.getEblanAppWidgetProviderInfoEntitiesFlow().map { entities ->
-            entities.map {
-                it.asModel()
+            entities.map { currentEblanAppWidgetProviderInfoEntity ->
+                currentEblanAppWidgetProviderInfoEntity.asModel()
             }
         }
 
     override suspend fun getEblanAppWidgetProviderInfos(): List<EblanAppWidgetProviderInfo> = eblanAppWidgetProviderInfoDao.getEblanAppWidgetProviderInfoEntityList()
-        .map {
-            it.asModel()
+        .map { currentEblanAppWidgetProviderInfoEntity ->
+            currentEblanAppWidgetProviderInfoEntity.asModel()
         }
 
     override suspend fun upsertEblanAppWidgetProviderInfos(eblanAppWidgetProviderInfos: List<EblanAppWidgetProviderInfo>) {
-        val entities = eblanAppWidgetProviderInfos.map {
-            it.asEntity()
+        val entities = eblanAppWidgetProviderInfos.map { currentEblanAppWidgetProviderInfo ->
+            currentEblanAppWidgetProviderInfo.asEntity()
         }
 
         eblanAppWidgetProviderInfoDao.upsertEblanAppWidgetProviderInfoEntities(entities = entities)
     }
 
     override suspend fun deleteEblanAppWidgetProviderInfos(eblanAppWidgetProviderInfos: List<EblanAppWidgetProviderInfo>) {
-        val entities = eblanAppWidgetProviderInfos.map {
-            it.asEntity()
+        val entities = eblanAppWidgetProviderInfos.map { currentEblanAppWidgetProviderInfo ->
+            currentEblanAppWidgetProviderInfo.asEntity()
         }
 
         eblanAppWidgetProviderInfoDao.deleteEblanAppWidgetProviderInfoEntities(
@@ -61,8 +61,8 @@ class DefaultEblanAppWidgetProviderInfoRepository @Inject constructor(private va
     ): List<EblanAppWidgetProviderInfo> = eblanAppWidgetProviderInfoDao.getEblanAppWidgetProviderInfoEntitiesByPackageName(
         serialNumber = serialNumber,
         packageName = packageName,
-    ).map {
-        it.asModel()
+    ).map { currentEblanAppWidgetProviderInfoEntity ->
+        currentEblanAppWidgetProviderInfoEntity.asModel()
     }
 
     override suspend fun deleteEblanAppWidgetProviderInfoByPackageName(

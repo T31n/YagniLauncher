@@ -361,9 +361,9 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
     val iconModifier = Modifier
         .size(gridItemSettings.iconSize.dp)
         .padding(gridItemSettings.iconPadding.dp)
-        .onGloballyPositioned {
-            intOffset = it.positionInRoot().round()
-            intSize = it.size
+        .onGloballyPositioned { currentLayoutCoordinates ->
+            intOffset = currentLayoutCoordinates.positionInRoot().round()
+            intSize = currentLayoutCoordinates.size
         }
 
     val iconContent: @Composable () -> Unit = {

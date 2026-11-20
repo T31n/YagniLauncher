@@ -39,8 +39,8 @@ internal class DefaultAccessibilityManagerWrapper @Inject constructor(
         accessibilityManager.isEnabled &&
             accessibilityManager
                 .getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK)
-                .any {
-                    val resolvedInfo = it.resolveInfo.serviceInfo
+                .any { currentAccessibilityServiceInfo ->
+                    val resolvedInfo = currentAccessibilityServiceInfo.resolveInfo.serviceInfo
 
                     resolvedInfo.packageName == context.packageName &&
                         resolvedInfo.name == EblanAccessibilityService::class.java.name

@@ -71,8 +71,8 @@ class CleanUpCacheUseCase @Inject constructor(
         fileManager.getFilesDirectory(name = FileManager.ICON_PACKS_DIR)
             .listFiles()
             ?.filter(File::isDirectory)
-            ?.filter { it.list().isNullOrEmpty() }
-            ?.forEach { it.delete() }
+            ?.filter { currentFile -> currentFile.list().isNullOrEmpty() }
+            ?.forEach { currentFile -> currentFile.delete() }
 
         freedSize
     }

@@ -27,27 +27,27 @@ import javax.inject.Inject
 class DefaultEblanShortcutInfoRepository @Inject constructor(private val eblanShortcutInfoDao: EblanShortcutInfoDao) : EblanShortcutInfoRepository {
     override val eblanShortcutInfosFlow =
         eblanShortcutInfoDao.getEblanShortcutInfoEntitiesFlow().map { entities ->
-            entities.map {
-                it.asModel()
+            entities.map { currentEblanShortcutInfoEntity ->
+                currentEblanShortcutInfoEntity.asModel()
             }
         }
 
     override suspend fun getEblanShortcutInfos(): List<EblanShortcutInfo> = eblanShortcutInfoDao.getEblanShortcutInfoEntities()
-        .map {
-            it.asModel()
+        .map { currentEblanShortcutInfoEntity ->
+            currentEblanShortcutInfoEntity.asModel()
         }
 
     override suspend fun upsertEblanShortcutInfos(eblanShortcutInfos: List<EblanShortcutInfo>) {
-        val entities = eblanShortcutInfos.map {
-            it.asEntity()
+        val entities = eblanShortcutInfos.map { currentEblanShortcutInfo ->
+            currentEblanShortcutInfo.asEntity()
         }
 
         eblanShortcutInfoDao.upsertEblanShortcutInfoEntities(entities = entities)
     }
 
     override suspend fun deleteEblanShortcutInfos(eblanShortcutInfos: List<EblanShortcutInfo>) {
-        val entities = eblanShortcutInfos.map {
-            it.asEntity()
+        val entities = eblanShortcutInfos.map { currentEblanShortcutInfo ->
+            currentEblanShortcutInfo.asEntity()
         }
 
         eblanShortcutInfoDao.deleteEblanShortcutInfoEntities(entities = entities)
@@ -59,8 +59,8 @@ class DefaultEblanShortcutInfoRepository @Inject constructor(private val eblanSh
     ): List<EblanShortcutInfo> = eblanShortcutInfoDao.getEblanShortcutInfoEntitiesByPackageName(
         serialNumber = serialNumber,
         packageName = packageName,
-    ).map {
-        it.asModel()
+    ).map { currentEblanShortcutInfoEntity ->
+        currentEblanShortcutInfoEntity.asModel()
     }
 
     override suspend fun deleteEblanShortcutInfos(

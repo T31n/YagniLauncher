@@ -177,7 +177,9 @@ internal fun FolderEblanApplicationInfoItem(
         key2 = folderEblanApplicationInfoEntries,
         key3 = isVisibleFolderEblanApplicationInfos,
     ) {
-        isVisibleFolderEblanApplicationInfos && folderEblanApplicationInfoEntries.any { it.id == folderEblanApplicationInfo.id }
+        isVisibleFolderEblanApplicationInfos && folderEblanApplicationInfoEntries.any { currentFolderEntry ->
+            currentFolderEntry.id == folderEblanApplicationInfo.id
+        }
     }
 
     val textAlpha = if (isLongPress) 0f else 1f
@@ -208,8 +210,8 @@ internal fun FolderEblanApplicationInfoItem(
             isLongPress = isLongPress,
             isSwiping = isSwiping,
             // Callbacks
-            onUpdateIsLongPress = {
-                isLongPress = it
+            onUpdateIsLongPress = { currentIsLongPress ->
+                isLongPress = currentIsLongPress
             },
             onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
             onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
@@ -265,9 +267,9 @@ internal fun FolderEblanApplicationInfoItem(
 
     val iconModifier = Modifier
         .onGloballyPositioned(
-            onGloballyPositioned = {
-                intOffset = it.positionInRoot().round()
-                intSize = it.size
+            onGloballyPositioned = { currentLayoutCoordinates ->
+                intOffset = currentLayoutCoordinates.positionInRoot().round()
+                intSize = currentLayoutCoordinates.size
             },
         )
         .gridItemSharedElement(
@@ -325,11 +327,13 @@ internal fun FolderEblanApplicationInfoItem(
                     // Layout
                     modifier = Modifier.fillMaxSize(),
                     // Callbacks
-                    slotId = { it.id },
-                    content = {
+                    slotId = { currentFolderEblanApplicationInfoGridItem ->
+                        currentFolderEblanApplicationInfoGridItem.id
+                    },
+                    content = { currentFolderEblanApplicationInfoGridItem ->
                         PreviewFolderEblanApplicationInfoItem(
                             // Item Data
-                            folderEblanApplicationInfoGridItem = it,
+                            folderEblanApplicationInfoGridItem = currentFolderEblanApplicationInfoGridItem,
                             // Item Settings
                             gridItemSettings = appDrawerSettings.gridItemSettings,
                             iconPackFilePaths = iconPackFilePaths,

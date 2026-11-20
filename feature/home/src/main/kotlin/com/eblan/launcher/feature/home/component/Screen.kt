@@ -53,8 +53,8 @@ internal fun ScreenEffect(
 
     LaunchedEffect(key1 = textFieldState) {
         snapshotFlow { textFieldState.text }.debounce(500L.milliseconds)
-            .onEach {
-                onGetLabel(it.toString())
+            .onEach { currentCharSequence ->
+                onGetLabel(currentCharSequence.toString())
             }.collect()
     }
 

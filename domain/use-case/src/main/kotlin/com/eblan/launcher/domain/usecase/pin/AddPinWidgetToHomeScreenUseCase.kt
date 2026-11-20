@@ -111,14 +111,14 @@ class AddPinWidgetToHomeScreenUseCase @Inject constructor(
             launcherAppsWrapper.getFastActivityList(
                 serialNumber = serialNumber,
                 packageName = packageName,
-            ).firstOrNull()?.componentName?.let {
+            ).firstOrNull()?.componentName?.let { currentComponentName ->
                 val directory = fileManager.getFilesDirectory(FileManager.ICONS_DIR)
 
                 val file = File(
                     directory,
                     iconKeyGenerator.getActivityIconKey(
                         serialNumber = serialNumber,
-                        componentName = it,
+                        componentName = currentComponentName,
                     ),
                 )
 
@@ -196,8 +196,8 @@ class AddPinWidgetToHomeScreenUseCase @Inject constructor(
             swipeDown = eblanAction,
         )
 
-        val gridItems = gridRepository.getGridItems().toGridItems().filter {
-            it.isTopLevel() && it.associate == Associate.Grid
+        val gridItems = gridRepository.getGridItems().toGridItems().filter { currentGridItem ->
+            currentGridItem.isTopLevel() && currentGridItem.associate == Associate.Grid
         }
 
         val newGridItem = findAvailableRegionByPage(

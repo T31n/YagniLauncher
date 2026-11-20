@@ -155,14 +155,16 @@ private fun Success(
             title = stringResource(R.string.pager_transition_effect),
             options = PagerTransitionEffect.entries,
             selected = homeSettings.pagerTransitionEffect,
-            label = {
-                it.getTitle()
+            label = { currentPagerTransitionEffect ->
+                currentPagerTransitionEffect.getTitle()
             },
             // Layout
             shape = EblanShapes.middle,
             // Actions
-            onSelectedChange = {
-                onUpdateHomeSettings(homeSettings.copy(pagerTransitionEffect = it))
+            onSelectedChange = { currentPagerTransitionEffect ->
+                onUpdateHomeSettings(
+                    homeSettings.copy(pagerTransitionEffect = currentPagerTransitionEffect),
+                )
             },
         )
 
@@ -175,9 +177,9 @@ private fun Success(
             // Appearance
             shape = EblanShapes.middle,
             // Callbacks
-            onCheckedChange = {
+            onCheckedChange = { currentInfiniteScroll ->
                 onUpdateHomeSettings(
-                    homeSettings.copy(infiniteScroll = it),
+                    homeSettings.copy(infiniteScroll = currentInfiniteScroll),
                 )
             },
         )
@@ -191,9 +193,9 @@ private fun Success(
             // Appearance
             shape = EblanShapes.middle,
             // Callbacks
-            onCheckedChange = {
+            onCheckedChange = { currentWallpaperScroll ->
                 onUpdateHomeSettings(
-                    homeSettings.copy(wallpaperScroll = it),
+                    homeSettings.copy(wallpaperScroll = currentWallpaperScroll),
                 )
             },
         )
@@ -207,9 +209,9 @@ private fun Success(
             // Appearance
             shape = EblanShapes.middle,
             // Callbacks
-            onCheckedChange = {
+            onCheckedChange = { currentLockScreenOrientation ->
                 onUpdateHomeSettings(
-                    homeSettings.copy(lockScreenOrientation = it),
+                    homeSettings.copy(lockScreenOrientation = currentLockScreenOrientation),
                 )
             },
         )
@@ -223,9 +225,9 @@ private fun Success(
             // Appearance
             shape = EblanShapes.middle,
             // Callbacks
-            onCheckedChange = {
+            onCheckedChange = { currentAddNewAppsToHomeScreen ->
                 onUpdateHomeSettings(
-                    homeSettings.copy(addNewAppsToHomeScreen = it),
+                    homeSettings.copy(addNewAppsToHomeScreen = currentAddNewAppsToHomeScreen),
                 )
             },
         )
@@ -239,9 +241,9 @@ private fun Success(
             // Appearance
             shape = EblanShapes.middle,
             // Callbacks
-            onCheckedChange = {
+            onCheckedChange = { currentShowPageIndicator ->
                 onUpdateHomeSettings(
-                    homeSettings.copy(showPageIndicator = it),
+                    homeSettings.copy(showPageIndicator = currentShowPageIndicator),
                 )
             },
         )
@@ -255,9 +257,9 @@ private fun Success(
             // Appearance
             shape = EblanShapes.middle,
             // Callbacks
-            onCheckedChange = {
+            onCheckedChange = { currentShowStatusBar ->
                 onUpdateHomeSettings(
-                    homeSettings.copy(showStatusBar = it),
+                    homeSettings.copy(showStatusBar = currentShowStatusBar),
                 )
             },
         )
@@ -271,9 +273,9 @@ private fun Success(
             // Appearance
             shape = EblanShapes.last,
             // Callbacks
-            onCheckedChange = {
+            onCheckedChange = { currentShowNavigationBar ->
                 onUpdateHomeSettings(
-                    homeSettings.copy(showNavigationBar = it),
+                    homeSettings.copy(showNavigationBar = currentShowNavigationBar),
                 )
             },
         )
@@ -289,9 +291,9 @@ private fun Success(
             // Appearance
             shape = EblanShapes.first,
             // Callbacks
-            onCheckedChange = {
+            onCheckedChange = { currentEnableDock ->
                 onUpdateHomeSettings(
-                    homeSettings.copy(enableDock = it),
+                    homeSettings.copy(enableDock = currentEnableDock),
                 )
             },
         )
@@ -329,9 +331,9 @@ private fun Success(
             // Appearance
             shape = EblanShapes.middle,
             // Callbacks
-            onCheckedChange = {
+            onCheckedChange = { currentDockInfiniteScroll ->
                 onUpdateHomeSettings(
-                    homeSettings.copy(dockInfiniteScroll = it),
+                    homeSettings.copy(dockInfiniteScroll = currentDockInfiniteScroll),
                 )
             },
         )
@@ -341,18 +343,18 @@ private fun Success(
             title = stringResource(R.string.dock_background_color),
             options = BackgroundColor.entries,
             selected = homeSettings.dockBackgroundColor,
-            label = {
-                it.getTitle()
+            label = { currentDockBackgroundColor ->
+                currentDockBackgroundColor.getTitle()
             },
             // Layout
             shape = EblanShapes.middle,
             // Actions
-            onSelectedChange = {
-                if (it == BackgroundColor.Custom) {
+            onSelectedChange = { currentDockBackgroundColor ->
+                if (currentDockBackgroundColor == BackgroundColor.Custom) {
                     showDockCustomBackgroundColorDialog = true
                 } else {
                     onUpdateHomeSettings(
-                        homeSettings.copy(dockBackgroundColor = it),
+                        homeSettings.copy(dockBackgroundColor = currentDockBackgroundColor),
                     )
                 }
             },
@@ -391,9 +393,9 @@ private fun Success(
             // Appearance
             shape = EblanShapes.last,
             // Callbacks
-            onCheckedChange = {
+            onCheckedChange = { currentAddDockBottomPadding ->
                 onUpdateHomeSettings(
-                    homeSettings.copy(addDockBottomPadding = it),
+                    homeSettings.copy(addDockBottomPadding = currentAddDockBottomPadding),
                 )
             },
         )
@@ -404,9 +406,9 @@ private fun Success(
             // Content
             title = stringResource(com.eblan.launcher.ui.R.string.grid_item),
             // Actions
-            onUpdateGridItemSettings = {
+            onUpdateGridItemSettings = { currentGridItemSettings ->
                 onUpdateHomeSettings(
-                    homeSettings.copy(gridItemSettings = it),
+                    homeSettings.copy(gridItemSettings = currentGridItemSettings),
                 )
             },
         )
@@ -417,9 +419,9 @@ private fun Success(
             // Content
             title = stringResource(R.string.dock_grid_item),
             // Actions
-            onUpdateGridItemSettings = {
+            onUpdateGridItemSettings = { currentDockGridItemSettings ->
                 onUpdateHomeSettings(
-                    homeSettings.copy(dockGridItemSettings = it),
+                    homeSettings.copy(dockGridItemSettings = currentDockGridItemSettings),
                 )
             },
         )
@@ -473,10 +475,10 @@ private fun Success(
             onDismissRequest = {
                 showDockHeightDialog = false
             },
-            onUpdateDockHeight = {
+            onUpdateDockHeight = { currentDockHeight ->
                 onUpdateHomeSettings(
                     homeSettings.copy(
-                        dockHeight = it,
+                        dockHeight = currentDockHeight,
                     ),
                 )
 
@@ -495,11 +497,11 @@ private fun Success(
             onDismissRequest = {
                 showDockCustomBackgroundColorDialog = false
             },
-            onSelectColor = {
+            onSelectColor = { currentDockCustomBackgroundColor ->
                 onUpdateHomeSettings(
                     homeSettings.copy(
                         dockBackgroundColor = BackgroundColor.Custom,
-                        dockCustomBackgroundColor = it,
+                        dockCustomBackgroundColor = currentDockCustomBackgroundColor,
                     ),
                 )
             },
@@ -514,10 +516,10 @@ private fun Success(
             onDismissRequest = {
                 showDockPaddingDialog = false
             },
-            onUpdatePadding = {
+            onUpdatePadding = { currentDockPadding ->
                 onUpdateHomeSettings(
                     homeSettings.copy(
-                        dockPadding = it,
+                        dockPadding = currentDockPadding,
                     ),
                 )
             },

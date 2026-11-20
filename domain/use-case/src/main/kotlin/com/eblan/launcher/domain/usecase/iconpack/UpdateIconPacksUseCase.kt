@@ -103,12 +103,12 @@ class UpdateIconPacksUseCase @Inject constructor(
 
         val appFilter = iconPackManager.getIconPackComponents(packageName = iconPackPackageName)
 
-        fastLauncherAppsActivityInfos.forEach {
+        fastLauncherAppsActivityInfos.forEach { currentFastLauncherAppsActivityInfo ->
             currentCoroutineContext().ensureActive()
 
             val file = File(
                 iconPackInfoDirectory,
-                iconKeyGenerator.getHashedName(name = it.componentName),
+                iconKeyGenerator.getHashedName(name = currentFastLauncherAppsActivityInfo.componentName),
             )
 
             cacheIconPackFile(
@@ -116,7 +116,7 @@ class UpdateIconPacksUseCase @Inject constructor(
                 appFilter = appFilter,
                 iconPackPackageName = iconPackPackageName,
                 file = file,
-                componentName = it.componentName,
+                componentName = currentFastLauncherAppsActivityInfo.componentName,
                 generalSettings = generalSettings,
             )
         }

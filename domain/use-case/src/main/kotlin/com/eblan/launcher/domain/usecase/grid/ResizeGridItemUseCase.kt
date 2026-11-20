@@ -49,24 +49,25 @@ class ResizeGridItemUseCase @Inject constructor(
         rows: Int,
     ): GridItem = withContext(defaultDispatcher) {
         val gridItems =
-            gridRepository.getGridItems().toGridItems().filter {
-                it.isTopLevel() && it.page == resizingGridItem.page &&
-                    it.associate == resizingGridItem.associate
+            gridRepository.getGridItems().toGridItems().filter { currentGridItem ->
+                currentGridItem.isTopLevel() &&
+                    currentGridItem.page == resizingGridItem.page &&
+                    currentGridItem.associate == resizingGridItem.associate
             }.toMutableList()
 
         val index =
-            gridItems.indexOfFirst {
-                it.id == resizingGridItem.id
+            gridItems.indexOfFirst { currentGridItem ->
+                currentGridItem.id == resizingGridItem.id
             }
 
         val oldGridItem = gridItems[index]
 
         gridItems[index] = resizingGridItem
 
-        val gridItemBySpan = gridItems.find {
-            it.id != resizingGridItem.id && rectanglesOverlap(
+        val gridItemBySpan = gridItems.find { currentGridItem ->
+            currentGridItem.id != resizingGridItem.id && rectanglesOverlap(
                 moving = resizingGridItem,
-                other = it,
+                other = currentGridItem,
             )
         }
 

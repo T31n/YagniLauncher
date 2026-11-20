@@ -31,60 +31,60 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class UserDataStore @Inject constructor(private val dataStore: DataStore<UserDataProto>) {
-    val userDataFlow = dataStore.data.map {
+    val userDataFlow = dataStore.data.map { currentUserDataProto ->
         UserData(
-            homeSettings = it.homeSettingsProto.toHomeSettings(),
-            appDrawerSettings = it.appDrawerSettingsProto.toAppDrawerSettings(),
-            gestureSettings = it.gestureSettingsProto.toGestureSettings(),
-            generalSettings = it.generalSettingsProto.toGeneralSettings(),
-            experimentalSettings = it.experimentalSettingsProto.toExperimentalSettings(),
-            folderSettings = it.folderSettingsProto.toFolderSettings(),
+            homeSettings = currentUserDataProto.homeSettingsProto.toHomeSettings(),
+            appDrawerSettings = currentUserDataProto.appDrawerSettingsProto.toAppDrawerSettings(),
+            gestureSettings = currentUserDataProto.gestureSettingsProto.toGestureSettings(),
+            generalSettings = currentUserDataProto.generalSettingsProto.toGeneralSettings(),
+            experimentalSettings = currentUserDataProto.experimentalSettingsProto.toExperimentalSettings(),
+            folderSettings = currentUserDataProto.folderSettingsProto.toFolderSettings(),
         )
     }
 
     suspend fun updateGeneralSettings(generalSettings: GeneralSettings) {
-        dataStore.updateData {
-            it.copy {
+        dataStore.updateData { currentUserDataProto ->
+            currentUserDataProto.copy {
                 generalSettingsProto = generalSettings.toGeneralSettingsProto()
             }
         }
     }
 
     suspend fun updateHomeSettings(homeSettings: HomeSettings) {
-        dataStore.updateData {
-            it.copy {
+        dataStore.updateData { currentUserDataProto ->
+            currentUserDataProto.copy {
                 homeSettingsProto = homeSettings.toHomeSettingsProto()
             }
         }
     }
 
     suspend fun updateAppDrawerSettings(appDrawerSettings: AppDrawerSettings) {
-        dataStore.updateData {
-            it.copy {
+        dataStore.updateData { currentUserDataProto ->
+            currentUserDataProto.copy {
                 appDrawerSettingsProto = appDrawerSettings.toAppDrawerSettingsProto()
             }
         }
     }
 
     suspend fun updateGestureSettings(gestureSettings: GestureSettings) {
-        dataStore.updateData {
-            it.copy {
+        dataStore.updateData { currentUserDataProto ->
+            currentUserDataProto.copy {
                 gestureSettingsProto = gestureSettings.toGestureSettingsProto()
             }
         }
     }
 
     suspend fun updateExperimentalSettings(experimentalSettings: ExperimentalSettings) {
-        dataStore.updateData {
-            it.copy {
+        dataStore.updateData { currentUserDataProto ->
+            currentUserDataProto.copy {
                 experimentalSettingsProto = experimentalSettings.toExperimentalSettingsProto()
             }
         }
     }
 
     suspend fun updateFolderSettings(folderSettings: FolderSettings) {
-        dataStore.updateData {
-            it.copy {
+        dataStore.updateData { currentUserDataProto ->
+            currentUserDataProto.copy {
                 folderSettingsProto = folderSettings.toFolderSettingsProto()
             }
         }

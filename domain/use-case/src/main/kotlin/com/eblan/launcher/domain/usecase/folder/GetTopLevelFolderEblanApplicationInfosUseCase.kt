@@ -38,6 +38,10 @@ class GetTopLevelFolderEblanApplicationInfosUseCase @Inject constructor(
      * @return A flow of top-level application folders.
      */
     operator fun invoke(): Flow<List<FolderEblanApplicationInfo>> = folderEblanApplicationInfoRepository.folderEblanApplicationInfosFlow.map { folderEblanApplicationInfos ->
-        folderEblanApplicationInfos.filterNot { it.folderId != null }.sortedBy { it.index }
+        folderEblanApplicationInfos.filterNot { currentFolderEblanApplicationInfo ->
+            currentFolderEblanApplicationInfo.folderId != null
+        }.sortedBy { currentFolderEblanApplicationInfo ->
+            currentFolderEblanApplicationInfo.index
+        }
     }.flowOn(defaultDispatcher)
 }

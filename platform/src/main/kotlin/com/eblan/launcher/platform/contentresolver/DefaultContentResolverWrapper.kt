@@ -34,6 +34,8 @@ internal class DefaultContentResolverWrapper @Inject constructor(
     private val contentResolver = context.contentResolver
 
     override suspend fun openInputStream(uri: String): ByteArray? = withContext(ioDispatcher) {
-        contentResolver.openInputStream(uri.toUri())?.use { it.readBytes() }
+        contentResolver.openInputStream(uri.toUri())?.use { currentInputStream ->
+            currentInputStream.readBytes()
+        }
     }
 }

@@ -121,8 +121,8 @@ internal fun SparkleGridLayout(
     )
 
     Canvas(
-        modifier = modifier.onGloballyPositioned {
-            gridPositionInRoot = it.positionInRoot()
+        modifier = modifier.onGloballyPositioned { currentLayoutCoordinates ->
+            gridPositionInRoot = currentLayoutCoordinates.positionInRoot()
         },
     ) {
         val cellWidth = size.width / columns

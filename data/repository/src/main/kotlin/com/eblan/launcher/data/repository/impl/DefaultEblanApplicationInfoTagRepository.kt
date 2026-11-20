@@ -27,8 +27,8 @@ import javax.inject.Inject
 internal class DefaultEblanApplicationInfoTagRepository @Inject constructor(private val eblanApplicationInfoTagDao: EblanApplicationInfoTagDao) : EblanApplicationInfoTagRepository {
     override val eblanApplicationInfoTagsFlow =
         eblanApplicationInfoTagDao.getEblanApplicationInfoTagEntitiesFlow().map { entities ->
-            entities.map {
-                it.asModel()
+            entities.map { currentEblanApplicationInfoTagEntity ->
+                currentEblanApplicationInfoTagEntity.asModel()
             }
         }
 
@@ -45,8 +45,8 @@ internal class DefaultEblanApplicationInfoTagRepository @Inject constructor(priv
     }
 
     override suspend fun updateEblanApplicationInfoTags(eblanApplicationInfoTags: List<EblanApplicationInfoTag>) {
-        val entities = eblanApplicationInfoTags.map {
-            it.asEntity()
+        val entities = eblanApplicationInfoTags.map { currentEblanApplicationInfoTag ->
+            currentEblanApplicationInfoTag.asEntity()
         }
 
         eblanApplicationInfoTagDao.updateEblanApplicationInfoTagEntities(entities = entities)

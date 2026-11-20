@@ -51,15 +51,15 @@ class GetEblanApplicationInfosTagsUiUseCase @Inject constructor(
         ),
         eblanApplicationInfoTagRepository.eblanApplicationInfoTagsFlow,
     ) { eblanApplicationInfoTagsByComponentName, eblanApplicationInfoTags ->
-        eblanApplicationInfoTags.map {
+        eblanApplicationInfoTags.map { currentEblanApplicationInfoTag ->
             EblanApplicationInfoTagUi(
-                id = it.id,
-                name = it.name,
-                selected = it in eblanApplicationInfoTagsByComponentName,
-                index = it.index,
+                id = currentEblanApplicationInfoTag.id,
+                name = currentEblanApplicationInfoTag.name,
+                selected = currentEblanApplicationInfoTag in eblanApplicationInfoTagsByComponentName,
+                index = currentEblanApplicationInfoTag.index,
             )
-        }.sortedBy {
-            it.id
+        }.sortedBy { currentEblanApplicationInfoTagUi ->
+            currentEblanApplicationInfoTagUi.id
         }
     }.flowOn(defaultDispatcher)
 }

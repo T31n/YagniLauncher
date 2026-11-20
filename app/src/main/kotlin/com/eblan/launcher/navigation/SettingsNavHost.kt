@@ -48,10 +48,30 @@ fun SettingsNavHost(
     NavHost(
         navController = navController,
         startDestination = SettingsRouteData::class,
-        enterTransition = { slideInHorizontally(initialOffsetX = { it }, animationSpec = tween()) },
-        exitTransition = { slideOutHorizontally(targetOffsetX = { -it }, animationSpec = tween()) },
-        popEnterTransition = { slideInHorizontally(initialOffsetX = { -it }, animationSpec = tween()) },
-        popExitTransition = { slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween()) },
+        enterTransition = {
+            slideInHorizontally(
+                initialOffsetX = { currentFullWidth -> currentFullWidth },
+                animationSpec = tween(),
+            )
+        },
+        exitTransition = {
+            slideOutHorizontally(
+                targetOffsetX = { currentFullWidth -> -currentFullWidth },
+                animationSpec = tween(),
+            )
+        },
+        popEnterTransition = {
+            slideInHorizontally(
+                initialOffsetX = { currentFullWidth -> -currentFullWidth },
+                animationSpec = tween(),
+            )
+        },
+        popExitTransition = {
+            slideOutHorizontally(
+                targetOffsetX = { currentFullWidth -> currentFullWidth },
+                animationSpec = tween(),
+            )
+        },
     ) {
         settingsScreen(
             onAppDrawer = navController::navigateToAppDrawerSettings,

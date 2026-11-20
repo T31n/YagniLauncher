@@ -63,14 +63,15 @@ class MoveGridItemUseCase @Inject constructor(
         gridHeight: Int,
     ): MoveGridItemResult {
         return withContext(defaultDispatcher) {
-            val gridItemsByPage = gridRepository.getGridItems().toGridItems().filter {
-                it.isTopLevel() && it.page == movingGridItem.page &&
-                    it.associate == movingGridItem.associate
+            val gridItemsByPage = gridRepository.getGridItems().toGridItems().filter { currentGridItem ->
+                currentGridItem.isTopLevel() &&
+                    currentGridItem.page == movingGridItem.page &&
+                    currentGridItem.associate == movingGridItem.associate
             }.toMutableList()
 
             val index =
-                gridItemsByPage.indexOfFirst {
-                    it.id == movingGridItem.id
+                gridItemsByPage.indexOfFirst { currentGridItem ->
+                    currentGridItem.id == movingGridItem.id
                 }
 
             if (index != -1) {
@@ -102,10 +103,10 @@ class MoveGridItemUseCase @Inject constructor(
                 )
             }
 
-            val conflictingGridItemBySpan = gridItemsByPage.find {
-                it.id != movingGridItem.id && rectanglesOverlap(
+            val conflictingGridItemBySpan = gridItemsByPage.find { currentGridItem ->
+                currentGridItem.id != movingGridItem.id && rectanglesOverlap(
                     moving = movingGridItem,
-                    other = it,
+                    other = currentGridItem,
                 )
             }
 

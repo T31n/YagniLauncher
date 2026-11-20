@@ -80,8 +80,8 @@ internal fun EditDockCornerRadiusDialog(
         ) {
             TextField(
                 value = currentDockTopStartCornerRadius,
-                onValueChange = {
-                    currentDockTopStartCornerRadius = it
+                onValueChange = { currentDockTopStartCornerRadiusString ->
+                    currentDockTopStartCornerRadius = currentDockTopStartCornerRadiusString
                     isErrorDockTopStartCornerRadius = false
                 },
                 modifier = Modifier.weight(1f),
@@ -101,8 +101,8 @@ internal fun EditDockCornerRadiusDialog(
 
             TextField(
                 value = currentDockTopEndCornerRadius,
-                onValueChange = {
-                    currentDockTopEndCornerRadius = it
+                onValueChange = { currentDockTopEndCornerRadiusString ->
+                    currentDockTopEndCornerRadius = currentDockTopEndCornerRadiusString
                     isErrorDockTopEndCornerRadius = false
                 },
                 modifier = Modifier.weight(1f),
@@ -126,8 +126,8 @@ internal fun EditDockCornerRadiusDialog(
         ) {
             TextField(
                 value = currentDockBottomStartCornerRadius,
-                onValueChange = {
-                    currentDockBottomStartCornerRadius = it
+                onValueChange = { currentDockBottomStartCornerRadiusString ->
+                    currentDockBottomStartCornerRadius = currentDockBottomStartCornerRadiusString
                     isErrorDockBottomStartCornerRadius = false
                 },
                 modifier = Modifier.weight(1f),
@@ -147,8 +147,8 @@ internal fun EditDockCornerRadiusDialog(
 
             TextField(
                 value = currentDockBottomEndCornerRadius,
-                onValueChange = {
-                    currentDockBottomEndCornerRadius = it
+                onValueChange = { currentDockBottomEndCornerRadiusString ->
+                    currentDockBottomEndCornerRadius = currentDockBottomEndCornerRadiusString
                     isErrorDockBottomEndCornerRadius = false
                 },
                 modifier = Modifier.weight(1f),

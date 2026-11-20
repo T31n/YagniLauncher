@@ -72,8 +72,8 @@ internal fun EditFolderMaxGridDialog(
         ) {
             TextField(
                 value = currentMaxFolderColumns,
-                onValueChange = {
-                    currentMaxFolderColumns = it
+                onValueChange = { currentMaxFolderColumnsString ->
+                    currentMaxFolderColumns = currentMaxFolderColumnsString
                     isErrorMaxFolderColumns = false
                 },
                 modifier = Modifier.weight(1f),
@@ -93,8 +93,8 @@ internal fun EditFolderMaxGridDialog(
 
             TextField(
                 value = currentMaxFolderRows,
-                onValueChange = {
-                    currentMaxFolderRows = it
+                onValueChange = { currentMaxFolderRowsString ->
+                    currentMaxFolderRows = currentMaxFolderRowsString
                     isErrorMaxFolderRows = false
                 },
                 modifier = Modifier.weight(1f),

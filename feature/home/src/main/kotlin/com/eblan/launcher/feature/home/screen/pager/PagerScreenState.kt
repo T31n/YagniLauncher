@@ -1060,8 +1060,8 @@ internal class PagerScreenState(
     fun handleEblanActionIntent(intent: Intent) {
         if (intent.action != EblanAction.ACTION || !isAvailableSystemNavigation) return
 
-        val eblanAction = intent.getStringExtra(EblanAction.NAME)?.let {
-            Json.decodeFromString<EblanAction>(it)
+        val eblanAction = intent.getStringExtra(EblanAction.NAME)?.let { currentEblanActionJson ->
+            Json.decodeFromString<EblanAction>(currentEblanActionJson)
         } ?: return
 
         handleEblanAction(

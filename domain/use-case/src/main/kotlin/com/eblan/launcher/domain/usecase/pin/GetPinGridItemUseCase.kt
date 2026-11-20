@@ -65,14 +65,14 @@ class GetPinGridItemUseCase @Inject constructor(
                         serialNumber = pinItemRequestType.serialNumber,
                         packageName = pinItemRequestType.packageName,
                     ).firstOrNull()?.componentName
-                        ?.let {
+                        ?.let { currentComponentName ->
                             val directory = fileManager.getFilesDirectory(FileManager.ICONS_DIR)
 
                             val file = File(
                                 directory,
                                 iconKeyGenerator.getActivityIconKey(
                                     serialNumber = pinItemRequestType.serialNumber,
-                                    componentName = it,
+                                    componentName = currentComponentName,
                                 ),
                             )
 
@@ -151,14 +151,14 @@ class GetPinGridItemUseCase @Inject constructor(
                         serialNumber = pinItemRequestType.serialNumber,
                         packageName = pinItemRequestType.packageName,
                     ).firstOrNull()?.componentName
-                        ?.let {
+                        ?.let { currentComponentName ->
                             val directory = fileManager.getFilesDirectory(FileManager.ICONS_DIR)
 
                             val file = File(
                                 directory,
                                 iconKeyGenerator.getActivityIconKey(
                                     serialNumber = pinItemRequestType.serialNumber,
-                                    componentName = it,
+                                    componentName = currentComponentName,
                                 ),
                             )
 

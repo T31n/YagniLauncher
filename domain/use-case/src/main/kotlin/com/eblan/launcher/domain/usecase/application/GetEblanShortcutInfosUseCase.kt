@@ -42,8 +42,8 @@ class GetEblanShortcutInfosUseCase @Inject constructor(
      */
     operator fun invoke(): Flow<Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>> = eblanShortcutInfoRepository.eblanShortcutInfosFlow.map { eblanShortcutInfos ->
         eblanShortcutInfos
-            .filter {
-                it.shortcutQueryFlag != ShortcutQueryFlag.Pinned
+            .filter { currentEblanShortcutInfo ->
+                currentEblanShortcutInfo.shortcutQueryFlag != ShortcutQueryFlag.Pinned
             }
             .groupBy { eblanShortcutInfo ->
                 EblanShortcutInfoByGroup(
@@ -52,10 +52,10 @@ class GetEblanShortcutInfosUseCase @Inject constructor(
                 )
             }
             .mapValues { (_, groupedEblanShortcutInfos) ->
-                val shortcutOrder = compareBy<EblanShortcutInfo> {
-                    it.shortcutQueryFlag != ShortcutQueryFlag.Manifest
-                }.thenBy {
-                    it.rank
+                val shortcutOrder = compareBy<EblanShortcutInfo> { currentEblanShortcutInfo ->
+                    currentEblanShortcutInfo.shortcutQueryFlag != ShortcutQueryFlag.Manifest
+                }.thenBy { currentEblanShortcutInfo ->
+                    currentEblanShortcutInfo.rank
                 }
 
                 groupedEblanShortcutInfos.sortedWith(shortcutOrder)

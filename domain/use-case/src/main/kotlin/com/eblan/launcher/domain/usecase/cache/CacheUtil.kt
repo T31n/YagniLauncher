@@ -66,22 +66,24 @@ internal suspend fun getCacheSnapshot(
         userDataRepository.userDataFlow.first().generalSettings.iconPackPackageName
 
     val keptIconPackPackageNames = buildSet {
-        eblanIconPackInfoRepository.getEblanIconPacks().forEach { add(it.packageName) }
+        eblanIconPackInfoRepository.getEblanIconPacks().forEach { currentEblanIconPackInfo ->
+            add(currentEblanIconPackInfo.packageName)
+        }
 
         if (activeIconPackPackageName.isNotEmpty()) add(activeIconPackPackageName)
     }
 
     val installedIconPackFileNames = buildSet {
-        eblanApplicationInfoRepository.getEblanApplicationInfos().forEach {
+        eblanApplicationInfoRepository.getEblanApplicationInfos().forEach { currentEblanApplicationInfo ->
             currentCoroutineContext().ensureActive()
 
-            add(iconKeyGenerator.getHashedName(name = it.componentName))
+            add(iconKeyGenerator.getHashedName(name = currentEblanApplicationInfo.componentName))
         }
     }
 
     return scanCache(
-        referenceCheckedDirectories = referenceCheckedDirectoryNames.map {
-            fileManager.getFilesDirectory(name = it)
+        referenceCheckedDirectories = referenceCheckedDirectoryNames.map { currentDirectoryName ->
+            fileManager.getFilesDirectory(name = currentDirectoryName)
         },
         iconPacksDirectory = fileManager.getFilesDirectory(name = FileManager.ICON_PACKS_DIR),
         referencedPaths = fileReferenceRepository.getReferencedFilePaths(),
@@ -108,7 +110,9 @@ private fun scanCache(
 ): CacheSnapshot {
     fun File.toCacheKey(): String = "${parentFile?.name.orEmpty()}/$name"
 
-    val referencedKeys = referencedPaths.mapTo(hashSetOf()) { File(it).toCacheKey() }
+    val referencedKeys = referencedPaths.mapTo(hashSetOf()) { currentReferencedPath ->
+        File(currentReferencedPath).toCacheKey()
+    }
 
     var totalSize = 0L
 
@@ -117,7 +121,7 @@ private fun scanCache(
     val unreferencedFiles = mutableListOf<File>()
 
     referenceCheckedDirectories.forEach { directory ->
-        directory.listFiles()?.filter { it.isFile }?.forEach { file ->
+        directory.listFiles()?.filter { currentFile -> currentFile.isFile }?.forEach { file ->
             val fileSize = file.length()
             totalSize += fileSize
 
@@ -128,10 +132,10 @@ private fun scanCache(
         }
     }
 
-    iconPacksDirectory.listFiles()?.filter { it.isDirectory }?.forEach { iconPackDirectory ->
+    iconPacksDirectory.listFiles()?.filter { currentFile -> currentFile.isDirectory }?.forEach { iconPackDirectory ->
         val isKept = iconPackDirectory.name in keptIconPackPackageNames
 
-        iconPackDirectory.listFiles()?.filter { it.isFile }?.forEach { file ->
+        iconPackDirectory.listFiles()?.filter { currentFile -> currentFile.isFile }?.forEach { file ->
             val fileSize = file.length()
             totalSize += fileSize
 

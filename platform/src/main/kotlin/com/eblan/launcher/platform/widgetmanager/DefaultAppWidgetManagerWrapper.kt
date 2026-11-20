@@ -63,10 +63,10 @@ internal class DefaultAppWidgetManagerWrapper @Inject constructor(
             appWidgetManager.getInstalledProvidersForProfile(userHandle)
         }
 
-        installedProviders.map {
+        installedProviders.map { currentAppWidgetProviderInfo ->
             currentCoroutineContext().ensureActive()
 
-            it.toEblanAppWidgetProviderInfo()
+            currentAppWidgetProviderInfo.toEblanAppWidgetProviderInfo()
         }
     }
 

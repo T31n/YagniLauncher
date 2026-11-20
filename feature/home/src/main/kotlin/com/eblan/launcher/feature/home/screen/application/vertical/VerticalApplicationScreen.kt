@@ -162,7 +162,9 @@ internal fun VerticalApplicationScreen(
 
     val eblanUserPageKeys =
         remember(key1 = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos) {
-            getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos.keys.distinctBy { it.eblanUser.serialNumber }
+            getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos.keys.distinctBy { currentEblanUserPageKey ->
+                currentEblanUserPageKey.eblanUser.serialNumber
+            }
         }
 
     Column(
@@ -206,10 +208,10 @@ internal fun VerticalApplicationScreen(
                 contentPadding = PaddingValues(horizontal = EblanSpacing.medium),
                 horizontalArrangement = Arrangement.spacedBy(EblanSpacing.small),
             ) {
-                items(eblanApplicationInfoTags) {
+                items(eblanApplicationInfoTags) { currentEblanApplicationInfoTag ->
                     TagElevatedFilterChip(
                         // Data
-                        eblanApplicationInfoTag = it,
+                        eblanApplicationInfoTag = currentEblanApplicationInfoTag,
                         selectedEblanApplicationInfoTag = selectedEblanApplicationInfoTagId,
                         // Callbacks
                         onUpdateEblanApplicationInfoTag = onUpdateSelectedEblanApplicationInfoTagId,
@@ -552,11 +554,13 @@ private fun EblanApplicationInfos(
                 EblanUserType.Personal -> {
                     items(
                         items = getEblanApplicationInfosByLabelAndTag.folderEblanApplicationInfos,
-                        key = { it.id },
-                    ) {
+                        key = { currentFolderEblanApplicationInfo ->
+                            currentFolderEblanApplicationInfo.id
+                        },
+                    ) { currentFolderEblanApplicationInfo ->
                         FolderEblanApplicationInfoItem(
                             // Core Data
-                            folderEblanApplicationInfo = it,
+                            folderEblanApplicationInfo = currentFolderEblanApplicationInfo,
                             appDrawerSettings = appDrawerSettings,
                             folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                             folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
@@ -590,11 +594,14 @@ private fun EblanApplicationInfos(
 
                     items(
                         items = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos[eblanUserPageKey].orEmpty(),
-                        key = { it.serialNumber to it.componentName },
-                    ) {
+                        key = { currentEblanApplicationInfo ->
+                            currentEblanApplicationInfo.serialNumber to
+                                currentEblanApplicationInfo.componentName
+                        },
+                    ) { currentEblanApplicationInfo ->
                         EblanApplicationInfoItem(
                             // Application Data and Settings
-                            eblanApplicationInfo = it,
+                            eblanApplicationInfo = currentEblanApplicationInfo,
                             appDrawerSettings = appDrawerSettings,
                             iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
                             // Layout and UI State
@@ -639,14 +646,14 @@ private fun EblanApplicationInfos(
                 else -> {
                     items(
                         items = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos[eblanUserPageKey].orEmpty(),
-                        key = {
-                            it.serialNumber to
-                                it.componentName
+                        key = { currentEblanApplicationInfo ->
+                            currentEblanApplicationInfo.serialNumber to
+                                currentEblanApplicationInfo.componentName
                         },
-                    ) {
+                    ) { currentEblanApplicationInfo ->
                         EblanApplicationInfoItem(
                             // Application Data and Settings
-                            eblanApplicationInfo = it,
+                            eblanApplicationInfo = currentEblanApplicationInfo,
                             appDrawerSettings = appDrawerSettings,
                             iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
                             // Layout and UI State

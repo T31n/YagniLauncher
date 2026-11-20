@@ -41,8 +41,8 @@ internal class DefaultEblanApplicationInfoRepository @Inject constructor(
         }
 
     override suspend fun getEblanApplicationInfos(): List<EblanApplicationInfo> = eblanApplicationInfoDao.getEblanApplicationInfoEntities()
-        .map {
-            it.asModel()
+        .map { currentEblanApplicationInfoEntity ->
+            currentEblanApplicationInfoEntity.asModel()
         }
 
     override suspend fun upsertEblanApplicationInfo(eblanApplicationInfo: EblanApplicationInfo) {
@@ -60,8 +60,8 @@ internal class DefaultEblanApplicationInfoRepository @Inject constructor(
     }
 
     override suspend fun deleteEblanApplicationInfos(eblanApplicationInfos: List<EblanApplicationInfo>) {
-        val entities = eblanApplicationInfos.map {
-            it.asEntity()
+        val entities = eblanApplicationInfos.map { currentEblanApplicationInfo ->
+            currentEblanApplicationInfo.asEntity()
         }
 
         eblanApplicationInfoDao.deleteEblanApplicationInfoEntities(entities = entities)
@@ -93,8 +93,8 @@ internal class DefaultEblanApplicationInfoRepository @Inject constructor(
     ): List<EblanApplicationInfo> = eblanApplicationInfoDao.getEblanApplicationInfoEntitiesByPackageName(
         serialNumber = serialNumber,
         packageName = packageName,
-    ).map {
-        it.asModel()
+    ).map { currentEblanApplicationInfoEntity ->
+        currentEblanApplicationInfoEntity.asModel()
     }
 
     override fun getEblanApplicationInfoTagsFlow(
@@ -104,22 +104,24 @@ internal class DefaultEblanApplicationInfoRepository @Inject constructor(
         serialNumber = serialNumber,
         componentName = componentName,
     ).map { entities ->
-        entities.map {
-            it.asModel()
+        entities.map { currentEblanApplicationInfoTagEntity ->
+            currentEblanApplicationInfoTagEntity.asModel()
         }
     }
 
-    override suspend fun getEblanApplicationInfosByTagId(id: Long): List<EblanApplicationInfo> = eblanApplicationInfoDao.getEblanApplicationInfoEntitiesByTagId(id = id).map {
-        it.asModel()
+    override suspend fun getEblanApplicationInfosByTagId(id: Long): List<EblanApplicationInfo> = eblanApplicationInfoDao.getEblanApplicationInfoEntitiesByTagId(id = id).map { currentEblanApplicationInfoEntity ->
+        currentEblanApplicationInfoEntity.asModel()
     }
 
     override suspend fun getEblanApplicationInfosWithoutTag(): List<EblanApplicationInfo> = eblanApplicationInfoDao.getEblanApplicationInfoEntitiesWithoutTags()
-        .map {
-            it.asModel()
+        .map { currentEblanApplicationInfoEntity ->
+            currentEblanApplicationInfoEntity.asModel()
         }
 
     override suspend fun updateEblanApplicationInfos(eblanApplicationInfos: List<EblanApplicationInfo>) {
-        val entities = eblanApplicationInfos.map { it.asEntity() }
+        val entities = eblanApplicationInfos.map { currentEblanApplicationInfo ->
+            currentEblanApplicationInfo.asEntity()
+        }
 
         eblanApplicationInfoDao.updateEblanApplicationInfoEntities(entities = entities)
     }

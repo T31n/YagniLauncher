@@ -125,7 +125,9 @@ internal fun HorizontalApplicationScreen(
 
     val eblanUserPageKeys =
         remember(key1 = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos) {
-            getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos.keys.distinctBy { it.eblanUser.serialNumber }
+            getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos.keys.distinctBy { currentEblanUserPageKey ->
+                currentEblanUserPageKey.eblanUser.serialNumber
+            }
         }
 
     Column(
@@ -420,7 +422,7 @@ private fun EblanApplicationInfos(
         // Modifier
         modifier = modifier.fillMaxSize(),
         // Content
-        content = {
+        content = { currentEblanApplicationInfo ->
             when (eblanUserPageKey.eblanUser.eblanUserType) {
                 EblanUserType.Personal,
                 EblanUserType.Clone,
@@ -428,7 +430,7 @@ private fun EblanApplicationInfos(
                 -> {
                     EblanApplicationInfoItem(
                         // Application Data and Settings
-                        eblanApplicationInfo = it,
+                        eblanApplicationInfo = currentEblanApplicationInfo,
                         appDrawerSettings = appDrawerSettings,
                         iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
                         // Layout and UI State
@@ -452,7 +454,7 @@ private fun EblanApplicationInfos(
                 EblanUserType.Private -> {
                     PrivateSpaceEblanApplicationInfoItem(
                         // Application Info
-                        eblanApplicationInfo = it,
+                        eblanApplicationInfo = currentEblanApplicationInfo,
                         // Settings and Styling
                         appDrawerSettings = appDrawerSettings,
                         iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,

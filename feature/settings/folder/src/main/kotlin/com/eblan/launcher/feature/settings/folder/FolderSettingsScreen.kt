@@ -179,18 +179,18 @@ private fun Success(
             title = stringResource(R.string.folder_background_color),
             options = BackgroundColor.entries,
             selected = folderSettings.folderBackgroundColor,
-            label = {
-                it.getTitle()
+            label = { currentFolderBackgroundColor ->
+                currentFolderBackgroundColor.getTitle()
             },
             // Layout
             shape = EblanShapes.middle,
             // Actions
-            onSelectedChange = {
-                if (it == BackgroundColor.Custom) {
+            onSelectedChange = { currentFolderBackgroundColor ->
+                if (currentFolderBackgroundColor == BackgroundColor.Custom) {
                     showFolderBackgroundColorPickerDialog = true
                 } else {
                     onUpdateFolderSettings(
-                        folderSettings.copy(folderBackgroundColor = it),
+                        folderSettings.copy(folderBackgroundColor = currentFolderBackgroundColor),
                     )
                 }
             },
@@ -201,8 +201,8 @@ private fun Success(
             title = stringResource(R.string.folder_border_color),
             options = BackgroundColor.entries,
             selected = folderSettings.folderBorderColor,
-            label = {
-                it.getTitle()
+            label = { currentFolderBorderColor ->
+                currentFolderBorderColor.getTitle()
             },
             // Layout
             shape = if (folderSettings.folderBorderColor == BackgroundColor.System) {
@@ -211,12 +211,12 @@ private fun Success(
                 EblanShapes.middle
             },
             // Actions
-            onSelectedChange = {
-                if (it == BackgroundColor.Custom) {
+            onSelectedChange = { currentFolderBorderColor ->
+                if (currentFolderBorderColor == BackgroundColor.Custom) {
                     showFolderBorderColorDialog = true
                 } else {
                     onUpdateFolderSettings(
-                        folderSettings.copy(folderBorderColor = it),
+                        folderSettings.copy(folderBorderColor = currentFolderBorderColor),
                     )
                 }
             },
@@ -285,10 +285,10 @@ private fun Success(
             onDismissRequest = {
                 showFolderCornerRadiusGridDialog = false
             },
-            onUpdateCornerRadius = {
+            onUpdateCornerRadius = { currentFolderCornerRadius ->
                 onUpdateFolderSettings(
                     folderSettings.copy(
-                        folderCornerRadius = it,
+                        folderCornerRadius = currentFolderCornerRadius,
                     ),
                 )
             },
@@ -306,11 +306,11 @@ private fun Success(
             onDismissRequest = {
                 showFolderBackgroundColorPickerDialog = false
             },
-            onSelectColor = {
+            onSelectColor = { currentCustomFolderBackgroundColor ->
                 onUpdateFolderSettings(
                     folderSettings.copy(
                         folderBackgroundColor = BackgroundColor.Custom,
-                        customFolderBackgroundColor = it,
+                        customFolderBackgroundColor = currentCustomFolderBackgroundColor,
                     ),
                 )
             },
@@ -328,11 +328,11 @@ private fun Success(
             onDismissRequest = {
                 showFolderBorderColorDialog = false
             },
-            onSelectColor = {
+            onSelectColor = { currentCustomFolderBorderColor ->
                 onUpdateFolderSettings(
                     folderSettings.copy(
                         folderBorderColor = BackgroundColor.Custom,
-                        customFolderBorderColor = it,
+                        customFolderBorderColor = currentCustomFolderBorderColor,
                     ),
                 )
             },
@@ -349,10 +349,10 @@ private fun Success(
             onDismissRequest = {
                 showFolderBorderWidthDialog = false
             },
-            onUpdateBorderWidth = {
+            onUpdateBorderWidth = { currentBorderWidth ->
                 onUpdateFolderSettings(
                     folderSettings.copy(
-                        borderWidth = it,
+                        borderWidth = currentBorderWidth,
                     ),
                 )
             },

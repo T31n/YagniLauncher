@@ -112,8 +112,8 @@ class SyncDataUseCase @Inject constructor(
         val newApplicationInfoGridItems = mutableListOf<ApplicationInfoGridItem>()
 
         val oldSyncEblanApplicationInfos =
-            eblanApplicationInfoRepository.getEblanApplicationInfos().map {
-                it.toSyncEblanApplicationInfo()
+            eblanApplicationInfoRepository.getEblanApplicationInfos().map { currentEblanApplicationInfo ->
+                currentEblanApplicationInfo.toSyncEblanApplicationInfo()
             }
 
         val newSyncEblanApplicationInfos = buildList {
@@ -132,10 +132,10 @@ class SyncDataUseCase @Inject constructor(
                         launcherAppsWrapper.getShortcutConfigActivityListWithCacheIcons(
                             serialNumber = launcherAppsActivityInfo.serialNumber,
                             packageName = launcherAppsActivityInfo.packageName,
-                        ).map {
+                        ).map { currentShortcutConfigActivityInfo ->
                             currentCoroutineContext().ensureActive()
 
-                            it.toEblanShortcutConfig(
+                            currentShortcutConfigActivityInfo.toEblanShortcutConfig(
                                 fileManager = fileManager,
                                 launcherAppsWrapper = launcherAppsWrapper,
                                 packageManagerWrapper = packageManagerWrapper,
@@ -158,11 +158,11 @@ class SyncDataUseCase @Inject constructor(
         )
 
         val oldDeleteEblanApplicationInfos = oldSyncEblanApplicationInfos
-            .differenceByIdentity(newSyncEblanApplicationInfos) {
-                it.serialNumber to it.componentName
+            .differenceByIdentity(newSyncEblanApplicationInfos) { currentSyncEblanApplicationInfo ->
+                currentSyncEblanApplicationInfo.serialNumber to currentSyncEblanApplicationInfo.componentName
             }
-            .map {
-                it.toDeleteEblanApplicationInfo()
+            .map { currentSyncEblanApplicationInfo ->
+                currentSyncEblanApplicationInfo.toDeleteEblanApplicationInfo()
             }
 
         eblanApplicationInfoRepository.deleteSyncEblanApplicationInfos(
@@ -206,42 +206,42 @@ class SyncDataUseCase @Inject constructor(
         }
 
         val gridItems = gridRepository.getGridItems().toGridItems()
-            .filter {
-                it.isTopLevel() && it.associate == Associate.Grid
+            .filter { currentGridItem ->
+                currentGridItem.isTopLevel() && currentGridItem.associate == Associate.Grid
             }
             .toMutableList()
 
         val oldNonSystemApplications =
-            oldSyncEblanApplicationInfos.filterNot {
+            oldSyncEblanApplicationInfos.filterNot { currentSyncEblanApplicationInfo ->
                 currentCoroutineContext().ensureActive()
 
-                packageManagerWrapper.isSystem(flags = it.flags)
+                packageManagerWrapper.isSystem(flags = currentSyncEblanApplicationInfo.flags)
             }
 
         val newNonSystemApplications =
-            newSyncEblanApplicationInfos.filterNot {
+            newSyncEblanApplicationInfos.filterNot { currentSyncEblanApplicationInfo ->
                 currentCoroutineContext().ensureActive()
 
-                packageManagerWrapper.isSystem(flags = it.flags)
+                packageManagerWrapper.isSystem(flags = currentSyncEblanApplicationInfo.flags)
             }
 
         val newAddNewEblanApplicationInfos = newNonSystemApplications
-            .differenceByIdentity(oldNonSystemApplications) {
-                it.serialNumber to it.componentName
+            .differenceByIdentity(oldNonSystemApplications) { currentSyncEblanApplicationInfo ->
+                currentSyncEblanApplicationInfo.serialNumber to currentSyncEblanApplicationInfo.componentName
             }
-            .map {
-                it.asAddNewEblanApplicationInfo()
+            .map { currentSyncEblanApplicationInfo ->
+                currentSyncEblanApplicationInfo.asAddNewEblanApplicationInfo()
             }
 
-        newAddNewEblanApplicationInfos.forEach {
+        newAddNewEblanApplicationInfos.forEach { currentAddNewEblanApplicationInfo ->
             currentCoroutineContext().ensureActive()
 
             addNewApplicationToHomeScreen(
                 gridItems = gridItems,
-                componentName = it.componentName,
-                packageName = it.packageName,
-                icon = it.icon,
-                label = it.label,
+                componentName = currentAddNewEblanApplicationInfo.componentName,
+                packageName = currentAddNewEblanApplicationInfo.packageName,
+                icon = currentAddNewEblanApplicationInfo.icon,
+                label = currentAddNewEblanApplicationInfo.label,
                 homeSettings = homeSettings,
                 applicationInfoGridItems = applicationInfoGridItems,
                 folderGridItemRepository = folderGridItemRepository,
@@ -261,8 +261,8 @@ class SyncDataUseCase @Inject constructor(
             eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos()
 
         val newEblanAppWidgetProviderInfos =
-            appWidgetManagerAppWidgetProviderInfos.map {
-                it.toEblanAppWidgetProviderInfo(
+            appWidgetManagerAppWidgetProviderInfos.map { currentAppWidgetManagerAppWidgetProviderInfo ->
+                currentAppWidgetManagerAppWidgetProviderInfo.toEblanAppWidgetProviderInfo(
                     fileManager = fileManager,
                     launcherAppsWrapper = launcherAppsWrapper,
                     packageManagerWrapper = packageManagerWrapper,
@@ -272,8 +272,8 @@ class SyncDataUseCase @Inject constructor(
 
         val deleteEblanAppWidgetProviderInfos =
             oldEblanAppWidgetProviderInfos
-                .differenceByIdentity(newEblanAppWidgetProviderInfos) {
-                    it.serialNumber to it.componentName
+                .differenceByIdentity(newEblanAppWidgetProviderInfos) { currentEblanAppWidgetProviderInfo ->
+                    currentEblanAppWidgetProviderInfo.serialNumber to currentEblanAppWidgetProviderInfo.componentName
                 }
 
         eblanAppWidgetProviderInfoRepository.deleteEblanAppWidgetProviderInfos(
@@ -303,13 +303,17 @@ class SyncDataUseCase @Inject constructor(
 
         val oldEblanShortcutInfos = eblanShortcutInfoRepository.getEblanShortcutInfos()
 
-        val newEblanShortcutInfos = launcherAppsShortcutInfos.map {
-            it.toEblanShortcutInfo()
+        val newEblanShortcutInfos = launcherAppsShortcutInfos.map { currentLauncherAppsShortcutInfo ->
+            currentLauncherAppsShortcutInfo.toEblanShortcutInfo()
         }
 
         val deleteEblanShortcutInfos = oldEblanShortcutInfos
-            .differenceByIdentity(newEblanShortcutInfos) {
-                Triple(it.serialNumber, it.shortcutId, it.packageName)
+            .differenceByIdentity(newEblanShortcutInfos) { currentEblanShortcutInfo ->
+                Triple(
+                    currentEblanShortcutInfo.serialNumber,
+                    currentEblanShortcutInfo.shortcutId,
+                    currentEblanShortcutInfo.packageName,
+                )
             }
 
         eblanShortcutInfoRepository.deleteEblanShortcutInfos(
@@ -339,8 +343,8 @@ class SyncDataUseCase @Inject constructor(
         if (oldEblanShortcutConfigs.toSet() == newEblanShortcutConfigs) return
 
         val deleteEblanShortcutConfigs = oldEblanShortcutConfigs
-            .differenceByIdentity(newEblanShortcutConfigs) {
-                it.serialNumber to it.componentName
+            .differenceByIdentity(newEblanShortcutConfigs) { currentEblanShortcutConfig ->
+                currentEblanShortcutConfig.serialNumber to currentEblanShortcutConfig.componentName
             }
 
         eblanShortcutConfigRepository.deleteEblanShortcutConfigs(
@@ -370,8 +374,8 @@ class SyncDataUseCase @Inject constructor(
         if (!experimentalSettings.firstLaunch) return
 
         val gridItems = gridRepository.getGridItems().toGridItems()
-            .filter {
-                it.isTopLevel() && it.associate == Associate.Grid
+            .filter { currentGridItem ->
+                currentGridItem.isTopLevel() && currentGridItem.associate == Associate.Grid
             }
 
         if (gridItems.isNotEmpty()) {
@@ -382,10 +386,10 @@ class SyncDataUseCase @Inject constructor(
             return
         }
 
-        val eblanApplicationInfosBySystem = eblanApplicationInfos.filter {
+        val eblanApplicationInfosBySystem = eblanApplicationInfos.filter { currentEblanApplicationInfo ->
             currentCoroutineContext().ensureActive()
 
-            packageManagerWrapper.isSystem(flags = it.flags)
+            packageManagerWrapper.isSystem(flags = currentEblanApplicationInfo.flags)
         }
 
         val applicationInfoGridItems = mutableListOf<ApplicationInfoGridItem>()

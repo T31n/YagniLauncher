@@ -63,8 +63,8 @@ fun EditBorderWidthDialog(
 
         TextField(
             value = currentBorderWidth,
-            onValueChange = {
-                currentBorderWidth = it
+            onValueChange = { currentBorderWidthString ->
+                currentBorderWidth = currentBorderWidthString
                 isErrorBorderWidth = false
             },
             modifier = Modifier.fillMaxWidth(),

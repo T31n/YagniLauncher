@@ -71,8 +71,8 @@ internal fun EditGridDialog(
         ) {
             TextField(
                 value = currentColumns,
-                onValueChange = {
-                    currentColumns = it
+                onValueChange = { currentColumnsString ->
+                    currentColumns = currentColumnsString
                     isErrorColumns = false
                 },
                 modifier = Modifier.weight(1f),
@@ -92,8 +92,8 @@ internal fun EditGridDialog(
 
             TextField(
                 value = currentRows,
-                onValueChange = {
-                    currentRows = it
+                onValueChange = { currentRowsString ->
+                    currentRows = currentRowsString
                     isErrorRows = false
                 },
                 modifier = Modifier.weight(1f),

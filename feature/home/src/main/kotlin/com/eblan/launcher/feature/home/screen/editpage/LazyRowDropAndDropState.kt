@@ -91,7 +91,9 @@ internal class LazyRowDragDropState(
         } ?: 0f
 
     private val draggingItemLayoutInfo: LazyListItemInfo?
-        get() = state.layoutInfo.visibleItemsInfo.firstOrNull { it.index == draggingItemIndex }
+        get() = state.layoutInfo.visibleItemsInfo.firstOrNull { currentLazyListItemInfo ->
+            currentLazyListItemInfo.index == draggingItemIndex
+        }
 
     internal var previousIndexOfDraggedItem by mutableStateOf<Int?>(null)
         private set
@@ -104,9 +106,9 @@ internal class LazyRowDragDropState(
             .firstOrNull { item ->
                 offset.x.toInt() in item.offset..(item.offset + item.size)
             }
-            ?.also {
-                draggingItemIndex = it.index
-                draggingItemInitialOffset = it.offset
+            ?.also { currentLazyListItemInfo ->
+                draggingItemIndex = currentLazyListItemInfo.index
+                draggingItemInitialOffset = currentLazyListItemInfo.offset
             }
     }
 

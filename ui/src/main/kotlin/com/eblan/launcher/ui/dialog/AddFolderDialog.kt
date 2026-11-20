@@ -48,7 +48,9 @@ fun AddFolderDialog(
     onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
 ) {
     val maxIndex = remember(key1 = topLevelFolderEblanApplicationInfos) {
-        topLevelFolderEblanApplicationInfos.maxOfOrNull { it.index } ?: 0
+        topLevelFolderEblanApplicationInfos.maxOfOrNull { currentFolderEblanApplicationInfo ->
+            currentFolderEblanApplicationInfo.index
+        } ?: 0
     }
 
     var value by remember { mutableStateOf("") }
@@ -66,8 +68,8 @@ fun AddFolderDialog(
 
         TextField(
             value = value,
-            onValueChange = {
-                value = it
+            onValueChange = { currentFolderLabelString ->
+                value = currentFolderLabelString
                 isError = false
             },
             modifier = Modifier.fillMaxWidth(),

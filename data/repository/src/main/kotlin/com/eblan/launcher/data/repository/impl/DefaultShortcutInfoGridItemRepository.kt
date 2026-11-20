@@ -26,8 +26,8 @@ import com.eblan.launcher.domain.repository.ShortcutInfoGridItemRepository
 import javax.inject.Inject
 
 internal class DefaultShortcutInfoGridItemRepository @Inject constructor(private val shortcutInfoGridItemDao: ShortcutInfoGridItemDao) : ShortcutInfoGridItemRepository {
-    override suspend fun getShortcutInfoGridItems(): List<ShortcutInfoGridItem> = shortcutInfoGridItemDao.getShortcutInfoGridItemEntities().map {
-        it.asModel()
+    override suspend fun getShortcutInfoGridItems(): List<ShortcutInfoGridItem> = shortcutInfoGridItemDao.getShortcutInfoGridItemEntities().map { currentShortcutInfoGridItemEntity ->
+        currentShortcutInfoGridItemEntity.asModel()
     }
 
     override suspend fun updateShortcutInfoGridItem(shortcutInfoGridItem: ShortcutInfoGridItem) {
@@ -37,8 +37,8 @@ internal class DefaultShortcutInfoGridItemRepository @Inject constructor(private
     }
 
     override suspend fun deleteShortcutInfoGridItems(shortcutInfoGridItems: List<ShortcutInfoGridItem>) {
-        val entities = shortcutInfoGridItems.map {
-            it.asEntity()
+        val entities = shortcutInfoGridItems.map { currentShortcutInfoGridItem ->
+            currentShortcutInfoGridItem.asEntity()
         }
 
         shortcutInfoGridItemDao.deleteShortcutInfoGridItemEntities(entities = entities)
@@ -54,8 +54,8 @@ internal class DefaultShortcutInfoGridItemRepository @Inject constructor(private
     ): List<ShortcutInfoGridItem> = shortcutInfoGridItemDao.getShortcutInfoGridItemEntitiesByPackageName(
         serialNumber = serialNumber,
         packageName = packageName,
-    ).map {
-        it.asModel()
+    ).map { currentShortcutInfoGridItemEntity ->
+        currentShortcutInfoGridItemEntity.asModel()
     }
 
     override suspend fun deleteShortcutInfoGridItemByPackageName(

@@ -208,14 +208,14 @@ private fun Success(
             title = stringResource(R.string.language),
             options = applicationLanguageTags,
             selected = applicationLanguageTag,
-            label = {
-                getLanguageLabel(it)
+            label = { currentLanguageTag ->
+                getLanguageLabel(currentLanguageTag)
             },
             // Layout
             shape = EblanShapes.middle,
             // Actions
-            onSelectedChange = {
-                localeWrapper.setApplicationLanguageTag(languageTag = it)
+            onSelectedChange = { currentLanguageTag ->
+                localeWrapper.setApplicationLanguageTag(languageTag = currentLanguageTag)
             },
         )
 
@@ -224,14 +224,14 @@ private fun Success(
             title = stringResource(R.string.theme),
             options = Theme.entries,
             selected = generalSettings.theme,
-            label = {
-                it.getTitle()
+            label = { currentTheme ->
+                currentTheme.getTitle()
             },
             // Layout
             shape = EblanShapes.middle,
             // Actions
-            onSelectedChange = {
-                onUpdateGeneralSettings(generalSettings.copy(theme = it))
+            onSelectedChange = { currentTheme ->
+                onUpdateGeneralSettings(generalSettings.copy(theme = currentTheme))
             },
         )
 
@@ -240,14 +240,14 @@ private fun Success(
             title = stringResource(R.string.system_bars_theme),
             options = Theme.entries,
             selected = generalSettings.systemBarsTheme,
-            label = {
-                it.getTitle()
+            label = { currentSystemBarsTheme ->
+                currentSystemBarsTheme.getTitle()
             },
             // Layout
             shape = EblanShapes.middle,
             // Actions
-            onSelectedChange = {
-                onUpdateGeneralSettings(generalSettings.copy(systemBarsTheme = it))
+            onSelectedChange = { currentSystemBarsTheme ->
+                onUpdateGeneralSettings(generalSettings.copy(systemBarsTheme = currentSystemBarsTheme))
             },
         )
 
@@ -257,20 +257,22 @@ private fun Success(
             options = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 ColorSource.entries
             } else {
-                ColorSource.entries.filterNot { it == ColorSource.Wallpaper }
+                ColorSource.entries.filterNot { currentColorSource ->
+                    currentColorSource == ColorSource.Wallpaper
+                }
             },
             selected = generalSettings.colorSource,
-            label = {
-                it.getTitle()
+            label = { currentColorSource ->
+                currentColorSource.getTitle()
             },
             // Layout
             shape = EblanShapes.middle,
             // Actions
-            onSelectedChange = {
-                if (it == ColorSource.Custom) {
+            onSelectedChange = { currentColorSource ->
+                if (currentColorSource == ColorSource.Custom) {
                     showCustomSeedColorPickerDialog = true
                 } else {
-                    onUpdateGeneralSettings(generalSettings.copy(colorSource = it))
+                    onUpdateGeneralSettings(generalSettings.copy(colorSource = currentColorSource))
                 }
             },
         )
@@ -281,16 +283,18 @@ private fun Success(
                 title = stringResource(R.string.palette_style),
                 options = ColorSchemePaletteStyle.entries,
                 selected = generalSettings.colorSchemeSettings.paletteStyle,
-                label = {
-                    it.getTitle()
+                label = { currentColorSchemePaletteStyle ->
+                    currentColorSchemePaletteStyle.getTitle()
                 },
                 // Layout
                 shape = EblanShapes.middle,
                 // Actions
-                onSelectedChange = {
+                onSelectedChange = { currentColorSchemePaletteStyle ->
                     onUpdateGeneralSettings(
                         generalSettings.copy(
-                            colorSchemeSettings = generalSettings.colorSchemeSettings.copy(paletteStyle = it),
+                            colorSchemeSettings = generalSettings.colorSchemeSettings.copy(
+                                paletteStyle = currentColorSchemePaletteStyle,
+                            ),
                         ),
                     )
                 },
@@ -301,16 +305,18 @@ private fun Success(
                 title = stringResource(R.string.contrast_preset),
                 options = ColorSchemeContrastPreset.entries,
                 selected = generalSettings.colorSchemeSettings.contrastPreset,
-                label = {
-                    it.getTitle()
+                label = { currentColorSchemeContrastPreset ->
+                    currentColorSchemeContrastPreset.getTitle()
                 },
                 // Layout
                 shape = EblanShapes.middle,
                 // Actions
-                onSelectedChange = {
+                onSelectedChange = { currentColorSchemeContrastPreset ->
                     onUpdateGeneralSettings(
                         generalSettings.copy(
-                            colorSchemeSettings = generalSettings.colorSchemeSettings.copy(contrastPreset = it),
+                            colorSchemeSettings = generalSettings.colorSchemeSettings.copy(
+                                contrastPreset = currentColorSchemeContrastPreset,
+                            ),
                         ),
                     )
                 },
@@ -325,10 +331,12 @@ private fun Success(
                 // Appearance
                 shape = EblanShapes.middle,
                 // Callbacks
-                onCheckedChange = {
+                onCheckedChange = { currentAmoledBlack ->
                     onUpdateGeneralSettings(
                         generalSettings.copy(
-                            colorSchemeSettings = generalSettings.colorSchemeSettings.copy(amoledBlack = it),
+                            colorSchemeSettings = generalSettings.colorSchemeSettings.copy(
+                                amoledBlack = currentAmoledBlack,
+                            ),
                         ),
                     )
                 },
@@ -344,8 +352,8 @@ private fun Success(
             // Appearance
             shape = EblanShapes.middle,
             // Callbacks
-            onCheckedChange = {
-                onUpdateGeneralSettings(generalSettings.copy(iconTint = it))
+            onCheckedChange = { currentIconTint ->
+                onUpdateGeneralSettings(generalSettings.copy(iconTint = currentIconTint))
             },
         )
 
@@ -354,8 +362,8 @@ private fun Success(
             title = stringResource(R.string.icon_shape),
             options = IconShape.entries,
             selected = generalSettings.iconShape,
-            label = {
-                it.getTitle()
+            label = { currentIconShape ->
+                currentIconShape.getTitle()
             },
             // Layout
             shape = if (isNotificationAccessGranted) {
@@ -364,8 +372,8 @@ private fun Success(
                 EblanShapes.middle
             },
             // Actions
-            onSelectedChange = {
-                onUpdateGeneralSettings(generalSettings.copy(iconShape = it))
+            onSelectedChange = { currentIconShape ->
+                onUpdateGeneralSettings(generalSettings.copy(iconShape = currentIconShape))
             },
         )
 
@@ -417,8 +425,10 @@ private fun Success(
             onReset = {
                 onUpdateGeneralSettings(generalSettings.copy(iconPackPackageName = ""))
             },
-            onUpdateIconPackPackageName = {
-                onUpdateGeneralSettings(generalSettings.copy(iconPackPackageName = it))
+            onUpdateIconPackPackageName = { currentIconPackPackageName ->
+                onUpdateGeneralSettings(
+                    generalSettings.copy(iconPackPackageName = currentIconPackPackageName),
+                )
             },
         )
     }
@@ -433,11 +443,11 @@ private fun Success(
             onDismissRequest = {
                 showCustomSeedColorPickerDialog = false
             },
-            onSelectColor = {
+            onSelectColor = { currentCustomSeedColor ->
                 onUpdateGeneralSettings(
                     generalSettings.copy(
                         colorSource = ColorSource.Custom,
-                        customSeedColor = it,
+                        customSeedColor = currentCustomSeedColor,
                     ),
                 )
             },

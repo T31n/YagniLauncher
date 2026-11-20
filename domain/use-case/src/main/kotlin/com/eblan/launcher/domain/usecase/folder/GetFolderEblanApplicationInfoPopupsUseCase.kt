@@ -44,7 +44,9 @@ class GetFolderEblanApplicationInfoPopupsUseCase @Inject constructor(
         folderEblanApplicationInfoRepository.folderEblanApplicationInfoWrappersFlow,
     ) { userData, folderEblanApplicationInfoWrappers ->
         folderEblanApplicationInfoWrappers
-            .sortedBy { it.folderEblanApplicationInfo.label }
+            .sortedBy { currentFolderEblanApplicationInfoWrapper ->
+                currentFolderEblanApplicationInfoWrapper.folderEblanApplicationInfo.label
+            }
             .asPreviewFolderEblanApplicationInfos(
                 maxFolderColumns = userData.folderSettings.maxFolderColumns,
                 maxFolderRows = userData.folderSettings.maxFolderRows,

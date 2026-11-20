@@ -137,11 +137,11 @@ internal fun FolderGridItem(
                     // Layout
                     modifier = Modifier.fillMaxSize(),
                     // Callbacks
-                    slotId = { it.id },
-                    content = {
+                    slotId = { currentFolderGridItem -> currentFolderGridItem.id },
+                    content = { currentFolderGridItem ->
                         PreviewFolderGridItem(
                             // Item and Settings
-                            gridItem = it,
+                            gridItem = currentFolderGridItem,
                             gridItemSettings = gridItemSettings,
                             // Appearance and Colors
                             iconPackFilePaths = iconPackFilePaths,

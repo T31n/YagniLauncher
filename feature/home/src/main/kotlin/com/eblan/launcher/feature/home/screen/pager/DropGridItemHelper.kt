@@ -429,27 +429,27 @@ internal suspend fun handleShortcutConfigLauncherResult(
 
     val name = result.data?.getStringExtra(Intent.EXTRA_SHORTCUT_NAME)
 
-    val icon = result.data?.let {
+    val icon = result.data?.let { currentIntent ->
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            it.getParcelableExtra(
+            currentIntent.getParcelableExtra(
                 Intent.EXTRA_SHORTCUT_ICON,
                 Bitmap::class.java,
             )
         } else {
-            it.getParcelableExtra(Intent.EXTRA_SHORTCUT_ICON)
+            currentIntent.getParcelableExtra(Intent.EXTRA_SHORTCUT_ICON)
         }
     }?.let { bitmap ->
         androidImageSerializer.createByteArray(bitmap = bitmap)
     }
 
-    val shortcutIntentUri = result.data?.let {
+    val shortcutIntentUri = result.data?.let { currentIntent ->
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            it.getParcelableExtra(
+            currentIntent.getParcelableExtra(
                 Intent.EXTRA_SHORTCUT_INTENT,
                 Intent::class.java,
             )
         } else {
-            it.getParcelableExtra(Intent.EXTRA_SHORTCUT_INTENT)
+            currentIntent.getParcelableExtra(Intent.EXTRA_SHORTCUT_INTENT)
         }
     }?.toUri(Intent.URI_INTENT_SCHEME)
 
@@ -486,14 +486,14 @@ internal suspend fun handleShortcutConfigIntentSenderLauncherResult(
         return
     }
 
-    val pinItemRequest = result.data?.let {
+    val pinItemRequest = result.data?.let { currentIntent ->
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            it.getParcelableExtra(
+            currentIntent.getParcelableExtra(
                 LauncherApps.EXTRA_PIN_ITEM_REQUEST,
                 PinItemRequest::class.java,
             )
         } else {
-            it.getParcelableExtra(LauncherApps.EXTRA_PIN_ITEM_REQUEST)
+            currentIntent.getParcelableExtra(LauncherApps.EXTRA_PIN_ITEM_REQUEST)
         }
     }
 

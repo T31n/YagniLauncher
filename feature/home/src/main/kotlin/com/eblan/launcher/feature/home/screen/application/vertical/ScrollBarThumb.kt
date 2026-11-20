@@ -125,7 +125,7 @@ internal fun ScrollBarThumb(
                 )
                 .pointerInput(lazyGridState) {
                     detectTapGestures(
-                        onTap = {
+                        onTap = { currentOffset ->
                             scrollToTap(
                                 // State and Scope
                                 lazyGridState = lazyGridState,
@@ -135,7 +135,7 @@ internal fun ScrollBarThumb(
                                 density = density,
                                 thumbHeight = thumbHeight,
                                 // Target
-                                offset = it,
+                                offset = currentOffset,
                                 // Action
                             )
                         },
@@ -178,8 +178,8 @@ internal fun ScrollBarThumb(
                                     deltaY = dragAmount.y,
                                     thumbY = thumbY,
                                     // Callbacks
-                                    onUpdateThumbY = {
-                                        thumbY = it
+                                    onUpdateThumbY = { currentThumbY ->
+                                        thumbY = currentThumbY
                                     },
                                 )
                             },
@@ -210,12 +210,12 @@ private fun produceHeaderHeightPxState(
     if (isPrivateSpaceEntryPointHidden) {
         snapshotFlow {
             lazyGridState.layoutInfo.visibleItemsInfo
-                .firstOrNull { it.index == 0 }
+                .firstOrNull { currentLazyGridItemInfo -> currentLazyGridItemInfo.index == 0 }
                 ?.size
                 ?.height
         }
             .filterNotNull()
-            .collect { value = it }
+            .collect { currentHeaderHeightPx -> value = currentHeaderHeightPx }
     } else {
         value = 0
     }
@@ -281,9 +281,13 @@ private fun scrollToDrag(
 
     val hasHeader = headerHeightPx > 0
 
-    val appItems = visibleItems.filter { it.index != 0 || !hasHeader }
+    val appItems = visibleItems.filter { currentLazyGridItemInfo ->
+        currentLazyGridItemInfo.index != 0 || !hasHeader
+    }
 
-    val avgItemHeight = appItems.map { it.size.height }.average().toFloat()
+    val avgItemHeight = appItems.map { currentLazyGridItemInfo ->
+        currentLazyGridItemInfo.size.height
+    }.average().toFloat()
 
     val totalRows = (totalItems + appDrawerColumns - 1) / appDrawerColumns
 
@@ -352,9 +356,13 @@ private fun getViewPortThumbY(
 
     val hasHeader = headerHeightPx > 0
 
-    val appItems = visibleItemsInfo.filter { it.index != 0 || !hasHeader }
+    val appItems = visibleItemsInfo.filter { currentLazyGridItemInfo ->
+        currentLazyGridItemInfo.index != 0 || !hasHeader
+    }
 
-    val avgItemHeight = appItems.map { it.size.height }.average().toFloat()
+    val avgItemHeight = appItems.map { currentLazyGridItemInfo ->
+        currentLazyGridItemInfo.size.height
+    }.average().toFloat()
 
     val appRows = if (hasHeader) {
         (totalItemsCount - 1 + appDrawerColumns - 1) / appDrawerColumns

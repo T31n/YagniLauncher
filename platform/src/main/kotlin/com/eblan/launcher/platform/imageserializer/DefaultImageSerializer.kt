@@ -89,11 +89,11 @@ internal class DefaultImageSerializer @Inject constructor(
                 }
 
                 if (createNew) {
-                    FileOutputStream(file).use {
+                    FileOutputStream(file).use { currentFileOutputStream ->
                         bitmap.compress(
                             Bitmap.CompressFormat.PNG,
                             100,
-                            it,
+                            currentFileOutputStream,
                         )
                     }
                 }
@@ -433,7 +433,7 @@ internal class DefaultImageSerializer @Inject constructor(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             copy is AdaptiveIconDrawable
         ) {
-            copy.monochrome?.let {
+            copy.monochrome?.let { currentMonochromeDrawable ->
                 return AdaptiveIconDrawable(
                     materialColorSchemeResolver.getSurfaceColor(
                         colorSource = colorSource,
@@ -441,7 +441,7 @@ internal class DefaultImageSerializer @Inject constructor(
                         theme = theme,
                         colorSchemeSettings = colorSchemeSettings,
                     ).toDrawable(),
-                    it.mutate().apply { setTint(primaryColor) },
+                    currentMonochromeDrawable.mutate().apply { setTint(primaryColor) },
                 )
             }
         }

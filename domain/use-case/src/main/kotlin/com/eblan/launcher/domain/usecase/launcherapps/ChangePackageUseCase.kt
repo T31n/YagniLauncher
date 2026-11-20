@@ -127,8 +127,8 @@ class ChangePackageUseCase @Inject constructor(
             eblanApplicationInfoRepository.getEblanApplicationInfosByPackageName(
                 serialNumber = serialNumber,
                 packageName = packageName,
-            ).map {
-                it.toSyncEblanApplicationInfo()
+            ).map { currentEblanApplicationInfo ->
+                currentEblanApplicationInfo.toSyncEblanApplicationInfo()
             }
 
         val newSyncEblanApplicationInfosByPackageName = buildList {
@@ -139,10 +139,10 @@ class ChangePackageUseCase @Inject constructor(
                     launcherAppsWrapper.getShortcutConfigActivityListWithCacheIcons(
                         serialNumber = launcherAppsActivityInfo.serialNumber,
                         packageName = launcherAppsActivityInfo.packageName,
-                    ).map {
+                    ).map { currentShortcutConfigActivityInfo ->
                         currentCoroutineContext().ensureActive()
 
-                        it.toEblanShortcutConfig(
+                        currentShortcutConfigActivityInfo.toEblanShortcutConfig(
                             fileManager = fileManager,
                             launcherAppsWrapper = launcherAppsWrapper,
                             packageManagerWrapper = packageManagerWrapper,
@@ -156,11 +156,11 @@ class ChangePackageUseCase @Inject constructor(
         }
 
         val oldDeleteEblanApplicationInfos = oldSyncEblanApplicationInfosByPackageName
-            .differenceByIdentity(newSyncEblanApplicationInfosByPackageName) {
-                it.serialNumber to it.componentName
+            .differenceByIdentity(newSyncEblanApplicationInfosByPackageName) { currentSyncEblanApplicationInfo ->
+                currentSyncEblanApplicationInfo.serialNumber to currentSyncEblanApplicationInfo.componentName
             }
-            .map {
-                it.toDeleteEblanApplicationInfo()
+            .map { currentSyncEblanApplicationInfo ->
+                currentSyncEblanApplicationInfo.toDeleteEblanApplicationInfo()
             }
 
         eblanApplicationInfoRepository.upsertSyncEblanApplicationInfos(
@@ -192,21 +192,23 @@ class ChangePackageUseCase @Inject constructor(
 
         val appWidgetManagerAppWidgetProviderInfosByPackageName =
             appWidgetManagerWrapper.getInstalledProvidersForProfilesWithCacheIcons()
-                .filter {
-                    it.serialNumber == serialNumber && it.packageName == packageName
+                .filter { currentAppWidgetManagerAppWidgetProviderInfo ->
+                    currentAppWidgetManagerAppWidgetProviderInfo.serialNumber == serialNumber &&
+                        currentAppWidgetManagerAppWidgetProviderInfo.packageName == packageName
                 }
 
         val oldEblanAppWidgetProviderInfosByPackageName =
             eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos()
-                .filter {
-                    it.serialNumber == serialNumber && it.packageName == packageName
+                .filter { currentEblanAppWidgetProviderInfo ->
+                    currentEblanAppWidgetProviderInfo.serialNumber == serialNumber &&
+                        currentEblanAppWidgetProviderInfo.packageName == packageName
                 }
 
         val newEblanAppWidgetProviderInfosByPackageName =
-            appWidgetManagerAppWidgetProviderInfosByPackageName.map {
+            appWidgetManagerAppWidgetProviderInfosByPackageName.map { currentAppWidgetManagerAppWidgetProviderInfo ->
                 currentCoroutineContext().ensureActive()
 
-                it.toEblanAppWidgetProviderInfo(
+                currentAppWidgetManagerAppWidgetProviderInfo.toEblanAppWidgetProviderInfo(
                     fileManager = fileManager,
                     launcherAppsWrapper = launcherAppsWrapper,
                     packageManagerWrapper = packageManagerWrapper,
@@ -216,8 +218,8 @@ class ChangePackageUseCase @Inject constructor(
 
         val deleteEblanAppWidgetProviderInfos =
             oldEblanAppWidgetProviderInfosByPackageName
-                .differenceByIdentity(newEblanAppWidgetProviderInfosByPackageName) {
-                    it.serialNumber to it.componentName
+                .differenceByIdentity(newEblanAppWidgetProviderInfosByPackageName) { currentEblanAppWidgetProviderInfo ->
+                    currentEblanAppWidgetProviderInfo.serialNumber to currentEblanAppWidgetProviderInfo.componentName
                 }
 
         eblanAppWidgetProviderInfoRepository.deleteEblanAppWidgetProviderInfos(
@@ -257,14 +259,18 @@ class ChangePackageUseCase @Inject constructor(
             )
 
         val newEblanShortcutInfosByPackageName =
-            launcherAppsShortcutInfosByPackageName.map {
-                it.toEblanShortcutInfo()
+            launcherAppsShortcutInfosByPackageName.map { currentLauncherAppsShortcutInfo ->
+                currentLauncherAppsShortcutInfo.toEblanShortcutInfo()
             }
 
         val deleteEblanShortcutInfos =
             oldEblanShortcutInfosByPackageName
-                .differenceByIdentity(newEblanShortcutInfosByPackageName) {
-                    Triple(it.serialNumber, it.shortcutId, it.packageName)
+                .differenceByIdentity(newEblanShortcutInfosByPackageName) { currentEblanShortcutInfo ->
+                    Triple(
+                        currentEblanShortcutInfo.serialNumber,
+                        currentEblanShortcutInfo.shortcutId,
+                        currentEblanShortcutInfo.packageName,
+                    )
                 }
 
         eblanShortcutInfoRepository.upsertEblanShortcutInfos(
@@ -298,8 +304,8 @@ class ChangePackageUseCase @Inject constructor(
             )
 
         val deleteEblanShortcutConfigs = oldEblanShortcutConfigsByPackageName
-            .differenceByIdentity(newEblanShortcutConfigs) {
-                it.serialNumber to it.componentName
+            .differenceByIdentity(newEblanShortcutConfigs) { currentEblanShortcutConfig ->
+                currentEblanShortcutConfig.serialNumber to currentEblanShortcutConfig.componentName
             }
 
         eblanShortcutConfigRepository.upsertEblanShortcutConfigs(

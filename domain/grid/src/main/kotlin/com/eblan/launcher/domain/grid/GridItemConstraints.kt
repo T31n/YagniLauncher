@@ -193,10 +193,10 @@ suspend fun findAvailableRegionByPage(
                     startRow = row,
                 )
 
-                val isFree = gridItems.none {
-                    it.page == page && rectanglesOverlap(
+                val isFree = gridItems.none { currentGridItem ->
+                    currentGridItem.page == page && rectanglesOverlap(
                         moving = candidateGridItem,
-                        other = it,
+                        other = currentGridItem,
                     )
                 }
 

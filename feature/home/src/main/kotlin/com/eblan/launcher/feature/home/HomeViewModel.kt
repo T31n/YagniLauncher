@@ -574,7 +574,7 @@ internal class HomeViewModel @Inject constructor(
     fun upsertFolderGridItemEntry(folderEntry: FolderEntry) {
         _folderGridItemEntries.update { folderEntries ->
             folderEntries
-                .filterNot { it.id == folderEntry.id }
+                .filterNot { currentFolderEntry -> currentFolderEntry.id == folderEntry.id }
                 .plus(folderEntry)
         }
     }
@@ -674,8 +674,8 @@ internal class HomeViewModel @Inject constructor(
 
             gridRepository.updateGridItem(gridItem = movingGridItem)
 
-            _folderGridItemEntries.update {
-                it + folderEntry
+            _folderGridItemEntries.update { currentFolderEntries ->
+                currentFolderEntries + folderEntry
             }
 
             _moveGridItemResult.update {
@@ -706,7 +706,7 @@ internal class HomeViewModel @Inject constructor(
 
     fun deleteFolderGridItemEntry(folderEntry: FolderEntry) {
         _folderGridItemEntries.update { folderEntries ->
-            folderEntries.filterNot { it.id == folderEntry.id }
+            folderEntries.filterNot { currentFolderEntry -> currentFolderEntry.id == folderEntry.id }
         }
     }
 
@@ -773,14 +773,14 @@ internal class HomeViewModel @Inject constructor(
     fun upsertFolderEblanApplicationInfoEntry(folderEntry: FolderEntry) {
         _folderEblanApplicationInfoEntries.update { folderEntries ->
             folderEntries
-                .filterNot { it.id == folderEntry.id }
+                .filterNot { currentFolderEntry -> currentFolderEntry.id == folderEntry.id }
                 .plus(folderEntry)
         }
     }
 
     fun deleteFolderEblanApplicationInfoEntry(folderEntry: FolderEntry) {
         _folderEblanApplicationInfoEntries.update { folderEntries ->
-            folderEntries.filterNot { it.id == folderEntry.id }
+            folderEntries.filterNot { currentFolderEntry -> currentFolderEntry.id == folderEntry.id }
         }
     }
 

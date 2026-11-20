@@ -218,7 +218,7 @@ internal fun InteractiveFolderGridItem(
         key1 = gridItem,
         key2 = folderGridItemEntries,
     ) {
-        folderGridItemEntries.any { it.id == gridItem.id }
+        folderGridItemEntries.any { currentFolderEntry -> currentFolderEntry.id == gridItem.id }
     }
 
     val horizontalAlignment =
@@ -529,10 +529,10 @@ private fun InteractiveApplicationInfoGridItem(
                 modifier = Modifier
                     .matchParentSize()
                     .padding(iconPadding)
-                    .onGloballyPositioned {
-                        intOffset = it.positionInRoot().round()
+                    .onGloballyPositioned { currentLayoutCoordinates ->
+                        intOffset = currentLayoutCoordinates.positionInRoot().round()
 
-                        intSize = it.size
+                        intSize = currentLayoutCoordinates.size
                     }
                     .gridItemSharedElement(
                         // Transition State
@@ -719,10 +719,10 @@ private fun InteractiveShortcutInfoGridItem(
                 modifier = Modifier
                     .matchParentSize()
                     .padding(iconPadding)
-                    .onGloballyPositioned {
-                        intOffset = it.positionInRoot().round()
+                    .onGloballyPositioned { currentLayoutCoordinates ->
+                        intOffset = currentLayoutCoordinates.positionInRoot().round()
 
-                        intSize = it.size
+                        intSize = currentLayoutCoordinates.size
                     }
                     .gridItemSharedElement(
                         // Transition State
@@ -878,8 +878,8 @@ private fun InteractiveShortcutConfigGridItem(
                                 )
                             },
                             onTap = {
-                                data.shortcutIntentUri?.let {
-                                    context.startActivity(parseUri(it, 0))
+                                data.shortcutIntentUri?.let { currentShortcutIntentUri ->
+                                    context.startActivity(parseUri(currentShortcutIntentUri, 0))
                                 }
                             },
                         )
@@ -907,10 +907,10 @@ private fun InteractiveShortcutConfigGridItem(
             modifier = Modifier
                 .size(iconSize)
                 .padding(iconPadding)
-                .onGloballyPositioned {
-                    intOffset = it.positionInRoot().round()
+                .onGloballyPositioned { currentLayoutCoordinates ->
+                    intOffset = currentLayoutCoordinates.positionInRoot().round()
 
-                    intSize = it.size
+                    intSize = currentLayoutCoordinates.size
                 }
                 .gridItemSharedElement(
                     // Transition State
@@ -1076,10 +1076,10 @@ private fun InteractiveNestedFolderGridItem(
         val commonModifier = Modifier
             .size(iconSize)
             .padding(iconPadding)
-            .onGloballyPositioned {
-                intOffset = it.positionInRoot().round()
+            .onGloballyPositioned { currentLayoutCoordinates ->
+                intOffset = currentLayoutCoordinates.positionInRoot().round()
 
-                intSize = it.size
+                intSize = currentLayoutCoordinates.size
             }
             .gridItemSharedElement(
                 // Transition State
@@ -1127,11 +1127,11 @@ private fun InteractiveNestedFolderGridItem(
                     // Layout
                     modifier = Modifier.fillMaxSize(),
                     // Callbacks
-                    slotId = { it.id },
-                    content = {
+                    slotId = { currentPreviewNestedFolderGridItem -> currentPreviewNestedFolderGridItem.id },
+                    content = { currentPreviewNestedFolderGridItem ->
                         PreviewNestedFolderGridItem(
                             // Item Data
-                            gridItem = it,
+                            gridItem = currentPreviewNestedFolderGridItem,
                             gridItemSettings = gridItemSettings,
                             // Permissions
                             hasShortcutHostPermission = hasShortcutHostPermission,

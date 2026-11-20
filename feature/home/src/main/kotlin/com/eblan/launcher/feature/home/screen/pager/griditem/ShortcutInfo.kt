@@ -202,9 +202,9 @@ internal fun InteractiveShortcutInfoGridItem(
 
     val iconModifier = Modifier
         .onGloballyPositioned(
-            onGloballyPositioned = {
-                intOffset = it.positionInRoot().round()
-                intSize = it.size
+            onGloballyPositioned = { currentLayoutCoordinates ->
+                intOffset = currentLayoutCoordinates.positionInRoot().round()
+                intSize = currentLayoutCoordinates.size
             },
         )
         .gridItemSharedElement(

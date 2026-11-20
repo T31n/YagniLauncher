@@ -60,7 +60,9 @@ class EblanNotificationListenerService : NotificationListenerService() {
         if (isListenerConnected) {
             _statusBarNotifications.update {
                 activeNotifications
-                    ?.groupingBy { it.packageName }
+                    ?.groupingBy { currentStatusBarNotification ->
+                        currentStatusBarNotification.packageName
+                    }
                     ?.eachCount()
                     ?: emptyMap()
             }

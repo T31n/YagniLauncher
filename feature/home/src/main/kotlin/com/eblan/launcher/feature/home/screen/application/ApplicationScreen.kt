@@ -281,8 +281,8 @@ internal fun ApplicationScreen(
                     isVisibleOverlay = isVisibleOverlay,
                     // Callbacks
                     onDragEnd = onDragEnd,
-                    onUpdateSelectedEblanApplicationInfoTagId = {
-                        selectedEblanApplicationInfoTagId = it
+                    onUpdateSelectedEblanApplicationInfoTagId = { currentSelectedEblanApplicationInfoTagId ->
+                        selectedEblanApplicationInfoTagId = currentSelectedEblanApplicationInfoTagId
                     },
                     onVerticalDrag = onVerticalDrag,
                     onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
@@ -317,8 +317,8 @@ internal fun ApplicationScreen(
                     drag = drag,
                     swipeY = swipeY,
                     isVisibleOverlay = isVisibleOverlay,
-                    onUpdateSelectedEblanApplicationInfoTagId = {
-                        selectedEblanApplicationInfoTagId = it
+                    onUpdateSelectedEblanApplicationInfoTagId = { currentSelectedEblanApplicationInfoTagId ->
+                        selectedEblanApplicationInfoTagId = currentSelectedEblanApplicationInfoTagId
                     },
                     onVerticalDrag = onVerticalDrag,
                     onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
@@ -473,8 +473,8 @@ internal fun EblanApplicationInfoTabRow(
         key1 = eblanUserPageKeys,
         key2 = currentEblanUserPageKey,
     ) {
-        eblanUserPageKeys.indexOfFirst {
-            it.eblanUser.serialNumber == currentEblanUserPageKey.eblanUser.serialNumber
+        eblanUserPageKeys.indexOfFirst { currentIndexedEblanUserPageKey ->
+            currentIndexedEblanUserPageKey.eblanUser.serialNumber == currentEblanUserPageKey.eblanUser.serialNumber
         }
     }
 
@@ -524,8 +524,8 @@ internal fun EblanApplicationInfoTabRow(
                 onClick = {
                     scope.launch {
                         onAnimateScrollToPage(
-                            eblanApplicationInfos.keys.indexOfFirst {
-                                it.eblanUser.serialNumber == eblanUserPageKey.eblanUser.serialNumber
+                            eblanApplicationInfos.keys.indexOfFirst { currentKeyEblanUserPageKey ->
+                                currentKeyEblanUserPageKey.eblanUser.serialNumber == eblanUserPageKey.eblanUser.serialNumber
                             },
                         )
                     }
@@ -745,8 +745,8 @@ private fun ApplicationScreenEffect(
     val shouldFocusSearch = swipeY == 0f && showKeyboard
 
     LaunchedEffect(key1 = textFieldState) {
-        snapshotFlow { textFieldState.text }.debounce(500L.milliseconds).onEach {
-            onGetEblanApplicationInfosByLabel(it.toString())
+        snapshotFlow { textFieldState.text }.debounce(500L.milliseconds).onEach { currentCharSequence ->
+            onGetEblanApplicationInfosByLabel(currentCharSequence.toString())
         }.collect()
     }
 

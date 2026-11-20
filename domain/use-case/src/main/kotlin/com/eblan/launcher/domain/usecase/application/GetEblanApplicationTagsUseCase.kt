@@ -38,6 +38,8 @@ class GetEblanApplicationTagsUseCase @Inject constructor(
      * @return A flow of application tag lists.
      */
     operator fun invoke(): Flow<List<EblanApplicationInfoTag>> = eblanApplicationInfoTagRepository.eblanApplicationInfoTagsFlow.map { eblanApplicationInfoTags ->
-        eblanApplicationInfoTags.sortedBy { it.index }
+        eblanApplicationInfoTags.sortedBy { currentEblanApplicationInfoTag ->
+            currentEblanApplicationInfoTag.index
+        }
     }.flowOn(defaultDispatcher)
 }

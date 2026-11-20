@@ -62,8 +62,8 @@ fun EditCornerRadiusDialog(
 
         TextField(
             value = currentCornerRadius,
-            onValueChange = {
-                currentCornerRadius = it
+            onValueChange = { currentCornerRadiusString ->
+                currentCornerRadius = currentCornerRadiusString
                 isErrorCornerRadius = false
             },
             modifier = Modifier.fillMaxWidth(),

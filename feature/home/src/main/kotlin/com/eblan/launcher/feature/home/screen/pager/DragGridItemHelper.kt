@@ -530,8 +530,8 @@ private fun calculateMovingFolderGridItem(
     conflictingGridItem: GridItem,
     folderGridItems: List<GridItem>?,
 ): GridItem {
-    val maxIndex = folderGridItems?.maxOfOrNull {
-        when (val data = it.data) {
+    val maxIndex = folderGridItems?.maxOfOrNull { currentFolderGridItem ->
+        when (val data = currentFolderGridItem.data) {
             is GridItemData.ApplicationInfo -> data.index + 1
             is GridItemData.ShortcutInfo -> data.index + 1
             is GridItemData.ShortcutConfig -> data.index + 1

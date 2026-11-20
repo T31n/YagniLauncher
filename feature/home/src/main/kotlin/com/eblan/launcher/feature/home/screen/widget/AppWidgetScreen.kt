@@ -61,7 +61,6 @@ import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalFocusManager
@@ -356,10 +355,10 @@ private fun EblanAppWidgetScreenItem(
                 .width(160.dp)
                 .height(100.dp)
                 .onGloballyPositioned(
-                    onGloballyPositioned = { it: LayoutCoordinates ->
-                        intOffset = it.positionInRoot().round()
+                    onGloballyPositioned = { currentLayoutCoordinates ->
+                        intOffset = currentLayoutCoordinates.positionInRoot().round()
 
-                        intSize = it.size
+                        intSize = currentLayoutCoordinates.size
                     },
                 )
                 .drawWithContent {

@@ -224,10 +224,10 @@ internal fun EditGridPageScreen(
                                 shape = MaterialTheme.shapes.small,
                             ),
                         // Content
-                        content = {
+                        content = { currentGridItem ->
                             PageGridItem(
                                 // Item and Settings
-                                gridItem = it,
+                                gridItem = currentGridItem,
                                 gridItemSettings = homeSettings.gridItemSettings,
                                 folderPopupGridItems = folderPopupGridItems,
                                 hasShortcutHostPermission = hasShortcutHostPermission,
@@ -278,10 +278,15 @@ internal fun EditGridPageScreen(
                     end = paddingValues.calculateEndPadding(layoutDirection),
                     bottom = paddingValues.calculateBottomPadding(),
                 ),
-            onExpandedChange = { expanded = it },
+            onExpandedChange = { currentExpanded -> expanded = currentExpanded },
             onAdd = {
                 currentPageItems = currentPageItems.toMutableList().apply {
-                    add(PageItem(id = maxOf { it.id } + 1, gridItems = emptyList()))
+                    add(
+                        PageItem(
+                            id = maxOf { currentPageItem -> currentPageItem.id } + 1,
+                            gridItems = emptyList(),
+                        ),
+                    )
                 }
             },
             onSave = {
@@ -468,10 +473,10 @@ internal fun EditDockGridPageScreen(
                                 .fillMaxWidth()
                                 .height(cardHeight),
                             // Content
-                            content = {
+                            content = { currentGridItem ->
                                 PageGridItem(
                                     // Item and Settings
-                                    gridItem = it,
+                                    gridItem = currentGridItem,
                                     gridItemSettings = homeSettings.dockGridItemSettings,
                                     folderPopupGridItems = folderPopupGridItems,
                                     hasShortcutHostPermission = hasShortcutHostPermission,
@@ -522,10 +527,15 @@ internal fun EditDockGridPageScreen(
                     end = paddingValues.calculateEndPadding(layoutDirection),
                     bottom = paddingValues.calculateBottomPadding(),
                 ),
-            onExpandedChange = { expanded = it },
+            onExpandedChange = { currentExpanded -> expanded = currentExpanded },
             onAdd = {
                 currentPageItems = currentPageItems.toMutableList().apply {
-                    add(PageItem(id = maxOf { it.id } + 1, gridItems = emptyList()))
+                    add(
+                        PageItem(
+                            id = maxOf { currentPageItem -> currentPageItem.id } + 1,
+                            gridItems = emptyList(),
+                        ),
+                    )
                 }
             },
             onSave = {
@@ -603,8 +613,8 @@ internal fun ExpandableFloatingActionButton(
     Column(modifier = modifier.padding(EblanSpacing.large)) {
         AnimatedVisibility(
             visible = expanded,
-            enter = fadeIn() + slideInHorizontally { it },
-            exit = fadeOut() + slideOutHorizontally { it },
+            enter = fadeIn() + slideInHorizontally { currentFullWidth -> currentFullWidth },
+            exit = fadeOut() + slideOutHorizontally { currentFullWidth -> currentFullWidth },
         ) {
             Column(
                 horizontalAlignment = Alignment.End,

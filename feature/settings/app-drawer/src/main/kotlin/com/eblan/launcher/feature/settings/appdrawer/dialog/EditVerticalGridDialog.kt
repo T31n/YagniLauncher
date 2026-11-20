@@ -73,8 +73,8 @@ internal fun EditVerticalGridDialog(
         ) {
             TextField(
                 value = currentAppDrawerColumns,
-                onValueChange = {
-                    currentAppDrawerColumns = it
+                onValueChange = { currentAppDrawerColumnsString ->
+                    currentAppDrawerColumns = currentAppDrawerColumnsString
                     isErrorAppDrawerColumns = false
                 },
                 modifier = Modifier.weight(1f),
@@ -94,8 +94,8 @@ internal fun EditVerticalGridDialog(
 
             TextField(
                 value = currentAppDrawerRowsHeight,
-                onValueChange = {
-                    currentAppDrawerRowsHeight = it
+                onValueChange = { currentAppDrawerRowsHeightString ->
+                    currentAppDrawerRowsHeight = currentAppDrawerRowsHeightString
                     isErrorAppDrawerRowsHeight = false
                 },
                 modifier = Modifier.weight(1f),

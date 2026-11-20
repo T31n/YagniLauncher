@@ -324,24 +324,24 @@ internal class DefaultGridRepository @Inject constructor(
     }
 
     private fun GridItemEntities.asGridItems(): GridItems {
-        val applicationInfoGridItems = applicationInfoGridItemEntities.map {
-            it.asModel()
+        val applicationInfoGridItems = applicationInfoGridItemEntities.map { currentApplicationInfoGridItemEntity ->
+            currentApplicationInfoGridItemEntity.asModel()
         }
 
-        val widgetGridItems = widgetGridItemEntities.map {
-            it.asModel()
+        val widgetGridItems = widgetGridItemEntities.map { currentWidgetGridItemEntity ->
+            currentWidgetGridItemEntity.asModel()
         }
 
-        val shortcutInfoGridItems = shortcutInfoGridItemEntities.map {
-            it.asModel()
+        val shortcutInfoGridItems = shortcutInfoGridItemEntities.map { currentShortcutInfoGridItemEntity ->
+            currentShortcutInfoGridItemEntity.asModel()
         }
 
-        val shortcutConfigGridItems = shortcutConfigGridItemEntities.map {
-            it.asModel()
+        val shortcutConfigGridItems = shortcutConfigGridItemEntities.map { currentShortcutConfigGridItemEntity ->
+            currentShortcutConfigGridItemEntity.asModel()
         }
 
-        val folderGridItems = folderGridItemEntities.map {
-            it.asModel()
+        val folderGridItems = folderGridItemEntities.map { currentFolderGridItemEntity ->
+            currentFolderGridItemEntity.asModel()
         }
 
         return GridItems(

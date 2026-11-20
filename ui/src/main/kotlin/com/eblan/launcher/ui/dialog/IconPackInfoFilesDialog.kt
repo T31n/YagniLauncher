@@ -149,7 +149,7 @@ fun IconPackInfoFilesDialog(
                 ) {
                     items(
                         items = iconPackComponents,
-                        key = { it.drawableName },
+                        key = { currentIconPackComponent -> currentIconPackComponent.drawableName },
                     ) { iconPackInfoComponent ->
 
                         var drawable by remember(iconPackInfoComponent, generalSettings) {

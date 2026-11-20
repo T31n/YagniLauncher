@@ -91,15 +91,15 @@ internal fun ImportIconPackInfoDialog(
                         fill = false,
                     ),
                 ) {
-                    items(currentIconPacks) {
+                    items(currentIconPacks) { currentPackageManagerIconPack ->
                         ListItem(
                             colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                             headlineContent = {
-                                Text(text = it.label)
+                                Text(text = currentPackageManagerIconPack.label)
                             },
                             leadingContent = {
                                 AsyncImage(
-                                    model = it.icon,
+                                    model = currentPackageManagerIconPack.icon,
                                     contentDescription = null,
                                     modifier = Modifier.size(40.dp),
                                 )
@@ -107,8 +107,8 @@ internal fun ImportIconPackInfoDialog(
                             modifier = Modifier
                                 .clickable {
                                     onUpdateIconPackInfo(
-                                        it.packageName,
-                                        it.label,
+                                        currentPackageManagerIconPack.packageName,
+                                        currentPackageManagerIconPack.label,
                                     )
 
                                     onDismissRequest()

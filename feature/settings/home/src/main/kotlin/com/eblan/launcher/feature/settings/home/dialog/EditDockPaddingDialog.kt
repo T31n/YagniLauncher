@@ -62,8 +62,8 @@ internal fun EditDockPaddingDialog(
 
         TextField(
             value = currentPadding,
-            onValueChange = {
-                currentPadding = it
+            onValueChange = { currentPaddingString ->
+                currentPadding = currentPaddingString
                 isErrorPadding = false
             },
             modifier = Modifier.fillMaxWidth(),

@@ -26,8 +26,8 @@ import com.eblan.launcher.domain.repository.WidgetGridItemRepository
 import javax.inject.Inject
 
 internal class DefaultWidgetGridItemRepository @Inject constructor(private val widgetGridItemDao: WidgetGridItemDao) : WidgetGridItemRepository {
-    override suspend fun getWidgetGridItems(): List<WidgetGridItem> = widgetGridItemDao.getWidgetGridItemEntities().map {
-        it.asModel()
+    override suspend fun getWidgetGridItems(): List<WidgetGridItem> = widgetGridItemDao.getWidgetGridItemEntities().map { currentWidgetGridItemEntity ->
+        currentWidgetGridItemEntity.asModel()
     }
 
     override suspend fun updateWidgetGridItem(widgetGridItem: WidgetGridItem) {
@@ -37,8 +37,8 @@ internal class DefaultWidgetGridItemRepository @Inject constructor(private val w
     }
 
     override suspend fun deleteWidgetGridItemsByPackageName(widgetGridItems: List<WidgetGridItem>) {
-        val entities = widgetGridItems.map {
-            it.asEntity()
+        val entities = widgetGridItems.map { currentWidgetGridItem ->
+            currentWidgetGridItem.asEntity()
         }
 
         widgetGridItemDao.deleteWidgetGridItemEntities(entities = entities)

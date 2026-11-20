@@ -237,10 +237,10 @@ internal fun Success(
 
                 onUpdateIconPackPackageName(packageName)
             },
-            onUpdateUri = {
+            onUpdateUri = { currentIconUri ->
                 onUpdateFolderEblanApplicationInfoCustomIcon(
                     folderEblanApplicationInfo,
-                    it,
+                    currentIconUri,
                 )
             },
             onResetCustomIcon = {
@@ -275,10 +275,10 @@ internal fun Success(
 
                     showCustomIconDialog = false
                 },
-                onUpdateIcon = {
+                onUpdateIcon = { currentIconByteArray ->
                     onUpdateFolderEblanApplicationInfoCustomIconByteArray(
                         folderEblanApplicationInfo,
-                        it,
+                        currentIconByteArray,
                     )
                 },
                 onSearchIconPackInfoComponent = onSearchIconPackInfoComponent,
@@ -325,11 +325,11 @@ private fun Folders(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        folderEblanApplicationInfos.forEach {
+        folderEblanApplicationInfos.forEach { currentFolderEblanApplicationInfo ->
             FolderEblanApplicationInfoItem(
                 // Identifier and Label
-                id = it.id,
-                label = it.label,
+                id = currentFolderEblanApplicationInfo.id,
+                label = currentFolderEblanApplicationInfo.label,
                 // Application Info
                 folderEblanApplicationInfo = folderEblanApplicationInfo,
                 folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
@@ -375,8 +375,8 @@ private fun FolderEblanApplicationInfoItem(
         key1 = folderEblanApplicationInfoPopups,
         key2 = id,
     ) {
-        folderEblanApplicationInfoPopups[id]?.folderEblanApplicationInfoGridItems?.maxOfOrNull {
-            when (val data = it.data) {
+        folderEblanApplicationInfoPopups[id]?.folderEblanApplicationInfoGridItems?.maxOfOrNull { currentFolderEblanApplicationInfoGridItem ->
+            when (val data = currentFolderEblanApplicationInfoGridItem.data) {
                 is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> data.folderIndex + 1
                 is FolderEblanApplicationInfoGridItemData.Folder -> data.folderIndex + 1
             }

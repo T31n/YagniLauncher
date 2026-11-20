@@ -72,8 +72,8 @@ internal fun EditDockGridDialog(
         ) {
             TextField(
                 value = currentDockColumns,
-                onValueChange = {
-                    currentDockColumns = it
+                onValueChange = { currentDockColumnsString ->
+                    currentDockColumns = currentDockColumnsString
                     isErrorDockColumns = false
                 },
                 modifier = Modifier.weight(1f),
@@ -93,8 +93,8 @@ internal fun EditDockGridDialog(
 
             TextField(
                 value = currentDockRows,
-                onValueChange = {
-                    currentDockRows = it
+                onValueChange = { currentDockRowsString ->
+                    currentDockRows = currentDockRowsString
                     isErrorDockRows = false
                 },
                 modifier = Modifier.weight(1f),

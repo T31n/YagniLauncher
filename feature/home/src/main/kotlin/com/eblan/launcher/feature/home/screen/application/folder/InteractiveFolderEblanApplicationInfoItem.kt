@@ -200,7 +200,9 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
         key1 = folderEblanApplicationInfoGridItem,
         key2 = folderEblanApplicationInfoEntries,
     ) {
-        folderEblanApplicationInfoEntries.any { it.id == folderEblanApplicationInfoGridItem.id }
+        folderEblanApplicationInfoEntries.any { currentFolderEntry ->
+            currentFolderEntry.id == folderEblanApplicationInfoGridItem.id
+        }
     }
 
     val horizontalAlignment =
@@ -429,10 +431,10 @@ private fun InteractiveEblanApplicationInfoItem(
             modifier = Modifier
                 .size(iconSize)
                 .padding(iconPadding)
-                .onGloballyPositioned {
-                    intOffset = it.positionInRoot().round()
+                .onGloballyPositioned { currentLayoutCoordinates ->
+                    intOffset = currentLayoutCoordinates.positionInRoot().round()
 
-                    intSize = it.size
+                    intSize = currentLayoutCoordinates.size
                 }
                 .gridItemSharedElement(
                     // Transition State
@@ -577,10 +579,10 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
             Modifier
                 .size(iconSize)
                 .padding(iconPadding)
-                .onGloballyPositioned {
-                    intOffset = it.positionInRoot().round()
+                .onGloballyPositioned { currentLayoutCoordinates ->
+                    intOffset = currentLayoutCoordinates.positionInRoot().round()
 
-                    intSize = it.size
+                    intSize = currentLayoutCoordinates.size
                 }
                 .gridItemSharedElement(
                     // Transition State
@@ -628,11 +630,13 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
                     // Layout
                     modifier = Modifier.fillMaxSize(),
                     // Callbacks
-                    slotId = { it.id },
-                    content = {
+                    slotId = { currentPreviewFolderEblanApplicationInfoGridItem ->
+                        currentPreviewFolderEblanApplicationInfoGridItem.id
+                    },
+                    content = { currentPreviewFolderEblanApplicationInfoGridItem ->
                         PreviewFolderEblanApplicationInfoItem(
                             // Item Data
-                            folderEblanApplicationInfoGridItem = it,
+                            folderEblanApplicationInfoGridItem = currentPreviewFolderEblanApplicationInfoGridItem,
                             gridItemSettings = appDrawerSettings.gridItemSettings,
                             // Appearance
                             alpha = iconAlpha,

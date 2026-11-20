@@ -203,14 +203,16 @@ private fun Success(
             title = stringResource(R.string.app_drawer_type),
             options = AppDrawerType.entries,
             selected = appDrawerSettings.appDrawerType,
-            label = {
-                it.getTitle()
+            label = { currentAppDrawerType ->
+                currentAppDrawerType.getTitle()
             },
             // Layout
             shape = EblanShapes.middle,
             // Actions
-            onSelectedChange = {
-                onUpdateAppDrawerSettings(appDrawerSettings.copy(appDrawerType = it))
+            onSelectedChange = { currentAppDrawerType ->
+                onUpdateAppDrawerSettings(
+                    appDrawerSettings.copy(appDrawerType = currentAppDrawerType),
+                )
             },
         )
 
@@ -245,18 +247,18 @@ private fun Success(
             title = stringResource(commonR.string.background_color),
             options = BackgroundColor.entries,
             selected = appDrawerSettings.backgroundColor,
-            label = {
-                it.getTitle()
+            label = { currentBackgroundColor ->
+                currentBackgroundColor.getTitle()
             },
             // Layout
             shape = EblanShapes.middle,
             // Actions
-            onSelectedChange = {
-                if (it == BackgroundColor.Custom) {
+            onSelectedChange = { currentBackgroundColor ->
+                if (currentBackgroundColor == BackgroundColor.Custom) {
                     showBackgroundColorPickerDialog = true
                 } else {
                     onUpdateAppDrawerSettings(
-                        appDrawerSettings.copy(backgroundColor = it),
+                        appDrawerSettings.copy(backgroundColor = currentBackgroundColor),
                     )
                 }
             },
@@ -283,10 +285,10 @@ private fun Success(
             // Appearance
             shape = EblanShapes.middle,
             // Callbacks
-            onCheckedChange = {
+            onCheckedChange = { currentExcludeTaggedApps ->
                 onUpdateAppDrawerSettings(
                     appDrawerSettings.copy(
-                        excludeTaggedApps = it,
+                        excludeTaggedApps = currentExcludeTaggedApps,
                     ),
                 )
             },
@@ -301,10 +303,10 @@ private fun Success(
             // Appearance
             shape = EblanShapes.middle,
             // Callbacks
-            onCheckedChange = {
+            onCheckedChange = { currentShowKeyboard ->
                 onUpdateAppDrawerSettings(
                     appDrawerSettings.copy(
-                        showKeyboard = it,
+                        showKeyboard = currentShowKeyboard,
                     ),
                 )
             },
@@ -323,10 +325,10 @@ private fun Success(
                 EblanShapes.middle
             },
             // Callbacks
-            onCheckedChange = {
+            onCheckedChange = { currentFuzzySearch ->
                 onUpdateAppDrawerSettings(
                     appDrawerSettings.copy(
-                        fuzzySearch = it,
+                        fuzzySearch = currentFuzzySearch,
                     ),
                 )
             },
@@ -342,10 +344,10 @@ private fun Success(
                 // Appearance
                 shape = EblanShapes.last,
                 // Callbacks
-                onCheckedChange = {
+                onCheckedChange = { currentBlurBehind ->
                     onUpdateAppDrawerSettings(
                         appDrawerSettings.copy(
-                            blurBehind = it,
+                            blurBehind = currentBlurBehind,
                         ),
                     )
                 },
@@ -358,10 +360,10 @@ private fun Success(
             // Content
             title = stringResource(com.eblan.launcher.ui.R.string.grid_item),
             // Actions
-            onUpdateGridItemSettings = {
+            onUpdateGridItemSettings = { currentGridItemSettings ->
                 onUpdateAppDrawerSettings(
                     appDrawerSettings.copy(
-                        gridItemSettings = it,
+                        gridItemSettings = currentGridItemSettings,
                     ),
                 )
             },
@@ -431,11 +433,11 @@ private fun Success(
             onDismissRequest = {
                 showBackgroundColorPickerDialog = false
             },
-            onSelectColor = {
+            onSelectColor = { currentCustomBackgroundColor ->
                 onUpdateAppDrawerSettings(
                     appDrawerSettings.copy(
                         backgroundColor = BackgroundColor.Custom,
-                        customBackgroundColor = it,
+                        customBackgroundColor = currentCustomBackgroundColor,
                     ),
                 )
             },

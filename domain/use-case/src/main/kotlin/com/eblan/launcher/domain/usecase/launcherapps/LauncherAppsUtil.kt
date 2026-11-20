@@ -72,13 +72,14 @@ internal suspend fun updateApplicationInfoGridItems(
     val applicationInfoGridItems =
         applicationInfoGridItemRepository.getApplicationInfoGridItems()
 
-    applicationInfoGridItems.filterNot {
-        it.override
+    applicationInfoGridItems.filterNot { currentApplicationInfoGridItem ->
+        currentApplicationInfoGridItem.override
     }.forEach { applicationInfoGridItem ->
         currentCoroutineContext().ensureActive()
 
-        val eblanApplicationInfo = eblanApplicationInfos.find {
-            it.serialNumber == applicationInfoGridItem.serialNumber && it.componentName == applicationInfoGridItem.componentName
+        val eblanApplicationInfo = eblanApplicationInfos.find { currentEblanApplicationInfo ->
+            currentEblanApplicationInfo.serialNumber == applicationInfoGridItem.serialNumber &&
+                currentEblanApplicationInfo.componentName == applicationInfoGridItem.componentName
         }
 
         if (eblanApplicationInfo != null) {
@@ -124,13 +125,14 @@ internal suspend fun updateShortcutInfoGridItems(
     val shortcutInfoGridItems = shortcutInfoGridItemRepository.getShortcutInfoGridItems()
 
     if (eblanShortcutInfos != null) {
-        shortcutInfoGridItems.filterNot {
-            it.override
+        shortcutInfoGridItems.filterNot { currentShortcutInfoGridItem ->
+            currentShortcutInfoGridItem.override
         }.forEach { shortcutInfoGridItem ->
             currentCoroutineContext().ensureActive()
 
-            val eblanShortcutInfo = eblanShortcutInfos.find {
-                it.serialNumber == shortcutInfoGridItem.serialNumber && it.shortcutId == shortcutInfoGridItem.shortcutId
+            val eblanShortcutInfo = eblanShortcutInfos.find { currentEblanShortcutInfo ->
+                currentEblanShortcutInfo.serialNumber == shortcutInfoGridItem.serialNumber &&
+                    currentEblanShortcutInfo.shortcutId == shortcutInfoGridItem.shortcutId
             }
 
             if (eblanShortcutInfo != null) {
@@ -179,13 +181,14 @@ internal suspend fun updateShortcutConfigGridItems(
 
     val shortcutConfigGridItems = shortcutConfigGridItemRepository.getShortcutConfigGridItems()
 
-    shortcutConfigGridItems.filterNot {
-        it.override
+    shortcutConfigGridItems.filterNot { currentShortcutConfigGridItem ->
+        currentShortcutConfigGridItem.override
     }.forEach { shortcutConfigGridItem ->
         currentCoroutineContext().ensureActive()
 
-        val eblanShortcutConfig = eblanShortcutConfigs.find {
-            it.serialNumber == shortcutConfigGridItem.serialNumber && it.componentName == shortcutConfigGridItem.componentName
+        val eblanShortcutConfig = eblanShortcutConfigs.find { currentEblanShortcutConfig ->
+            currentEblanShortcutConfig.serialNumber == shortcutConfigGridItem.serialNumber &&
+                currentEblanShortcutConfig.componentName == shortcutConfigGridItem.componentName
         }
 
         if (eblanShortcutConfig != null) {
@@ -243,8 +246,9 @@ internal suspend fun updateWidgetGridItems(
     widgetGridItems.forEach { widgetGridItem ->
         currentCoroutineContext().ensureActive()
 
-        val eblanAppWidgetProviderInfo = eblanAppWidgetProviderInfos.find {
-            it.serialNumber == widgetGridItem.serialNumber && it.componentName == widgetGridItem.componentName
+        val eblanAppWidgetProviderInfo = eblanAppWidgetProviderInfos.find { currentEblanAppWidgetProviderInfo ->
+            currentEblanAppWidgetProviderInfo.serialNumber == widgetGridItem.serialNumber &&
+                currentEblanAppWidgetProviderInfo.componentName == widgetGridItem.componentName
         }
 
         if (eblanAppWidgetProviderInfo != null &&
@@ -258,14 +262,15 @@ internal suspend fun updateWidgetGridItems(
         }
     }
 
-    widgetGridItems.filterNot {
-        it.override
+    widgetGridItems.filterNot { currentWidgetGridItem ->
+        currentWidgetGridItem.override
     }.forEach { widgetGridItem ->
         currentCoroutineContext().ensureActive()
 
         val eblanAppWidgetProviderInfo =
-            eblanAppWidgetProviderInfos.find {
-                it.serialNumber == widgetGridItem.serialNumber && it.componentName == widgetGridItem.componentName
+            eblanAppWidgetProviderInfos.find { currentEblanAppWidgetProviderInfo ->
+                currentEblanAppWidgetProviderInfo.serialNumber == widgetGridItem.serialNumber &&
+                    currentEblanAppWidgetProviderInfo.componentName == widgetGridItem.componentName
             }
 
         if (eblanAppWidgetProviderInfo != null) {
@@ -380,7 +385,7 @@ internal inline fun <T, K> Iterable<T>.differenceByIdentity(
 ): List<T> {
     val otherIdentities = other.mapTo(mutableSetOf(), identity)
 
-    return filterNot { identity(it) in otherIdentities }
+    return filterNot { currentItem -> identity(currentItem) in otherIdentities }
 }
 
 /** Converts synchronization data into the smaller record used to delete an application. */
@@ -447,8 +452,8 @@ internal suspend fun addNewApplicationToHomeScreen(
     folderGridItemRepository: FolderGridItemRepository,
     folderSettings: FolderSettings,
 ) {
-    val alreadyOnHome = gridItems.any {
-        when (val data = it.data) {
+    val alreadyOnHome = gridItems.any { currentGridItem ->
+        when (val data = currentGridItem.data) {
             is GridItemData.ApplicationInfo ->
                 data.serialNumber == 0L &&
                     data.componentName == componentName
@@ -463,7 +468,7 @@ internal suspend fun addNewApplicationToHomeScreen(
 
                 val folderGridItems = getRecursiveFolderGridItems(
                     folderPopupGridItems = previewFolderGridItems,
-                    folderId = it.id,
+                    folderId = currentGridItem.id,
                 )
 
                 folderGridItems.any { folderGridItem ->

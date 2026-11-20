@@ -62,8 +62,8 @@ internal fun EditTextSizeDialog(
 
         TextField(
             value = currentTextSize,
-            onValueChange = {
-                currentTextSize = it
+            onValueChange = { currentTextSizeString ->
+                currentTextSize = currentTextSizeString
                 isErrorTextSize = false
             },
             modifier = Modifier.fillMaxWidth(),

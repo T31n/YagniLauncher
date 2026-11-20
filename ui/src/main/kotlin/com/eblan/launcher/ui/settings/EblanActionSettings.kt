@@ -118,8 +118,8 @@ fun EblanActionSettings(
             eblanAction = doubleTap,
             eblanApplicationInfos = eblanApplicationInfos,
             // Callbacks
-            onSelectEblanAction = {
-                onUpdateDoubleTap(it)
+            onSelectEblanAction = { currentDoubleTapEblanAction ->
+                onUpdateDoubleTap(currentDoubleTapEblanAction)
 
                 showDoubleTapDialog = false
             },
@@ -136,8 +136,8 @@ fun EblanActionSettings(
             eblanAction = swipeUp,
             eblanApplicationInfos = eblanApplicationInfos,
             // Callbacks
-            onSelectEblanAction = {
-                onUpdateSwipeUp(it)
+            onSelectEblanAction = { currentSwipeUpEblanAction ->
+                onUpdateSwipeUp(currentSwipeUpEblanAction)
 
                 showSwipeUpDialog = false
             },
@@ -154,8 +154,8 @@ fun EblanActionSettings(
             eblanAction = swipeDown,
             eblanApplicationInfos = eblanApplicationInfos,
             // Callbacks
-            onSelectEblanAction = {
-                onUpdateSwipeDown(it)
+            onSelectEblanAction = { currentSwipeDownEblanAction ->
+                onUpdateSwipeDown(currentSwipeDownEblanAction)
 
                 showSwipeDownDialog = false
             },

@@ -83,8 +83,8 @@ fun EditCustomLabelDialog(
 
         TextField(
             value = currentCustomLabel,
-            onValueChange = {
-                currentCustomLabel = it
+            onValueChange = { currentCustomLabelString ->
+                currentCustomLabel = currentCustomLabelString
                 isErrorCustomLabel = false
             },
             modifier = Modifier.fillMaxWidth(),

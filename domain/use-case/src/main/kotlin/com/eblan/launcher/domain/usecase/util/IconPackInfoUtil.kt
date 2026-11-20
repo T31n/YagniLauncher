@@ -33,13 +33,13 @@ internal suspend fun cacheIconPackFile(
     componentName: String,
     generalSettings: GeneralSettings,
 ) {
-    appFilter.find {
-        componentName == it.componentName.removePrefix("ComponentInfo{")
+    appFilter.find { currentIconPackComponent ->
+        componentName == currentIconPackComponent.componentName.removePrefix("ComponentInfo{")
             .removeSuffix("}")
-    }?.let {
+    }?.let { currentIconPackComponent ->
         iconPackManager.createIconPackPath(
             packageName = iconPackPackageName,
-            drawableName = it.drawableName,
+            drawableName = currentIconPackComponent.drawableName,
             file = file,
             iconTint = generalSettings.iconTint,
             colorSource = generalSettings.colorSource,
@@ -75,10 +75,10 @@ internal suspend fun getIconPackFilePaths(
         iconPackPackageName,
     )
 
-    return componentNames.associateWith {
+    return componentNames.associateWith { currentComponentName ->
         val iconPackInfoFile = File(
             iconPackDirectory,
-            iconKeyGenerator.getHashedName(name = it),
+            iconKeyGenerator.getHashedName(name = currentComponentName),
         )
 
         iconPackInfoFile
