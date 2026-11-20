@@ -752,18 +752,8 @@ internal class PagerScreenState(
         }
     }
 
-    fun openAppWidgetScreen(
-        value: EblanApplicationInfoGroup,
-        onResetFolderGridItemPopupEntries: () -> Unit,
-        onResetFolderEblanApplicationInfoPopupEntries: () -> Unit,
-    ) {
+    fun openAppWidgetScreen(value: EblanApplicationInfoGroup) {
         scope.launch {
-            onResetFolderGridItemPopupEntries()
-
-            onResetFolderEblanApplicationInfoPopupEntries()
-
-            dismissApplicationScreen()
-
             eblanApplicationInfoGroup = value
 
             appWidgetScreenSwipeY.animateTo(
@@ -1279,6 +1269,8 @@ internal class PagerScreenState(
         onUpdateGridItemSource: (GridItemSource) -> Unit,
         onUpdateIsVisibleOverlay: (Boolean) -> Unit,
         onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
+        onResetFolderGridItemPopupEntries: () -> Unit,
+        onResetFolderEblanApplicationInfoPopupEntries: () -> Unit,
     ) {
         onUpdateGridItemSource(GridItemSource.New)
 
@@ -1300,7 +1292,29 @@ internal class PagerScreenState(
 
         isDragging = true
 
-        dismissAppWidgetScreen()
+        eblanApplicationInfoGroup = null
+
+        if (isVisibleFolderGridItems) {
+            isVisibleFolderGridItems = false
+
+            onResetFolderGridItemPopupEntries()
+        }
+
+        if (isVisibleFolderEblanApplicationInfos) {
+            isVisibleFolderEblanApplicationInfos = false
+
+            onResetFolderEblanApplicationInfoPopupEntries()
+        }
+
+        if (showApplicationScreen) {
+            showApplicationScreen = false
+        }
+
+        scope.launch(start = CoroutineStart.UNDISPATCHED) {
+            swipeUpY.snapTo(screenHeight.toFloat())
+            swipeDownY.snapTo(screenHeight.toFloat())
+            appWidgetScreenSwipeY.snapTo(screenHeight.toFloat())
+        }
 
         onUpdateIsVisibleOverlay(true)
     }

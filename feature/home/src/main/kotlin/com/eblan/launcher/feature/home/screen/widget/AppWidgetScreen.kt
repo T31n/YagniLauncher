@@ -19,6 +19,7 @@ package com.eblan.launcher.feature.home.screen.widget
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -53,6 +54,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.layer.GraphicsLayer
 import androidx.compose.ui.graphics.layer.drawLayer
@@ -62,7 +64,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
@@ -75,7 +79,6 @@ import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
 import com.eblan.launcher.feature.home.component.HomeHandler
-import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -99,12 +102,10 @@ internal fun AppWidgetScreen(
     // Interaction
     swipeY: Float,
     isVisibleOverlay: Boolean,
-    drag: Drag,
     // Callbacks
     onDismiss: () -> Unit,
     onVerticalDrag: (Float) -> Unit,
     onDragEnd: () -> Unit,
-    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onDragAppWidget: (
         gridItem: GridItem,
         imageBitmap: ImageBitmap,
@@ -117,13 +118,15 @@ internal fun AppWidgetScreen(
 
     val layoutDirection = LocalLayoutDirection.current
 
-    LaunchedEffect(
-        key1 = isVisibleOverlay,
-        key2 = drag,
-    ) {
-        if (isVisibleOverlay && (drag == Drag.Cancel || drag == Drag.End)) {
-            onUpdateIsVisibleOverlay(false)
-        }
+    val focusManager = LocalFocusManager.current
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    val scrimAlpha = (1f - (swipeY / screenHeight.toFloat())).coerceIn(0f, 1f) * 0.32f
+
+    LaunchedEffect(key1 = eblanApplicationInfoGroup) {
+        focusManager.clearFocus()
+        keyboardController?.hide()
     }
 
     BackHandler(enabled = swipeY < screenHeight.toFloat()) {
@@ -137,25 +140,35 @@ internal fun AppWidgetScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .offset {
-                IntOffset(x = 0, y = swipeY.roundToInt())
-            }
-            .pointerInput(key1 = Unit) {
-                detectTapGestures(
-                    onTap = {
-                        onDismiss()
-                    },
-                )
+            .background(Color.Black.copy(alpha = scrimAlpha))
+            .run {
+                if (!isVisibleOverlay) {
+                    pointerInput(key1 = Unit) {
+                        detectTapGestures(
+                            onTap = {
+                                onDismiss()
+                            },
+                        )
+                    }
+                } else {
+                    this
+                }
             },
         contentAlignment = Alignment.BottomCenter,
     ) {
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
+                .offset {
+                    IntOffset(x = 0, y = swipeY.roundToInt())
+                }
                 .padding(
                     top = paddingValues.calculateTopPadding(),
                 )
-                .clip(MaterialTheme.shapes.large),
+                .clip(MaterialTheme.shapes.large)
+                .pointerInput(key1 = Unit) {
+                    detectTapGestures {}
+                },
         ) {
             Column(
                 modifier = Modifier
@@ -258,29 +271,34 @@ private fun EblanAppWidgetScreenItem(
         modifier = modifier
             .size(200.dp)
             .padding(EblanSpacing.extraLarge)
-            .pointerInput(
-                key1 = isVisibleOverlay,
-                key2 = gridItemSettings,
-            ) {
-                detectTapGestures(
-                    onLongPress = {
-                        scope.launch {
-                            handleOnLongPressEblanAppWidgetScreenItem(
-                                // Widget Identification
-                                id = id,
-                                eblanAppWidgetProviderInfo = eblanAppWidgetProviderInfo,
-                                // Widget Settings and UI
-                                gridItemSettings = gridItemSettings,
-                                graphicsLayer = graphicsLayer,
-                                // Widget Positioning
-                                intOffset = intOffset,
-                                intSize = intSize,
-                                // Drag Callback
-                                onDragAppWidget = onDragAppWidget,
-                            )
-                        }
-                    },
-                )
+            .run {
+                if (!isVisibleOverlay) {
+                    pointerInput(
+                        key1 = gridItemSettings,
+                    ) {
+                        detectTapGestures(
+                            onLongPress = {
+                                scope.launch {
+                                    handleOnLongPressEblanAppWidgetScreenItem(
+                                        // Widget Identification
+                                        id = id,
+                                        eblanAppWidgetProviderInfo = eblanAppWidgetProviderInfo,
+                                        // Widget Settings and UI
+                                        gridItemSettings = gridItemSettings,
+                                        graphicsLayer = graphicsLayer,
+                                        // Widget Positioning
+                                        intOffset = intOffset,
+                                        intSize = intSize,
+                                        // Drag Callback
+                                        onDragAppWidget = onDragAppWidget,
+                                    )
+                                }
+                            },
+                        )
+                    }
+                } else {
+                    this
+                }
             },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
