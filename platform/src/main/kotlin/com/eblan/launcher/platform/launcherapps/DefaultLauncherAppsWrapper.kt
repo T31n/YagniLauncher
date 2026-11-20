@@ -25,7 +25,6 @@ import android.content.IntentSender
 import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
 import android.content.pm.LauncherUserInfo
-import android.content.pm.PackageManager
 import android.content.pm.ShortcutInfo
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
@@ -649,7 +648,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             packageName = applicationInfo.packageName,
             activityIcon = activityIcon,
             activityLabel = label.toString(),
-            lastUpdateTime = getLastUpdateTime(packageName = applicationInfo.packageName),
+            lastUpdateTime = getApkLastModified(),
             flags = applicationInfo.flags,
         )
     }
@@ -658,7 +657,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         serialNumber = androidUserManagerWrapper.getSerialNumberForUser(user),
         componentName = componentName.flattenToString(),
         packageName = applicationInfo.packageName,
-        lastUpdateTime = getLastUpdateTime(packageName = applicationInfo.packageName),
+        lastUpdateTime = getApkLastModified(),
     )
 
     private suspend fun ShortcutInfo.toLauncherAppsShortcutInfo(): LauncherAppsShortcutInfo {
@@ -721,12 +720,12 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         shortcutId = id,
         packageName = `package`,
         serialNumber = androidUserManagerWrapper.getSerialNumberForUser(userHandle),
-        lastChangedTimestamp = getLastUpdateTime(packageName = `package`),
+        lastChangedTimestamp = lastChangedTimestamp,
     )
 
-    private fun getLastUpdateTime(packageName: String): Long = try {
-        packageManager.getPackageInfo(packageName, 0).lastUpdateTime
-    } catch (_: PackageManager.NameNotFoundException) {
+    private fun LauncherActivityInfo.getApkLastModified(): Long = try {
+        applicationInfo.sourceDir?.let { File(it).lastModified() } ?: 0L
+    } catch (_: SecurityException) {
         0L
     }
 
