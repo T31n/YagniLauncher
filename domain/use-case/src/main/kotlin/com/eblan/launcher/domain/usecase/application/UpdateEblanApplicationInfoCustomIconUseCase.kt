@@ -62,4 +62,29 @@ class UpdateEblanApplicationInfoCustomIconUseCase @Inject constructor(
             ),
         )
     }
+
+    /**
+     * Saves [byteArray] and updates the application record with its new icon path.
+     *
+     * If writing fails, no repository update is made.
+     *
+     * @param eblanApplicationInfo The application whose icon should be replaced.
+     * @param byteArray The encoded bytes of the replacement image.
+     */
+    suspend operator fun invoke(
+        eblanApplicationInfo: EblanApplicationInfo,
+        byteArray: ByteArray,
+    ) = withContext(ioDispatcher) {
+        val customIcon = getCustomIcon(
+            fileManager = fileManager,
+            iconKeyGenerator = iconKeyGenerator,
+            byteArray = byteArray,
+        ) ?: return@withContext
+
+        eblanApplicationInfoRepository.updateEblanApplicationInfo(
+            eblanApplicationInfo = eblanApplicationInfo.copy(
+                customIcon = customIcon,
+            ),
+        )
+    }
 }

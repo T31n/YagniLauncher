@@ -180,6 +180,7 @@ internal fun HomeRoute(
         onUpdateGridItemSource = viewModel::updateGridItemSource,
         onUpdateIsVisibleOverlay = viewModel::updateIsVisibleOverlay,
         onUpdateShortcutConfigIntoShortcutInfoGridItem = viewModel::updateShortcutConfigIntoShortcutInfoGridItem,
+        onUpdateShortcutConfigGridItem = viewModel::updateShortcutConfigGridItem,
         // Folder Management Callbacks
         onMoveFolderGridItem = viewModel::moveFolderGridItem,
         onMoveFolderGridItemOutsideFolder = viewModel::moveFolderGridItemOutsideFolder,
@@ -304,6 +305,12 @@ internal fun HomeScreen(
         moveGridItemResult: MoveGridItemResult,
         pinItemRequestType: PinItemRequestType.ShortcutInfo,
     ) -> Unit,
+    onUpdateShortcutConfigGridItem: (
+        moveGridItemResult: MoveGridItemResult,
+        shortcutIntentName: String?,
+        shortcutIntentIcon: ByteArray?,
+        shortcutIntentUri: String?,
+    ) -> Unit,
     // Folder Management Callbacks
     onMoveFolderGridItem: (
         folderPopup: FolderPopup,
@@ -423,6 +430,7 @@ internal fun HomeScreen(
                 onGetPinGridItem = onGetPinGridItem,
                 onResetPinGridItem = onResetPinGridItem,
                 onUpdateShortcutConfigIntoShortcutInfoGridItem = onUpdateShortcutConfigIntoShortcutInfoGridItem,
+                onUpdateShortcutConfigGridItem = onUpdateShortcutConfigGridItem,
                 // Resize Grid Item Actions
                 onResizeGridItem = onResizeGridItem,
                 onUpdateResizeGridItem = onUpdateResizeGridItem,
@@ -541,6 +549,12 @@ private fun Success(
     onUpdateShortcutConfigIntoShortcutInfoGridItem: (
         moveGridItemResult: MoveGridItemResult,
         pinItemRequestType: PinItemRequestType.ShortcutInfo,
+    ) -> Unit,
+    onUpdateShortcutConfigGridItem: (
+        moveGridItemResult: MoveGridItemResult,
+        shortcutIntentName: String?,
+        shortcutIntentIcon: ByteArray?,
+        shortcutIntentUri: String?,
     ) -> Unit,
     // Resize Grid Item Actions
     onResizeGridItem: (
@@ -723,6 +737,7 @@ private fun Success(
                     onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
                     onUpdateGridItemsAfterMoveNewFolder = onUpdateGridItemsAfterMoveNewFolder,
                     onUpdateShortcutConfigIntoShortcutInfoGridItem = onUpdateShortcutConfigIntoShortcutInfoGridItem,
+                    onUpdateShortcutConfigGridItem = onUpdateShortcutConfigGridItem,
                     // Callbacks - Folder Actions
                     onResetGridAfterMoveFolder = onResetGridAfterMoveFolder,
                     onUpsertFolderGridItemPopupEntry = onUpsertFolderGridItemPopupEntry,

@@ -152,7 +152,6 @@ import com.eblan.launcher.platform.service.EblanNotificationListenerService
 import com.eblan.launcher.platform.usermanager.AndroidUserManagerWrapper
 import com.eblan.launcher.ui.local.LocalAppWidgetHost
 import com.eblan.launcher.ui.local.LocalAppWidgetManager
-import com.eblan.launcher.ui.local.LocalFileManager
 import com.eblan.launcher.ui.local.LocalImageSerializer
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import com.eblan.launcher.ui.local.LocalPinItemRequest
@@ -247,6 +246,12 @@ internal fun PagerScreen(
         moveGridItemResult: MoveGridItemResult,
         pinItemRequestType: PinItemRequestType.ShortcutInfo,
     ) -> Unit,
+    onUpdateShortcutConfigGridItem: (
+        moveGridItemResult: MoveGridItemResult,
+        shortcutIntentName: String?,
+        shortcutIntentIcon: ByteArray?,
+        shortcutIntentUri: String?,
+    ) -> Unit,
     // Callbacks - Folder Actions
     onResetGridAfterMoveFolder: () -> Unit,
     onUpsertFolderGridItemPopupEntry: (FolderEntry) -> Unit,
@@ -331,7 +336,6 @@ internal fun PagerScreen(
     val androidUserManagerWrapper = LocalUserManager.current
     val androidImageSerializer = LocalImageSerializer.current
     val androidAppWidgetManagerWrapper = LocalAppWidgetManager.current
-    val fileManager = LocalFileManager.current
     val androidAppWidgetHostWrapper = LocalAppWidgetHost.current
 
     val scope = rememberCoroutineScope()
@@ -433,12 +437,10 @@ internal fun PagerScreen(
                 result = it,
                 moveGridItemResult = currentMoveGridItemResult.value,
                 // Dependencies
-                fileManager = fileManager,
                 androidImageSerializer = androidImageSerializer,
                 // Callbacks
                 onDeleteGridItem = onResetGridAfterDeleteGridItem,
-                onUpdateGridItemsAfterMove = onUpdateGridItemsAfterMove,
-                onResetGrid = onResetGrid,
+                onUpdateShortcutConfigGridItem = onUpdateShortcutConfigGridItem,
             )
         }
     }

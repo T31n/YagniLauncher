@@ -33,8 +33,52 @@ sealed interface PinItemRequestType {
         val maxResizeHeight: Int,
         val targetCellHeight: Int,
         val targetCellWidth: Int,
-        val preview: String?,
-    ) : PinItemRequestType
+        val preview: ByteArray?,
+    ) : PinItemRequestType {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+
+            other as Widget
+
+            if (appWidgetId != other.appWidgetId) return false
+            if (serialNumber != other.serialNumber) return false
+            if (minWidth != other.minWidth) return false
+            if (minHeight != other.minHeight) return false
+            if (resizeMode != other.resizeMode) return false
+            if (minResizeWidth != other.minResizeWidth) return false
+            if (minResizeHeight != other.minResizeHeight) return false
+            if (maxResizeWidth != other.maxResizeWidth) return false
+            if (maxResizeHeight != other.maxResizeHeight) return false
+            if (targetCellHeight != other.targetCellHeight) return false
+            if (targetCellWidth != other.targetCellWidth) return false
+            if (componentName != other.componentName) return false
+            if (packageName != other.packageName) return false
+            if (configure != other.configure) return false
+            if (!preview.contentEquals(other.preview)) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = appWidgetId
+            result = 31 * result + serialNumber.hashCode()
+            result = 31 * result + minWidth
+            result = 31 * result + minHeight
+            result = 31 * result + resizeMode
+            result = 31 * result + minResizeWidth
+            result = 31 * result + minResizeHeight
+            result = 31 * result + maxResizeWidth
+            result = 31 * result + maxResizeHeight
+            result = 31 * result + targetCellHeight
+            result = 31 * result + targetCellWidth
+            result = 31 * result + componentName.hashCode()
+            result = 31 * result + packageName.hashCode()
+            result = 31 * result + (configure?.hashCode() ?: 0)
+            result = 31 * result + (preview?.contentHashCode() ?: 0)
+            return result
+        }
+    }
 
     data class ShortcutInfo(
         val serialNumber: Long,

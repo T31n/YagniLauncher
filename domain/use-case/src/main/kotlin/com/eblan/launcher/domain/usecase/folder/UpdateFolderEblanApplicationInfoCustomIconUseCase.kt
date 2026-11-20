@@ -62,4 +62,29 @@ class UpdateFolderEblanApplicationInfoCustomIconUseCase @Inject constructor(
             ),
         )
     }
+
+    /**
+     * Saves [byteArray] and persists the folder with the new icon path.
+     *
+     * If writing fails, no repository update is made.
+     *
+     * @param folderEblanApplicationInfo The folder whose icon should be replaced.
+     * @param byteArray The encoded bytes of the replacement image.
+     */
+    suspend operator fun invoke(
+        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        byteArray: ByteArray,
+    ) = withContext(ioDispatcher) {
+        val icon = getCustomIcon(
+            fileManager = fileManager,
+            iconKeyGenerator = iconKeyGenerator,
+            byteArray = byteArray,
+        ) ?: return@withContext
+
+        folderEblanApplicationInfoRepository.upsertFolderEblanApplicationInfo(
+            folderEblanApplicationInfo = folderEblanApplicationInfo.copy(
+                icon = icon,
+            ),
+        )
+    }
 }

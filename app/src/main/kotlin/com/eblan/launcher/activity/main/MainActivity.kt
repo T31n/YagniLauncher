@@ -34,8 +34,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.eblan.launcher.activity.settings.SettingsActivity
-import com.eblan.launcher.domain.platform.FileManager
-import com.eblan.launcher.domain.platform.IconKeyGenerator
 import com.eblan.launcher.model.ApplicationTheme
 import com.eblan.launcher.navigation.MainNavHost
 import com.eblan.launcher.platform.accessibilitymanager.AndroidAccessibilityManagerWrapper
@@ -55,8 +53,6 @@ import com.eblan.launcher.platform.widgetmanager.AndroidAppWidgetManagerWrapper
 import com.eblan.launcher.ui.local.LocalAccessibilityManager
 import com.eblan.launcher.ui.local.LocalAppWidgetHost
 import com.eblan.launcher.ui.local.LocalAppWidgetManager
-import com.eblan.launcher.ui.local.LocalFileManager
-import com.eblan.launcher.ui.local.LocalIconKeyGenerator
 import com.eblan.launcher.ui.local.LocalIconPackManager
 import com.eblan.launcher.ui.local.LocalImageSerializer
 import com.eblan.launcher.ui.local.LocalLauncherApps
@@ -113,13 +109,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var androidIconPackManager: AndroidIconPackManager
 
     @Inject
-    lateinit var fileManager: FileManager
-
-    @Inject
     lateinit var androidAccessibilityManagerWrapper: AndroidAccessibilityManagerWrapper
-
-    @Inject
-    lateinit var iconKeyGenerator: IconKeyGenerator
 
     @Inject
     lateinit var androidStatusBarManagerWrapper: AndroidStatusBarManagerWrapper
@@ -145,9 +135,7 @@ class MainActivity : AppCompatActivity() {
                 LocalUserManager provides androidUserManagerWrapper,
                 LocalSettings provides androidSettingsWrapper,
                 LocalIconPackManager provides androidIconPackManager,
-                LocalFileManager provides fileManager,
                 LocalAccessibilityManager provides androidAccessibilityManagerWrapper,
-                LocalIconKeyGenerator provides iconKeyGenerator,
                 LocalStatusBarManager provides androidStatusBarManagerWrapper,
             ) {
                 val generalSettings by viewModel.generalSettingsFlow.collectAsStateWithLifecycle(

@@ -37,4 +37,9 @@ interface AndroidAppWidgetManagerWrapper {
     ): Boolean
 
     fun updateAppWidgetOptions(appWidgetId: Int, options: Bundle)
+
+    suspend fun loadPreviewImageByteArray(
+        appWidgetProviderInfo: AppWidgetProviderInfo,
+        density: Int = 0,
+    ): ByteArray?
 }

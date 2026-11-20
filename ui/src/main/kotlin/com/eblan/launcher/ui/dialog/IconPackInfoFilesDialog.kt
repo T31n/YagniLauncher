@@ -53,9 +53,6 @@ import com.eblan.launcher.designsystem.component.EblanDialog
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
-import com.eblan.launcher.domain.platform.FileManager
-import com.eblan.launcher.ui.local.LocalFileManager
-import com.eblan.launcher.ui.local.LocalIconKeyGenerator
 import com.eblan.launcher.ui.local.LocalIconPackManager
 import com.eblan.launcher.ui.local.LocalImageSerializer
 import kotlinx.coroutines.FlowPreview
@@ -63,7 +60,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import java.io.File
 import kotlin.time.Duration.Companion.milliseconds
 import com.eblan.launcher.common.R as commonR
 
@@ -74,12 +70,11 @@ fun IconPackInfoFilesDialog(
     iconPackComponents: List<IconPackComponent>,
     iconPackPackageName: String?,
     iconPackInfoLabel: String?,
-    iconName: String,
     // Modifier
     modifier: Modifier = Modifier,
     // Callbacks
     onDismissRequest: () -> Unit,
-    onUpdateIcon: (String?) -> Unit,
+    onUpdateIcon: (ByteArray) -> Unit,
     onSearchIconPackInfoComponent: (String) -> Unit,
 ) {
     requireNotNull(iconPackPackageName)
@@ -87,13 +82,9 @@ fun IconPackInfoFilesDialog(
     requireNotNull(iconPackInfoLabel)
     val scope = rememberCoroutineScope()
 
-    val byteArray = LocalImageSerializer.current
-
-    val fileManager = LocalFileManager.current
+    val imageSerializer = LocalImageSerializer.current
 
     val iconPackManager = LocalIconPackManager.current
-
-    val iconKeyGenerator = LocalIconKeyGenerator.current
 
     val searchBarState = rememberSearchBarState()
 
@@ -173,21 +164,9 @@ fun IconPackInfoFilesDialog(
                                 .clickable {
                                     scope.launch {
                                         val icon = drawable?.let { currentDrawable ->
-                                            val directory = fileManager.getFilesDirectory(
-                                                FileManager.CUSTOM_ICONS_DIR,
-                                            )
-
-                                            val file = File(
-                                                directory,
-                                                iconKeyGenerator.getHashedName(name = iconName),
-                                            )
-
-                                            byteArray.createDrawablePath(
+                                            imageSerializer.createByteArray(
                                                 drawable = currentDrawable,
-                                                file = file,
                                             )
-
-                                            file.absolutePath
                                         }
 
                                         if (icon != null) {

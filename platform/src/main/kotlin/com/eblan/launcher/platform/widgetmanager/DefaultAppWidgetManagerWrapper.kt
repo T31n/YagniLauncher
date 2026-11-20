@@ -89,6 +89,15 @@ internal class DefaultAppWidgetManagerWrapper @Inject constructor(
         appWidgetManager.updateAppWidgetOptions(appWidgetId, options)
     }
 
+    override suspend fun loadPreviewImageByteArray(
+        appWidgetProviderInfo: AppWidgetProviderInfo,
+        density: Int,
+    ): ByteArray? = withContext(ioDispatcher) {
+        appWidgetProviderInfo.loadPreviewImage(context, density)?.let { drawable ->
+            imageSerializer.createByteArray(drawable = drawable)
+        }
+    }
+
     private suspend fun AppWidgetProviderInfo.toEblanAppWidgetProviderInfo(): AppWidgetManagerAppWidgetProviderInfo {
         val serialNumber = androidUserManagerWrapper.getSerialNumberForUser(userHandle = profile)
 

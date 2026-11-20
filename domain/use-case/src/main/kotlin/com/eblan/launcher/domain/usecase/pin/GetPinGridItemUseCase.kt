@@ -79,6 +79,19 @@ class GetPinGridItemUseCase @Inject constructor(
                             file.absolutePath
                         }
 
+                val preview = pinItemRequestType.preview?.let { byteArray ->
+                    val directory = fileManager.getFilesDirectory(FileManager.WIDGETS_DIR)
+
+                    fileManager.updateAndGetFilePath(
+                        directory = directory,
+                        name = iconKeyGenerator.getWidgetPreviewKey(
+                            serialNumber = pinItemRequestType.serialNumber,
+                            componentName = pinItemRequestType.componentName,
+                        ),
+                        byteArray = byteArray,
+                    )
+                }
+
                 val data = Widget(
                     appWidgetId = 0,
                     componentName = pinItemRequestType.componentName,
@@ -94,7 +107,7 @@ class GetPinGridItemUseCase @Inject constructor(
                     maxResizeHeight = pinItemRequestType.maxResizeHeight,
                     targetCellHeight = pinItemRequestType.targetCellHeight,
                     targetCellWidth = pinItemRequestType.targetCellWidth,
-                    preview = pinItemRequestType.preview,
+                    preview = preview,
                     label = packageManagerWrapper.getApplicationLabel(
                         packageName = pinItemRequestType.packageName,
                         serialNumber = pinItemRequestType.serialNumber,

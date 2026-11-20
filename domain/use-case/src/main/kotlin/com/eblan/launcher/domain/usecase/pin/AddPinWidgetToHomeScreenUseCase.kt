@@ -70,7 +70,7 @@ class AddPinWidgetToHomeScreenUseCase @Inject constructor(
      * @param maxResizeHeight The maximum resizable height in pixels.
      * @param rootWidth The home-grid root width in pixels.
      * @param rootHeight The home-grid root height in pixels.
-     * @param preview The optional cached widget preview path.
+     * @param preview The optional widget preview image bytes.
      * @return The inserted grid item, or `null` if no region is available.
      */
     suspend operator fun invoke(
@@ -89,7 +89,7 @@ class AddPinWidgetToHomeScreenUseCase @Inject constructor(
         maxResizeHeight: Int,
         rootWidth: Int,
         rootHeight: Int,
-        preview: String?,
+        preview: ByteArray?,
     ): GridItem? = withContext(ioDispatcher) {
         val homeSettings = userDataRepository.userDataFlow.first().homeSettings
 
@@ -166,7 +166,7 @@ class AddPinWidgetToHomeScreenUseCase @Inject constructor(
             maxResizeHeight = maxResizeHeight,
             targetCellHeight = targetCellHeight,
             targetCellWidth = targetCellWidth,
-            preview = preview,
+            preview = null,
             label = packageManagerWrapper.getApplicationLabel(
                 packageName = packageName,
                 serialNumber = serialNumber,
@@ -209,9 +209,28 @@ class AddPinWidgetToHomeScreenUseCase @Inject constructor(
         )
 
         if (newGridItem != null) {
-            gridRepository.insertGridItem(gridItem = newGridItem)
-        }
+            val previewPath = preview?.let { byteArray ->
+                val directory = fileManager.getFilesDirectory(FileManager.WIDGETS_DIR)
 
-        newGridItem
+                fileManager.updateAndGetFilePath(
+                    directory = directory,
+                    name = iconKeyGenerator.getWidgetPreviewKey(
+                        serialNumber = serialNumber,
+                        componentName = componentName,
+                    ),
+                    byteArray = byteArray,
+                )
+            }
+
+            val updatedGridItem = newGridItem.copy(
+                data = data.copy(preview = previewPath),
+            )
+
+            gridRepository.insertGridItem(gridItem = updatedGridItem)
+
+            updatedGridItem
+        } else {
+            null
+        }
     }
 }

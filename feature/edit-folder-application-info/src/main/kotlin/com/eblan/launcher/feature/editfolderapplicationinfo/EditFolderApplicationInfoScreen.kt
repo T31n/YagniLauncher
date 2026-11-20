@@ -87,6 +87,7 @@ internal fun EditFolderApplicationInfoRoute(
         onNavigateUp = onNavigateUp,
         onUpdateIconPackPackageName = viewModel::updateIconPackPackageName,
         onUpdateFolderEblanApplicationInfoCustomIcon = viewModel::updateFolderEblanApplicationInfoCustomIcon,
+        onUpdateFolderEblanApplicationInfoCustomIconByteArray = viewModel::updateFolderEblanApplicationInfoCustomIconByteArray,
         onResetIconPackPackageName = viewModel::resetIconPackPackageName,
         onSearchIconPackInfoComponent = viewModel::searchIconPackInfoComponent,
         onUpdateFolderEblanApplicationInfo = viewModel::updateFolderEblanApplicationInfo,
@@ -111,6 +112,10 @@ internal fun EditFolderApplicationInfoScreen(
     onUpdateFolderEblanApplicationInfoCustomIcon: (
         folderEblanApplicationInfo: FolderEblanApplicationInfo,
         uri: String,
+    ) -> Unit,
+    onUpdateFolderEblanApplicationInfoCustomIconByteArray: (
+        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        byteArray: ByteArray,
     ) -> Unit,
     onResetIconPackPackageName: () -> Unit,
     onSearchIconPackInfoComponent: (String) -> Unit,
@@ -156,6 +161,7 @@ internal fun EditFolderApplicationInfoScreen(
                     // Callbacks
                     onUpdateIconPackPackageName = onUpdateIconPackPackageName,
                     onUpdateFolderEblanApplicationInfoCustomIcon = onUpdateFolderEblanApplicationInfoCustomIcon,
+                    onUpdateFolderEblanApplicationInfoCustomIconByteArray = onUpdateFolderEblanApplicationInfoCustomIconByteArray,
                     onResetIconPackPackageName = onResetIconPackPackageName,
                     onSearchIconPackInfoComponent = onSearchIconPackInfoComponent,
                     onUpdateFolderEblanApplicationInfo = onUpdateFolderEblanApplicationInfo,
@@ -182,6 +188,10 @@ internal fun Success(
     onUpdateFolderEblanApplicationInfoCustomIcon: (
         folderEblanApplicationInfo: FolderEblanApplicationInfo,
         uri: String,
+    ) -> Unit,
+    onUpdateFolderEblanApplicationInfoCustomIconByteArray: (
+        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        byteArray: ByteArray,
     ) -> Unit,
     onResetIconPackPackageName: () -> Unit,
     onSearchIconPackInfoComponent: (String) -> Unit,
@@ -255,7 +265,6 @@ internal fun Success(
                 iconPackComponents = iconPackComponents,
                 iconPackPackageName = iconPackPackageName,
                 iconPackInfoLabel = iconPackInfoLabel,
-                iconName = folderEblanApplicationInfo.id,
                 // Callbacks
                 onDismissRequest = {
                     onResetIconPackPackageName()
@@ -263,10 +272,9 @@ internal fun Success(
                     showCustomIconDialog = false
                 },
                 onUpdateIcon = {
-                    onUpdateFolderEblanApplicationInfo(
-                        folderEblanApplicationInfo.copy(
-                            icon = it,
-                        ),
+                    onUpdateFolderEblanApplicationInfoCustomIconByteArray(
+                        folderEblanApplicationInfo,
+                        it,
                     )
                 },
                 onSearchIconPackInfoComponent = onSearchIconPackInfoComponent,

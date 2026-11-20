@@ -65,23 +65,19 @@ import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
 import com.eblan.launcher.domain.model.userdata.GestureSettings
 import com.eblan.launcher.domain.model.userdata.HomeSettings
-import com.eblan.launcher.domain.platform.FileManager
-import com.eblan.launcher.domain.platform.IconKeyGenerator
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.GridItemSource
 import com.eblan.launcher.feature.home.model.PageDirection
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.calculatePage
 import com.eblan.launcher.feature.home.util.handleEblanAction
-import com.eblan.launcher.platform.imageserializer.AndroidImageSerializer
 import com.eblan.launcher.platform.launcherapps.AndroidLauncherAppsWrapper
 import com.eblan.launcher.platform.launcherapps.PinItemRequestWrapper
 import com.eblan.launcher.platform.statusbarmanager.AndroidStatusBarManagerWrapper
 import com.eblan.launcher.platform.usermanager.AndroidUserManagerWrapper
 import com.eblan.launcher.platform.wallpapermanager.AndroidWallpaperManagerWrapper
-import com.eblan.launcher.ui.local.LocalFileManager
-import com.eblan.launcher.ui.local.LocalIconKeyGenerator
-import com.eblan.launcher.ui.local.LocalImageSerializer
+import com.eblan.launcher.platform.widgetmanager.AndroidAppWidgetManagerWrapper
+import com.eblan.launcher.ui.local.LocalAppWidgetManager
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import com.eblan.launcher.ui.local.LocalPinItemRequest
 import com.eblan.launcher.ui.local.LocalStatusBarManager
@@ -95,7 +91,6 @@ import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
-import java.io.File
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
@@ -106,8 +101,7 @@ import kotlin.math.roundToInt
 internal class PagerScreenState(
     density: Density,
     private val screenHeight: Int,
-    private val fileManager: FileManager,
-    private val androidImageSerializer: AndroidImageSerializer,
+    private val androidAppWidgetManagerWrapper: AndroidAppWidgetManagerWrapper,
     private val androidLauncherAppsWrapper: AndroidLauncherAppsWrapper,
     private val androidStatusBarManagerWrapper: AndroidStatusBarManagerWrapper,
     private val scope: CoroutineScope,
@@ -117,7 +111,6 @@ internal class PagerScreenState(
     private val gestureSettings: GestureSettings,
     private val homeSettings: HomeSettings,
     private val androidWallpaperManagerWrapper: AndroidWallpaperManagerWrapper,
-    private val iconKeyGenerator: IconKeyGenerator,
     private val onGetPinGridItem: (PinItemRequestType) -> Unit,
     private val onResetPinGridItem: () -> Unit,
 ) {
@@ -840,24 +833,10 @@ internal class PagerScreenState(
             userHandle = appWidgetProviderInfo.profile,
         )
 
-        val preview = appWidgetProviderInfo.loadPreviewImage(context, 0)?.let {
-            val directory = fileManager.getFilesDirectory(FileManager.WIDGETS_DIR)
-
-            val file = File(
-                directory,
-                iconKeyGenerator.getWidgetPreviewKey(
-                    serialNumber = serialNumber,
-                    componentName = componentName,
-                ),
-            )
-
-            androidImageSerializer.createDrawablePath(
-                drawable = it,
-                file = file,
-            )
-
-            file.absolutePath
-        }
+        val preview = androidAppWidgetManagerWrapper.loadPreviewImageByteArray(
+            appWidgetProviderInfo = appWidgetProviderInfo,
+            density = 0,
+        )
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             onGetPinGridItem(
@@ -865,10 +844,8 @@ internal class PagerScreenState(
                     appWidgetId = 0,
                     componentName = componentName,
                     packageName = appWidgetProviderInfo.provider.packageName,
-                    serialNumber = androidUserManagerWrapper.getSerialNumberForUser(
-                        userHandle = appWidgetProviderInfo.profile,
-                    ),
-                    configure = appWidgetProviderInfo.configure.flattenToString(),
+                    serialNumber = serialNumber,
+                    configure = appWidgetProviderInfo.configure?.flattenToString(),
                     minWidth = appWidgetProviderInfo.minWidth,
                     minHeight = appWidgetProviderInfo.minHeight,
                     resizeMode = appWidgetProviderInfo.resizeMode,
@@ -885,12 +862,10 @@ internal class PagerScreenState(
             onGetPinGridItem(
                 PinItemRequestType.Widget(
                     appWidgetId = 0,
-                    componentName = appWidgetProviderInfo.provider.flattenToString(),
+                    componentName = componentName,
                     packageName = appWidgetProviderInfo.provider.packageName,
-                    serialNumber = androidUserManagerWrapper.getSerialNumberForUser(
-                        userHandle = appWidgetProviderInfo.profile,
-                    ),
-                    configure = appWidgetProviderInfo.configure.flattenToString(),
+                    serialNumber = serialNumber,
+                    configure = appWidgetProviderInfo.configure?.flattenToString(),
                     minWidth = appWidgetProviderInfo.minWidth,
                     minHeight = appWidgetProviderInfo.minHeight,
                     resizeMode = appWidgetProviderInfo.resizeMode,
@@ -1815,6 +1790,8 @@ internal fun rememberPagerScreenState(
 
     val context = LocalContext.current
 
+    val androidAppWidgetManagerWrapper = LocalAppWidgetManager.current
+
     val androidLauncherAppsWrapper = LocalLauncherApps.current
 
     val androidWallpaperManagerWrapper = LocalWallpaperManager.current
@@ -1823,13 +1800,7 @@ internal fun rememberPagerScreenState(
 
     val androidUserManagerWrapper = LocalUserManager.current
 
-    val androidImageSerializer = LocalImageSerializer.current
-
-    val fileManager = LocalFileManager.current
-
     val pinItemRequestWrapper = LocalPinItemRequest.current
-
-    val iconKeyGenerator = LocalIconKeyGenerator.current
 
     val androidStatusBarManagerWrapper = LocalStatusBarManager.current
 
@@ -1842,8 +1813,7 @@ internal fun rememberPagerScreenState(
         PagerScreenState(
             density = density,
             screenHeight = screenHeight,
-            fileManager = fileManager,
-            androidImageSerializer = androidImageSerializer,
+            androidAppWidgetManagerWrapper = androidAppWidgetManagerWrapper,
             androidLauncherAppsWrapper = androidLauncherAppsWrapper,
             androidStatusBarManagerWrapper = androidStatusBarManagerWrapper,
             scope = scope,
@@ -1853,7 +1823,6 @@ internal fun rememberPagerScreenState(
             gestureSettings = gestureSettings,
             homeSettings = homeSettings,
             androidWallpaperManagerWrapper = androidWallpaperManagerWrapper,
-            iconKeyGenerator = iconKeyGenerator,
             onGetPinGridItem = onGetPinGridItem,
             onResetPinGridItem = onResetPinGridItem,
         )

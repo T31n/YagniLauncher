@@ -213,6 +213,20 @@ internal class EditApplicationInfoViewModel @Inject constructor(
         }
     }
 
+    fun updateEblanApplicationInfoCustomIconByteArray(
+        eblanApplicationInfo: EblanApplicationInfo,
+        byteArray: ByteArray,
+    ) {
+        viewModelScope.launch {
+            updateEblanApplicationInfoCustomIconUseCase(
+                eblanApplicationInfo = eblanApplicationInfo,
+                byteArray = byteArray,
+            )
+
+            getApplicationInfo()
+        }
+    }
+
     fun addFolderEblanApplicationInfo(folderEblanApplicationInfo: FolderEblanApplicationInfo) {
         viewModelScope.launch {
             folderEblanApplicationInfoRepository.insertFolderEblanApplicationInfo(

@@ -50,3 +50,25 @@ internal suspend fun getCustomIcon(
 } catch (_: IOException) {
     null
 }
+
+/**
+ * Writes [byteArray] to the custom-icon cache and returns its absolute path.
+ *
+ * @return The saved file path, or `null` if writing fails.
+ */
+internal suspend fun getCustomIcon(
+    fileManager: FileManager,
+    iconKeyGenerator: IconKeyGenerator,
+    byteArray: ByteArray,
+): String? {
+    val customIconsDirectory =
+        fileManager.getFilesDirectory(name = FileManager.CUSTOM_ICONS_DIR)
+
+    val name = iconKeyGenerator.getHashedName(name = Uuid.random().toHexString())
+
+    return fileManager.updateAndGetFilePath(
+        directory = customIconsDirectory,
+        name = name,
+        byteArray = byteArray,
+    )
+}

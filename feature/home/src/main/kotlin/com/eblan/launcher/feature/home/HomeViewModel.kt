@@ -28,6 +28,7 @@ import com.eblan.launcher.domain.model.folder.FolderEntry
 import com.eblan.launcher.domain.model.folder.FolderPopup
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.GridItemData.ShortcutConfig
 import com.eblan.launcher.domain.model.grid.GridItemData.ShortcutInfo
 import com.eblan.launcher.domain.model.grid.MoveFolderEblanApplicationInfoGridItemResult
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
@@ -502,6 +503,43 @@ internal class HomeViewModel @Inject constructor(
             gridRepository.insertGridItem(gridItem = movingGridItem.copy(data = data))
 
             updateGridItemsAfterMove(moveGridItemResult = moveGridItemResult)
+
+            resetGrid()
+        }
+    }
+
+    fun updateShortcutConfigGridItem(
+        moveGridItemResult: MoveGridItemResult,
+        shortcutIntentName: String?,
+        shortcutIntentIcon: ByteArray?,
+        shortcutIntentUri: String?,
+    ) {
+        viewModelScope.launch {
+            moveGridItemJob?.cancelAndJoin()
+
+            val movingGridItem = moveGridItemResult.movingGridItem
+
+            val movingData = movingGridItem.data as ShortcutConfig
+
+            val shortcutIntentIconPath = shortcutIntentIcon?.let { byteArray ->
+                fileManager.updateAndGetFilePath(
+                    directory = fileManager.getFilesDirectory(FileManager.SHORTCUT_INTENT_ICONS_DIR),
+                    name = movingGridItem.id,
+                    byteArray = byteArray,
+                )
+            }
+
+            val newData = movingData.copy(
+                shortcutIntentName = shortcutIntentName,
+                shortcutIntentIcon = shortcutIntentIconPath,
+                shortcutIntentUri = shortcutIntentUri,
+            )
+
+            val newMovingGridItem = movingGridItem.copy(data = newData)
+
+            updateGridItemsAfterMoveUseCase(
+                moveGridItemResult = moveGridItemResult.copy(movingGridItem = newMovingGridItem),
+            )
 
             resetGrid()
         }

@@ -42,7 +42,6 @@ import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.model.launcherapps.PinItemRequestType
-import com.eblan.launcher.domain.platform.FileManager
 import com.eblan.launcher.feature.home.R
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.GridItemSource
@@ -408,12 +407,15 @@ internal suspend fun handleShortcutConfigLauncherResult(
     result: ActivityResult,
     moveGridItemResult: MoveGridItemResult?,
     // Dependencies
-    fileManager: FileManager,
     androidImageSerializer: AndroidImageSerializer,
     // Callbacks
     onDeleteGridItem: (GridItem) -> Unit,
-    onUpdateGridItemsAfterMove: (MoveGridItemResult) -> Unit,
-    onResetGrid: () -> Unit,
+    onUpdateShortcutConfigGridItem: (
+        moveGridItemResult: MoveGridItemResult,
+        shortcutIntentName: String?,
+        shortcutIntentIcon: ByteArray?,
+        shortcutIntentUri: String?,
+    ) -> Unit,
 ) {
     val currentMoveGridItemResult = requireNotNull(moveGridItemResult)
 
@@ -451,27 +453,12 @@ internal suspend fun handleShortcutConfigLauncherResult(
         }
     }?.toUri(Intent.URI_INTENT_SCHEME)
 
-    val movingData = movingGridItem.data as GridItemData.ShortcutConfig
-
-    val shortcutIntentIcon = icon?.let {
-        fileManager.updateAndGetFilePath(
-            fileManager.getFilesDirectory(FileManager.SHORTCUT_INTENT_ICONS_DIR),
-            movingGridItem.id,
-            it,
-        )
-    }
-
-    val newData = movingData.copy(
-        shortcutIntentName = name,
-        shortcutIntentIcon = shortcutIntentIcon,
-        shortcutIntentUri = shortcutIntentUri,
+    onUpdateShortcutConfigGridItem(
+        currentMoveGridItemResult,
+        name,
+        icon,
+        shortcutIntentUri,
     )
-
-    val newMovingGridItem = movingGridItem.copy(data = newData)
-
-    onUpdateGridItemsAfterMove(currentMoveGridItemResult.copy(movingGridItem = newMovingGridItem))
-
-    onResetGrid()
 }
 
 @Suppress("DEPRECATION")

@@ -77,4 +77,43 @@ class UpdateGridItemCustomIconUseCase @Inject constructor(
 
         gridRepository.updateGridItem(gridItem = gridItem.copy(data = newData))
     }
+
+    /**
+     * Saves [byteArray] and updates the item's icon reference.
+     *
+     * If writing fails, the grid item is left unchanged.
+     *
+     * @param gridItem The item whose custom icon should be replaced.
+     * @param byteArray The encoded bytes of the replacement image.
+     */
+    suspend operator fun invoke(
+        gridItem: GridItem,
+        byteArray: ByteArray,
+    ) = withContext(ioDispatcher) {
+        val data = when (val data = gridItem.data) {
+            is GridItemData.ApplicationInfo,
+            is GridItemData.Folder,
+            is GridItemData.ShortcutConfig,
+            is GridItemData.ShortcutInfo,
+            -> data
+
+            else -> error("Unsupported Grid Item")
+        }
+
+        val customIcon = getCustomIcon(
+            fileManager = fileManager,
+            iconKeyGenerator = iconKeyGenerator,
+            byteArray = byteArray,
+        ) ?: return@withContext
+
+        val newData = when (data) {
+            is GridItemData.ApplicationInfo -> data.copy(customIcon = customIcon)
+            is GridItemData.Folder -> data.copy(icon = customIcon)
+            is GridItemData.ShortcutConfig -> data.copy(customIcon = customIcon)
+            is GridItemData.ShortcutInfo -> data.copy(customIcon = customIcon)
+            else -> data
+        }
+
+        gridRepository.updateGridItem(gridItem = gridItem.copy(data = newData))
+    }
 }

@@ -32,12 +32,9 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.domain.model.userdata.GeneralSettings
-import com.eblan.launcher.domain.platform.FileManager
-import com.eblan.launcher.domain.platform.IconKeyGenerator
 import com.eblan.launcher.feature.pin.PinScreen
 import com.eblan.launcher.model.ApplicationTheme
 import com.eblan.launcher.platform.colorscheme.MaterialColorSchemeResolver
-import com.eblan.launcher.platform.imageserializer.AndroidImageSerializer
 import com.eblan.launcher.platform.launcherapps.AndroidLauncherAppsWrapper
 import com.eblan.launcher.platform.launcherapps.PinItemRequestWrapper
 import com.eblan.launcher.platform.usermanager.AndroidUserManagerWrapper
@@ -46,9 +43,6 @@ import com.eblan.launcher.platform.widgetmanager.AndroidAppWidgetHostWrapper
 import com.eblan.launcher.platform.widgetmanager.AndroidAppWidgetManagerWrapper
 import com.eblan.launcher.ui.local.LocalAppWidgetHost
 import com.eblan.launcher.ui.local.LocalAppWidgetManager
-import com.eblan.launcher.ui.local.LocalFileManager
-import com.eblan.launcher.ui.local.LocalIconKeyGenerator
-import com.eblan.launcher.ui.local.LocalImageSerializer
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import com.eblan.launcher.ui.local.LocalMaterialColorSchemeResolver
 import com.eblan.launcher.ui.local.LocalPinItemRequest
@@ -76,9 +70,6 @@ class PinActivity : ComponentActivity() {
     lateinit var pinItemRequestWrapper: PinItemRequestWrapper
 
     @Inject
-    lateinit var imageSerializer: AndroidImageSerializer
-
-    @Inject
     lateinit var materialColorSchemeResolver: MaterialColorSchemeResolver
 
     @Inject
@@ -86,12 +77,6 @@ class PinActivity : ComponentActivity() {
 
     @Inject
     lateinit var androidWallpaperManagerWrapper: AndroidWallpaperManagerWrapper
-
-    @Inject
-    lateinit var fileManager: FileManager
-
-    @Inject
-    lateinit var iconKeyGenerator: IconKeyGenerator
 
     private val viewModel: PinActivityViewModel by viewModels()
 
@@ -112,11 +97,8 @@ class PinActivity : ComponentActivity() {
                 LocalAppWidgetManager provides androidAppWidgetManagerWrapper,
                 LocalPinItemRequest provides pinItemRequestWrapper,
                 LocalLauncherApps provides androidLauncherAppsWrapper,
-                LocalImageSerializer provides imageSerializer,
                 LocalMaterialColorSchemeResolver provides materialColorSchemeResolver,
                 LocalUserManager provides androidUserManagerWrapper,
-                LocalFileManager provides fileManager,
-                LocalIconKeyGenerator provides iconKeyGenerator,
                 LocalWallpaperManager provides androidWallpaperManagerWrapper,
             ) {
                 val generalSettings: GeneralSettings? by viewModel.generalSettingsFlow.collectAsStateWithLifecycle(

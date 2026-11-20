@@ -73,21 +73,15 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.eblan.launcher.domain.model.grid.GridItem
-import com.eblan.launcher.domain.platform.FileManager
-import com.eblan.launcher.domain.platform.IconKeyGenerator
-import com.eblan.launcher.platform.imageserializer.AndroidImageSerializer
 import com.eblan.launcher.platform.launcherapps.AndroidLauncherAppsWrapper
 import com.eblan.launcher.platform.usermanager.AndroidUserManagerWrapper
+import com.eblan.launcher.platform.widgetmanager.AndroidAppWidgetManagerWrapper
 import com.eblan.launcher.ui.local.LocalAppWidgetHost
 import com.eblan.launcher.ui.local.LocalAppWidgetManager
-import com.eblan.launcher.ui.local.LocalFileManager
-import com.eblan.launcher.ui.local.LocalIconKeyGenerator
-import com.eblan.launcher.ui.local.LocalImageSerializer
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import com.eblan.launcher.ui.local.LocalPinItemRequest
 import com.eblan.launcher.ui.local.LocalUserManager
 import kotlinx.coroutines.launch
-import java.io.File
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -269,7 +263,7 @@ private fun PinWidgetScreen(
         maxResizeHeight: Int,
         rootWidth: Int,
         rootHeight: Int,
-        preview: String?,
+        preview: ByteArray?,
     ) -> Unit,
     onDeleteGridItemCache: (GridItem) -> Unit,
     onDragStart: () -> Unit,
@@ -285,9 +279,6 @@ private fun PinWidgetScreen(
     val appWidgetHostWrapper = LocalAppWidgetHost.current
     val appWidgetManager = LocalAppWidgetManager.current
     val userManager = LocalUserManager.current
-    val fileManager = LocalFileManager.current
-    val iconKeyGenerator = LocalIconKeyGenerator.current
-    val imageSerializer = LocalImageSerializer.current
 
     val paddingValues = WindowInsets.safeDrawing.asPaddingValues()
 
@@ -295,8 +286,15 @@ private fun PinWidgetScreen(
 
     var deleteAppWidgetId by remember { mutableStateOf(false) }
 
-    val icon = remember {
-        appWidgetProviderInfo.loadPreviewImage(context, 0)
+    val icon by produceState<ByteArray?>(
+        initialValue = null,
+        key1 = appWidgetProviderInfo,
+        key2 = appWidgetManager,
+    ) {
+        value = appWidgetManager.loadPreviewImageByteArray(
+            appWidgetProviderInfo = appWidgetProviderInfo,
+            density = 0,
+        )
     }
 
     val appWidgetLauncher = rememberLauncherForActivityResult(
@@ -383,15 +381,12 @@ private fun PinWidgetScreen(
             onAdd = {
                 addPinWidgetToHomeScreen(
                     // Widget Info
-                    context = context,
                     appWidgetProviderInfo = appWidgetProviderInfo,
                     // Dimensions
                     maxWidth = constraints.maxWidth,
                     maxHeight = constraints.maxHeight,
                     // Dependencies
-                    fileManager = fileManager,
-                    iconKeyGenerator = iconKeyGenerator,
-                    imageSerializer = imageSerializer,
+                    appWidgetManager = appWidgetManager,
                     userManager = userManager,
                     // Callback
                     onAddPinWidgetToHomeScreen = onAddPinWidgetToHomeScreen,
@@ -587,15 +582,12 @@ private suspend fun addPinShortcutToHomeScreen(
 
 private suspend fun addPinWidgetToHomeScreen(
     // Widget Info
-    context: Context,
     appWidgetProviderInfo: AppWidgetProviderInfo,
     // Dimensions
     maxWidth: Int,
     maxHeight: Int,
     // Dependencies
-    fileManager: FileManager,
-    iconKeyGenerator: IconKeyGenerator,
-    imageSerializer: AndroidImageSerializer,
+    appWidgetManager: AndroidAppWidgetManagerWrapper,
     userManager: AndroidUserManagerWrapper,
     // Callback
     onAddPinWidgetToHomeScreen: (
@@ -614,7 +606,7 @@ private suspend fun addPinWidgetToHomeScreen(
         maxResizeHeight: Int,
         rootWidth: Int,
         rootHeight: Int,
-        preview: String?,
+        preview: ByteArray?,
     ) -> Unit,
 ) {
     val serialNumber =
@@ -622,31 +614,16 @@ private suspend fun addPinWidgetToHomeScreen(
 
     val componentName = appWidgetProviderInfo.provider.flattenToString()
 
-    val preview = appWidgetProviderInfo.loadPreviewImage(context, 0)?.let { drawable ->
-        val directory =
-            fileManager.getFilesDirectory(FileManager.WIDGETS_DIR)
-
-        val file = File(
-            directory,
-            iconKeyGenerator.getWidgetPreviewKey(
-                serialNumber = serialNumber,
-                componentName = componentName,
-            ),
-        )
-
-        imageSerializer.createDrawablePath(
-            drawable = drawable,
-            file = file,
-        )
-
-        file.absolutePath
-    }
+    val preview = appWidgetManager.loadPreviewImageByteArray(
+        appWidgetProviderInfo = appWidgetProviderInfo,
+        density = 0,
+    )
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         onAddPinWidgetToHomeScreen(
-            userManager.getSerialNumberForUser(userHandle = appWidgetProviderInfo.profile),
+            serialNumber,
             componentName,
-            appWidgetProviderInfo.configure.flattenToString(),
+            appWidgetProviderInfo.configure?.flattenToString(),
             appWidgetProviderInfo.provider.packageName,
             appWidgetProviderInfo.targetCellHeight,
             appWidgetProviderInfo.targetCellWidth,
@@ -663,9 +640,9 @@ private suspend fun addPinWidgetToHomeScreen(
         )
     } else {
         onAddPinWidgetToHomeScreen(
-            userManager.getSerialNumberForUser(userHandle = appWidgetProviderInfo.profile),
-            appWidgetProviderInfo.provider.flattenToString(),
-            appWidgetProviderInfo.configure.flattenToString(),
+            serialNumber,
+            componentName,
+            appWidgetProviderInfo.configure?.flattenToString(),
             appWidgetProviderInfo.provider.packageName,
             0,
             0,

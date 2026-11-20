@@ -19,7 +19,7 @@ Stock Android Launcher From Scratch
 </div>
 
 > [!WARNING]
-> This is an Alpha Stage Build. Expect bugs, instability, and incomplete features.
+> This is an Alpha Stage Build. Expect bugs, instability, and incomplete features. Development on new features is a bit slower right now because I'm focusing on solidifying the core architecture and code quality.
 
 > [!NOTE]
 > AI tools (like CodeRabbitAI) are welcome here and help me review PRs, but no bot-submitted PRs or unreviewed **AI slop**. Every contribution must be understood and stood behind by a human. Meow 🐱

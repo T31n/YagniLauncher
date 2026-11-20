@@ -90,7 +90,7 @@ class PinScreenViewModel @Inject constructor(
         maxResizeHeight: Int,
         rootWidth: Int,
         rootHeight: Int,
-        preview: String?,
+        preview: ByteArray?,
     ) {
         viewModelScope.launch {
             _gridItem.update {
