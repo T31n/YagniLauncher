@@ -33,6 +33,7 @@ import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoTagCrossRefRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoTagRepository
 import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
+import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.application.GetEblanApplicationInfosTagsUiUseCase
 import com.eblan.launcher.domain.usecase.application.UpdateEblanApplicationInfoCustomIconUseCase
 import com.eblan.launcher.domain.usecase.folder.GetFolderEblanApplicationInfoPopupsUseCase
@@ -42,9 +43,11 @@ import com.eblan.launcher.feature.editapplicationinfo.navigation.EditApplication
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -61,6 +64,7 @@ internal class EditApplicationInfoViewModel @Inject constructor(
     private val eblanApplicationInfoTagCrossRefRepository: EblanApplicationInfoTagCrossRefRepository,
     private val updateEblanApplicationInfoCustomIconUseCase: UpdateEblanApplicationInfoCustomIconUseCase,
     private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
+    userDataRepository: UserDataRepository,
     getFolderEblanApplicationInfoPopupsUseCase: GetFolderEblanApplicationInfoPopupsUseCase,
     getTopLevelFolderEblanApplicationInfosUseCase: GetTopLevelFolderEblanApplicationInfosUseCase,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
@@ -68,9 +72,16 @@ internal class EditApplicationInfoViewModel @Inject constructor(
     private val editApplicationInfoRouteData =
         savedStateHandle.toRoute<EditApplicationInfoRouteData>()
 
-    private val _editApplicationInfoUiState =
-        MutableStateFlow<EditApplicationInfoUiState>(EditApplicationInfoUiState.Loading)
-    val editApplicationInfoUiState = _editApplicationInfoUiState.onStart {
+    private val _eblanApplicationInfo = MutableSharedFlow<EblanApplicationInfo?>(replay = 1)
+    val editApplicationInfoUiState = combine(
+        _eblanApplicationInfo,
+        userDataRepository.userDataFlow,
+    ) { eblanApplicationInfo, userData ->
+        EditApplicationInfoUiState.Success(
+            eblanApplicationInfo = eblanApplicationInfo,
+            generalSettings = userData.generalSettings,
+        )
+    }.onStart {
         getApplicationInfo()
     }.stateIn(
         scope = viewModelScope,
@@ -237,14 +248,12 @@ internal class EditApplicationInfoViewModel @Inject constructor(
 
     private fun getApplicationInfo() {
         viewModelScope.launch {
-            _editApplicationInfoUiState.update {
-                EditApplicationInfoUiState.Success(
-                    eblanApplicationInfo = eblanApplicationInfoRepository.getEblanApplicationInfoByComponentName(
-                        serialNumber = editApplicationInfoRouteData.serialNumber,
-                        componentName = editApplicationInfoRouteData.componentName,
-                    ),
-                )
-            }
+            _eblanApplicationInfo.emit(
+                eblanApplicationInfoRepository.getEblanApplicationInfoByComponentName(
+                    serialNumber = editApplicationInfoRouteData.serialNumber,
+                    componentName = editApplicationInfoRouteData.componentName,
+                ),
+            )
         }
     }
 }

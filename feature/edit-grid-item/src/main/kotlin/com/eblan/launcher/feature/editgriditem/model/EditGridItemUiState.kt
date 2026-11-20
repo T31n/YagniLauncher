@@ -18,9 +18,13 @@
 package com.eblan.launcher.feature.editgriditem.model
 
 import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.userdata.GeneralSettings
 
 internal sealed interface EditGridItemUiState {
     data object Loading : EditGridItemUiState
 
-    data class Success(val gridItem: GridItem?) : EditGridItemUiState
+    data class Success(
+        val gridItem: GridItem?,
+        val generalSettings: GeneralSettings,
+    ) : EditGridItemUiState
 }

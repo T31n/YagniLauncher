@@ -18,9 +18,13 @@
 package com.eblan.launcher.feature.editfolderapplicationinfo.model
 
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
+import com.eblan.launcher.domain.model.userdata.GeneralSettings
 
 internal sealed interface EditFolderApplicationInfoUiState {
     data object Loading : EditFolderApplicationInfoUiState
 
-    data class Success(val folderEblanApplicationInfo: FolderEblanApplicationInfo?) : EditFolderApplicationInfoUiState
+    data class Success(
+        val folderEblanApplicationInfo: FolderEblanApplicationInfo?,
+        val generalSettings: GeneralSettings,
+    ) : EditFolderApplicationInfoUiState
 }

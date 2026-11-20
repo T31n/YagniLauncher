@@ -27,6 +27,7 @@ import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
 import com.eblan.launcher.domain.platform.IconPackManager
 import com.eblan.launcher.domain.repository.GridRepository
+import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.application.GetEblanApplicationInfosUseCase
 import com.eblan.launcher.domain.usecase.grid.DeleteGridItemCustomIconUseCase
 import com.eblan.launcher.domain.usecase.grid.GetGridItemByIdUseCase
@@ -36,9 +37,11 @@ import com.eblan.launcher.feature.editgriditem.navigation.EditGridItemRouteData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -50,6 +53,7 @@ internal class EditGridItemViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val iconPackManager: IconPackManager,
     private val gridRepository: GridRepository,
+    userDataRepository: UserDataRepository,
     getEblanApplicationInfosUseCase: GetEblanApplicationInfosUseCase,
     private val updateGridItemCustomIconUseCase: UpdateGridItemCustomIconUseCase,
     private val deleteGridItemCustomIconUseCase: DeleteGridItemCustomIconUseCase,
@@ -58,10 +62,17 @@ internal class EditGridItemViewModel @Inject constructor(
 ) : ViewModel() {
     private val editGridItemRouteData = savedStateHandle.toRoute<EditGridItemRouteData>()
 
-    private val _editGridItemUiState =
-        MutableStateFlow<EditGridItemUiState>(EditGridItemUiState.Loading)
+    private val _gridItem = MutableSharedFlow<GridItem?>(replay = 1)
 
-    val editGridItemUiState = _editGridItemUiState.onStart {
+    val editGridItemUiState = combine(
+        _gridItem,
+        userDataRepository.userDataFlow,
+    ) { gridItem, userData ->
+        EditGridItemUiState.Success(
+            gridItem = gridItem,
+            generalSettings = userData.generalSettings,
+        )
+    }.onStart {
         getGridItem()
     }.stateIn(
         scope = viewModelScope,
@@ -165,11 +176,9 @@ internal class EditGridItemViewModel @Inject constructor(
 
     private fun getGridItem() {
         viewModelScope.launch {
-            _editGridItemUiState.update {
-                EditGridItemUiState.Success(
-                    gridItem = getGridItemByIdUseCase(id = editGridItemRouteData.id),
-                )
-            }
+            _gridItem.emit(
+                getGridItemByIdUseCase(id = editGridItemRouteData.id),
+            )
         }
     }
 }

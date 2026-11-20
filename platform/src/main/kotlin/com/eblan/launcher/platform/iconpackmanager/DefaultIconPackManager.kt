@@ -19,6 +19,8 @@ package com.eblan.launcher.platform.iconpackmanager
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.content.res.XmlResourceParser
 import android.graphics.drawable.Drawable
 import androidx.core.content.res.ResourcesCompat
@@ -30,6 +32,7 @@ import com.eblan.launcher.domain.model.userdata.ColorSource
 import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.domain.platform.IconPackManager
+import com.eblan.launcher.platform.colorscheme.MaterialColorSchemeResolver
 import com.eblan.launcher.platform.imageserializer.AndroidImageSerializer
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
@@ -46,6 +49,7 @@ import javax.inject.Inject
 internal class DefaultIconPackManager @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val imageSerializer: AndroidImageSerializer,
+    private val materialColorSchemeResolver: MaterialColorSchemeResolver,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : IconPackManager,
     AndroidIconPackManager {
@@ -107,8 +111,14 @@ internal class DefaultIconPackManager @Inject constructor(
         theme: Theme,
         colorSchemeSettings: ColorSchemeSettings,
     ): String? = withContext(ioDispatcher) {
-        val packageContext =
-            context.createPackageContext(packageName, Context.CONTEXT_IGNORE_SECURITY)
+        val packageContext = try {
+            getThemedPackageContext(
+                packageName = packageName,
+                theme = theme,
+            )
+        } catch (_: PackageManager.NameNotFoundException) {
+            return@withContext null
+        }
 
         val resources = packageContext.resources
 
@@ -151,23 +161,74 @@ internal class DefaultIconPackManager @Inject constructor(
     override suspend fun loadDrawableFromIconPack(
         packageName: String,
         drawableName: String,
+        iconTint: Boolean,
+        colorSource: ColorSource,
+        customSeedColor: Int,
+        iconShape: IconShape,
+        theme: Theme,
+        colorSchemeSettings: ColorSchemeSettings,
     ): Drawable? = withContext(ioDispatcher) {
-        val packageContext =
-            context.createPackageContext(packageName, Context.CONTEXT_IGNORE_SECURITY)
+        val packageContext = try {
+            getThemedPackageContext(
+                packageName = packageName,
+                theme = theme,
+            )
+        } catch (_: PackageManager.NameNotFoundException) {
+            return@withContext null
+        }
 
         val resources = packageContext.resources
 
         val resId = resources.getIdentifier(drawableName, "drawable", packageName)
 
         if (resId != 0) {
-            ResourcesCompat.getDrawable(
+            val drawable = ResourcesCompat.getDrawable(
                 resources,
                 resId,
                 packageContext.theme,
-            )
+            ) ?: return@withContext null
+
+            if (iconTint) {
+                imageSerializer.getTintedAndShapedDrawable(
+                    drawable = drawable,
+                    colorSource = colorSource,
+                    customSeedColor = customSeedColor,
+                    theme = theme,
+                    iconShape = iconShape,
+                    colorSchemeSettings = colorSchemeSettings,
+                )
+            } else {
+                imageSerializer.getShapedDrawable(
+                    drawable = drawable,
+                    iconShape = iconShape,
+                )
+            }
         } else {
             null
         }
+    }
+
+    private fun getThemedPackageContext(
+        packageName: String,
+        theme: Theme,
+    ): Context {
+        val packageContext = context.createPackageContext(
+            packageName,
+            Context.CONTEXT_IGNORE_SECURITY,
+        )
+
+        val isDarkTheme = materialColorSchemeResolver.isDarkTheme(theme = theme)
+
+        val configuration = Configuration(packageContext.resources.configuration).apply {
+            uiMode = (uiMode and Configuration.UI_MODE_NIGHT_MASK.inv()) or
+                if (isDarkTheme) {
+                    Configuration.UI_MODE_NIGHT_YES
+                } else {
+                    Configuration.UI_MODE_NIGHT_NO
+                }
+        }
+
+        return packageContext.createConfigurationContext(configuration)
     }
 
     private suspend fun parseXml(xmlPullParser: XmlPullParser): List<IconPackComponent> {

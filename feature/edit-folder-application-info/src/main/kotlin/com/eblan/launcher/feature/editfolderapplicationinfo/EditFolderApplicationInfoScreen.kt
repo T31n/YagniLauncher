@@ -54,6 +54,7 @@ import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
+import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.feature.editfolderapplicationinfo.dialog.EditFolderLabelDialog
 import com.eblan.launcher.feature.editfolderapplicationinfo.model.EditFolderApplicationInfoUiState
 import com.eblan.launcher.ui.dialog.AddFolderDialog
@@ -156,6 +157,7 @@ internal fun EditFolderApplicationInfoScreen(
                     folderEblanApplicationInfos = folderEblanApplicationInfos,
                     topLevelFolderEblanApplicationInfos = folderEblanApplicationInfos,
                     folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+                    generalSettings = editFolderApplicationInfoUiState.generalSettings,
                     // Icon Packs
                     iconPackComponents = iconPackComponents,
                     // Callbacks
@@ -179,6 +181,7 @@ internal fun Success(
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
+    generalSettings: GeneralSettings,
     // Icon Packs
     iconPackComponents: List<IconPackComponent>,
     // Modifier
@@ -265,6 +268,7 @@ internal fun Success(
                 iconPackComponents = iconPackComponents,
                 iconPackPackageName = iconPackPackageName,
                 iconPackInfoLabel = iconPackInfoLabel,
+                generalSettings = generalSettings,
                 // Callbacks
                 onDismissRequest = {
                     onResetIconPackPackageName()

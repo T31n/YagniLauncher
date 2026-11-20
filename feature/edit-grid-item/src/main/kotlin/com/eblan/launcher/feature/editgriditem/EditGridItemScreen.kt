@@ -48,6 +48,7 @@ import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
+import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.feature.editgriditem.dialog.EditFolderLabelDialog
 import com.eblan.launcher.feature.editgriditem.model.EditGridItemUiState
 import com.eblan.launcher.ui.dialog.EditCustomLabelDialog
@@ -147,6 +148,7 @@ internal fun EditGridItemScreen(
                     // Data
                     eblanApplicationInfos = eblanApplicationInfos,
                     gridItem = editGridItemUiState.gridItem,
+                    generalSettings = editGridItemUiState.generalSettings,
                     iconPackComponents = iconPackComponents,
                     // Actions
                     onResetIconPackPackageName = onResetIconPackPackageName,
@@ -167,6 +169,7 @@ private fun Success(
     // Data
     eblanApplicationInfos: List<EblanApplicationInfo>,
     gridItem: GridItem,
+    generalSettings: GeneralSettings,
     iconPackComponents: List<IconPackComponent>,
     // Modifier
     modifier: Modifier = Modifier,
@@ -198,6 +201,7 @@ private fun Success(
                     // Item Data
                     gridItem = gridItem,
                     data = data,
+                    generalSettings = generalSettings,
                     // Icon Packs
                     iconPackComponents = iconPackComponents,
                     // Callbacks
@@ -216,6 +220,7 @@ private fun Success(
                     // Grid Item
                     gridItem = gridItem,
                     data = data,
+                    generalSettings = generalSettings,
                     // Icon Packs
                     iconPackComponents = iconPackComponents,
                     // Actions
@@ -234,6 +239,7 @@ private fun Success(
                     // Shortcut Data
                     gridItem = gridItem,
                     data = data,
+                    generalSettings = generalSettings,
                     // Icon Packs
                     iconPackComponents = iconPackComponents,
                     // Actions
@@ -252,6 +258,7 @@ private fun Success(
                     // Grid Item
                     gridItem = gridItem,
                     data = data,
+                    generalSettings = generalSettings,
                     // Icon Packs
                     iconPackComponents = iconPackComponents,
                     // Actions
@@ -309,6 +316,7 @@ private fun EditApplicationInfo(
     // Item Data
     gridItem: GridItem,
     data: GridItemData.ApplicationInfo,
+    generalSettings: GeneralSettings,
     // Icon Packs
     iconPackComponents: List<IconPackComponent>,
     // Modifier
@@ -333,6 +341,7 @@ private fun EditApplicationInfo(
     EditCustomIcon(
         gridItem = gridItem,
         customIcon = data.customIcon,
+        generalSettings = generalSettings,
         iconPackComponents = iconPackComponents,
         modifier = modifier,
         onResetIconPackPackageName = onResetIconPackPackageName,
@@ -384,6 +393,7 @@ private fun EditFolder(
     // Grid Item
     gridItem: GridItem,
     data: GridItemData.Folder,
+    generalSettings: GeneralSettings,
     modifier: Modifier = Modifier,
     // Icon Packs
     iconPackComponents: List<IconPackComponent>,
@@ -407,6 +417,7 @@ private fun EditFolder(
     EditCustomIcon(
         gridItem = gridItem,
         customIcon = data.icon,
+        generalSettings = generalSettings,
         iconPackComponents = iconPackComponents,
         modifier = modifier,
         onResetIconPackPackageName = onResetIconPackPackageName,
@@ -455,6 +466,7 @@ private fun EditShortcutInfo(
     // Shortcut Data
     gridItem: GridItem,
     data: GridItemData.ShortcutInfo,
+    generalSettings: GeneralSettings,
     // Icon Packs
     iconPackComponents: List<IconPackComponent>,
     // Layout
@@ -479,6 +491,7 @@ private fun EditShortcutInfo(
     EditCustomIcon(
         gridItem = gridItem,
         customIcon = data.customIcon,
+        generalSettings = generalSettings,
         iconPackComponents = iconPackComponents,
         modifier = modifier,
         onResetIconPackPackageName = onResetIconPackPackageName,
@@ -530,6 +543,7 @@ private fun EditShortcutConfig(
     // Grid Item
     gridItem: GridItem,
     data: GridItemData.ShortcutConfig,
+    generalSettings: GeneralSettings,
     // Icon Packs
     iconPackComponents: List<IconPackComponent>,
     // Modifier
@@ -554,6 +568,7 @@ private fun EditShortcutConfig(
     EditCustomIcon(
         gridItem = gridItem,
         customIcon = data.customIcon,
+        generalSettings = generalSettings,
         iconPackComponents = iconPackComponents,
         modifier = modifier,
         onResetIconPackPackageName = onResetIconPackPackageName,
@@ -604,6 +619,7 @@ private fun EditShortcutConfig(
 private fun EditCustomIcon(
     gridItem: GridItem,
     customIcon: String?,
+    generalSettings: GeneralSettings,
     iconPackComponents: List<IconPackComponent>,
     modifier: Modifier = Modifier,
     onResetIconPackPackageName: () -> Unit,
@@ -649,6 +665,7 @@ private fun EditCustomIcon(
             iconPackComponents = iconPackComponents,
             iconPackPackageName = iconPackPackageName,
             iconPackInfoLabel = iconPackLabel,
+            generalSettings = generalSettings,
             // Callbacks
             onDismissRequest = {
                 onResetIconPackPackageName()

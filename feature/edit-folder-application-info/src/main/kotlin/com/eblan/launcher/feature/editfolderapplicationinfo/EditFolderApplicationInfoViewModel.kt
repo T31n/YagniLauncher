@@ -27,6 +27,7 @@ import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
 import com.eblan.launcher.domain.platform.IconPackManager
 import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
+import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.folder.GetFolderEblanApplicationInfoPopupsUseCase
 import com.eblan.launcher.domain.usecase.folder.GetFolderEblanApplicationInfosByIdUseCase
 import com.eblan.launcher.domain.usecase.folder.UpdateFolderEblanApplicationInfoCustomIconUseCase
@@ -35,9 +36,11 @@ import com.eblan.launcher.feature.editfolderapplicationinfo.navigation.EditFolde
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -49,6 +52,7 @@ internal class EditFolderApplicationInfoViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val iconPackManager: IconPackManager,
     private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
+    userDataRepository: UserDataRepository,
     private val updateFolderEblanApplicationInfoCustomIconUseCase: UpdateFolderEblanApplicationInfoCustomIconUseCase,
     getFolderEblanApplicationInfosByIdUseCase: GetFolderEblanApplicationInfosByIdUseCase,
     getFolderEblanApplicationInfoPopupsUseCase: GetFolderEblanApplicationInfoPopupsUseCase,
@@ -57,9 +61,16 @@ internal class EditFolderApplicationInfoViewModel @Inject constructor(
     private val editFolderApplicationInfoRouteData =
         savedStateHandle.toRoute<EditFolderApplicationInfoRouteData>()
 
-    private val _editFolderApplicationInfoUiState =
-        MutableStateFlow<EditFolderApplicationInfoUiState>(EditFolderApplicationInfoUiState.Loading)
-    val editFolderApplicationInfoUiState = _editFolderApplicationInfoUiState.onStart {
+    private val _folderEblanApplicationInfo = MutableSharedFlow<FolderEblanApplicationInfo?>(replay = 1)
+    val editFolderApplicationInfoUiState = combine(
+        _folderEblanApplicationInfo,
+        userDataRepository.userDataFlow,
+    ) { folderEblanApplicationInfo, userData ->
+        EditFolderApplicationInfoUiState.Success(
+            folderEblanApplicationInfo = folderEblanApplicationInfo,
+            generalSettings = userData.generalSettings,
+        )
+    }.onStart {
         getFolderApplicationInfo()
     }.stateIn(
         scope = viewModelScope,
@@ -172,12 +183,11 @@ internal class EditFolderApplicationInfoViewModel @Inject constructor(
 
     private fun getFolderApplicationInfo() {
         viewModelScope.launch {
-            _editFolderApplicationInfoUiState.update {
-                EditFolderApplicationInfoUiState.Success(
-                    folderEblanApplicationInfo =
-                    folderEblanApplicationInfoRepository.getFolderEblanApplicationInfoById(id = editFolderApplicationInfoRouteData.id),
-                )
-            }
+            _folderEblanApplicationInfo.emit(
+                folderEblanApplicationInfoRepository.getFolderEblanApplicationInfoById(
+                    id = editFolderApplicationInfoRouteData.id,
+                ),
+            )
         }
     }
 }

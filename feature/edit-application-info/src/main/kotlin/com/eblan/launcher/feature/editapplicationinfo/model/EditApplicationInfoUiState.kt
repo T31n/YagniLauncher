@@ -18,9 +18,13 @@
 package com.eblan.launcher.feature.editapplicationinfo.model
 
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
+import com.eblan.launcher.domain.model.userdata.GeneralSettings
 
 internal sealed interface EditApplicationInfoUiState {
     data object Loading : EditApplicationInfoUiState
 
-    data class Success(val eblanApplicationInfo: EblanApplicationInfo?) : EditApplicationInfoUiState
+    data class Success(
+        val eblanApplicationInfo: EblanApplicationInfo?,
+        val generalSettings: GeneralSettings,
+    ) : EditApplicationInfoUiState
 }

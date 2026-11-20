@@ -53,6 +53,7 @@ import com.eblan.launcher.designsystem.component.EblanDialog
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
+import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.ui.local.LocalIconPackManager
 import com.eblan.launcher.ui.local.LocalImageSerializer
 import kotlinx.coroutines.FlowPreview
@@ -70,6 +71,7 @@ fun IconPackInfoFilesDialog(
     iconPackComponents: List<IconPackComponent>,
     iconPackPackageName: String?,
     iconPackInfoLabel: String?,
+    generalSettings: GeneralSettings,
     // Modifier
     modifier: Modifier = Modifier,
     // Callbacks
@@ -145,14 +147,25 @@ fun IconPackInfoFilesDialog(
                     ),
                     columns = GridCells.Fixed(5),
                 ) {
-                    items(iconPackComponents) { iconPackInfoComponent ->
+                    items(
+                        items = iconPackComponents,
+                        key = { it.drawableName },
+                    ) { iconPackInfoComponent ->
 
-                        var drawable by remember { mutableStateOf<Drawable?>(null) }
+                        var drawable by remember(iconPackInfoComponent, generalSettings) {
+                            mutableStateOf<Drawable?>(null)
+                        }
 
-                        LaunchedEffect(iconPackInfoComponent) {
+                        LaunchedEffect(key1 = iconPackInfoComponent, key2 = generalSettings) {
                             drawable = iconPackManager.loadDrawableFromIconPack(
                                 packageName = iconPackPackageName,
                                 drawableName = iconPackInfoComponent.drawableName,
+                                iconTint = generalSettings.iconTint,
+                                colorSource = generalSettings.colorSource,
+                                customSeedColor = generalSettings.customSeedColor,
+                                iconShape = generalSettings.iconShape,
+                                theme = generalSettings.theme,
+                                colorSchemeSettings = generalSettings.colorSchemeSettings,
                             )
                         }
 

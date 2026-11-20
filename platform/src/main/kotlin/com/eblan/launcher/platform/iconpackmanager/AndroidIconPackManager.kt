@@ -18,10 +18,20 @@
 package com.eblan.launcher.platform.iconpackmanager
 
 import android.graphics.drawable.Drawable
+import com.eblan.launcher.domain.model.userdata.ColorSchemeSettings
+import com.eblan.launcher.domain.model.userdata.ColorSource
+import com.eblan.launcher.domain.model.userdata.IconShape
+import com.eblan.launcher.domain.model.userdata.Theme
 
 interface AndroidIconPackManager {
     suspend fun loadDrawableFromIconPack(
         packageName: String,
         drawableName: String,
+        iconTint: Boolean,
+        colorSource: ColorSource,
+        customSeedColor: Int,
+        iconShape: IconShape,
+        theme: Theme,
+        colorSchemeSettings: ColorSchemeSettings = ColorSchemeSettings(),
     ): Drawable?
 }

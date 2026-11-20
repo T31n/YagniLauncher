@@ -61,6 +61,7 @@ import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
+import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.feature.editapplicationinfo.R.string.hide_from_drawer
 import com.eblan.launcher.feature.editapplicationinfo.R.string.view_hidden_apps_in_app_drawer_settings
 import com.eblan.launcher.feature.editapplicationinfo.dialog.AddTagDialog
@@ -183,6 +184,7 @@ internal fun EditApplicationInfoScreen(
                     folderEblanApplicationInfos = folderEblanApplicationInfos,
                     folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                     topLevelFolderEblanApplicationInfos = topLevelFolderEblanApplicationInfos,
+                    generalSettings = editApplicationInfoUiState.generalSettings,
                     // Icon Pack
                     iconPackComponents = iconPackComponents,
                     // Callbacks
@@ -212,6 +214,7 @@ private fun Success(
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
+    generalSettings: GeneralSettings,
     // Icon Pack
     iconPackComponents: List<IconPackComponent>,
     // Modifier
@@ -331,6 +334,7 @@ private fun Success(
             iconPackComponents = iconPackComponents,
             iconPackPackageName = iconPackPackageName,
             iconPackInfoLabel = iconPackInfoLabel,
+            generalSettings = generalSettings,
             // Callbacks
             onDismissRequest = {
                 onResetIconPackPackageName()
