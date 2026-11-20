@@ -21,9 +21,6 @@ Stock Android Launcher From Scratch
 > [!WARNING]
 > This is an Alpha Stage Build. Expect bugs, instability, and incomplete features. Development on new features is a bit slower right now because I'm focusing on solidifying the core architecture and code quality.
 
-> [!NOTE]
-> AI tools (like CodeRabbitAI) are welcome here and help me review PRs, but no bot-submitted PRs or unreviewed **AI slop**. Every contribution must be understood and stood behind by a human. Meow 🐱
-
 ## About The Project
 
 Closed-source launchers are locking features behind paywalls and adding trackers. My goal is to offer powerful features with no compromises on privacy.
@@ -59,7 +56,9 @@ Yagni matches and extends stock functionality without the bloat.
 </div>
 
 ## Documentation
-If you're interested in contributing to the project, I recommend reading the [Yagni Launcher Architecture](docs/ARCHITECTURE.md) first.
+I'm a big fan of Clean Architecture and Clean Code. I've made plenty of mistakes along the way, but I keep learning and improving. Even with AI, I remain obsessed with code quality and building something maintainable.
+
+If you're interested in contributing, I recommend reading the [Yagni Launcher Architecture](docs/ARCHITECTURE.md) first. If you have suggestions or ideas for improvement, I'd be glad to hear them.
 
 ## License
 **Yagni Launcher** is licensed under the GNU General Public License v3.0. See the [license](LICENSE)
