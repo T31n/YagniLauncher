@@ -32,12 +32,14 @@ import com.eblan.launcher.domain.platform.PackageManagerWrapper
 import com.eblan.launcher.domain.repository.ApplicationInfoGridItemRepository
 import com.eblan.launcher.domain.repository.EblanAppWidgetProviderInfoRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
+import com.eblan.launcher.domain.repository.EblanIconPackInfoRepository
 import com.eblan.launcher.domain.repository.EblanShortcutConfigRepository
 import com.eblan.launcher.domain.repository.EblanShortcutInfoRepository
 import com.eblan.launcher.domain.repository.ShortcutConfigGridItemRepository
 import com.eblan.launcher.domain.repository.ShortcutInfoGridItemRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.repository.WidgetGridItemRepository
+import com.eblan.launcher.domain.usecase.iconpack.UpdateIconPacksUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
@@ -61,6 +63,8 @@ class ChangePackageUseCase @Inject constructor(
     private val widgetGridItemRepository: WidgetGridItemRepository,
     private val iconKeyGenerator: IconKeyGenerator,
     private val userDataRepository: UserDataRepository,
+    private val eblanIconPackInfoRepository: EblanIconPackInfoRepository,
+    private val updateIconPacksUseCase: UpdateIconPacksUseCase,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     /**
@@ -96,6 +100,17 @@ class ChangePackageUseCase @Inject constructor(
                 serialNumber = serialNumber,
                 packageName = packageName,
             )
+
+            if (serialNumber == 0L &&
+                (
+                    userData.generalSettings.iconPackPackageName == packageName ||
+                        eblanIconPackInfoRepository.getEblanIconPackByPackageName(
+                            packageName = packageName,
+                        ) != null
+                    )
+            ) {
+                updateIconPacksUseCase(iconPackPackageName = packageName)
+            }
         }
     }
 

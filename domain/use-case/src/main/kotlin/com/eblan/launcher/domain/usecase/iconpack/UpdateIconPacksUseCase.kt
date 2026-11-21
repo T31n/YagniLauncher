@@ -26,6 +26,7 @@ import com.eblan.launcher.domain.platform.FileManager
 import com.eblan.launcher.domain.platform.IconKeyGenerator
 import com.eblan.launcher.domain.platform.IconPackManager
 import com.eblan.launcher.domain.platform.LauncherAppsWrapper
+import com.eblan.launcher.domain.platform.PackageManagerWrapper
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.EblanIconPackInfoRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
@@ -47,6 +48,7 @@ class UpdateIconPacksUseCase @Inject constructor(
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
     private val userDataRepository: UserDataRepository,
     private val iconKeyGenerator: IconKeyGenerator,
+    private val packageManagerWrapper: PackageManagerWrapper,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     /**
@@ -74,10 +76,24 @@ class UpdateIconPacksUseCase @Inject constructor(
                     generalSettings = generalSettings,
                 )
 
+                val iconFile = File(
+                    fileManager.getFilesDirectory(name = FileManager.ICONS_DIR),
+                    iconKeyGenerator.getActivityIconKey(
+                        serialNumber = 0L,
+                        componentName = eblanApplicationInfo.componentName,
+                    ),
+                )
+
+                val icon = packageManagerWrapper.getApplicationIconCache(
+                    packageName = iconPackPackageName,
+                    file = iconFile,
+                    serialNumber = 0L,
+                )
+
                 eblanIconPackInfoRepository.upsertEblanIconPackInfo(
                     eblanIconPackInfo = EblanIconPackInfo(
                         packageName = eblanApplicationInfo.packageName,
-                        icon = eblanApplicationInfo.icon,
+                        icon = icon,
                         label = eblanApplicationInfo.label,
                     ),
                 )

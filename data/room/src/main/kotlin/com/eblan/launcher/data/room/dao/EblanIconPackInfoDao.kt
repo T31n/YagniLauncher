@@ -32,6 +32,9 @@ interface EblanIconPackInfoDao {
     @Query("SELECT * FROM EblanIconPackInfoEntity")
     suspend fun getEblanIconPackInfoEntities(): List<EblanIconPackInfoEntity>
 
+    @Query("SELECT * FROM EblanIconPackInfoEntity WHERE packageName = :packageName")
+    suspend fun getEblanIconPackInfoEntityByPackageName(packageName: String): EblanIconPackInfoEntity?
+
     @Upsert
     suspend fun upsertEblanIconPackInfoEntity(entity: EblanIconPackInfoEntity): Long
 

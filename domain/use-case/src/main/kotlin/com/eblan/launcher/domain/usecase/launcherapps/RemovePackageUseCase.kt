@@ -22,12 +22,15 @@ import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.repository.ApplicationInfoGridItemRepository
 import com.eblan.launcher.domain.repository.EblanAppWidgetProviderInfoRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
+import com.eblan.launcher.domain.repository.EblanIconPackInfoRepository
 import com.eblan.launcher.domain.repository.EblanShortcutConfigRepository
 import com.eblan.launcher.domain.repository.EblanShortcutInfoRepository
 import com.eblan.launcher.domain.repository.ShortcutConfigGridItemRepository
 import com.eblan.launcher.domain.repository.ShortcutInfoGridItemRepository
+import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.repository.WidgetGridItemRepository
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -41,6 +44,8 @@ class RemovePackageUseCase @Inject constructor(
     private val eblanShortcutInfoRepository: EblanShortcutInfoRepository,
     private val eblanShortcutConfigRepository: EblanShortcutConfigRepository,
     private val shortcutConfigGridItemRepository: ShortcutConfigGridItemRepository,
+    private val eblanIconPackInfoRepository: EblanIconPackInfoRepository,
+    private val userDataRepository: UserDataRepository,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     /**
@@ -93,6 +98,24 @@ class RemovePackageUseCase @Inject constructor(
                 serialNumber = serialNumber,
                 packageName = packageName,
             )
+
+            if (serialNumber == 0L) {
+                eblanIconPackInfoRepository.getEblanIconPackByPackageName(
+                    packageName = packageName,
+                )?.let { currentEblanIconPackInfo ->
+                    eblanIconPackInfoRepository.deleteEblanIconPackInfo(
+                        eblanIconPackInfo = currentEblanIconPackInfo,
+                    )
+                }
+
+                val generalSettings = userDataRepository.userDataFlow.first().generalSettings
+
+                if (generalSettings.iconPackPackageName == packageName) {
+                    userDataRepository.updateGeneralSettings(
+                        generalSettings = generalSettings.copy(iconPackPackageName = ""),
+                    )
+                }
+            }
         }
     }
 }

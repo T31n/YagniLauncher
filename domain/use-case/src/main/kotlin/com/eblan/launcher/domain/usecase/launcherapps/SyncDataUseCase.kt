@@ -23,6 +23,7 @@ import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.application.SyncEblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.ApplicationInfoGridItem
 import com.eblan.launcher.domain.model.grid.Associate
+import com.eblan.launcher.domain.model.iconpackinfo.EblanIconPackInfo
 import com.eblan.launcher.domain.model.shortcutconfig.EblanShortcutConfig
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
@@ -38,6 +39,7 @@ import com.eblan.launcher.domain.platform.PackageManagerWrapper
 import com.eblan.launcher.domain.repository.ApplicationInfoGridItemRepository
 import com.eblan.launcher.domain.repository.EblanAppWidgetProviderInfoRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
+import com.eblan.launcher.domain.repository.EblanIconPackInfoRepository
 import com.eblan.launcher.domain.repository.EblanShortcutConfigRepository
 import com.eblan.launcher.domain.repository.EblanShortcutInfoRepository
 import com.eblan.launcher.domain.repository.FolderGridItemRepository
@@ -54,6 +56,7 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
+import java.io.File
 import javax.inject.Inject
 import kotlin.uuid.Uuid
 
@@ -76,6 +79,7 @@ class SyncDataUseCase @Inject constructor(
     private val folderGridItemRepository: FolderGridItemRepository,
     private val gridRepository: GridRepository,
     private val updateIconPacksUseCase: UpdateIconPacksUseCase,
+    private val eblanIconPackInfoRepository: EblanIconPackInfoRepository,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     /** Refreshes launcher data and icon-pack caches using the current user settings. */
@@ -94,8 +98,67 @@ class SyncDataUseCase @Inject constructor(
 
             updateEblanLauncherShortcutInfos()
 
+            updateEblanIconPackInfos(generalSettings = userData.generalSettings)
+        }
+    }
+
+    /** Reconciles stored icon-pack entries with installed packages and refreshes active caches. */
+    private suspend fun updateEblanIconPackInfos(generalSettings: GeneralSettings) {
+        val personalApplicationInfosByPackageName =
+            eblanApplicationInfoRepository.getEblanApplicationInfos()
+                .filter { currentEblanApplicationInfo ->
+                    currentEblanApplicationInfo.serialNumber == 0L
+                }
+                .associateBy { currentEblanApplicationInfo ->
+                    currentEblanApplicationInfo.packageName
+                }
+
+        eblanIconPackInfoRepository.getEblanIconPacks().forEach { currentEblanIconPackInfo ->
+            currentCoroutineContext().ensureActive()
+
+            val eblanApplicationInfo =
+                personalApplicationInfosByPackageName[currentEblanIconPackInfo.packageName]
+
+            if (eblanApplicationInfo == null) {
+                eblanIconPackInfoRepository.deleteEblanIconPackInfo(
+                    eblanIconPackInfo = currentEblanIconPackInfo,
+                )
+            } else if (currentEblanIconPackInfo.packageName != generalSettings.iconPackPackageName) {
+                val iconFile = File(
+                    fileManager.getFilesDirectory(name = FileManager.ICONS_DIR),
+                    iconKeyGenerator.getActivityIconKey(
+                        serialNumber = 0L,
+                        componentName = eblanApplicationInfo.componentName,
+                    ),
+                )
+
+                val icon = packageManagerWrapper.getApplicationIconCache(
+                    packageName = eblanApplicationInfo.packageName,
+                    file = iconFile,
+                    serialNumber = 0L,
+                )
+
+                eblanIconPackInfoRepository.upsertEblanIconPackInfo(
+                    eblanIconPackInfo = EblanIconPackInfo(
+                        packageName = eblanApplicationInfo.packageName,
+                        icon = icon,
+                        label = eblanApplicationInfo.label,
+                    ),
+                )
+            }
+        }
+
+        val activeIconPackPackageName = generalSettings.iconPackPackageName
+
+        if (activeIconPackPackageName.isNotEmpty() &&
+            activeIconPackPackageName !in personalApplicationInfosByPackageName
+        ) {
+            userDataRepository.updateGeneralSettings(
+                generalSettings = generalSettings.copy(iconPackPackageName = ""),
+            )
+        } else {
             updateIconPacksUseCase(
-                iconPackPackageName = userData.generalSettings.iconPackPackageName,
+                iconPackPackageName = activeIconPackPackageName,
             )
         }
     }

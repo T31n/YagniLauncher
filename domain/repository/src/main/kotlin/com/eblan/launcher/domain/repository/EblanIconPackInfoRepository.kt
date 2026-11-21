@@ -25,6 +25,8 @@ interface EblanIconPackInfoRepository {
 
     suspend fun getEblanIconPacks(): List<EblanIconPackInfo>
 
+    suspend fun getEblanIconPackByPackageName(packageName: String): EblanIconPackInfo?
+
     suspend fun upsertEblanIconPackInfo(eblanIconPackInfo: EblanIconPackInfo): Long
 
     suspend fun deleteEblanIconPackInfo(eblanIconPackInfo: EblanIconPackInfo)
