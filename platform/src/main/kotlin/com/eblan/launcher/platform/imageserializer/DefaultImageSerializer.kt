@@ -20,9 +20,13 @@ package com.eblan.launcher.platform.imageserializer
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.BitmapShader
 import android.graphics.Canvas
+import android.graphics.Paint
 import android.graphics.Path
+import android.graphics.Rect
 import android.graphics.RectF
+import android.graphics.Shader
 import android.graphics.drawable.AdaptiveIconDrawable
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
@@ -105,7 +109,9 @@ internal class DefaultImageSerializer @Inject constructor(
         drawable: Drawable,
         iconShape: IconShape,
     ): Drawable? {
-        val bitmap = drawable.toBitmap() ?: return null
+        if (iconShape == IconShape.None) return drawable
+
+        val bitmap = drawable.toBitmap(unmaskAdaptiveIcon = true) ?: return null
         val shapedBitmap = createBitmap(bitmap.width, bitmap.height)
         val canvas = Canvas(shapedBitmap)
         val bounds = RectF(0f, 0f, bitmap.width.toFloat(), bitmap.height.toFloat())
@@ -125,8 +131,10 @@ internal class DefaultImageSerializer @Inject constructor(
             IconShape.None -> return drawable
         }
 
-        canvas.clipPath(path)
-        canvas.drawBitmap(bitmap, 0f, 0f, null)
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            shader = BitmapShader(bitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP)
+        }
+        canvas.drawPath(path, paint)
         return shapedBitmap.toDrawable(Resources.getSystem())
     }
 
@@ -382,35 +390,42 @@ internal class DefaultImageSerializer @Inject constructor(
         )
     }
 
-    private fun Drawable.toBitmap(): Bitmap? = if (this is BitmapDrawable) {
+    private fun Drawable.toBitmap(unmaskAdaptiveIcon: Boolean = false): Bitmap? = if (this is BitmapDrawable) {
         bitmap
     } else {
-        val width = if (bounds.isEmpty) {
-            intrinsicWidth
-        } else {
-            bounds.width()
-        }
+        val width = if (bounds.isEmpty) intrinsicWidth else bounds.width()
+        val height = if (bounds.isEmpty) intrinsicHeight else bounds.height()
 
-        val height = if (bounds.isEmpty) {
-            intrinsicHeight
-        } else {
-            bounds.height()
-        }
-
-        if (width > 0 && height > 0) {
+        if (width <= 0 || height <= 0) {
+            null
+        } else if (unmaskAdaptiveIcon && this is AdaptiveIconDrawable) {
+            val insetX = (width * AdaptiveIconDrawable.getExtraInsetFraction()).toInt()
+            val insetY = (height * AdaptiveIconDrawable.getExtraInsetFraction()).toInt()
             createBitmap(
                 width = width,
                 height = height,
                 config = Bitmap.Config.ARGB_8888,
             ).apply {
                 val canvas = Canvas(this)
-
-                setBounds(0, 0, canvas.width, canvas.height)
-
-                draw(canvas)
+                listOfNotNull(background, foreground).forEach { layer ->
+                    val oldBounds = Rect(layer.bounds)
+                    layer.setBounds(-insetX, -insetY, width + insetX, height + insetY)
+                    layer.draw(canvas)
+                    layer.bounds = oldBounds
+                }
             }
         } else {
-            null
+            createBitmap(
+                width = width,
+                height = height,
+                config = Bitmap.Config.ARGB_8888,
+            ).apply {
+                val canvas = Canvas(this)
+                val oldBounds = Rect(bounds)
+                setBounds(0, 0, canvas.width, canvas.height)
+                draw(canvas)
+                bounds = oldBounds
+            }
         }
     }
 
@@ -421,6 +436,17 @@ internal class DefaultImageSerializer @Inject constructor(
         theme: Theme,
         colorSchemeSettings: ColorSchemeSettings,
     ): Drawable {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+            drawable !is AdaptiveIconDrawable ||
+            drawable.monochrome == null
+        ) {
+            return drawable
+        }
+
+        val copy = (drawable.constantState?.newDrawable()?.mutate() ?: drawable.mutate())
+            as? AdaptiveIconDrawable ?: return drawable
+        val monochromeDrawable = copy.monochrome ?: return drawable
+
         val primaryColor = materialColorSchemeResolver.getPrimaryColor(
             colorSource = colorSource,
             customSeedColor = customSeedColor,
@@ -428,25 +454,17 @@ internal class DefaultImageSerializer @Inject constructor(
             colorSchemeSettings = colorSchemeSettings,
         )
 
-        val copy = drawable.constantState?.newDrawable()?.mutate() ?: drawable.mutate()
+        val surfaceColor = materialColorSchemeResolver.getSurfaceColor(
+            colorSource = colorSource,
+            customSeedColor = customSeedColor,
+            theme = theme,
+            colorSchemeSettings = colorSchemeSettings,
+        )
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-            copy is AdaptiveIconDrawable
-        ) {
-            copy.monochrome?.let { currentMonochromeDrawable ->
-                return AdaptiveIconDrawable(
-                    materialColorSchemeResolver.getSurfaceColor(
-                        colorSource = colorSource,
-                        customSeedColor = customSeedColor,
-                        theme = theme,
-                        colorSchemeSettings = colorSchemeSettings,
-                    ).toDrawable(),
-                    currentMonochromeDrawable.mutate().apply { setTint(primaryColor) },
-                )
-            }
-        }
-
-        return copy
+        return AdaptiveIconDrawable(
+            surfaceColor.toDrawable(),
+            monochromeDrawable.mutate().apply { setTint(primaryColor) },
+        )
     }
 
     private companion object {
