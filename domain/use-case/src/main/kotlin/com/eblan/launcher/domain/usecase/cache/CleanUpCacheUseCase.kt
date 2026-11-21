@@ -47,8 +47,8 @@ class CleanUpCacheUseCase @Inject constructor(
     private val iconKeyGenerator: IconKeyGenerator,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
-    /** Deletes the unreferenced files and returns the number of bytes that were freed. */
-    suspend operator fun invoke(): Long = withContext(ioDispatcher) {
+    /** Deletes the unreferenced files. */
+    suspend operator fun invoke() = withContext(ioDispatcher) {
         val cacheSnapshot = getCacheSnapshot(
             fileManager = fileManager,
             fileReferenceRepository = fileReferenceRepository,
@@ -58,14 +58,10 @@ class CleanUpCacheUseCase @Inject constructor(
             iconKeyGenerator = iconKeyGenerator,
         )
 
-        var freedSize = 0L
-
         cacheSnapshot.unreferencedFiles.forEach { file ->
             currentCoroutineContext().ensureActive()
 
-            val size = file.length()
-
-            if (file.delete()) freedSize += size
+            file.delete()
         }
 
         fileManager.getFilesDirectory(name = FileManager.ICON_PACKS_DIR)
@@ -73,7 +69,5 @@ class CleanUpCacheUseCase @Inject constructor(
             ?.filter(File::isDirectory)
             ?.filter { currentFile -> currentFile.list().isNullOrEmpty() }
             ?.forEach { currentFile -> currentFile.delete() }
-
-        freedSize
     }
 }

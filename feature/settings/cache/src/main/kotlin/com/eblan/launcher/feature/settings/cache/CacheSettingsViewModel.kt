@@ -61,27 +61,16 @@ internal class CacheSettingsViewModel @Inject constructor(
 
                     is CacheSettingsUiState.Success -> state.copy(
                         isCleaningUp = true,
-                        freedSize = null,
                     )
                 }
             }
 
-            val freedSize = cleanUpCacheUseCase()
+            cleanUpCacheUseCase()
 
             _cacheSettingsUiState.update {
                 CacheSettingsUiState.Success(
                     cacheInfo = getCacheInfoUseCase(),
-                    freedSize = freedSize,
                 )
-            }
-        }
-    }
-
-    fun consumeFreedSize() {
-        _cacheSettingsUiState.update { state ->
-            when (state) {
-                CacheSettingsUiState.Loading -> state
-                is CacheSettingsUiState.Success -> state.copy(freedSize = null)
             }
         }
     }

@@ -25,6 +25,5 @@ internal sealed interface CacheSettingsUiState {
     data class Success(
         val cacheInfo: CacheInfo,
         val isCleaningUp: Boolean = false,
-        val freedSize: Long? = null,
     ) : CacheSettingsUiState
 }

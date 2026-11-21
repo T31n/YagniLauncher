@@ -21,6 +21,5 @@
     <string name="can_be_freed">Can be freed</string>
     <string name="clean_up">Clean up</string>
     <string name="cleaning_up">Cleaning up…</string>
-    <string name="freed_size">Freed %1$s</string>
     <string name="nothing_to_clean_up">Nothing to clean up</string>
 </resources>
