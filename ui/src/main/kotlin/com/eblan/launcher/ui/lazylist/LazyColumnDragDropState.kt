@@ -102,7 +102,9 @@ class LazyColumnDragDropState(
         private set
 
     fun onDragStart(offset: Offset) {
-        state.layoutInfo.visibleItemsInfo.firstOrNull { item -> offset.y.toInt() in item.offset..(item.offset + item.size) }
+        val contentOffsetY = offset.y - state.layoutInfo.beforeContentPadding
+
+        state.layoutInfo.visibleItemsInfo.firstOrNull { item -> contentOffsetY.toInt() in item.offset..(item.offset + item.size) }
             ?.also { currentLazyListItemInfo ->
                 draggingItemIndex = currentLazyListItemInfo.index
                 draggingItemInitialOffset = currentLazyListItemInfo.offset

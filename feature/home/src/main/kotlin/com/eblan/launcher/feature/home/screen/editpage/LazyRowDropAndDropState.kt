@@ -102,9 +102,11 @@ internal class LazyRowDragDropState(
         private set
 
     internal fun onDragStart(offset: Offset) {
+        val contentOffsetX = offset.x - state.layoutInfo.beforeContentPadding
+
         state.layoutInfo.visibleItemsInfo
             .firstOrNull { item ->
-                offset.x.toInt() in item.offset..(item.offset + item.size)
+                contentOffsetX.toInt() in item.offset..(item.offset + item.size)
             }
             ?.also { currentLazyListItemInfo ->
                 draggingItemIndex = currentLazyListItemInfo.index

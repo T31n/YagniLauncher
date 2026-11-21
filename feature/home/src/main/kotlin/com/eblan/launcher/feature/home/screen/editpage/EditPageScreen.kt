@@ -21,19 +21,17 @@ import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.background
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -43,15 +41,21 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -61,6 +65,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
@@ -124,7 +130,6 @@ internal fun EditGridPageScreen(
     requireNotNull(pageItems)
 
     val density = LocalDensity.current
-
     val layoutDirection = LocalLayoutDirection.current
 
     val (gridWidthDp, gridHeightDp) = getGridSize(
@@ -135,11 +140,12 @@ internal fun EditGridPageScreen(
         layoutDirection = layoutDirection,
     )
 
-    var currentPageItems by remember { mutableStateOf(pageItems) }
-
+    var currentPageItems by remember(pageItems) { mutableStateOf(pageItems) }
     val pageItemsToDelete = remember { mutableStateListOf<PageItem>() }
-
-    var selectedId by remember { mutableIntStateOf(homeSettings.initialPage) }
+    var selectedId by remember(homeSettings.initialPage) {
+        mutableIntStateOf(homeSettings.initialPage)
+    }
+    var scrollToLastTrigger by remember { mutableIntStateOf(0) }
 
     val lazyListState = rememberLazyListState()
 
@@ -153,156 +159,158 @@ internal fun EditGridPageScreen(
             }
         }
 
-    val activity = LocalActivity.current as ComponentActivity
-
-    val scope = rememberCoroutineScope()
-
-    val columns = homeSettings.columns
-
-    val rows = homeSettings.rows
-
-    var expanded by remember { mutableStateOf(false) }
-
-    DisposableEffect(key1 = activity) {
-        val listener = Consumer<Intent> { intent ->
-            scope.launch {
-                handleActionMainIntent(
-                    intent = intent,
-                    onUpdateScreen = onUpdateScreen,
-                )
-            }
-        }
-
-        activity.addOnNewIntentListener(listener)
-
-        onDispose {
-            activity.removeOnNewIntentListener(listener)
+    LaunchedEffect(key1 = scrollToLastTrigger) {
+        if (scrollToLastTrigger > 0 && currentPageItems.isNotEmpty()) {
+            lazyListState.animateScrollToItem(currentPageItems.lastIndex)
         }
     }
 
-    BackHandler {
-        onUpdateScreen(Screen.Pager)
-    }
-
-    HomeHandler {
-        onUpdateScreen(Screen.Pager)
-    }
-
-    Box(modifier = modifier.fillMaxSize()) {
-        LazyRow(
+    EditPageScaffold(
+        modifier = modifier,
+        paddingValues = paddingValues,
+        onAdd = {
+            val nextId = (currentPageItems.maxOfOrNull { it.id } ?: -1) + 1
+            currentPageItems = currentPageItems + PageItem(
+                id = nextId,
+                gridItems = emptyList(),
+            )
+            scrollToLastTrigger++
+        },
+        onSave = {
+            onSaveEditPage(
+                selectedId,
+                currentPageItems,
+                pageItemsToDelete,
+                Associate.Grid,
+            )
+        },
+        onCancel = {
+            onUpdateScreen(Screen.Pager)
+        },
+        onUpdateScreen = onUpdateScreen,
+    ) { contentPadding ->
+        BoxWithConstraints(
             modifier = Modifier
-                .dragRowContainer(lazyRowDragDropState = lazyRowDragDropState)
-                .matchParentSize(),
-            contentPadding = paddingValues,
-            state = lazyListState,
+                .fillMaxSize()
+                .padding(contentPadding),
         ) {
-            itemsIndexed(
-                items = currentPageItems,
-                key = { _, pageItem -> pageItem.id },
-            ) { index, pageItem ->
-                DraggableRowItem(
-                    modifier = Modifier
-                        .size(
-                            width = gridWidthDp,
-                            height = gridHeightDp,
+            val gridAspectRatio = if (gridHeightDp > 0.dp) {
+                gridWidthDp / gridHeightDp
+            } else {
+                0.5625f
+            }
+            val maxPreviewWidth = maxWidth * 0.68f
+            val maxPreviewHeight = (maxHeight - 88.dp).coerceAtLeast(120.dp)
+            val cardWidth = minOf(maxPreviewWidth, maxPreviewHeight * gridAspectRatio)
+            val cardHeight = cardWidth / gridAspectRatio
+            val scale = if (gridWidthDp > 0.dp) cardWidth / gridWidthDp else 1f
+            val horizontalEdgePadding = ((maxWidth - cardWidth) / 2f).coerceAtLeast(EblanSpacing.large)
+
+            LazyRow(
+                modifier = Modifier
+                    .dragRowContainer(lazyRowDragDropState = lazyRowDragDropState)
+                    .fillMaxSize(),
+                state = lazyListState,
+                contentPadding = PaddingValues(horizontal = horizontalEdgePadding),
+                horizontalArrangement = Arrangement.spacedBy(EblanSpacing.medium),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                itemsIndexed(
+                    items = currentPageItems,
+                    key = { _, pageItem -> pageItem.id },
+                ) { index, pageItem ->
+                    val isHome = pageItem.id == selectedId
+
+                    DraggableRowItem(
+                        lazyRowDragDropState = lazyRowDragDropState,
+                        index = index,
+                    ) { isDragging ->
+                        val dragScale by animateFloatAsState(
+                            targetValue = if (isDragging) 1.04f else 1f,
+                            animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
+                            label = "DragGridPageScale",
                         )
-                        .padding(EblanSpacing.medium),
-                    lazyRowDragDropState = lazyRowDragDropState,
-                    index = index,
-                ) {
-                    GridLayout(
-                        // Grid Properties
-                        gridItems = pageItem.gridItems,
-                        columns = columns,
-                        rows = rows,
-                        // Layout Options
-                        animate = false,
-                        modifier = Modifier
-                            .weight(1f)
-                            .background(
-                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.25f),
-                                shape = MaterialTheme.shapes.small,
+
+                        Surface(
+                            modifier = Modifier
+                                .size(
+                                    width = cardWidth,
+                                    height = cardHeight,
+                                )
+                                .graphicsLayer {
+                                    scaleX = dragScale
+                                    scaleY = dragScale
+                                },
+                            shape = MaterialTheme.shapes.medium,
+                            color = MaterialTheme.colorScheme.surfaceContainerLow.copy(
+                                alpha = if (isDragging) 0.72f else 0.52f,
                             ),
-                        // Content
-                        content = { currentGridItem ->
-                            PageGridItem(
-                                // Item and Settings
-                                gridItem = currentGridItem,
-                                gridItemSettings = homeSettings.gridItemSettings,
-                                folderPopupGridItems = folderPopupGridItems,
-                                hasShortcutHostPermission = hasShortcutHostPermission,
-                                // Colors
-                                textColor = textColor,
-                                systemTextColor = systemTextColor,
-                                systemCustomTextColor = systemCustomTextColor,
-                                folderBackgroundColor = folderBackgroundColor,
-                                customFolderBackgroundColor = customFolderBackgroundColor,
-                                folderBorderColor = folderBorderColor,
-                                customFolderBorderColor = customFolderBorderColor,
-                                folderBorderWidth = folderBorderWidth,
-                                folderCornerRadius = folderSettings.folderCornerRadius,
-                                // Assets and Styling
-                                iconPackFilePaths = iconPackFilePaths,
-                            )
-                        },
-                    )
-
-                    PageButtons(
-                        pageItem = pageItem,
-                        selectedId = selectedId,
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .padding(EblanSpacing.extraSmall),
-                        onDeleteClick = {
-                            currentPageItems = currentPageItems.toMutableList().apply {
-                                removeIf { currentPageItem ->
-                                    currentPageItem.id == pageItem.id
-                                }
+                            border = BorderStroke(
+                                width = if (isHome || isDragging) 2.dp else 1.dp,
+                                color = when {
+                                    isHome -> MaterialTheme.colorScheme.primary
+                                    isDragging -> MaterialTheme.colorScheme.secondary
+                                    else -> MaterialTheme.colorScheme.outlineVariant
+                                },
+                            ),
+                            tonalElevation = if (isDragging) 8.dp else 2.dp,
+                        ) {
+                            CompositionLocalProvider(
+                                LocalDensity provides Density(
+                                    density = density.density * scale,
+                                    fontScale = density.fontScale,
+                                ),
+                            ) {
+                                GridLayout(
+                                    gridItems = pageItem.gridItems,
+                                    columns = homeSettings.columns,
+                                    rows = homeSettings.rows,
+                                    animate = false,
+                                    modifier = Modifier.fillMaxSize(),
+                                    content = { currentGridItem ->
+                                        PageGridItem(
+                                            gridItem = currentGridItem,
+                                            gridItemSettings = homeSettings.gridItemSettings,
+                                            folderPopupGridItems = folderPopupGridItems,
+                                            hasShortcutHostPermission = hasShortcutHostPermission,
+                                            textColor = textColor,
+                                            systemTextColor = systemTextColor,
+                                            systemCustomTextColor = systemCustomTextColor,
+                                            folderBackgroundColor = folderBackgroundColor,
+                                            customFolderBackgroundColor = customFolderBackgroundColor,
+                                            folderBorderColor = folderBorderColor,
+                                            customFolderBorderColor = customFolderBorderColor,
+                                            folderBorderWidth = folderBorderWidth,
+                                            folderCornerRadius = folderSettings.folderCornerRadius,
+                                            iconPackFilePaths = iconPackFilePaths,
+                                        )
+                                    },
+                                )
                             }
+                        }
 
-                            pageItemsToDelete.add(pageItem)
-                        },
-                        onHomeClick = {
-                            selectedId = pageItem.id
-                        },
-                    )
+                        Spacer(modifier = Modifier.height(EblanSpacing.small))
+
+                        PageButtons(
+                            pageNumber = index + 1,
+                            isHome = isHome,
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                            onDeleteClick = {
+                                currentPageItems = currentPageItems.toMutableList().apply {
+                                    removeIf { currentPageItem ->
+                                        currentPageItem.id == pageItem.id
+                                    }
+                                }
+                                pageItemsToDelete.add(pageItem)
+                            },
+                            onHomeClick = {
+                                selectedId = pageItem.id
+                            },
+                        )
+                    }
                 }
             }
         }
-
-        ExpandableFloatingActionButton(
-            expanded = expanded,
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(
-                    end = paddingValues.calculateEndPadding(layoutDirection),
-                    bottom = paddingValues.calculateBottomPadding(),
-                ),
-            onExpandedChange = { currentExpanded -> expanded = currentExpanded },
-            onAdd = {
-                currentPageItems = currentPageItems.toMutableList().apply {
-                    add(
-                        PageItem(
-                            id = maxOf { currentPageItem -> currentPageItem.id } + 1,
-                            gridItems = emptyList(),
-                        ),
-                    )
-                }
-            },
-            onSave = {
-                onSaveEditPage(
-                    selectedId,
-                    currentPageItems,
-                    pageItemsToDelete,
-                    Associate.Grid,
-                )
-
-                expanded = false
-            },
-            onCancel = {
-                onUpdateScreen(Screen.Pager)
-            },
-        )
     }
 }
 
@@ -332,7 +340,6 @@ private fun getGridSize(
     }
 
     val horizontalPadding = leftPadding + rightPadding
-
     val verticalPadding = topPadding + bottomPadding
 
     val gridWidthDp = with(density) {
@@ -379,14 +386,13 @@ internal fun EditDockGridPageScreen(
 ) {
     requireNotNull(pageItems)
 
-    val layoutDirection = LocalLayoutDirection.current
+    val scope = rememberCoroutineScope()
 
-    var currentPageItems by remember { mutableStateOf(pageItems) }
-
+    var currentPageItems by remember(pageItems) { mutableStateOf(pageItems) }
     val pageItemsToDelete = remember { mutableStateListOf<PageItem>() }
-
-    var selectedId by remember { mutableIntStateOf(homeSettings.dockInitialPage) }
-
+    var selectedId by remember(homeSettings.dockInitialPage) {
+        mutableIntStateOf(homeSettings.dockInitialPage)
+    }
     val lazyListState = rememberLazyListState()
 
     val lazyColumnDragDropState =
@@ -399,16 +405,149 @@ internal fun EditDockGridPageScreen(
             }
         }
 
-    val activity = LocalActivity.current as ComponentActivity
-
-    val scope = rememberCoroutineScope()
-
-    val columns = homeSettings.dockColumns
-    val rows = homeSettings.dockRows
-
     val cardHeight = homeSettings.dockHeight.dp
 
-    var expanded by remember { mutableStateOf(false) }
+    EditPageScaffold(
+        modifier = modifier,
+        paddingValues = paddingValues,
+        onAdd = {
+            val nextId = (currentPageItems.maxOfOrNull { it.id } ?: -1) + 1
+
+            currentPageItems = currentPageItems + PageItem(
+                id = nextId,
+                gridItems = emptyList(),
+            )
+
+            scope.launch {
+                lazyListState.animateScrollToItem(currentPageItems.lastIndex)
+            }
+        },
+        onSave = {
+            onSaveEditPage(
+                selectedId,
+                currentPageItems,
+                pageItemsToDelete,
+                Associate.Dock,
+            )
+        },
+        onCancel = {
+            onUpdateScreen(Screen.Pager)
+        },
+        onUpdateScreen = onUpdateScreen,
+    ) { contentPadding ->
+        LazyColumn(
+            modifier = Modifier
+                .dragColumnContainer(lazyColumnDragDropState = lazyColumnDragDropState)
+                .fillMaxSize()
+                .padding(contentPadding),
+            state = lazyListState,
+            contentPadding = PaddingValues(EblanSpacing.large),
+            verticalArrangement = Arrangement.spacedBy(EblanSpacing.medium),
+        ) {
+            itemsIndexed(
+                items = currentPageItems,
+                key = { _, pageItem -> pageItem.id },
+            ) { index, pageItem ->
+                val isHome = pageItem.id == selectedId
+
+                DraggableColumnItem(
+                    modifier = Modifier.fillMaxWidth(),
+                    lazyColumnDragDropState = lazyColumnDragDropState,
+                    index = index,
+                ) { isDragging ->
+                    val dragScale by animateFloatAsState(
+                        targetValue = if (isDragging) 1.03f else 1f,
+                        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
+                        label = "DragDockPageScale",
+                    )
+
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .graphicsLayer {
+                                scaleX = dragScale
+                                scaleY = dragScale
+                            },
+                        shape = MaterialTheme.shapes.medium,
+                        color = MaterialTheme.colorScheme.surfaceContainerLow.copy(
+                            alpha = if (isDragging) 0.72f else 0.52f,
+                        ),
+                        border = BorderStroke(
+                            width = if (isHome || isDragging) 2.dp else 1.dp,
+                            color = when {
+                                isHome -> MaterialTheme.colorScheme.primary
+                                isDragging -> MaterialTheme.colorScheme.secondary
+                                else -> MaterialTheme.colorScheme.outlineVariant
+                            },
+                        ),
+                        tonalElevation = if (isDragging) 8.dp else 2.dp,
+                    ) {
+                        GridLayout(
+                            gridItems = pageItem.gridItems,
+                            columns = homeSettings.dockColumns,
+                            rows = homeSettings.dockRows,
+                            animate = false,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(cardHeight),
+                            content = { currentGridItem ->
+                                PageGridItem(
+                                    gridItem = currentGridItem,
+                                    gridItemSettings = homeSettings.dockGridItemSettings,
+                                    folderPopupGridItems = folderPopupGridItems,
+                                    hasShortcutHostPermission = hasShortcutHostPermission,
+                                    textColor = textColor,
+                                    systemTextColor = systemTextColor,
+                                    systemCustomTextColor = systemCustomTextColor,
+                                    folderBackgroundColor = folderBackgroundColor,
+                                    customFolderBackgroundColor = customFolderBackgroundColor,
+                                    folderBorderColor = folderBorderColor,
+                                    customFolderBorderColor = customFolderBorderColor,
+                                    folderBorderWidth = folderBorderWidth,
+                                    folderCornerRadius = folderSettings.folderCornerRadius,
+                                    iconPackFilePaths = iconPackFilePaths,
+                                )
+                            },
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(EblanSpacing.small))
+
+                    PageButtons(
+                        pageNumber = index + 1,
+                        isHome = isHome,
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                        onDeleteClick = {
+                            currentPageItems = currentPageItems.toMutableList().apply {
+                                removeIf { currentPageItem ->
+                                    currentPageItem.id == pageItem.id
+                                }
+                            }
+                            pageItemsToDelete.add(pageItem)
+                        },
+                        onHomeClick = {
+                            selectedId = pageItem.id
+                        },
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun EditPageScaffold(
+    paddingValues: PaddingValues,
+    onAdd: () -> Unit,
+    onSave: () -> Unit,
+    onCancel: () -> Unit,
+    onUpdateScreen: (Screen) -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable (PaddingValues) -> Unit,
+) {
+    val activity = LocalActivity.current as ComponentActivity
+    val layoutDirection = LocalLayoutDirection.current
+    val scope = rememberCoroutineScope()
 
     DisposableEffect(key1 = activity) {
         val listener = Consumer<Intent> { intent ->
@@ -427,233 +566,118 @@ internal fun EditDockGridPageScreen(
         }
     }
 
-    BackHandler {
-        onUpdateScreen(Screen.Pager)
-    }
+    BackHandler(onBack = onCancel)
 
     HomeHandler {
-        onUpdateScreen(Screen.Pager)
+        onCancel()
     }
 
-    Box(modifier = modifier.fillMaxSize()) {
-        LazyColumn(
-            modifier = Modifier
-                .dragColumnContainer(lazyColumnDragDropState = lazyColumnDragDropState)
-                .matchParentSize(),
-            state = lazyListState,
-            contentPadding = paddingValues,
-        ) {
-            itemsIndexed(
-                items = currentPageItems,
-                key = { _, pageItem -> pageItem.id },
-            ) { index, pageItem ->
-                DraggableColumnItem(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(EblanSpacing.medium),
-                    lazyColumnDragDropState = lazyColumnDragDropState,
-                    index = index,
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(
-                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.25f),
-                                shape = MaterialTheme.shapes.small,
-                            ),
-                    ) {
-                        GridLayout(
-                            // Grid Properties
-                            gridItems = pageItem.gridItems,
-                            columns = columns,
-                            rows = rows,
-                            // Layout Options
-                            animate = false,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(cardHeight),
-                            // Content
-                            content = { currentGridItem ->
-                                PageGridItem(
-                                    // Item and Settings
-                                    gridItem = currentGridItem,
-                                    gridItemSettings = homeSettings.dockGridItemSettings,
-                                    folderPopupGridItems = folderPopupGridItems,
-                                    hasShortcutHostPermission = hasShortcutHostPermission,
-                                    textColor = textColor,
-                                    systemTextColor = systemTextColor,
-                                    systemCustomTextColor = systemCustomTextColor,
-                                    folderBackgroundColor = folderBackgroundColor,
-                                    customFolderBackgroundColor = customFolderBackgroundColor,
-                                    folderBorderColor = folderBorderColor,
-                                    customFolderBorderColor = customFolderBorderColor,
-                                    folderBorderWidth = folderBorderWidth,
-                                    folderCornerRadius = folderSettings.folderCornerRadius,
-                                    // Assets and Styling
-                                    iconPackFilePaths = iconPackFilePaths,
-                                )
-                            },
-                        )
-
-                        PageButtons(
-                            pageItem = pageItem,
-                            selectedId = selectedId,
-                            modifier = Modifier
-                                .align(Alignment.CenterHorizontally)
-                                .padding(EblanSpacing.extraSmall),
-                            onDeleteClick = {
-                                currentPageItems = currentPageItems.toMutableList().apply {
-                                    removeIf { currentPageItem ->
-                                        currentPageItem.id == pageItem.id
-                                    }
-                                }
-
-                                pageItemsToDelete.add(pageItem)
-                            },
-                            onHomeClick = {
-                                selectedId = pageItem.id
-                            },
-                        )
-                    }
-                }
-            }
-        }
-
-        ExpandableFloatingActionButton(
-            expanded = expanded,
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(
-                    end = paddingValues.calculateEndPadding(layoutDirection),
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        containerColor = Color.Transparent,
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        bottomBar = {
+            BottomAppBar(
+                windowInsets = WindowInsets(
+                    left = paddingValues.calculateLeftPadding(layoutDirection),
+                    right = paddingValues.calculateRightPadding(layoutDirection),
                     bottom = paddingValues.calculateBottomPadding(),
                 ),
-            onExpandedChange = { currentExpanded -> expanded = currentExpanded },
-            onAdd = {
-                currentPageItems = currentPageItems.toMutableList().apply {
-                    add(
-                        PageItem(
-                            id = maxOf { currentPageItem -> currentPageItem.id } + 1,
-                            gridItems = emptyList(),
-                        ),
-                    )
-                }
-            },
-            onSave = {
-                onSaveEditPage(
-                    selectedId,
-                    currentPageItems,
-                    pageItemsToDelete,
-                    Associate.Dock,
-                )
+                actions = {
+                    IconButton(onClick = onCancel) {
+                        Icon(
+                            imageVector = EblanLauncherIcons.Close,
+                            contentDescription = stringResource(commonR.string.cancel),
+                        )
+                    }
 
-                expanded = false
-            },
-            onCancel = {
-                onUpdateScreen(Screen.Pager)
-            },
-        )
+                    IconButton(onClick = onSave) {
+                        Icon(
+                            imageVector = EblanLauncherIcons.Done,
+                            contentDescription = stringResource(commonR.string.save),
+                        )
+                    }
+                },
+                floatingActionButton = {
+                    FloatingActionButton(
+                        onClick = onAdd,
+                        containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
+                        elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(),
+                    ) {
+                        Icon(
+                            imageVector = EblanLauncherIcons.Add,
+                            contentDescription = stringResource(commonR.string.add),
+                        )
+                    }
+                },
+            )
+        },
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    start = paddingValues.calculateLeftPadding(layoutDirection),
+                    top = paddingValues.calculateTopPadding(),
+                    end = paddingValues.calculateRightPadding(layoutDirection),
+                    bottom = innerPadding.calculateBottomPadding(),
+                ),
+        ) {
+            content(PaddingValues())
+        }
     }
 }
 
 @Composable
 internal fun PageButtons(
-    // Page Data
-    pageItem: PageItem,
-    selectedId: Int,
-    // Layout
+    pageNumber: Int,
+    isHome: Boolean,
     modifier: Modifier = Modifier,
-    // Actions
     onDeleteClick: () -> Unit,
     onHomeClick: () -> Unit,
 ) {
     Surface(
         modifier = modifier,
         shape = MaterialTheme.shapes.extraLarge,
-        tonalElevation = 10.dp,
+        tonalElevation = 4.dp,
     ) {
         Row(
-            modifier = Modifier.padding(EblanSpacing.extraSmall),
-            horizontalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier.padding(horizontal = EblanSpacing.small, vertical = EblanSpacing.extraSmall),
+            horizontalArrangement = Arrangement.spacedBy(EblanSpacing.extraSmall),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
+            Text(
+                text = pageNumber.toString(),
+                style = MaterialTheme.typography.labelLarge,
+                modifier = Modifier.padding(horizontal = EblanSpacing.small),
+            )
+
+            IconButton(
+                onClick = onHomeClick,
+                enabled = !isHome,
+                colors = IconButtonDefaults.iconButtonColors(
+                    disabledContentColor = if (isHome) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                    },
+                ),
+            ) {
+                Icon(
+                    imageVector = EblanLauncherIcons.Home,
+                    contentDescription = stringResource(commonR.string.home),
+                )
+            }
+
             IconButton(
                 onClick = onDeleteClick,
-                enabled = pageItem.id != selectedId,
+                enabled = !isHome,
             ) {
                 Icon(
                     imageVector = EblanLauncherIcons.Delete,
                     contentDescription = null,
                 )
             }
-
-            IconButton(
-                onClick = onHomeClick,
-                enabled = pageItem.id != selectedId,
-            ) {
-                Icon(
-                    imageVector = EblanLauncherIcons.Home,
-                    contentDescription = null,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-internal fun ExpandableFloatingActionButton(
-    // State
-    expanded: Boolean,
-    // Layout
-    modifier: Modifier = Modifier,
-    // Actions
-    onExpandedChange: (Boolean) -> Unit,
-    onAdd: () -> Unit,
-    onSave: () -> Unit,
-    onCancel: () -> Unit,
-) {
-    Column(modifier = modifier.padding(EblanSpacing.large)) {
-        AnimatedVisibility(
-            visible = expanded,
-            enter = fadeIn() + slideInHorizontally { currentFullWidth -> currentFullWidth },
-            exit = fadeOut() + slideOutHorizontally { currentFullWidth -> currentFullWidth },
-        ) {
-            Column(
-                horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.spacedBy(5.dp),
-            ) {
-                ElevatedButton(onClick = onAdd) {
-                    Text(text = stringResource(commonR.string.add))
-                }
-
-                ElevatedButton(
-                    onClick = onSave,
-                ) {
-                    Text(text = stringResource(commonR.string.save))
-                }
-
-                ElevatedButton(
-                    onClick = onCancel,
-                ) {
-                    Text(text = stringResource(commonR.string.cancel))
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(15.dp))
-
-        FloatingActionButton(
-            modifier = Modifier.align(Alignment.End),
-            onClick = {
-                onExpandedChange(!expanded)
-            },
-        ) {
-            Icon(
-                imageVector = if (expanded) {
-                    EblanLauncherIcons.Close
-                } else {
-                    EblanLauncherIcons.Add
-                },
-                contentDescription = null,
-            )
         }
     }
 }
