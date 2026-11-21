@@ -21,26 +21,20 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.eblan.launcher.domain.common.Dispatcher
-import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.model.grid.GridItem
-import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
-import com.eblan.launcher.domain.platform.IconPackManager
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.application.GetEblanApplicationInfosUseCase
 import com.eblan.launcher.domain.usecase.grid.DeleteGridItemCustomIconUseCase
 import com.eblan.launcher.domain.usecase.grid.GetGridItemByIdUseCase
 import com.eblan.launcher.domain.usecase.grid.UpdateGridItemCustomIconUseCase
+import com.eblan.launcher.domain.usecase.iconpack.GetIconPackComponentsUseCase
 import com.eblan.launcher.feature.editgriditem.model.EditGridItemUiState
 import com.eblan.launcher.feature.editgriditem.navigation.EditGridItemRouteData
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
@@ -51,14 +45,13 @@ import javax.inject.Inject
 @HiltViewModel
 internal class EditGridItemViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val iconPackManager: IconPackManager,
     private val gridRepository: GridRepository,
     userDataRepository: UserDataRepository,
     getEblanApplicationInfosUseCase: GetEblanApplicationInfosUseCase,
     private val updateGridItemCustomIconUseCase: UpdateGridItemCustomIconUseCase,
     private val deleteGridItemCustomIconUseCase: DeleteGridItemCustomIconUseCase,
     private val getGridItemByIdUseCase: GetGridItemByIdUseCase,
-    @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
+    getIconPackComponentsUseCase: GetIconPackComponentsUseCase,
 ) : ViewModel() {
     private val editGridItemRouteData = savedStateHandle.toRoute<EditGridItemRouteData>()
 
@@ -86,13 +79,17 @@ internal class EditGridItemViewModel @Inject constructor(
         initialValue = emptyList(),
     )
 
-    private val _iconPackComponents = MutableStateFlow(emptyList<IconPackComponent>())
+    private val _iconPackPackageName = MutableStateFlow<String?>(null)
+    private val _iconPackComponentQuery = MutableStateFlow("")
 
-    val iconPackInfoComponents = _iconPackComponents.asStateFlow()
-
-    private var iconPackComponentsJob: Job? = null
-
-    private var lastIconPackComponents = emptyList<IconPackComponent>()
+    val iconPackInfoComponents = getIconPackComponentsUseCase(
+        packageNameFlow = _iconPackPackageName,
+        queryFlow = _iconPackComponentQuery,
+    ).stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = emptyList(),
+    )
 
     fun updateGridItem(gridItem: GridItem) {
         viewModelScope.launch {
@@ -111,39 +108,17 @@ internal class EditGridItemViewModel @Inject constructor(
     }
 
     fun updateIconPackPackageName(packageName: String) {
-        iconPackComponentsJob = viewModelScope.launch(defaultDispatcher) {
-            _iconPackComponents.update {
-                iconPackManager.getIconPackComponents(packageName = packageName)
-                    .distinctBy { iconPackInfoComponent ->
-                        iconPackInfoComponent.drawableName
-                    }.also { iconPackInfoComponents ->
-                        lastIconPackComponents = iconPackInfoComponents
-                    }
-            }
-        }
+        _iconPackComponentQuery.update { "" }
+        _iconPackPackageName.update { packageName }
     }
 
     fun resetIconPackPackageName() {
-        iconPackComponentsJob?.cancel()
-
-        _iconPackComponents.update {
-            emptyList()
-        }
-
-        lastIconPackComponents = emptyList()
+        _iconPackPackageName.update { null }
+        _iconPackComponentQuery.update { "" }
     }
 
     fun searchIconPackInfoComponent(component: String) {
-        viewModelScope.launch(defaultDispatcher) {
-            _iconPackComponents.update {
-                lastIconPackComponents.filter { iconPackInfoComponent ->
-                    iconPackInfoComponent.componentName.contains(
-                        other = component,
-                        ignoreCase = true,
-                    )
-                }
-            }
-        }
+        _iconPackComponentQuery.update { component }
     }
 
     fun updateGridItemCustomIcon(

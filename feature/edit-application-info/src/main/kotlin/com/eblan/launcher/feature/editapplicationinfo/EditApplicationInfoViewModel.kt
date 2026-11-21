@@ -21,14 +21,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.eblan.launcher.domain.common.Dispatcher
-import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTagCrossRef
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
-import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
-import com.eblan.launcher.domain.platform.IconPackManager
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoTagCrossRefRepository
 import com.eblan.launcher.domain.repository.EblanApplicationInfoTagRepository
@@ -38,15 +34,13 @@ import com.eblan.launcher.domain.usecase.application.GetEblanApplicationInfosTag
 import com.eblan.launcher.domain.usecase.application.UpdateEblanApplicationInfoCustomIconUseCase
 import com.eblan.launcher.domain.usecase.folder.GetFolderEblanApplicationInfoPopupsUseCase
 import com.eblan.launcher.domain.usecase.folder.GetTopLevelFolderEblanApplicationInfosUseCase
+import com.eblan.launcher.domain.usecase.iconpack.GetIconPackComponentsUseCase
 import com.eblan.launcher.feature.editapplicationinfo.model.EditApplicationInfoUiState
 import com.eblan.launcher.feature.editapplicationinfo.navigation.EditApplicationInfoRouteData
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
@@ -58,7 +52,6 @@ import javax.inject.Inject
 internal class EditApplicationInfoViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
-    private val iconPackManager: IconPackManager,
     getEblanApplicationInfosTagsUiUseCase: GetEblanApplicationInfosTagsUiUseCase,
     private val eblanApplicationInfoTagRepository: EblanApplicationInfoTagRepository,
     private val eblanApplicationInfoTagCrossRefRepository: EblanApplicationInfoTagCrossRefRepository,
@@ -67,7 +60,7 @@ internal class EditApplicationInfoViewModel @Inject constructor(
     userDataRepository: UserDataRepository,
     getFolderEblanApplicationInfoPopupsUseCase: GetFolderEblanApplicationInfoPopupsUseCase,
     getTopLevelFolderEblanApplicationInfosUseCase: GetTopLevelFolderEblanApplicationInfosUseCase,
-    @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
+    getIconPackComponentsUseCase: GetIconPackComponentsUseCase,
 ) : ViewModel() {
     private val editApplicationInfoRouteData =
         savedStateHandle.toRoute<EditApplicationInfoRouteData>()
@@ -89,12 +82,17 @@ internal class EditApplicationInfoViewModel @Inject constructor(
         initialValue = EditApplicationInfoUiState.Loading,
     )
 
-    private val _iconPackComponents = MutableStateFlow(emptyList<IconPackComponent>())
-    val iconPackInfoComponents = _iconPackComponents.asStateFlow()
+    private val _iconPackPackageName = MutableStateFlow<String?>(null)
+    private val _iconPackComponentQuery = MutableStateFlow("")
 
-    private var iconPackComponentsJob: Job? = null
-
-    private var lastIconPackComponents = emptyList<IconPackComponent>()
+    val iconPackInfoComponents = getIconPackComponentsUseCase(
+        packageNameFlow = _iconPackPackageName,
+        queryFlow = _iconPackComponentQuery,
+    ).stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = emptyList(),
+    )
 
     val eblanApplicationInfoTagsUi = getEblanApplicationInfosTagsUiUseCase(
         serialNumber = editApplicationInfoRouteData.serialNumber,
@@ -135,39 +133,17 @@ internal class EditApplicationInfoViewModel @Inject constructor(
     }
 
     fun updateIconPackPackageName(packageName: String) {
-        iconPackComponentsJob = viewModelScope.launch(defaultDispatcher) {
-            _iconPackComponents.update {
-                iconPackManager.getIconPackComponents(packageName = packageName)
-                    .distinctBy { iconPackInfoComponent ->
-                        iconPackInfoComponent.drawableName
-                    }.also { iconPackInfoComponents ->
-                        lastIconPackComponents = iconPackInfoComponents
-                    }
-            }
-        }
+        _iconPackComponentQuery.update { "" }
+        _iconPackPackageName.update { packageName }
     }
 
     fun resetIconPackPackageName() {
-        iconPackComponentsJob?.cancel()
-
-        _iconPackComponents.update {
-            emptyList()
-        }
-
-        lastIconPackComponents = emptyList()
+        _iconPackPackageName.update { null }
+        _iconPackComponentQuery.update { "" }
     }
 
     fun searchIconPackInfoComponent(component: String) {
-        viewModelScope.launch(defaultDispatcher) {
-            _iconPackComponents.update {
-                lastIconPackComponents.filter { iconPackInfoComponent ->
-                    iconPackInfoComponent.componentName.contains(
-                        other = component,
-                        ignoreCase = true,
-                    )
-                }
-            }
-        }
+        _iconPackComponentQuery.update { component }
     }
 
     fun addEblanApplicationInfoTag(eblanApplicationInfoTag: EblanApplicationInfoTag) {

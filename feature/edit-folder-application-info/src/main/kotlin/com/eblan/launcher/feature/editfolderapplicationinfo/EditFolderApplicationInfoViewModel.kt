@@ -21,25 +21,19 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.eblan.launcher.domain.common.Dispatcher
-import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
-import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
-import com.eblan.launcher.domain.platform.IconPackManager
 import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.folder.GetFolderEblanApplicationInfoPopupsUseCase
 import com.eblan.launcher.domain.usecase.folder.GetFolderEblanApplicationInfosByIdUseCase
 import com.eblan.launcher.domain.usecase.folder.UpdateFolderEblanApplicationInfoCustomIconUseCase
+import com.eblan.launcher.domain.usecase.iconpack.GetIconPackComponentsUseCase
 import com.eblan.launcher.feature.editfolderapplicationinfo.model.EditFolderApplicationInfoUiState
 import com.eblan.launcher.feature.editfolderapplicationinfo.navigation.EditFolderApplicationInfoRouteData
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
@@ -50,13 +44,12 @@ import javax.inject.Inject
 @HiltViewModel
 internal class EditFolderApplicationInfoViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val iconPackManager: IconPackManager,
     private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
     userDataRepository: UserDataRepository,
     private val updateFolderEblanApplicationInfoCustomIconUseCase: UpdateFolderEblanApplicationInfoCustomIconUseCase,
     getFolderEblanApplicationInfosByIdUseCase: GetFolderEblanApplicationInfosByIdUseCase,
     getFolderEblanApplicationInfoPopupsUseCase: GetFolderEblanApplicationInfoPopupsUseCase,
-    @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
+    getIconPackComponentsUseCase: GetIconPackComponentsUseCase,
 ) : ViewModel() {
     private val editFolderApplicationInfoRouteData =
         savedStateHandle.toRoute<EditFolderApplicationInfoRouteData>()
@@ -78,12 +71,17 @@ internal class EditFolderApplicationInfoViewModel @Inject constructor(
         initialValue = EditFolderApplicationInfoUiState.Loading,
     )
 
-    private val _iconPackComponents = MutableStateFlow(emptyList<IconPackComponent>())
-    val iconPackInfoComponents = _iconPackComponents.asStateFlow()
+    private val _iconPackPackageName = MutableStateFlow<String?>(null)
+    private val _iconPackComponentQuery = MutableStateFlow("")
 
-    private var iconPackComponentsJob: Job? = null
-
-    private var lastIconPackComponents = emptyList<IconPackComponent>()
+    val iconPackInfoComponents = getIconPackComponentsUseCase(
+        packageNameFlow = _iconPackPackageName,
+        queryFlow = _iconPackComponentQuery,
+    ).stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = emptyList(),
+    )
 
     val folderEblanApplicationInfos =
         getFolderEblanApplicationInfosByIdUseCase(id = editFolderApplicationInfoRouteData.id).stateIn(
@@ -100,39 +98,17 @@ internal class EditFolderApplicationInfoViewModel @Inject constructor(
         )
 
     fun updateIconPackPackageName(packageName: String) {
-        iconPackComponentsJob = viewModelScope.launch(defaultDispatcher) {
-            _iconPackComponents.update {
-                iconPackManager.getIconPackComponents(packageName = packageName)
-                    .distinctBy { iconPackInfoComponent ->
-                        iconPackInfoComponent.drawableName
-                    }.also { iconPackInfoComponents ->
-                        lastIconPackComponents = iconPackInfoComponents
-                    }
-            }
-        }
+        _iconPackComponentQuery.update { "" }
+        _iconPackPackageName.update { packageName }
     }
 
     fun resetIconPackPackageName() {
-        iconPackComponentsJob?.cancel()
-
-        _iconPackComponents.update {
-            emptyList()
-        }
-
-        lastIconPackComponents = emptyList()
+        _iconPackPackageName.update { null }
+        _iconPackComponentQuery.update { "" }
     }
 
     fun searchIconPackInfoComponent(component: String) {
-        viewModelScope.launch(defaultDispatcher) {
-            _iconPackComponents.update {
-                lastIconPackComponents.filter { iconPackInfoComponent ->
-                    iconPackInfoComponent.componentName.contains(
-                        other = component,
-                        ignoreCase = true,
-                    )
-                }
-            }
-        }
+        _iconPackComponentQuery.update { component }
     }
 
     fun updateFolderEblanApplicationInfoCustomIcon(
