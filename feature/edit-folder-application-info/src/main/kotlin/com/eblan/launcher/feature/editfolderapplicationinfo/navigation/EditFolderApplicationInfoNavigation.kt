@@ -17,9 +17,10 @@
  */
 package com.eblan.launcher.feature.editfolderapplicationinfo.navigation
 
+import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
+import androidx.navigation.compose.dialog
 import com.eblan.launcher.feature.editfolderapplicationinfo.EditFolderApplicationInfoRoute
 
 fun NavController.navigateToEditFolderApplicationScreen(id: String) {
@@ -29,7 +30,12 @@ fun NavController.navigateToEditFolderApplicationScreen(id: String) {
 fun NavGraphBuilder.editFolderApplicationScreen(
     onNavigateUp: () -> Unit,
 ) {
-    composable<EditFolderApplicationInfoRouteData> {
+    dialog<EditFolderApplicationInfoRouteData>(
+        dialogProperties = DialogProperties(
+            usePlatformDefaultWidth = false,
+            decorFitsSystemWindows = false,
+        ),
+    ) {
         EditFolderApplicationInfoRoute(onNavigateUp = onNavigateUp)
     }
 }

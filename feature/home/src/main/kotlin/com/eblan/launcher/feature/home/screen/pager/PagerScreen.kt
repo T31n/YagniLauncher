@@ -804,6 +804,43 @@ internal fun PagerScreen(
         )
     }
 
+    LaunchedEffect(
+        key1 = folderPopups,
+        key2 = folderGridItemEntries,
+    ) {
+        folderGridItemEntries
+            .filterNot { currentFolderEntry -> folderPopups.containsKey(currentFolderEntry.id) }
+            .forEach { staleFolderEntry ->
+                pagerScreenState.closeFolderGridItem(
+                    folderEntry = staleFolderEntry,
+                    isFirstFolderGridItem = folderGridItemEntries.none { entry ->
+                        entry.id != staleFolderEntry.id && folderPopups.containsKey(entry.id)
+                    },
+                    onDeleteFolderGridItemPopupEntry = onDeleteFolderGridItemPopupEntry,
+                )
+            }
+    }
+
+    LaunchedEffect(
+        key1 = folderEblanApplicationInfoPopups,
+        key2 = folderEblanApplicationInfoEntries,
+    ) {
+        folderEblanApplicationInfoEntries
+            .filterNot { currentFolderEntry ->
+                folderEblanApplicationInfoPopups.containsKey(currentFolderEntry.id)
+            }
+            .forEach { staleFolderEntry ->
+                pagerScreenState.closeFolderEblanApplicationInfo(
+                    folderEntry = staleFolderEntry,
+                    isFirstFolderEblanApplicationInfo = folderEblanApplicationInfoEntries.none { entry ->
+                        entry.id != staleFolderEntry.id &&
+                            folderEblanApplicationInfoPopups.containsKey(entry.id)
+                    },
+                    onDeleteFolderPopupEntry = onDeleteFolderEblanApplicationInfoPopupEntry,
+                )
+            }
+    }
+
     DisposableEffect(
         key1 = activity,
         key2 = pagerScreenState,
@@ -1256,11 +1293,7 @@ internal fun PagerScreen(
                 // Callbacks
                 onDeleteGridItem = onDeleteGridItem,
                 onDismissRequest = pagerScreenState::dismissGridItemMenu,
-                onEdit = { id ->
-                    onResetGrid()
-
-                    onEditGridItem(id)
-                },
+                onEdit = onEditGridItem,
                 onResize = onUpdateResizeGridItem,
                 onWidgets = pagerScreenState::openAppWidgetScreen,
                 onUpdateIsResizing = pagerScreenState::updateIsResizing,
@@ -1404,13 +1437,8 @@ internal fun PagerScreen(
                 // Actions
                 onDeleteGridItem = onDeleteGridItem,
                 onDismissRequest = pagerScreenState::dismissFolderGridItemMenu,
-                onEdit = { id ->
-                    onResetGrid()
-
-                    onEditGridItem(id)
-                },
+                onEdit = onEditGridItem,
                 onWidgets = pagerScreenState::openAppWidgetScreen,
-                onResetFolderGridItemPopupEntries = onResetFolderGridItemPopupEntries,
                 onDragShortcutInfo = { gridItem, imageBitmap, intOffset, intSize, sharedElementKey ->
                     pagerScreenState.dragShortcutInfoFromFolderGridItemMenu(
                         // Grid item details
@@ -1800,21 +1828,9 @@ internal fun PagerScreen(
                 isCloseFolderEblanApplicationInfoGridItemMenu = pagerScreenState.isCloseFolderEblanApplicationInfoGridItemMenu,
                 // Actions
                 onDismissRequest = pagerScreenState::dismissFolderEblanApplicationInfoGridItemMenu,
-                onEditFolderApplicationInfo = { id ->
-                    onResetGrid()
-
-                    onEditFolderApplicationInfo(id)
-                },
-                onEditApplicationInfo = { serialNumber, componentName ->
-                    onResetGrid()
-
-                    onEditApplicationInfo(
-                        serialNumber,
-                        componentName,
-                    )
-                },
+                onEditFolderApplicationInfo = onEditFolderApplicationInfo,
+                onEditApplicationInfo = onEditApplicationInfo,
                 onWidgets = pagerScreenState::openAppWidgetScreen,
-                onResetFolderEblanApplicationInfoPopupEntries = onResetFolderEblanApplicationInfoPopupEntries,
                 onDeleteFolderEblanApplicationInfoGridItems = onDeleteFolderEblanApplicationInfoGridItems,
                 onDragShortcutInfo = { gridItem, imageBitmap, intOffset, intSize, sharedElementKey ->
                     pagerScreenState.dragShortcutInfoFromFolderApplicationGridItemMenu(

@@ -188,6 +188,14 @@ internal fun ApplicationScreen(
 
     var selectedEblanApplicationInfoTagId by remember { mutableStateOf<Long?>(null) }
 
+    LaunchedEffect(key1 = eblanApplicationInfoTags) {
+        if (selectedEblanApplicationInfoTagId != null &&
+            eblanApplicationInfoTags.none { tag -> tag.id == selectedEblanApplicationInfoTagId }
+        ) {
+            selectedEblanApplicationInfoTagId = null
+        }
+    }
+
     BlurBehindEffect(
         // Effect
         blurBehind = appDrawerSettings.blurBehind,

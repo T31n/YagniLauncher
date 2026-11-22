@@ -196,7 +196,6 @@ internal fun FolderApplicationInfoGridItemPopup(
         componentName: String,
     ) -> Unit,
     onWidgets: (EblanApplicationInfoGroup) -> Unit,
-    onResetFolderEblanApplicationInfoPopupEntries: () -> Unit,
     onDeleteFolderEblanApplicationInfoGridItems: (String) -> Unit,
     onDragShortcutInfo: (
         gridItem: GridItem,
@@ -300,7 +299,6 @@ internal fun FolderApplicationInfoGridItemPopup(
                 onEditApplicationInfo = onEditApplicationInfo,
                 onEditFolderApplicationInfo = onEditFolderApplicationInfo,
                 onDeleteFolderEblanApplicationInfoGridItems = onDeleteFolderEblanApplicationInfoGridItems,
-                onResetFolderEblanApplicationInfoPopupEntries = onResetFolderEblanApplicationInfoPopupEntries,
                 onDismiss = {
                     transitionState.targetState = false
                 },
@@ -331,7 +329,6 @@ private fun FolderApplicationInfoGridItemPopupContent(
     onEditApplicationInfo: (Long, String) -> Unit,
     onEditFolderApplicationInfo: (String) -> Unit,
     onDeleteFolderEblanApplicationInfoGridItems: (String) -> Unit,
-    onResetFolderEblanApplicationInfoPopupEntries: () -> Unit,
     onDismiss: () -> Unit,
     onDragShortcutInfo: (
         gridItem: GridItem,
@@ -386,8 +383,6 @@ private fun FolderApplicationInfoGridItemPopupContent(
                         data.serialNumber,
                         data.componentName,
                     )
-
-                    onResetFolderEblanApplicationInfoPopupEntries()
 
                     onDismiss()
                 },
@@ -449,8 +444,6 @@ private fun FolderApplicationInfoGridItemPopupContent(
                 },
                 onEdit = {
                     onEditFolderApplicationInfo(folderEblanApplicationInfoGridItem.id)
-
-                    onResetFolderEblanApplicationInfoPopupEntries()
 
                     onDismiss()
                 },
