@@ -1293,7 +1293,11 @@ internal fun PagerScreen(
                 // Callbacks
                 onDeleteGridItem = onDeleteGridItem,
                 onDismissRequest = pagerScreenState::dismissGridItemMenu,
-                onEdit = onEditGridItem,
+                onEdit = { id ->
+                    onResetGrid()
+
+                    onEditGridItem(id)
+                },
                 onResize = onUpdateResizeGridItem,
                 onWidgets = pagerScreenState::openAppWidgetScreen,
                 onUpdateIsResizing = pagerScreenState::updateIsResizing,
@@ -1437,7 +1441,11 @@ internal fun PagerScreen(
                 // Actions
                 onDeleteGridItem = onDeleteGridItem,
                 onDismissRequest = pagerScreenState::dismissFolderGridItemMenu,
-                onEdit = onEditGridItem,
+                onEdit = { id ->
+                    onResetGrid()
+
+                    onEditGridItem(id)
+                },
                 onWidgets = pagerScreenState::openAppWidgetScreen,
                 onDragShortcutInfo = { gridItem, imageBitmap, intOffset, intSize, sharedElementKey ->
                     pagerScreenState.dragShortcutInfoFromFolderGridItemMenu(
