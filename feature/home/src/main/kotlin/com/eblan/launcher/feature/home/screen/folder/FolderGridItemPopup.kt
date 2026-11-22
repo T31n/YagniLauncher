@@ -89,7 +89,6 @@ internal fun FolderGridItemPopup(
     onDismissRequest: () -> Unit,
     onEdit: (String) -> Unit,
     onWidgets: (EblanApplicationInfoGroup) -> Unit,
-    onResetFolderGridItemPopupEntries: () -> Unit,
     onDragShortcutInfo: (
         gridItem: GridItem,
         imageBitmap: ImageBitmap,
@@ -218,7 +217,6 @@ internal fun FolderGridItemPopup(
                     )
                 },
                 onWidgets = onWidgets,
-                onResetFolderGridItemPopupEntries = onResetFolderGridItemPopupEntries,
                 onDragShortcutInfo = onDragShortcutInfo,
             )
         }
@@ -248,7 +246,6 @@ private fun FolderGridItemPopupContent(
         shortcutId: String,
     ) -> Unit,
     onWidgets: (EblanApplicationInfoGroup) -> Unit,
-    onResetFolderGridItemPopupEntries: () -> Unit,
     onDragShortcutInfo: (
         gridItem: GridItem,
         imageBitmap: ImageBitmap,
@@ -289,8 +286,6 @@ private fun FolderGridItemPopupContent(
                         },
                         onEdit = {
                             onEdit(folderGridItem.id)
-
-                            onResetFolderGridItemPopupEntries()
 
                             onDismiss()
                         },
@@ -339,8 +334,6 @@ private fun FolderGridItemPopupContent(
                         },
                         onEdit = {
                             onEdit(folderGridItem.id)
-
-                            onResetFolderGridItemPopupEntries()
 
                             onDismiss()
                         },

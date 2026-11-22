@@ -17,9 +17,10 @@
  */
 package com.eblan.launcher.feature.editgriditem.navigation
 
+import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
+import androidx.navigation.compose.dialog
 import com.eblan.launcher.feature.editgriditem.EditGridItemRoute
 
 fun NavController.navigateToEditGridItemScreen(id: String) {
@@ -29,7 +30,12 @@ fun NavController.navigateToEditGridItemScreen(id: String) {
 fun NavGraphBuilder.editGridItemScreen(
     onNavigateUp: () -> Unit,
 ) {
-    composable<EditGridItemRouteData> {
+    dialog<EditGridItemRouteData>(
+        dialogProperties = DialogProperties(
+            usePlatformDefaultWidth = false,
+            decorFitsSystemWindows = false,
+        ),
+    ) {
         EditGridItemRoute(onNavigateUp = onNavigateUp)
     }
 }

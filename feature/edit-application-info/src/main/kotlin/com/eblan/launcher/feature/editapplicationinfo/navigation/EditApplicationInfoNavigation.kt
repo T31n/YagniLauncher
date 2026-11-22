@@ -17,9 +17,10 @@
  */
 package com.eblan.launcher.feature.editapplicationinfo.navigation
 
+import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
+import androidx.navigation.compose.dialog
 import com.eblan.launcher.feature.editapplicationinfo.EditApplicationInfoRoute
 
 fun NavController.navigateToEditApplicationScreen(
@@ -37,7 +38,12 @@ fun NavController.navigateToEditApplicationScreen(
 fun NavGraphBuilder.editApplicationScreen(
     onNavigateUp: () -> Unit,
 ) {
-    composable<EditApplicationInfoRouteData> {
+    dialog<EditApplicationInfoRouteData>(
+        dialogProperties = DialogProperties(
+            usePlatformDefaultWidth = false,
+            decorFitsSystemWindows = false,
+        ),
+    ) {
         EditApplicationInfoRoute(onNavigateUp = onNavigateUp)
     }
 }
