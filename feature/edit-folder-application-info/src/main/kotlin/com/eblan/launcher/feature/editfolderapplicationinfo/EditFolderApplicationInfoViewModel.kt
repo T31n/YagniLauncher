@@ -21,9 +21,12 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
+import com.eblan.launcher.domain.usecase.application.GetEblanApplicationInfosUseCase
+import com.eblan.launcher.domain.usecase.folder.AddEblanApplicationInfosToFolderUseCase
 import com.eblan.launcher.domain.usecase.folder.GetFolderEblanApplicationInfoPopupsUseCase
 import com.eblan.launcher.domain.usecase.folder.GetFolderEblanApplicationInfosByIdUseCase
 import com.eblan.launcher.domain.usecase.folder.UpdateFolderEblanApplicationInfoCustomIconUseCase
@@ -47,6 +50,8 @@ internal class EditFolderApplicationInfoViewModel @Inject constructor(
     private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
     userDataRepository: UserDataRepository,
     private val updateFolderEblanApplicationInfoCustomIconUseCase: UpdateFolderEblanApplicationInfoCustomIconUseCase,
+    private val addEblanApplicationInfosToFolderUseCase: AddEblanApplicationInfosToFolderUseCase,
+    getEblanApplicationInfosUseCase: GetEblanApplicationInfosUseCase,
     getFolderEblanApplicationInfosByIdUseCase: GetFolderEblanApplicationInfosByIdUseCase,
     getFolderEblanApplicationInfoPopupsUseCase: GetFolderEblanApplicationInfoPopupsUseCase,
     getIconPackComponentsUseCase: GetIconPackComponentsUseCase,
@@ -96,6 +101,12 @@ internal class EditFolderApplicationInfoViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = emptyMap(),
         )
+
+    val eblanApplicationInfos = getEblanApplicationInfosUseCase().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = emptyList(),
+    )
 
     fun updateIconPackPackageName(packageName: String) {
         _iconPackComponentQuery.update { "" }
@@ -154,6 +165,18 @@ internal class EditFolderApplicationInfoViewModel @Inject constructor(
             )
 
             getFolderApplicationInfo()
+        }
+    }
+
+    fun addEblanApplicationInfosToFolder(
+        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        eblanApplicationInfos: List<EblanApplicationInfo>,
+    ) {
+        viewModelScope.launch {
+            addEblanApplicationInfosToFolderUseCase(
+                folderEblanApplicationInfo = folderEblanApplicationInfo,
+                eblanApplicationInfos = eblanApplicationInfos,
+            )
         }
     }
 

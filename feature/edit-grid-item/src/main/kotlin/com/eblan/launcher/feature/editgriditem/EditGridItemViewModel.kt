@@ -21,10 +21,12 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.application.GetEblanApplicationInfosUseCase
+import com.eblan.launcher.domain.usecase.folder.AddApplicationInfosToFolderGridItemUseCase
 import com.eblan.launcher.domain.usecase.grid.DeleteGridItemCustomIconUseCase
 import com.eblan.launcher.domain.usecase.grid.GetGridItemByIdUseCase
 import com.eblan.launcher.domain.usecase.grid.UpdateGridItemCustomIconUseCase
@@ -51,6 +53,7 @@ internal class EditGridItemViewModel @Inject constructor(
     private val updateGridItemCustomIconUseCase: UpdateGridItemCustomIconUseCase,
     private val deleteGridItemCustomIconUseCase: DeleteGridItemCustomIconUseCase,
     private val getGridItemByIdUseCase: GetGridItemByIdUseCase,
+    private val addApplicationInfosToFolderGridItemUseCase: AddApplicationInfosToFolderGridItemUseCase,
     getIconPackComponentsUseCase: GetIconPackComponentsUseCase,
 ) : ViewModel() {
     private val editGridItemRouteData = savedStateHandle.toRoute<EditGridItemRouteData>()
@@ -146,6 +149,18 @@ internal class EditGridItemViewModel @Inject constructor(
             )
 
             getGridItem()
+        }
+    }
+
+    fun addApplicationInfosToFolder(
+        folderGridItem: GridItem,
+        eblanApplicationInfos: List<EblanApplicationInfo>,
+    ) {
+        viewModelScope.launch {
+            addApplicationInfosToFolderGridItemUseCase(
+                folderGridItem = folderGridItem,
+                eblanApplicationInfos = eblanApplicationInfos,
+            )
         }
     }
 

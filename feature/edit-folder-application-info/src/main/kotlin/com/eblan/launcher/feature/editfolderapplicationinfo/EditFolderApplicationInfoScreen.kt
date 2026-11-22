@@ -50,6 +50,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.designsystem.theme.EblanShapes
 import com.eblan.launcher.designsystem.theme.EblanSpacing
+import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
@@ -59,6 +60,7 @@ import com.eblan.launcher.feature.editfolderapplicationinfo.dialog.EditFolderLab
 import com.eblan.launcher.feature.editfolderapplicationinfo.model.EditFolderApplicationInfoUiState
 import com.eblan.launcher.ui.dialog.AddFolderDialog
 import com.eblan.launcher.ui.dialog.IconPackInfoFilesDialog
+import com.eblan.launcher.ui.dialog.SelectApplicationsDialog
 import com.eblan.launcher.ui.settings.CustomIcon
 import com.eblan.launcher.ui.settings.SettingsCategoryText
 import com.eblan.launcher.ui.settings.SettingsColumnItem
@@ -74,11 +76,13 @@ internal fun EditFolderApplicationInfoRoute(
     val iconPackInfoComponents by viewModel.iconPackInfoComponents.collectAsStateWithLifecycle()
     val folderEblanApplicationInfos by viewModel.folderEblanApplicationInfos.collectAsStateWithLifecycle()
     val folderEblanApplicationInfoPopups by viewModel.folderEblanApplicationInfoPopups.collectAsStateWithLifecycle()
+    val eblanApplicationInfos by viewModel.eblanApplicationInfos.collectAsStateWithLifecycle()
 
     EditFolderApplicationInfoScreen(
         // State
         editFolderApplicationInfoUiState = editFolderApplicationInfoUiState,
         // Data
+        eblanApplicationInfos = eblanApplicationInfos,
         iconPackComponents = iconPackInfoComponents,
         folderEblanApplicationInfos = folderEblanApplicationInfos,
         folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
@@ -93,6 +97,7 @@ internal fun EditFolderApplicationInfoRoute(
         onSearchIconPackInfoComponent = viewModel::searchIconPackInfoComponent,
         onUpdateFolderEblanApplicationInfo = viewModel::updateFolderEblanApplicationInfo,
         onAddFolderEblanApplicationInfo = viewModel::addFolderEblanApplicationInfo,
+        onAddEblanApplicationInfosToFolder = viewModel::addEblanApplicationInfosToFolder,
     )
 }
 
@@ -102,6 +107,7 @@ internal fun EditFolderApplicationInfoScreen(
     // State
     editFolderApplicationInfoUiState: EditFolderApplicationInfoUiState,
     // Data
+    eblanApplicationInfos: List<EblanApplicationInfo>,
     iconPackComponents: List<IconPackComponent>,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
@@ -122,6 +128,10 @@ internal fun EditFolderApplicationInfoScreen(
     onSearchIconPackInfoComponent: (String) -> Unit,
     onUpdateFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
     onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
+    onAddEblanApplicationInfosToFolder: (
+        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        eblanApplicationInfos: List<EblanApplicationInfo>,
+    ) -> Unit,
 ) {
     if (editFolderApplicationInfoUiState is EditFolderApplicationInfoUiState.Success && editFolderApplicationInfoUiState.folderEblanApplicationInfo != null) {
         Scaffold(
@@ -153,6 +163,7 @@ internal fun EditFolderApplicationInfoScreen(
             ) {
                 Success(
                     // Application Info
+                    eblanApplicationInfos = eblanApplicationInfos,
                     folderEblanApplicationInfo = editFolderApplicationInfoUiState.folderEblanApplicationInfo,
                     folderEblanApplicationInfos = folderEblanApplicationInfos,
                     topLevelFolderEblanApplicationInfos = folderEblanApplicationInfos,
@@ -168,6 +179,7 @@ internal fun EditFolderApplicationInfoScreen(
                     onSearchIconPackInfoComponent = onSearchIconPackInfoComponent,
                     onUpdateFolderEblanApplicationInfo = onUpdateFolderEblanApplicationInfo,
                     onAddFolderEblanApplicationInfo = onAddFolderEblanApplicationInfo,
+                    onAddEblanApplicationInfosToFolder = onAddEblanApplicationInfosToFolder,
                 )
             }
         }
@@ -177,6 +189,7 @@ internal fun EditFolderApplicationInfoScreen(
 @Composable
 internal fun Success(
     // Application Info
+    eblanApplicationInfos: List<EblanApplicationInfo>,
     folderEblanApplicationInfo: FolderEblanApplicationInfo,
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
@@ -200,9 +213,14 @@ internal fun Success(
     onSearchIconPackInfoComponent: (String) -> Unit,
     onUpdateFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
     onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
+    onAddEblanApplicationInfosToFolder: (
+        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        eblanApplicationInfos: List<EblanApplicationInfo>,
+    ) -> Unit,
 ) {
     var showCustomIconDialog by remember { mutableStateOf(false) }
     var showEditLabelDialog by remember { mutableStateOf(false) }
+    var showSelectApplicationsDialog by remember { mutableStateOf(false) }
 
     var iconPackPackageName by remember { mutableStateOf<String?>(null) }
     var iconPackInfoLabel by remember { mutableStateOf<String?>(null) }
@@ -255,10 +273,22 @@ internal fun Success(
             title = stringResource(commonR.string.edit_label),
             subtitle = folderEblanApplicationInfo.label,
             // Layout
-            shape = EblanShapes.last,
+            shape = EblanShapes.middle,
             // Actions
             onClick = {
                 showEditLabelDialog = true
+            },
+        )
+
+        SettingsColumnItem(
+            // Content
+            title = stringResource(commonR.string.add_applications),
+            subtitle = stringResource(commonR.string.add_applications_to_folder),
+            // Layout
+            shape = EblanShapes.last,
+            // Actions
+            onClick = {
+                showSelectApplicationsDialog = true
             },
         )
 
@@ -294,6 +324,32 @@ internal fun Success(
                     showEditLabelDialog = false
                 },
                 onUpdateFolderEblanApplicationInfo = onUpdateFolderEblanApplicationInfo,
+            )
+        }
+
+        if (showSelectApplicationsDialog) {
+            val availableEblanApplicationInfos = remember(
+                key1 = eblanApplicationInfos,
+                key2 = folderEblanApplicationInfo.id,
+            ) {
+                eblanApplicationInfos.filter { currentEblanApplicationInfo ->
+                    currentEblanApplicationInfo.folderId != folderEblanApplicationInfo.id
+                }
+            }
+
+            SelectApplicationsDialog(
+                // Data
+                eblanApplicationInfos = availableEblanApplicationInfos,
+                // Callbacks
+                onDismissRequest = {
+                    showSelectApplicationsDialog = false
+                },
+                onAddApplications = { selectedEblanApplicationInfos ->
+                    onAddEblanApplicationInfosToFolder(
+                        folderEblanApplicationInfo,
+                        selectedEblanApplicationInfos,
+                    )
+                },
             )
         }
     }

@@ -53,6 +53,7 @@ import com.eblan.launcher.feature.editgriditem.dialog.EditFolderLabelDialog
 import com.eblan.launcher.feature.editgriditem.model.EditGridItemUiState
 import com.eblan.launcher.ui.dialog.EditCustomLabelDialog
 import com.eblan.launcher.ui.dialog.IconPackInfoFilesDialog
+import com.eblan.launcher.ui.dialog.SelectApplicationsDialog
 import com.eblan.launcher.ui.settings.CustomIcon
 import com.eblan.launcher.ui.settings.EblanActionSettings
 import com.eblan.launcher.ui.settings.GridItemSettings
@@ -86,6 +87,7 @@ internal fun EditGridItemRoute(
         onUpdateIconPackPackageName = viewModel::updateIconPackPackageName,
         onUpdateGridItemCustomIcon = viewModel::updateGridItemCustomIcon,
         onUpdateGridItemCustomIconByteArray = viewModel::updateGridItemCustomIconByteArray,
+        onAddApplicationInfosToFolder = viewModel::addApplicationInfosToFolder,
     )
 }
 
@@ -111,6 +113,10 @@ internal fun EditGridItemScreen(
     onUpdateGridItemCustomIconByteArray: (
         gridItem: GridItem,
         byteArray: ByteArray,
+    ) -> Unit,
+    onAddApplicationInfosToFolder: (
+        folderGridItem: GridItem,
+        eblanApplicationInfos: List<EblanApplicationInfo>,
     ) -> Unit,
 ) {
     if (editGridItemUiState is EditGridItemUiState.Success && editGridItemUiState.gridItem != null) {
@@ -158,6 +164,7 @@ internal fun EditGridItemScreen(
                     onResetGridItemCustomIcon = onResetGridItemCustomIcon,
                     onUpdateGridItemCustomIcon = onUpdateGridItemCustomIcon,
                     onUpdateGridItemCustomIconByteArray = onUpdateGridItemCustomIconByteArray,
+                    onAddApplicationInfosToFolder = onAddApplicationInfosToFolder,
                 )
             }
         }
@@ -186,6 +193,10 @@ private fun Success(
     onUpdateGridItemCustomIconByteArray: (
         gridItem: GridItem,
         byteArray: ByteArray,
+    ) -> Unit,
+    onAddApplicationInfosToFolder: (
+        folderGridItem: GridItem,
+        eblanApplicationInfos: List<EblanApplicationInfo>,
     ) -> Unit,
 ) {
     Column(
@@ -220,6 +231,7 @@ private fun Success(
                     // Grid Item
                     gridItem = gridItem,
                     data = data,
+                    eblanApplicationInfos = eblanApplicationInfos,
                     generalSettings = generalSettings,
                     // Icon Packs
                     iconPackComponents = iconPackComponents,
@@ -231,6 +243,7 @@ private fun Success(
                     onUpdateIconPackPackageName = onUpdateIconPackPackageName,
                     onUpdateGridItemCustomIcon = onUpdateGridItemCustomIcon,
                     onUpdateGridItemCustomIconByteArray = onUpdateGridItemCustomIconByteArray,
+                    onAddApplicationInfosToFolder = onAddApplicationInfosToFolder,
                 )
             }
 
@@ -393,6 +406,7 @@ private fun EditFolder(
     // Grid Item
     gridItem: GridItem,
     data: GridItemData.Folder,
+    eblanApplicationInfos: List<EblanApplicationInfo>,
     generalSettings: GeneralSettings,
     modifier: Modifier = Modifier,
     // Icon Packs
@@ -411,8 +425,13 @@ private fun EditFolder(
         gridItem: GridItem,
         byteArray: ByteArray,
     ) -> Unit,
+    onAddApplicationInfosToFolder: (
+        folderGridItem: GridItem,
+        eblanApplicationInfos: List<EblanApplicationInfo>,
+    ) -> Unit,
 ) {
     var showEditLabelDialog by remember { mutableStateOf(false) }
+    var showSelectApplicationsDialog by remember { mutableStateOf(false) }
 
     EditCustomIcon(
         gridItem = gridItem,
@@ -441,6 +460,19 @@ private fun EditFolder(
         },
     )
 
+    SettingsColumnItem(
+        // Content
+        title = stringResource(commonR.string.add_applications),
+        subtitle = stringResource(commonR.string.add_applications_to_folder),
+        // Layout
+        shape = EblanShapes.middle,
+        modifier = modifier,
+        // Actions
+        onClick = {
+            showSelectApplicationsDialog = true
+        },
+    )
+
     EditOverrideSwitch(
         gridItem = gridItem,
         modifier = modifier,
@@ -457,6 +489,23 @@ private fun EditFolder(
                 showEditLabelDialog = false
             },
             onUpdateGridItem = onUpdateGridItem,
+        )
+    }
+
+    if (showSelectApplicationsDialog) {
+        SelectApplicationsDialog(
+            // Data
+            eblanApplicationInfos = eblanApplicationInfos,
+            // Callbacks
+            onDismissRequest = {
+                showSelectApplicationsDialog = false
+            },
+            onAddApplications = { selectedEblanApplicationInfos ->
+                onAddApplicationInfosToFolder(
+                    gridItem,
+                    selectedEblanApplicationInfos,
+                )
+            },
         )
     }
 }
