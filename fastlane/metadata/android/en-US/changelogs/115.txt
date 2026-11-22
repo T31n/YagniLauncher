@@ -1,0 +1,5 @@
+- Add applications directly to folders (#1138)
+- Display edit screens as dialogs and redesign edit page screen (#1140)
+- Handle icon pack updates, removals, and sync automatically
+- Improve adaptive icon shaping and apply tint/shape settings to icon pack previews
+- Improve widget drag overlay, grid resets, and stability
