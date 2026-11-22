@@ -824,6 +824,8 @@ private fun handleExistingGridItemSource(
     if (isLongPress) {
         onUpdateIsVisibleOverlay(false)
 
+        onResetGrid()
+
         return
     }
 
@@ -868,6 +870,8 @@ private fun handleExistingFolderGridItemSource(
 
     if (isLongPress) {
         onUpdateIsVisibleOverlay(false)
+
+        onResetGrid()
 
         return
     }

@@ -375,6 +375,8 @@ internal fun handleDropFolderGridItem(
     if (isVisibleOverlay && !isDragging) {
         onUpdateIsVisibleOverlay(false)
 
+        onResetGrid()
+
         return
     }
 

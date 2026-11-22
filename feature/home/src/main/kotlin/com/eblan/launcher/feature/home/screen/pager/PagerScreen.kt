@@ -559,9 +559,9 @@ internal fun PagerScreen(
     val statusBarNotifications by produceStatusBarNotificationsState()
 
     val isVisibleFolderEblanApplicationInfoGridItemMenu =
-        pagerScreenState.showFolderEblanApplicationInfoGridItemMenu &&
-            hasMenuGeometry &&
-            moveFolderEblanApplicationInfoGridItemResult != null
+        pagerScreenState.selectedFolderEblanApplicationInfoGridItem != null &&
+            pagerScreenState.showFolderEblanApplicationInfoGridItemMenu &&
+            hasMenuGeometry
 
     val isDragOnDock =
         dockHeightPx > 0 &&
@@ -1256,7 +1256,11 @@ internal fun PagerScreen(
                 // Callbacks
                 onDeleteGridItem = onDeleteGridItem,
                 onDismissRequest = pagerScreenState::dismissGridItemMenu,
-                onEdit = onEditGridItem,
+                onEdit = { id ->
+                    onResetGrid()
+
+                    onEditGridItem(id)
+                },
                 onResize = onUpdateResizeGridItem,
                 onWidgets = pagerScreenState::openAppWidgetScreen,
                 onUpdateIsResizing = pagerScreenState::updateIsResizing,
@@ -1400,7 +1404,11 @@ internal fun PagerScreen(
                 // Actions
                 onDeleteGridItem = onDeleteGridItem,
                 onDismissRequest = pagerScreenState::dismissFolderGridItemMenu,
-                onEdit = onEditGridItem,
+                onEdit = { id ->
+                    onResetGrid()
+
+                    onEditGridItem(id)
+                },
                 onWidgets = pagerScreenState::openAppWidgetScreen,
                 onResetFolderGridItemPopupEntries = onResetFolderGridItemPopupEntries,
                 onDragShortcutInfo = { gridItem, imageBitmap, intOffset, intSize, sharedElementKey ->
@@ -1792,8 +1800,19 @@ internal fun PagerScreen(
                 isCloseFolderEblanApplicationInfoGridItemMenu = pagerScreenState.isCloseFolderEblanApplicationInfoGridItemMenu,
                 // Actions
                 onDismissRequest = pagerScreenState::dismissFolderEblanApplicationInfoGridItemMenu,
-                onEditFolderApplicationInfo = onEditFolderApplicationInfo,
-                onEditApplicationInfo = onEditApplicationInfo,
+                onEditFolderApplicationInfo = { id ->
+                    onResetGrid()
+
+                    onEditFolderApplicationInfo(id)
+                },
+                onEditApplicationInfo = { serialNumber, componentName ->
+                    onResetGrid()
+
+                    onEditApplicationInfo(
+                        serialNumber,
+                        componentName,
+                    )
+                },
                 onWidgets = pagerScreenState::openAppWidgetScreen,
                 onResetFolderEblanApplicationInfoPopupEntries = onResetFolderEblanApplicationInfoPopupEntries,
                 onDeleteFolderEblanApplicationInfoGridItems = onDeleteFolderEblanApplicationInfoGridItems,
