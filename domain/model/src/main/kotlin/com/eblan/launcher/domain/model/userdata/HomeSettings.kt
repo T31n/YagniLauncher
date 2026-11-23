@@ -30,7 +30,7 @@ data class HomeSettings(
     val initialPage: Int,
     val wallpaperScroll: Boolean,
     val gridItemSettings: GridItemSettings,
-    val lockScreenOrientation: Boolean,
+    val screenOrientation: ScreenOrientation,
     val dockPageCount: Int,
     val dockInfiniteScroll: Boolean,
     val dockInitialPage: Int,

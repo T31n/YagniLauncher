@@ -25,7 +25,6 @@
     <string name="seamless_loop_page_scroll">Bezešvá smyčka při rolování stránek</string>
     <string name="wallpaper_scrolling">Rolování tapety</string>
     <string name="scroll_wallpaper_across_pages">Rolování tapety napříč stránkami</string>
-    <string name="lock_screen_orientation">Zamknout otáčení obrazovky</string>
     <string name="add_new_apps">Přidat nové aplikace</string>
     <string name="add_new_apps_to_home_screen">Přidat nové aplikace na domovskou obrazovku</string>
     <string name="dock">Dokovací oblast</string>
@@ -33,7 +32,6 @@
     <string name="show_or_hide_the_dock">Zobrazit nebo skrýt dokovací oblast</string>
     <string name="dock_grid_item">Položka mřížky dokovací oblasti</string>
     <string name="dock_infinite_scroll">Nekonečné rolování dokovací oblasti</string>
-    <string name="prevent_rotation_when_device_orientation_changes">Zabránit otáčení při změně natočení zařízení</string>
     <string name="show_page_indicator">Zobrazit indikátor stránky</string>
     <string name="show_status_bar">Zobrazit stavový řádek</string>
     <string name="show_the_status_bar_on_the_home_screen">Zobrazit stavový řádek na domovské obrazovce</string>

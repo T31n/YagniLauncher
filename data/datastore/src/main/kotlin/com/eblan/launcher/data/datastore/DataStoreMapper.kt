@@ -36,6 +36,7 @@ import com.eblan.launcher.data.datastore.proto.home.HorizontalAlignmentProto
 import com.eblan.launcher.data.datastore.proto.home.HorizontalArrangementProto
 import com.eblan.launcher.data.datastore.proto.home.LayoutTypeProto
 import com.eblan.launcher.data.datastore.proto.home.PagerTransitionEffectProto
+import com.eblan.launcher.data.datastore.proto.home.ScreenOrientationProto
 import com.eblan.launcher.data.datastore.proto.home.TextColorProto
 import com.eblan.launcher.data.datastore.proto.home.VerticalAlignmentProto
 import com.eblan.launcher.data.datastore.proto.home.VerticalArrangementProto
@@ -62,6 +63,7 @@ import com.eblan.launcher.domain.model.userdata.GestureSettings
 import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.PagerTransitionEffect
+import com.eblan.launcher.domain.model.userdata.ScreenOrientation
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.domain.model.userdata.Theme
 
@@ -76,7 +78,7 @@ internal fun HomeSettingsProto.toHomeSettings(): HomeSettings = HomeSettings(
     initialPage = initialPage,
     wallpaperScroll = wallpaperScroll,
     gridItemSettings = gridItemSettingsProto.toGridItemSettings(),
-    lockScreenOrientation = lockScreenOrientation,
+    screenOrientation = screenOrientationProto.toScreenOrientation(),
     dockPageCount = dockPageCount,
     dockInfiniteScroll = dockInfiniteScroll,
     dockInitialPage = dockInitialPage,
@@ -176,7 +178,7 @@ internal fun HomeSettings.toHomeSettingsProto(): HomeSettingsProto = HomeSetting
     builder.initialPage = initialPage
     builder.wallpaperScroll = wallpaperScroll
     builder.gridItemSettingsProto = gridItemSettings.toGridItemSettingsProto()
-    builder.lockScreenOrientation = lockScreenOrientation
+    builder.screenOrientationProto = screenOrientation.toScreenOrientationProto()
     builder.dockPageCount = dockPageCount
     builder.dockInfiniteScroll = dockInfiniteScroll
     builder.dockInitialPage = dockInitialPage
@@ -327,6 +329,22 @@ private fun PagerTransitionEffectProto.toPagerTransitionEffect(): PagerTransitio
     PagerTransitionEffectProto.PagerTransitionEffectParallax -> PagerTransitionEffect.Parallax
 
     PagerTransitionEffectProto.PagerTransitionEffectStack -> PagerTransitionEffect.Stack
+}
+
+private fun ScreenOrientation.toScreenOrientationProto(): ScreenOrientationProto = when (this) {
+    ScreenOrientation.System -> ScreenOrientationProto.ScreenOrientationSystem
+    ScreenOrientation.Portrait -> ScreenOrientationProto.ScreenOrientationPortrait
+    ScreenOrientation.Landscape -> ScreenOrientationProto.ScreenOrientationLandscape
+}
+
+private fun ScreenOrientationProto.toScreenOrientation(): ScreenOrientation = when (this) {
+    ScreenOrientationProto.ScreenOrientationSystem,
+    ScreenOrientationProto.UNRECOGNIZED,
+    -> ScreenOrientation.System
+
+    ScreenOrientationProto.ScreenOrientationPortrait -> ScreenOrientation.Portrait
+
+    ScreenOrientationProto.ScreenOrientationLandscape -> ScreenOrientation.Landscape
 }
 
 private fun EblanActionType.toEblanActionTypeProto(): EblanActionTypeProto = when (this) {

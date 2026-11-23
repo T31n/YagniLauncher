@@ -46,6 +46,7 @@ import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.domain.model.userdata.PagerTransitionEffect
+import com.eblan.launcher.domain.model.userdata.ScreenOrientation
 import com.eblan.launcher.feature.settings.home.dialog.EditDockCornerRadiusDialog
 import com.eblan.launcher.feature.settings.home.dialog.EditDockGridDialog
 import com.eblan.launcher.feature.settings.home.dialog.EditDockHeightDialog
@@ -200,18 +201,20 @@ private fun Success(
             },
         )
 
-        SettingsSwitchItem(
+        SettingsDropdownItem(
             // Content
-            title = stringResource(R.string.lock_screen_orientation),
-            subtitle = stringResource(R.string.prevent_rotation_when_device_orientation_changes),
-            // State
-            checked = homeSettings.lockScreenOrientation,
-            // Appearance
+            title = stringResource(R.string.screen_orientation),
+            options = ScreenOrientation.entries,
+            selected = homeSettings.screenOrientation,
+            label = { currentScreenOrientation ->
+                currentScreenOrientation.getTitle()
+            },
+            // Layout
             shape = EblanShapes.middle,
-            // Callbacks
-            onCheckedChange = { currentLockScreenOrientation ->
+            // Actions
+            onSelectedChange = { currentScreenOrientation ->
                 onUpdateHomeSettings(
-                    homeSettings.copy(lockScreenOrientation = currentLockScreenOrientation),
+                    homeSettings.copy(screenOrientation = currentScreenOrientation),
                 )
             },
         )
@@ -561,4 +564,11 @@ private fun PagerTransitionEffect.getTitle(): String = when (this) {
     PagerTransitionEffect.Flip -> stringResource(R.string.transition_effect_flip)
     PagerTransitionEffect.Parallax -> stringResource(R.string.transition_effect_parallax)
     PagerTransitionEffect.Stack -> stringResource(R.string.transition_effect_stack)
+}
+
+@Composable
+private fun ScreenOrientation.getTitle(): String = when (this) {
+    ScreenOrientation.System -> stringResource(commonR.string.system)
+    ScreenOrientation.Portrait -> stringResource(R.string.portrait)
+    ScreenOrientation.Landscape -> stringResource(R.string.landscape)
 }
