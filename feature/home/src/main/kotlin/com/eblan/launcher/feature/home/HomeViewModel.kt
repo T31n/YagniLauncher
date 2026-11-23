@@ -44,6 +44,7 @@ import com.eblan.launcher.domain.usecase.application.GetEblanApplicationInfosByL
 import com.eblan.launcher.domain.usecase.application.GetEblanApplicationTagsUseCase
 import com.eblan.launcher.domain.usecase.application.GetEblanShortcutConfigsByLabelUseCase
 import com.eblan.launcher.domain.usecase.application.GetEblanShortcutInfosUseCase
+import com.eblan.launcher.domain.usecase.folder.CleanupFolderGridItemsUseCase
 import com.eblan.launcher.domain.usecase.folder.DeleteFolderEblanApplicationInfoGridItemsUseCase
 import com.eblan.launcher.domain.usecase.folder.GetFolderEblanApplicationInfoPopupsUseCase
 import com.eblan.launcher.domain.usecase.folder.GetRecursiveFolderEblanApplicationInfosUseCase
@@ -110,6 +111,7 @@ internal class HomeViewModel @Inject constructor(
     getEblanApplicationTagsUseCase: GetEblanApplicationTagsUseCase,
     private val getRecursiveFolderEblanApplicationInfosUseCase: GetRecursiveFolderEblanApplicationInfosUseCase,
     private val deleteFolderEblanApplicationInfoGridItemsUseCase: DeleteFolderEblanApplicationInfoGridItemsUseCase,
+    private val cleanupFolderGridItemsUseCase: CleanupFolderGridItemsUseCase,
 ) : ViewModel() {
     val homeUiState = getHomeDataUseCase().map(HomeUiState::Success).stateIn(
         scope = viewModelScope,
@@ -611,6 +613,8 @@ internal class HomeViewModel @Inject constructor(
     fun resetGridAfterMoveFolder() {
         viewModelScope.launch {
             moveGridItemJob?.cancelAndJoin()
+
+            cleanupFolderGridItemsUseCase()
 
             _isVisibleOverlay.update {
                 false

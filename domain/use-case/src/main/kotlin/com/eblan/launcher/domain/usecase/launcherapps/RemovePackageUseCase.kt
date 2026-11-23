@@ -29,6 +29,8 @@ import com.eblan.launcher.domain.repository.ShortcutConfigGridItemRepository
 import com.eblan.launcher.domain.repository.ShortcutInfoGridItemRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.repository.WidgetGridItemRepository
+import com.eblan.launcher.domain.usecase.folder.CleanupFolderEblanApplicationInfosUseCase
+import com.eblan.launcher.domain.usecase.folder.CleanupFolderGridItemsUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -46,6 +48,8 @@ class RemovePackageUseCase @Inject constructor(
     private val shortcutConfigGridItemRepository: ShortcutConfigGridItemRepository,
     private val eblanIconPackInfoRepository: EblanIconPackInfoRepository,
     private val userDataRepository: UserDataRepository,
+    private val cleanupFolderGridItemsUseCase: CleanupFolderGridItemsUseCase,
+    private val cleanupFolderEblanApplicationInfosUseCase: CleanupFolderEblanApplicationInfosUseCase,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     /**
@@ -116,6 +120,10 @@ class RemovePackageUseCase @Inject constructor(
                     )
                 }
             }
+
+            cleanupFolderGridItemsUseCase()
+
+            cleanupFolderEblanApplicationInfosUseCase()
         }
     }
 }

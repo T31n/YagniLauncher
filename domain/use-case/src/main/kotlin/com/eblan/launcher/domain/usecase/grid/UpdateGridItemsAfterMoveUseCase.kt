@@ -25,6 +25,7 @@ import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.repository.FolderGridItemRepository
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
+import com.eblan.launcher.domain.usecase.folder.CleanupFolderGridItemsUseCase
 import com.eblan.launcher.domain.usecase.folder.asPreviewFolders
 import com.eblan.launcher.domain.usecase.util.getRecursiveFolderGridItems
 import kotlinx.coroutines.CoroutineDispatcher
@@ -38,6 +39,7 @@ class UpdateGridItemsAfterMoveUseCase @Inject constructor(
     private val gridRepository: GridRepository,
     private val folderGridItemRepository: FolderGridItemRepository,
     private val userDataRepository: UserDataRepository,
+    private val cleanupFolderGridItemsUseCase: CleanupFolderGridItemsUseCase,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     /**
@@ -89,6 +91,8 @@ class UpdateGridItemsAfterMoveUseCase @Inject constructor(
             } else {
                 gridRepository.updateGridItem(gridItem = movingGridItem)
             }
+
+            cleanupFolderGridItemsUseCase()
         }
     }
 

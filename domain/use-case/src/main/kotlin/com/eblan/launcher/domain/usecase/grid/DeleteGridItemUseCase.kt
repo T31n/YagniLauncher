@@ -25,6 +25,7 @@ import com.eblan.launcher.domain.platform.LauncherAppsWrapper
 import com.eblan.launcher.domain.repository.FolderGridItemRepository
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
+import com.eblan.launcher.domain.usecase.folder.CleanupFolderGridItemsUseCase
 import com.eblan.launcher.domain.usecase.folder.asPreviewFolders
 import com.eblan.launcher.domain.usecase.util.deleteGridItemData
 import kotlinx.coroutines.CoroutineDispatcher
@@ -39,6 +40,7 @@ class DeleteGridItemUseCase @Inject constructor(
     private val appWidgetHostWrapper: AppWidgetHostWrapper,
     private val launcherAppsWrapper: LauncherAppsWrapper,
     private val folderGridItemRepository: FolderGridItemRepository,
+    private val cleanupFolderGridItemsUseCase: CleanupFolderGridItemsUseCase,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     /**
@@ -67,5 +69,7 @@ class DeleteGridItemUseCase @Inject constructor(
         )
 
         gridRepository.deleteGridItem(gridItem = gridItem)
+
+        cleanupFolderGridItemsUseCase()
     }
 }

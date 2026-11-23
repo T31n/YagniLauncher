@@ -35,6 +35,7 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
     private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
     private val userDataRepository: UserDataRepository,
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
+    private val cleanupFolderEblanApplicationInfosUseCase: CleanupFolderEblanApplicationInfosUseCase,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     /**
@@ -82,7 +83,14 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
             }
         }
 
+        val deletedFolder =
+            folderEblanApplicationInfoRepository.getFolderEblanApplicationInfoById(id = folderId)
+
         folderEblanApplicationInfoRepository.deleteFolderEblanApplicationInfoById(id = folderId)
+
+        if (deletedFolder?.folderId != null) {
+            cleanupFolderEblanApplicationInfosUseCase()
+        }
     }
 
     /** Collects a folder and all nested descendants from the preview-folder map. */
