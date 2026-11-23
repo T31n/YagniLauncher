@@ -25,62 +25,112 @@ import com.eblan.launcher.domain.model.grid.GridItems
 import com.eblan.launcher.domain.model.grid.ShortcutConfigGridItem
 import com.eblan.launcher.domain.model.grid.ShortcutInfoGridItem
 import com.eblan.launcher.domain.model.grid.WidgetGridItem
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
+import kotlin.coroutines.CoroutineContext
 
 class FakeGridRepository(initialGridItems: GridItems) : GridRepository {
     private val _gridItemsFlow = MutableStateFlow(initialGridItems)
 
+    private val transactionMutex = Mutex()
+
     override val gridItemsFlow: Flow<GridItems>
         get() = _gridItemsFlow
 
-    override suspend fun getGridItems(): GridItems = _gridItemsFlow.value
+    override suspend fun getGridItems(): GridItems = withTransaction {
+        _gridItemsFlow.value
+    }
 
     override suspend fun insertGridItem(gridItem: GridItem) {
-        _gridItemsFlow.update { current ->
-            current.add(gridItem)
+        withTransaction {
+            _gridItemsFlow.update { current ->
+                current.add(gridItem)
+            }
         }
     }
 
     override suspend fun updateGridItem(gridItem: GridItem) {
-        _gridItemsFlow.update { current ->
-            current.update(gridItem)
+        withTransaction {
+            _gridItemsFlow.update { current ->
+                current.update(gridItem)
+            }
         }
     }
 
     override suspend fun upsertGridItems(gridItems: List<GridItem>) {
-        _gridItemsFlow.update { current ->
-            gridItems.fold(current) { result, gridItem ->
-                result.upsert(gridItem)
+        withTransaction {
+            _gridItemsFlow.update { current ->
+                gridItems.fold(current) { result, gridItem ->
+                    result.upsert(gridItem)
+                }
             }
         }
     }
 
     override suspend fun deleteGridItems(gridItems: List<GridItem>) {
-        _gridItemsFlow.update { current ->
-            gridItems.fold(current) { result, gridItem ->
-                result.deleteById(gridItem.id)
+        withTransaction {
+            _gridItemsFlow.update { current ->
+                gridItems.fold(current) { result, gridItem ->
+                    result.deleteById(gridItem.id)
+                }
             }
         }
     }
 
     override suspend fun deleteGridItem(gridItem: GridItem) {
-        _gridItemsFlow.update { current ->
-            current.deleteById(gridItem.id)
+        withTransaction {
+            _gridItemsFlow.update { current ->
+                current.deleteById(gridItem.id)
+            }
         }
     }
 
     override suspend fun upsertGridItem(gridItem: GridItem) {
-        _gridItemsFlow.update { current ->
-            current.upsert(gridItem)
+        withTransaction {
+            _gridItemsFlow.update { current ->
+                current.upsert(gridItem)
+            }
         }
     }
 
     override suspend fun deleteGridItemById(gridItem: GridItem) {
-        _gridItemsFlow.update { current ->
-            current.deleteById(gridItem.id)
+        withTransaction {
+            _gridItemsFlow.update { current ->
+                current.deleteById(gridItem.id)
+            }
         }
+    }
+
+    override suspend fun <T> withTransaction(block: suspend () -> T): T {
+        val currentTransactionElement = currentCoroutineContext()[TransactionContextElement]
+        if (currentTransactionElement?.owner === this) {
+            return block()
+        }
+
+        return transactionMutex.withLock {
+            withContext(TransactionContextElement(owner = this)) {
+                val snapshotGridItems = _gridItemsFlow.value
+                try {
+                    block()
+                } catch (throwable: Throwable) {
+                    _gridItemsFlow.value = snapshotGridItems
+                    throw throwable
+                }
+            }
+        }
+    }
+
+    private class TransactionContextElement(
+        val owner: FakeGridRepository,
+    ) : CoroutineContext.Element {
+        override val key: CoroutineContext.Key<*> = Key
+
+        companion object Key : CoroutineContext.Key<TransactionContextElement>
     }
 
     private fun GridItems.add(

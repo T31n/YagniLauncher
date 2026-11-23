@@ -23,6 +23,7 @@ import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
+import com.eblan.launcher.domain.repository.FolderGridItemTransaction
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -34,6 +35,7 @@ import javax.inject.Inject
 class CleanupFolderEblanApplicationInfosUseCase @Inject constructor(
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
     private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
+    private val folderGridItemTransaction: FolderGridItemTransaction,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     /**
@@ -41,55 +43,57 @@ class CleanupFolderEblanApplicationInfosUseCase @Inject constructor(
      * folder to take the collapsed folder's parent and position.
      */
     suspend operator fun invoke() = withContext(defaultDispatcher) {
-        val eblanApplicationInfos =
-            eblanApplicationInfoRepository.getEblanApplicationInfos()
+        folderGridItemTransaction.withTransaction {
+            val eblanApplicationInfos =
+                eblanApplicationInfoRepository.getEblanApplicationInfos()
 
-        val folderEblanApplicationInfos =
-            folderEblanApplicationInfoRepository.getFolderEblanApplicationInfos()
+            val folderEblanApplicationInfos =
+                folderEblanApplicationInfoRepository.getFolderEblanApplicationInfos()
 
-        val eblanApplicationInfosByFolderId = eblanApplicationInfos
-            .groupBy { currentEblanApplicationInfo -> currentEblanApplicationInfo.folderId }
-            .mapValues { (_, currentEblanApplicationInfos) -> currentEblanApplicationInfos.toMutableList() }
-            .toMutableMap()
+            val eblanApplicationInfosByFolderId = eblanApplicationInfos
+                .groupBy { currentEblanApplicationInfo -> currentEblanApplicationInfo.folderId }
+                .mapValues { (_, currentEblanApplicationInfos) -> currentEblanApplicationInfos.toMutableList() }
+                .toMutableMap()
 
-        val folderEblanApplicationInfosByFolderId = folderEblanApplicationInfos
-            .groupBy { currentFolderEblanApplicationInfo -> currentFolderEblanApplicationInfo.folderId }
-            .mapValues { (_, currentFolderEblanApplicationInfos) -> currentFolderEblanApplicationInfos.toMutableList() }
-            .toMutableMap()
+            val folderEblanApplicationInfosByFolderId = folderEblanApplicationInfos
+                .groupBy { currentFolderEblanApplicationInfo -> currentFolderEblanApplicationInfo.folderId }
+                .mapValues { (_, currentFolderEblanApplicationInfos) -> currentFolderEblanApplicationInfos.toMutableList() }
+                .toMutableMap()
 
-        val eblanApplicationInfosToUpdateByKey = mutableMapOf<Pair<Long, String>, EblanApplicationInfo>()
-        val folderEblanApplicationInfosToUpdateById = mutableMapOf<String, FolderEblanApplicationInfo>()
-        val folderEblanApplicationInfoIdsToDelete = mutableSetOf<String>()
-        val visitedFolderEblanApplicationInfoIds = mutableSetOf<String>()
+            val eblanApplicationInfosToUpdateByKey = mutableMapOf<Pair<Long, String>, EblanApplicationInfo>()
+            val folderEblanApplicationInfosToUpdateById = mutableMapOf<String, FolderEblanApplicationInfo>()
+            val folderEblanApplicationInfoIdsToDelete = mutableSetOf<String>()
+            val visitedFolderEblanApplicationInfoIds = mutableSetOf<String>()
 
-        folderEblanApplicationInfos.forEach { folderEblanApplicationInfo ->
-            cleanupFolderEblanApplicationInfo(
-                folderEblanApplicationInfo = folderEblanApplicationInfo,
-                eblanApplicationInfosByFolderId = eblanApplicationInfosByFolderId,
-                folderEblanApplicationInfosByFolderId = folderEblanApplicationInfosByFolderId,
-                eblanApplicationInfosToUpdateByKey = eblanApplicationInfosToUpdateByKey,
-                folderEblanApplicationInfosToUpdateById = folderEblanApplicationInfosToUpdateById,
-                folderEblanApplicationInfoIdsToDelete = folderEblanApplicationInfoIdsToDelete,
-                visitedFolderEblanApplicationInfoIds = visitedFolderEblanApplicationInfoIds,
-            )
-        }
+            folderEblanApplicationInfos.forEach { folderEblanApplicationInfo ->
+                cleanupFolderEblanApplicationInfo(
+                    folderEblanApplicationInfo = folderEblanApplicationInfo,
+                    eblanApplicationInfosByFolderId = eblanApplicationInfosByFolderId,
+                    folderEblanApplicationInfosByFolderId = folderEblanApplicationInfosByFolderId,
+                    eblanApplicationInfosToUpdateByKey = eblanApplicationInfosToUpdateByKey,
+                    folderEblanApplicationInfosToUpdateById = folderEblanApplicationInfosToUpdateById,
+                    folderEblanApplicationInfoIdsToDelete = folderEblanApplicationInfoIdsToDelete,
+                    visitedFolderEblanApplicationInfoIds = visitedFolderEblanApplicationInfoIds,
+                )
+            }
 
-        if (eblanApplicationInfosToUpdateByKey.isNotEmpty()) {
-            eblanApplicationInfoRepository.updateEblanApplicationInfos(
-                eblanApplicationInfos = eblanApplicationInfosToUpdateByKey.values.toList(),
-            )
-        }
+            if (eblanApplicationInfosToUpdateByKey.isNotEmpty()) {
+                eblanApplicationInfoRepository.updateEblanApplicationInfos(
+                    eblanApplicationInfos = eblanApplicationInfosToUpdateByKey.values.toList(),
+                )
+            }
 
-        if (folderEblanApplicationInfosToUpdateById.isNotEmpty()) {
-            folderEblanApplicationInfoRepository.updateFolderEblanApplicationInfos(
-                folderEblanApplicationInfos = folderEblanApplicationInfosToUpdateById.values.toList(),
-            )
-        }
+            if (folderEblanApplicationInfosToUpdateById.isNotEmpty()) {
+                folderEblanApplicationInfoRepository.updateFolderEblanApplicationInfos(
+                    folderEblanApplicationInfos = folderEblanApplicationInfosToUpdateById.values.toList(),
+                )
+            }
 
-        folderEblanApplicationInfoIdsToDelete.forEach { folderEblanApplicationInfoId ->
-            folderEblanApplicationInfoRepository.deleteFolderEblanApplicationInfoById(
-                id = folderEblanApplicationInfoId,
-            )
+            folderEblanApplicationInfoIdsToDelete.forEach { folderEblanApplicationInfoId ->
+                folderEblanApplicationInfoRepository.deleteFolderEblanApplicationInfoById(
+                    id = folderEblanApplicationInfoId,
+                )
+            }
         }
     }
 

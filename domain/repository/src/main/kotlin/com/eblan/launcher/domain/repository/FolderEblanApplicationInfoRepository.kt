@@ -38,6 +38,10 @@ interface FolderEblanApplicationInfoRepository {
 
     suspend fun updateFolderEblanApplicationInfos(folderEblanApplicationInfos: List<FolderEblanApplicationInfo>)
 
+    suspend fun upsertFolderEblanApplicationInfos(folderEblanApplicationInfos: List<FolderEblanApplicationInfo>)
+
+    suspend fun deleteFolderEblanApplicationInfos(folderEblanApplicationInfos: List<FolderEblanApplicationInfo>)
+
     suspend fun getFolderEblanApplicationInfoWrappers(): List<FolderEblanApplicationInfoWrapper>
 
     suspend fun deleteFolderEblanApplicationInfoById(id: String)

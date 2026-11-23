@@ -25,6 +25,7 @@ import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.EblanIconPackInfoRepository
 import com.eblan.launcher.domain.repository.EblanShortcutConfigRepository
 import com.eblan.launcher.domain.repository.EblanShortcutInfoRepository
+import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.repository.ShortcutConfigGridItemRepository
 import com.eblan.launcher.domain.repository.ShortcutInfoGridItemRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
@@ -48,6 +49,7 @@ class RemovePackageUseCase @Inject constructor(
     private val shortcutConfigGridItemRepository: ShortcutConfigGridItemRepository,
     private val eblanIconPackInfoRepository: EblanIconPackInfoRepository,
     private val userDataRepository: UserDataRepository,
+    private val gridRepository: GridRepository,
     private val cleanupFolderGridItemsUseCase: CleanupFolderGridItemsUseCase,
     private val cleanupFolderEblanApplicationInfosUseCase: CleanupFolderEblanApplicationInfosUseCase,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
@@ -63,67 +65,73 @@ class RemovePackageUseCase @Inject constructor(
         packageName: String,
     ) {
         withContext(ioDispatcher) {
-            eblanApplicationInfoRepository.deleteEblanApplicationInfoByPackageName(
-                serialNumber = serialNumber,
-                packageName = packageName,
-            )
-
-            eblanAppWidgetProviderInfoRepository.deleteEblanAppWidgetProviderInfoByPackageName(
-                serialNumber = serialNumber,
-                packageName = packageName,
-            )
-
-            eblanShortcutInfoRepository.deleteEblanShortcutInfos(
-                serialNumber = serialNumber,
-                packageName = packageName,
-            )
-
-            eblanShortcutConfigRepository.deleteEblanShortcutConfigByPackageName(
-                serialNumber = serialNumber,
-                packageName = packageName,
-            )
-
-            applicationInfoGridItemRepository.deleteApplicationInfoGridItem(
-                serialNumber = serialNumber,
-                packageName = packageName,
-            )
-
-            widgetGridItemRepository.deleteWidgetGridItemByPackageName(
-                serialNumber = serialNumber,
-                packageName = packageName,
-            )
-
-            shortcutInfoGridItemRepository.deleteShortcutInfoGridItemByPackageName(
-                serialNumber = serialNumber,
-                packageName = packageName,
-            )
-
-            shortcutConfigGridItemRepository.deleteShortcutConfigGridItemByPackageName(
-                serialNumber = serialNumber,
-                packageName = packageName,
-            )
-
-            if (serialNumber == 0L) {
-                eblanIconPackInfoRepository.getEblanIconPackByPackageName(
-                    packageName = packageName,
-                )?.let { currentEblanIconPackInfo ->
-                    eblanIconPackInfoRepository.deleteEblanIconPackInfo(
-                        eblanIconPackInfo = currentEblanIconPackInfo,
-                    )
-                }
-
-                val generalSettings = userDataRepository.userDataFlow.first().generalSettings
-
-                if (generalSettings.iconPackPackageName == packageName) {
-                    userDataRepository.updateGeneralSettings(
-                        generalSettings = generalSettings.copy(iconPackPackageName = ""),
-                    )
-                }
+            val generalSettings = if (serialNumber == 0L) {
+                userDataRepository.userDataFlow.first().generalSettings
+            } else {
+                null
             }
 
-            cleanupFolderGridItemsUseCase()
+            gridRepository.withTransaction {
+                eblanApplicationInfoRepository.deleteEblanApplicationInfoByPackageName(
+                    serialNumber = serialNumber,
+                    packageName = packageName,
+                )
 
-            cleanupFolderEblanApplicationInfosUseCase()
+                eblanAppWidgetProviderInfoRepository.deleteEblanAppWidgetProviderInfoByPackageName(
+                    serialNumber = serialNumber,
+                    packageName = packageName,
+                )
+
+                eblanShortcutInfoRepository.deleteEblanShortcutInfos(
+                    serialNumber = serialNumber,
+                    packageName = packageName,
+                )
+
+                eblanShortcutConfigRepository.deleteEblanShortcutConfigByPackageName(
+                    serialNumber = serialNumber,
+                    packageName = packageName,
+                )
+
+                applicationInfoGridItemRepository.deleteApplicationInfoGridItem(
+                    serialNumber = serialNumber,
+                    packageName = packageName,
+                )
+
+                widgetGridItemRepository.deleteWidgetGridItemByPackageName(
+                    serialNumber = serialNumber,
+                    packageName = packageName,
+                )
+
+                shortcutInfoGridItemRepository.deleteShortcutInfoGridItemByPackageName(
+                    serialNumber = serialNumber,
+                    packageName = packageName,
+                )
+
+                shortcutConfigGridItemRepository.deleteShortcutConfigGridItemByPackageName(
+                    serialNumber = serialNumber,
+                    packageName = packageName,
+                )
+
+                if (serialNumber == 0L) {
+                    eblanIconPackInfoRepository.getEblanIconPackByPackageName(
+                        packageName = packageName,
+                    )?.let { currentEblanIconPackInfo ->
+                        eblanIconPackInfoRepository.deleteEblanIconPackInfo(
+                            eblanIconPackInfo = currentEblanIconPackInfo,
+                        )
+                    }
+                }
+
+                cleanupFolderGridItemsUseCase()
+
+                cleanupFolderEblanApplicationInfosUseCase()
+            }
+
+            if (generalSettings != null && generalSettings.iconPackPackageName == packageName) {
+                userDataRepository.updateGeneralSettings(
+                    generalSettings = generalSettings.copy(iconPackPackageName = ""),
+                )
+            }
         }
     }
 }

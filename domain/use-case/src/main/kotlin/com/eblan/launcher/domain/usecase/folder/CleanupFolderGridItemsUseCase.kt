@@ -37,35 +37,37 @@ class CleanupFolderGridItemsUseCase @Inject constructor(
      * at the folder's position, resolving nested folders recursively.
      */
     suspend operator fun invoke() = withContext(defaultDispatcher) {
-        val gridItems = gridRepository.getGridItems().toGridItems()
+        gridRepository.withTransaction {
+            val gridItems = gridRepository.getGridItems().toGridItems()
 
-        val gridItemsByFolderId = gridItems
-            .groupBy { currentGridItem -> currentGridItem.folderIdOrNull() }
-            .mapValues { (_, currentGridItems) -> currentGridItems.toMutableList() }
-            .toMutableMap()
+            val gridItemsByFolderId = gridItems
+                .groupBy { currentGridItem -> currentGridItem.folderIdOrNull() }
+                .mapValues { (_, currentGridItems) -> currentGridItems.toMutableList() }
+                .toMutableMap()
 
-        val gridItemsToUpsertById = mutableMapOf<String, GridItem>()
-        val gridItemsToDeleteById = mutableMapOf<String, GridItem>()
-        val visitedFolderGridItemIds = mutableSetOf<String>()
+            val gridItemsToUpsertById = mutableMapOf<String, GridItem>()
+            val gridItemsToDeleteById = mutableMapOf<String, GridItem>()
+            val visitedFolderGridItemIds = mutableSetOf<String>()
 
-        gridItems
-            .filter { currentGridItem -> currentGridItem.data is GridItemData.Folder }
-            .forEach { folderGridItem ->
-                cleanupFolderGridItem(
-                    folderGridItem = folderGridItem,
-                    gridItemsByFolderId = gridItemsByFolderId,
-                    gridItemsToUpsertById = gridItemsToUpsertById,
-                    gridItemsToDeleteById = gridItemsToDeleteById,
-                    visitedFolderGridItemIds = visitedFolderGridItemIds,
-                )
+            gridItems
+                .filter { currentGridItem -> currentGridItem.data is GridItemData.Folder }
+                .forEach { folderGridItem ->
+                    cleanupFolderGridItem(
+                        folderGridItem = folderGridItem,
+                        gridItemsByFolderId = gridItemsByFolderId,
+                        gridItemsToUpsertById = gridItemsToUpsertById,
+                        gridItemsToDeleteById = gridItemsToDeleteById,
+                        visitedFolderGridItemIds = visitedFolderGridItemIds,
+                    )
+                }
+
+            if (gridItemsToUpsertById.isNotEmpty()) {
+                gridRepository.upsertGridItems(gridItems = gridItemsToUpsertById.values.toList())
             }
 
-        if (gridItemsToUpsertById.isNotEmpty()) {
-            gridRepository.upsertGridItems(gridItems = gridItemsToUpsertById.values.toList())
-        }
-
-        if (gridItemsToDeleteById.isNotEmpty()) {
-            gridRepository.deleteGridItems(gridItems = gridItemsToDeleteById.values.toList())
+            if (gridItemsToDeleteById.isNotEmpty()) {
+                gridRepository.deleteGridItems(gridItems = gridItemsToDeleteById.values.toList())
+            }
         }
     }
 

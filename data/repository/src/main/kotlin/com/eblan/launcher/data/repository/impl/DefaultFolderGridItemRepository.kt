@@ -19,6 +19,7 @@ package com.eblan.launcher.data.repository.impl
 
 import com.eblan.launcher.data.repository.mapper.asEntity
 import com.eblan.launcher.data.repository.mapper.asFolderGridItemWrapper
+import com.eblan.launcher.data.repository.mapper.asModel
 import com.eblan.launcher.data.room.dao.FolderGridItemDao
 import com.eblan.launcher.domain.model.grid.FolderGridItem
 import com.eblan.launcher.domain.model.grid.FolderGridItemWrapper
@@ -38,6 +39,10 @@ internal class DefaultFolderGridItemRepository @Inject constructor(private val f
         currentFolderGridItemWrapperEntity.asFolderGridItemWrapper()
     }
 
+    override suspend fun getFolderGridItems(): List<FolderGridItem> = folderGridItemDao.getFolderGridItemEntities().map { currentFolderGridItemEntity ->
+        currentFolderGridItemEntity.asModel()
+    }
+
     override suspend fun updateFolderGridItem(folderGridItem: FolderGridItem) {
         folderGridItemDao.updateFolderGridItemEntity(entity = folderGridItem.asEntity())
     }
@@ -46,12 +51,28 @@ internal class DefaultFolderGridItemRepository @Inject constructor(private val f
         folderGridItemDao.deleteFolderGridItemEntity(entity = folderGridItem.asEntity())
     }
 
+    override suspend fun deleteFolderGridItems(folderGridItems: List<FolderGridItem>) {
+        val entities = folderGridItems.map { currentFolderGridItem ->
+            currentFolderGridItem.asEntity()
+        }
+
+        folderGridItemDao.deleteFolderGridItemEntities(entities = entities)
+    }
+
     override suspend fun insertFolderGridItem(folderGridItem: FolderGridItem) {
         folderGridItemDao.insertFolderGridItemEntity(entity = folderGridItem.asEntity())
     }
 
     override suspend fun upsertFolderGridItem(folderGridItem: FolderGridItem) {
         folderGridItemDao.upsertFolderGridItemEntity(entity = folderGridItem.asEntity())
+    }
+
+    override suspend fun upsertFolderGridItems(folderGridItems: List<FolderGridItem>) {
+        val entities = folderGridItems.map { currentFolderGridItem ->
+            currentFolderGridItem.asEntity()
+        }
+
+        folderGridItemDao.upsertFolderGridItemEntities(entities = entities)
     }
 
     override suspend fun deleteFolderGridItemById(id: String) {

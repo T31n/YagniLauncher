@@ -242,9 +242,7 @@ class SyncDataUseCase @Inject constructor(
             syncEblanApplicationInfos = newSyncEblanApplicationInfos,
         )
 
-        if (oldDeleteEblanApplicationInfos.isNotEmpty()) {
-            cleanupFolderEblanApplicationInfosUseCase()
-        }
+        cleanupFolderEblanApplicationInfosUseCase()
 
         updateEblanShortcutConfigs(newEblanShortcutConfigs = newEblanShortcutConfigs)
 

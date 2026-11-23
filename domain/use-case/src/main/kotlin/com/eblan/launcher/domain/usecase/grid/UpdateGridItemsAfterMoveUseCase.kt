@@ -55,44 +55,46 @@ class UpdateGridItemsAfterMoveUseCase @Inject constructor(
 
             val movingGridItem = moveGridItemResult.movingGridItem
 
-            if (conflictingGridItem != null) {
-                when (conflictingGridItem.data) {
-                    is GridItemData.Folder -> {
-                        val previewFolderGridItems =
-                            folderGridItemRepository.getFolderGridItemWrappers()
-                                .asPreviewFolders(
-                                    maxFolderColumns = userData.folderSettings.maxFolderColumns,
-                                    maxFolderRows = userData.folderSettings.maxFolderRows,
-                                )
+            gridRepository.withTransaction {
+                if (conflictingGridItem != null) {
+                    when (conflictingGridItem.data) {
+                        is GridItemData.Folder -> {
+                            val previewFolderGridItems =
+                                folderGridItemRepository.getFolderGridItemWrappers()
+                                    .asPreviewFolders(
+                                        maxFolderColumns = userData.folderSettings.maxFolderColumns,
+                                        maxFolderRows = userData.folderSettings.maxFolderRows,
+                                    )
 
-                        val folderGridItems = getRecursiveFolderGridItems(
-                            folderPopupGridItems = previewFolderGridItems,
-                            folderId = conflictingGridItem.id,
-                        )
+                            val folderGridItems = getRecursiveFolderGridItems(
+                                folderPopupGridItems = previewFolderGridItems,
+                                folderId = conflictingGridItem.id,
+                            )
 
-                        addMovingGridItemIntoFolder(
-                            conflictingGridItem = conflictingGridItem,
-                            movingGridItem = movingGridItem,
-                            folderGridItems = folderGridItems,
-                        )
+                            addMovingGridItemIntoFolder(
+                                conflictingGridItem = conflictingGridItem,
+                                movingGridItem = movingGridItem,
+                                folderGridItems = folderGridItems,
+                            )
+                        }
+
+                        is GridItemData.ApplicationInfo,
+                        is GridItemData.ShortcutConfig,
+                        is GridItemData.ShortcutInfo,
+                        is GridItemData.Widget,
+                        -> {
+                            createNewFolder(
+                                conflictingGridItem = conflictingGridItem,
+                                movingGridItem = movingGridItem,
+                            )
+                        }
                     }
-
-                    is GridItemData.ApplicationInfo,
-                    is GridItemData.ShortcutConfig,
-                    is GridItemData.ShortcutInfo,
-                    is GridItemData.Widget,
-                    -> {
-                        createNewFolder(
-                            conflictingGridItem = conflictingGridItem,
-                            movingGridItem = movingGridItem,
-                        )
-                    }
+                } else {
+                    gridRepository.updateGridItem(gridItem = movingGridItem)
                 }
-            } else {
-                gridRepository.updateGridItem(gridItem = movingGridItem)
-            }
 
-            cleanupFolderGridItemsUseCase()
+                cleanupFolderGridItemsUseCase()
+            }
         }
     }
 

@@ -929,9 +929,11 @@ internal class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             moveGridItemJob?.cancelAndJoin()
 
-            gridRepository.upsertGridItems(gridItems = folderGridItems)
+            gridRepository.withTransaction {
+                gridRepository.upsertGridItems(gridItems = folderGridItems)
 
-            updateGridItemsAfterMoveUseCase(moveGridItemResult = moveGridItemResult)
+                updateGridItemsAfterMoveUseCase(moveGridItemResult = moveGridItemResult)
+            }
 
             if (moveGridItemResult.conflictingGridItem == null) {
                 resetGrid()

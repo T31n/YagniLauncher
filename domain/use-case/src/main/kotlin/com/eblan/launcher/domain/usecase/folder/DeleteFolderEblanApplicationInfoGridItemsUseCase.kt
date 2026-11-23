@@ -24,6 +24,7 @@ import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
+import com.eblan.launcher.domain.repository.FolderGridItemTransaction
 import com.eblan.launcher.domain.repository.UserDataRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
@@ -35,6 +36,7 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
     private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
     private val userDataRepository: UserDataRepository,
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
+    private val folderGridItemTransaction: FolderGridItemTransaction,
     private val cleanupFolderEblanApplicationInfosUseCase: CleanupFolderEblanApplicationInfosUseCase,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
@@ -49,47 +51,49 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
     ) = withContext(defaultDispatcher) {
         val userData = userDataRepository.userDataFlow.first()
 
-        val folderEblanApplicationInfoPopups =
-            folderEblanApplicationInfoRepository.getFolderEblanApplicationInfoWrappers()
-                .asPreviewFolderEblanApplicationInfos(
-                    maxFolderColumns = userData.folderSettings.maxFolderColumns,
-                    maxFolderRows = userData.folderSettings.maxFolderRows,
-                )
+        folderGridItemTransaction.withTransaction {
+            val folderEblanApplicationInfoPopups =
+                folderEblanApplicationInfoRepository.getFolderEblanApplicationInfoWrappers()
+                    .asPreviewFolderEblanApplicationInfos(
+                        maxFolderColumns = userData.folderSettings.maxFolderColumns,
+                        maxFolderRows = userData.folderSettings.maxFolderRows,
+                    )
 
-        getRecursiveFolderGridItems(
-            folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
-            folderId = folderId,
-        ).forEach { folderGridItem ->
-            when (val data = folderGridItem.data) {
-                is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
-                    val eblanApplicationInfos =
-                        eblanApplicationInfoRepository.getEblanApplicationInfosByPackageName(
-                            serialNumber = data.serialNumber,
-                            packageName = data.packageName,
-                        ).filter { currentEblanApplicationInfo ->
-                            currentEblanApplicationInfo.componentName == data.componentName &&
-                                currentEblanApplicationInfo.folderId != null
-                        }.map { currentEblanApplicationInfo ->
-                            currentEblanApplicationInfo.copy(
-                                folderIndex = -1,
-                                folderId = null,
-                            )
-                        }
+            getRecursiveFolderGridItems(
+                folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+                folderId = folderId,
+            ).forEach { folderGridItem ->
+                when (val data = folderGridItem.data) {
+                    is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
+                        val eblanApplicationInfos =
+                            eblanApplicationInfoRepository.getEblanApplicationInfosByPackageName(
+                                serialNumber = data.serialNumber,
+                                packageName = data.packageName,
+                            ).filter { currentEblanApplicationInfo ->
+                                currentEblanApplicationInfo.componentName == data.componentName &&
+                                    currentEblanApplicationInfo.folderId != null
+                            }.map { currentEblanApplicationInfo ->
+                                currentEblanApplicationInfo.copy(
+                                    folderIndex = -1,
+                                    folderId = null,
+                                )
+                            }
 
-                    eblanApplicationInfoRepository.updateEblanApplicationInfos(eblanApplicationInfos = eblanApplicationInfos)
+                        eblanApplicationInfoRepository.updateEblanApplicationInfos(eblanApplicationInfos = eblanApplicationInfos)
+                    }
+
+                    is FolderEblanApplicationInfoGridItemData.Folder -> Unit
                 }
-
-                is FolderEblanApplicationInfoGridItemData.Folder -> Unit
             }
-        }
 
-        val deletedFolder =
-            folderEblanApplicationInfoRepository.getFolderEblanApplicationInfoById(id = folderId)
+            val deletedFolder =
+                folderEblanApplicationInfoRepository.getFolderEblanApplicationInfoById(id = folderId)
 
-        folderEblanApplicationInfoRepository.deleteFolderEblanApplicationInfoById(id = folderId)
+            folderEblanApplicationInfoRepository.deleteFolderEblanApplicationInfoById(id = folderId)
 
-        if (deletedFolder?.folderId != null) {
-            cleanupFolderEblanApplicationInfosUseCase()
+            if (deletedFolder?.folderId != null) {
+                cleanupFolderEblanApplicationInfosUseCase()
+            }
         }
     }
 

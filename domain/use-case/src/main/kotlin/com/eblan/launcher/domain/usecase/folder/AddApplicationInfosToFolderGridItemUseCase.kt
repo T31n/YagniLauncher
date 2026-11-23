@@ -50,68 +50,70 @@ class AddApplicationInfosToFolderGridItemUseCase @Inject constructor(
         folderGridItem: GridItem,
         eblanApplicationInfos: List<EblanApplicationInfo>,
     ) = withContext(defaultDispatcher) {
-        val gridItems = gridRepository.getGridItems()
-
         val homeSettings = userDataRepository.userDataFlow.first().homeSettings
 
-        val gridItemSettings = when (folderGridItem.associate) {
-            Associate.Grid -> homeSettings.gridItemSettings
-            Associate.Dock -> homeSettings.dockGridItemSettings
-        }
+        gridRepository.withTransaction {
+            val gridItems = gridRepository.getGridItems()
 
-        val startIndex = sequenceOf(
-            gridItems.applicationInfoGridItems
-                .asSequence()
-                .filter { it.folderId == folderGridItem.id }
-                .map { it.index + 1 },
-            gridItems.shortcutInfoGridItems
-                .asSequence()
-                .filter { it.folderId == folderGridItem.id }
-                .map { it.index + 1 },
-            gridItems.shortcutConfigGridItems
-                .asSequence()
-                .filter { it.folderId == folderGridItem.id }
-                .map { it.index + 1 },
-            gridItems.folderGridItems
-                .asSequence()
-                .filter { it.folderId == folderGridItem.id }
-                .map { it.index + 1 },
-        ).flatten().maxOrNull() ?: 0
+            val gridItemSettings = when (folderGridItem.associate) {
+                Associate.Grid -> homeSettings.gridItemSettings
+                Associate.Dock -> homeSettings.dockGridItemSettings
+            }
 
-        val eblanAction = EblanAction(
-            eblanActionType = EblanActionType.None,
-            serialNumber = 0L,
-            componentName = "",
-        )
+            val startIndex = sequenceOf(
+                gridItems.applicationInfoGridItems
+                    .asSequence()
+                    .filter { it.folderId == folderGridItem.id }
+                    .map { it.index + 1 },
+                gridItems.shortcutInfoGridItems
+                    .asSequence()
+                    .filter { it.folderId == folderGridItem.id }
+                    .map { it.index + 1 },
+                gridItems.shortcutConfigGridItems
+                    .asSequence()
+                    .filter { it.folderId == folderGridItem.id }
+                    .map { it.index + 1 },
+                gridItems.folderGridItems
+                    .asSequence()
+                    .filter { it.folderId == folderGridItem.id }
+                    .map { it.index + 1 },
+            ).flatten().maxOrNull() ?: 0
 
-        val newGridItems = eblanApplicationInfos.mapIndexed { index, eblanApplicationInfo ->
-            GridItem(
-                id = Uuid.random().toHexString(),
-                page = folderGridItem.page,
-                startColumn = -1,
-                startRow = -1,
-                columnSpan = 1,
-                rowSpan = 1,
-                data = GridItemData.ApplicationInfo(
-                    serialNumber = eblanApplicationInfo.serialNumber,
-                    componentName = eblanApplicationInfo.componentName,
-                    packageName = eblanApplicationInfo.packageName,
-                    icon = eblanApplicationInfo.icon,
-                    label = eblanApplicationInfo.label,
-                    customIcon = eblanApplicationInfo.customIcon,
-                    customLabel = eblanApplicationInfo.customLabel,
-                    index = startIndex + index,
-                    folderId = folderGridItem.id,
-                ),
-                associate = folderGridItem.associate,
-                override = false,
-                gridItemSettings = gridItemSettings,
-                doubleTap = eblanAction,
-                swipeUp = eblanAction,
-                swipeDown = eblanAction,
+            val eblanAction = EblanAction(
+                eblanActionType = EblanActionType.None,
+                serialNumber = 0L,
+                componentName = "",
             )
-        }
 
-        gridRepository.upsertGridItems(gridItems = newGridItems)
+            val newGridItems = eblanApplicationInfos.mapIndexed { index, eblanApplicationInfo ->
+                GridItem(
+                    id = Uuid.random().toHexString(),
+                    page = folderGridItem.page,
+                    startColumn = -1,
+                    startRow = -1,
+                    columnSpan = 1,
+                    rowSpan = 1,
+                    data = GridItemData.ApplicationInfo(
+                        serialNumber = eblanApplicationInfo.serialNumber,
+                        componentName = eblanApplicationInfo.componentName,
+                        packageName = eblanApplicationInfo.packageName,
+                        icon = eblanApplicationInfo.icon,
+                        label = eblanApplicationInfo.label,
+                        customIcon = eblanApplicationInfo.customIcon,
+                        customLabel = eblanApplicationInfo.customLabel,
+                        index = startIndex + index,
+                        folderId = folderGridItem.id,
+                    ),
+                    associate = folderGridItem.associate,
+                    override = false,
+                    gridItemSettings = gridItemSettings,
+                    doubleTap = eblanAction,
+                    swipeUp = eblanAction,
+                    swipeDown = eblanAction,
+                )
+            }
+
+            gridRepository.upsertGridItems(gridItems = newGridItems)
+        }
     }
 }

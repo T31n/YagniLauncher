@@ -135,43 +135,45 @@ class AddPinShortcutToHomeScreenUseCase @Inject constructor(
             swipeDown = eblanAction,
         )
 
-        val gridItems = gridRepository.getGridItems().toGridItems()
-            .filter { currentGridItem ->
-                currentGridItem.isTopLevel() && currentGridItem.associate == Associate.Grid
-            }
+        val iconPath = icon?.let { byteArray ->
+            val directory = fileManager.getFilesDirectory(FileManager.SHORTCUTS_DIR)
 
-        val newGridItem = findAvailableRegionByPage(
-            gridItems = gridItems,
-            gridItem = gridItem,
-            pageCount = pageCount,
-            columns = columns,
-            rows = rows,
-        )
+            fileManager.updateAndGetFilePath(
+                directory = directory,
+                name = iconKeyGenerator.getShortcutIconKey(
+                    serialNumber = serialNumber,
+                    packageName = packageName,
+                    id = shortcutId,
+                ),
+                byteArray = byteArray,
+            )
+        }
 
-        if (newGridItem != null) {
-            val iconPath = icon?.let { byteArray ->
-                val directory = fileManager.getFilesDirectory(FileManager.SHORTCUTS_DIR)
+        gridRepository.withTransaction {
+            val gridItems = gridRepository.getGridItems().toGridItems()
+                .filter { currentGridItem ->
+                    currentGridItem.isTopLevel() && currentGridItem.associate == Associate.Grid
+                }
 
-                fileManager.updateAndGetFilePath(
-                    directory = directory,
-                    name = iconKeyGenerator.getShortcutIconKey(
-                        serialNumber = serialNumber,
-                        packageName = packageName,
-                        id = shortcutId,
-                    ),
-                    byteArray = byteArray,
-                )
-            }
-
-            val updatedGridItem = newGridItem.copy(
-                data = data.copy(icon = iconPath),
+            val newGridItem = findAvailableRegionByPage(
+                gridItems = gridItems,
+                gridItem = gridItem,
+                pageCount = pageCount,
+                columns = columns,
+                rows = rows,
             )
 
-            gridRepository.insertGridItem(gridItem = updatedGridItem)
+            if (newGridItem != null) {
+                val updatedGridItem = newGridItem.copy(
+                    data = data.copy(icon = iconPath),
+                )
 
-            updatedGridItem
-        } else {
-            null
+                gridRepository.insertGridItem(gridItem = updatedGridItem)
+
+                updatedGridItem
+            } else {
+                null
+            }
         }
     }
 }

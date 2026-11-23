@@ -75,8 +75,6 @@ class UpdatePageItemsUseCase @Inject constructor(
                         launcherAppsWrapper = launcherAppsWrapper,
                     )
                 }
-
-                gridRepository.deleteGridItems(gridItems = pageItem.gridItems)
             }
 
             val gridItems = pageItems.flatMapIndexed { index, pageItem ->
@@ -109,7 +107,13 @@ class UpdatePageItemsUseCase @Inject constructor(
                 }
             }
 
-            gridRepository.upsertGridItems(gridItems = gridItems)
+            gridRepository.withTransaction {
+                pageItemsToDelete.forEach { pageItem ->
+                    gridRepository.deleteGridItems(gridItems = pageItem.gridItems)
+                }
+
+                gridRepository.upsertGridItems(gridItems = gridItems)
+            }
         }
     }
 }

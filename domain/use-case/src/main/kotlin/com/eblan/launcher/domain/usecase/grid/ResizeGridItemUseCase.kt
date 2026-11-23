@@ -48,42 +48,44 @@ class ResizeGridItemUseCase @Inject constructor(
         columns: Int,
         rows: Int,
     ): GridItem = withContext(defaultDispatcher) {
-        val gridItems =
-            gridRepository.getGridItems().toGridItems().filter { currentGridItem ->
-                currentGridItem.isTopLevel() &&
-                    currentGridItem.page == resizingGridItem.page &&
-                    currentGridItem.associate == resizingGridItem.associate
-            }.toMutableList()
+        gridRepository.withTransaction {
+            val gridItems =
+                gridRepository.getGridItems().toGridItems().filter { currentGridItem ->
+                    currentGridItem.isTopLevel() &&
+                        currentGridItem.page == resizingGridItem.page &&
+                        currentGridItem.associate == resizingGridItem.associate
+                }.toMutableList()
 
-        val index =
-            gridItems.indexOfFirst { currentGridItem ->
-                currentGridItem.id == resizingGridItem.id
+            val index =
+                gridItems.indexOfFirst { currentGridItem ->
+                    currentGridItem.id == resizingGridItem.id
+                }
+
+            val oldGridItem = gridItems[index]
+
+            gridItems[index] = resizingGridItem
+
+            val gridItemBySpan = gridItems.find { currentGridItem ->
+                currentGridItem.id != resizingGridItem.id && rectanglesOverlap(
+                    moving = resizingGridItem,
+                    other = currentGridItem,
+                )
             }
 
-        val oldGridItem = gridItems[index]
+            if (gridItemBySpan != null) {
+                handleConflictsOfGridItemSpan(
+                    oldGridItem = oldGridItem,
+                    conflictingGridItem = gridItemBySpan,
+                    gridItems = gridItems,
+                    resizingGridItem = resizingGridItem,
+                    columns = columns,
+                    rows = rows,
+                )
+            } else {
+                gridRepository.upsertGridItems(gridItems = gridItems)
 
-        gridItems[index] = resizingGridItem
-
-        val gridItemBySpan = gridItems.find { currentGridItem ->
-            currentGridItem.id != resizingGridItem.id && rectanglesOverlap(
-                moving = resizingGridItem,
-                other = currentGridItem,
-            )
-        }
-
-        if (gridItemBySpan != null) {
-            handleConflictsOfGridItemSpan(
-                oldGridItem = oldGridItem,
-                conflictingGridItem = gridItemBySpan,
-                gridItems = gridItems,
-                resizingGridItem = resizingGridItem,
-                columns = columns,
-                rows = rows,
-            )
-        } else {
-            gridRepository.upsertGridItems(gridItems = gridItems)
-
-            resizingGridItem
+                resizingGridItem
+            }
         }
     }
 

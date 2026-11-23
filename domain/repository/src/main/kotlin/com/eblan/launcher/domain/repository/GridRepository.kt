@@ -39,4 +39,6 @@ interface GridRepository {
     suspend fun upsertGridItem(gridItem: GridItem)
 
     suspend fun deleteGridItemById(gridItem: GridItem)
+
+    suspend fun <T> withTransaction(block: suspend () -> T): T
 }

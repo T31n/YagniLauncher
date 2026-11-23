@@ -68,8 +68,10 @@ class DeleteGridItemUseCase @Inject constructor(
             launcherAppsWrapper = launcherAppsWrapper,
         )
 
-        gridRepository.deleteGridItem(gridItem = gridItem)
+        gridRepository.withTransaction {
+            gridRepository.deleteGridItem(gridItem = gridItem)
 
-        cleanupFolderGridItemsUseCase()
+            cleanupFolderGridItemsUseCase()
+        }
     }
 }

@@ -196,41 +196,43 @@ class AddPinWidgetToHomeScreenUseCase @Inject constructor(
             swipeDown = eblanAction,
         )
 
-        val gridItems = gridRepository.getGridItems().toGridItems().filter { currentGridItem ->
-            currentGridItem.isTopLevel() && currentGridItem.associate == Associate.Grid
+        val previewPath = preview?.let { byteArray ->
+            val directory = fileManager.getFilesDirectory(FileManager.WIDGETS_DIR)
+
+            fileManager.updateAndGetFilePath(
+                directory = directory,
+                name = iconKeyGenerator.getWidgetPreviewKey(
+                    serialNumber = serialNumber,
+                    componentName = componentName,
+                ),
+                byteArray = byteArray,
+            )
         }
 
-        val newGridItem = findAvailableRegionByPage(
-            gridItems = gridItems,
-            gridItem = gridItem,
-            pageCount = pageCount,
-            columns = columns,
-            rows = rows,
-        )
-
-        if (newGridItem != null) {
-            val previewPath = preview?.let { byteArray ->
-                val directory = fileManager.getFilesDirectory(FileManager.WIDGETS_DIR)
-
-                fileManager.updateAndGetFilePath(
-                    directory = directory,
-                    name = iconKeyGenerator.getWidgetPreviewKey(
-                        serialNumber = serialNumber,
-                        componentName = componentName,
-                    ),
-                    byteArray = byteArray,
-                )
+        gridRepository.withTransaction {
+            val gridItems = gridRepository.getGridItems().toGridItems().filter { currentGridItem ->
+                currentGridItem.isTopLevel() && currentGridItem.associate == Associate.Grid
             }
 
-            val updatedGridItem = newGridItem.copy(
-                data = data.copy(preview = previewPath),
+            val newGridItem = findAvailableRegionByPage(
+                gridItems = gridItems,
+                gridItem = gridItem,
+                pageCount = pageCount,
+                columns = columns,
+                rows = rows,
             )
 
-            gridRepository.insertGridItem(gridItem = updatedGridItem)
+            if (newGridItem != null) {
+                val updatedGridItem = newGridItem.copy(
+                    data = data.copy(preview = previewPath),
+                )
 
-            updatedGridItem
-        } else {
-            null
+                gridRepository.insertGridItem(gridItem = updatedGridItem)
+
+                updatedGridItem
+            } else {
+                null
+            }
         }
     }
 }

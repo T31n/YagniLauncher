@@ -39,10 +39,8 @@ import com.eblan.launcher.data.room.migration.Migration22To23
 import com.eblan.launcher.data.room.migration.Migration23To24
 import com.eblan.launcher.data.room.migration.Migration3To4
 import com.eblan.launcher.data.room.migration.Migration7To8
-import com.eblan.launcher.data.room.transaction.DefaultFolderGridItemEntityTransaction
-import com.eblan.launcher.data.room.transaction.DefaultGridItemEntityTransaction
-import com.eblan.launcher.data.room.transaction.FolderGridItemEntityTransaction
-import com.eblan.launcher.data.room.transaction.GridItemEntityTransaction
+import com.eblan.launcher.data.room.transaction.DefaultGridTransaction
+import com.eblan.launcher.data.room.transaction.GridTransaction
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -85,30 +83,22 @@ internal object RoomModule {
 
     @Singleton
     @Provides
-    fun gridItemTransaction(
+    fun gridTransaction(
         eblanDatabase: EblanDatabase,
         applicationInfoGridItemDao: ApplicationInfoGridItemDao,
         widgetGridItemDao: WidgetGridItemDao,
         shortcutInfoGridItemDao: ShortcutInfoGridItemDao,
         shortcutConfigGridItemDao: ShortcutConfigGridItemDao,
         folderGridItemDao: FolderGridItemDao,
-    ): GridItemEntityTransaction = DefaultGridItemEntityTransaction(
+        eblanApplicationInfoDao: EblanApplicationInfoDao,
+        folderEblanApplicationInfoDao: FolderEblanApplicationInfoDao,
+    ): GridTransaction = DefaultGridTransaction(
         eblanDatabase = eblanDatabase,
         applicationInfoGridItemDao = applicationInfoGridItemDao,
         widgetGridItemDao = widgetGridItemDao,
         shortcutInfoGridItemDao = shortcutInfoGridItemDao,
         shortcutConfigGridItemDao = shortcutConfigGridItemDao,
         folderGridItemDao = folderGridItemDao,
-    )
-
-    @Singleton
-    @Provides
-    fun folderGridItemTransaction(
-        eblanDatabase: EblanDatabase,
-        eblanApplicationInfoDao: EblanApplicationInfoDao,
-        folderEblanApplicationInfoDao: FolderEblanApplicationInfoDao,
-    ): FolderGridItemEntityTransaction = DefaultFolderGridItemEntityTransaction(
-        eblanDatabase = eblanDatabase,
         eblanApplicationInfoDao = eblanApplicationInfoDao,
         folderEblanApplicationInfoDao = folderEblanApplicationInfoDao,
     )
