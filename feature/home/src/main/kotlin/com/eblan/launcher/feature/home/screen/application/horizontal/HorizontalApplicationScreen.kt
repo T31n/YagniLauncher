@@ -327,7 +327,7 @@ private fun EblanApplicationInfosPage(
                 onVerticalDrag = onVerticalDrag,
             )
         } else {
-            EblanApplicationInfos(
+            EblanApplicationInfosGrid(
                 // Navigation and Layout
                 eblanUserPageKey = eblanUserPageKey,
                 sharedTransitionScope = sharedTransitionScope,
@@ -380,7 +380,7 @@ private fun EblanApplicationInfosPage(
 }
 
 @Composable
-private fun EblanApplicationInfos(
+private fun EblanApplicationInfosGrid(
     // Navigation and Layout
     eblanUserPageKey: EblanUserPageKey,
     sharedTransitionScope: SharedTransitionScope,

@@ -351,7 +351,7 @@ private fun EblanApplicationInfosPage(
 
     val userManager = LocalUserManager.current
 
-    val eblanUserPageKey =
+    val eblanUserPageKey = remember(key1 = getEblanApplicationInfosByLabelAndTag) {
         getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos.keys.toList()
             .getOrElse(
                 index = index,
@@ -366,6 +366,7 @@ private fun EblanApplicationInfosPage(
                     )
                 },
             )
+    }
 
     val userHandle =
         userManager.getUserForSerialNumber(serialNumber = eblanUserPageKey.eblanUser.serialNumber)
@@ -389,7 +390,7 @@ private fun EblanApplicationInfosPage(
                 onVerticalDrag = onVerticalDrag,
             )
         } else {
-            EblanApplicationInfos(
+            EblanApplicationInfosGrid(
                 // Layout
                 sharedTransitionScope = sharedTransitionScope,
                 paddingValues = paddingValues,
@@ -426,7 +427,8 @@ private fun EblanApplicationInfosPage(
             )
 
             if (isDefaultLauncher &&
-                eblanUserPageKey.eblanUser.serialNumber > 0 && userHandle != null
+                eblanUserPageKey.eblanUser.serialNumber > 0 &&
+                userHandle != null
             ) {
                 FloatingActionButton(
                     modifier = Modifier
@@ -455,7 +457,7 @@ private fun EblanApplicationInfosPage(
 }
 
 @Composable
-private fun EblanApplicationInfos(
+private fun EblanApplicationInfosGrid(
     // Layout
     sharedTransitionScope: SharedTransitionScope,
     paddingValues: PaddingValues,
