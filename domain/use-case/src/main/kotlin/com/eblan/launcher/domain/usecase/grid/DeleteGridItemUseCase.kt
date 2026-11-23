@@ -20,6 +20,7 @@ package com.eblan.launcher.domain.usecase.grid
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.platform.AppWidgetHostWrapper
 import com.eblan.launcher.domain.platform.LauncherAppsWrapper
 import com.eblan.launcher.domain.repository.FolderGridItemRepository
@@ -29,6 +30,7 @@ import com.eblan.launcher.domain.usecase.folder.CleanupFolderGridItemsUseCase
 import com.eblan.launcher.domain.usecase.folder.asPreviewFolders
 import com.eblan.launcher.domain.usecase.util.deleteGridItemData
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -44,34 +46,49 @@ class DeleteGridItemUseCase @Inject constructor(
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     /**
-     * Deletes the item's nested resources and persisted grid record.
+     * Deletes the item's persisted grid record and then releases its nested external resources.
      *
-     * Folder contents are expanded so pinned shortcuts and widgets inside nested folders are
-     * released before the folder's grid item is removed.
+     * Folder contents are snapshotted and deleted within the transaction before releasing widget
+     * IDs and pinned shortcuts, so a failed or cancelled transaction cannot leave grid items
+     * referencing released resources; if persistence succeeds and subsequent cleanup fails,
+     * unreleased widget IDs or shortcuts may temporarily leak.
      *
      * @param gridItem The item to delete.
      */
     suspend operator fun invoke(gridItem: GridItem) = withContext(defaultDispatcher) {
-        val userData = userDataRepository.userDataFlow.first()
+        val folderSettings = if (gridItem.data is GridItemData.Folder) {
+            userDataRepository.userDataFlow.first().folderSettings
+        } else {
+            null
+        }
 
-        val previewFolderGridItems =
-            folderGridItemRepository.getFolderGridItemWrappers()
-                .asPreviewFolders(
-                    maxFolderColumns = userData.folderSettings.maxFolderColumns,
-                    maxFolderRows = userData.folderSettings.maxFolderRows,
-                )
+        val previewFolderGridItems = gridRepository.withTransaction {
+            val previewFolders = if (folderSettings != null) {
+                folderGridItemRepository.getFolderGridItemWrappers()
+                    .asPreviewFolders(
+                        maxFolderColumns = folderSettings.maxFolderColumns,
+                        maxFolderRows = folderSettings.maxFolderRows,
+                    )
+            } else {
+                emptyMap()
+            }
 
-        deleteGridItemData(
-            gridItem = gridItem,
-            folderPopupGridItems = previewFolderGridItems,
-            appWidgetHostWrapper = appWidgetHostWrapper,
-            launcherAppsWrapper = launcherAppsWrapper,
-        )
-
-        gridRepository.withTransaction {
             gridRepository.deleteGridItem(gridItem = gridItem)
 
             cleanupFolderGridItemsUseCase()
+
+            previewFolders
+        }
+
+        // Records are already committed above; run external cleanup non-cancellably,
+        // accepting temporarily leaked resources if cleanup still fails.
+        withContext(NonCancellable) {
+            deleteGridItemData(
+                gridItem = gridItem,
+                folderPopupGridItems = previewFolderGridItems,
+                appWidgetHostWrapper = appWidgetHostWrapper,
+                launcherAppsWrapper = launcherAppsWrapper,
+            )
         }
     }
 }
