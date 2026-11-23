@@ -19,6 +19,8 @@ package com.eblan.launcher.domain.usecase.application
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
+import com.eblan.launcher.domain.model.application.AppDrawerGridItem
+import com.eblan.launcher.domain.model.application.AppDrawerGridItemData
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
@@ -108,6 +110,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
                     horizontalAppDrawerColumns = userData.appDrawerSettings.horizontalAppDrawerColumns,
                     horizontalAppDrawerRows = userData.appDrawerSettings.horizontalAppDrawerRows,
                     eblanApplicationInfos = eblanApplicationInfosByLabel,
+                    folderEblanApplicationInfos = folderEblanApplicationInfosByLabel,
                     iconPackFilePaths = iconPackFilePaths,
                 )
         }
@@ -122,7 +125,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
         folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
         iconPackFilePaths: Map<String, String?>,
     ): GetEblanApplicationInfosByLabelAndTag {
-        val groupedEblanApplicationInfos = eblanApplicationInfos
+        val groupedUsers = eblanApplicationInfos
             .groupBy { currentEblanApplicationInfo ->
                 EblanUserPageKey(
                     eblanUser = launcherAppsWrapper.getUser(serialNumber = currentEblanApplicationInfo.serialNumber),
@@ -137,10 +140,10 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
                 ),
             )
 
-        val groupedEblanApplicationInfosWithFolders =
+        val groupedUsersWithFolders =
             if (
                 folderEblanApplicationInfos.isNotEmpty() &&
-                groupedEblanApplicationInfos.keys.none { currentEblanUserPageKey ->
+                groupedUsers.keys.none { currentEblanUserPageKey ->
                     currentEblanUserPageKey.eblanUser.eblanUserType == EblanUserType.Personal
                 }
             ) {
@@ -149,37 +152,54 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
                     page = 0,
                 )
 
-                groupedEblanApplicationInfos + (personalEblanUserPageKey to emptyList())
+                groupedUsers + (personalEblanUserPageKey to emptyList())
             } else {
-                groupedEblanApplicationInfos
+                groupedUsers
             }
 
         val privateEblanUserPageKey =
-            groupedEblanApplicationInfosWithFolders.keys.firstOrNull { currentEblanUserPageKey ->
+            groupedUsersWithFolders.keys.firstOrNull { currentEblanUserPageKey ->
                 currentEblanUserPageKey.eblanUser.eblanUserType == EblanUserType.Private
             }
 
+        val appDrawerGridItems = groupedUsersWithFolders
+            .filterKeys { currentEblanUserPageKey ->
+                currentEblanUserPageKey != privateEblanUserPageKey
+            }
+            .mapValues { (eblanUserPageKey, currentEblanApplicationInfos) ->
+                if (eblanUserPageKey.eblanUser.eblanUserType == EblanUserType.Personal) {
+                    folderEblanApplicationInfos.map(FolderEblanApplicationInfo::toAppDrawerGridItem) +
+                        currentEblanApplicationInfos.map(EblanApplicationInfo::toAppDrawerGridItem)
+                } else {
+                    currentEblanApplicationInfos.map(EblanApplicationInfo::toAppDrawerGridItem)
+                }
+            }
+
         return GetEblanApplicationInfosByLabelAndTag(
-            eblanApplicationInfos = groupedEblanApplicationInfosWithFolders
-                .filterKeys { currentEblanUserPageKey ->
-                    currentEblanUserPageKey != privateEblanUserPageKey
-                },
+            eblanApplicationInfos = appDrawerGridItems,
             privateEblanUser = privateEblanUserPageKey?.eblanUser,
-            privateEblanApplicationInfos = groupedEblanApplicationInfos[privateEblanUserPageKey].orEmpty(),
+            privateEblanApplicationInfos = groupedUsers[privateEblanUserPageKey].orEmpty(),
             iconPackFilePaths = iconPackFilePaths,
-            folderEblanApplicationInfos = folderEblanApplicationInfos,
         )
     }
 
-    /** Groups horizontal drawer results by user and splits each user's applications into pages. */
+    /** Groups horizontal drawer results by user and splits each user's items into pages. */
     private suspend fun getHorizontalEblanApplicationInfosByLabel(
         horizontalAppDrawerColumns: Int,
         horizontalAppDrawerRows: Int,
         eblanApplicationInfos: List<EblanApplicationInfo>,
+        folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
         iconPackFilePaths: Map<String, String?>,
     ): GetEblanApplicationInfosByLabelAndTag {
-        val groupedEblanApplicationInfos = eblanApplicationInfos.groupBy { currentEblanApplicationInfo ->
+        val pageSize = (horizontalAppDrawerColumns * horizontalAppDrawerRows).coerceAtLeast(1)
+
+        val groupedUsers = eblanApplicationInfos.groupBy { currentEblanApplicationInfo ->
             launcherAppsWrapper.getUser(serialNumber = currentEblanApplicationInfo.serialNumber)
+        }.filterKeys { currentEblanUser ->
+            !(
+                currentEblanUser.eblanUserType == EblanUserType.Private &&
+                    currentEblanUser.isPrivateSpaceEntryPointHidden
+                )
         }.toSortedMap(
             nullsLast(
                 compareBy { currentEblanUser ->
@@ -187,22 +207,51 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
                 },
             ),
         )
-            .flatMap { (eblanUser, eblanApplicationInfos) ->
-                eblanApplicationInfos.chunked(horizontalAppDrawerColumns * horizontalAppDrawerRows)
-                    .mapIndexed { index, eblanApplicationInfos ->
+
+        val groupedUsersWithFolders =
+            if (
+                folderEblanApplicationInfos.isNotEmpty() &&
+                groupedUsers.keys.none { currentEblanUser ->
+                    currentEblanUser.eblanUserType == EblanUserType.Personal
+                }
+            ) {
+                val personalEblanUser = launcherAppsWrapper.getUser(serialNumber = 0L)
+
+                (groupedUsers + (personalEblanUser to emptyList())).toSortedMap(
+                    nullsLast(
+                        compareBy { currentEblanUser ->
+                            currentEblanUser.serialNumber
+                        },
+                    ),
+                )
+            } else {
+                groupedUsers
+            }
+
+        val groupedAppDrawerGridItems = groupedUsersWithFolders
+            .flatMap { (eblanUser, currentEblanApplicationInfos) ->
+                val appDrawerGridItems =
+                    if (eblanUser.eblanUserType == EblanUserType.Personal) {
+                        folderEblanApplicationInfos.map(FolderEblanApplicationInfo::toAppDrawerGridItem) +
+                            currentEblanApplicationInfos.map(EblanApplicationInfo::toAppDrawerGridItem)
+                    } else {
+                        currentEblanApplicationInfos.map(EblanApplicationInfo::toAppDrawerGridItem)
+                    }
+
+                appDrawerGridItems.chunked(pageSize)
+                    .mapIndexed { index, chunkedAppDrawerGridItems ->
                         EblanUserPageKey(
                             eblanUser = eblanUser,
                             page = index,
-                        ) to eblanApplicationInfos
+                        ) to chunkedAppDrawerGridItems
                     }
             }.toMap()
 
         return GetEblanApplicationInfosByLabelAndTag(
-            eblanApplicationInfos = groupedEblanApplicationInfos,
+            eblanApplicationInfos = groupedAppDrawerGridItems,
             privateEblanUser = null,
             privateEblanApplicationInfos = emptyList(),
             iconPackFilePaths = iconPackFilePaths,
-            folderEblanApplicationInfos = emptyList(),
         )
     }
 
@@ -319,3 +368,13 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
             .lowercase()
     }
 }
+
+private fun EblanApplicationInfo.toAppDrawerGridItem(): AppDrawerGridItem = AppDrawerGridItem(
+    id = "${serialNumber}_$componentName",
+    data = AppDrawerGridItemData.ApplicationInfo(eblanApplicationInfo = this),
+)
+
+private fun FolderEblanApplicationInfo.toAppDrawerGridItem(): AppDrawerGridItem = AppDrawerGridItem(
+    id = id,
+    data = AppDrawerGridItemData.Folder(folderEblanApplicationInfo = this),
+)

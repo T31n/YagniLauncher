@@ -164,7 +164,6 @@ internal class HomeViewModel @Inject constructor(
             privateEblanUser = null,
             privateEblanApplicationInfos = emptyList(),
             iconPackFilePaths = emptyMap(),
-            folderEblanApplicationInfos = emptyList(),
         ),
     )
 

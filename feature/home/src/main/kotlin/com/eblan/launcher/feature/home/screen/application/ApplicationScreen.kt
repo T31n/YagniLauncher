@@ -81,6 +81,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.designsystem.theme.EblanSpacing
+import com.eblan.launcher.domain.model.application.AppDrawerGridItem
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
@@ -308,7 +309,6 @@ internal fun ApplicationScreen(
                     // Layout and Transition
                     sharedTransitionScope = sharedTransitionScope,
                     paddingValues = paddingValues,
-                    screenHeight = screenHeight,
                     // Application Info and Data
                     eblanApplicationInfoTags = eblanApplicationInfoTags,
                     getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
@@ -316,6 +316,16 @@ internal fun ApplicationScreen(
                     textFieldState = textFieldState,
                     selectedEblanApplicationInfoTagId = selectedEblanApplicationInfoTagId,
                     focusRequester = focusRequester,
+                    // Folder Configuration
+                    folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+                    folderCornerRadius = folderCornerRadius,
+                    folderBackgroundColor = folderBackgroundColor,
+                    customFolderBackgroundColor = customFolderBackgroundColor,
+                    folderBorderColor = folderBorderColor,
+                    customFolderBorderColor = customFolderBorderColor,
+                    folderBorderWidth = folderBorderWidth,
+                    isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
+                    folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
                     // Theme and Appearance
                     systemTextColor = systemTextColor,
                     systemCustomTextColor = systemCustomTextColor,
@@ -331,9 +341,12 @@ internal fun ApplicationScreen(
                     onVerticalDrag = onVerticalDrag,
                     onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                     onDragEnd = onDragEnd,
+                    onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
                     onDragApplicationInfo = onDragApplicationInfo,
                     onLongPressApplicationInfo = onLongPressApplicationInfo,
+                    onLongPressFolderApplicationInfo = onLongPressFolderApplicationInfo,
                     onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
+                    onTapFolderApplicationInfo = onTapFolderApplicationInfo,
                 )
             }
         }
@@ -461,7 +474,7 @@ internal fun TagElevatedFilterChip(
 internal fun EblanApplicationInfoTabRow(
     // Data
     eblanUserPageKeys: List<EblanUserPageKey>,
-    eblanApplicationInfos: Map<EblanUserPageKey, List<EblanApplicationInfo>>,
+    eblanApplicationInfos: Map<EblanUserPageKey, List<AppDrawerGridItem>>,
     // State
     currentPage: Int,
     // Appearance
@@ -475,7 +488,8 @@ internal fun EblanApplicationInfoTabRow(
 ) {
     val scope = rememberCoroutineScope()
 
-    val currentEblanUserPageKey = eblanApplicationInfos.keys.toList()[currentPage]
+    val currentEblanUserPageKey =
+        eblanApplicationInfos.keys.toList().getOrNull(currentPage) ?: return
 
     val selectedTabIndex = remember(
         key1 = eblanUserPageKeys,
@@ -483,7 +497,7 @@ internal fun EblanApplicationInfoTabRow(
     ) {
         eblanUserPageKeys.indexOfFirst { currentIndexedEblanUserPageKey ->
             currentIndexedEblanUserPageKey.eblanUser.serialNumber == currentEblanUserPageKey.eblanUser.serialNumber
-        }
+        }.coerceAtLeast(0)
     }
 
     val containerColor = getBackgroundColor(
@@ -528,14 +542,16 @@ internal fun EblanApplicationInfoTabRow(
     ) {
         eblanUserPageKeys.forEach { eblanUserPageKey ->
             Tab(
-                selected = currentEblanUserPageKey == eblanUserPageKey,
+                selected = currentEblanUserPageKey.eblanUser.serialNumber == eblanUserPageKey.eblanUser.serialNumber,
                 onClick = {
                     scope.launch {
-                        onAnimateScrollToPage(
-                            eblanApplicationInfos.keys.indexOfFirst { currentKeyEblanUserPageKey ->
-                                currentKeyEblanUserPageKey.eblanUser.serialNumber == eblanUserPageKey.eblanUser.serialNumber
-                            },
-                        )
+                        val targetPage = eblanApplicationInfos.keys.indexOfFirst { currentKeyEblanUserPageKey ->
+                            currentKeyEblanUserPageKey.eblanUser.serialNumber == eblanUserPageKey.eblanUser.serialNumber
+                        }
+
+                        if (targetPage >= 0) {
+                            onAnimateScrollToPage(targetPage)
+                        }
                     }
                 },
                 selectedContentColor = contentColor,
@@ -598,6 +614,11 @@ internal fun produceIsQuietModeEnabledState(userHandle: UserHandle?): State<Bool
                 addAction(Intent.ACTION_MANAGED_PROFILE_AVAILABLE)
                 addAction(Intent.ACTION_MANAGED_PROFILE_UNAVAILABLE)
                 addAction(Intent.ACTION_MANAGED_PROFILE_UNLOCKED)
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                    addAction(Intent.ACTION_PROFILE_AVAILABLE)
+                    addAction(Intent.ACTION_PROFILE_UNAVAILABLE)
+                }
             },
             ContextCompat.RECEIVER_NOT_EXPORTED,
         )
