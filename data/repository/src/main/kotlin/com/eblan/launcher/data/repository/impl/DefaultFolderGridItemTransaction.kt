@@ -18,9 +18,7 @@
 package com.eblan.launcher.data.repository.impl
 
 import com.eblan.launcher.data.repository.mapper.asModel
-import com.eblan.launcher.data.room.entity.EblanApplicationInfoEntity
-import com.eblan.launcher.data.room.entity.FolderEblanApplicationInfoEntity
-import com.eblan.launcher.data.room.transaction.FolderGridItemEntityTransaction
+import com.eblan.launcher.data.room.transaction.GridTransaction
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
@@ -34,12 +32,12 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 internal class DefaultFolderGridItemTransaction @Inject constructor(
-    private val folderGridItemEntityTransaction: FolderGridItemEntityTransaction,
+    private val gridTransaction: GridTransaction,
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
     private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
 ) : FolderGridItemTransaction {
     override val folderGridItemsFlow: Flow<FolderGridItems> =
-        folderGridItemEntityTransaction.folderGridItemEntitiesFlow.map { folderGridItemEntities ->
+        gridTransaction.folderGridItemEntitiesFlow.map { folderGridItemEntities ->
             FolderGridItems(
                 eblanApplicationInfos = folderGridItemEntities.eblanApplicationInfoEntities.map { currentEblanApplicationInfoEntity ->
                     currentEblanApplicationInfoEntity.asModel()
@@ -50,59 +48,71 @@ internal class DefaultFolderGridItemTransaction @Inject constructor(
             )
         }
 
-    override suspend fun getFolderGridItems(): FolderGridItems = FolderGridItems(
-        eblanApplicationInfos = folderGridItemEntityTransaction.getFolderGridItemEntities().eblanApplicationInfoEntities.map { currentEblanApplicationInfoEntity ->
-            currentEblanApplicationInfoEntity.asModel()
-        },
-        folderEblanApplicationInfos = folderGridItemEntityTransaction.getFolderGridItemEntities().folderEblanApplicationInfoEntities.map { currentFolderEblanApplicationInfoEntity ->
-            currentFolderEblanApplicationInfoEntity.asModel()
-        },
-    )
-
-    override suspend fun upsertFolderGridItemsTransaction(folderEblanApplicationInfos: List<FolderEblanApplicationInfoGridItem>) {
-        val eblanApplicationInfoEntities = mutableListOf<EblanApplicationInfoEntity>()
-
-        val folderEblanApplicationInfosEntities = mutableListOf<FolderEblanApplicationInfoEntity>()
-
-        folderEblanApplicationInfos.forEach { folderEblanApplicationInfoGridItem ->
-            when (val data = folderEblanApplicationInfoGridItem.data) {
-                is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
-                    eblanApplicationInfoEntities.add(data.asEntity())
-                }
-
-                is FolderEblanApplicationInfoGridItemData.Folder -> {
-                    folderEblanApplicationInfosEntities.add(data.asEntity(id = folderEblanApplicationInfoGridItem.id))
-                }
-            }
-        }
-
-        folderGridItemEntityTransaction.upsertFolderGridItemEntitiesTransaction(
-            eblanApplicationInfoEntities = eblanApplicationInfoEntities,
-            folderEblanApplicationInfoEntities = folderEblanApplicationInfosEntities,
+    override suspend fun getFolderGridItems(): FolderGridItems = gridTransaction.withTransaction {
+        FolderGridItems(
+            eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos(),
+            folderEblanApplicationInfos = folderEblanApplicationInfoRepository.getFolderEblanApplicationInfos(),
         )
     }
 
-    override suspend fun deleteFolderGridItemsTransaction(folderEblanApplicationInfos: List<FolderEblanApplicationInfoGridItem>) {
-        val eblanApplicationInfoEntities = mutableListOf<EblanApplicationInfoEntity>()
+    override suspend fun upsertFolderGridItemsTransaction(folderEblanApplicationInfos: List<FolderEblanApplicationInfoGridItem>) {
+        val eblanApplicationInfos = mutableListOf<EblanApplicationInfo>()
 
-        val folderEblanApplicationInfosEntities = mutableListOf<FolderEblanApplicationInfoEntity>()
+        val folderEblanApplicationInfoModels = mutableListOf<FolderEblanApplicationInfo>()
 
         folderEblanApplicationInfos.forEach { folderEblanApplicationInfoGridItem ->
             when (val data = folderEblanApplicationInfoGridItem.data) {
                 is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
-                    eblanApplicationInfoEntities.add(data.asEntity())
+                    eblanApplicationInfos.add(data.asModel())
                 }
 
                 is FolderEblanApplicationInfoGridItemData.Folder -> {
-                    folderEblanApplicationInfosEntities.add(data.asEntity(id = folderEblanApplicationInfoGridItem.id))
+                    folderEblanApplicationInfoModels.add(
+                        folderEblanApplicationInfoGridItem.asModel(data = data),
+                    )
                 }
             }
         }
 
-        folderGridItemEntityTransaction.deleteFolderGridItemEntitiesTransaction(
-            eblanApplicationInfoEntities = eblanApplicationInfoEntities,
-            folderEblanApplicationInfoEntities = folderEblanApplicationInfosEntities,
-        )
+        gridTransaction.withTransaction {
+            eblanApplicationInfoRepository.upsertEblanApplicationInfos(
+                eblanApplicationInfos = eblanApplicationInfos,
+            )
+
+            folderEblanApplicationInfoRepository.upsertFolderEblanApplicationInfos(
+                folderEblanApplicationInfos = folderEblanApplicationInfoModels,
+            )
+        }
+    }
+
+    override suspend fun deleteFolderGridItemsTransaction(folderEblanApplicationInfos: List<FolderEblanApplicationInfoGridItem>) {
+        val eblanApplicationInfos = mutableListOf<EblanApplicationInfo>()
+
+        val folderEblanApplicationInfoModels = mutableListOf<FolderEblanApplicationInfo>()
+
+        folderEblanApplicationInfos.forEach { folderEblanApplicationInfoGridItem ->
+            when (val data = folderEblanApplicationInfoGridItem.data) {
+                is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
+                    eblanApplicationInfos.add(data.asModel())
+                }
+
+                is FolderEblanApplicationInfoGridItemData.Folder -> {
+                    folderEblanApplicationInfoModels.add(
+                        folderEblanApplicationInfoGridItem.asModel(data = data),
+                    )
+                }
+            }
+        }
+
+        gridTransaction.withTransaction {
+            eblanApplicationInfoRepository.deleteEblanApplicationInfos(
+                eblanApplicationInfos = eblanApplicationInfos,
+            )
+
+            folderEblanApplicationInfoRepository.deleteFolderEblanApplicationInfos(
+                folderEblanApplicationInfos = folderEblanApplicationInfoModels,
+            )
+        }
     }
 
     override suspend fun updateFolderEblanApplicationInfoGridItem(folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem) {
@@ -119,29 +129,9 @@ internal class DefaultFolderGridItemTransaction @Inject constructor(
         }
     }
 
-    private fun FolderEblanApplicationInfoGridItemData.ApplicationInfo.asEntity(): EblanApplicationInfoEntity = EblanApplicationInfoEntity(
-        componentName = componentName,
-        serialNumber = serialNumber,
-        packageName = packageName,
-        icon = icon,
-        label = label,
-        customIcon = customIcon,
-        customLabel = customLabel,
-        isHidden = isHidden,
-        lastUpdateTime = lastUpdateTime,
-        flags = flags,
-        folderIndex = folderIndex,
-        folderId = folderId,
-    )
-
-    private fun FolderEblanApplicationInfoGridItemData.Folder.asEntity(id: String): FolderEblanApplicationInfoEntity = FolderEblanApplicationInfoEntity(
-        id = id,
-        icon = icon,
-        label = label,
-        index = index,
-        folderIndex = folderIndex,
-        folderId = folderId,
-    )
+    override suspend fun <T> withTransaction(block: suspend () -> T): T = gridTransaction.withTransaction {
+        block()
+    }
 
     private fun FolderEblanApplicationInfoGridItemData.ApplicationInfo.asModel(): EblanApplicationInfo = EblanApplicationInfo(
         componentName = componentName,

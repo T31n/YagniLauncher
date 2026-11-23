@@ -48,6 +48,8 @@ import com.eblan.launcher.domain.repository.ShortcutConfigGridItemRepository
 import com.eblan.launcher.domain.repository.ShortcutInfoGridItemRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.repository.WidgetGridItemRepository
+import com.eblan.launcher.domain.usecase.folder.CleanupFolderEblanApplicationInfosUseCase
+import com.eblan.launcher.domain.usecase.folder.CleanupFolderGridItemsUseCase
 import com.eblan.launcher.domain.usecase.iconpack.UpdateIconPacksUseCase
 import com.eblan.launcher.domain.usecase.util.isTopLevel
 import com.eblan.launcher.domain.usecase.util.toGridItems
@@ -80,6 +82,8 @@ class SyncDataUseCase @Inject constructor(
     private val gridRepository: GridRepository,
     private val updateIconPacksUseCase: UpdateIconPacksUseCase,
     private val eblanIconPackInfoRepository: EblanIconPackInfoRepository,
+    private val cleanupFolderGridItemsUseCase: CleanupFolderGridItemsUseCase,
+    private val cleanupFolderEblanApplicationInfosUseCase: CleanupFolderEblanApplicationInfosUseCase,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     /** Refreshes launcher data and icon-pack caches using the current user settings. */
@@ -99,6 +103,8 @@ class SyncDataUseCase @Inject constructor(
             updateEblanLauncherShortcutInfos()
 
             updateEblanIconPackInfos(generalSettings = userData.generalSettings)
+
+            cleanupFolderGridItemsUseCase()
         }
     }
 
@@ -235,6 +241,8 @@ class SyncDataUseCase @Inject constructor(
         eblanApplicationInfoRepository.upsertSyncEblanApplicationInfos(
             syncEblanApplicationInfos = newSyncEblanApplicationInfos,
         )
+
+        cleanupFolderEblanApplicationInfosUseCase()
 
         updateEblanShortcutConfigs(newEblanShortcutConfigs = newEblanShortcutConfigs)
 

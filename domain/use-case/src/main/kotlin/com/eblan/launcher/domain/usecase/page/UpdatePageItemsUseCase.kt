@@ -29,6 +29,7 @@ import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.folder.asPreviewFolders
 import com.eblan.launcher.domain.usecase.util.deleteGridItemData
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -45,6 +46,11 @@ class UpdatePageItemsUseCase @Inject constructor(
     /**
      * Deletes requested pages, reindexes retained items, updates page settings, and saves the result.
      *
+     * Persisted grid-item records are deleted before releasing external widget IDs and pinned
+     * shortcuts so a failure or cancellation cannot leave grid items referencing released
+     * resources; if persistence succeeds and subsequent cleanup fails, unreleased widget IDs or
+     * shortcuts may temporarily leak.
+     *
      * @param id The ID of the page that should become the initial page.
      * @param pageItems The page items to retain, in their new order.
      * @param pageItemsToDelete Pages and their items to delete.
@@ -59,26 +65,6 @@ class UpdatePageItemsUseCase @Inject constructor(
         withContext(defaultDispatcher) {
             val userData = userDataRepository.userDataFlow.first()
 
-            pageItemsToDelete.forEach { pageItem ->
-                pageItem.gridItems.forEach { gridItem ->
-                    val previewFolderGridItems =
-                        folderGridItemRepository.getFolderGridItemWrappers()
-                            .asPreviewFolders(
-                                maxFolderColumns = userData.folderSettings.maxFolderColumns,
-                                maxFolderRows = userData.folderSettings.maxFolderRows,
-                            )
-
-                    deleteGridItemData(
-                        gridItem = gridItem,
-                        folderPopupGridItems = previewFolderGridItems,
-                        appWidgetHostWrapper = appWidgetHostWrapper,
-                        launcherAppsWrapper = launcherAppsWrapper,
-                    )
-                }
-
-                gridRepository.deleteGridItems(gridItems = pageItem.gridItems)
-            }
-
             val gridItems = pageItems.flatMapIndexed { index, pageItem ->
                 pageItem.gridItems.map { gridItem ->
                     gridItem.copy(page = index)
@@ -89,27 +75,62 @@ class UpdatePageItemsUseCase @Inject constructor(
                 currentPageItem.id == id
             }
 
-            when (associate) {
-                Associate.Grid -> {
-                    userDataRepository.updateHomeSettings(
-                        homeSettings = userData.homeSettings.copy(
-                            pageCount = pageItems.size,
-                            initialPage = newInitialPage,
-                        ),
-                    )
+            val gridItemsToDelete = pageItemsToDelete.flatMap { pageItem ->
+                pageItem.gridItems
+            }
+
+            val previewFolderGridItems = gridRepository.withTransaction {
+                val previewFolders = if (gridItemsToDelete.isNotEmpty()) {
+                    folderGridItemRepository.getFolderGridItemWrappers()
+                        .asPreviewFolders(
+                            maxFolderColumns = userData.folderSettings.maxFolderColumns,
+                            maxFolderRows = userData.folderSettings.maxFolderRows,
+                        )
+                } else {
+                    emptyMap()
                 }
 
-                Associate.Dock -> {
-                    userDataRepository.updateHomeSettings(
-                        homeSettings = userData.homeSettings.copy(
-                            dockPageCount = pageItems.size,
-                            dockInitialPage = newInitialPage,
-                        ),
+                if (gridItemsToDelete.isNotEmpty()) {
+                    gridRepository.deleteGridItems(gridItems = gridItemsToDelete)
+                }
+
+                gridRepository.upsertGridItems(gridItems = gridItems)
+
+                previewFolders
+            }
+
+            // Records are already committed above; run settings update and external cleanup
+            // non-cancellably, accepting temporarily leaked resources if cleanup still fails.
+            withContext(NonCancellable) {
+                when (associate) {
+                    Associate.Grid -> {
+                        userDataRepository.updateHomeSettings(
+                            homeSettings = userData.homeSettings.copy(
+                                pageCount = pageItems.size,
+                                initialPage = newInitialPage,
+                            ),
+                        )
+                    }
+
+                    Associate.Dock -> {
+                        userDataRepository.updateHomeSettings(
+                            homeSettings = userData.homeSettings.copy(
+                                dockPageCount = pageItems.size,
+                                dockInitialPage = newInitialPage,
+                            ),
+                        )
+                    }
+                }
+
+                gridItemsToDelete.forEach { gridItem ->
+                    deleteGridItemData(
+                        gridItem = gridItem,
+                        folderPopupGridItems = previewFolderGridItems,
+                        appWidgetHostWrapper = appWidgetHostWrapper,
+                        launcherAppsWrapper = launcherAppsWrapper,
                     )
                 }
             }
-
-            gridRepository.upsertGridItems(gridItems = gridItems)
         }
     }
 }

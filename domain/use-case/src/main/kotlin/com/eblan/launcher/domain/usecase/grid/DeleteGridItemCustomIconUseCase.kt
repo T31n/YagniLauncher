@@ -41,32 +41,34 @@ class DeleteGridItemCustomIconUseCase @Inject constructor(
      * @param gridItem The item whose custom icon should be removed.
      */
     suspend operator fun invoke(gridItem: GridItem) = withContext(ioDispatcher) {
-        val newData = when (val data = gridItem.data) {
-            is GridItemData.ApplicationInfo -> {
-                val eblanApplicationInfo =
-                    eblanApplicationInfoRepository.getEblanApplicationInfoByComponentName(
-                        serialNumber = data.serialNumber,
-                        componentName = data.componentName,
-                    )
+        gridRepository.withTransaction {
+            val newData = when (val data = gridItem.data) {
+                is GridItemData.ApplicationInfo -> {
+                    val eblanApplicationInfo =
+                        eblanApplicationInfoRepository.getEblanApplicationInfoByComponentName(
+                            serialNumber = data.serialNumber,
+                            componentName = data.componentName,
+                        )
 
-                if (eblanApplicationInfo != null) {
-                    eblanApplicationInfoRepository.updateEblanApplicationInfo(
-                        eblanApplicationInfo = eblanApplicationInfo.copy(customIcon = null),
-                    )
+                    if (eblanApplicationInfo != null) {
+                        eblanApplicationInfoRepository.updateEblanApplicationInfo(
+                            eblanApplicationInfo = eblanApplicationInfo.copy(customIcon = null),
+                        )
+                    }
+
+                    data.copy(customIcon = null)
                 }
 
-                data.copy(customIcon = null)
+                is GridItemData.ShortcutConfig -> data.copy(customIcon = null)
+
+                is GridItemData.ShortcutInfo -> data.copy(customIcon = null)
+
+                is GridItemData.Folder -> data.copy(icon = null)
+
+                else -> error("Unsupported Grid Item")
             }
 
-            is GridItemData.ShortcutConfig -> data.copy(customIcon = null)
-
-            is GridItemData.ShortcutInfo -> data.copy(customIcon = null)
-
-            is GridItemData.Folder -> data.copy(icon = null)
-
-            else -> error("Unsupported Grid Item")
+            gridRepository.updateGridItem(gridItem = gridItem.copy(data = newData))
         }
-
-        gridRepository.updateGridItem(gridItem = gridItem.copy(data = newData))
     }
 }

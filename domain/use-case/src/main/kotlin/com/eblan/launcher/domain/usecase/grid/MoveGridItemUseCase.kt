@@ -63,70 +63,72 @@ class MoveGridItemUseCase @Inject constructor(
         gridHeight: Int,
     ): MoveGridItemResult {
         return withContext(defaultDispatcher) {
-            val gridItemsByPage = gridRepository.getGridItems().toGridItems().filter { currentGridItem ->
-                currentGridItem.isTopLevel() &&
-                    currentGridItem.page == movingGridItem.page &&
-                    currentGridItem.associate == movingGridItem.associate
-            }.toMutableList()
+            gridRepository.withTransaction {
+                val gridItemsByPage = gridRepository.getGridItems().toGridItems().filter { currentGridItem ->
+                    currentGridItem.isTopLevel() &&
+                        currentGridItem.page == movingGridItem.page &&
+                        currentGridItem.associate == movingGridItem.associate
+                }.toMutableList()
 
-            val index =
-                gridItemsByPage.indexOfFirst { currentGridItem ->
-                    currentGridItem.id == movingGridItem.id
+                val index =
+                    gridItemsByPage.indexOfFirst { currentGridItem ->
+                        currentGridItem.id == movingGridItem.id
+                    }
+
+                if (index != -1) {
+                    gridItemsByPage[index] = movingGridItem
+                } else {
+                    gridItemsByPage.add(movingGridItem)
                 }
 
-            if (index != -1) {
-                gridItemsByPage[index] = movingGridItem
-            } else {
-                gridItemsByPage.add(movingGridItem)
-            }
-
-            val conflictingGridItemByCoordinates = getGridItemByCoordinates(
-                id = movingGridItem.id,
-                gridItems = gridItemsByPage,
-                columns = columns,
-                rows = rows,
-                x = x,
-                y = y,
-                gridWidth = gridWidth,
-                gridHeight = gridHeight,
-            )
-
-            if (conflictingGridItemByCoordinates != null) {
-                return@withContext handleConflictsOfGridItemCoordinates(
+                val conflictingGridItemByCoordinates = getGridItemByCoordinates(
+                    id = movingGridItem.id,
                     gridItems = gridItemsByPage,
-                    movingGridItem = movingGridItem,
-                    conflictingGridItem = conflictingGridItemByCoordinates,
+                    columns = columns,
+                    rows = rows,
                     x = x,
-                    columns = columns,
-                    rows = rows,
+                    y = y,
                     gridWidth = gridWidth,
+                    gridHeight = gridHeight,
                 )
-            }
 
-            val conflictingGridItemBySpan = gridItemsByPage.find { currentGridItem ->
-                currentGridItem.id != movingGridItem.id && rectanglesOverlap(
-                    moving = movingGridItem,
-                    other = currentGridItem,
-                )
-            }
+                if (conflictingGridItemByCoordinates != null) {
+                    return@withTransaction handleConflictsOfGridItemCoordinates(
+                        gridItems = gridItemsByPage,
+                        movingGridItem = movingGridItem,
+                        conflictingGridItem = conflictingGridItemByCoordinates,
+                        x = x,
+                        columns = columns,
+                        rows = rows,
+                        gridWidth = gridWidth,
+                    )
+                }
 
-            if (conflictingGridItemBySpan != null) {
-                return@withContext handleConflictsOfGridItemSpan(
+                val conflictingGridItemBySpan = gridItemsByPage.find { currentGridItem ->
+                    currentGridItem.id != movingGridItem.id && rectanglesOverlap(
+                        moving = movingGridItem,
+                        other = currentGridItem,
+                    )
+                }
+
+                if (conflictingGridItemBySpan != null) {
+                    return@withTransaction handleConflictsOfGridItemSpan(
+                        movingGridItem = movingGridItem,
+                        conflictingGridItem = conflictingGridItemBySpan,
+                        gridItems = gridItemsByPage,
+                        columns = columns,
+                        rows = rows,
+                    )
+                }
+
+                gridRepository.upsertGridItems(gridItems = gridItemsByPage)
+
+                MoveGridItemResult(
+                    isSuccess = true,
                     movingGridItem = movingGridItem,
-                    conflictingGridItem = conflictingGridItemBySpan,
-                    gridItems = gridItemsByPage,
-                    columns = columns,
-                    rows = rows,
+                    conflictingGridItem = null,
                 )
             }
-
-            gridRepository.upsertGridItems(gridItems = gridItemsByPage)
-
-            return@withContext MoveGridItemResult(
-                isSuccess = true,
-                movingGridItem = movingGridItem,
-                conflictingGridItem = null,
-            )
         }
     }
 

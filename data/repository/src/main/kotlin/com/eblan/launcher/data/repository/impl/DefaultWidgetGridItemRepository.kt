@@ -70,6 +70,22 @@ internal class DefaultWidgetGridItemRepository @Inject constructor(private val w
         widgetGridItemDao.upsertWidgetGridItemEntity(entity = widgetGridItem.asEntity())
     }
 
+    override suspend fun upsertWidgetGridItems(widgetGridItems: List<WidgetGridItem>) {
+        val entities = widgetGridItems.map { currentWidgetGridItem ->
+            currentWidgetGridItem.asEntity()
+        }
+
+        widgetGridItemDao.upsertWidgetGridItemEntities(entities = entities)
+    }
+
+    override suspend fun deleteWidgetGridItems(widgetGridItems: List<WidgetGridItem>) {
+        val entities = widgetGridItems.map { currentWidgetGridItem ->
+            currentWidgetGridItem.asEntity()
+        }
+
+        widgetGridItemDao.deleteWidgetGridItemEntities(entities = entities)
+    }
+
     override suspend fun deleteWidgetGridItemById(id: String) {
         widgetGridItemDao.deleteWidgetGridItemEntityById(id = id)
     }

@@ -45,5 +45,7 @@ interface ShortcutInfoGridItemRepository {
 
     suspend fun upsertShortcutInfoGridItem(shortcutInfoGridItem: ShortcutInfoGridItem)
 
+    suspend fun upsertShortcutInfoGridItems(shortcutInfoGridItems: List<ShortcutInfoGridItem>)
+
     suspend fun deleteShortcutInfoGridItemById(id: String)
 }

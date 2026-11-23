@@ -22,7 +22,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -219,7 +218,6 @@ internal fun FolderEblanApplicationInfoItem(
     }
 
     val itemModifier = modifier
-        .height(appDrawerSettings.appDrawerRowsHeight.dp)
         .padding(appDrawerSettings.gridItemSettings.padding.dp)
         .background(
             color = getGridItemBackgroundColor(appDrawerSettings.gridItemSettings),

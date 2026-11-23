@@ -18,9 +18,11 @@
 package com.eblan.launcher.platform.launcherapps
 
 import android.content.ActivityNotFoundException
+import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.IntentSender
 import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
@@ -34,6 +36,7 @@ import android.os.Handler
 import android.os.Process.myUserHandle
 import android.os.UserHandle
 import android.os.UserManager
+import androidx.core.content.ContextCompat
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.model.launcherapps.EblanUser
@@ -56,8 +59,11 @@ import com.eblan.launcher.platform.imageserializer.AndroidImageSerializer
 import com.eblan.launcher.platform.usermanager.AndroidUserManagerWrapper
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
@@ -77,6 +83,42 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
 
     override val hasShortcutHostPermission
         get() = launcherApps.hasShortcutHostPermission()
+
+    override val profileStateFlow: Flow<Int>
+        get() = callbackFlow {
+            var version = 0
+            send(version)
+
+            val receiver = object : BroadcastReceiver() {
+                override fun onReceive(
+                    context: Context,
+                    intent: Intent,
+                ) {
+                    trySend(++version)
+                }
+            }
+
+            ContextCompat.registerReceiver(
+                context,
+                receiver,
+                IntentFilter().apply {
+                    addAction(Intent.ACTION_USER_UNLOCKED)
+                    addAction(Intent.ACTION_MANAGED_PROFILE_AVAILABLE)
+                    addAction(Intent.ACTION_MANAGED_PROFILE_UNAVAILABLE)
+                    addAction(Intent.ACTION_MANAGED_PROFILE_UNLOCKED)
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                        addAction(Intent.ACTION_PROFILE_AVAILABLE)
+                        addAction(Intent.ACTION_PROFILE_UNAVAILABLE)
+                    }
+                },
+                ContextCompat.RECEIVER_NOT_EXPORTED,
+            )
+
+            awaitClose {
+                context.unregisterReceiver(receiver)
+            }
+        }
 
     override fun registerCallback(
         callback: LauncherApps.Callback,
@@ -519,9 +561,13 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
                 serialNumber = serialNumber,
                 eblanUserType = EblanUserType.Personal,
                 isPrivateSpaceEntryPointHidden = false,
+                isPrivateSpaceLocked = false,
+                isQuietModeEnabled = false,
             )
 
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            val isQuietModeEnabled = androidUserManagerWrapper.isQuietModeEnabled(userHandle = userHandle)
+
             val launcherUserInfo = try {
                 launcherApps.getLauncherUserInfo(userHandle)
             } catch (_: IllegalStateException) {
@@ -532,6 +578,8 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
                 serialNumber = serialNumber,
                 eblanUserType = EblanUserType.Personal,
                 isPrivateSpaceEntryPointHidden = isPrivateSpaceEntryPointHidden(userHandle = userHandle),
+                isQuietModeEnabled = isQuietModeEnabled,
+                isPrivateSpaceLocked = false,
             )
 
             val eblanUserType = when (launcherUserInfo.userType) {
@@ -545,6 +593,9 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
                 serialNumber = serialNumber,
                 eblanUserType = eblanUserType,
                 isPrivateSpaceEntryPointHidden = isPrivateSpaceEntryPointHidden(userHandle = userHandle),
+                isPrivateSpaceLocked = eblanUserType == EblanUserType.Private &&
+                    !isUserAvailable(userHandle = userHandle),
+                isQuietModeEnabled = isQuietModeEnabled,
             )
         } else {
             val isWorkProfile = withContext(ioDispatcher) {
@@ -560,6 +611,8 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
                 serialNumber = serialNumber,
                 eblanUserType = eblanUserType,
                 isPrivateSpaceEntryPointHidden = isPrivateSpaceEntryPointHidden(userHandle = userHandle),
+                isQuietModeEnabled = androidUserManagerWrapper.isQuietModeEnabled(userHandle = userHandle),
+                isPrivateSpaceLocked = false,
             )
         }
     }

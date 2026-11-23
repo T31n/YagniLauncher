@@ -21,6 +21,8 @@ data class EblanUser(
     val serialNumber: Long,
     val eblanUserType: EblanUserType,
     val isPrivateSpaceEntryPointHidden: Boolean,
+    val isPrivateSpaceLocked: Boolean,
+    val isQuietModeEnabled: Boolean,
 )
 
 enum class EblanUserType {

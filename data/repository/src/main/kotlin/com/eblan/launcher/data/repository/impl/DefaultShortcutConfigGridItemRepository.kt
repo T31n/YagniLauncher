@@ -84,6 +84,14 @@ internal class DefaultShortcutConfigGridItemRepository @Inject constructor(priva
         shortcutConfigGridItemDao.upsertShortcutConfigGridItemEntity(entity = shortcutConfigGridItem.asEntity())
     }
 
+    override suspend fun upsertShortcutConfigGridItems(shortcutConfigGridItems: List<ShortcutConfigGridItem>) {
+        val entities = shortcutConfigGridItems.map { currentShortcutConfigGridItem ->
+            currentShortcutConfigGridItem.asEntity()
+        }
+
+        shortcutConfigGridItemDao.upsertShortcutConfigGridItemEntities(entities = entities)
+    }
+
     override suspend fun deleteShortcutConfigGridItemById(id: String) {
         shortcutConfigGridItemDao.deleteShortcutConfigGridItemEntityById(id = id)
     }

@@ -25,6 +25,7 @@ import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.repository.FolderGridItemRepository
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
+import com.eblan.launcher.domain.usecase.folder.CleanupFolderGridItemsUseCase
 import com.eblan.launcher.domain.usecase.folder.asPreviewFolders
 import com.eblan.launcher.domain.usecase.util.getRecursiveFolderGridItems
 import kotlinx.coroutines.CoroutineDispatcher
@@ -38,6 +39,7 @@ class UpdateGridItemsAfterMoveUseCase @Inject constructor(
     private val gridRepository: GridRepository,
     private val folderGridItemRepository: FolderGridItemRepository,
     private val userDataRepository: UserDataRepository,
+    private val cleanupFolderGridItemsUseCase: CleanupFolderGridItemsUseCase,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     /**
@@ -53,41 +55,45 @@ class UpdateGridItemsAfterMoveUseCase @Inject constructor(
 
             val movingGridItem = moveGridItemResult.movingGridItem
 
-            if (conflictingGridItem != null) {
-                when (conflictingGridItem.data) {
-                    is GridItemData.Folder -> {
-                        val previewFolderGridItems =
-                            folderGridItemRepository.getFolderGridItemWrappers()
-                                .asPreviewFolders(
-                                    maxFolderColumns = userData.folderSettings.maxFolderColumns,
-                                    maxFolderRows = userData.folderSettings.maxFolderRows,
-                                )
+            gridRepository.withTransaction {
+                if (conflictingGridItem != null) {
+                    when (conflictingGridItem.data) {
+                        is GridItemData.Folder -> {
+                            val previewFolderGridItems =
+                                folderGridItemRepository.getFolderGridItemWrappers()
+                                    .asPreviewFolders(
+                                        maxFolderColumns = userData.folderSettings.maxFolderColumns,
+                                        maxFolderRows = userData.folderSettings.maxFolderRows,
+                                    )
 
-                        val folderGridItems = getRecursiveFolderGridItems(
-                            folderPopupGridItems = previewFolderGridItems,
-                            folderId = conflictingGridItem.id,
-                        )
+                            val folderGridItems = getRecursiveFolderGridItems(
+                                folderPopupGridItems = previewFolderGridItems,
+                                folderId = conflictingGridItem.id,
+                            )
 
-                        addMovingGridItemIntoFolder(
-                            conflictingGridItem = conflictingGridItem,
-                            movingGridItem = movingGridItem,
-                            folderGridItems = folderGridItems,
-                        )
+                            addMovingGridItemIntoFolder(
+                                conflictingGridItem = conflictingGridItem,
+                                movingGridItem = movingGridItem,
+                                folderGridItems = folderGridItems,
+                            )
+                        }
+
+                        is GridItemData.ApplicationInfo,
+                        is GridItemData.ShortcutConfig,
+                        is GridItemData.ShortcutInfo,
+                        is GridItemData.Widget,
+                        -> {
+                            createNewFolder(
+                                conflictingGridItem = conflictingGridItem,
+                                movingGridItem = movingGridItem,
+                            )
+                        }
                     }
-
-                    is GridItemData.ApplicationInfo,
-                    is GridItemData.ShortcutConfig,
-                    is GridItemData.ShortcutInfo,
-                    is GridItemData.Widget,
-                    -> {
-                        createNewFolder(
-                            conflictingGridItem = conflictingGridItem,
-                            movingGridItem = movingGridItem,
-                        )
-                    }
+                } else {
+                    gridRepository.updateGridItem(gridItem = movingGridItem)
                 }
-            } else {
-                gridRepository.updateGridItem(gridItem = movingGridItem)
+
+                cleanupFolderGridItemsUseCase()
             }
         }
     }

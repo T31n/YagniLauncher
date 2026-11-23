@@ -44,6 +44,7 @@ import com.eblan.launcher.domain.usecase.application.GetEblanApplicationInfosByL
 import com.eblan.launcher.domain.usecase.application.GetEblanApplicationTagsUseCase
 import com.eblan.launcher.domain.usecase.application.GetEblanShortcutConfigsByLabelUseCase
 import com.eblan.launcher.domain.usecase.application.GetEblanShortcutInfosUseCase
+import com.eblan.launcher.domain.usecase.folder.CleanupFolderGridItemsUseCase
 import com.eblan.launcher.domain.usecase.folder.DeleteFolderEblanApplicationInfoGridItemsUseCase
 import com.eblan.launcher.domain.usecase.folder.GetFolderEblanApplicationInfoPopupsUseCase
 import com.eblan.launcher.domain.usecase.folder.GetRecursiveFolderEblanApplicationInfosUseCase
@@ -110,6 +111,7 @@ internal class HomeViewModel @Inject constructor(
     getEblanApplicationTagsUseCase: GetEblanApplicationTagsUseCase,
     private val getRecursiveFolderEblanApplicationInfosUseCase: GetRecursiveFolderEblanApplicationInfosUseCase,
     private val deleteFolderEblanApplicationInfoGridItemsUseCase: DeleteFolderEblanApplicationInfoGridItemsUseCase,
+    private val cleanupFolderGridItemsUseCase: CleanupFolderGridItemsUseCase,
 ) : ViewModel() {
     val homeUiState = getHomeDataUseCase().map(HomeUiState::Success).stateIn(
         scope = viewModelScope,
@@ -164,7 +166,6 @@ internal class HomeViewModel @Inject constructor(
             privateEblanUser = null,
             privateEblanApplicationInfos = emptyList(),
             iconPackFilePaths = emptyMap(),
-            folderEblanApplicationInfos = emptyList(),
         ),
     )
 
@@ -613,6 +614,8 @@ internal class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             moveGridItemJob?.cancelAndJoin()
 
+            cleanupFolderGridItemsUseCase()
+
             _isVisibleOverlay.update {
                 false
             }
@@ -926,9 +929,11 @@ internal class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             moveGridItemJob?.cancelAndJoin()
 
-            gridRepository.upsertGridItems(gridItems = folderGridItems)
+            gridRepository.withTransaction {
+                gridRepository.upsertGridItems(gridItems = folderGridItems)
 
-            updateGridItemsAfterMoveUseCase(moveGridItemResult = moveGridItemResult)
+                updateGridItemsAfterMoveUseCase(moveGridItemResult = moveGridItemResult)
+            }
 
             if (moveGridItemResult.conflictingGridItem == null) {
                 resetGrid()

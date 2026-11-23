@@ -53,14 +53,19 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.designsystem.theme.EblanSpacing
+import com.eblan.launcher.domain.model.application.AppDrawerGridItemData
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
+import com.eblan.launcher.domain.model.folder.FolderEntry
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.launcherapps.EblanUser
 import com.eblan.launcher.domain.model.launcherapps.EblanUserPageKey
 import com.eblan.launcher.domain.model.launcherapps.EblanUserType
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
+import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.HorizontalAppDrawerGridLayout
 import com.eblan.launcher.feature.home.model.Drag
@@ -68,10 +73,11 @@ import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.screen.application.ApplicationSearchBar
 import com.eblan.launcher.feature.home.screen.application.EblanApplicationInfoItem
 import com.eblan.launcher.feature.home.screen.application.EblanApplicationInfoTabRow
+import com.eblan.launcher.feature.home.screen.application.FolderEblanApplicationInfoItem
 import com.eblan.launcher.feature.home.screen.application.PrivateSpaceEblanApplicationInfoItem
+import com.eblan.launcher.feature.home.screen.application.PrivateSpaceStickyHeader
 import com.eblan.launcher.feature.home.screen.application.QuiteModeScreen
 import com.eblan.launcher.feature.home.screen.application.TagElevatedFilterChip
-import com.eblan.launcher.feature.home.screen.application.produceIsQuietModeEnabledState
 import com.eblan.launcher.feature.home.util.getApplicationScreenTextColor
 import com.eblan.launcher.ui.local.LocalUserManager
 import com.eblan.launcher.ui.settings.produceIsDefaultLauncherState
@@ -83,7 +89,6 @@ internal fun HorizontalApplicationScreen(
     // Layout and Transition
     sharedTransitionScope: SharedTransitionScope,
     paddingValues: PaddingValues,
-    screenHeight: Int,
     modifier: Modifier = Modifier,
     // Application Info and Data
     eblanApplicationInfoTags: List<EblanApplicationInfoTag>,
@@ -92,6 +97,16 @@ internal fun HorizontalApplicationScreen(
     textFieldState: TextFieldState,
     selectedEblanApplicationInfoTagId: Long?,
     focusRequester: FocusRequester,
+    // Folder Configuration
+    folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
+    folderCornerRadius: Int,
+    folderBackgroundColor: BackgroundColor,
+    customFolderBackgroundColor: Int,
+    folderBorderColor: BackgroundColor,
+    customFolderBorderColor: Int,
+    folderBorderWidth: Int,
+    isVisibleFolderEblanApplicationInfos: Boolean,
+    folderEblanApplicationInfoEntries: List<FolderEntry>,
     // Theme and Appearance
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
@@ -105,9 +120,20 @@ internal fun HorizontalApplicationScreen(
     onVerticalDrag: (Float) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onDragEnd: () -> Unit,
+    onDragFolderEblanApplicationInfo: (
+        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        movingGridItem: GridItem,
+    ) -> Unit,
     onDragApplicationInfo: (GridItem) -> Unit,
     onLongPressApplicationInfo: (
         eblanApplicationInfo: EblanApplicationInfo,
+        imageBitmap: ImageBitmap,
+        intOffset: IntOffset,
+        intSize: IntSize,
+        sharedElementKey: SharedElementKey,
+    ) -> Unit,
+    onLongPressFolderApplicationInfo: (
+        folderEblanApplicationInfo: FolderEblanApplicationInfo,
         imageBitmap: ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
@@ -118,6 +144,7 @@ internal fun HorizontalApplicationScreen(
         intOffset: IntOffset,
         intSize: IntSize,
     ) -> Unit,
+    onTapFolderApplicationInfo: (folderEntry: FolderEntry) -> Unit,
 ) {
     val layoutDirection = LocalLayoutDirection.current
 
@@ -225,6 +252,16 @@ internal fun HorizontalApplicationScreen(
                 appDrawerSettings = appDrawerSettings,
                 getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
                 index = index,
+                // Folder Configuration
+                folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+                folderCornerRadius = folderCornerRadius,
+                folderBackgroundColor = folderBackgroundColor,
+                customFolderBackgroundColor = customFolderBackgroundColor,
+                folderBorderColor = folderBorderColor,
+                customFolderBorderColor = customFolderBorderColor,
+                folderBorderWidth = folderBorderWidth,
+                isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
+                folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
                 // State and UI Flags
                 isVisibleOverlay = isVisibleOverlay,
                 isScrollInProgress = horizontalPagerState.isScrollInProgress,
@@ -239,9 +276,12 @@ internal fun HorizontalApplicationScreen(
                 onDragEnd = onDragEnd,
                 onVerticalDrag = onVerticalDrag,
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+                onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
                 onDragApplicationInfo = onDragApplicationInfo,
                 onLongPressApplicationInfo = onLongPressApplicationInfo,
+                onLongPressFolderApplicationInfo = onLongPressFolderApplicationInfo,
                 onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
+                onTapFolderApplicationInfo = onTapFolderApplicationInfo,
             )
         }
     }
@@ -257,6 +297,16 @@ private fun EblanApplicationInfosPage(
     appDrawerSettings: AppDrawerSettings,
     getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
     index: Int,
+    // Folder Configuration
+    folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
+    folderCornerRadius: Int,
+    folderBackgroundColor: BackgroundColor,
+    customFolderBackgroundColor: Int,
+    folderBorderColor: BackgroundColor,
+    customFolderBorderColor: Int,
+    folderBorderWidth: Int,
+    isVisibleFolderEblanApplicationInfos: Boolean,
+    folderEblanApplicationInfoEntries: List<FolderEntry>,
     // State and UI Flags
     isVisibleOverlay: Boolean,
     isScrollInProgress: Boolean,
@@ -271,9 +321,20 @@ private fun EblanApplicationInfosPage(
     onDragEnd: () -> Unit,
     onVerticalDrag: (Float) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
+    onDragFolderEblanApplicationInfo: (
+        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        movingGridItem: GridItem,
+    ) -> Unit,
     onDragApplicationInfo: (GridItem) -> Unit,
     onLongPressApplicationInfo: (
         eblanApplicationInfo: EblanApplicationInfo,
+        imageBitmap: ImageBitmap,
+        intOffset: IntOffset,
+        intSize: IntSize,
+        sharedElementKey: SharedElementKey,
+    ) -> Unit,
+    onLongPressFolderApplicationInfo: (
+        folderEblanApplicationInfo: FolderEblanApplicationInfo,
         imageBitmap: ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
@@ -284,95 +345,171 @@ private fun EblanApplicationInfosPage(
         intOffset: IntOffset,
         intSize: IntSize,
     ) -> Unit,
+    onTapFolderApplicationInfo: (folderEntry: FolderEntry) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
 
     val userManager = LocalUserManager.current
 
     val eblanUserPageKey =
-        getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos.keys.toList()
-            .getOrElse(
-                index = index,
-                defaultValue = {
-                    EblanUserPageKey(
-                        eblanUser = EblanUser(
-                            serialNumber = 0L,
-                            eblanUserType = EblanUserType.Personal,
-                            isPrivateSpaceEntryPointHidden = false,
-                        ),
-                        page = 0,
-                    )
-                },
-            )
+        remember(key1 = getEblanApplicationInfosByLabelAndTag, key2 = index) {
+            getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos.keys.toList()
+                .getOrElse(
+                    index = index,
+                    defaultValue = {
+                        EblanUserPageKey(
+                            eblanUser = EblanUser(
+                                serialNumber = 0L,
+                                eblanUserType = EblanUserType.Personal,
+                                isPrivateSpaceEntryPointHidden = false,
+                                isPrivateSpaceLocked = false,
+                                isQuietModeEnabled = false,
+                            ),
+                            page = 0,
+                        )
+                    },
+                )
+        }
 
     val userHandle =
         userManager.getUserForSerialNumber(serialNumber = eblanUserPageKey.eblanUser.serialNumber)
 
     val isDefaultLauncher by produceIsDefaultLauncherState()
 
-    val isQuietModeEnabled by produceIsQuietModeEnabledState(userHandle = userHandle)
+    val isQuietModeEnabled = eblanUserPageKey.eblanUser.isQuietModeEnabled
 
     Box(modifier = modifier.fillMaxSize()) {
-        if (isQuietModeEnabled) {
-            QuiteModeScreen(
-                // User
-                userHandle = userHandle,
-                // Appearance
-                backgroundColor = appDrawerSettings.backgroundColor,
-                customBackgroundColor = appDrawerSettings.customBackgroundColor,
-                systemTextColor = systemTextColor,
-                systemCustomTextColor = systemCustomTextColor,
-                // Callbacks
-                onDragEnd = onDragEnd,
-                onVerticalDrag = onVerticalDrag,
-            )
-        } else {
-            EblanApplicationInfosGrid(
-                // Navigation and Layout
-                eblanUserPageKey = eblanUserPageKey,
-                sharedTransitionScope = sharedTransitionScope,
-                appDrawerSettings = appDrawerSettings,
-                paddingValues = paddingValues,
-                // System Appearance
-                systemTextColor = systemTextColor,
-                systemCustomTextColor = systemCustomTextColor,
-                animations = animations,
-                // Data and State
-                getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
-                isVisibleOverlay = isVisibleOverlay,
-                drag = drag,
-                swipeY = swipeY,
-                isScrollInProgress = isScrollInProgress,
-                // Callbacks
-                onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                onDragApplicationInfo = onDragApplicationInfo,
-                onLongPressApplicationInfo = onLongPressApplicationInfo,
-                onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
-            )
+        when (eblanUserPageKey.eblanUser.eblanUserType) {
+            EblanUserType.Private -> {
+                Column(modifier = Modifier.fillMaxSize()) {
+                    PrivateSpaceStickyHeader(
+                        // Device State
+                        serialNumber = eblanUserPageKey.eblanUser.serialNumber,
+                        isQuietModeEnabled = isQuietModeEnabled,
+                        // Appearance
+                        backgroundColor = appDrawerSettings.backgroundColor,
+                        customBackgroundColor = appDrawerSettings.customBackgroundColor,
+                        systemTextColor = systemTextColor,
+                        systemCustomTextColor = systemCustomTextColor,
+                    )
 
-            if (isDefaultLauncher &&
-                eblanUserPageKey.eblanUser.serialNumber > 0 && userHandle != null
-            ) {
-                FloatingActionButton(
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(
-                            end = EblanSpacing.large,
-                            bottom = paddingValues.calculateBottomPadding() + EblanSpacing.large,
-                        ),
-                    onClick = {
-                        scope.launch {
-                            userManager.requestQuietModeEnabled(
-                                enableQuiteMode = true,
-                                userHandle = userHandle,
+                    if (!isQuietModeEnabled) {
+                        EblanApplicationInfosGrid(
+                            // Navigation and Layout
+                            eblanUserPageKey = eblanUserPageKey,
+                            sharedTransitionScope = sharedTransitionScope,
+                            appDrawerSettings = appDrawerSettings,
+                            paddingValues = paddingValues,
+                            // Folder Configuration
+                            folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+                            folderCornerRadius = folderCornerRadius,
+                            folderBackgroundColor = folderBackgroundColor,
+                            customFolderBackgroundColor = customFolderBackgroundColor,
+                            folderBorderColor = folderBorderColor,
+                            customFolderBorderColor = customFolderBorderColor,
+                            folderBorderWidth = folderBorderWidth,
+                            isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
+                            folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
+                            // System Appearance
+                            systemTextColor = systemTextColor,
+                            systemCustomTextColor = systemCustomTextColor,
+                            animations = animations,
+                            // Data and State
+                            getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
+                            isVisibleOverlay = isVisibleOverlay,
+                            drag = drag,
+                            swipeY = swipeY,
+                            isScrollInProgress = isScrollInProgress,
+                            modifier = Modifier.weight(1f),
+                            // Callbacks
+                            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+                            onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
+                            onDragApplicationInfo = onDragApplicationInfo,
+                            onLongPressApplicationInfo = onLongPressApplicationInfo,
+                            onLongPressFolderApplicationInfo = onLongPressFolderApplicationInfo,
+                            onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
+                            onTapFolderApplicationInfo = onTapFolderApplicationInfo,
+                        )
+                    }
+                }
+            }
+
+            else -> {
+                if (isQuietModeEnabled) {
+                    QuiteModeScreen(
+                        // User
+                        userHandle = userHandle,
+                        // Appearance
+                        backgroundColor = appDrawerSettings.backgroundColor,
+                        customBackgroundColor = appDrawerSettings.customBackgroundColor,
+                        systemTextColor = systemTextColor,
+                        systemCustomTextColor = systemCustomTextColor,
+                        // Callbacks
+                        onDragEnd = onDragEnd,
+                        onVerticalDrag = onVerticalDrag,
+                    )
+                } else {
+                    EblanApplicationInfosGrid(
+                        // Navigation and Layout
+                        eblanUserPageKey = eblanUserPageKey,
+                        sharedTransitionScope = sharedTransitionScope,
+                        appDrawerSettings = appDrawerSettings,
+                        paddingValues = paddingValues,
+                        // Folder Configuration
+                        folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+                        folderCornerRadius = folderCornerRadius,
+                        folderBackgroundColor = folderBackgroundColor,
+                        customFolderBackgroundColor = customFolderBackgroundColor,
+                        folderBorderColor = folderBorderColor,
+                        customFolderBorderColor = customFolderBorderColor,
+                        folderBorderWidth = folderBorderWidth,
+                        isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
+                        folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
+                        // System Appearance
+                        systemTextColor = systemTextColor,
+                        systemCustomTextColor = systemCustomTextColor,
+                        animations = animations,
+                        // Data and State
+                        getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
+                        isVisibleOverlay = isVisibleOverlay,
+                        drag = drag,
+                        swipeY = swipeY,
+                        isScrollInProgress = isScrollInProgress,
+                        // Callbacks
+                        onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+                        onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
+                        onDragApplicationInfo = onDragApplicationInfo,
+                        onLongPressApplicationInfo = onLongPressApplicationInfo,
+                        onLongPressFolderApplicationInfo = onLongPressFolderApplicationInfo,
+                        onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
+                        onTapFolderApplicationInfo = onTapFolderApplicationInfo,
+                    )
+
+                    if (isDefaultLauncher &&
+                        eblanUserPageKey.eblanUser.serialNumber > 0 && userHandle != null
+                    ) {
+                        FloatingActionButton(
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .padding(
+                                    end = EblanSpacing.large,
+                                    bottom = paddingValues.calculateBottomPadding() + EblanSpacing.large,
+                                ),
+                            onClick = {
+                                scope.launch {
+                                    userManager.requestQuietModeEnabled(
+                                        enableQuiteMode = true,
+                                        userHandle = userHandle,
+                                    )
+                                }
+                            },
+                        ) {
+                            Icon(
+                                imageVector = EblanLauncherIcons.WorkOff,
+                                contentDescription = null,
                             )
                         }
-                    },
-                ) {
-                    Icon(
-                        imageVector = EblanLauncherIcons.WorkOff,
-                        contentDescription = null,
-                    )
+                    }
                 }
             }
         }
@@ -386,6 +523,16 @@ private fun EblanApplicationInfosGrid(
     sharedTransitionScope: SharedTransitionScope,
     appDrawerSettings: AppDrawerSettings,
     paddingValues: PaddingValues,
+    // Folder Configuration
+    folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
+    folderCornerRadius: Int,
+    folderBackgroundColor: BackgroundColor,
+    customFolderBackgroundColor: Int,
+    folderBorderColor: BackgroundColor,
+    customFolderBorderColor: Int,
+    folderBorderWidth: Int,
+    isVisibleFolderEblanApplicationInfos: Boolean,
+    folderEblanApplicationInfoEntries: List<FolderEntry>,
     // System Appearance
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
@@ -399,9 +546,20 @@ private fun EblanApplicationInfosGrid(
     modifier: Modifier = Modifier,
     // Callbacks
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
+    onDragFolderEblanApplicationInfo: (
+        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        movingGridItem: GridItem,
+    ) -> Unit,
     onDragApplicationInfo: (GridItem) -> Unit,
     onLongPressApplicationInfo: (
         eblanApplicationInfo: EblanApplicationInfo,
+        imageBitmap: ImageBitmap,
+        intOffset: IntOffset,
+        intSize: IntSize,
+        sharedElementKey: SharedElementKey,
+    ) -> Unit,
+    onLongPressFolderApplicationInfo: (
+        folderEblanApplicationInfo: FolderEblanApplicationInfo,
         imageBitmap: ImageBitmap,
         intOffset: IntOffset,
         intSize: IntSize,
@@ -412,58 +570,100 @@ private fun EblanApplicationInfosGrid(
         intOffset: IntOffset,
         intSize: IntSize,
     ) -> Unit,
+    onTapFolderApplicationInfo: (folderEntry: FolderEntry) -> Unit,
 ) {
     HorizontalAppDrawerGridLayout(
         // Data
-        eblanApplicationInfos = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos[eblanUserPageKey],
+        appDrawerGridItems = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos[eblanUserPageKey],
         // Layout
         rows = appDrawerSettings.horizontalAppDrawerRows,
         columns = appDrawerSettings.horizontalAppDrawerColumns,
         // Modifier
         modifier = modifier.fillMaxSize(),
         // Content
-        content = { currentEblanApplicationInfo ->
-            when (eblanUserPageKey.eblanUser.eblanUserType) {
-                EblanUserType.Personal,
-                EblanUserType.Clone,
-                EblanUserType.Work,
-                -> {
-                    EblanApplicationInfoItem(
-                        // Application Data and Settings
-                        eblanApplicationInfo = currentEblanApplicationInfo,
+        content = { currentAppDrawerGridItem ->
+            when (val data = currentAppDrawerGridItem.data) {
+                is AppDrawerGridItemData.ApplicationInfo -> {
+                    when (eblanUserPageKey.eblanUser.eblanUserType) {
+                        EblanUserType.Personal,
+                        EblanUserType.Clone,
+                        EblanUserType.Work,
+                        -> {
+                            EblanApplicationInfoItem(
+                                // Application Data and Settings
+                                eblanApplicationInfo = data.eblanApplicationInfo,
+                                appDrawerSettings = appDrawerSettings,
+                                iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
+                                // Layout and UI State
+                                sharedTransitionScope = sharedTransitionScope,
+                                drag = drag,
+                                paddingValues = paddingValues,
+                                animations = animations,
+                                isVisibleOverlay = isVisibleOverlay,
+                                isScrollInProgress = isScrollInProgress,
+                                isSwiping = swipeY != 0f,
+                                systemTextColor = systemTextColor,
+                                systemCustomTextColor = systemCustomTextColor,
+                                modifier = Modifier.fillMaxSize(),
+                                // Callbacks
+                                onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+                                onDragApplicationInfo = onDragApplicationInfo,
+                                onLongPressApplicationInfo = onLongPressApplicationInfo,
+                            )
+                        }
+
+                        EblanUserType.Private -> {
+                            PrivateSpaceEblanApplicationInfoItem(
+                                // Application Info
+                                eblanApplicationInfo = data.eblanApplicationInfo,
+                                // Settings and Styling
+                                appDrawerSettings = appDrawerSettings,
+                                iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
+                                isVisibleOverlay = isVisibleOverlay,
+                                systemTextColor = systemTextColor,
+                                systemCustomTextColor = systemCustomTextColor,
+                                paddingValues = paddingValues,
+                                modifier = Modifier.fillMaxSize(),
+                                // Actions
+                                onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
+                            )
+                        }
+                    }
+                }
+
+                is AppDrawerGridItemData.Folder -> {
+                    FolderEblanApplicationInfoItem(
+                        // Core Data
+                        folderEblanApplicationInfo = data.folderEblanApplicationInfo,
                         appDrawerSettings = appDrawerSettings,
+                        folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+                        folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
                         iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
-                        // Layout and UI State
+                        // Animation and Transition
                         sharedTransitionScope = sharedTransitionScope,
-                        drag = drag,
-                        paddingValues = paddingValues,
                         animations = animations,
+                        // Visibility and State
                         isVisibleOverlay = isVisibleOverlay,
+                        isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
                         isScrollInProgress = isScrollInProgress,
                         isSwiping = swipeY != 0f,
+                        // Styling and Appearance
                         systemTextColor = systemTextColor,
                         systemCustomTextColor = systemCustomTextColor,
+                        folderCornerRadius = folderCornerRadius,
+                        folderBackgroundColor = folderBackgroundColor,
+                        customFolderBackgroundColor = customFolderBackgroundColor,
+                        folderBorderColor = folderBorderColor,
+                        customFolderBorderColor = customFolderBorderColor,
+                        folderBorderWidth = folderBorderWidth,
+                        // Interaction
+                        drag = drag,
                         modifier = Modifier.fillMaxSize(),
                         // Callbacks
                         onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                        onDragApplicationInfo = onDragApplicationInfo,
-                        onLongPressApplicationInfo = onLongPressApplicationInfo,
-                    )
-                }
-
-                EblanUserType.Private -> {
-                    PrivateSpaceEblanApplicationInfoItem(
-                        // Application Info
-                        eblanApplicationInfo = currentEblanApplicationInfo,
-                        // Settings and Styling
-                        appDrawerSettings = appDrawerSettings,
-                        iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
-                        isVisibleOverlay = isVisibleOverlay,
-                        systemTextColor = systemTextColor,
-                        systemCustomTextColor = systemCustomTextColor,
-                        paddingValues = paddingValues,
-                        // Actions
-                        onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
+                        onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
+                        onLongPressFolderApplicationInfo = onLongPressFolderApplicationInfo,
+                        onTapFolderApplicationInfo = onTapFolderApplicationInfo,
                     )
                 }
             }

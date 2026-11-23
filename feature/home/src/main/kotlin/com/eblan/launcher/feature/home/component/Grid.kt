@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.eblan.launcher.domain.model.application.EblanApplicationInfo
+import com.eblan.launcher.domain.model.application.AppDrawerGridItem
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.userdata.TextColor
@@ -184,28 +184,25 @@ internal fun SparkleGridLayout(
 @Composable
 internal fun HorizontalAppDrawerGridLayout(
     // Data
-    eblanApplicationInfos: List<EblanApplicationInfo>?,
+    appDrawerGridItems: List<AppDrawerGridItem>?,
     // Layout
     rows: Int,
     columns: Int,
     // Modifier
     modifier: Modifier = Modifier,
     // Content
-    content: @Composable BoxScope.(EblanApplicationInfo) -> Unit,
+    content: @Composable BoxScope.(AppDrawerGridItem) -> Unit,
 ) {
     SubcomposeLayout(modifier = modifier) { constraints ->
         val cellWidth = constraints.maxWidth / columns
         val cellHeight = constraints.maxHeight / rows
 
         layout(constraints.maxWidth, constraints.maxHeight) {
-            eblanApplicationInfos?.forEachIndexed { index, eblanApplicationInfo ->
+            appDrawerGridItems?.forEachIndexed { index, appDrawerGridItem ->
                 val row = index / columns
                 val column = index % columns
 
-                subcompose(
-                    eblanApplicationInfo.serialNumber to
-                        eblanApplicationInfo.componentName,
-                ) {
+                subcompose(appDrawerGridItem.id) {
                     Box(
                         modifier = Modifier.gridItem(
                             width = cellWidth,
@@ -214,7 +211,7 @@ internal fun HorizontalAppDrawerGridLayout(
                             y = row * cellHeight,
                         ),
                     ) {
-                        content(eblanApplicationInfo)
+                        content(appDrawerGridItem)
                     }
                 }.forEach { measurable ->
                     measurable.measure(

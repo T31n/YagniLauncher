@@ -19,22 +19,52 @@ package com.eblan.launcher.data.room.transaction
 
 import androidx.room.withTransaction
 import com.eblan.launcher.data.room.EblanDatabase
+import com.eblan.launcher.data.room.dao.ApplicationInfoGridItemDao
 import com.eblan.launcher.data.room.dao.EblanApplicationInfoDao
 import com.eblan.launcher.data.room.dao.FolderEblanApplicationInfoDao
-import com.eblan.launcher.data.room.entity.EblanApplicationInfoEntity
-import com.eblan.launcher.data.room.entity.FolderEblanApplicationInfoEntity
+import com.eblan.launcher.data.room.dao.FolderGridItemDao
+import com.eblan.launcher.data.room.dao.ShortcutConfigGridItemDao
+import com.eblan.launcher.data.room.dao.ShortcutInfoGridItemDao
+import com.eblan.launcher.data.room.dao.WidgetGridItemDao
 import com.eblan.launcher.data.room.model.FolderGridItemEntities
+import com.eblan.launcher.data.room.model.GridItemEntities
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-internal class DefaultFolderGridItemEntityTransaction @Inject constructor(
+internal class DefaultGridTransaction @Inject constructor(
     private val eblanDatabase: EblanDatabase,
+    private val applicationInfoGridItemDao: ApplicationInfoGridItemDao,
+    private val widgetGridItemDao: WidgetGridItemDao,
+    private val shortcutInfoGridItemDao: ShortcutInfoGridItemDao,
+    private val shortcutConfigGridItemDao: ShortcutConfigGridItemDao,
+    private val folderGridItemDao: FolderGridItemDao,
     private val eblanApplicationInfoDao: EblanApplicationInfoDao,
     private val folderEblanApplicationInfoDao: FolderEblanApplicationInfoDao,
-) : FolderGridItemEntityTransaction {
+) : GridTransaction {
+    override val gridItemEntitiesFlow: Flow<GridItemEntities> =
+        eblanDatabase.invalidationTracker.createFlow(
+            "ApplicationInfoGridItemEntity",
+            "WidgetGridItemEntity",
+            "ShortcutInfoGridItemEntity",
+            "ShortcutConfigGridItemEntity",
+            "FolderGridItemEntity",
+        ).conflate()
+            .map {
+                eblanDatabase.withTransaction {
+                    GridItemEntities(
+                        applicationInfoGridItemEntities = applicationInfoGridItemDao.getApplicationInfoGridItemEntities(),
+                        widgetGridItemEntities = widgetGridItemDao.getWidgetGridItemEntities(),
+                        shortcutInfoGridItemEntities = shortcutInfoGridItemDao.getShortcutInfoGridItemEntities(),
+                        shortcutConfigGridItemEntities = shortcutConfigGridItemDao.getShortcutConfigGridItemEntities(),
+                        folderGridItemEntities = folderGridItemDao.getFolderGridItemEntities(),
+                    )
+                }
+            }
+            .distinctUntilChanged()
+
     override val folderGridItemEntitiesFlow: Flow<FolderGridItemEntities> =
         eblanDatabase.invalidationTracker.createFlow(
             "EblanApplicationInfoEntity",
@@ -50,30 +80,7 @@ internal class DefaultFolderGridItemEntityTransaction @Inject constructor(
             }
             .distinctUntilChanged()
 
-    override suspend fun getFolderGridItemEntities(): FolderGridItemEntities = FolderGridItemEntities(
-        eblanApplicationInfoEntities = eblanApplicationInfoDao.getEblanApplicationInfoEntities(),
-        folderEblanApplicationInfoEntities = folderEblanApplicationInfoDao.getFolderEblanApplicationInfoEntities(),
-    )
-
-    override suspend fun upsertFolderGridItemEntitiesTransaction(
-        eblanApplicationInfoEntities: List<EblanApplicationInfoEntity>,
-        folderEblanApplicationInfoEntities: List<FolderEblanApplicationInfoEntity>,
-    ) {
-        eblanDatabase.withTransaction {
-            eblanApplicationInfoDao.upsertEblanApplicationInfoEntities(entities = eblanApplicationInfoEntities)
-
-            folderEblanApplicationInfoDao.upsertFolderEblanApplicationInfoEntities(entities = folderEblanApplicationInfoEntities)
-        }
-    }
-
-    override suspend fun deleteFolderGridItemEntitiesTransaction(
-        eblanApplicationInfoEntities: List<EblanApplicationInfoEntity>,
-        folderEblanApplicationInfoEntities: List<FolderEblanApplicationInfoEntity>,
-    ) {
-        eblanDatabase.withTransaction {
-            eblanApplicationInfoDao.deleteEblanApplicationInfoEntities(entities = eblanApplicationInfoEntities)
-
-            folderEblanApplicationInfoDao.deleteFolderEblanApplicationInfoEntities(entities = folderEblanApplicationInfoEntities)
-        }
+    override suspend fun <T> withTransaction(block: suspend () -> T): T = eblanDatabase.withTransaction {
+        block()
     }
 }

@@ -28,9 +28,12 @@ import com.eblan.launcher.domain.model.userdata.ColorSchemeSettings
 import com.eblan.launcher.domain.model.userdata.ColorSource
 import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.Theme
+import kotlinx.coroutines.flow.Flow
 
 interface LauncherAppsWrapper {
     val hasShortcutHostPermission: Boolean
+
+    val profileStateFlow: Flow<Int>
 
     suspend fun getActivityListWithCacheIcons(
         iconTint: Boolean,

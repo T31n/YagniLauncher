@@ -17,23 +17,14 @@
  */
 package com.eblan.launcher.data.room.transaction
 
-import com.eblan.launcher.data.room.entity.EblanApplicationInfoEntity
-import com.eblan.launcher.data.room.entity.FolderEblanApplicationInfoEntity
 import com.eblan.launcher.data.room.model.FolderGridItemEntities
+import com.eblan.launcher.data.room.model.GridItemEntities
 import kotlinx.coroutines.flow.Flow
 
-interface FolderGridItemEntityTransaction {
+interface GridTransaction {
+    val gridItemEntitiesFlow: Flow<GridItemEntities>
+
     val folderGridItemEntitiesFlow: Flow<FolderGridItemEntities>
 
-    suspend fun getFolderGridItemEntities(): FolderGridItemEntities
-
-    suspend fun upsertFolderGridItemEntitiesTransaction(
-        eblanApplicationInfoEntities: List<EblanApplicationInfoEntity>,
-        folderEblanApplicationInfoEntities: List<FolderEblanApplicationInfoEntity>,
-    )
-
-    suspend fun deleteFolderGridItemEntitiesTransaction(
-        eblanApplicationInfoEntities: List<EblanApplicationInfoEntity>,
-        folderEblanApplicationInfoEntities: List<FolderEblanApplicationInfoEntity>,
-    )
+    suspend fun <T> withTransaction(block: suspend () -> T): T
 }

@@ -45,5 +45,7 @@ interface ShortcutConfigGridItemRepository {
 
     suspend fun upsertShortcutConfigGridItem(shortcutConfigGridItem: ShortcutConfigGridItem)
 
+    suspend fun upsertShortcutConfigGridItems(shortcutConfigGridItems: List<ShortcutConfigGridItem>)
+
     suspend fun deleteShortcutConfigGridItemById(id: String)
 }

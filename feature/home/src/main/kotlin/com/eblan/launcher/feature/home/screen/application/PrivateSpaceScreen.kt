@@ -109,7 +109,15 @@ internal fun LazyGridScope.privateSpace(
         intSize: IntSize,
     ) -> Unit,
 ) {
-    if (privateEblanUser == null || privateEblanUser.isPrivateSpaceEntryPointHidden) return
+    if (
+        privateEblanUser == null ||
+        (
+            privateEblanUser.isPrivateSpaceEntryPointHidden &&
+                privateEblanUser.isPrivateSpaceLocked
+            )
+    ) {
+        return
+    }
 
     stickyHeader {
         PrivateSpaceStickyHeader(

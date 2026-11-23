@@ -23,6 +23,7 @@ import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
+import com.eblan.launcher.domain.repository.FolderGridItemTransaction
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -31,6 +32,7 @@ import javax.inject.Inject
 class AddEblanApplicationInfosToFolderUseCase @Inject constructor(
     private val eblanApplicationInfoRepository: EblanApplicationInfoRepository,
     private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
+    private val folderGridItemTransaction: FolderGridItemTransaction,
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     /**
@@ -44,34 +46,36 @@ class AddEblanApplicationInfosToFolderUseCase @Inject constructor(
         folderEblanApplicationInfo: FolderEblanApplicationInfo,
         eblanApplicationInfos: List<EblanApplicationInfo>,
     ) = withContext(defaultDispatcher) {
-        val maxApplicationIndex = eblanApplicationInfoRepository.getEblanApplicationInfos()
-            .asSequence()
-            .filter { currentEblanApplicationInfo ->
-                currentEblanApplicationInfo.folderId == folderEblanApplicationInfo.id
-            }
-            .maxOfOrNull { currentEblanApplicationInfo ->
-                currentEblanApplicationInfo.folderIndex + 1
-            } ?: 0
-
-        val maxFolderIndex =
-            folderEblanApplicationInfoRepository.getFolderEblanApplicationInfos()
+        folderGridItemTransaction.withTransaction {
+            val maxApplicationIndex = eblanApplicationInfoRepository.getEblanApplicationInfos()
                 .asSequence()
-                .filter { currentFolderEblanApplicationInfo ->
-                    currentFolderEblanApplicationInfo.folderId == folderEblanApplicationInfo.id
+                .filter { currentEblanApplicationInfo ->
+                    currentEblanApplicationInfo.folderId == folderEblanApplicationInfo.id
                 }
-                .maxOfOrNull { currentFolderEblanApplicationInfo ->
-                    currentFolderEblanApplicationInfo.folderIndex + 1
+                .maxOfOrNull { currentEblanApplicationInfo ->
+                    currentEblanApplicationInfo.folderIndex + 1
                 } ?: 0
 
-        val startIndex = maxOf(maxApplicationIndex, maxFolderIndex)
+            val maxFolderIndex =
+                folderEblanApplicationInfoRepository.getFolderEblanApplicationInfos()
+                    .asSequence()
+                    .filter { currentFolderEblanApplicationInfo ->
+                        currentFolderEblanApplicationInfo.folderId == folderEblanApplicationInfo.id
+                    }
+                    .maxOfOrNull { currentFolderEblanApplicationInfo ->
+                        currentFolderEblanApplicationInfo.folderIndex + 1
+                    } ?: 0
 
-        eblanApplicationInfoRepository.updateEblanApplicationInfos(
-            eblanApplicationInfos = eblanApplicationInfos.mapIndexed { index, currentEblanApplicationInfo ->
-                currentEblanApplicationInfo.copy(
-                    folderIndex = startIndex + index,
-                    folderId = folderEblanApplicationInfo.id,
-                )
-            },
-        )
+            val startIndex = maxOf(maxApplicationIndex, maxFolderIndex)
+
+            eblanApplicationInfoRepository.updateEblanApplicationInfos(
+                eblanApplicationInfos = eblanApplicationInfos.mapIndexed { index, currentEblanApplicationInfo ->
+                    currentEblanApplicationInfo.copy(
+                        folderIndex = startIndex + index,
+                        folderId = folderEblanApplicationInfo.id,
+                    )
+                },
+            )
+        }
     }
 }
