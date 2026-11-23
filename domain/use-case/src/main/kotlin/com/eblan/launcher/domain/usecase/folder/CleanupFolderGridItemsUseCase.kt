@@ -39,98 +39,121 @@ class CleanupFolderGridItemsUseCase @Inject constructor(
     suspend operator fun invoke() = withContext(defaultDispatcher) {
         val gridItems = gridRepository.getGridItems().toGridItems()
 
-        val childrenByFolderId = gridItems
+        val gridItemsByFolderId = gridItems
             .groupBy { currentGridItem -> currentGridItem.folderIdOrNull() }
             .mapValues { (_, currentGridItems) -> currentGridItems.toMutableList() }
             .toMutableMap()
 
-        val itemsToUpsertById = mutableMapOf<String, GridItem>()
-        val itemsToDeleteById = mutableMapOf<String, GridItem>()
-        val visitedFolderIds = mutableSetOf<String>()
-
-        fun cleanupFolder(folderGridItem: GridItem) {
-            val folderData = folderGridItem.data as? GridItemData.Folder ?: return
-            if (!visitedFolderIds.add(folderGridItem.id)) return
-
-            childrenByFolderId[folderGridItem.id]
-                ?.toList()
-                .orEmpty()
-                .filter { currentGridItem -> currentGridItem.data is GridItemData.Folder }
-                .forEach(::cleanupFolder)
-
-            val children = childrenByFolderId[folderGridItem.id].orEmpty()
-            if (children.size > 1) return
-
-            childrenByFolderId[folderData.folderId]?.removeAll { currentGridItem ->
-                currentGridItem.id == folderGridItem.id
-            }
-
-            val singleChild = children.singleOrNull()
-            if (singleChild != null && singleChild.id != folderGridItem.id) {
-                val updatedChild = singleChild.moveToFolderPosition(
-                    folderGridItem = folderGridItem,
-                    folderData = folderData,
-                )
-
-                itemsToUpsertById[updatedChild.id] = updatedChild
-                childrenByFolderId.getOrPut(folderData.folderId) { mutableListOf() }.add(updatedChild)
-            }
-
-            childrenByFolderId.remove(folderGridItem.id)
-            itemsToUpsertById.remove(folderGridItem.id)
-            itemsToDeleteById[folderGridItem.id] = folderGridItem
-        }
+        val gridItemsToUpsertById = mutableMapOf<String, GridItem>()
+        val gridItemsToDeleteById = mutableMapOf<String, GridItem>()
+        val visitedFolderGridItemIds = mutableSetOf<String>()
 
         gridItems
             .filter { currentGridItem -> currentGridItem.data is GridItemData.Folder }
-            .forEach(::cleanupFolder)
+            .forEach { folderGridItem ->
+                cleanupFolderGridItem(
+                    folderGridItem = folderGridItem,
+                    gridItemsByFolderId = gridItemsByFolderId,
+                    gridItemsToUpsertById = gridItemsToUpsertById,
+                    gridItemsToDeleteById = gridItemsToDeleteById,
+                    visitedFolderGridItemIds = visitedFolderGridItemIds,
+                )
+            }
 
-        if (itemsToUpsertById.isNotEmpty()) {
-            gridRepository.upsertGridItems(gridItems = itemsToUpsertById.values.toList())
+        if (gridItemsToUpsertById.isNotEmpty()) {
+            gridRepository.upsertGridItems(gridItems = gridItemsToUpsertById.values.toList())
         }
 
-        if (itemsToDeleteById.isNotEmpty()) {
-            gridRepository.deleteGridItems(gridItems = itemsToDeleteById.values.toList())
+        if (gridItemsToDeleteById.isNotEmpty()) {
+            gridRepository.deleteGridItems(gridItems = gridItemsToDeleteById.values.toList())
         }
     }
 
-    private fun GridItem.folderIdOrNull(): String? = when (val itemData = data) {
-        is GridItemData.ApplicationInfo -> itemData.folderId
-        is GridItemData.Folder -> itemData.folderId
-        is GridItemData.ShortcutConfig -> itemData.folderId
-        is GridItemData.ShortcutInfo -> itemData.folderId
+    private fun cleanupFolderGridItem(
+        folderGridItem: GridItem,
+        gridItemsByFolderId: MutableMap<String?, MutableList<GridItem>>,
+        gridItemsToUpsertById: MutableMap<String, GridItem>,
+        gridItemsToDeleteById: MutableMap<String, GridItem>,
+        visitedFolderGridItemIds: MutableSet<String>,
+    ) {
+        val folderGridItemData = folderGridItem.data as? GridItemData.Folder ?: return
+        if (!visitedFolderGridItemIds.add(folderGridItem.id)) return
+
+        gridItemsByFolderId[folderGridItem.id]
+            ?.toList()
+            .orEmpty()
+            .filter { currentGridItem -> currentGridItem.data is GridItemData.Folder }
+            .forEach { childFolderGridItem ->
+                cleanupFolderGridItem(
+                    folderGridItem = childFolderGridItem,
+                    gridItemsByFolderId = gridItemsByFolderId,
+                    gridItemsToUpsertById = gridItemsToUpsertById,
+                    gridItemsToDeleteById = gridItemsToDeleteById,
+                    visitedFolderGridItemIds = visitedFolderGridItemIds,
+                )
+            }
+
+        val childGridItems = gridItemsByFolderId[folderGridItem.id].orEmpty()
+        if (childGridItems.size > 1) return
+
+        gridItemsByFolderId[folderGridItemData.folderId]?.removeAll { currentGridItem ->
+            currentGridItem.id == folderGridItem.id
+        }
+
+        val singleChildGridItem = childGridItems.singleOrNull()
+        if (singleChildGridItem != null && singleChildGridItem.id != folderGridItem.id) {
+            val updatedChildGridItem = singleChildGridItem.moveToFolderGridItemPosition(
+                folderGridItem = folderGridItem,
+                folderGridItemData = folderGridItemData,
+            )
+
+            gridItemsToUpsertById[updatedChildGridItem.id] = updatedChildGridItem
+            gridItemsByFolderId.getOrPut(folderGridItemData.folderId) { mutableListOf() }
+                .add(updatedChildGridItem)
+        }
+
+        gridItemsByFolderId.remove(folderGridItem.id)
+        gridItemsToUpsertById.remove(folderGridItem.id)
+        gridItemsToDeleteById[folderGridItem.id] = folderGridItem
+    }
+
+    private fun GridItem.folderIdOrNull(): String? = when (val gridItemData = data) {
+        is GridItemData.ApplicationInfo -> gridItemData.folderId
+        is GridItemData.Folder -> gridItemData.folderId
+        is GridItemData.ShortcutConfig -> gridItemData.folderId
+        is GridItemData.ShortcutInfo -> gridItemData.folderId
         is GridItemData.Widget -> null
     }
 
-    private fun GridItem.moveToFolderPosition(
+    private fun GridItem.moveToFolderGridItemPosition(
         folderGridItem: GridItem,
-        folderData: GridItemData.Folder,
+        folderGridItemData: GridItemData.Folder,
     ): GridItem {
-        val targetFolderId = folderData.folderId
-        val targetIndex = if (targetFolderId == null) -1 else folderData.index
+        val targetFolderId = folderGridItemData.folderId
+        val targetGridItemIndex = if (targetFolderId == null) -1 else folderGridItemData.index
 
-        val updatedData = when (val childData = data) {
-            is GridItemData.ApplicationInfo -> childData.copy(
-                index = targetIndex,
+        val updatedGridItemData = when (val childGridItemData = data) {
+            is GridItemData.ApplicationInfo -> childGridItemData.copy(
+                index = targetGridItemIndex,
                 folderId = targetFolderId,
             )
 
-            is GridItemData.ShortcutConfig -> childData.copy(
-                index = targetIndex,
+            is GridItemData.ShortcutConfig -> childGridItemData.copy(
+                index = targetGridItemIndex,
                 folderId = targetFolderId,
             )
 
-            is GridItemData.ShortcutInfo -> childData.copy(
-                index = targetIndex,
+            is GridItemData.ShortcutInfo -> childGridItemData.copy(
+                index = targetGridItemIndex,
                 folderId = targetFolderId,
             )
 
-            is GridItemData.Folder -> childData.copy(
-                index = targetIndex,
+            is GridItemData.Folder -> childGridItemData.copy(
+                index = targetGridItemIndex,
                 folderId = targetFolderId,
             )
 
-            is GridItemData.Widget -> childData
+            is GridItemData.Widget -> childGridItemData
         }
 
         return if (targetFolderId == null) {
@@ -141,7 +164,7 @@ class CleanupFolderGridItemsUseCase @Inject constructor(
                 columnSpan = folderGridItem.columnSpan,
                 rowSpan = folderGridItem.rowSpan,
                 associate = folderGridItem.associate,
-                data = updatedData,
+                data = updatedGridItemData,
             )
         } else {
             copy(
@@ -151,7 +174,7 @@ class CleanupFolderGridItemsUseCase @Inject constructor(
                 columnSpan = 1,
                 rowSpan = 1,
                 associate = folderGridItem.associate,
-                data = updatedData,
+                data = updatedGridItemData,
             )
         }
     }

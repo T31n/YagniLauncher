@@ -52,79 +52,27 @@ class CleanupFolderEblanApplicationInfosUseCase @Inject constructor(
             .mapValues { (_, currentEblanApplicationInfos) -> currentEblanApplicationInfos.toMutableList() }
             .toMutableMap()
 
-        val foldersByFolderId = folderEblanApplicationInfos
+        val folderEblanApplicationInfosByFolderId = folderEblanApplicationInfos
             .groupBy { currentFolderEblanApplicationInfo -> currentFolderEblanApplicationInfo.folderId }
             .mapValues { (_, currentFolderEblanApplicationInfos) -> currentFolderEblanApplicationInfos.toMutableList() }
             .toMutableMap()
 
         val eblanApplicationInfosToUpdateByKey = mutableMapOf<Pair<Long, String>, EblanApplicationInfo>()
-        val foldersToUpdateById = mutableMapOf<String, FolderEblanApplicationInfo>()
-        val folderIdsToDelete = mutableSetOf<String>()
-        val visitedFolderIds = mutableSetOf<String>()
+        val folderEblanApplicationInfosToUpdateById = mutableMapOf<String, FolderEblanApplicationInfo>()
+        val folderEblanApplicationInfoIdsToDelete = mutableSetOf<String>()
+        val visitedFolderEblanApplicationInfoIds = mutableSetOf<String>()
 
-        fun cleanupFolder(folderEblanApplicationInfo: FolderEblanApplicationInfo) {
-            if (!visitedFolderIds.add(folderEblanApplicationInfo.id)) return
-
-            foldersByFolderId[folderEblanApplicationInfo.id]
-                ?.toList()
-                .orEmpty()
-                .forEach(::cleanupFolder)
-
-            val childApps = eblanApplicationInfosByFolderId[folderEblanApplicationInfo.id].orEmpty()
-            val childFolders = foldersByFolderId[folderEblanApplicationInfo.id].orEmpty()
-
-            if (childApps.size + childFolders.size > 1) return
-
-            val targetFolderId = folderEblanApplicationInfo.folderId
-            val targetFolderIndex =
-                if (targetFolderId == null) -1 else folderEblanApplicationInfo.folderIndex
-
-            foldersByFolderId[targetFolderId]?.removeAll { currentFolder ->
-                currentFolder.id == folderEblanApplicationInfo.id
-            }
-
-            when {
-                childApps.size == 1 && childFolders.isEmpty() -> {
-                    val childApp = childApps.single()
-                    val updatedApp = childApp.copy(
-                        folderIndex = targetFolderIndex,
-                        folderId = targetFolderId,
-                    )
-
-                    eblanApplicationInfosToUpdateByKey[updatedApp.serialNumber to updatedApp.componentName] =
-                        updatedApp
-                    eblanApplicationInfosByFolderId.getOrPut(targetFolderId) { mutableListOf() }
-                        .add(updatedApp)
-                }
-
-                childFolders.size == 1 && childApps.isEmpty() -> {
-                    val childFolder = childFolders.single()
-
-                    if (childFolder.id != folderEblanApplicationInfo.id) {
-                        val updatedChildFolder = childFolder.copy(
-                            index = if (targetFolderId == null) {
-                                folderEblanApplicationInfo.index
-                            } else {
-                                childFolder.index
-                            },
-                            folderIndex = targetFolderIndex,
-                            folderId = targetFolderId,
-                        )
-
-                        foldersToUpdateById[updatedChildFolder.id] = updatedChildFolder
-                        foldersByFolderId.getOrPut(targetFolderId) { mutableListOf() }
-                            .add(updatedChildFolder)
-                    }
-                }
-            }
-
-            eblanApplicationInfosByFolderId.remove(folderEblanApplicationInfo.id)
-            foldersByFolderId.remove(folderEblanApplicationInfo.id)
-            foldersToUpdateById.remove(folderEblanApplicationInfo.id)
-            folderIdsToDelete.add(folderEblanApplicationInfo.id)
+        folderEblanApplicationInfos.forEach { folderEblanApplicationInfo ->
+            cleanupFolderEblanApplicationInfo(
+                folderEblanApplicationInfo = folderEblanApplicationInfo,
+                eblanApplicationInfosByFolderId = eblanApplicationInfosByFolderId,
+                folderEblanApplicationInfosByFolderId = folderEblanApplicationInfosByFolderId,
+                eblanApplicationInfosToUpdateByKey = eblanApplicationInfosToUpdateByKey,
+                folderEblanApplicationInfosToUpdateById = folderEblanApplicationInfosToUpdateById,
+                folderEblanApplicationInfoIdsToDelete = folderEblanApplicationInfoIdsToDelete,
+                visitedFolderEblanApplicationInfoIds = visitedFolderEblanApplicationInfoIds,
+            )
         }
-
-        folderEblanApplicationInfos.forEach(::cleanupFolder)
 
         if (eblanApplicationInfosToUpdateByKey.isNotEmpty()) {
             eblanApplicationInfoRepository.updateEblanApplicationInfos(
@@ -132,14 +80,99 @@ class CleanupFolderEblanApplicationInfosUseCase @Inject constructor(
             )
         }
 
-        if (foldersToUpdateById.isNotEmpty()) {
+        if (folderEblanApplicationInfosToUpdateById.isNotEmpty()) {
             folderEblanApplicationInfoRepository.updateFolderEblanApplicationInfos(
-                folderEblanApplicationInfos = foldersToUpdateById.values.toList(),
+                folderEblanApplicationInfos = folderEblanApplicationInfosToUpdateById.values.toList(),
             )
         }
 
-        folderIdsToDelete.forEach { folderId ->
-            folderEblanApplicationInfoRepository.deleteFolderEblanApplicationInfoById(id = folderId)
+        folderEblanApplicationInfoIdsToDelete.forEach { folderEblanApplicationInfoId ->
+            folderEblanApplicationInfoRepository.deleteFolderEblanApplicationInfoById(
+                id = folderEblanApplicationInfoId,
+            )
         }
+    }
+
+    private fun cleanupFolderEblanApplicationInfo(
+        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        eblanApplicationInfosByFolderId: MutableMap<String?, MutableList<EblanApplicationInfo>>,
+        folderEblanApplicationInfosByFolderId: MutableMap<String?, MutableList<FolderEblanApplicationInfo>>,
+        eblanApplicationInfosToUpdateByKey: MutableMap<Pair<Long, String>, EblanApplicationInfo>,
+        folderEblanApplicationInfosToUpdateById: MutableMap<String, FolderEblanApplicationInfo>,
+        folderEblanApplicationInfoIdsToDelete: MutableSet<String>,
+        visitedFolderEblanApplicationInfoIds: MutableSet<String>,
+    ) {
+        if (!visitedFolderEblanApplicationInfoIds.add(folderEblanApplicationInfo.id)) return
+
+        folderEblanApplicationInfosByFolderId[folderEblanApplicationInfo.id]
+            ?.toList()
+            .orEmpty()
+            .forEach { childFolderEblanApplicationInfo ->
+                cleanupFolderEblanApplicationInfo(
+                    folderEblanApplicationInfo = childFolderEblanApplicationInfo,
+                    eblanApplicationInfosByFolderId = eblanApplicationInfosByFolderId,
+                    folderEblanApplicationInfosByFolderId = folderEblanApplicationInfosByFolderId,
+                    eblanApplicationInfosToUpdateByKey = eblanApplicationInfosToUpdateByKey,
+                    folderEblanApplicationInfosToUpdateById = folderEblanApplicationInfosToUpdateById,
+                    folderEblanApplicationInfoIdsToDelete = folderEblanApplicationInfoIdsToDelete,
+                    visitedFolderEblanApplicationInfoIds = visitedFolderEblanApplicationInfoIds,
+                )
+            }
+
+        val childEblanApplicationInfos =
+            eblanApplicationInfosByFolderId[folderEblanApplicationInfo.id].orEmpty()
+        val childFolderEblanApplicationInfos =
+            folderEblanApplicationInfosByFolderId[folderEblanApplicationInfo.id].orEmpty()
+
+        if (childEblanApplicationInfos.size + childFolderEblanApplicationInfos.size > 1) return
+
+        val targetFolderId = folderEblanApplicationInfo.folderId
+        val targetFolderIndex =
+            if (targetFolderId == null) -1 else folderEblanApplicationInfo.folderIndex
+
+        folderEblanApplicationInfosByFolderId[targetFolderId]?.removeAll { currentFolderEblanApplicationInfo ->
+            currentFolderEblanApplicationInfo.id == folderEblanApplicationInfo.id
+        }
+
+        when {
+            childEblanApplicationInfos.size == 1 && childFolderEblanApplicationInfos.isEmpty() -> {
+                val childEblanApplicationInfo = childEblanApplicationInfos.single()
+                val updatedEblanApplicationInfo = childEblanApplicationInfo.copy(
+                    folderIndex = targetFolderIndex,
+                    folderId = targetFolderId,
+                )
+
+                eblanApplicationInfosToUpdateByKey[updatedEblanApplicationInfo.serialNumber to updatedEblanApplicationInfo.componentName] =
+                    updatedEblanApplicationInfo
+                eblanApplicationInfosByFolderId.getOrPut(targetFolderId) { mutableListOf() }
+                    .add(updatedEblanApplicationInfo)
+            }
+
+            childFolderEblanApplicationInfos.size == 1 && childEblanApplicationInfos.isEmpty() -> {
+                val childFolderEblanApplicationInfo = childFolderEblanApplicationInfos.single()
+
+                if (childFolderEblanApplicationInfo.id != folderEblanApplicationInfo.id) {
+                    val updatedChildFolderEblanApplicationInfo = childFolderEblanApplicationInfo.copy(
+                        index = if (targetFolderId == null) {
+                            folderEblanApplicationInfo.index
+                        } else {
+                            childFolderEblanApplicationInfo.index
+                        },
+                        folderIndex = targetFolderIndex,
+                        folderId = targetFolderId,
+                    )
+
+                    folderEblanApplicationInfosToUpdateById[updatedChildFolderEblanApplicationInfo.id] =
+                        updatedChildFolderEblanApplicationInfo
+                    folderEblanApplicationInfosByFolderId.getOrPut(targetFolderId) { mutableListOf() }
+                        .add(updatedChildFolderEblanApplicationInfo)
+                }
+            }
+        }
+
+        eblanApplicationInfosByFolderId.remove(folderEblanApplicationInfo.id)
+        folderEblanApplicationInfosByFolderId.remove(folderEblanApplicationInfo.id)
+        folderEblanApplicationInfosToUpdateById.remove(folderEblanApplicationInfo.id)
+        folderEblanApplicationInfoIdsToDelete.add(folderEblanApplicationInfo.id)
     }
 }
