@@ -65,12 +65,17 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
         labelFlow: Flow<String>,
         eblanApplicationInfoTagIdFlow: Flow<Long?>,
     ): Flow<GetEblanApplicationInfosByLabelAndTag> = combine(
-        eblanApplicationInfoTagIdFlow,
-        labelFlow,
+        combine(
+            eblanApplicationInfoTagIdFlow,
+            labelFlow,
+            launcherAppsWrapper.profileStateFlow,
+        ) { tagId, label, _ ->
+            tagId to label
+        },
         userDataRepository.userDataFlow,
         eblanApplicationInfoRepository.eblanApplicationInfosFlow,
         folderEblanApplicationInfoRepository.folderEblanApplicationInfosFlow,
-    ) { tagId, label, userData, eblanApplicationInfos, folderEblanApplicationInfos ->
+    ) { (tagId, label), userData, eblanApplicationInfos, folderEblanApplicationInfos ->
         val iconPackPackageName = userData.generalSettings.iconPackPackageName
 
         val eblanApplicationInfosByLabel = getEblanApplicationInfos(
@@ -198,7 +203,8 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
         }.filterKeys { currentEblanUser ->
             !(
                 currentEblanUser.eblanUserType == EblanUserType.Private &&
-                    currentEblanUser.isPrivateSpaceEntryPointHidden
+                    currentEblanUser.isPrivateSpaceEntryPointHidden &&
+                    currentEblanUser.isPrivateSpaceLocked
                 )
         }.toSortedMap(
             nullsLast(

@@ -85,8 +85,6 @@ import com.eblan.launcher.feature.home.screen.application.FolderEblanApplication
 import com.eblan.launcher.feature.home.screen.application.QuiteModeScreen
 import com.eblan.launcher.feature.home.screen.application.TagElevatedFilterChip
 import com.eblan.launcher.feature.home.screen.application.privateSpace
-import com.eblan.launcher.feature.home.screen.application.produceIsPrivateQuietModeEnabledState
-import com.eblan.launcher.feature.home.screen.application.produceIsQuietModeEnabledState
 import com.eblan.launcher.feature.home.util.getApplicationScreenTextColor
 import com.eblan.launcher.ui.local.LocalUserManager
 import com.eblan.launcher.ui.settings.produceIsDefaultLauncherState
@@ -362,6 +360,8 @@ private fun EblanApplicationInfosPage(
                             serialNumber = 0L,
                             eblanUserType = EblanUserType.Personal,
                             isPrivateSpaceEntryPointHidden = false,
+                            isPrivateSpaceLocked = false,
+                            isQuietModeEnabled = false,
                         ),
                         page = 0,
                     )
@@ -374,7 +374,7 @@ private fun EblanApplicationInfosPage(
 
     val isDefaultLauncher by produceIsDefaultLauncherState()
 
-    val isQuietModeEnabled by produceIsQuietModeEnabledState(userHandle = userHandle)
+    val isQuietModeEnabled = eblanUserPageKey.eblanUser.isQuietModeEnabled
 
     Box(modifier = modifier.fillMaxSize()) {
         if (isQuietModeEnabled) {
@@ -530,7 +530,8 @@ private fun EblanApplicationInfosGrid(
         onDragEnd = onDragEnd,
     )
 
-    val privateIsQuiteModeEnabled by produceIsPrivateQuietModeEnabledState(eblanUser = getEblanApplicationInfosByLabelAndTag.privateEblanUser)
+    val privateIsQuiteModeEnabled =
+        getEblanApplicationInfosByLabelAndTag.privateEblanUser?.isQuietModeEnabled == true
 
     val isDefaultLauncher by produceIsDefaultLauncherState()
     val isScreenDismissed = swipeY.toInt() == screenHeight
@@ -692,8 +693,12 @@ private fun EblanApplicationInfosGrid(
             // UI Settings
             isPrivateSpaceEntryPointHidden = isDefaultLauncher &&
                 eblanUserPageKey.eblanUser.eblanUserType == EblanUserType.Personal &&
-                getEblanApplicationInfosByLabelAndTag.privateEblanUser
-                    ?.isPrivateSpaceEntryPointHidden == false,
+                getEblanApplicationInfosByLabelAndTag.privateEblanUser?.let { privateEblanUser ->
+                    !(
+                        privateEblanUser.isPrivateSpaceEntryPointHidden &&
+                            privateEblanUser.isPrivateSpaceLocked
+                        )
+                } == true,
         )
     }
 }

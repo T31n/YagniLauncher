@@ -17,11 +17,6 @@
  */
 package com.eblan.launcher.feature.home.screen.application
 
-import android.annotation.SuppressLint
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.os.Build
 import android.os.UserHandle
 import android.view.WindowManager
@@ -56,10 +51,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -70,7 +63,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -78,7 +70,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.domain.model.application.AppDrawerGridItem
@@ -89,7 +80,6 @@ import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderEntry
 import com.eblan.launcher.domain.model.grid.GridItem
-import com.eblan.launcher.domain.model.launcherapps.EblanUser
 import com.eblan.launcher.domain.model.launcherapps.EblanUserPageKey
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.AppDrawerType
@@ -563,141 +553,6 @@ internal fun EblanApplicationInfoTabRow(
                     )
                 },
             )
-        }
-    }
-}
-
-@SuppressLint("WrongConstant")
-@Composable
-internal fun produceIsQuietModeEnabledState(userHandle: UserHandle?): State<Boolean> {
-    val context = LocalContext.current
-    val userManager = LocalUserManager.current
-
-    return produceState(
-        initialValue = false,
-        key1 = userHandle,
-    ) {
-        if (userHandle == null) return@produceState
-
-        value = userManager.isQuietModeEnabled(
-            userHandle = userHandle,
-        )
-
-        val receiver = object : BroadcastReceiver() {
-            override fun onReceive(
-                context: Context,
-                intent: Intent,
-            ) {
-                val changedUserHandle =
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        intent.getParcelableExtra(
-                            Intent.EXTRA_USER,
-                            UserHandle::class.java,
-                        )
-                    } else {
-                        @Suppress("DEPRECATION")
-                        intent.getParcelableExtra(Intent.EXTRA_USER)
-                    }
-
-                if (changedUserHandle != userHandle) return
-
-                value = userManager.isQuietModeEnabled(
-                    userHandle = userHandle,
-                )
-            }
-        }
-
-        ContextCompat.registerReceiver(
-            context,
-            receiver,
-            IntentFilter().apply {
-                addAction(Intent.ACTION_MANAGED_PROFILE_AVAILABLE)
-                addAction(Intent.ACTION_MANAGED_PROFILE_UNAVAILABLE)
-                addAction(Intent.ACTION_MANAGED_PROFILE_UNLOCKED)
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-                    addAction(Intent.ACTION_PROFILE_AVAILABLE)
-                    addAction(Intent.ACTION_PROFILE_UNAVAILABLE)
-                }
-            },
-            ContextCompat.RECEIVER_NOT_EXPORTED,
-        )
-
-        awaitDispose {
-            context.unregisterReceiver(receiver)
-        }
-    }
-}
-
-@SuppressLint("WrongConstant")
-@Composable
-internal fun produceIsPrivateQuietModeEnabledState(eblanUser: EblanUser?): State<Boolean> {
-    val context = LocalContext.current
-
-    val userManager = LocalUserManager.current
-
-    return produceState(
-        initialValue = false,
-        key1 = eblanUser?.serialNumber,
-    ) {
-        if (eblanUser == null) return@produceState
-
-        val userHandle = userManager.getUserForSerialNumber(
-            serialNumber = eblanUser.serialNumber,
-        ) ?: return@produceState
-
-        value = userManager.isQuietModeEnabled(
-            userHandle = userHandle,
-        )
-
-        val receiver = object : BroadcastReceiver() {
-            override fun onReceive(
-                context: Context,
-                intent: Intent,
-            ) {
-                val changedUserHandle =
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        intent.getParcelableExtra(
-                            Intent.EXTRA_USER,
-                            UserHandle::class.java,
-                        )
-                    } else {
-                        @Suppress("DEPRECATION")
-                        intent.getParcelableExtra(Intent.EXTRA_USER)
-                    }
-
-                if (
-                    changedUserHandle == null ||
-                    userManager.getSerialNumberForUser(changedUserHandle) !=
-                    eblanUser.serialNumber
-                ) {
-                    return
-                }
-
-                value = userManager.isQuietModeEnabled(
-                    userHandle = changedUserHandle,
-                )
-            }
-        }
-
-        ContextCompat.registerReceiver(
-            context,
-            receiver,
-            IntentFilter().apply {
-                addAction(Intent.ACTION_MANAGED_PROFILE_AVAILABLE)
-                addAction(Intent.ACTION_MANAGED_PROFILE_UNAVAILABLE)
-                addAction(Intent.ACTION_MANAGED_PROFILE_UNLOCKED)
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-                    addAction(Intent.ACTION_PROFILE_AVAILABLE)
-                    addAction(Intent.ACTION_PROFILE_UNAVAILABLE)
-                }
-            },
-            ContextCompat.RECEIVER_NOT_EXPORTED,
-        )
-
-        awaitDispose {
-            context.unregisterReceiver(receiver)
         }
     }
 }

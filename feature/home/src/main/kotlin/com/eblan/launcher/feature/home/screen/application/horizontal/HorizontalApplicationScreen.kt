@@ -78,7 +78,6 @@ import com.eblan.launcher.feature.home.screen.application.PrivateSpaceEblanAppli
 import com.eblan.launcher.feature.home.screen.application.PrivateSpaceStickyHeader
 import com.eblan.launcher.feature.home.screen.application.QuiteModeScreen
 import com.eblan.launcher.feature.home.screen.application.TagElevatedFilterChip
-import com.eblan.launcher.feature.home.screen.application.produceIsQuietModeEnabledState
 import com.eblan.launcher.feature.home.util.getApplicationScreenTextColor
 import com.eblan.launcher.ui.local.LocalUserManager
 import com.eblan.launcher.ui.settings.produceIsDefaultLauncherState
@@ -363,6 +362,8 @@ private fun EblanApplicationInfosPage(
                                 serialNumber = 0L,
                                 eblanUserType = EblanUserType.Personal,
                                 isPrivateSpaceEntryPointHidden = false,
+                                isPrivateSpaceLocked = false,
+                                isQuietModeEnabled = false,
                             ),
                             page = 0,
                         )
@@ -375,7 +376,7 @@ private fun EblanApplicationInfosPage(
 
     val isDefaultLauncher by produceIsDefaultLauncherState()
 
-    val isQuietModeEnabled by produceIsQuietModeEnabledState(userHandle = userHandle)
+    val isQuietModeEnabled = eblanUserPageKey.eblanUser.isQuietModeEnabled
 
     Box(modifier = modifier.fillMaxSize()) {
         when (eblanUserPageKey.eblanUser.eblanUserType) {
