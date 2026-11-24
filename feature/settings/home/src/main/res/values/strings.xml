@@ -15,7 +15,7 @@
   ~   limitations under the License.
   ~
   -->
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="dock_grid">Dock Grid</string>
     <string name="dock_columns_is_not_valid">Dock columns is not valid</string>
     <string name="dock_rows_is_not_valid">Dock rows is not valid</string>
@@ -25,7 +25,6 @@
     <string name="seamless_loop_page_scroll">Seamless loop page scroll</string>
     <string name="wallpaper_scrolling">Wallpaper Scrolling</string>
     <string name="scroll_wallpaper_across_pages">Scroll wallpaper across pages</string>
-    <string name="lock_screen_orientation">Lock Screen Orientation</string>
     <string name="add_new_apps">Add New Apps</string>
     <string name="add_new_apps_to_home_screen">Add new apps to home screen</string>
     <string name="dock">Dock</string>
@@ -33,7 +32,6 @@
     <string name="show_or_hide_the_dock">Show or hide the dock</string>
     <string name="dock_grid_item">Dock Grid Item</string>
     <string name="dock_infinite_scroll">Dock Infinite Scroll</string>
-    <string name="prevent_rotation_when_device_orientation_changes">Prevent rotation when device orientation changes</string>
     <string name="show_page_indicator">Show Page Indicator</string>
     <string name="show_status_bar">Show Status Bar</string>
     <string name="show_the_status_bar_on_the_home_screen">Show the status bar on the home screen</string>
@@ -64,4 +62,7 @@
     <string name="transition_effect_flip">Flip</string>
     <string name="transition_effect_parallax">Parallax</string>
     <string name="transition_effect_stack">Stack</string>
+    <string name="screen_orientation" tools:ignore="MissingTranslation">Screen Orientation</string>
+    <string name="portrait" tools:ignore="MissingTranslation">Portrait</string>
+    <string name="landscape" tools:ignore="MissingTranslation">Landscape</string>
 </resources>

@@ -25,7 +25,6 @@
     <string name="seamless_loop_page_scroll">Rolagem de páginas em loop contínuo</string>
     <string name="wallpaper_scrolling">Rolagem do papel de parede</string>
     <string name="scroll_wallpaper_across_pages">Rolar o papel de parede entre as páginas</string>
-    <string name="lock_screen_orientation">Bloquear orientação da tela</string>
     <string name="add_new_apps">Adicionar novos aplicativos</string>
     <string name="add_new_apps_to_home_screen">Adicionar novos aplicativos à tela inicial</string>
     <string name="dock">Doca</string>
@@ -33,7 +32,6 @@
     <string name="show_or_hide_the_dock">Mostrar ou ocultar a doca</string>
     <string name="dock_grid_item">Item da grade da doca</string>
     <string name="dock_infinite_scroll">Rolagem infinita da doca</string>
-    <string name="prevent_rotation_when_device_orientation_changes">Impedir rotação quando a orientação do dispositivo mudar</string>
     <string name="show_page_indicator">Mostrar indicador de página</string>
     <string name="show_status_bar">Mostrar barra de status</string>
     <string name="show_the_status_bar_on_the_home_screen">Mostrar a barra de status na tela inicial</string>

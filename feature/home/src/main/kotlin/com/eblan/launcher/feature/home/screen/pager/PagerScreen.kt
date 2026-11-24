@@ -121,6 +121,7 @@ import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
 import com.eblan.launcher.domain.model.userdata.FolderSettings
 import com.eblan.launcher.domain.model.userdata.GestureSettings
 import com.eblan.launcher.domain.model.userdata.HomeSettings
+import com.eblan.launcher.domain.model.userdata.ScreenOrientation
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
 import com.eblan.launcher.feature.home.component.GridLayout
@@ -535,7 +536,7 @@ internal fun PagerScreen(
 
     val isVisibleFolderEblanApplicationInfos =
         pagerScreenState.isVisibleFolderEblanApplicationInfos &&
-            folderEblanApplicationInfoPopups.isNotEmpty()
+            folderEblanApplicationInfoEntries.isNotEmpty()
 
     val isVisibleFolderGridItemMenu =
         pagerScreenState.selectedGridItem != null &&
@@ -545,8 +546,7 @@ internal fun PagerScreen(
     val isResizing = pagerScreenState.isResizing && resizeGridItem != null
 
     val shouldLockScreenOrientation =
-        homeSettings.lockScreenOrientation ||
-            isVisibleGridItemMenu ||
+        isVisibleGridItemMenu ||
             isVisibleSettingsMenu ||
             isVisibleFolderGridItems ||
             isVisibleFolderGridItemMenu ||
@@ -804,43 +804,6 @@ internal fun PagerScreen(
         )
     }
 
-    LaunchedEffect(
-        key1 = folderPopups,
-        key2 = folderGridItemEntries,
-    ) {
-        folderGridItemEntries
-            .filterNot { currentFolderEntry -> folderPopups.containsKey(currentFolderEntry.id) }
-            .forEach { staleFolderEntry ->
-                pagerScreenState.closeFolderGridItem(
-                    folderEntry = staleFolderEntry,
-                    isFirstFolderGridItem = folderGridItemEntries.none { entry ->
-                        entry.id != staleFolderEntry.id && folderPopups.containsKey(entry.id)
-                    },
-                    onDeleteFolderGridItemPopupEntry = onDeleteFolderGridItemPopupEntry,
-                )
-            }
-    }
-
-    LaunchedEffect(
-        key1 = folderEblanApplicationInfoPopups,
-        key2 = folderEblanApplicationInfoEntries,
-    ) {
-        folderEblanApplicationInfoEntries
-            .filterNot { currentFolderEntry ->
-                folderEblanApplicationInfoPopups.containsKey(currentFolderEntry.id)
-            }
-            .forEach { staleFolderEntry ->
-                pagerScreenState.closeFolderEblanApplicationInfo(
-                    folderEntry = staleFolderEntry,
-                    isFirstFolderEblanApplicationInfo = folderEblanApplicationInfoEntries.none { entry ->
-                        entry.id != staleFolderEntry.id &&
-                            folderEblanApplicationInfoPopups.containsKey(entry.id)
-                    },
-                    onDeleteFolderPopupEntry = onDeleteFolderEblanApplicationInfoPopupEntry,
-                )
-            }
-    }
-
     DisposableEffect(
         key1 = activity,
         key2 = pagerScreenState,
@@ -856,17 +819,31 @@ internal fun PagerScreen(
         }
     }
 
-    DisposableEffect(key1 = shouldLockScreenOrientation) {
-        activity.requestedOrientation =
+    val requestedOrientation = when (homeSettings.screenOrientation) {
+        ScreenOrientation.System -> {
             if (shouldLockScreenOrientation) {
                 ActivityInfo.SCREEN_ORIENTATION_LOCKED
             } else {
                 ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
             }
+        }
+
+        ScreenOrientation.Portrait -> ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
+        ScreenOrientation.Landscape -> ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+    }
+
+    DisposableEffect(
+        key1 = activity,
+        key2 = requestedOrientation,
+    ) {
+        activity.requestedOrientation = requestedOrientation
 
         onDispose {
-            activity.requestedOrientation =
-                ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            if (!activity.isChangingConfigurations) {
+                activity.requestedOrientation =
+                    ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            }
         }
     }
 
