@@ -190,6 +190,7 @@ internal fun FolderApplicationInfoGridItemPopup(
     modifier: Modifier = Modifier,
     // Actions
     onDismissRequest: () -> Unit,
+    onDismissScreen: () -> Unit,
     onEditFolderApplicationInfo: (String) -> Unit,
     onEditApplicationInfo: (
         serialNumber: Long,
@@ -302,6 +303,7 @@ internal fun FolderApplicationInfoGridItemPopup(
                 onDismiss = {
                     transitionState.targetState = false
                 },
+                onDismissScreen = onDismissScreen,
                 onDragShortcutInfo = onDragShortcutInfo,
             )
         }
@@ -330,6 +332,7 @@ private fun FolderApplicationInfoGridItemPopupContent(
     onEditFolderApplicationInfo: (String) -> Unit,
     onDeleteFolderEblanApplicationInfoGridItems: (String) -> Unit,
     onDismiss: () -> Unit,
+    onDismissScreen: () -> Unit,
     onDragShortcutInfo: (
         gridItem: GridItem,
         imageBitmap: ImageBitmap,
@@ -429,6 +432,8 @@ private fun FolderApplicationInfoGridItemPopupContent(
                     )
 
                     onDismiss()
+
+                    onDismissScreen()
                 },
                 onDragShortcutInfo = onDragShortcutInfo,
             )

@@ -119,7 +119,7 @@ internal fun FolderApplicationScreen(
     dragIntOffset: IntOffset,
     showFolderEblanApplicationInfoGridItemMenu: Boolean,
     // Actions and Callbacks
-    onUpsertFolderEblanApplicationInfoPopupEntry: (FolderEntry) -> Unit,
+    onUpsertFolderEblanApplicationInfoEntry: (FolderEntry) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onMoveFolderEblanApplicationInfoGridItem: (
         folderEblanApplicationInfoPopup: FolderEblanApplicationInfoPopup,
@@ -150,6 +150,7 @@ internal fun FolderApplicationScreen(
         folderEntry: FolderEntry,
         isFirstFolderEblanApplicationInfoGridItem: Boolean,
     ) -> Unit,
+    onDismiss: () -> Unit,
     onTapFolderEblanApplicationInfoItem: (FolderEntry) -> Unit,
 ) {
     val previewFolderEblanApplicationInfo = folderEblanApplicationInfoPopups[folderEntry.id] ?: return
@@ -320,7 +321,7 @@ internal fun FolderApplicationScreen(
             isInProgress = isInProgress,
             // Callbacks
             onMoveFolderEblanApplicationInfoGridItem = onMoveFolderEblanApplicationInfoGridItem,
-            onUpsertFolderEblanApplicationInfoPopupEntry = onUpsertFolderEblanApplicationInfoPopupEntry,
+            onUpsertFolderEblanApplicationInfoEntry = onUpsertFolderEblanApplicationInfoEntry,
         )
     }
 
@@ -402,7 +403,7 @@ internal fun FolderApplicationScreen(
             isLastFolderEblanApplicationInfo &&
             !isInProgress,
     ) {
-        onUpsertFolderEblanApplicationInfoPopupEntry(folderEntry.copy(isCloseFolder = true))
+        onUpsertFolderEblanApplicationInfoEntry(folderEntry.copy(isCloseFolder = true))
     }
 
     HomeHandler(
@@ -410,7 +411,7 @@ internal fun FolderApplicationScreen(
             isLastFolderEblanApplicationInfo &&
             !isInProgress,
     ) {
-        onUpsertFolderEblanApplicationInfoPopupEntry(folderEntry.copy(isCloseFolder = true))
+        onUpsertFolderEblanApplicationInfoEntry(folderEntry.copy(isCloseFolder = true))
     }
 
     Box(
@@ -422,7 +423,7 @@ internal fun FolderApplicationScreen(
                         onPress = {
                             awaitRelease()
 
-                            onUpsertFolderEblanApplicationInfoPopupEntry(folderEntry.copy(isCloseFolder = true))
+                            onUpsertFolderEblanApplicationInfoEntry(folderEntry.copy(isCloseFolder = true))
                         },
                     )
                 }
@@ -517,6 +518,7 @@ internal fun FolderApplicationScreen(
                                 drag = drag,
                                 showFolderEblanApplicationInfoGridItemMenu = showFolderEblanApplicationInfoGridItemMenu,
                                 // Callbacks
+                                onDismiss = onDismiss,
                                 onLongPressFolderEblanApplicationInfoGridItem = onLongPressFolderEblanApplicationInfoGridItem,
                                 onDragFolderEblanApplicationInfoGridItem = onDragFolderEblanApplicationInfoGridItem,
                                 onTapFolderEblanApplicationInfoItem = onTapFolderEblanApplicationInfoItem,

@@ -39,6 +39,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -127,6 +128,7 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
     showFolderEblanApplicationInfoGridItemMenu: Boolean,
     modifier: Modifier = Modifier,
     // Callbacks
+    onDismiss: () -> Unit,
     onLongPressFolderEblanApplicationInfoGridItem: (
         folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
         imageBitmap: suspend () -> ImageBitmap,
@@ -258,6 +260,7 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
                 // Modifier
                 modifier = modifier,
                 // Callbacks
+                onDismiss = onDismiss,
                 onLongPressFolderEblanApplicationInfoGridItem = onLongPressFolderEblanApplicationInfoGridItem,
             )
         }
@@ -336,6 +339,7 @@ private fun InteractiveEblanApplicationInfoItem(
     // Modifier
     modifier: Modifier = Modifier,
     // Callbacks
+    onDismiss: () -> Unit,
     onLongPressFolderEblanApplicationInfoGridItem: (
         folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
         imageBitmap: suspend () -> ImageBitmap,
@@ -349,6 +353,7 @@ private fun InteractiveEblanApplicationInfoItem(
     val launcherApps = LocalLauncherApps.current
     val layoutDirection = LocalLayoutDirection.current
     val keyboardController = LocalSoftwareKeyboardController.current
+    val currentOnDismiss by rememberUpdatedState(onDismiss)
 
     val leftPadding = with(density) {
         paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
@@ -395,6 +400,8 @@ private fun InteractiveEblanApplicationInfoItem(
                                     componentName = data.componentName,
                                     sourceBounds = sourceBounds,
                                 )
+
+                                currentOnDismiss()
                             },
                             onLongPress = {
                                 keyboardController?.hide()

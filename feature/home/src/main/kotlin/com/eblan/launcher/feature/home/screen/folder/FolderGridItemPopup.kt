@@ -87,6 +87,7 @@ internal fun FolderGridItemPopup(
     // Actions
     onDeleteGridItem: (GridItem) -> Unit,
     onDismissRequest: () -> Unit,
+    onDismissScreen: () -> Unit,
     onEdit: (String) -> Unit,
     onWidgets: (EblanApplicationInfoGroup) -> Unit,
     onDragShortcutInfo: (
@@ -215,6 +216,10 @@ internal fun FolderGridItemPopup(
                         id = shortcutId,
                         sourceBounds = getSourceBounds(),
                     )
+
+                    transitionState.targetState = false
+
+                    onDismissScreen()
                 },
                 onWidgets = onWidgets,
                 onDragShortcutInfo = onDragShortcutInfo,

@@ -87,6 +87,7 @@ internal fun ApplicationInfoPopup(
     modifier: Modifier = Modifier,
     // Callbacks
     onDismissRequest: () -> Unit,
+    onDismissScreen: () -> Unit,
     onEditApplicationInfo: (
         serialNumber: Long,
         componentName: String,
@@ -260,6 +261,8 @@ internal fun ApplicationInfoPopup(
                     )
 
                     transitionState.targetState = false
+
+                    onDismissScreen()
                 },
                 onDragShortcutInfo = onDragShortcutInfo,
             )
@@ -281,6 +284,7 @@ internal fun PrivateApplicationInfoPopup(
     modifier: Modifier = Modifier,
     // Callbacks
     onDismissRequest: () -> Unit,
+    onDismissScreen: () -> Unit,
     onEditApplicationInfo: (
         serialNumber: Long,
         componentName: String,
@@ -428,6 +432,8 @@ internal fun PrivateApplicationInfoPopup(
                     )
 
                     transitionState.targetState = false
+
+                    onDismissScreen()
                 },
             )
         }
