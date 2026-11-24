@@ -28,7 +28,6 @@ import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.usecase.application.GetEblanApplicationInfosUseCase
 import com.eblan.launcher.domain.usecase.folder.AddEblanApplicationInfosToFolderUseCase
 import com.eblan.launcher.domain.usecase.folder.GetFolderEblanApplicationInfoPopupsUseCase
-import com.eblan.launcher.domain.usecase.folder.GetFolderEblanApplicationInfosByIdUseCase
 import com.eblan.launcher.domain.usecase.folder.UpdateFolderEblanApplicationInfoCustomIconUseCase
 import com.eblan.launcher.domain.usecase.iconpack.GetIconPackComponentsUseCase
 import com.eblan.launcher.feature.editfolderapplicationinfo.model.EditFolderApplicationInfoUiState
@@ -38,6 +37,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -52,7 +52,6 @@ internal class EditFolderApplicationInfoViewModel @Inject constructor(
     private val updateFolderEblanApplicationInfoCustomIconUseCase: UpdateFolderEblanApplicationInfoCustomIconUseCase,
     private val addEblanApplicationInfosToFolderUseCase: AddEblanApplicationInfosToFolderUseCase,
     getEblanApplicationInfosUseCase: GetEblanApplicationInfosUseCase,
-    getFolderEblanApplicationInfosByIdUseCase: GetFolderEblanApplicationInfosByIdUseCase,
     getFolderEblanApplicationInfoPopupsUseCase: GetFolderEblanApplicationInfoPopupsUseCase,
     getIconPackComponentsUseCase: GetIconPackComponentsUseCase,
 ) : ViewModel() {
@@ -89,11 +88,17 @@ internal class EditFolderApplicationInfoViewModel @Inject constructor(
     )
 
     val folderEblanApplicationInfos =
-        getFolderEblanApplicationInfosByIdUseCase(id = editFolderApplicationInfoRouteData.id).stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = emptyList(),
-        )
+        folderEblanApplicationInfoRepository.folderEblanApplicationInfosFlow
+            .map { folderEblanApplicationInfos ->
+                folderEblanApplicationInfos.filterNot { currentFolderEblanApplicationInfo ->
+                    currentFolderEblanApplicationInfo.id == editFolderApplicationInfoRouteData.id
+                }
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = emptyList(),
+            )
 
     val folderEblanApplicationInfoPopups =
         getFolderEblanApplicationInfoPopupsUseCase().stateIn(

@@ -73,6 +73,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -198,7 +201,26 @@ internal class HomeViewModel @Inject constructor(
     private var shortcutsChangedJob: Job? = null
 
     private val _folderGridItemEntries = MutableStateFlow<List<FolderEntry>>(emptyList())
-    val folderGridItemEntries = _folderGridItemEntries.asStateFlow()
+    val folderGridItemEntries = combine(
+        _folderGridItemEntries,
+        homeUiState.filterIsInstance<HomeUiState.Success>(),
+    ) { folderEntries, currentHomeUiState ->
+        val filteredFolderEntries = folderEntries.filter { folderEntry ->
+            folderEntry.id in currentHomeUiState.homeData.folderPopups
+        }
+
+        if (filteredFolderEntries.size != folderEntries.size) {
+            _folderGridItemEntries.update {
+                filteredFolderEntries
+            }
+        }
+
+        filteredFolderEntries
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = emptyList(),
+    )
 
     private val _resizeGridItem = MutableStateFlow<GridItem?>(null)
     val resizeGridItem = _resizeGridItem.asStateFlow()
@@ -209,8 +231,15 @@ internal class HomeViewModel @Inject constructor(
     private val _isVisibleOverlay = MutableStateFlow(false)
     val isVisibleOverlay = _isVisibleOverlay.asStateFlow()
 
-    val folderEblanApplicationInfoPopups =
+    private val _folderEblanApplicationInfoPopups =
         getFolderEblanApplicationInfoPopupsUseCase().stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = null,
+        )
+
+    val folderEblanApplicationInfoPopups =
+        _folderEblanApplicationInfoPopups.filterNotNull().stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = emptyMap(),
@@ -218,7 +247,26 @@ internal class HomeViewModel @Inject constructor(
 
     private val _folderEblanApplicationInfoEntries =
         MutableStateFlow<List<FolderEntry>>(emptyList())
-    val folderEblanApplicationInfoEntries = _folderEblanApplicationInfoEntries.asStateFlow()
+    val folderEblanApplicationInfoEntries = combine(
+        _folderEblanApplicationInfoEntries,
+        _folderEblanApplicationInfoPopups.filterNotNull(),
+    ) { folderEntries, currentFolderPopups ->
+        val filteredFolderEntries = folderEntries.filter { folderEntry ->
+            folderEntry.id in currentFolderPopups
+        }
+
+        if (filteredFolderEntries.size != folderEntries.size) {
+            _folderEblanApplicationInfoEntries.update {
+                filteredFolderEntries
+            }
+        }
+
+        filteredFolderEntries
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = emptyList(),
+    )
 
     private val _moveFolderEblanApplicationInfoGridItemResult =
         MutableStateFlow<MoveFolderEblanApplicationInfoGridItemResult?>(null)

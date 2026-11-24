@@ -536,7 +536,7 @@ internal fun PagerScreen(
 
     val isVisibleFolderEblanApplicationInfos =
         pagerScreenState.isVisibleFolderEblanApplicationInfos &&
-            folderEblanApplicationInfoPopups.isNotEmpty()
+            folderEblanApplicationInfoEntries.isNotEmpty()
 
     val isVisibleFolderGridItemMenu =
         pagerScreenState.selectedGridItem != null &&
@@ -802,43 +802,6 @@ internal fun PagerScreen(
                 homeSettings.dockInitialPage
             },
         )
-    }
-
-    LaunchedEffect(
-        key1 = folderPopups,
-        key2 = folderGridItemEntries,
-    ) {
-        folderGridItemEntries
-            .filterNot { currentFolderEntry -> folderPopups.containsKey(currentFolderEntry.id) }
-            .forEach { staleFolderEntry ->
-                pagerScreenState.closeFolderGridItem(
-                    folderEntry = staleFolderEntry,
-                    isFirstFolderGridItem = folderGridItemEntries.none { entry ->
-                        entry.id != staleFolderEntry.id && folderPopups.containsKey(entry.id)
-                    },
-                    onDeleteFolderGridItemPopupEntry = onDeleteFolderGridItemPopupEntry,
-                )
-            }
-    }
-
-    LaunchedEffect(
-        key1 = folderEblanApplicationInfoPopups,
-        key2 = folderEblanApplicationInfoEntries,
-    ) {
-        folderEblanApplicationInfoEntries
-            .filterNot { currentFolderEntry ->
-                folderEblanApplicationInfoPopups.containsKey(currentFolderEntry.id)
-            }
-            .forEach { staleFolderEntry ->
-                pagerScreenState.closeFolderEblanApplicationInfo(
-                    folderEntry = staleFolderEntry,
-                    isFirstFolderEblanApplicationInfo = folderEblanApplicationInfoEntries.none { entry ->
-                        entry.id != staleFolderEntry.id &&
-                            folderEblanApplicationInfoPopups.containsKey(entry.id)
-                    },
-                    onDeleteFolderPopupEntry = onDeleteFolderEblanApplicationInfoPopupEntry,
-                )
-            }
     }
 
     DisposableEffect(
