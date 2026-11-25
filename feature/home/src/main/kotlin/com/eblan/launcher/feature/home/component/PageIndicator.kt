@@ -44,11 +44,15 @@ import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.clipPath
+import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.constrainHeight
 import androidx.compose.ui.unit.constrainWidth
 import androidx.compose.ui.unit.dp
@@ -245,49 +249,51 @@ private fun LinePageIndicator(
             .width(trackWidth)
             .height(trackHeight),
     ) {
-        val cornerRadius = CornerRadius(size.height / 2f, size.height / 2f)
-        val trackPath = Path().apply {
-            addRoundRect(
-                RoundRect(
-                    rect = Rect(Offset.Zero, size),
-                    cornerRadius = cornerRadius,
-                ),
-            )
-        }
+        drawWithLayoutDirection {
+            val cornerRadius = CornerRadius(size.height / 2f, size.height / 2f)
+            val trackPath = Path().apply {
+                addRoundRect(
+                    RoundRect(
+                        rect = Rect(Offset.Zero, size),
+                        cornerRadius = cornerRadius,
+                    ),
+                )
+            }
 
-        drawRoundRect(
-            color = color.copy(alpha = 0.3f),
-            cornerRadius = cornerRadius,
-        )
-
-        val position = pagerPosition(
-            gridHorizontalPagerState = gridHorizontalPagerState,
-            pageCount = pageCount,
-            infiniteScroll = infiniteScroll,
-        )
-        val segmentWidth = size.width / pageCount
-        val normalizedPosition = if (infiniteScroll && pageCount > 1) {
-            ((position % pageCount) + pageCount) % pageCount
-        } else {
-            position.coerceIn(0f, (pageCount - 1).coerceAtLeast(0).toFloat())
-        }
-        val startX = normalizedPosition * segmentWidth
-
-        clipPath(trackPath) {
             drawRoundRect(
-                color = color,
-                topLeft = Offset(x = startX, y = 0f),
-                size = Size(width = segmentWidth, height = size.height),
+                color = color.copy(alpha = 0.3f),
                 cornerRadius = cornerRadius,
             )
 
-            if (infiniteScroll && startX + segmentWidth > size.width) {
+            val position = pagerPosition(
+                gridHorizontalPagerState = gridHorizontalPagerState,
+                pageCount = pageCount,
+                infiniteScroll = infiniteScroll,
+            )
+            val segmentWidth = size.width / pageCount
+            val normalizedPosition = if (infiniteScroll && pageCount > 1) {
+                ((position % pageCount) + pageCount) % pageCount
+            } else {
+                position.coerceIn(0f, (pageCount - 1).coerceAtLeast(0).toFloat())
+            }
+            val startX = normalizedPosition * segmentWidth
+
+            clipPath(trackPath) {
                 drawRoundRect(
                     color = color,
-                    topLeft = Offset(x = startX - size.width, y = 0f),
+                    topLeft = Offset(x = startX, y = 0f),
                     size = Size(width = segmentWidth, height = size.height),
                     cornerRadius = cornerRadius,
                 )
+
+                if (infiniteScroll && startX + segmentWidth > size.width) {
+                    drawRoundRect(
+                        color = color,
+                        topLeft = Offset(x = startX - size.width, y = 0f),
+                        size = Size(width = segmentWidth, height = size.height),
+                        cornerRadius = cornerRadius,
+                    )
+                }
             }
         }
     }
@@ -311,46 +317,60 @@ private fun WormPageIndicator(
             .width(totalWidth)
             .height(dotDiameter),
     ) {
-        val radius = dotDiameter.toPx() / 2f
-        val stepPx = step.toPx()
-        val centerY = size.height / 2f
+        drawWithLayoutDirection {
+            val radius = dotDiameter.toPx() / 2f
+            val stepPx = step.toPx()
+            val centerY = size.height / 2f
 
-        repeat(pageCount) { index ->
-            drawCircle(
-                color = color.copy(alpha = 0.4f),
-                radius = radius,
-                center = Offset(x = radius + index * stepPx, y = centerY),
-            )
-        }
+            repeat(pageCount) { index ->
+                drawCircle(
+                    color = color.copy(alpha = 0.4f),
+                    radius = radius,
+                    center = Offset(x = radius + index * stepPx, y = centerY),
+                )
+            }
 
-        val (fromPage, toPage, fraction) = resolveTransition(
-            pagePosition = pagerPosition(
-                gridHorizontalPagerState = gridHorizontalPagerState,
+            val (fromPage, toPage, fraction, isWrapping) = resolveTransition(
+                pagePosition = pagerPosition(
+                    gridHorizontalPagerState = gridHorizontalPagerState,
+                    pageCount = pageCount,
+                    infiniteScroll = infiniteScroll,
+                ),
                 pageCount = pageCount,
                 infiniteScroll = infiniteScroll,
-            ),
-            pageCount = pageCount,
-            infiniteScroll = infiniteScroll,
-        )
+            )
 
-        val fromX = radius + fromPage * stepPx
-        val toX = radius + toPage * stepPx
+            val fromX = radius + fromPage * stepPx
+            val toX = radius + toPage * stepPx
 
-        val headProgress = (fraction * 2f).coerceIn(0f, 1f)
-        val tailProgress = ((fraction - 0.5f) * 2f).coerceIn(0f, 1f)
+            val headProgress = (fraction * 2f).coerceIn(0f, 1f)
+            val tailProgress = ((fraction - 0.5f) * 2f).coerceIn(0f, 1f)
 
-        val headX = lerp(fromX, toX, headProgress)
-        val tailX = lerp(fromX, toX, tailProgress)
+            val headX = lerp(fromX, toX, headProgress)
+            val tailX = lerp(fromX, toX, tailProgress)
 
-        val left = min(headX, tailX) - radius
-        val right = max(headX, tailX) + radius
+            val left = min(headX, tailX) - radius
+            val right = max(headX, tailX) + radius
+            val cycleWidth = pageCount * stepPx
 
-        drawRoundRect(
-            color = color,
-            topLeft = Offset(x = left, y = 0f),
-            size = Size(width = right - left, height = size.height),
-            cornerRadius = CornerRadius(radius, radius),
-        )
+            clipRect {
+                drawRoundRect(
+                    color = color,
+                    topLeft = Offset(x = left, y = 0f),
+                    size = Size(width = right - left, height = size.height),
+                    cornerRadius = CornerRadius(radius, radius),
+                )
+
+                if (isWrapping) {
+                    drawRoundRect(
+                        color = color,
+                        topLeft = Offset(x = left - cycleWidth, y = 0f),
+                        size = Size(width = right - left, height = size.height),
+                        cornerRadius = CornerRadius(radius, radius),
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -374,42 +394,55 @@ private fun JumpingDotPageIndicator(
             .width(totalWidth)
             .height(totalHeight),
     ) {
-        val baseRadius = dotDiameter.toPx() / 2f
-        val stepPx = step.toPx()
-        val startOffsetX = baseRadius + 2.dp.toPx()
-        val baselineY = size.height - baseRadius - 2.dp.toPx()
+        drawWithLayoutDirection {
+            val baseRadius = dotDiameter.toPx() / 2f
+            val stepPx = step.toPx()
+            val startOffsetX = baseRadius + 2.dp.toPx()
+            val baselineY = size.height - baseRadius - 2.dp.toPx()
 
-        repeat(pageCount) { index ->
-            drawCircle(
-                color = color.copy(alpha = 0.4f),
-                radius = baseRadius,
-                center = Offset(x = startOffsetX + index * stepPx, y = baselineY),
-            )
-        }
+            repeat(pageCount) { index ->
+                drawCircle(
+                    color = color.copy(alpha = 0.4f),
+                    radius = baseRadius,
+                    center = Offset(x = startOffsetX + index * stepPx, y = baselineY),
+                )
+            }
 
-        val transition = resolveTransition(
-            pagePosition = pagerPosition(
-                gridHorizontalPagerState = gridHorizontalPagerState,
+            val (fromPage, toPage, fraction, isWrapping) = resolveTransition(
+                pagePosition = pagerPosition(
+                    gridHorizontalPagerState = gridHorizontalPagerState,
+                    pageCount = pageCount,
+                    infiniteScroll = infiniteScroll,
+                ),
                 pageCount = pageCount,
                 infiniteScroll = infiniteScroll,
-            ),
-            pageCount = pageCount,
-            infiniteScroll = infiniteScroll,
-        )
+            )
 
-        val fromX = startOffsetX + transition.fromPage * stepPx
-        val toX = startOffsetX + transition.toPage * stepPx
-        val arc = sin(transition.fraction * PI).toFloat()
+            val fromX = startOffsetX + fromPage * stepPx
+            val toX = startOffsetX + toPage * stepPx
+            val arc = sin(fraction * PI).toFloat()
 
-        val activeX = lerp(fromX, toX, transition.fraction)
-        val activeY = baselineY - arc * jumpHeight.toPx()
-        val activeRadius = baseRadius * (1f + 0.15f * arc)
+            val activeX = lerp(fromX, toX, fraction)
+            val activeY = baselineY - arc * jumpHeight.toPx()
+            val activeRadius = baseRadius * (1f + 0.15f * arc)
+            val cycleWidth = pageCount * stepPx
 
-        drawCircle(
-            color = color,
-            radius = activeRadius,
-            center = Offset(x = activeX, y = activeY),
-        )
+            clipRect {
+                drawCircle(
+                    color = color,
+                    radius = activeRadius,
+                    center = Offset(x = activeX, y = activeY),
+                )
+
+                if (isWrapping) {
+                    drawCircle(
+                        color = color,
+                        radius = activeRadius,
+                        center = Offset(x = activeX - cycleWidth, y = activeY),
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -433,40 +466,42 @@ private fun EqualizerPageIndicator(
             .width(totalWidth)
             .height(maxBarHeight),
     ) {
-        val barWidthPx = barWidth.toPx()
-        val stepPx = step.toPx()
-        val minHeightPx = minBarHeight.toPx()
-        val maxHeightPx = maxBarHeight.toPx()
-        val cornerRadius = CornerRadius(barWidthPx / 2f, barWidthPx / 2f)
+        drawWithLayoutDirection {
+            val barWidthPx = barWidth.toPx()
+            val stepPx = step.toPx()
+            val minHeightPx = minBarHeight.toPx()
+            val maxHeightPx = maxBarHeight.toPx()
+            val cornerRadius = CornerRadius(barWidthPx / 2f, barWidthPx / 2f)
 
-        val position = pagerPosition(
-            gridHorizontalPagerState = gridHorizontalPagerState,
-            pageCount = pageCount,
-            infiniteScroll = infiniteScroll,
-        )
-
-        repeat(pageCount) { index ->
-            val rawDistance = rawPageDistance(
-                pagePosition = position,
-                index = index,
+            val position = pagerPosition(
+                gridHorizontalPagerState = gridHorizontalPagerState,
                 pageCount = pageCount,
                 infiniteScroll = infiniteScroll,
             )
-            val rippleFraction = (1f - abs(rawDistance) / 1.4f).coerceIn(0f, 1f)
-            val heightPx = lerp(minHeightPx, maxHeightPx, rippleFraction)
-            val topY = (size.height - heightPx) / 2f
-            val barColor = lerp(
-                start = color.copy(alpha = 0.4f),
-                stop = color,
-                fraction = (1f - abs(rawDistance)).coerceIn(0f, 1f),
-            )
 
-            drawRoundRect(
-                color = barColor,
-                topLeft = Offset(x = index * stepPx, y = topY),
-                size = Size(width = barWidthPx, height = heightPx),
-                cornerRadius = cornerRadius,
-            )
+            repeat(pageCount) { index ->
+                val rawDistance = rawPageDistance(
+                    pagePosition = position,
+                    index = index,
+                    pageCount = pageCount,
+                    infiniteScroll = infiniteScroll,
+                )
+                val rippleFraction = (1f - abs(rawDistance) / 1.4f).coerceIn(0f, 1f)
+                val heightPx = lerp(minHeightPx, maxHeightPx, rippleFraction)
+                val topY = (size.height - heightPx) / 2f
+                val barColor = lerp(
+                    start = color.copy(alpha = 0.4f),
+                    stop = color,
+                    fraction = (1f - abs(rawDistance)).coerceIn(0f, 1f),
+                )
+
+                drawRoundRect(
+                    color = barColor,
+                    topLeft = Offset(x = index * stepPx, y = topY),
+                    size = Size(width = barWidthPx, height = heightPx),
+                    cornerRadius = cornerRadius,
+                )
+            }
         }
     }
 }
@@ -487,44 +522,46 @@ private fun DiamondsPageIndicator(
             .width(totalWidth)
             .height(slotSize),
     ) {
-        val slotPx = slotSize.toPx()
-        val centerY = size.height / 2f
-        val minSide = 5.5.dp.toPx()
-        val maxSide = 9.dp.toPx()
+        drawWithLayoutDirection {
+            val slotPx = slotSize.toPx()
+            val centerY = size.height / 2f
+            val minSide = 5.5.dp.toPx()
+            val maxSide = 9.dp.toPx()
 
-        val position = pagerPosition(
-            gridHorizontalPagerState = gridHorizontalPagerState,
-            pageCount = pageCount,
-            infiniteScroll = infiniteScroll,
-        )
-
-        repeat(pageCount) { index ->
-            val distance = pageDistance(
-                pagePosition = position,
-                index = index,
+            val position = pagerPosition(
+                gridHorizontalPagerState = gridHorizontalPagerState,
                 pageCount = pageCount,
                 infiniteScroll = infiniteScroll,
             )
-            val activeFraction = 1f - abs(distance).coerceIn(0f, 1f)
-            val side = lerp(minSide, maxSide, activeFraction)
-            val centerX = slotPx * index + slotPx / 2f
-            val rotationDegrees = 45f + activeFraction * 90f
-            val diamondColor = lerp(
-                start = color.copy(alpha = 0.45f),
-                stop = color,
-                fraction = activeFraction,
-            )
 
-            rotate(
-                degrees = rotationDegrees,
-                pivot = Offset(x = centerX, y = centerY),
-            ) {
-                drawRoundRect(
-                    color = diamondColor,
-                    topLeft = Offset(x = centerX - side / 2f, y = centerY - side / 2f),
-                    size = Size(width = side, height = side),
-                    cornerRadius = CornerRadius(1.5.dp.toPx(), 1.5.dp.toPx()),
+            repeat(pageCount) { index ->
+                val distance = pageDistance(
+                    pagePosition = position,
+                    index = index,
+                    pageCount = pageCount,
+                    infiniteScroll = infiniteScroll,
                 )
+                val activeFraction = 1f - abs(distance).coerceIn(0f, 1f)
+                val side = lerp(minSide, maxSide, activeFraction)
+                val centerX = slotPx * index + slotPx / 2f
+                val rotationDegrees = 45f + activeFraction * 90f
+                val diamondColor = lerp(
+                    start = color.copy(alpha = 0.45f),
+                    stop = color,
+                    fraction = activeFraction,
+                )
+
+                rotate(
+                    degrees = rotationDegrees,
+                    pivot = Offset(x = centerX, y = centerY),
+                ) {
+                    drawRoundRect(
+                        color = diamondColor,
+                        topLeft = Offset(x = centerX - side / 2f, y = centerY - side / 2f),
+                        size = Size(width = side, height = side),
+                        cornerRadius = CornerRadius(1.5.dp.toPx(), 1.5.dp.toPx()),
+                    )
+                }
             }
         }
     }
@@ -565,8 +602,8 @@ private fun NumbersPageIndicator(
 }
 
 private class PacManDirectionState {
-    var lastX: Float = Float.NaN
-    var facingRight: Boolean = true
+    var lastPosition: Float = Float.NaN
+    var facingForward: Boolean = true
 }
 
 @Composable
@@ -588,53 +625,94 @@ private fun PacManPageIndicator(
             .width(totalWidth)
             .height(pacManDiameter),
     ) {
-        val pacRadius = pacManDiameter.toPx() / 2f
-        val pelletRadius = pelletDiameter.toPx() / 2f
-        val stepPx = step.toPx()
-        val centerY = size.height / 2f
+        drawWithLayoutDirection {
+            val pacRadius = pacManDiameter.toPx() / 2f
+            val pelletRadius = pelletDiameter.toPx() / 2f
+            val stepPx = step.toPx()
+            val centerY = size.height / 2f
+            val cycleWidth = pageCount * stepPx
 
-        val transition = resolveTransition(
-            pagePosition = pagerPosition(
-                gridHorizontalPagerState = gridHorizontalPagerState,
+            val rawPosition = gridHorizontalPagerState.currentPage +
+                gridHorizontalPagerState.currentPageOffsetFraction
+
+            if (!directionState.lastPosition.isNaN() &&
+                abs(rawPosition - directionState.lastPosition) > 0.005f
+            ) {
+                directionState.facingForward = rawPosition > directionState.lastPosition
+            }
+            directionState.lastPosition = rawPosition
+
+            val (fromPage, toPage, fraction, isWrapping) = resolveTransition(
+                pagePosition = pagerPosition(
+                    gridHorizontalPagerState = gridHorizontalPagerState,
+                    pageCount = pageCount,
+                    infiniteScroll = infiniteScroll,
+                ),
                 pageCount = pageCount,
                 infiniteScroll = infiniteScroll,
-            ),
-            pageCount = pageCount,
-            infiniteScroll = infiniteScroll,
-        )
+            )
 
-        val fromX = pacRadius + transition.fromPage * stepPx
-        val toX = pacRadius + transition.toPage * stepPx
-        val pacX = lerp(fromX, toX, transition.fraction)
+            val fromX = pacRadius + fromPage * stepPx
+            val toX = pacRadius + toPage * stepPx
+            val pacX = lerp(fromX, toX, fraction)
+            val wrappedPacX = pacX - cycleWidth
 
-        if (!directionState.lastX.isNaN() && abs(pacX - directionState.lastX) > 0.5f) {
-            directionState.facingRight = pacX > directionState.lastX
-        }
-        directionState.lastX = pacX
+            repeat(pageCount) { index ->
+                val pelletX = pacRadius + index * stepPx
+                val eatenByPrimary = abs(pelletX - pacX) <= pacRadius * 0.6f
+                val eatenByWrapped = isWrapping && abs(pelletX - wrappedPacX) <= pacRadius * 0.6f
+                if (!eatenByPrimary && !eatenByWrapped) {
+                    drawCircle(
+                        color = color.copy(alpha = 0.45f),
+                        radius = pelletRadius,
+                        center = Offset(x = pelletX, y = centerY),
+                    )
+                }
+            }
 
-        repeat(pageCount) { index ->
-            val pelletX = pacRadius + index * stepPx
-            if (abs(pelletX - pacX) > pacRadius * 0.6f) {
-                drawCircle(
-                    color = color.copy(alpha = 0.45f),
-                    radius = pelletRadius,
-                    center = Offset(x = pelletX, y = centerY),
+            val chomp = abs(sin(fraction * 2f * PI)).toFloat()
+            val mouthHalfAngle = lerp(18f, 46f, chomp)
+            val baseAngle = if (directionState.facingForward) 0f else 180f
+            val pacSize = Size(width = pacRadius * 2f, height = pacRadius * 2f)
+
+            clipRect {
+                drawArc(
+                    color = color,
+                    startAngle = baseAngle + mouthHalfAngle,
+                    sweepAngle = 360f - 2f * mouthHalfAngle,
+                    useCenter = true,
+                    topLeft = Offset(x = pacX - pacRadius, y = centerY - pacRadius),
+                    size = pacSize,
                 )
+
+                if (isWrapping) {
+                    drawArc(
+                        color = color,
+                        startAngle = baseAngle + mouthHalfAngle,
+                        sweepAngle = 360f - 2f * mouthHalfAngle,
+                        useCenter = true,
+                        topLeft = Offset(x = wrappedPacX - pacRadius, y = centerY - pacRadius),
+                        size = pacSize,
+                    )
+                }
             }
         }
+    }
+}
 
-        val chomp = abs(sin(transition.fraction * 2f * PI)).toFloat()
-        val mouthHalfAngle = lerp(18f, 46f, chomp)
-        val baseAngle = if (directionState.facingRight) 0f else 180f
-
-        drawArc(
-            color = color,
-            startAngle = baseAngle + mouthHalfAngle,
-            sweepAngle = 360f - 2f * mouthHalfAngle,
-            useCenter = true,
-            topLeft = Offset(x = pacX - pacRadius, y = centerY - pacRadius),
-            size = Size(width = pacRadius * 2f, height = pacRadius * 2f),
-        )
+private inline fun DrawScope.drawWithLayoutDirection(
+    block: DrawScope.() -> Unit,
+) {
+    if (layoutDirection == LayoutDirection.Rtl) {
+        scale(
+            scaleX = -1f,
+            scaleY = 1f,
+            pivot = Offset(x = size.width / 2f, y = size.height / 2f),
+        ) {
+            block()
+        }
+    } else {
+        block()
     }
 }
 
@@ -642,6 +720,7 @@ private data class PageTransition(
     val fromPage: Int,
     val toPage: Int,
     val fraction: Float,
+    val isWrapping: Boolean,
 )
 
 private fun pagerPosition(
@@ -690,20 +769,30 @@ private fun resolveTransition(
     infiniteScroll: Boolean,
 ): PageTransition {
     if (pageCount <= 1) {
-        return PageTransition(fromPage = 0, toPage = 0, fraction = 0f)
+        return PageTransition(fromPage = 0, toPage = 0, fraction = 0f, isWrapping = false)
     }
 
     return if (infiniteScroll) {
         val base = floor(pagePosition).toInt()
         val fraction = (pagePosition - base).coerceIn(0f, 1f)
         val fromPage = base.mod(pageCount)
-        val toPage = (base + 1).mod(pageCount)
-        PageTransition(fromPage = fromPage, toPage = toPage, fraction = fraction)
+        val toPage = fromPage + 1
+        PageTransition(
+            fromPage = fromPage,
+            toPage = toPage,
+            fraction = fraction,
+            isWrapping = toPage >= pageCount,
+        )
     } else {
         val clamped = pagePosition.coerceIn(0f, (pageCount - 1).toFloat())
         val fromPage = floor(clamped).toInt().coerceIn(0, pageCount - 1)
         val toPage = (fromPage + 1).coerceAtMost(pageCount - 1)
         val fraction = (clamped - fromPage).coerceIn(0f, 1f)
-        PageTransition(fromPage = fromPage, toPage = toPage, fraction = fraction)
+        PageTransition(
+            fromPage = fromPage,
+            toPage = toPage,
+            fraction = fraction,
+            isWrapping = false,
+        )
     }
 }

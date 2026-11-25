@@ -454,13 +454,17 @@ internal class DefaultImageSerializer @Inject constructor(
         val size = minOf(bounds.width(), bounds.height())
         val centerX = bounds.centerX()
         val centerY = bounds.centerY()
-        addCircle(centerX - size * 0.04f, bounds.top + size * 0.31f, size * 0.26f, Path.Direction.CW)
-        addCircle(centerX + size * 0.19f, bounds.top + size * 0.37f, size * 0.21f, Path.Direction.CW)
-        addCircle(bounds.right - size * 0.22f, centerY + size * 0.1f, size * 0.22f, Path.Direction.CW)
-        addCircle(centerX + size * 0.14f, bounds.bottom - size * 0.24f, size * 0.22f, Path.Direction.CW)
-        addCircle(centerX - size * 0.14f, bounds.bottom - size * 0.24f, size * 0.22f, Path.Direction.CW)
-        addCircle(bounds.left + size * 0.23f, centerY + size * 0.08f, size * 0.23f, Path.Direction.CW)
-        addCircle(bounds.left + size * 0.26f, bounds.top + size * 0.4f, size * 0.2f, Path.Direction.CW)
+        val squareLeft = centerX - size / 2f
+        val squareRight = centerX + size / 2f
+        val squareTop = centerY - size / 2f
+        val squareBottom = centerY + size / 2f
+        addCircle(centerX - size * 0.04f, squareTop + size * 0.31f, size * 0.26f, Path.Direction.CW)
+        addCircle(centerX + size * 0.19f, squareTop + size * 0.37f, size * 0.21f, Path.Direction.CW)
+        addCircle(squareRight - size * 0.22f, centerY + size * 0.1f, size * 0.22f, Path.Direction.CW)
+        addCircle(centerX + size * 0.14f, squareBottom - size * 0.24f, size * 0.22f, Path.Direction.CW)
+        addCircle(centerX - size * 0.14f, squareBottom - size * 0.24f, size * 0.22f, Path.Direction.CW)
+        addCircle(squareLeft + size * 0.23f, centerY + size * 0.08f, size * 0.23f, Path.Direction.CW)
+        addCircle(squareLeft + size * 0.26f, squareTop + size * 0.4f, size * 0.2f, Path.Direction.CW)
         addCircle(centerX, centerY + size * 0.04f, size * 0.3f, Path.Direction.CW)
     }
 
