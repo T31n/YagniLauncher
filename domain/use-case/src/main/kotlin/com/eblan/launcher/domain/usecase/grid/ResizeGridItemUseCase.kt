@@ -61,6 +61,8 @@ class ResizeGridItemUseCase @Inject constructor(
                     currentGridItem.id == resizingGridItem.id
                 }
 
+            if (index == -1) return@withTransaction resizingGridItem
+
             val oldGridItem = gridItems[index]
 
             gridItems[index] = resizingGridItem

@@ -355,7 +355,15 @@ private fun InteractiveEblanApplicationInfoItem(
     val launcherApps = LocalLauncherApps.current
     val layoutDirection = LocalLayoutDirection.current
     val keyboardController = LocalSoftwareKeyboardController.current
+    val currentFolderEblanApplicationInfoGridItem by rememberUpdatedState(
+        folderEblanApplicationInfoGridItem,
+    )
+    val currentData by rememberUpdatedState(data)
+    val currentSharedElementKey by rememberUpdatedState(sharedElementKey)
     val currentOnDismiss by rememberUpdatedState(onDismiss)
+    val currentOnLongPressFolderEblanApplicationInfoGridItem by rememberUpdatedState(
+        onLongPressFolderEblanApplicationInfoGridItem,
+    )
 
     val leftPadding = with(density) {
         paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
@@ -380,6 +388,8 @@ private fun InteractiveEblanApplicationInfoItem(
         top + intSize.height,
     )
 
+    val currentSourceBounds by rememberUpdatedState(sourceBounds)
+
     val graphicsLayer = rememberGraphicsLayer()
 
     Column(
@@ -401,9 +411,9 @@ private fun InteractiveEblanApplicationInfoItem(
                         detectTapGestures(
                             onTap = {
                                 launcherApps.startMainActivity(
-                                    serialNumber = data.serialNumber,
-                                    componentName = data.componentName,
-                                    sourceBounds = sourceBounds,
+                                    serialNumber = currentData.serialNumber,
+                                    componentName = currentData.componentName,
+                                    sourceBounds = currentSourceBounds,
                                 )
 
                                 currentOnDismiss()
@@ -411,12 +421,12 @@ private fun InteractiveEblanApplicationInfoItem(
                             onLongPress = {
                                 keyboardController?.hide()
 
-                                onLongPressFolderEblanApplicationInfoGridItem(
-                                    folderEblanApplicationInfoGridItem,
+                                currentOnLongPressFolderEblanApplicationInfoGridItem(
+                                    currentFolderEblanApplicationInfoGridItem,
                                     { graphicsLayer.toImageBitmap() },
                                     intOffset,
                                     intSize,
-                                    sharedElementKey,
+                                    currentSharedElementKey,
                                 )
                             },
                         )
@@ -530,6 +540,16 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
     onTapFolderEblanApplicationInfoItem: (FolderEntry) -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
+    val currentFolderEblanApplicationInfoGridItem by rememberUpdatedState(
+        folderEblanApplicationInfoGridItem,
+    )
+    val currentSharedElementKey by rememberUpdatedState(sharedElementKey)
+    val currentOnTapFolderEblanApplicationInfoItem by rememberUpdatedState(
+        onTapFolderEblanApplicationInfoItem,
+    )
+    val currentOnLongPressFolderEblanApplicationInfoGridItem by rememberUpdatedState(
+        onLongPressFolderEblanApplicationInfoGridItem,
+    )
 
     val maxLines = if (gridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
 
@@ -559,9 +579,9 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
                     pointerInput(key1 = Unit) {
                         detectTapGestures(
                             onTap = {
-                                onTapFolderEblanApplicationInfoItem(
+                                currentOnTapFolderEblanApplicationInfoItem(
                                     FolderEntry(
-                                        id = folderEblanApplicationInfoGridItem.id,
+                                        id = currentFolderEblanApplicationInfoGridItem.id,
                                         x = intOffset.x,
                                         y = intOffset.y,
                                         width = intSize.width,
@@ -573,12 +593,12 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
                             onLongPress = {
                                 keyboardController?.hide()
 
-                                onLongPressFolderEblanApplicationInfoGridItem(
-                                    folderEblanApplicationInfoGridItem,
+                                currentOnLongPressFolderEblanApplicationInfoGridItem(
+                                    currentFolderEblanApplicationInfoGridItem,
                                     { graphicsLayer.toImageBitmap() },
                                     intOffset,
                                     intSize,
-                                    sharedElementKey,
+                                    currentSharedElementKey,
                                 )
                             },
                         )

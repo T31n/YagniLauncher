@@ -145,8 +145,6 @@ class MainActivity : AppCompatActivity() {
                 val applicationTheme by produceApplicationThemeState(
                     theme = generalSettings?.theme,
                     systemBarsTheme = generalSettings?.systemBarsTheme,
-                    colorSource = generalSettings?.colorSource,
-                    customSeedColor = generalSettings?.customSeedColor,
                 )
 
                 val colorScheme by produceColorSchemeState(
@@ -179,7 +177,11 @@ class MainActivity : AppCompatActivity() {
         colorScheme: ColorScheme?,
     ) {
         when {
-            systemBarsTheme == null || colorScheme == null -> enableEdgeToEdge()
+            systemBarsTheme == null || colorScheme == null -> {
+                SideEffect {
+                    enableEdgeToEdge()
+                }
+            }
 
             else -> {
                 val colorSchemeResolver = LocalMaterialColorSchemeResolver.current

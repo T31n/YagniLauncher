@@ -66,6 +66,8 @@ internal suspend fun handleDropGridItem(
     // Grid and Layout Configuration
     columns: Int,
     rows: Int,
+    dockColumns: Int,
+    dockRows: Int,
     screenHeight: Int,
     screenWidth: Int,
     dockHeight: Int,
@@ -119,6 +121,16 @@ internal suspend fun handleDropGridItem(
         associate = currentMoveGridItemResult.movingGridItem.associate,
     )
 
+    val targetColumns = when (currentMoveGridItemResult.movingGridItem.associate) {
+        Associate.Grid -> columns
+        Associate.Dock -> dockColumns
+    }
+
+    val targetRows = when (currentMoveGridItemResult.movingGridItem.associate) {
+        Associate.Grid -> rows
+        Associate.Dock -> dockRows
+    }
+
     val isLongPress = isVisibleOverlay && !isDragging
 
     val isMoveGridItemResultFailed = drag == Drag.Cancel ||
@@ -168,8 +180,8 @@ internal suspend fun handleDropGridItem(
                 androidLauncherAppsWrapper = androidLauncherAppsWrapper,
                 androidUserManagerWrapper = androidUserManagerWrapper,
                 // Grid Dimensions
-                columns = columns,
-                rows = rows,
+                columns = targetColumns,
+                rows = targetRows,
                 gridSize = gridSize,
                 // Drag and Overlay State
                 isDragging = isDragging,
@@ -216,8 +228,8 @@ internal suspend fun handleDropGridItem(
                 context = context,
                 density = density,
                 // Grid Dimensions
-                columns = columns,
-                rows = rows,
+                columns = targetColumns,
+                rows = targetRows,
                 gridSize = gridSize,
                 // Current State
                 currentGridItemSource = currentGridItemSource,
@@ -251,8 +263,10 @@ internal fun handleAppWidgetLauncherResult(
     lastAppWidgetId: Int,
     // Screen and Grid Configuration
     columns: Int,
-    density: Density,
     rows: Int,
+    dockColumns: Int,
+    dockRows: Int,
+    density: Density,
     screenWidth: Int,
     screenHeight: Int,
     paddingValues: PaddingValues,
@@ -266,6 +280,16 @@ internal fun handleAppWidgetLauncherResult(
     val movingGridItem = requireNotNull(moveGridItemResult?.movingGridItem)
 
     val data = movingGridItem.data as GridItemData.Widget
+
+    val targetColumns = when (movingGridItem.associate) {
+        Associate.Grid -> columns
+        Associate.Dock -> dockColumns
+    }
+
+    val targetRows = when (movingGridItem.associate) {
+        Associate.Grid -> rows
+        Associate.Dock -> dockRows
+    }
 
     val gridSize = calculateGridSize(
         // Screen Dimensions
@@ -298,8 +322,8 @@ internal fun handleAppWidgetLauncherResult(
             width = with(density) { data.minWidth.dp.roundToPx() },
             height = with(density) { data.minHeight.dp.roundToPx() },
             density = density,
-            columns = columns,
-            rows = rows,
+            columns = targetColumns,
+            rows = targetRows,
             gridWidth = gridSize.width,
             gridHeight = gridSize.height,
             startColumn = movingGridItem.startColumn,

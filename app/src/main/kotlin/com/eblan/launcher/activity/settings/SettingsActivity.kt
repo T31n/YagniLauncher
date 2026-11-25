@@ -106,8 +106,6 @@ class SettingsActivity : AppCompatActivity() {
                 val applicationTheme by produceApplicationThemeState(
                     theme = generalSettings?.theme,
                     systemBarsTheme = generalSettings?.systemBarsTheme,
-                    colorSource = generalSettings?.colorSource,
-                    customSeedColor = generalSettings?.customSeedColor,
                 )
 
                 val colorScheme by produceColorSchemeState(

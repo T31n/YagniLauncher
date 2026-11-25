@@ -123,7 +123,7 @@ internal fun EditGridPageScreen(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
 ) {
-    val pageItems = requireNotNull(contract.pageItems.collectAsStateWithLifecycle().value)
+    val pageItems = contract.pageItems.collectAsStateWithLifecycle().value ?: return
 
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
@@ -374,7 +374,7 @@ internal fun EditDockGridPageScreen(
     paddingValues: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
-    val pageItems = requireNotNull(contract.pageItems.collectAsStateWithLifecycle().value)
+    val pageItems = contract.pageItems.collectAsStateWithLifecycle().value ?: return
 
     val scope = rememberCoroutineScope()
 

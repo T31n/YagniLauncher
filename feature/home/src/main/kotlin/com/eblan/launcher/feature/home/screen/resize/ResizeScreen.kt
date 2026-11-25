@@ -55,6 +55,7 @@ internal fun ResizeScreen(
     gridItemSettings: GridItemSettings,
     // Appearance
     textColor: TextColor,
+    dockTextColor: TextColor,
     lockMovement: Boolean,
     // Callbacks
     onUpdateIsResizing: (Boolean) -> Unit,
@@ -167,7 +168,7 @@ internal fun ResizeScreen(
                     gridItemSettings = dockGridItemSettings,
                     // Behavior and Appearance
                     lockMovement = lockMovement,
-                    textColor = textColor,
+                    textColor = dockTextColor,
                     // Callbacks
                     onResizeGridItem = contract::resizeGridItem,
                 )

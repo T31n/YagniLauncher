@@ -180,6 +180,16 @@ private fun Success(
         theme = homeData.userData.generalSettings.theme,
     )
 
+    val dockTextColor by produceHomeTextColorState(
+        configuredTextColor = homeData.userData.homeSettings.dockGridItemSettings.textColor,
+        theme = homeData.userData.generalSettings.theme,
+    )
+
+    val appDrawerTextColor by produceHomeTextColorState(
+        configuredTextColor = homeData.userData.appDrawerSettings.gridItemSettings.textColor,
+        theme = homeData.userData.generalSettings.theme,
+    )
+
     DisposableEffect(
         key1 = activity,
         key2 = homeSettings.showStatusBar,
@@ -228,6 +238,8 @@ private fun Success(
                     gestureSettings = homeData.userData.gestureSettings,
                     experimentalSettings = homeData.userData.experimentalSettings,
                     textColor = textColor,
+                    dockTextColor = dockTextColor,
+                    appDrawerTextColor = appDrawerTextColor,
                     // System Features
                     hasSystemFeatureAppWidgets = homeData.hasSystemFeatureAppWidgets,
                     hasShortcutHostPermission = homeData.hasShortcutHostPermission,
@@ -297,8 +309,8 @@ private fun Success(
                     dockGridItemSettings = homeData.userData.homeSettings.dockGridItemSettings,
                     folderCornerRadius = homeData.userData.folderSettings.folderCornerRadius,
                     // Appearance
-                    textColor = textColor,
-                    systemTextColor = textColor,
+                    textColor = dockTextColor,
+                    systemTextColor = dockTextColor,
                     systemCustomTextColor = homeData.userData.homeSettings.dockGridItemSettings.customTextColor,
                     folderBackgroundColor = homeData.userData.folderSettings.folderBackgroundColor,
                     customFolderBackgroundColor = homeData.userData.folderSettings.customFolderBackgroundColor,

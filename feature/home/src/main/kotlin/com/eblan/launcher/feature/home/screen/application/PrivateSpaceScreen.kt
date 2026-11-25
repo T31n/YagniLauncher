@@ -136,7 +136,12 @@ internal fun LazyGridScope.privateSpace(
     }
 
     if (!isQuietModeEnabled) {
-        items(privateEblanApplicationInfos) { eblanApplicationInfo ->
+        items(
+            items = privateEblanApplicationInfos,
+            key = { currentEblanApplicationInfo ->
+                "${currentEblanApplicationInfo.serialNumber} ${currentEblanApplicationInfo.componentName}"
+            },
+        ) { eblanApplicationInfo ->
             PrivateSpaceEblanApplicationInfoItem(
                 // Application Info
                 eblanApplicationInfo = eblanApplicationInfo,
@@ -280,7 +285,11 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
 
     val scope = rememberCoroutineScope()
 
+    val currentEblanApplicationInfo by rememberUpdatedState(eblanApplicationInfo)
     val currentOnDismiss by rememberUpdatedState(onDismiss)
+    val currentOnLongPressPrivateSpaceApplicationInfoItem by rememberUpdatedState(
+        onLongPressPrivateSpaceApplicationInfoItem,
+    )
 
     val textColor = getGridItemTextColorFromBackgroundColor(
         // Container Background Color
@@ -320,6 +329,9 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
         paddingValues.calculateTopPadding().roundToPx()
     }
 
+    val currentLeftPadding by rememberUpdatedState(leftPadding)
+    val currentTopPadding by rememberUpdatedState(topPadding)
+
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
     var intSize by remember { mutableStateOf(IntSize.Zero) }
 
@@ -344,15 +356,15 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
                         scope.launch {
                             handleOnTapEblanApplicationInfoItem(
                                 // Application Info
-                                serialNumber = eblanApplicationInfo.serialNumber,
-                                componentName = eblanApplicationInfo.componentName,
+                                serialNumber = currentEblanApplicationInfo.serialNumber,
+                                componentName = currentEblanApplicationInfo.componentName,
                                 launcherApps = launcherApps,
                                 // Position and Size
                                 intOffset = intOffset,
                                 intSize = intSize,
                                 // Padding
-                                leftPadding = leftPadding,
-                                topPadding = topPadding,
+                                leftPadding = currentLeftPadding,
+                                topPadding = currentTopPadding,
                                 // Controller
                                 keyboardController = keyboardController,
                             )
@@ -368,14 +380,14 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
                         scope.launch {
                             handleOnLongPressPrivateSpaceEblanApplicationInfoItem(
                                 // Application Info
-                                eblanApplicationInfo = eblanApplicationInfo,
+                                eblanApplicationInfo = currentEblanApplicationInfo,
                                 // Position and Size
                                 intOffset = intOffset,
                                 intSize = intSize,
                                 // Keyboard
                                 keyboardController = keyboardController,
                                 // Callbacks
-                                onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
+                                onLongPressPrivateSpaceApplicationInfoItem = currentOnLongPressPrivateSpaceApplicationInfoItem,
                             )
                         }
                     }

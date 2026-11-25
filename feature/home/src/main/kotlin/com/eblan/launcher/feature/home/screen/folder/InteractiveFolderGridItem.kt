@@ -438,7 +438,13 @@ private fun InteractiveApplicationInfoGridItem(
     val androidLauncherAppsWrapper = LocalLauncherApps.current
     val androidStatusBarManagerWrapper = LocalStatusBarManager.current
     val context = LocalContext.current
+    val currentGridItem by rememberUpdatedState(gridItem)
+    val currentData by rememberUpdatedState(data)
+    val currentSourceBounds by rememberUpdatedState(sourceBounds)
+    val currentSharedElementKey by rememberUpdatedState(sharedElementKey)
     val currentOnDismiss by rememberUpdatedState(onDismiss)
+    val currentOnOpenAppDrawer by rememberUpdatedState(onOpenAppDrawer)
+    val currentOnLongPressFolderGridItem by rememberUpdatedState(onLongPressFolderGridItem)
 
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
     var intSize by remember { mutableStateOf(IntSize.Zero) }
@@ -478,22 +484,22 @@ private fun InteractiveApplicationInfoGridItem(
             )
             .run {
                 if (!isVisibleOverlay && !isInProgress) {
-                    pointerInput(key1 = Unit) {
+                    pointerInput(key1 = gridItem.doubleTap.eblanActionType != EblanActionType.None) {
                         detectTapGestures(
                             onDoubleTap = if (gridItem.doubleTap.eblanActionType != EblanActionType.None) {
                                 {
                                     handleEblanAction(
                                         // Context and Action
                                         context = context,
-                                        eblanAction = gridItem.doubleTap,
+                                        eblanAction = currentGridItem.doubleTap,
                                         // System Wrappers
                                         launcherApps = launcherApps,
                                         statusBarManagerWrapper = androidStatusBarManagerWrapper,
                                         // Callbacks
-                                        onOpenAppDrawer = onOpenAppDrawer,
+                                        onOpenAppDrawer = currentOnOpenAppDrawer,
                                     )
 
-                                    if (gridItem.doubleTap.eblanActionType == EblanActionType.OpenApp) {
+                                    if (currentGridItem.doubleTap.eblanActionType == EblanActionType.OpenApp) {
                                         currentOnDismiss()
                                     }
                                 }
@@ -501,19 +507,19 @@ private fun InteractiveApplicationInfoGridItem(
                                 null
                             },
                             onLongPress = {
-                                onLongPressFolderGridItem(
-                                    gridItem,
+                                currentOnLongPressFolderGridItem(
+                                    currentGridItem,
                                     { graphicsLayer.toImageBitmap() },
                                     intOffset,
                                     intSize,
-                                    sharedElementKey,
+                                    currentSharedElementKey,
                                 )
                             },
                             onTap = {
                                 androidLauncherAppsWrapper.startMainActivity(
-                                    serialNumber = data.serialNumber,
-                                    componentName = data.componentName,
-                                    sourceBounds = sourceBounds,
+                                    serialNumber = currentData.serialNumber,
+                                    componentName = currentData.componentName,
+                                    sourceBounds = currentSourceBounds,
                                 )
 
                                 currentOnDismiss()
@@ -531,7 +537,7 @@ private fun InteractiveApplicationInfoGridItem(
                 swipeDown = gridItem.swipeDown,
                 swipeUp = gridItem.swipeUp,
                 // Actions
-                onOpenAppDrawer = onOpenAppDrawer,
+                onOpenAppDrawer = currentOnOpenAppDrawer,
             ),
         horizontalAlignment = horizontalAlignment,
         verticalArrangement = verticalArrangement,
@@ -640,7 +646,14 @@ private fun InteractiveShortcutInfoGridItem(
     val launcherApps = LocalLauncherApps.current
     val androidStatusBarManagerWrapper = LocalStatusBarManager.current
     val context = LocalContext.current
+    val currentGridItem by rememberUpdatedState(gridItem)
+    val currentData by rememberUpdatedState(data)
+    val currentHasShortcutHostPermission by rememberUpdatedState(hasShortcutHostPermission)
+    val currentSourceBounds by rememberUpdatedState(sourceBounds)
+    val currentSharedElementKey by rememberUpdatedState(sharedElementKey)
     val currentOnDismiss by rememberUpdatedState(onDismiss)
+    val currentOnOpenAppDrawer by rememberUpdatedState(onOpenAppDrawer)
+    val currentOnLongPressFolderGridItem by rememberUpdatedState(onLongPressFolderGridItem)
 
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
     var intSize by remember { mutableStateOf(IntSize.Zero) }
@@ -676,22 +689,22 @@ private fun InteractiveShortcutInfoGridItem(
             )
             .run {
                 if (!isVisibleOverlay && !isInProgress) {
-                    pointerInput(key1 = Unit) {
+                    pointerInput(key1 = gridItem.doubleTap.eblanActionType != EblanActionType.None) {
                         detectTapGestures(
                             onDoubleTap = if (gridItem.doubleTap.eblanActionType != EblanActionType.None) {
                                 {
                                     handleEblanAction(
                                         // Context and Action
                                         context = context,
-                                        eblanAction = gridItem.doubleTap,
+                                        eblanAction = currentGridItem.doubleTap,
                                         // System Wrappers
                                         launcherApps = launcherApps,
                                         statusBarManagerWrapper = androidStatusBarManagerWrapper,
                                         // Callbacks
-                                        onOpenAppDrawer = onOpenAppDrawer,
+                                        onOpenAppDrawer = currentOnOpenAppDrawer,
                                     )
 
-                                    if (gridItem.doubleTap.eblanActionType == EblanActionType.OpenApp) {
+                                    if (currentGridItem.doubleTap.eblanActionType == EblanActionType.OpenApp) {
                                         currentOnDismiss()
                                     }
                                 }
@@ -699,24 +712,24 @@ private fun InteractiveShortcutInfoGridItem(
                                 null
                             },
                             onLongPress = {
-                                onLongPressFolderGridItem(
-                                    gridItem,
+                                currentOnLongPressFolderGridItem(
+                                    currentGridItem,
                                     { graphicsLayer.toImageBitmap() },
                                     intOffset,
                                     intSize,
-                                    sharedElementKey,
+                                    currentSharedElementKey,
                                 )
                             },
                             onTap = {
                                 if (
-                                    hasShortcutHostPermission &&
-                                    data.isEnabled
+                                    currentHasShortcutHostPermission &&
+                                    currentData.isEnabled
                                 ) {
                                     androidLauncherAppsWrapper.startShortcut(
-                                        serialNumber = data.serialNumber,
-                                        packageName = data.packageName,
-                                        id = data.shortcutId,
-                                        sourceBounds = sourceBounds,
+                                        serialNumber = currentData.serialNumber,
+                                        packageName = currentData.packageName,
+                                        id = currentData.shortcutId,
+                                        sourceBounds = currentSourceBounds,
                                     )
 
                                     currentOnDismiss()
@@ -735,7 +748,7 @@ private fun InteractiveShortcutInfoGridItem(
                 swipeDown = gridItem.swipeDown,
                 swipeUp = gridItem.swipeUp,
                 // Actions
-                onOpenAppDrawer = onOpenAppDrawer,
+                onOpenAppDrawer = currentOnOpenAppDrawer,
             ),
         horizontalAlignment = horizontalAlignment,
         verticalArrangement = verticalArrangement,
@@ -841,7 +854,12 @@ private fun InteractiveShortcutConfigGridItem(
     val launcherApps = LocalLauncherApps.current
     val androidStatusBarManagerWrapper = LocalStatusBarManager.current
     val context = LocalContext.current
+    val currentGridItem by rememberUpdatedState(gridItem)
+    val currentData by rememberUpdatedState(data)
+    val currentSharedElementKey by rememberUpdatedState(sharedElementKey)
     val currentOnDismiss by rememberUpdatedState(onDismiss)
+    val currentOnOpenAppDrawer by rememberUpdatedState(onOpenAppDrawer)
+    val currentOnLongPressFolderGridItem by rememberUpdatedState(onLongPressFolderGridItem)
 
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
     var intSize by remember { mutableStateOf(IntSize.Zero) }
@@ -885,22 +903,22 @@ private fun InteractiveShortcutConfigGridItem(
             )
             .run {
                 if (!isVisibleOverlay && !isInProgress) {
-                    pointerInput(key1 = Unit) {
+                    pointerInput(key1 = gridItem.doubleTap.eblanActionType != EblanActionType.None) {
                         detectTapGestures(
                             onDoubleTap = if (gridItem.doubleTap.eblanActionType != EblanActionType.None) {
                                 {
                                     handleEblanAction(
                                         // Context and Action
                                         context = context,
-                                        eblanAction = gridItem.doubleTap,
+                                        eblanAction = currentGridItem.doubleTap,
                                         // System Wrappers
                                         launcherApps = launcherApps,
                                         statusBarManagerWrapper = androidStatusBarManagerWrapper,
                                         // Callbacks
-                                        onOpenAppDrawer = onOpenAppDrawer,
+                                        onOpenAppDrawer = currentOnOpenAppDrawer,
                                     )
 
-                                    if (gridItem.doubleTap.eblanActionType == EblanActionType.OpenApp) {
+                                    if (currentGridItem.doubleTap.eblanActionType == EblanActionType.OpenApp) {
                                         currentOnDismiss()
                                     }
                                 }
@@ -908,16 +926,16 @@ private fun InteractiveShortcutConfigGridItem(
                                 null
                             },
                             onLongPress = {
-                                onLongPressFolderGridItem(
-                                    gridItem,
+                                currentOnLongPressFolderGridItem(
+                                    currentGridItem,
                                     { graphicsLayer.toImageBitmap() },
                                     intOffset,
                                     intSize,
-                                    sharedElementKey,
+                                    currentSharedElementKey,
                                 )
                             },
                             onTap = {
-                                data.shortcutIntentUri?.let { currentShortcutIntentUri ->
+                                currentData.shortcutIntentUri?.let { currentShortcutIntentUri ->
                                     context.startActivity(parseUri(currentShortcutIntentUri, 0))
 
                                     currentOnDismiss()
@@ -936,7 +954,7 @@ private fun InteractiveShortcutConfigGridItem(
                 swipeDown = gridItem.swipeDown,
                 swipeUp = gridItem.swipeUp,
                 // Actions
-                onOpenAppDrawer = onOpenAppDrawer,
+                onOpenAppDrawer = currentOnOpenAppDrawer,
             ),
         horizontalAlignment = horizontalAlignment,
         verticalArrangement = verticalArrangement,
@@ -1036,6 +1054,11 @@ private fun InteractiveNestedFolderGridItem(
     val launcherApps = LocalLauncherApps.current
     val androidStatusBarManagerWrapper = LocalStatusBarManager.current
     val context = LocalContext.current
+    val currentGridItem by rememberUpdatedState(gridItem)
+    val currentSharedElementKey by rememberUpdatedState(sharedElementKey)
+    val currentOnOpenAppDrawer by rememberUpdatedState(onOpenAppDrawer)
+    val currentOnUpsertFolderGridItemEntry by rememberUpdatedState(onUpsertFolderGridItemEntry)
+    val currentOnLongPressFolderGridItem by rememberUpdatedState(onLongPressFolderGridItem)
 
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
     var intSize by remember { mutableStateOf(IntSize.Zero) }
@@ -1060,37 +1083,37 @@ private fun InteractiveNestedFolderGridItem(
             )
             .run {
                 if (!isVisibleOverlay && !isInProgress) {
-                    pointerInput(key1 = Unit) {
+                    pointerInput(key1 = gridItem.doubleTap.eblanActionType != EblanActionType.None) {
                         detectTapGestures(
                             onDoubleTap = if (gridItem.doubleTap.eblanActionType != EblanActionType.None) {
                                 {
                                     handleEblanAction(
                                         // Context and Action
                                         context = context,
-                                        eblanAction = gridItem.doubleTap,
+                                        eblanAction = currentGridItem.doubleTap,
                                         // System Wrappers
                                         launcherApps = launcherApps,
                                         statusBarManagerWrapper = androidStatusBarManagerWrapper,
                                         // Callbacks
-                                        onOpenAppDrawer = onOpenAppDrawer,
+                                        onOpenAppDrawer = currentOnOpenAppDrawer,
                                     )
                                 }
                             } else {
                                 null
                             },
                             onLongPress = {
-                                onLongPressFolderGridItem(
-                                    gridItem,
+                                currentOnLongPressFolderGridItem(
+                                    currentGridItem,
                                     { graphicsLayer.toImageBitmap() },
                                     intOffset,
                                     intSize,
-                                    sharedElementKey,
+                                    currentSharedElementKey,
                                 )
                             },
                             onTap = {
-                                onUpsertFolderGridItemEntry(
+                                currentOnUpsertFolderGridItemEntry(
                                     FolderEntry(
-                                        id = gridItem.id,
+                                        id = currentGridItem.id,
                                         x = intOffset.x,
                                         y = intOffset.y,
                                         width = intSize.width,
@@ -1112,7 +1135,7 @@ private fun InteractiveNestedFolderGridItem(
                 swipeDown = gridItem.swipeDown,
                 swipeUp = gridItem.swipeUp,
                 // Actions
-                onOpenAppDrawer = onOpenAppDrawer,
+                onOpenAppDrawer = currentOnOpenAppDrawer,
             ),
         horizontalAlignment = horizontalAlignment,
         verticalArrangement = verticalArrangement,

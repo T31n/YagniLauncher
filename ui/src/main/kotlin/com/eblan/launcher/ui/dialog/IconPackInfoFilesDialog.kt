@@ -87,9 +87,7 @@ fun IconPackInfoFilesDialog(
     onUpdateIcon: (ByteArray) -> Unit,
     onSearchIconPackInfoComponent: (String) -> Unit,
 ) {
-    requireNotNull(iconPackPackageName)
-
-    requireNotNull(iconPackInfoLabel)
+    if (iconPackPackageName == null || iconPackInfoLabel == null) return
     val scope = rememberCoroutineScope()
 
     val imageSerializer = LocalImageSerializer.current
@@ -198,19 +196,18 @@ fun IconPackInfoFilesDialog(
                             contentDescription = null,
                             modifier = Modifier
                                 .size(48.dp)
-                                .clickable {
+                                .clickable(enabled = drawable != null) {
+                                    val currentDrawable = drawable ?: return@clickable
+
                                     scope.launch {
-                                        val icon = drawable?.let { currentDrawable ->
-                                            imageSerializer.createByteArray(
-                                                drawable = currentDrawable,
-                                            )
-                                        }
+                                        val icon = imageSerializer.createByteArray(
+                                            drawable = currentDrawable,
+                                        )
 
                                         if (icon != null) {
                                             onUpdateIcon(icon)
+                                            onDismissRequest()
                                         }
-
-                                        onDismissRequest()
                                     }
                                 }
                                 .padding(EblanSpacing.extraSmall),

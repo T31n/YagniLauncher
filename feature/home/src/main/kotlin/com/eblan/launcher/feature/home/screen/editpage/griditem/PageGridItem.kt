@@ -66,7 +66,7 @@ internal fun PageGridItem(
         gridItemCustomTextColor = currentGridItemSettings.customTextColor,
         // System Text Colors
         systemTextColor = textColor,
-        systemCustomTextColor = gridItemSettings.customTextColor,
+        systemCustomTextColor = systemCustomTextColor,
         // Background Color
         backgroundColor = currentGridItemSettings.backgroundColor,
         customBackgroundColor = currentGridItemSettings.customBackgroundColor,

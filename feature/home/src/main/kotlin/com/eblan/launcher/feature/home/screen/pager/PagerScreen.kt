@@ -164,6 +164,8 @@ internal fun PagerScreen(
     gestureSettings: GestureSettings,
     experimentalSettings: ExperimentalSettings,
     textColor: TextColor,
+    dockTextColor: TextColor,
+    appDrawerTextColor: TextColor,
     // System Features
     hasSystemFeatureAppWidgets: Boolean,
     hasShortcutHostPermission: Boolean,
@@ -290,8 +292,10 @@ internal fun PagerScreen(
             lastAppWidgetId = pagerScreenState.lastAppWidgetId,
             // Screen and Grid Configuration
             columns = homeSettings.columns,
-            density = density,
             rows = homeSettings.rows,
+            dockColumns = homeSettings.dockColumns,
+            dockRows = homeSettings.dockRows,
+            density = density,
             screenWidth = screenWidth,
             screenHeight = screenHeight,
             paddingValues = paddingValues,
@@ -520,6 +524,8 @@ internal fun PagerScreen(
             // Grid and Layout Configuration
             columns = homeSettings.columns,
             rows = homeSettings.rows,
+            dockColumns = homeSettings.dockColumns,
+            dockRows = homeSettings.dockRows,
             screenHeight = screenHeight,
             screenWidth = screenWidth,
             dockHeight = visibleDockHeight,
@@ -725,8 +731,11 @@ internal fun PagerScreen(
             .pointerInput(key1 = pagerScreenState) {
                 detectDragGesturesAfterLongPress(
                     onDragStart = { pointerOffset ->
-                        val rootPointerOffset = requireNotNull(sharedTransitionLayoutCoordinates)
-                            .localToRoot(pointerOffset)
+                        val layoutCoordinates = sharedTransitionLayoutCoordinates
+                            ?.takeIf(LayoutCoordinates::isAttached)
+                            ?: return@detectDragGesturesAfterLongPress
+
+                        val rootPointerOffset = layoutCoordinates.localToRoot(pointerOffset)
 
                         pagerScreenState.dragStart(rootPointerOffset)
                     },
@@ -975,7 +984,7 @@ internal fun PagerScreen(
                             gridItemCustomTextColor = homeSettings.dockGridItemSettings.customTextColor,
                             // Drag and Style
                             dragIntOffset = pagerScreenState.dragIntOffset,
-                            textColor = textColor,
+                            textColor = dockTextColor,
                             // Modifier
                             modifier = Modifier
                                 .fillMaxSize()
@@ -1038,7 +1047,7 @@ internal fun PagerScreen(
                                     leftPadding = leftPadding,
                                     topOffset = dockTopLeft,
                                     // Styling and Appearance
-                                    textColor = textColor,
+                                    textColor = dockTextColor,
                                     folderCornerRadius = folderSettings.folderCornerRadius,
                                     folderBackgroundColor = folderSettings.folderBackgroundColor,
                                     customFolderBackgroundColor = folderSettings.customFolderBackgroundColor,
@@ -1169,6 +1178,21 @@ internal fun PagerScreen(
 
         if (isVisibleFolderGridItems) {
             folderGridItemEntries.forEach { currentFolderEntry ->
+                val isDockFolder =
+                    folderPopups[currentFolderEntry.id]?.folderGridItem?.associate == Associate.Dock
+
+                val folderGridItemSettings = if (isDockFolder) {
+                    homeSettings.dockGridItemSettings
+                } else {
+                    homeSettings.gridItemSettings
+                }
+
+                val folderSystemTextColor = if (isDockFolder) {
+                    dockTextColor
+                } else {
+                    textColor
+                }
+
                 FolderScreen(
                     // Contract
                     contract = contract,
@@ -1181,7 +1205,7 @@ internal fun PagerScreen(
                     screenWidth = screenWidth,
                     // Folder Content and Settings
                     folderEntry = currentFolderEntry,
-                    gridItemSettings = homeSettings.gridItemSettings,
+                    gridItemSettings = folderGridItemSettings,
                     folderCellWidth = folderSettings.folderCellWidth,
                     folderCellHeight = folderSettings.folderCellHeight,
                     folderPopups = folderPopups,
@@ -1189,8 +1213,8 @@ internal fun PagerScreen(
                     statusBarNotifications = statusBarNotifications,
                     // Appearance and Style
                     animations = experimentalSettings.gridItemAnimation,
-                    systemTextColor = textColor,
-                    systemCustomTextColor = homeSettings.gridItemSettings.customTextColor,
+                    systemTextColor = folderSystemTextColor,
+                    systemCustomTextColor = folderGridItemSettings.customTextColor,
                     folderBackgroundColor = folderSettings.folderBackgroundColor,
                     folderCornerRadius = folderSettings.folderCornerRadius,
                     customFolderBackgroundColor = folderSettings.customFolderBackgroundColor,
@@ -1304,8 +1328,8 @@ internal fun PagerScreen(
                 // Visual and Animation
                 animations = experimentalSettings.gridItemAnimation,
                 alpha = pagerScreenState.applicationScreenAlpha,
-                systemTextColor = textColor,
-                systemCustomTextColor = homeSettings.gridItemSettings.customTextColor,
+                systemTextColor = appDrawerTextColor,
+                systemCustomTextColor = appDrawerSettings.gridItemSettings.customTextColor,
                 // Application Data
                 appDrawerSettings = appDrawerSettings,
                 // Folder Settings
@@ -1536,6 +1560,7 @@ internal fun PagerScreen(
                 gridItemSettings = homeSettings.gridItemSettings,
                 // Appearance
                 textColor = textColor,
+                dockTextColor = dockTextColor,
                 lockMovement = experimentalSettings.lockMovement,
                 // Callbacks
                 onUpdateIsResizing = pagerScreenState::updateIsResizing,
@@ -1557,8 +1582,8 @@ internal fun PagerScreen(
                     screenHeight = screenHeight,
                     // Folder Content and Appearance
                     animations = experimentalSettings.gridItemAnimation,
-                    systemTextColor = textColor,
-                    systemCustomTextColor = homeSettings.gridItemSettings.customTextColor,
+                    systemTextColor = appDrawerTextColor,
+                    systemCustomTextColor = appDrawerSettings.gridItemSettings.customTextColor,
                     folderBackgroundColor = folderSettings.folderBackgroundColor,
                     customFolderBackgroundColor = folderSettings.customFolderBackgroundColor,
                     folderBorderColor = folderSettings.folderBorderColor,

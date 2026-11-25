@@ -133,6 +133,7 @@ internal fun EblanApplicationInfoItem(
 
     val alpha = if (isLongPress) 0f else 1f
 
+    val currentEblanApplicationInfo by rememberUpdatedState(eblanApplicationInfo)
     val currentOnLongPressApplicationInfo by rememberUpdatedState(onLongPressApplicationInfo)
     val currentOnDismiss by rememberUpdatedState(onDismiss)
 
@@ -189,6 +190,10 @@ internal fun EblanApplicationInfoItem(
         parent = SharedElementKey.Parent.SwipeY,
     )
 
+    val currentLeftPadding by rememberUpdatedState(leftPadding)
+    val currentTopPadding by rememberUpdatedState(topPadding)
+    val currentSharedElementKey by rememberUpdatedState(sharedElementKey)
+
     LaunchedEffect(
         key1 = drag,
         key2 = isLongPress,
@@ -224,15 +229,15 @@ internal fun EblanApplicationInfoItem(
                         onTap = {
                             handleOnTapEblanApplicationInfoItem(
                                 // Application Info
-                                serialNumber = eblanApplicationInfo.serialNumber,
-                                componentName = eblanApplicationInfo.componentName,
+                                serialNumber = currentEblanApplicationInfo.serialNumber,
+                                componentName = currentEblanApplicationInfo.componentName,
                                 launcherApps = launcherApps,
                                 // Position and Size
                                 intOffset = intOffset,
                                 intSize = intSize,
                                 // Padding
-                                leftPadding = leftPadding,
-                                topPadding = topPadding,
+                                leftPadding = currentLeftPadding,
+                                topPadding = currentTopPadding,
                                 // Controller
                                 keyboardController = keyboardController,
                             )
@@ -246,11 +251,11 @@ internal fun EblanApplicationInfoItem(
                                 keyboardController?.hide()
 
                                 currentOnLongPressApplicationInfo(
-                                    eblanApplicationInfo,
+                                    currentEblanApplicationInfo,
                                     graphicsLayer.toImageBitmap(),
                                     intOffset,
                                     intSize,
-                                    sharedElementKey,
+                                    currentSharedElementKey,
                                 )
                             }
                         },

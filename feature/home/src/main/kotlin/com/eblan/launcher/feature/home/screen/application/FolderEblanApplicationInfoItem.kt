@@ -191,6 +191,8 @@ internal fun FolderEblanApplicationInfoItem(
         parent = SharedElementKey.Parent.SwipeY,
     )
 
+    val currentFolderEblanApplicationInfo by rememberUpdatedState(folderEblanApplicationInfo)
+    val currentSharedElementKey by rememberUpdatedState(sharedElementKey)
     val currentOnTapFolderApplicationInfo by rememberUpdatedState(onTapFolderApplicationInfo)
     val currentOnLongPressFolderApplicationInfo by rememberUpdatedState(
         onLongPressFolderApplicationInfo,
@@ -239,7 +241,7 @@ internal fun FolderEblanApplicationInfoItem(
                         onTap = {
                             currentOnTapFolderApplicationInfo(
                                 FolderEntry(
-                                    id = folderEblanApplicationInfo.id,
+                                    id = currentFolderEblanApplicationInfo.id,
                                     x = intOffset.x,
                                     y = intOffset.y,
                                     width = intSize.width,
@@ -255,11 +257,11 @@ internal fun FolderEblanApplicationInfoItem(
                                 keyboardController?.hide()
 
                                 currentOnLongPressFolderApplicationInfo(
-                                    folderEblanApplicationInfo,
+                                    currentFolderEblanApplicationInfo,
                                     graphicsLayer.toImageBitmap(),
                                     intOffset,
                                     intSize,
-                                    sharedElementKey,
+                                    currentSharedElementKey,
                                 )
                             }
                         },

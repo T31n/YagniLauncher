@@ -125,6 +125,10 @@ internal fun InteractiveApplicationInfoGridItem(
 
     val alpha = if (hasInteraction) 0f else 1f
 
+    val currentGridItem by rememberUpdatedState(gridItem)
+    val currentData by rememberUpdatedState(data)
+    val currentSourceBounds by rememberUpdatedState(sourceBounds)
+    val currentSharedElementKey by rememberUpdatedState(sharedElementKey)
     val currentOnOpenAppDrawer by rememberUpdatedState(onOpenAppDrawer)
     val currentOnLongPressGridItem by rememberUpdatedState(onLongPressGridItem)
 
@@ -153,14 +157,14 @@ internal fun InteractiveApplicationInfoGridItem(
         )
         .run {
             if (!isVisibleOverlay) {
-                pointerInput(key1 = Unit) {
+                pointerInput(key1 = gridItem.doubleTap.eblanActionType != EblanActionType.None) {
                     detectTapGestures(
                         onDoubleTap = if (gridItem.doubleTap.eblanActionType != EblanActionType.None) {
                             {
                                 handleEblanAction(
                                     // Context and Action
                                     context = context,
-                                    eblanAction = gridItem.doubleTap,
+                                    eblanAction = currentGridItem.doubleTap,
                                     // System Wrappers
                                     launcherApps = androidLauncherAppsWrapper,
                                     statusBarManagerWrapper = androidStatusBarManagerWrapper,
@@ -173,18 +177,18 @@ internal fun InteractiveApplicationInfoGridItem(
                         },
                         onLongPress = {
                             currentOnLongPressGridItem(
-                                gridItem,
+                                currentGridItem,
                                 { graphicsLayer.toImageBitmap() },
                                 intOffset,
                                 intSize,
-                                sharedElementKey,
+                                currentSharedElementKey,
                             )
                         },
                         onTap = {
                             androidLauncherAppsWrapper.startMainActivity(
-                                serialNumber = data.serialNumber,
-                                componentName = data.componentName,
-                                sourceBounds = sourceBounds,
+                                serialNumber = currentData.serialNumber,
+                                componentName = currentData.componentName,
+                                sourceBounds = currentSourceBounds,
                             )
                         },
                     )
@@ -198,7 +202,7 @@ internal fun InteractiveApplicationInfoGridItem(
             swipeDown = gridItem.swipeDown,
             swipeUp = gridItem.swipeUp,
             // Actions
-            onOpenAppDrawer = onOpenAppDrawer,
+            onOpenAppDrawer = currentOnOpenAppDrawer,
         )
 
     val iconModifier = Modifier

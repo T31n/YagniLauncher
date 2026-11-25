@@ -158,6 +158,7 @@ internal fun InteractiveFolderGridItem(
     val currentIsDragging = rememberUpdatedState(isDragging)
     val currentIsVisibleOverlay = rememberUpdatedState(isVisibleOverlay)
     val currentGridItem = rememberUpdatedState(gridItem)
+    val currentSharedElementKey by rememberUpdatedState(sharedElementKey)
     val currentLockMovement = rememberUpdatedState(lockMovement)
     val currentFolderGridItems =
         rememberUpdatedState(folderPopups[gridItem.id]?.folderGridItems)
@@ -206,14 +207,14 @@ internal fun InteractiveFolderGridItem(
         )
         .run {
             if (!isVisibleOverlay) {
-                pointerInput(key1 = Unit) {
+                pointerInput(key1 = gridItem.doubleTap.eblanActionType != EblanActionType.None) {
                     detectTapGestures(
                         onDoubleTap = if (gridItem.doubleTap.eblanActionType != EblanActionType.None) {
                             {
                                 handleEblanAction(
                                     // Context and Action
                                     context = context,
-                                    eblanAction = gridItem.doubleTap,
+                                    eblanAction = currentGridItem.value.doubleTap,
                                     // System Wrappers
                                     launcherApps = launcherApps,
                                     statusBarManagerWrapper = androidStatusBarManagerWrapper,
@@ -226,17 +227,17 @@ internal fun InteractiveFolderGridItem(
                         },
                         onLongPress = {
                             currentOnLongPressGridItem(
-                                gridItem,
+                                currentGridItem.value,
                                 { graphicsLayer.toImageBitmap() },
                                 intOffset,
                                 intSize,
-                                sharedElementKey,
+                                currentSharedElementKey,
                             )
                         },
                         onTap = {
                             currentOnTapFolderGridItem(
                                 FolderEntry(
-                                    id = gridItem.id,
+                                    id = currentGridItem.value.id,
                                     x = intOffset.x,
                                     y = intOffset.y,
                                     width = intSize.width,
@@ -256,7 +257,7 @@ internal fun InteractiveFolderGridItem(
             swipeDown = gridItem.swipeDown,
             swipeUp = gridItem.swipeUp,
             // Actions
-            onOpenAppDrawer = onOpenAppDrawer,
+            onOpenAppDrawer = currentOnOpenAppDrawer,
         )
 
     val iconModifier = Modifier

@@ -602,6 +602,8 @@ internal class HomeViewModel @Inject constructor(
     }
 
     override fun startSyncData() {
+        syncDataJob?.cancel()
+
         syncDataJob = viewModelScope.launch {
             syncDataUseCase()
         }
