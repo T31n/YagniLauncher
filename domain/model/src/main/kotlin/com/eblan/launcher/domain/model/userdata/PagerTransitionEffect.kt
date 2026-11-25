@@ -26,4 +26,13 @@ enum class PagerTransitionEffect {
     Flip,
     Parallax,
     Stack,
+    CubeInside,
+    Accordion,
+    Windmill,
+    Jelly,
+    Hinge,
+    Pinwheel,
+    CardToss,
+    Crt,
+    Random,
 }

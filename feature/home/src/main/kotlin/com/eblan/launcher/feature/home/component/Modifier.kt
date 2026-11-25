@@ -60,8 +60,10 @@ import com.eblan.launcher.feature.home.util.handleEblanAction
 import com.eblan.launcher.ui.local.LocalLauncherApps
 import com.eblan.launcher.ui.local.LocalStatusBarManager
 import kotlinx.coroutines.launch
+import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.roundToInt
+import kotlin.math.sin
 
 @Composable
 internal fun Modifier.swipeGestures(
@@ -249,8 +251,16 @@ internal fun Modifier.pagerTransitionEffect(
     val pageWidth = size.width
     val perspective = maxOf(pageWidth * 1.1f, 12f * density)
 
-    when (effect) {
-        PagerTransitionEffect.None -> Unit
+    val resolvedEffect = if (effect == PagerTransitionEffect.Random) {
+        pagerState.randomTransitionEffect()
+    } else {
+        effect
+    }
+
+    when (resolvedEffect) {
+        PagerTransitionEffect.None,
+        PagerTransitionEffect.Random,
+        -> Unit
 
         PagerTransitionEffect.Fade -> {
             // Pages cross-fade in place instead of sliding past each other.
@@ -306,7 +316,100 @@ internal fun Modifier.pagerTransitionEffect(
                 alpha = 1f - (0.25f * absoluteOffset)
             }
         }
+
+        PagerTransitionEffect.CubeInside -> {
+            // Mirrors Cube inward so the viewport feels like rotating inside a 3D room.
+            val scale = 1f - (0.15f * absoluteOffset)
+            scaleX = scale
+            scaleY = scale
+            rotationY = 90f * clampedOffset
+            transformOrigin = seamTransformOrigin(pageOffset)
+            cameraDistance = perspective
+        }
+
+        PagerTransitionEffect.Accordion -> {
+            // Compresses the outgoing page into the shared seam while unfolding the next.
+            scaleX = 1f - absoluteOffset
+            transformOrigin = seamTransformOrigin(pageOffset)
+        }
+
+        PagerTransitionEffect.Windmill -> {
+            // Fans pages around a pivot below the screen like playing cards.
+            rotationZ = -25f * clampedOffset
+            transformOrigin = TransformOrigin(pivotFractionX = 0.5f, pivotFractionY = 1.5f)
+            alpha = 1f - (0.25f * absoluteOffset)
+        }
+
+        PagerTransitionEffect.Jelly -> {
+            // Stretches horizontally and squashes vertically mid-swipe for a rubbery feel.
+            val stretch = sin(absoluteOffset * PI.toFloat())
+            scaleX = 1f + (0.18f * stretch)
+            scaleY = 1f - (0.16f * stretch)
+        }
+
+        PagerTransitionEffect.Hinge -> {
+            if (pageOffset > 0f) {
+                // Pins the outgoing page to its top-left corner and drops it away with gravity.
+                translationX = clampedOffset * pageWidth
+                translationY = absoluteOffset * absoluteOffset * size.height * 0.35f
+                rotationZ = 60f * clampedOffset
+                transformOrigin = TransformOrigin(pivotFractionX = 0f, pivotFractionY = 0f)
+                alpha = 1f - absoluteOffset
+            }
+        }
+
+        PagerTransitionEffect.Pinwheel -> {
+            // Spins and shrinks pages in place while cross-fading.
+            translationX = clampedOffset * pageWidth
+            rotationZ = -180f * clampedOffset
+            val scale = 1f - absoluteOffset
+            scaleX = scale
+            scaleY = scale
+            alpha = 1f - absoluteOffset
+        }
+
+        PagerTransitionEffect.CardToss -> {
+            // Tilts and arcs pages upward as if tossing cards across a table.
+            rotationZ = -16f * clampedOffset
+            translationY = -sin(absoluteOffset * PI.toFloat()) * size.height * 0.1f
+            val scale = 1f - (0.15f * absoluteOffset)
+            scaleX = scale
+            scaleY = scale
+            alpha = 1f - (0.3f * absoluteOffset)
+        }
+
+        PagerTransitionEffect.Crt -> {
+            // Squashes vertically to a scanline, then collapses horizontally into the center.
+            translationX = clampedOffset * pageWidth
+            when {
+                absoluteOffset < 0.35f -> {
+                    val t = absoluteOffset / 0.35f
+                    scaleY = 1f - (0.96f * t)
+                }
+
+                absoluteOffset < 0.5f -> {
+                    val t = (absoluteOffset - 0.35f) / 0.15f
+                    scaleY = 0.04f
+                    scaleX = 1f - t
+                    alpha = 1f - t
+                }
+
+                else -> {
+                    alpha = 0f
+                }
+            }
+        }
     }
+}
+
+private val randomTransitionEffects = PagerTransitionEffect.entries.filter {
+    it != PagerTransitionEffect.None && it != PagerTransitionEffect.Random
+}
+
+private fun PagerState.randomTransitionEffect(): PagerTransitionEffect {
+    val size = randomTransitionEffects.size
+    val index = ((settledPage * 7 + 3) % size + size) % size
+    return randomTransitionEffects[index]
 }
 
 private fun PagerState.pageOffsetFor(page: Int): Float = (currentPage - page) + currentPageOffsetFraction

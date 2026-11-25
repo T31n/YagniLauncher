@@ -60,6 +60,15 @@
     <string name="transition_effect_flip">Подбросить</string>
     <string name="transition_effect_parallax">Параллакс (смещение)</string>
     <string name="transition_effect_stack">Нагромождение</string>
+    <string name="transition_effect_cube_inside">Куб изнутри</string>
+    <string name="transition_effect_accordion">Аккордеон</string>
+    <string name="transition_effect_windmill">Ветряная мельница</string>
+    <string name="transition_effect_jelly">Желе</string>
+    <string name="transition_effect_hinge">Петля</string>
+    <string name="transition_effect_pinwheel">Вертушка</string>
+    <string name="transition_effect_card_toss">Бросок карты</string>
+    <string name="transition_effect_crt">ЭЛТ</string>
+    <string name="transition_effect_random">Случайный</string>
     <string name="screen_orientation">Ориентация экрана</string>
     <string name="portrait">Книжная</string>
     <string name="landscape">Альбомная</string>

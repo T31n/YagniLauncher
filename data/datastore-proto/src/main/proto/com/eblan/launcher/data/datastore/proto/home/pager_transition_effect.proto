@@ -12,4 +12,13 @@ enum PagerTransitionEffectProto {
   PagerTransitionEffectFlip = 5;
   PagerTransitionEffectParallax = 6;
   PagerTransitionEffectStack = 7;
+  PagerTransitionEffectCubeInside = 8;
+  PagerTransitionEffectAccordion = 9;
+  PagerTransitionEffectWindmill = 10;
+  PagerTransitionEffectJelly = 11;
+  PagerTransitionEffectHinge = 12;
+  PagerTransitionEffectPinwheel = 13;
+  PagerTransitionEffectCardToss = 14;
+  PagerTransitionEffectCrt = 15;
+  PagerTransitionEffectRandom = 16;
 }

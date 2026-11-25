@@ -60,6 +60,15 @@
     <string name="transition_effect_flip">Virar</string>
     <string name="transition_effect_parallax">Paralaxe</string>
     <string name="transition_effect_stack">Pilha</string>
+    <string name="transition_effect_cube_inside">Cubo interno</string>
+    <string name="transition_effect_accordion">Acordeão</string>
+    <string name="transition_effect_windmill">Moinho de vento</string>
+    <string name="transition_effect_jelly">Gelatina</string>
+    <string name="transition_effect_hinge">Dobradiça</string>
+    <string name="transition_effect_pinwheel">Cata-vento</string>
+    <string name="transition_effect_card_toss">Jogar carta</string>
+    <string name="transition_effect_crt">CRT</string>
+    <string name="transition_effect_random">Aleatório</string>
     <string name="screen_orientation">Orientação da tela</string>
     <string name="portrait">Retrato</string>
     <string name="landscape">Paisagem</string>

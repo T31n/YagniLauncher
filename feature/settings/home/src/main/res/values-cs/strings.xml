@@ -60,6 +60,15 @@
     <string name="transition_effect_flip">Překlopení</string>
     <string name="transition_effect_parallax">Paralaxa</string>
     <string name="transition_effect_stack">Stoh</string>
+    <string name="transition_effect_cube_inside">Krychle zevnitř</string>
+    <string name="transition_effect_accordion">Akordeon</string>
+    <string name="transition_effect_windmill">Větrný mlýn</string>
+    <string name="transition_effect_jelly">Želé</string>
+    <string name="transition_effect_hinge">Pant</string>
+    <string name="transition_effect_pinwheel">Větrník</string>
+    <string name="transition_effect_card_toss">Hod kartou</string>
+    <string name="transition_effect_crt">CRT</string>
+    <string name="transition_effect_random">Náhodný</string>
     <string name="screen_orientation">Orientace obrazovky</string>
     <string name="portrait">Na výšku</string>
     <string name="landscape">Na šířku</string>
