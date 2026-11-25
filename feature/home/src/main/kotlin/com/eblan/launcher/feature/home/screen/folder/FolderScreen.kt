@@ -121,13 +121,14 @@ internal fun FolderScreen(
         folderEntry: FolderEntry,
         isFirstFolderGridItem: Boolean,
     ) -> Unit,
+    onDismiss: () -> Unit,
     onOpenAppDrawer: () -> Unit,
     onResetGrid: () -> Unit,
     onResetGridAfterMoveFolder: () -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onDismissFolderGridItemMenu: () -> Unit,
-    onUpsertFolderGridItemPopupEntry: (FolderEntry) -> Unit,
+    onUpsertFolderGridItemEntry: (FolderEntry) -> Unit,
     onDragFolderGridItem: () -> Unit,
     onLongPressFolderGridItem: (
         gridItem: GridItem,
@@ -316,7 +317,7 @@ internal fun FolderScreen(
             folderCellHeight = folderCellHeight,
             // Callbacks
             onMoveFolderGridItem = onMoveFolderGridItem,
-            onUpsertFolderGridItemPopupEntry = onUpsertFolderGridItemPopupEntry,
+            onUpsertFolderGridItemEntry = onUpsertFolderGridItemEntry,
         )
     }
 
@@ -398,7 +399,7 @@ internal fun FolderScreen(
             isLastFolderGridItem &&
             !isInProgress,
     ) {
-        onUpsertFolderGridItemPopupEntry(folderEntry.copy(isCloseFolder = true))
+        onUpsertFolderGridItemEntry(folderEntry.copy(isCloseFolder = true))
     }
 
     HomeHandler(
@@ -406,7 +407,7 @@ internal fun FolderScreen(
             isLastFolderGridItem &&
             !isInProgress,
     ) {
-        onUpsertFolderGridItemPopupEntry(folderEntry.copy(isCloseFolder = true))
+        onUpsertFolderGridItemEntry(folderEntry.copy(isCloseFolder = true))
     }
 
     Box(
@@ -418,7 +419,7 @@ internal fun FolderScreen(
                         onPress = {
                             awaitRelease()
 
-                            onUpsertFolderGridItemPopupEntry(
+                            onUpsertFolderGridItemEntry(
                                 folderEntry.copy(
                                     isCloseFolder = true,
                                 ),
@@ -519,8 +520,9 @@ internal fun FolderScreen(
                                 customFolderBorderColor = customFolderBorderColor,
                                 folderBorderWidth = folderBorderWidth,
                                 // Callbacks
+                                onDismiss = onDismiss,
                                 onOpenAppDrawer = onOpenAppDrawer,
-                                onUpsertFolderGridItemPopupEntry = onUpsertFolderGridItemPopupEntry,
+                                onUpsertFolderGridItemEntry = onUpsertFolderGridItemEntry,
                                 onLongPressFolderGridItem = onLongPressFolderGridItem,
                                 onDragFolderGridItem = onDragFolderGridItem,
                             )

@@ -63,7 +63,7 @@ internal fun handleDragFolderEblanApplicationInfoGridItem(
         gridHeight: Int,
         currentPage: Int,
     ) -> Unit,
-    onUpsertFolderEblanApplicationInfoPopupEntry: (FolderEntry) -> Unit,
+    onUpsertFolderEblanApplicationInfoEntry: (FolderEntry) -> Unit,
 ) {
     if (drag != Drag.Dragging ||
         isScrollInProgress ||
@@ -109,7 +109,7 @@ internal fun handleDragFolderEblanApplicationInfoGridItem(
             currentPage,
         )
     } else if (!folderEntry.isCloseFolder) {
-        onUpsertFolderEblanApplicationInfoPopupEntry(
+        onUpsertFolderEblanApplicationInfoEntry(
             folderEntry.copy(isCloseFolder = true),
         )
     }

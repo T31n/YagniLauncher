@@ -41,6 +41,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -103,6 +104,7 @@ internal fun LazyGridScope.privateSpace(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     // Callbacks
+    onDismiss: () -> Unit,
     onLongPressPrivateSpaceApplicationInfoItem: (
         eblanApplicationInfo: EblanApplicationInfo,
         intOffset: IntOffset,
@@ -145,6 +147,7 @@ internal fun LazyGridScope.privateSpace(
                 systemCustomTextColor = systemCustomTextColor,
                 paddingValues = paddingValues,
                 // Actions
+                onDismiss = onDismiss,
                 onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
             )
         }
@@ -255,6 +258,7 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
     paddingValues: PaddingValues,
     modifier: Modifier = Modifier,
     // Actions
+    onDismiss: () -> Unit,
     onLongPressPrivateSpaceApplicationInfoItem: (
         eblanApplicationInfo: EblanApplicationInfo,
         intOffset: IntOffset,
@@ -268,6 +272,8 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val scope = rememberCoroutineScope()
+
+    val currentOnDismiss by rememberUpdatedState(onDismiss)
 
     val gridItemSettings = appDrawerSettings.gridItemSettings
 
@@ -339,6 +345,8 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
                                 // Controller
                                 keyboardController = keyboardController,
                             )
+
+                            currentOnDismiss()
                         }
                     }
                 } else {

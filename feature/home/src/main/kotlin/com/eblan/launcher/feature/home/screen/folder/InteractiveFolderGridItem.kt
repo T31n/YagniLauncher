@@ -42,6 +42,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -134,8 +135,9 @@ internal fun InteractiveFolderGridItem(
     folderBorderWidth: Int,
     modifier: Modifier = Modifier,
     // Callbacks
+    onDismiss: () -> Unit,
     onOpenAppDrawer: () -> Unit,
-    onUpsertFolderGridItemPopupEntry: (FolderEntry) -> Unit,
+    onUpsertFolderGridItemEntry: (FolderEntry) -> Unit,
     onLongPressFolderGridItem: (
         gridItem: GridItem,
         imageBitmap: suspend () -> ImageBitmap,
@@ -268,6 +270,7 @@ internal fun InteractiveFolderGridItem(
                 sourceBounds = sourceBounds,
                 modifier = modifier,
                 // Callbacks
+                onDismiss = onDismiss,
                 onOpenAppDrawer = onOpenAppDrawer,
                 onLongPressFolderGridItem = onLongPressFolderGridItem,
             )
@@ -302,6 +305,7 @@ internal fun InteractiveFolderGridItem(
                 // Modifier
                 modifier = modifier,
                 // Callbacks
+                onDismiss = onDismiss,
                 onOpenAppDrawer = onOpenAppDrawer,
                 onLongPressFolderGridItem = onLongPressFolderGridItem,
             )
@@ -334,6 +338,7 @@ internal fun InteractiveFolderGridItem(
                 // Modifier
                 modifier = modifier,
                 // Callbacks
+                onDismiss = onDismiss,
                 onOpenAppDrawer = onOpenAppDrawer,
                 onLongPressFolderGridItem = onLongPressFolderGridItem,
             )
@@ -378,7 +383,7 @@ internal fun InteractiveFolderGridItem(
                 modifier = modifier,
                 // Callbacks
                 onOpenAppDrawer = onOpenAppDrawer,
-                onUpsertFolderGridItemPopupEntry = onUpsertFolderGridItemPopupEntry,
+                onUpsertFolderGridItemEntry = onUpsertFolderGridItemEntry,
                 onLongPressFolderGridItem = onLongPressFolderGridItem,
             )
         }
@@ -416,6 +421,7 @@ private fun InteractiveApplicationInfoGridItem(
     sourceBounds: Rect,
     modifier: Modifier = Modifier,
     // Callbacks
+    onDismiss: () -> Unit,
     onOpenAppDrawer: () -> Unit,
     onLongPressFolderGridItem: (
         gridItem: GridItem,
@@ -429,6 +435,7 @@ private fun InteractiveApplicationInfoGridItem(
     val androidLauncherAppsWrapper = LocalLauncherApps.current
     val androidStatusBarManagerWrapper = LocalStatusBarManager.current
     val context = LocalContext.current
+    val currentOnDismiss by rememberUpdatedState(onDismiss)
 
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
     var intSize by remember { mutableStateOf(IntSize.Zero) }
@@ -479,6 +486,10 @@ private fun InteractiveApplicationInfoGridItem(
                                         // Callbacks
                                         onOpenAppDrawer = onOpenAppDrawer,
                                     )
+
+                                    if (gridItem.doubleTap.eblanActionType == EblanActionType.OpenApp) {
+                                        currentOnDismiss()
+                                    }
                                 }
                             } else {
                                 null
@@ -498,6 +509,8 @@ private fun InteractiveApplicationInfoGridItem(
                                     componentName = data.componentName,
                                     sourceBounds = sourceBounds,
                                 )
+
+                                currentOnDismiss()
                             },
                         )
                     }
@@ -607,6 +620,7 @@ private fun InteractiveShortcutInfoGridItem(
     // Modifier
     modifier: Modifier = Modifier,
     // Callbacks
+    onDismiss: () -> Unit,
     onOpenAppDrawer: () -> Unit,
     onLongPressFolderGridItem: (
         gridItem: GridItem,
@@ -620,6 +634,7 @@ private fun InteractiveShortcutInfoGridItem(
     val launcherApps = LocalLauncherApps.current
     val androidStatusBarManagerWrapper = LocalStatusBarManager.current
     val context = LocalContext.current
+    val currentOnDismiss by rememberUpdatedState(onDismiss)
 
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
     var intSize by remember { mutableStateOf(IntSize.Zero) }
@@ -666,6 +681,10 @@ private fun InteractiveShortcutInfoGridItem(
                                         // Callbacks
                                         onOpenAppDrawer = onOpenAppDrawer,
                                     )
+
+                                    if (gridItem.doubleTap.eblanActionType == EblanActionType.OpenApp) {
+                                        currentOnDismiss()
+                                    }
                                 }
                             } else {
                                 null
@@ -690,6 +709,8 @@ private fun InteractiveShortcutInfoGridItem(
                                         id = data.shortcutId,
                                         sourceBounds = sourceBounds,
                                     )
+
+                                    currentOnDismiss()
                                 }
                             },
                         )
@@ -798,6 +819,7 @@ private fun InteractiveShortcutConfigGridItem(
     // Modifier
     modifier: Modifier = Modifier,
     // Callbacks
+    onDismiss: () -> Unit,
     onOpenAppDrawer: () -> Unit,
     onLongPressFolderGridItem: (
         gridItem: GridItem,
@@ -810,6 +832,7 @@ private fun InteractiveShortcutConfigGridItem(
     val launcherApps = LocalLauncherApps.current
     val androidStatusBarManagerWrapper = LocalStatusBarManager.current
     val context = LocalContext.current
+    val currentOnDismiss by rememberUpdatedState(onDismiss)
 
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
     var intSize by remember { mutableStateOf(IntSize.Zero) }
@@ -864,6 +887,10 @@ private fun InteractiveShortcutConfigGridItem(
                                         // Callbacks
                                         onOpenAppDrawer = onOpenAppDrawer,
                                     )
+
+                                    if (gridItem.doubleTap.eblanActionType == EblanActionType.OpenApp) {
+                                        currentOnDismiss()
+                                    }
                                 }
                             } else {
                                 null
@@ -880,6 +907,8 @@ private fun InteractiveShortcutConfigGridItem(
                             onTap = {
                                 data.shortcutIntentUri?.let { currentShortcutIntentUri ->
                                     context.startActivity(parseUri(currentShortcutIntentUri, 0))
+
+                                    currentOnDismiss()
                                 }
                             },
                         )
@@ -983,7 +1012,7 @@ private fun InteractiveNestedFolderGridItem(
     modifier: Modifier = Modifier,
     // Callbacks
     onOpenAppDrawer: () -> Unit,
-    onUpsertFolderGridItemPopupEntry: (FolderEntry) -> Unit,
+    onUpsertFolderGridItemEntry: (FolderEntry) -> Unit,
     onLongPressFolderGridItem: (
         gridItem: GridItem,
         imageBitmap: suspend () -> ImageBitmap,
@@ -1044,7 +1073,7 @@ private fun InteractiveNestedFolderGridItem(
                                 )
                             },
                             onTap = {
-                                onUpsertFolderGridItemPopupEntry(
+                                onUpsertFolderGridItemEntry(
                                     FolderEntry(
                                         id = gridItem.id,
                                         x = intOffset.x,

@@ -279,6 +279,7 @@ internal fun ApplicationScreen(
                     swipeY = swipeY,
                     isVisibleOverlay = isVisibleOverlay,
                     // Callbacks
+                    onDismiss = onDismiss,
                     onDragEnd = onDragEnd,
                     onUpdateSelectedEblanApplicationInfoTagId = { currentSelectedEblanApplicationInfoTagId ->
                         selectedEblanApplicationInfoTagId = currentSelectedEblanApplicationInfoTagId
@@ -328,6 +329,7 @@ internal fun ApplicationScreen(
                     onUpdateSelectedEblanApplicationInfoTagId = { currentSelectedEblanApplicationInfoTagId ->
                         selectedEblanApplicationInfoTagId = currentSelectedEblanApplicationInfoTagId
                     },
+                    onDismiss = onDismiss,
                     onVerticalDrag = onVerticalDrag,
                     onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                     onDragEnd = onDragEnd,
@@ -658,6 +660,13 @@ private fun ApplicationScreenEffect(
 
                 keyboardController?.show()
             }
+        }
+    }
+
+    DisposableEffect(key1 = Unit) {
+        onDispose {
+            onGetEblanApplicationInfosByLabel("")
+            onGetEblanApplicationInfosByTagId(null)
         }
     }
 

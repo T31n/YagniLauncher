@@ -102,6 +102,7 @@ internal fun EblanApplicationInfoItem(
     systemCustomTextColor: Int,
     modifier: Modifier = Modifier,
     // Callbacks
+    onDismiss: () -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onDragApplicationInfo: (GridItem) -> Unit,
     onLongPressApplicationInfo: (
@@ -130,6 +131,7 @@ internal fun EblanApplicationInfoItem(
     val alpha = if (isLongPress) 0f else 1f
 
     val currentOnLongPressApplicationInfo by rememberUpdatedState(onLongPressApplicationInfo)
+    val currentOnDismiss by rememberUpdatedState(onDismiss)
 
     val gridItemSettings = appDrawerSettings.gridItemSettings
 
@@ -227,6 +229,8 @@ internal fun EblanApplicationInfoItem(
                                 // Controller
                                 keyboardController = keyboardController,
                             )
+
+                            currentOnDismiss()
                         },
                         onLongPress = {
                             scope.launch {

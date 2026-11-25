@@ -682,11 +682,7 @@ internal class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             moveGridItemJob?.cancelAndJoin()
 
-            _folderGridItemEntries.update { folderPopupEntries ->
-                folderPopupEntries.map { folderPopupEntry ->
-                    folderPopupEntry.copy(isCloseFolder = true)
-                }
-            }
+            closeFolderGridItemEntries()
 
             gridRepository.updateGridItem(gridItem = movingGridItem)
 
@@ -821,6 +817,14 @@ internal class HomeViewModel @Inject constructor(
         _folderGridItemEntries.update { emptyList() }
     }
 
+    fun closeFolderGridItemEntries() {
+        _folderGridItemEntries.update { folderEntries ->
+            folderEntries.map { folderEntry ->
+                folderEntry.copy(isCloseFolder = true)
+            }
+        }
+    }
+
     fun upsertFolderEblanApplicationInfoEntry(folderEntry: FolderEntry) {
         _folderEblanApplicationInfoEntries.update { folderEntries ->
             folderEntries
@@ -837,6 +841,14 @@ internal class HomeViewModel @Inject constructor(
 
     fun resetFolderEblanApplicationInfoEntries() {
         _folderEblanApplicationInfoEntries.update { emptyList() }
+    }
+
+    fun closeFolderEblanApplicationInfoEntries() {
+        _folderEblanApplicationInfoEntries.update { folderEntries ->
+            folderEntries.map { folderEntry ->
+                folderEntry.copy(isCloseFolder = true)
+            }
+        }
     }
 
     fun moveFolderEblanApplicationInfoGridItem(
@@ -903,11 +915,7 @@ internal class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             moveGridItemJob?.cancelAndJoin()
 
-            _folderEblanApplicationInfoEntries.update { folderEntries ->
-                folderEntries.map { folderEntry ->
-                    folderEntry.copy(isCloseFolder = true)
-                }
-            }
+            closeFolderEblanApplicationInfoEntries()
 
             _moveGridItemResult.update {
                 MoveGridItemResult(

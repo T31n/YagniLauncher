@@ -125,6 +125,7 @@ internal fun VerticalApplicationScreen(
     swipeY: Float,
     isVisibleOverlay: Boolean,
     // Callbacks
+    onDismiss: () -> Unit,
     onDragEnd: () -> Unit,
     onUpdateSelectedEblanApplicationInfoTagId: (Long?) -> Unit,
     onVerticalDrag: (Float) -> Unit,
@@ -270,6 +271,7 @@ internal fun VerticalApplicationScreen(
                 // Drag and Drop State
                 drag = drag,
                 // Drag and Drop Callbacks
+                onDismiss = onDismiss,
                 onDragEnd = onDragEnd,
                 onVerticalDrag = onVerticalDrag,
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
@@ -316,6 +318,7 @@ private fun EblanApplicationInfosPage(
     // Drag and Drop State
     drag: Drag,
     // Drag and Drop Callbacks
+    onDismiss: () -> Unit,
     onDragEnd: () -> Unit,
     onVerticalDrag: (Float) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
@@ -416,6 +419,7 @@ private fun EblanApplicationInfosPage(
                 folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
                 drag = drag,
                 // Callbacks
+                onDismiss = onDismiss,
                 onDragEnd = onDragEnd,
                 onVerticalDrag = onVerticalDrag,
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
@@ -484,6 +488,7 @@ private fun EblanApplicationInfosGrid(
     folderEblanApplicationInfoEntries: List<FolderEntry>,
     drag: Drag,
     // Callbacks
+    onDismiss: () -> Unit,
     onDragEnd: () -> Unit,
     onVerticalDrag: (Float) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
@@ -581,6 +586,7 @@ private fun EblanApplicationInfosGrid(
                                     systemCustomTextColor = systemCustomTextColor,
                                     modifier = Modifier.height(appDrawerSettings.appDrawerRowsHeight.dp),
                                     // Callbacks
+                                    onDismiss = onDismiss,
                                     onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                                     onDragApplicationInfo = onDragApplicationInfo,
                                     onLongPressApplicationInfo = onLongPressApplicationInfo,
@@ -642,6 +648,7 @@ private fun EblanApplicationInfosGrid(
                         systemTextColor = systemTextColor,
                         systemCustomTextColor = systemCustomTextColor,
                         // Callbacks
+                        onDismiss = onDismiss,
                         onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
                     )
                 }
@@ -672,6 +679,7 @@ private fun EblanApplicationInfosGrid(
                                     systemCustomTextColor = systemCustomTextColor,
                                     modifier = Modifier.height(appDrawerSettings.appDrawerRowsHeight.dp),
                                     // Callbacks
+                                    onDismiss = onDismiss,
                                     onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                                     onDragApplicationInfo = onDragApplicationInfo,
                                     onLongPressApplicationInfo = onLongPressApplicationInfo,

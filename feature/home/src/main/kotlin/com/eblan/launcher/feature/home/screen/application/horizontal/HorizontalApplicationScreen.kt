@@ -117,6 +117,7 @@ internal fun HorizontalApplicationScreen(
     swipeY: Float,
     isVisibleOverlay: Boolean,
     onUpdateSelectedEblanApplicationInfoTagId: (Long?) -> Unit,
+    onDismiss: () -> Unit,
     onVerticalDrag: (Float) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onDragEnd: () -> Unit,
@@ -273,6 +274,7 @@ internal fun HorizontalApplicationScreen(
                 drag = drag,
                 swipeY = swipeY,
                 // Callbacks
+                onDismiss = onDismiss,
                 onDragEnd = onDragEnd,
                 onVerticalDrag = onVerticalDrag,
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
@@ -318,6 +320,7 @@ private fun EblanApplicationInfosPage(
     drag: Drag,
     swipeY: Float,
     // Callbacks
+    onDismiss: () -> Unit,
     onDragEnd: () -> Unit,
     onVerticalDrag: (Float) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
@@ -422,6 +425,7 @@ private fun EblanApplicationInfosPage(
                             isScrollInProgress = isScrollInProgress,
                             modifier = Modifier.weight(1f),
                             // Callbacks
+                            onDismiss = onDismiss,
                             onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                             onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
                             onDragApplicationInfo = onDragApplicationInfo,
@@ -476,6 +480,7 @@ private fun EblanApplicationInfosPage(
                         swipeY = swipeY,
                         isScrollInProgress = isScrollInProgress,
                         // Callbacks
+                        onDismiss = onDismiss,
                         onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                         onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
                         onDragApplicationInfo = onDragApplicationInfo,
@@ -545,6 +550,7 @@ private fun EblanApplicationInfosGrid(
     isScrollInProgress: Boolean,
     modifier: Modifier = Modifier,
     // Callbacks
+    onDismiss: () -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onDragFolderEblanApplicationInfo: (
         folderEblanApplicationInfo: FolderEblanApplicationInfo,
@@ -606,6 +612,7 @@ private fun EblanApplicationInfosGrid(
                                 systemCustomTextColor = systemCustomTextColor,
                                 modifier = Modifier.fillMaxSize(),
                                 // Callbacks
+                                onDismiss = onDismiss,
                                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                                 onDragApplicationInfo = onDragApplicationInfo,
                                 onLongPressApplicationInfo = onLongPressApplicationInfo,
@@ -625,6 +632,7 @@ private fun EblanApplicationInfosGrid(
                                 paddingValues = paddingValues,
                                 modifier = Modifier.fillMaxSize(),
                                 // Actions
+                                onDismiss = onDismiss,
                                 onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
                             )
                         }

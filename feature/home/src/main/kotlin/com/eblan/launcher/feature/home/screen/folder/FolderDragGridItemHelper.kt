@@ -64,7 +64,7 @@ internal fun handleDragFolderGridItem(
         gridHeight: Int,
         currentPage: Int,
     ) -> Unit,
-    onUpsertFolderGridItemPopupEntry: (FolderEntry) -> Unit,
+    onUpsertFolderGridItemEntry: (FolderEntry) -> Unit,
 ) {
     if (drag != Drag.Dragging ||
         isScrollInProgress ||
@@ -110,6 +110,6 @@ internal fun handleDragFolderGridItem(
             currentPage,
         )
     } else if (!folderEntry.isCloseFolder) {
-        onUpsertFolderGridItemPopupEntry(folderEntry.copy(isCloseFolder = true))
+        onUpsertFolderGridItemEntry(folderEntry.copy(isCloseFolder = true))
     }
 }

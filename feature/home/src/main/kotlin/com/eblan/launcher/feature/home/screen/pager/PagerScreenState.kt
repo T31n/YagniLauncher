@@ -1184,7 +1184,7 @@ internal class PagerScreenState(
         onUpdateGridItemSource: (GridItemSource) -> Unit,
         onUpdateIsVisibleOverlay: (Boolean) -> Unit,
         onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
-        onResetFolderGridItemPopupEntries: () -> Unit,
+        onResetFolderGridItemEntries: () -> Unit,
     ) {
         onUpdateGridItemSource(GridItemSource.New)
 
@@ -1208,7 +1208,7 @@ internal class PagerScreenState(
 
         isCloseFolderGridItemMenu = true
 
-        onResetFolderGridItemPopupEntries()
+        onResetFolderGridItemEntries()
 
         onUpdateIsVisibleOverlay(true)
     }
@@ -1225,7 +1225,7 @@ internal class PagerScreenState(
         onUpdateGridItemSource: (GridItemSource) -> Unit,
         onUpdateIsVisibleOverlay: (Boolean) -> Unit,
         onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
-        onResetFolderEblanApplicationInfoPopupEntries: () -> Unit,
+        onResetFolderEblanApplicationInfoEntries: () -> Unit,
     ) {
         onUpdateGridItemSource(GridItemSource.New)
 
@@ -1249,7 +1249,7 @@ internal class PagerScreenState(
 
         isCloseFolderEblanApplicationInfoGridItemMenu = true
 
-        onResetFolderEblanApplicationInfoPopupEntries()
+        onResetFolderEblanApplicationInfoEntries()
 
         dismissApplicationScreen()
 
@@ -1269,8 +1269,8 @@ internal class PagerScreenState(
         onUpdateGridItemSource: (GridItemSource) -> Unit,
         onUpdateIsVisibleOverlay: (Boolean) -> Unit,
         onUpdateMoveGridItemResult: (MoveGridItemResult) -> Unit,
-        onResetFolderGridItemPopupEntries: () -> Unit,
-        onResetFolderEblanApplicationInfoPopupEntries: () -> Unit,
+        onResetFolderGridItemEntries: () -> Unit,
+        onResetFolderEblanApplicationInfoEntries: () -> Unit,
     ) {
         onUpdateGridItemSource(GridItemSource.New)
 
@@ -1297,13 +1297,13 @@ internal class PagerScreenState(
         if (isVisibleFolderGridItems) {
             isVisibleFolderGridItems = false
 
-            onResetFolderGridItemPopupEntries()
+            onResetFolderGridItemEntries()
         }
 
         if (isVisibleFolderEblanApplicationInfos) {
             isVisibleFolderEblanApplicationInfos = false
 
-            onResetFolderEblanApplicationInfoPopupEntries()
+            onResetFolderEblanApplicationInfoEntries()
         }
 
         if (showApplicationScreen) {
@@ -1392,11 +1392,11 @@ internal class PagerScreenState(
 
     fun tapFolderGridItem(
         folderEntry: FolderEntry,
-        onUpsertFolderGridItemPopupEntry: (FolderEntry) -> Unit,
+        onUpsertFolderGridItemEntry: (FolderEntry) -> Unit,
     ) {
         isVisibleFolderGridItems = true
 
-        onUpsertFolderGridItemPopupEntry(folderEntry)
+        onUpsertFolderGridItemEntry(folderEntry)
     }
 
     fun dragGridItem() {
@@ -1475,11 +1475,11 @@ internal class PagerScreenState(
         folderEntry: FolderEntry,
         isFirstFolderGridItem: Boolean,
         // Callbacks
-        onDeleteFolderGridItemPopupEntry: (FolderEntry) -> Unit,
+        onDeleteFolderGridItemEntry: (FolderEntry) -> Unit,
     ) {
         isVisibleFolderGridItems = !isFirstFolderGridItem
 
-        onDeleteFolderGridItemPopupEntry(folderEntry)
+        onDeleteFolderGridItemEntry(folderEntry)
     }
 
     fun dragWidget(
@@ -1658,11 +1658,11 @@ internal class PagerScreenState(
 
     fun tapFolderEblanApplicationInfo(
         folderEntry: FolderEntry,
-        onUpsertFolderEblanApplicationInfoPopupEntry: (FolderEntry) -> Unit,
+        onUpsertFolderEblanApplicationInfoEntry: (FolderEntry) -> Unit,
     ) {
         isVisibleFolderEblanApplicationInfos = true
 
-        onUpsertFolderEblanApplicationInfoPopupEntry(folderEntry)
+        onUpsertFolderEblanApplicationInfoEntry(folderEntry)
     }
 
     fun longPressFolderEblanApplicationInfo(
@@ -1771,11 +1771,11 @@ internal class PagerScreenState(
         folderEntry: FolderEntry,
         isFirstFolderEblanApplicationInfo: Boolean,
         // Callbacks
-        onDeleteFolderPopupEntry: (FolderEntry) -> Unit,
+        onDeleteFolderEntry: (FolderEntry) -> Unit,
     ) {
         isVisibleFolderEblanApplicationInfos = !isFirstFolderEblanApplicationInfo
 
-        onDeleteFolderPopupEntry(folderEntry)
+        onDeleteFolderEntry(folderEntry)
     }
 
     fun tapFolderEblanApplicationInfoGridItem(
