@@ -323,6 +323,7 @@ internal fun HorizontalApplicationScreen(
             hasSearchQuery = textFieldState.text.isNotEmpty(),
             canPauseWorkProfile = canPauseWorkProfile,
             isQuietModeEnabled = isQuietModeEnabled,
+            isScrollInProgress = horizontalPagerState.isScrollInProgress,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(

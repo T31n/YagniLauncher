@@ -17,24 +17,20 @@
  */
 package com.eblan.launcher.feature.home.component
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.feature.home.util.calculatePage
 import kotlin.math.abs
@@ -86,44 +82,52 @@ private fun PageIndicatorContent(
     val baseHeight = 8.dp
     val activeWidth = 16.dp
 
-    val distance by remember(key1 = index) {
-        derivedStateOf {
-            val currentPage = calculatePage(
-                index = gridHorizontalPagerState.currentPage,
-                infiniteScroll = infiniteScroll,
-                pageCount = pageCount,
-            )
+    val currentPage = calculatePage(
+        index = gridHorizontalPagerState.currentPage,
+        infiniteScroll = infiniteScroll,
+        pageCount = pageCount,
+    )
 
-            val relative =
-                (currentPage + gridHorizontalPagerState.currentPageOffsetFraction) - index
-
-            relative.coerceIn(-1f, 1f)
-        }
-    }
-
-    val width by remember {
-        derivedStateOf {
-            when (distance) {
-                0f -> activeWidth
-                in -1f..0f -> baseWidth + (activeWidth - baseWidth) * (1f + distance)
-                in 0f..1f -> baseWidth + (activeWidth - baseWidth) * (1f - distance)
-                else -> baseWidth
-            }
-        }
-    }
+    fun distance(): Float = ((currentPage + gridHorizontalPagerState.currentPageOffsetFraction) - index)
+        .coerceIn(-1f, 1f)
 
     Box(
         modifier = modifier
             .padding(3.dp)
-            .width(width)
-            .height(baseHeight)
+            .layout { measurable, constraints ->
+                val widthDp = when (val currentDistance = distance()) {
+                    0f -> activeWidth
+                    in -1f..0f -> baseWidth + (activeWidth - baseWidth) * (1f + currentDistance)
+                    in 0f..1f -> baseWidth + (activeWidth - baseWidth) * (1f - currentDistance)
+                    else -> baseWidth
+                }
+
+                val widthPx = widthDp.roundToPx()
+
+                val heightPx = baseHeight.roundToPx()
+
+                val placeable = measurable.measure(
+                    constraints.copy(
+                        minWidth = widthPx,
+                        maxWidth = widthPx,
+                        minHeight = heightPx,
+                        maxHeight = heightPx,
+                    ),
+                )
+
+                layout(widthPx, heightPx) {
+                    placeable.placeRelative(0, 0)
+                }
+            }
             .clip(CircleShape)
-            .background(
-                color = lerp(
-                    start = color.copy(alpha = 0.5f),
-                    stop = color,
-                    fraction = 1f - abs(distance).coerceIn(0f, 1f),
-                ),
-            ),
+            .drawBehind {
+                drawRect(
+                    color = lerp(
+                        start = color.copy(alpha = 0.5f),
+                        stop = color,
+                        fraction = 1f - abs(distance()).coerceIn(0f, 1f),
+                    ),
+                )
+            },
     )
 }

@@ -62,7 +62,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -496,31 +495,17 @@ internal fun PagerScreen(
         },
     )
 
-    val gridCurrentPage by remember(
-        key1 = gridHorizontalPagerState,
-        key2 = homeSettings,
-    ) {
-        derivedStateOf {
-            calculatePage(
-                index = gridHorizontalPagerState.currentPage,
-                infiniteScroll = homeSettings.infiniteScroll,
-                pageCount = homeSettings.pageCount,
-            )
-        }
-    }
+    val gridCurrentPage = calculatePage(
+        index = gridHorizontalPagerState.currentPage,
+        infiniteScroll = homeSettings.infiniteScroll,
+        pageCount = homeSettings.pageCount,
+    )
 
-    val dockGridCurrentPage by remember(
-        key1 = dockGridHorizontalPagerState,
-        key2 = homeSettings,
-    ) {
-        derivedStateOf {
-            calculatePage(
-                index = dockGridHorizontalPagerState.currentPage,
-                infiniteScroll = homeSettings.dockInfiniteScroll,
-                pageCount = homeSettings.dockPageCount,
-            )
-        }
-    }
+    val dockGridCurrentPage = calculatePage(
+        index = dockGridHorizontalPagerState.currentPage,
+        infiniteScroll = homeSettings.dockInfiniteScroll,
+        pageCount = homeSettings.dockPageCount,
+    )
 
     val hasMenuGeometry =
         pagerScreenState.menuIntOffset != null && pagerScreenState.menuIntSize != null
