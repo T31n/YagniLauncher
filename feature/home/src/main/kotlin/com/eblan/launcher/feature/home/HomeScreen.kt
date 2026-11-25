@@ -111,7 +111,7 @@ internal fun HomeScreen(
     onEditGridItem: (String) -> Unit,
     onEditFolderApplicationInfo: (String) -> Unit,
 ) {
-    val homeUiState by contract.homeUiState.collectAsStateWithLifecycle()
+    val homeUiState = contract.homeUiState.collectAsStateWithLifecycle().value
     val screen by contract.screen.collectAsStateWithLifecycle()
 
     val paddingValues = WindowInsets.systemBars
@@ -127,28 +127,24 @@ internal fun HomeScreen(
                 screenIntSize = intSize
             },
     ) {
-        when (val state = homeUiState) {
-            is HomeUiState.Success if screenIntSize != IntSize.Zero -> {
-                Success(
-                    // Contract
-                    contract = contract,
-                    // State
-                    homeData = state.homeData,
-                    screen = screen,
-                    screenWidth = screenIntSize.width,
-                    screenHeight = screenIntSize.height,
-                    paddingValues = paddingValues,
-                    configureResultCode = configureResultCode,
-                    // Navigation and Activity Callbacks
-                    onResetConfigureResultCode = onResetConfigureResultCode,
-                    onSettings = onSettings,
-                    onEditApplicationInfo = onEditApplicationInfo,
-                    onEditGridItem = onEditGridItem,
-                    onEditFolderApplicationInfo = onEditFolderApplicationInfo,
-                )
-            }
-
-            else -> Unit
+        if (homeUiState is HomeUiState.Success && screenIntSize != IntSize.Zero) {
+            Success(
+                // Contract
+                contract = contract,
+                // State
+                homeData = homeUiState.homeData,
+                screen = screen,
+                screenWidth = screenIntSize.width,
+                screenHeight = screenIntSize.height,
+                paddingValues = paddingValues,
+                configureResultCode = configureResultCode,
+                // Navigation and Activity Callbacks
+                onResetConfigureResultCode = onResetConfigureResultCode,
+                onSettings = onSettings,
+                onEditApplicationInfo = onEditApplicationInfo,
+                onEditGridItem = onEditGridItem,
+                onEditFolderApplicationInfo = onEditFolderApplicationInfo,
+            )
         }
     }
 }
@@ -357,7 +353,7 @@ private fun RequestPermissionsEffect(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun produceHomeTextColorState(
+private fun produceHomeTextColorState(
     configuredTextColor: TextColor?,
     theme: Theme?,
 ): State<TextColor> {
