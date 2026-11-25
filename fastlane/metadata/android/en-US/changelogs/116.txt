@@ -1,0 +1,6 @@
+- Add new home pager transition effects (#1152)
+- Add customizable page indicator styles and new icon shapes (#1151)
+- Add app drawer search bar styles (Top, Floating, None) (#1149)
+- Replace screen orientation lock with orientation options (#1145)
+- Support folders in horizontal app drawer and auto-cleanup empty/single-item folders (#1144)
+- Dismiss app drawer and folders when launching apps (#1148)
