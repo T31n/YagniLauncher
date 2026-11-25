@@ -120,6 +120,7 @@ import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
 import com.eblan.launcher.domain.model.userdata.FolderSettings
 import com.eblan.launcher.domain.model.userdata.GestureSettings
 import com.eblan.launcher.domain.model.userdata.HomeSettings
+import com.eblan.launcher.domain.model.userdata.PageIndicatorType
 import com.eblan.launcher.domain.model.userdata.ScreenOrientation
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
@@ -1046,7 +1047,7 @@ internal fun PagerScreen(
                     textColor = textColor,
                     customTextColor = homeSettings.gridItemSettings.customTextColor,
                 ),
-                showPageIndicator = homeSettings.showPageIndicator,
+                pageIndicatorType = homeSettings.pageIndicatorType,
                 // Scroll Behavior
                 infiniteScroll = homeSettings.infiniteScroll,
                 swipeUp = gestureSettings.swipeUp,
@@ -2058,7 +2059,7 @@ private fun GridPagerIndicator(
     pageCount: Int,
     // Indicator Appearance
     color: Color,
-    showPageIndicator: Boolean,
+    pageIndicatorType: PageIndicatorType,
     // Scroll Behavior
     infiniteScroll: Boolean,
     swipeUp: EblanAction,
@@ -2066,7 +2067,7 @@ private fun GridPagerIndicator(
     // Layout
     modifier: Modifier = Modifier,
 ) {
-    if (!showPageIndicator) return
+    if (pageIndicatorType == PageIndicatorType.None) return
 
     var isScrollInProgress by remember { mutableStateOf(false) }
 
@@ -2089,6 +2090,7 @@ private fun GridPagerIndicator(
                 infiniteScroll = infiniteScroll,
                 // Appearance and Layout
                 color = color,
+                pageIndicatorType = pageIndicatorType,
             )
         } else if (swipeUp.eblanActionType == EblanActionType.OpenAppDrawer) {
             Image(

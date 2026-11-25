@@ -32,12 +32,10 @@
     <string name="show_or_hide_the_dock">Show or hide the dock</string>
     <string name="dock_grid_item">Dock Grid Item</string>
     <string name="dock_infinite_scroll">Dock Infinite Scroll</string>
-    <string name="show_page_indicator">Show Page Indicator</string>
     <string name="show_status_bar">Show Status Bar</string>
     <string name="show_the_status_bar_on_the_home_screen">Show the status bar on the home screen</string>
     <string name="show_navigation_bar">Show Navigation Bar</string>
     <string name="show_the_navigation_bar_on_the_home_screen">Show the navigation bar on the home screen</string>
-    <string name="show_an_indicator_for_the_current_page">Show an indicator for the current page</string>
     <string name="dock_background_color">Dock Background Color</string>
     <string name="dock_padding">Dock Padding</string>
     <string name="dock_corner_radius">Dock Corner Radius</string>
@@ -65,4 +63,13 @@
     <string name="screen_orientation">Screen Orientation</string>
     <string name="portrait">Portrait</string>
     <string name="landscape">Landscape</string>
+    <string name="page_indicator">Page Indicator</string>
+    <string name="page_indicator_dots">Dots</string>
+    <string name="page_indicator_line">Line</string>
+    <string name="page_indicator_worm">Worm</string>
+    <string name="page_indicator_jumping_dot">Jumping Dot</string>
+    <string name="page_indicator_equalizer">Equalizer</string>
+    <string name="page_indicator_diamonds">Diamonds</string>
+    <string name="page_indicator_numbers">Numbers</string>
+    <string name="page_indicator_pac_man">Pac-Man</string>
 </resources>

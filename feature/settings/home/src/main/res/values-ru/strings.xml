@@ -32,12 +32,10 @@
     <string name="show_or_hide_the_dock">Показать или скрыть док-панель</string>
     <string name="dock_grid_item">Элемент сетки док-панели</string>
     <string name="dock_infinite_scroll">Бесконечная прокрутка в док-панели</string>
-    <string name="show_page_indicator">Показывать индикатор страницы</string>
     <string name="show_status_bar">Показывать строку состояния</string>
     <string name="show_the_status_bar_on_the_home_screen">Показывать строку состояния на главном экране</string>
     <string name="show_navigation_bar">Показывать панель навигации</string>
     <string name="show_the_navigation_bar_on_the_home_screen">Показывать панель навигации на главном экране</string>
-    <string name="show_an_indicator_for_the_current_page">Отображать индикатор текущей страницы</string>
     <string name="dock_background_color">Цвет фона док-панели</string>
     <string name="dock_padding">Отступ док-панели</string>
     <string name="dock_corner_radius">Радиус скругления угла док-панели</string>
@@ -65,4 +63,13 @@
     <string name="screen_orientation">Ориентация экрана</string>
     <string name="portrait">Книжная</string>
     <string name="landscape">Альбомная</string>
+    <string name="page_indicator">Индикатор страницы</string>
+    <string name="page_indicator_dots">Точки</string>
+    <string name="page_indicator_line">Линия</string>
+    <string name="page_indicator_worm">Червяк</string>
+    <string name="page_indicator_jumping_dot">Прыгающая точка</string>
+    <string name="page_indicator_equalizer">Эквалайзер</string>
+    <string name="page_indicator_diamonds">Ромбы</string>
+    <string name="page_indicator_numbers">Числа</string>
+    <string name="page_indicator_pac_man">Пакман</string>
 </resources>

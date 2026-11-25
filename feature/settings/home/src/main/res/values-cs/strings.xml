@@ -32,12 +32,10 @@
     <string name="show_or_hide_the_dock">Zobrazit nebo skrýt dokovací oblast</string>
     <string name="dock_grid_item">Položka mřížky dokovací oblasti</string>
     <string name="dock_infinite_scroll">Nekonečné rolování dokovací oblasti</string>
-    <string name="show_page_indicator">Zobrazit indikátor stránky</string>
     <string name="show_status_bar">Zobrazit stavový řádek</string>
     <string name="show_the_status_bar_on_the_home_screen">Zobrazit stavový řádek na domovské obrazovce</string>
     <string name="show_navigation_bar">Zobrazit navigační lištu</string>
     <string name="show_the_navigation_bar_on_the_home_screen">Zobrazit navigační lištu na domovské obrazovce</string>
-    <string name="show_an_indicator_for_the_current_page">Zobrazit indikátor pro aktuální stránku</string>
     <string name="dock_background_color">Barva pozadí dokovací oblasti</string>
     <string name="dock_padding">Odsazení dokovací oblasti</string>
     <string name="dock_corner_radius">Zaoblení rohů dokovací oblasti</string>
@@ -65,4 +63,13 @@
     <string name="screen_orientation">Orientace obrazovky</string>
     <string name="portrait">Na výšku</string>
     <string name="landscape">Na šířku</string>
+    <string name="page_indicator">Indikátor stránky</string>
+    <string name="page_indicator_dots">Tečky</string>
+    <string name="page_indicator_line">Čára</string>
+    <string name="page_indicator_worm">Červ</string>
+    <string name="page_indicator_jumping_dot">Skákající tečka</string>
+    <string name="page_indicator_equalizer">Ekvalizér</string>
+    <string name="page_indicator_diamonds">Diamanty</string>
+    <string name="page_indicator_numbers">Čísla</string>
+    <string name="page_indicator_pac_man">Pac-Man</string>
 </resources>

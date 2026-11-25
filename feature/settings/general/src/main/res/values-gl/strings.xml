@@ -64,5 +64,15 @@
     <string name="cookie">Galleta</string>
     <string name="flower">Flor</string>
     <string name="shield">Escudo</string>
+    <string name="squircle">Cadrado curvo</string>
+    <string name="leaf">Folla</string>
+    <string name="arch">Arco</string>
+    <string name="scallop">Onda</string>
+    <string name="heart">Corazón</string>
+    <string name="star">Estrela</string>
+    <string name="cloud">Nube</string>
+    <string name="cat">Gato</string>
+    <string name="ghost">Fantasma</string>
+    <string name="pac_man">Pac-Man</string>
     <string name="icon_shape">Forma da icona</string>
 </resources>
