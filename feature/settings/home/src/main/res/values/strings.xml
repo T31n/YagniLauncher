@@ -15,7 +15,7 @@
   ~   limitations under the License.
   ~
   -->
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <string name="dock_grid">Dock Grid</string>
     <string name="dock_columns_is_not_valid">Dock columns is not valid</string>
     <string name="dock_rows_is_not_valid">Dock rows is not valid</string>
@@ -62,7 +62,7 @@
     <string name="transition_effect_flip">Flip</string>
     <string name="transition_effect_parallax">Parallax</string>
     <string name="transition_effect_stack">Stack</string>
-    <string name="screen_orientation" tools:ignore="MissingTranslation">Screen Orientation</string>
-    <string name="portrait" tools:ignore="MissingTranslation">Portrait</string>
-    <string name="landscape" tools:ignore="MissingTranslation">Landscape</string>
+    <string name="screen_orientation">Screen Orientation</string>
+    <string name="portrait">Portrait</string>
+    <string name="landscape">Landscape</string>
 </resources>

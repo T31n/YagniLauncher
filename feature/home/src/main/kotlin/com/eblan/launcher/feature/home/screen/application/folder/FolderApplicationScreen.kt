@@ -187,43 +187,35 @@ internal fun FolderApplicationScreen(
 
     val progress = remember { Animatable(0f) }
 
-    val animatedFolderRect by remember(key1 = folderPopupLayoutInfo) {
-        derivedStateOf {
-            getAnimatedRect(
-                // Animation Progress
-                progress = progress.value,
-                // Dimensions
-                startWidth = folderPopupLayoutInfo.startWidth,
-                startHeight = folderPopupLayoutInfo.startHeight,
-                endWidth = folderPopupLayoutInfo.folderGridWidthPx.toFloat(),
-                endHeight = folderPopupLayoutInfo.endHeight.toFloat(),
-                // Center Coordinates
-                startCenterX = folderPopupLayoutInfo.startCenterX,
-                startCenterY = folderPopupLayoutInfo.startCenterY,
-                endCenterX = folderPopupLayoutInfo.endCenterX,
-                endCenterY = folderPopupLayoutInfo.endCenterY,
-            )
-        }
-    }
+    val animatedFolderRect = getAnimatedRect(
+        // Animation Progress
+        progress = progress.value,
+        // Dimensions
+        startWidth = folderPopupLayoutInfo.startWidth,
+        startHeight = folderPopupLayoutInfo.startHeight,
+        endWidth = folderPopupLayoutInfo.folderGridWidthPx.toFloat(),
+        endHeight = folderPopupLayoutInfo.endHeight.toFloat(),
+        // Center Coordinates
+        startCenterX = folderPopupLayoutInfo.startCenterX,
+        startCenterY = folderPopupLayoutInfo.startCenterY,
+        endCenterX = folderPopupLayoutInfo.endCenterX,
+        endCenterY = folderPopupLayoutInfo.endCenterY,
+    )
 
-    val animatedPreviewRect by remember(key1 = folderPopupLayoutInfo) {
-        derivedStateOf {
-            getAnimatedRect(
-                // Animation Progress
-                progress = progress.value,
-                // Dimensions
-                startWidth = folderPopupLayoutInfo.startPreviewWidth,
-                startHeight = folderPopupLayoutInfo.startPreviewHeight,
-                endWidth = folderPopupLayoutInfo.folderGridWidthPx.toFloat(),
-                endHeight = folderPopupLayoutInfo.folderGridHeightPx.toFloat(),
-                // Center Coordinates
-                startCenterX = folderPopupLayoutInfo.startCenterX,
-                startCenterY = folderPopupLayoutInfo.startCenterY,
-                endCenterX = folderPopupLayoutInfo.endCenterX,
-                endCenterY = folderPopupLayoutInfo.endCenterY,
-            )
-        }
-    }
+    val animatedPreviewRect = getAnimatedRect(
+        // Animation Progress
+        progress = progress.value,
+        // Dimensions
+        startWidth = folderPopupLayoutInfo.startPreviewWidth,
+        startHeight = folderPopupLayoutInfo.startPreviewHeight,
+        endWidth = folderPopupLayoutInfo.folderGridWidthPx.toFloat(),
+        endHeight = folderPopupLayoutInfo.folderGridHeightPx.toFloat(),
+        // Center Coordinates
+        startCenterX = folderPopupLayoutInfo.startCenterX,
+        startCenterY = folderPopupLayoutInfo.startCenterY,
+        endCenterX = folderPopupLayoutInfo.endCenterX,
+        endCenterY = folderPopupLayoutInfo.endCenterY,
+    )
 
     val folderGridHorizontalPagerState = rememberPagerState(
         pageCount = {

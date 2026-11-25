@@ -69,4 +69,5 @@
     <string name="vertical_alignment">Alinhamento vertical</string>
     <string name="horizontal_arrangement">Disposição horizontal</string>
     <string name="open_notification_panel_by_reflection">Abrir painel de notificações por reflexão</string>
+    <string name="select_applications">Selecionar aplicativos</string>
 </resources>

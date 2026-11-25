@@ -33,4 +33,5 @@
     <string name="please_wait_for_the_white_box_indicator">الرجاء الانتظار حتى يظهر الصندوق الابيض</string>
     <string name="edit_dock_pages">تعديل صفحات شريط التطبيقات السفلي</string>
     <string name="private_space">مساحة خاصة</string>
+    <string name="search">بحث</string>
 </resources>

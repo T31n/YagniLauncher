@@ -62,4 +62,7 @@
     <string name="transition_effect_flip">Virar</string>
     <string name="transition_effect_parallax">Paralaxe</string>
     <string name="transition_effect_stack">Pilha</string>
+    <string name="screen_orientation">Orientação da tela</string>
+    <string name="portrait">Retrato</string>
+    <string name="landscape">Paisagem</string>
 </resources>

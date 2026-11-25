@@ -15,7 +15,7 @@
   ~   limitations under the License.
   ~
   -->
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <string name="open">Open %1$s</string>
     <string name="app">App</string>
     <string name="open_app_drawer">Open App Drawer</string>
@@ -35,7 +35,7 @@
     <string name="text_size">Text Size</string>
     <string name="text_size_is_not_valid">Text Size is not valid</string>
     <string name="select_application">Select Application</string>
-    <string name="select_applications" tools:ignore="MissingTranslation">Select Applications</string>
+    <string name="select_applications">Select Applications</string>
     <string name="custom_icon">Custom Icon</string>
     <string name="gallery">Gallery</string>
     <string name="pick_icons_from_your_gallery">Pick icons from your gallery</string>

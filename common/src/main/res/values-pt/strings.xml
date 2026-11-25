@@ -47,4 +47,7 @@
     <string name="folders">Pastas</string>
     <string name="folder">Pasta</string>
     <string name="custom">Personalizado</string>
+    <string name="add_applications">Adicionar aplicativos</string>
+    <string name="add_applications_to_folder">Adicionar aplicativos a esta pasta</string>
+    <string name="cache">Cache</string>
 </resources>

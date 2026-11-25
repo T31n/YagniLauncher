@@ -22,6 +22,7 @@ import androidx.datastore.core.Serializer
 import com.eblan.launcher.data.datastore.proto.UserDataProto
 import com.eblan.launcher.data.datastore.proto.appdrawer.AppDrawerSettingsProto
 import com.eblan.launcher.data.datastore.proto.appdrawer.AppDrawerTypeProto
+import com.eblan.launcher.data.datastore.proto.appdrawer.SearchBarTypeProto
 import com.eblan.launcher.data.datastore.proto.experimental.ExperimentalSettingsProto
 import com.eblan.launcher.data.datastore.proto.folder.FolderSettingsProto
 import com.eblan.launcher.data.datastore.proto.general.ColorSchemeContrastPresetProto
@@ -122,6 +123,7 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
         showKeyboard = false
         fuzzySearch = false
         blurBehind = false
+        searchBarTypeProto = SearchBarTypeProto.SearchBarTypeTop
     }.build()
 
     private val defaultGestureSettingsProto = GestureSettingsProto.newBuilder().apply {

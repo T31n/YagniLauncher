@@ -28,7 +28,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -126,53 +125,37 @@ internal fun WidgetGridItemResizeOverlay(
         DRAG_HANDLE_SIZE.roundToPx()
     }
 
-    val borderWidth by remember {
-        derivedStateOf {
-            with(density) {
-                currentWidth.value.coerceAtLeast(dragHandleSizePx).toDp()
-            }
-        }
+    val borderWidth = with(density) {
+        currentWidth.value.coerceAtLeast(dragHandleSizePx).toDp()
     }
 
-    val borderHeight by remember {
-        derivedStateOf {
-            with(density) {
-                currentHeight.value.coerceAtLeast(dragHandleSizePx).toDp()
-            }
-        }
+    val borderHeight = with(density) {
+        currentHeight.value.coerceAtLeast(dragHandleSizePx).toDp()
     }
 
-    val borderX by remember {
-        derivedStateOf {
-            getWidgetBorderX(
-                // Position
-                x = x,
-                currentX = currentX.value,
-                // Dimensions
-                width = width,
-                currentWidth = currentWidth.value,
-                // DragHandle
-                dragHandle = dragHandle,
-                dragHandleSizePx = dragHandleSizePx,
-            )
-        }
-    }
+    val borderX = getWidgetBorderX(
+        // Position
+        x = x,
+        currentX = currentX.value,
+        // Dimensions
+        width = width,
+        currentWidth = currentWidth.value,
+        // DragHandle
+        dragHandle = dragHandle,
+        dragHandleSizePx = dragHandleSizePx,
+    )
 
-    val borderY by remember {
-        derivedStateOf {
-            getWidgetBorderY(
-                // Position
-                y = y,
-                currentY = currentY.value,
-                // Dimensions
-                height = height,
-                currentHeight = currentHeight.value,
-                // Drag Configuration
-                dragHandle = dragHandle,
-                dragHandleSizePx = dragHandleSizePx,
-            )
-        }
-    }
+    val borderY = getWidgetBorderY(
+        // Position
+        y = y,
+        currentY = currentY.value,
+        // Dimensions
+        height = height,
+        currentHeight = currentHeight.value,
+        // Drag Configuration
+        dragHandle = dragHandle,
+        dragHandleSizePx = dragHandleSizePx,
+    )
 
     LaunchedEffect(
         key1 = currentWidth.value,

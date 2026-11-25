@@ -62,4 +62,7 @@
     <string name="transition_effect_flip">قلب</string>
     <string name="transition_effect_parallax">تأثير اختلاف المنظور</string>
     <string name="transition_effect_stack">مكدس</string>
+    <string name="screen_orientation">اتجاه الشاشة</string>
+    <string name="portrait">عمودي</string>
+    <string name="landscape">أفقي</string>
 </resources>

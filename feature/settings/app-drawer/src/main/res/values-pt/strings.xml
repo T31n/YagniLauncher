@@ -40,4 +40,7 @@
     <string name="sort_update_and_delete_folders">Ordenar, atualizar e excluir pastas</string>
     <string name="vertical">Vertical</string>
     <string name="horizontal">Horizontal</string>
+    <string name="search_bar_type">Tipo de barra de pesquisa</string>
+    <string name="top">Superior</string>
+    <string name="floating">Flutuante</string>
 </resources>

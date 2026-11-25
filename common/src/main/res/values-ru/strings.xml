@@ -47,4 +47,7 @@
     <string name="folders">Папки</string>
     <string name="folder">Папка</string>
     <string name="custom">Другое</string>
+    <string name="add_applications">Добавить приложения</string>
+    <string name="add_applications_to_folder">Добавить приложения в эту папку</string>
+    <string name="cache">Кэш</string>
 </resources>

@@ -62,4 +62,7 @@
     <string name="transition_effect_flip">Voltear</string>
     <string name="transition_effect_parallax">Paralaxe</string>
     <string name="transition_effect_stack">Pila</string>
+    <string name="screen_orientation">Orientación da pantalla</string>
+    <string name="portrait">Vertical</string>
+    <string name="landscape">Horizontal</string>
 </resources>

@@ -62,4 +62,7 @@
     <string name="transition_effect_flip">Подбросить</string>
     <string name="transition_effect_parallax">Параллакс (смещение)</string>
     <string name="transition_effect_stack">Нагромождение</string>
+    <string name="screen_orientation">Ориентация экрана</string>
+    <string name="portrait">Книжная</string>
+    <string name="landscape">Альбомная</string>
 </resources>

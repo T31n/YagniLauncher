@@ -40,4 +40,7 @@
     <string name="sort_update_and_delete_folders">Sortuj, aktualizuj i usuwaj foldery</string>
     <string name="vertical">Pionowo</string>
     <string name="horizontal">Poziomo</string>
+    <string name="search_bar_type">Typ paska wyszukiwania</string>
+    <string name="top">Góra</string>
+    <string name="floating">Pływający</string>
 </resources>

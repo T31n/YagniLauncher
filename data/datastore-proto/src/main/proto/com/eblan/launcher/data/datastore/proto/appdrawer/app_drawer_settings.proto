@@ -2,6 +2,7 @@ syntax = "proto3";
 
 import "com/eblan/launcher/data/datastore/proto/model/grid_item_settings.proto";
 import "com/eblan/launcher/data/datastore/proto/appdrawer/app_drawer_type.proto";
+import "com/eblan/launcher/data/datastore/proto/appdrawer/search_bar_type.proto";
 import "com/eblan/launcher/data/datastore/proto/model/background_color.proto";
 
 option java_package = "com.eblan.launcher.data.datastore.proto.appdrawer";
@@ -20,4 +21,5 @@ message AppDrawerSettingsProto {
   optional bool showKeyboard = 12;
   optional bool fuzzySearch = 13;
   optional bool blurBehind = 14;
+  optional SearchBarTypeProto searchBarTypeProto = 15;
 }

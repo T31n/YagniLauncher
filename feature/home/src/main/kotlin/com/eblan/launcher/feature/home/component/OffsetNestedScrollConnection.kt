@@ -18,8 +18,9 @@
 package com.eblan.launcher.feature.home.component
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
@@ -34,38 +35,35 @@ internal fun rememberNestedScrollConnectionEffect(
     onVerticalDrag: (Float) -> Unit,
     onDragEnd: () -> Unit,
 ): OffsetNestedScrollConnection {
-    val nestedScrollConnection = remember(
+    val currentCanScrollBackward = rememberUpdatedState(canScrollBackward)
+    val currentSwipeY = rememberUpdatedState(swipeY)
+
+    return remember(
         key1 = onVerticalDrag,
         key2 = onDragEnd,
     ) {
         OffsetNestedScrollConnection(
+            canScrollBackward = currentCanScrollBackward,
+            swipeY = currentSwipeY,
             onVerticalDrag = onVerticalDrag,
             onDragEnd = onDragEnd,
         )
     }
-
-    SideEffect {
-        nestedScrollConnection.updateSwipeY(swipeY)
-        nestedScrollConnection.updateCanScrollBackward(canScrollBackward)
-    }
-
-    return nestedScrollConnection
 }
 
 internal class OffsetNestedScrollConnection(
+    private val canScrollBackward: State<Boolean>,
+    private val swipeY: State<Float>,
     private val onVerticalDrag: (Float) -> Unit,
     private val onDragEnd: () -> Unit,
 ) : NestedScrollConnection {
-    private var swipeY = 0f
-    private var canScrollBackward = false
-
     override fun onPreScroll(
         available: Offset,
         source: NestedScrollSource,
     ): Offset {
         if (
             source == NestedScrollSource.UserInput &&
-            available.y < 0f && swipeY > 0f
+            available.y < 0f && swipeY.value > 0f
         ) {
             onVerticalDrag(available.y)
 
@@ -85,7 +83,7 @@ internal class OffsetNestedScrollConnection(
     ): Offset {
         if (
             source == NestedScrollSource.UserInput &&
-            available.y > 0f && !canScrollBackward
+            available.y > 0f && !canScrollBackward.value
         ) {
             onVerticalDrag(available.y)
 
@@ -99,18 +97,10 @@ internal class OffsetNestedScrollConnection(
     }
 
     override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
-        if (swipeY > 0f) {
+        if (swipeY.value > 0f) {
             onDragEnd()
         }
 
         return super.onPostFling(consumed, available)
-    }
-
-    fun updateSwipeY(value: Float) {
-        swipeY = value
-    }
-
-    fun updateCanScrollBackward(value: Boolean) {
-        canScrollBackward = value
     }
 }
