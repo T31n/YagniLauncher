@@ -17,11 +17,6 @@
  */
 package com.eblan.launcher.feature.home.screen.application
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -195,7 +190,6 @@ internal fun ApplicationFloatingActionButton(
     hasSearchQuery: Boolean,
     canPauseWorkProfile: Boolean,
     isQuietModeEnabled: Boolean,
-    isScrollInProgress: Boolean,
     modifier: Modifier = Modifier,
     onShowSearchDialog: () -> Unit,
     onClearSearch: () -> Unit,
@@ -205,52 +199,26 @@ internal fun ApplicationFloatingActionButton(
         return
     }
 
-    AnimatedVisibility(
-        visible = !isScrollInProgress,
+    Row(
         modifier = modifier,
-        enter = fadeIn() + scaleIn(initialScale = 0.8f),
-        exit = fadeOut() + scaleOut(targetScale = 0.8f),
+        horizontalArrangement = Arrangement.spacedBy(EblanSpacing.medium),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(EblanSpacing.medium),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            when (searchBarType) {
-                SearchBarType.Floating -> {
-                    if (hasSearchQuery) {
-                        SmallFloatingActionButton(
-                            onClick = onClearSearch,
-                        ) {
-                            Icon(
-                                imageVector = EblanLauncherIcons.Close,
-                                contentDescription = null,
-                            )
-                        }
-                    }
-
-                    if (canPauseWorkProfile) {
-                        SmallFloatingActionButton(
-                            onClick = onPauseWorkProfile,
-                        ) {
-                            Icon(
-                                imageVector = EblanLauncherIcons.WorkOff,
-                                contentDescription = null,
-                            )
-                        }
-                    }
-
-                    FloatingActionButton(
-                        onClick = onShowSearchDialog,
+        when (searchBarType) {
+            SearchBarType.Floating -> {
+                if (hasSearchQuery) {
+                    SmallFloatingActionButton(
+                        onClick = onClearSearch,
                     ) {
                         Icon(
-                            imageVector = EblanLauncherIcons.Search,
+                            imageVector = EblanLauncherIcons.Close,
                             contentDescription = null,
                         )
                     }
                 }
 
-                SearchBarType.Top, SearchBarType.None -> {
-                    FloatingActionButton(
+                if (canPauseWorkProfile) {
+                    SmallFloatingActionButton(
                         onClick = onPauseWorkProfile,
                     ) {
                         Icon(
@@ -258,6 +226,26 @@ internal fun ApplicationFloatingActionButton(
                             contentDescription = null,
                         )
                     }
+                }
+
+                FloatingActionButton(
+                    onClick = onShowSearchDialog,
+                ) {
+                    Icon(
+                        imageVector = EblanLauncherIcons.Search,
+                        contentDescription = null,
+                    )
+                }
+            }
+
+            SearchBarType.Top, SearchBarType.None -> {
+                FloatingActionButton(
+                    onClick = onPauseWorkProfile,
+                ) {
+                    Icon(
+                        imageVector = EblanLauncherIcons.WorkOff,
+                        contentDescription = null,
+                    )
                 }
             }
         }

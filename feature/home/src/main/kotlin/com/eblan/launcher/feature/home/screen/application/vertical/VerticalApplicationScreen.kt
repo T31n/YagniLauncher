@@ -43,13 +43,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -196,14 +193,6 @@ internal fun VerticalApplicationScreen(
         currentEblanUserPageKey.eblanUser.serialNumber > 0 &&
         currentUserHandle != null
 
-    var isVerticalScrollInProgress by remember { mutableStateOf(false) }
-
-    val isScrollInProgress = horizontalPagerState.isScrollInProgress || isVerticalScrollInProgress
-
-    LaunchedEffect(key1 = horizontalPagerState.currentPage) {
-        isVerticalScrollInProgress = false
-    }
-
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -322,11 +311,6 @@ internal fun VerticalApplicationScreen(
                     onLongPressFolderApplicationInfo = onLongPressFolderApplicationInfo,
                     onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
                     onTapFolderApplicationInfo = onTapFolderApplicationInfo,
-                    onUpdateIsScrollInProgress = { currentIsScrollInProgress ->
-                        if (index == horizontalPagerState.currentPage) {
-                            isVerticalScrollInProgress = currentIsScrollInProgress
-                        }
-                    },
                 )
             }
         }
@@ -336,7 +320,6 @@ internal fun VerticalApplicationScreen(
             hasSearchQuery = textFieldState.text.isNotEmpty(),
             canPauseWorkProfile = canPauseWorkProfile,
             isQuietModeEnabled = isQuietModeEnabled,
-            isScrollInProgress = isScrollInProgress,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(
@@ -420,7 +403,6 @@ private fun EblanApplicationInfosPage(
         intSize: IntSize,
     ) -> Unit,
     onTapFolderApplicationInfo: (folderEntry: FolderEntry) -> Unit,
-    onUpdateIsScrollInProgress: (Boolean) -> Unit,
 ) {
     val userManager = LocalUserManager.current
 
@@ -498,7 +480,6 @@ private fun EblanApplicationInfosPage(
                 onLongPressFolderApplicationInfo = onLongPressFolderApplicationInfo,
                 onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
                 onTapFolderApplicationInfo = onTapFolderApplicationInfo,
-                onUpdateIsScrollInProgress = onUpdateIsScrollInProgress,
             )
         }
     }
@@ -560,7 +541,6 @@ private fun EblanApplicationInfosGrid(
         intSize: IntSize,
     ) -> Unit,
     onTapFolderApplicationInfo: (folderEntry: FolderEntry) -> Unit,
-    onUpdateIsScrollInProgress: (Boolean) -> Unit,
 ) {
     val lazyGridState = rememberLazyGridState()
 
@@ -584,16 +564,6 @@ private fun EblanApplicationInfosGrid(
     LaunchedEffect(key1 = isScreenDismissed) {
         if (isScreenDismissed) {
             lazyGridState.scrollToItem(0)
-        }
-    }
-
-    LaunchedEffect(key1 = lazyGridState.isScrollInProgress) {
-        onUpdateIsScrollInProgress(lazyGridState.isScrollInProgress)
-    }
-
-    DisposableEffect(key1 = Unit) {
-        onDispose {
-            onUpdateIsScrollInProgress(false)
         }
     }
 
