@@ -32,12 +32,10 @@
     <string name="show_or_hide_the_dock">Mostrar ou ocultar a doca</string>
     <string name="dock_grid_item">Item da grade da doca</string>
     <string name="dock_infinite_scroll">Rolagem infinita da doca</string>
-    <string name="show_page_indicator">Mostrar indicador de página</string>
     <string name="show_status_bar">Mostrar barra de status</string>
     <string name="show_the_status_bar_on_the_home_screen">Mostrar a barra de status na tela inicial</string>
     <string name="show_navigation_bar">Mostrar barra de navegação</string>
     <string name="show_the_navigation_bar_on_the_home_screen">Mostrar a barra de navegação na tela inicial</string>
-    <string name="show_an_indicator_for_the_current_page">Mostrar um indicador para a página atual</string>
     <string name="dock_background_color">Cor de fundo da doca</string>
     <string name="dock_padding">Preenchimento da doca</string>
     <string name="dock_corner_radius">Raio dos cantos da doca</string>
@@ -65,4 +63,13 @@
     <string name="screen_orientation">Orientação da tela</string>
     <string name="portrait">Retrato</string>
     <string name="landscape">Paisagem</string>
+    <string name="page_indicator">Indicador de página</string>
+    <string name="page_indicator_dots">Pontos</string>
+    <string name="page_indicator_line">Linha</string>
+    <string name="page_indicator_worm">Minhoca</string>
+    <string name="page_indicator_jumping_dot">Ponto saltitante</string>
+    <string name="page_indicator_equalizer">Equalizador</string>
+    <string name="page_indicator_diamonds">Diamantes</string>
+    <string name="page_indicator_numbers">Números</string>
+    <string name="page_indicator_pac_man">Pac-Man</string>
 </resources>

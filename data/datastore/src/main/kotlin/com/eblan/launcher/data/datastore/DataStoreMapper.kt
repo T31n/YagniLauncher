@@ -36,6 +36,7 @@ import com.eblan.launcher.data.datastore.proto.home.HomeSettingsProto
 import com.eblan.launcher.data.datastore.proto.home.HorizontalAlignmentProto
 import com.eblan.launcher.data.datastore.proto.home.HorizontalArrangementProto
 import com.eblan.launcher.data.datastore.proto.home.LayoutTypeProto
+import com.eblan.launcher.data.datastore.proto.home.PageIndicatorTypeProto
 import com.eblan.launcher.data.datastore.proto.home.PagerTransitionEffectProto
 import com.eblan.launcher.data.datastore.proto.home.ScreenOrientationProto
 import com.eblan.launcher.data.datastore.proto.home.TextColorProto
@@ -63,6 +64,7 @@ import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.domain.model.userdata.GestureSettings
 import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.domain.model.userdata.IconShape
+import com.eblan.launcher.domain.model.userdata.PageIndicatorType
 import com.eblan.launcher.domain.model.userdata.PagerTransitionEffect
 import com.eblan.launcher.domain.model.userdata.ScreenOrientation
 import com.eblan.launcher.domain.model.userdata.SearchBarType
@@ -85,7 +87,7 @@ internal fun HomeSettingsProto.toHomeSettings(): HomeSettings = HomeSettings(
     dockInfiniteScroll = dockInfiniteScroll,
     dockInitialPage = dockInitialPage,
     addNewAppsToHomeScreen = addNewAppsToHomeScreen,
-    showPageIndicator = showPageIndicator,
+    pageIndicatorType = pageIndicatorTypeProto.toPageIndicatorType(),
     dockBackgroundColor = dockBackgroundColorProto.toBackgroundColor(),
     dockCustomBackgroundColor = dockCustomBackgroundColor,
     dockPadding = dockPadding,
@@ -186,7 +188,7 @@ internal fun HomeSettings.toHomeSettingsProto(): HomeSettingsProto = HomeSetting
     builder.dockInfiniteScroll = dockInfiniteScroll
     builder.dockInitialPage = dockInitialPage
     builder.addNewAppsToHomeScreen = addNewAppsToHomeScreen
-    builder.showPageIndicator = showPageIndicator
+    builder.pageIndicatorTypeProto = pageIndicatorType.toPageIndicatorTypeProto()
     builder.dockBackgroundColorProto = dockBackgroundColor.toBackgroundColorProto()
     builder.dockCustomBackgroundColor = dockCustomBackgroundColor
     builder.dockPadding = dockPadding
@@ -333,6 +335,40 @@ private fun PagerTransitionEffectProto.toPagerTransitionEffect(): PagerTransitio
     PagerTransitionEffectProto.PagerTransitionEffectParallax -> PagerTransitionEffect.Parallax
 
     PagerTransitionEffectProto.PagerTransitionEffectStack -> PagerTransitionEffect.Stack
+}
+
+private fun PageIndicatorType.toPageIndicatorTypeProto(): PageIndicatorTypeProto = when (this) {
+    PageIndicatorType.Dots -> PageIndicatorTypeProto.PageIndicatorTypeDots
+    PageIndicatorType.Line -> PageIndicatorTypeProto.PageIndicatorTypeLine
+    PageIndicatorType.Worm -> PageIndicatorTypeProto.PageIndicatorTypeWorm
+    PageIndicatorType.JumpingDot -> PageIndicatorTypeProto.PageIndicatorTypeJumpingDot
+    PageIndicatorType.Equalizer -> PageIndicatorTypeProto.PageIndicatorTypeEqualizer
+    PageIndicatorType.Diamonds -> PageIndicatorTypeProto.PageIndicatorTypeDiamonds
+    PageIndicatorType.Numbers -> PageIndicatorTypeProto.PageIndicatorTypeNumbers
+    PageIndicatorType.PacMan -> PageIndicatorTypeProto.PageIndicatorTypePacMan
+    PageIndicatorType.None -> PageIndicatorTypeProto.PageIndicatorTypeNone
+}
+
+private fun PageIndicatorTypeProto.toPageIndicatorType(): PageIndicatorType = when (this) {
+    PageIndicatorTypeProto.PageIndicatorTypeDots,
+    PageIndicatorTypeProto.UNRECOGNIZED,
+    -> PageIndicatorType.Dots
+
+    PageIndicatorTypeProto.PageIndicatorTypeLine -> PageIndicatorType.Line
+
+    PageIndicatorTypeProto.PageIndicatorTypeWorm -> PageIndicatorType.Worm
+
+    PageIndicatorTypeProto.PageIndicatorTypeJumpingDot -> PageIndicatorType.JumpingDot
+
+    PageIndicatorTypeProto.PageIndicatorTypeEqualizer -> PageIndicatorType.Equalizer
+
+    PageIndicatorTypeProto.PageIndicatorTypeDiamonds -> PageIndicatorType.Diamonds
+
+    PageIndicatorTypeProto.PageIndicatorTypeNumbers -> PageIndicatorType.Numbers
+
+    PageIndicatorTypeProto.PageIndicatorTypePacMan -> PageIndicatorType.PacMan
+
+    PageIndicatorTypeProto.PageIndicatorTypeNone -> PageIndicatorType.None
 }
 
 private fun ScreenOrientation.toScreenOrientationProto(): ScreenOrientationProto = when (this) {

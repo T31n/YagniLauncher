@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option java_package = "com.eblan.launcher.data.datastore.proto.home";
+option java_multiple_files = true;
+
+enum PageIndicatorTypeProto {
+  PageIndicatorTypeDots = 0;
+  PageIndicatorTypeLine = 1;
+  PageIndicatorTypeWorm = 2;
+  PageIndicatorTypeJumpingDot = 3;
+  PageIndicatorTypeEqualizer = 4;
+  PageIndicatorTypeDiamonds = 5;
+  PageIndicatorTypeNumbers = 6;
+  PageIndicatorTypePacMan = 7;
+  PageIndicatorTypeNone = 8;
+}

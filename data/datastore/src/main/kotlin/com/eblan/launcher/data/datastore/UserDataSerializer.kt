@@ -36,6 +36,7 @@ import com.eblan.launcher.data.datastore.proto.home.GridItemSettingsProto
 import com.eblan.launcher.data.datastore.proto.home.HomeSettingsProto
 import com.eblan.launcher.data.datastore.proto.home.HorizontalAlignmentProto
 import com.eblan.launcher.data.datastore.proto.home.LayoutTypeProto
+import com.eblan.launcher.data.datastore.proto.home.PageIndicatorTypeProto
 import com.eblan.launcher.data.datastore.proto.home.PagerTransitionEffectProto
 import com.eblan.launcher.data.datastore.proto.home.ScreenOrientationProto
 import com.eblan.launcher.data.datastore.proto.home.TextColorProto
@@ -94,7 +95,7 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
         dockPageCount = 1
         dockInfiniteScroll = false
         addNewAppsToHomeScreen = true
-        showPageIndicator = true
+        pageIndicatorTypeProto = PageIndicatorTypeProto.PageIndicatorTypeDots
         dockBackgroundColorProto = BackgroundColorProto.BackgroundColorSystem
         dockCustomBackgroundColor = 0x00000000
         dockPadding = 0

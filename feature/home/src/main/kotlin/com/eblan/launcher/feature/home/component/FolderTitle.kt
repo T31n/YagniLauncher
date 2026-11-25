@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
+import com.eblan.launcher.domain.model.userdata.PageIndicatorType
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.util.PAGE_INDICATOR_HEIGHT
 import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
@@ -93,6 +94,7 @@ internal fun <T> FolderTitle(
                     infiniteScroll = false,
                     // Appearance and Layout
                     color = color,
+                    pageIndicatorType = PageIndicatorType.Dots,
                 )
             }
         } else {

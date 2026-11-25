@@ -32,12 +32,10 @@
     <string name="show_or_hide_the_dock">Pokaż lub ukryj dok</string>
     <string name="dock_grid_item">Element siatki doku</string>
     <string name="dock_infinite_scroll">Nieskończone przewijanie doku</string>
-    <string name="show_page_indicator">Pokaż wskaźnik stron</string>
     <string name="show_status_bar">Pokaż pasek stanu</string>
     <string name="show_the_status_bar_on_the_home_screen">Pokaż pasek stanu na ekranie głównym</string>
     <string name="show_navigation_bar">Pokaż pasek nawigacji</string>
     <string name="show_the_navigation_bar_on_the_home_screen">Pokaż pasek nawigacji na ekranie głównym</string>
-    <string name="show_an_indicator_for_the_current_page">Pokazuj wskaźnik bieżącej strony</string>
     <string name="dock_background_color">Kolor tła doku</string>
     <string name="dock_padding">Margines wewnętrzny doku</string>
     <string name="dock_corner_radius">Promień zaokrąglenia rogów doku</string>
@@ -65,4 +63,13 @@
     <string name="screen_orientation">Orientacja ekranu</string>
     <string name="portrait">Pionowa</string>
     <string name="landscape">Pozioma</string>
+    <string name="page_indicator">Wskaźnik stron</string>
+    <string name="page_indicator_dots">Kropki</string>
+    <string name="page_indicator_line">Linia</string>
+    <string name="page_indicator_worm">Robak</string>
+    <string name="page_indicator_jumping_dot">Skacząca kropka</string>
+    <string name="page_indicator_equalizer">Korektor</string>
+    <string name="page_indicator_diamonds">Diamenty</string>
+    <string name="page_indicator_numbers">Liczby</string>
+    <string name="page_indicator_pac_man">Pac-Man</string>
 </resources>

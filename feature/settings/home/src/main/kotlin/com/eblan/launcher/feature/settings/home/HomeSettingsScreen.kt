@@ -45,6 +45,7 @@ import com.eblan.launcher.designsystem.theme.EblanShapes
 import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.HomeSettings
+import com.eblan.launcher.domain.model.userdata.PageIndicatorType
 import com.eblan.launcher.domain.model.userdata.PagerTransitionEffect
 import com.eblan.launcher.domain.model.userdata.ScreenOrientation
 import com.eblan.launcher.feature.settings.home.dialog.EditDockCornerRadiusDialog
@@ -235,18 +236,20 @@ private fun Success(
             },
         )
 
-        SettingsSwitchItem(
+        SettingsDropdownItem(
             // Content
-            title = stringResource(R.string.show_page_indicator),
-            subtitle = stringResource(R.string.show_an_indicator_for_the_current_page),
-            // State
-            checked = homeSettings.showPageIndicator,
-            // Appearance
+            title = stringResource(R.string.page_indicator),
+            options = PageIndicatorType.entries,
+            selected = homeSettings.pageIndicatorType,
+            label = { currentPageIndicatorType ->
+                currentPageIndicatorType.getTitle()
+            },
+            // Layout
             shape = EblanShapes.middle,
-            // Callbacks
-            onCheckedChange = { currentShowPageIndicator ->
+            // Actions
+            onSelectedChange = { currentPageIndicatorType ->
                 onUpdateHomeSettings(
-                    homeSettings.copy(showPageIndicator = currentShowPageIndicator),
+                    homeSettings.copy(pageIndicatorType = currentPageIndicatorType),
                 )
             },
         )
@@ -571,4 +574,17 @@ private fun ScreenOrientation.getTitle(): String = when (this) {
     ScreenOrientation.System -> stringResource(commonR.string.system)
     ScreenOrientation.Portrait -> stringResource(R.string.portrait)
     ScreenOrientation.Landscape -> stringResource(R.string.landscape)
+}
+
+@Composable
+private fun PageIndicatorType.getTitle(): String = when (this) {
+    PageIndicatorType.Dots -> stringResource(R.string.page_indicator_dots)
+    PageIndicatorType.Line -> stringResource(R.string.page_indicator_line)
+    PageIndicatorType.Worm -> stringResource(R.string.page_indicator_worm)
+    PageIndicatorType.JumpingDot -> stringResource(R.string.page_indicator_jumping_dot)
+    PageIndicatorType.Equalizer -> stringResource(R.string.page_indicator_equalizer)
+    PageIndicatorType.Diamonds -> stringResource(R.string.page_indicator_diamonds)
+    PageIndicatorType.Numbers -> stringResource(R.string.page_indicator_numbers)
+    PageIndicatorType.PacMan -> stringResource(R.string.page_indicator_pac_man)
+    PageIndicatorType.None -> stringResource(commonR.string.none)
 }

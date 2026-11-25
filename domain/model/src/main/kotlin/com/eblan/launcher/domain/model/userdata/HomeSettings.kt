@@ -35,7 +35,7 @@ data class HomeSettings(
     val dockInfiniteScroll: Boolean,
     val dockInitialPage: Int,
     val addNewAppsToHomeScreen: Boolean,
-    val showPageIndicator: Boolean,
+    val pageIndicatorType: PageIndicatorType,
     val dockBackgroundColor: BackgroundColor,
     val dockCustomBackgroundColor: Int,
     val dockPadding: Int,

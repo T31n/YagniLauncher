@@ -32,12 +32,10 @@
     <string name="show_or_hide_the_dock">إظهار أو إخفاء شريط التطبيقات السفلي</string>
     <string name="dock_grid_item">عنصر شبكة شريط التطبيقات السفلي</string>
     <string name="dock_infinite_scroll">تمرير لانهائي لشريط التطبيقات السفلي</string>
-    <string name="show_page_indicator">إظهار مؤشر الصفحات</string>
     <string name="show_status_bar">إظهار شريط الحالة</string>
     <string name="show_the_status_bar_on_the_home_screen">إظهار شريط الحالة على الشاشة الرئيسية</string>
     <string name="show_navigation_bar">إظهار شريط التنقل</string>
     <string name="show_the_navigation_bar_on_the_home_screen">إظهار شريط التنقل على الشاشة الرئيسية</string>
-    <string name="show_an_indicator_for_the_current_page">إظهار مؤشر الصفحة الحالية</string>
     <string name="dock_background_color">لون خلفية شريط التطبيقات السفل</string>
     <string name="dock_padding">الحشو الداخلي لشريط التطبيقات السفلي</string>
     <string name="dock_corner_radius">استدارة زوايا شريط التطبيقات السفلي</string>
@@ -65,4 +63,13 @@
     <string name="screen_orientation">اتجاه الشاشة</string>
     <string name="portrait">عمودي</string>
     <string name="landscape">أفقي</string>
+    <string name="page_indicator">مؤشر الصفحات</string>
+    <string name="page_indicator_dots">نقاط</string>
+    <string name="page_indicator_line">خط</string>
+    <string name="page_indicator_worm">دودة</string>
+    <string name="page_indicator_jumping_dot">نقطة قافزة</string>
+    <string name="page_indicator_equalizer">معادل الصوت</string>
+    <string name="page_indicator_diamonds">معينات</string>
+    <string name="page_indicator_numbers">أرقام</string>
+    <string name="page_indicator_pac_man">باك مان</string>
 </resources>
