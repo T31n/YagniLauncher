@@ -315,6 +315,15 @@ private fun PagerTransitionEffect.toPagerTransitionEffectProto(): PagerTransitio
     PagerTransitionEffect.Flip -> PagerTransitionEffectProto.PagerTransitionEffectFlip
     PagerTransitionEffect.Parallax -> PagerTransitionEffectProto.PagerTransitionEffectParallax
     PagerTransitionEffect.Stack -> PagerTransitionEffectProto.PagerTransitionEffectStack
+    PagerTransitionEffect.CubeInside -> PagerTransitionEffectProto.PagerTransitionEffectCubeInside
+    PagerTransitionEffect.Accordion -> PagerTransitionEffectProto.PagerTransitionEffectAccordion
+    PagerTransitionEffect.Windmill -> PagerTransitionEffectProto.PagerTransitionEffectWindmill
+    PagerTransitionEffect.Jelly -> PagerTransitionEffectProto.PagerTransitionEffectJelly
+    PagerTransitionEffect.Hinge -> PagerTransitionEffectProto.PagerTransitionEffectHinge
+    PagerTransitionEffect.Pinwheel -> PagerTransitionEffectProto.PagerTransitionEffectPinwheel
+    PagerTransitionEffect.CardToss -> PagerTransitionEffectProto.PagerTransitionEffectCardToss
+    PagerTransitionEffect.Crt -> PagerTransitionEffectProto.PagerTransitionEffectCrt
+    PagerTransitionEffect.Random -> PagerTransitionEffectProto.PagerTransitionEffectRandom
 }
 
 private fun PagerTransitionEffectProto.toPagerTransitionEffect(): PagerTransitionEffect = when (this) {
@@ -335,6 +344,24 @@ private fun PagerTransitionEffectProto.toPagerTransitionEffect(): PagerTransitio
     PagerTransitionEffectProto.PagerTransitionEffectParallax -> PagerTransitionEffect.Parallax
 
     PagerTransitionEffectProto.PagerTransitionEffectStack -> PagerTransitionEffect.Stack
+
+    PagerTransitionEffectProto.PagerTransitionEffectCubeInside -> PagerTransitionEffect.CubeInside
+
+    PagerTransitionEffectProto.PagerTransitionEffectAccordion -> PagerTransitionEffect.Accordion
+
+    PagerTransitionEffectProto.PagerTransitionEffectWindmill -> PagerTransitionEffect.Windmill
+
+    PagerTransitionEffectProto.PagerTransitionEffectJelly -> PagerTransitionEffect.Jelly
+
+    PagerTransitionEffectProto.PagerTransitionEffectHinge -> PagerTransitionEffect.Hinge
+
+    PagerTransitionEffectProto.PagerTransitionEffectPinwheel -> PagerTransitionEffect.Pinwheel
+
+    PagerTransitionEffectProto.PagerTransitionEffectCardToss -> PagerTransitionEffect.CardToss
+
+    PagerTransitionEffectProto.PagerTransitionEffectCrt -> PagerTransitionEffect.Crt
+
+    PagerTransitionEffectProto.PagerTransitionEffectRandom -> PagerTransitionEffect.Random
 }
 
 private fun PageIndicatorType.toPageIndicatorTypeProto(): PageIndicatorTypeProto = when (this) {

@@ -567,6 +567,15 @@ private fun PagerTransitionEffect.getTitle(): String = when (this) {
     PagerTransitionEffect.Flip -> stringResource(R.string.transition_effect_flip)
     PagerTransitionEffect.Parallax -> stringResource(R.string.transition_effect_parallax)
     PagerTransitionEffect.Stack -> stringResource(R.string.transition_effect_stack)
+    PagerTransitionEffect.CubeInside -> stringResource(R.string.transition_effect_cube_inside)
+    PagerTransitionEffect.Accordion -> stringResource(R.string.transition_effect_accordion)
+    PagerTransitionEffect.Windmill -> stringResource(R.string.transition_effect_windmill)
+    PagerTransitionEffect.Jelly -> stringResource(R.string.transition_effect_jelly)
+    PagerTransitionEffect.Hinge -> stringResource(R.string.transition_effect_hinge)
+    PagerTransitionEffect.Pinwheel -> stringResource(R.string.transition_effect_pinwheel)
+    PagerTransitionEffect.CardToss -> stringResource(R.string.transition_effect_card_toss)
+    PagerTransitionEffect.Crt -> stringResource(R.string.transition_effect_crt)
+    PagerTransitionEffect.Random -> stringResource(R.string.transition_effect_random)
 }
 
 @Composable

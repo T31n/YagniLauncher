@@ -60,6 +60,15 @@
     <string name="transition_effect_flip">قلب</string>
     <string name="transition_effect_parallax">تأثير اختلاف المنظور</string>
     <string name="transition_effect_stack">مكدس</string>
+    <string name="transition_effect_cube_inside">مكعب داخلي</string>
+    <string name="transition_effect_accordion">أكورديون</string>
+    <string name="transition_effect_windmill">طاحونة هواء</string>
+    <string name="transition_effect_jelly">هلام</string>
+    <string name="transition_effect_hinge">مفصلة</string>
+    <string name="transition_effect_pinwheel">مروحة ورقية</string>
+    <string name="transition_effect_card_toss">رمي البطاقة</string>
+    <string name="transition_effect_crt">CRT</string>
+    <string name="transition_effect_random">عشوائي</string>
     <string name="screen_orientation">اتجاه الشاشة</string>
     <string name="portrait">عمودي</string>
     <string name="landscape">أفقي</string>

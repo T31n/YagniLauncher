@@ -60,6 +60,15 @@
     <string name="transition_effect_flip">Flip</string>
     <string name="transition_effect_parallax">Parallax</string>
     <string name="transition_effect_stack">Stack</string>
+    <string name="transition_effect_cube_inside">Cube Inside</string>
+    <string name="transition_effect_accordion">Accordion</string>
+    <string name="transition_effect_windmill">Windmill</string>
+    <string name="transition_effect_jelly">Jelly</string>
+    <string name="transition_effect_hinge">Hinge</string>
+    <string name="transition_effect_pinwheel">Pinwheel</string>
+    <string name="transition_effect_card_toss">Card Toss</string>
+    <string name="transition_effect_crt">CRT</string>
+    <string name="transition_effect_random">Random</string>
     <string name="screen_orientation">Screen Orientation</string>
     <string name="portrait">Portrait</string>
     <string name="landscape">Landscape</string>
