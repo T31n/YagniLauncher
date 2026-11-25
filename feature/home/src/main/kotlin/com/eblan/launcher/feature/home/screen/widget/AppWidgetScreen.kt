@@ -71,6 +71,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
@@ -78,6 +79,7 @@ import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
 import com.eblan.launcher.feature.home.component.HomeHandler
+import com.eblan.launcher.feature.home.contract.AppWidgetScreenContract
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -86,8 +88,9 @@ import kotlin.uuid.Uuid
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun AppWidgetScreen(
+    // Contract
+    contract: AppWidgetScreenContract,
     // Data
-    eblanAppWidgetProviderInfosGroup: Map<String, List<EblanAppWidgetProviderInfo>>,
     eblanApplicationInfoGroup: EblanApplicationInfoGroup?,
     // Grid
     columns: Int,
@@ -100,7 +103,6 @@ internal fun AppWidgetScreen(
     modifier: Modifier = Modifier,
     // Interaction
     swipeY: Float,
-    isVisibleOverlay: Boolean,
     // Callbacks
     onDismiss: () -> Unit,
     onVerticalDrag: (Float) -> Unit,
@@ -114,6 +116,9 @@ internal fun AppWidgetScreen(
     ) -> Unit,
 ) {
     requireNotNull(eblanApplicationInfoGroup)
+
+    val eblanAppWidgetProviderInfosGroup by contract.eblanAppWidgetProviderInfosGroup.collectAsStateWithLifecycle()
+    val isVisibleOverlay by contract.isVisibleOverlay.collectAsStateWithLifecycle()
 
     val layoutDirection = LocalLayoutDirection.current
 

@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.domain.model.folder.FolderEntry
 import com.eblan.launcher.domain.model.folder.FolderPopup
 import com.eblan.launcher.domain.model.grid.Associate
@@ -65,6 +66,7 @@ import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.FolderGridLayout
 import com.eblan.launcher.feature.home.component.FolderTitle
 import com.eblan.launcher.feature.home.component.HomeHandler
+import com.eblan.launcher.feature.home.contract.FolderScreenContract
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.PageDirection
 import com.eblan.launcher.feature.home.model.SharedElementKey
@@ -79,6 +81,8 @@ import kotlin.math.roundToInt
 
 @Composable
 internal fun FolderScreen(
+    // Contract
+    contract: FolderScreenContract,
     // Transition and Layout
     sharedTransitionScope: SharedTransitionScope,
     modifier: Modifier = Modifier,
@@ -89,7 +93,6 @@ internal fun FolderScreen(
     screenWidth: Int,
     // Folder Content and Settings
     folderEntry: FolderEntry,
-    folderGridItemEntries: List<FolderEntry>,
     gridItemSettings: GridItemSettings,
     folderCellWidth: Int,
     folderCellHeight: Int,
@@ -108,12 +111,10 @@ internal fun FolderScreen(
     folderBorderWidth: Int,
     // Drag and Drop State
     drag: Drag,
-    moveGridItemResult: MoveGridItemResult?,
     isDragging: Boolean,
     dragIntOffset: IntOffset,
     lockMovement: Boolean,
     // Overlay and Permission State
-    isVisibleOverlay: Boolean,
     hasShortcutHostPermission: Boolean,
     showFolderGridItemMenu: Boolean,
     // Folder Actions
@@ -121,14 +122,9 @@ internal fun FolderScreen(
         folderEntry: FolderEntry,
         isFirstFolderGridItem: Boolean,
     ) -> Unit,
-    onDismiss: () -> Unit,
     onOpenAppDrawer: () -> Unit,
-    onResetGrid: () -> Unit,
-    onResetGridAfterMoveFolder: () -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
-    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onDismissFolderGridItemMenu: () -> Unit,
-    onUpsertFolderGridItemEntry: (FolderEntry) -> Unit,
     onDragFolderGridItem: () -> Unit,
     onLongPressFolderGridItem: (
         gridItem: GridItem,
@@ -137,21 +133,16 @@ internal fun FolderScreen(
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
     ) -> Unit,
-    onMoveFolderGridItem: (
-        folderPopup: FolderPopup,
-        movingFolderGridItem: GridItem,
-        dragX: Int,
-        dragY: Int,
-        gridWidth: Int,
-        gridHeight: Int,
-        currentPage: Int,
-    ) -> Unit,
     onMoveFolderGridItemOutsideFolder: (
         gridItem: GridItem,
         sharedElementKey: SharedElementKey,
     ) -> Unit,
 ) {
     val folderPopup = folderPopups[folderEntry.id] ?: return
+
+    val folderGridItemEntries by contract.folderGridItemEntries.collectAsStateWithLifecycle()
+    val moveGridItemResult by contract.movedGridItemResult.collectAsStateWithLifecycle()
+    val isVisibleOverlay by contract.isVisibleOverlay.collectAsStateWithLifecycle()
 
     val folderPopupIntOffset = IntOffset(
         x = folderEntry.x,
@@ -308,8 +299,8 @@ internal fun FolderScreen(
             folderCellWidth = folderCellWidth,
             folderCellHeight = folderCellHeight,
             // Callbacks
-            onMoveFolderGridItem = onMoveFolderGridItem,
-            onUpsertFolderGridItemEntry = onUpsertFolderGridItemEntry,
+            onMoveFolderGridItem = contract::moveFolderGridItem,
+            onUpsertFolderGridItemEntry = contract::upsertFolderGridItemEntry,
         )
     }
 
@@ -325,10 +316,10 @@ internal fun FolderScreen(
             isVisibleOverlay = currentIsVisibleOverlay.value,
             isLastFolderGridItem = isLastFolderGridItem,
             // Callbacks
-            onResetGrid = onResetGrid,
-            onResetGridAfterMoveFolder = onResetGridAfterMoveFolder,
+            onResetGrid = contract::resetGrid,
+            onResetGridAfterMoveFolder = contract::resetGridAfterMoveFolder,
             onUpdateIsDragging = onUpdateIsDragging,
-            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+            onUpdateIsVisibleOverlay = contract::updateIsVisibleOverlay,
         )
     }
 
@@ -391,7 +382,7 @@ internal fun FolderScreen(
             isLastFolderGridItem &&
             !isInProgress,
     ) {
-        onUpsertFolderGridItemEntry(folderEntry.copy(isCloseFolder = true))
+        contract.upsertFolderGridItemEntry(folderEntry.copy(isCloseFolder = true))
     }
 
     HomeHandler(
@@ -399,7 +390,7 @@ internal fun FolderScreen(
             isLastFolderGridItem &&
             !isInProgress,
     ) {
-        onUpsertFolderGridItemEntry(folderEntry.copy(isCloseFolder = true))
+        contract.upsertFolderGridItemEntry(folderEntry.copy(isCloseFolder = true))
     }
 
     Box(
@@ -411,7 +402,7 @@ internal fun FolderScreen(
                         onPress = {
                             awaitRelease()
 
-                            onUpsertFolderGridItemEntry(
+                            contract.upsertFolderGridItemEntry(
                                 folderEntry.copy(
                                     isCloseFolder = true,
                                 ),
@@ -512,9 +503,9 @@ internal fun FolderScreen(
                                 customFolderBorderColor = customFolderBorderColor,
                                 folderBorderWidth = folderBorderWidth,
                                 // Callbacks
-                                onDismiss = onDismiss,
+                                onDismiss = contract::closeFolderGridItemEntries,
                                 onOpenAppDrawer = onOpenAppDrawer,
-                                onUpsertFolderGridItemEntry = onUpsertFolderGridItemEntry,
+                                onUpsertFolderGridItemEntry = contract::upsertFolderGridItemEntry,
                                 onLongPressFolderGridItem = onLongPressFolderGridItem,
                                 onDragFolderGridItem = onDragFolderGridItem,
                             )
