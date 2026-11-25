@@ -17,4 +17,14 @@ enum IconShapeProto {
   IconShapeCookie = 10;
   IconShapeFlower = 11;
   IconShapeShield = 12;
+  IconShapeSquircle = 13;
+  IconShapeLeaf = 14;
+  IconShapeArch = 15;
+  IconShapeHeart = 16;
+  IconShapeStar = 17;
+  IconShapeScallop = 18;
+  IconShapeCloud = 19;
+  IconShapeCat = 20;
+  IconShapeGhost = 21;
+  IconShapePacMan = 22;
 }

@@ -64,5 +64,15 @@
     <string name="cookie">Cookie</string>
     <string name="flower">Flower</string>
     <string name="shield">Shield</string>
+    <string name="squircle">Squircle</string>
+    <string name="leaf">Leaf</string>
+    <string name="arch">Arch</string>
+    <string name="scallop">Scallop</string>
+    <string name="heart">Heart</string>
+    <string name="star">Star</string>
+    <string name="cloud">Cloud</string>
+    <string name="cat">Cat</string>
+    <string name="ghost">Ghost</string>
+    <string name="pac_man">Pac-Man</string>
     <string name="icon_shape">Icon Shape</string>
 </resources>

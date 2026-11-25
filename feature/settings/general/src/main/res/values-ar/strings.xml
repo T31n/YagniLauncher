@@ -65,4 +65,14 @@
     <string name="octagon">ثماني</string>
     <string name="pentagon">خماسي</string>
     <string name="cookie">شكل البسكويت</string>
+    <string name="squircle">مربع دائري</string>
+    <string name="leaf">ورقة</string>
+    <string name="arch">قوس</string>
+    <string name="scallop">صدفة مموجة</string>
+    <string name="heart">قلب</string>
+    <string name="star">نجمة</string>
+    <string name="cloud">سحابة</string>
+    <string name="cat">قطة</string>
+    <string name="ghost">شبح</string>
+    <string name="pac_man">باك مان</string>
 </resources>

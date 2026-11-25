@@ -64,5 +64,15 @@
     <string name="cookie">Печенье</string>
     <string name="flower">Цветок</string>
     <string name="shield">Щит</string>
+    <string name="squircle">Сквиркл</string>
+    <string name="leaf">Лист</string>
+    <string name="arch">Арка</string>
+    <string name="scallop">Волна</string>
+    <string name="heart">Сердце</string>
+    <string name="star">Звезда</string>
+    <string name="cloud">Облако</string>
+    <string name="cat">Кот</string>
+    <string name="ghost">Призрак</string>
+    <string name="pac_man">Пакман</string>
     <string name="icon_shape">Форма иконки</string>
 </resources>

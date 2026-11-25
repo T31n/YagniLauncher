@@ -64,5 +64,15 @@
     <string name="cookie">Ciastko</string>
     <string name="flower">Kwiat</string>
     <string name="shield">Tarcza</string>
+    <string name="squircle">Superelipsa</string>
+    <string name="leaf">Liść</string>
+    <string name="arch">Łuk</string>
+    <string name="scallop">Falbanka</string>
+    <string name="heart">Serce</string>
+    <string name="star">Gwiazda</string>
+    <string name="cloud">Chmura</string>
+    <string name="cat">Kot</string>
+    <string name="ghost">Duch</string>
+    <string name="pac_man">Pac-Man</string>
     <string name="icon_shape">Kształt ikony</string>
 </resources>

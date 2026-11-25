@@ -592,6 +592,16 @@ private fun IconShapeProto.toIconShape(): IconShape = when (this) {
     IconShapeProto.IconShapeCookie -> IconShape.Cookie
     IconShapeProto.IconShapeFlower -> IconShape.Flower
     IconShapeProto.IconShapeShield -> IconShape.Shield
+    IconShapeProto.IconShapeSquircle -> IconShape.Squircle
+    IconShapeProto.IconShapeLeaf -> IconShape.Leaf
+    IconShapeProto.IconShapeArch -> IconShape.Arch
+    IconShapeProto.IconShapeHeart -> IconShape.Heart
+    IconShapeProto.IconShapeStar -> IconShape.Star
+    IconShapeProto.IconShapeScallop -> IconShape.Scallop
+    IconShapeProto.IconShapeCloud -> IconShape.Cloud
+    IconShapeProto.IconShapeCat -> IconShape.Cat
+    IconShapeProto.IconShapeGhost -> IconShape.Ghost
+    IconShapeProto.IconShapePacMan -> IconShape.PacMan
 }
 
 private fun IconShape.toIconShapeProto(): IconShapeProto = when (this) {
@@ -608,4 +618,14 @@ private fun IconShape.toIconShapeProto(): IconShapeProto = when (this) {
     IconShape.Cookie -> IconShapeProto.IconShapeCookie
     IconShape.Flower -> IconShapeProto.IconShapeFlower
     IconShape.Shield -> IconShapeProto.IconShapeShield
+    IconShape.Squircle -> IconShapeProto.IconShapeSquircle
+    IconShape.Leaf -> IconShapeProto.IconShapeLeaf
+    IconShape.Arch -> IconShapeProto.IconShapeArch
+    IconShape.Heart -> IconShapeProto.IconShapeHeart
+    IconShape.Star -> IconShapeProto.IconShapeStar
+    IconShape.Scallop -> IconShapeProto.IconShapeScallop
+    IconShape.Cloud -> IconShapeProto.IconShapeCloud
+    IconShape.Cat -> IconShapeProto.IconShapeCat
+    IconShape.Ghost -> IconShapeProto.IconShapeGhost
+    IconShape.PacMan -> IconShapeProto.IconShapePacMan
 }

@@ -64,5 +64,15 @@
     <string name="cookie">Sušenka</string>
     <string name="flower">Květina</string>
     <string name="shield">Štít</string>
+    <string name="squircle">Squircle</string>
+    <string name="leaf">List</string>
+    <string name="arch">Oblouk</string>
+    <string name="scallop">Vlnka</string>
+    <string name="heart">Srdce</string>
+    <string name="star">Hvězda</string>
+    <string name="cloud">Mrak</string>
+    <string name="cat">Kočka</string>
+    <string name="ghost">Duch</string>
+    <string name="pac_man">Pac-Man</string>
     <string name="icon_shape">Tvar ikony</string>
 </resources>
