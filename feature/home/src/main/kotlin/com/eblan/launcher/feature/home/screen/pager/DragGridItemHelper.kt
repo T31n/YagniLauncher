@@ -37,6 +37,7 @@ import com.eblan.launcher.feature.home.model.GridItemSource
 import com.eblan.launcher.feature.home.model.PageDirection
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.util.PAGE_INDICATOR_HEIGHT
+import com.eblan.launcher.feature.home.util.calculatePage
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -110,11 +111,15 @@ internal fun handleDragGridItem(
     // Grid Dimensions
     columns: Int,
     rows: Int,
-    gridCurrentPage: Int,
+    gridIndex: Int,
+    infiniteScroll: Boolean,
+    pageCount: Int,
     // Dock Dimensions
     dockColumns: Int,
     dockRows: Int,
-    dockGridCurrentPage: Int,
+    dockIndex: Int,
+    dockInfiniteScroll: Boolean,
+    dockPageCount: Int,
     dockHeight: Int,
     // Screen and Layout
     screenWidth: Int,
@@ -192,6 +197,18 @@ internal fun handleDragGridItem(
     }
 
     val isOnDock = dockHeightPx > 0 && localDragY > safeDrawingHeight - dockHeightPx
+
+    val gridCurrentPage = calculatePage(
+        index = gridIndex,
+        infiniteScroll = infiniteScroll,
+        pageCount = pageCount,
+    )
+
+    val dockGridCurrentPage = calculatePage(
+        index = dockIndex,
+        infiniteScroll = dockInfiniteScroll,
+        pageCount = dockPageCount,
+    )
 
     when (val currentGridItemSource = gridItemSource ?: return) {
         is GridItemSource.Existing,

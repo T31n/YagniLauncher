@@ -495,18 +495,6 @@ internal fun PagerScreen(
         },
     )
 
-    val gridCurrentPage = calculatePage(
-        index = gridHorizontalPagerState.currentPage,
-        infiniteScroll = homeSettings.infiniteScroll,
-        pageCount = homeSettings.pageCount,
-    )
-
-    val dockGridCurrentPage = calculatePage(
-        index = dockGridHorizontalPagerState.currentPage,
-        infiniteScroll = homeSettings.dockInfiniteScroll,
-        pageCount = homeSettings.dockPageCount,
-    )
-
     val hasMenuGeometry =
         pagerScreenState.menuIntOffset != null && pagerScreenState.menuIntSize != null
 
@@ -606,11 +594,15 @@ internal fun PagerScreen(
             // Grid Dimensions
             columns = homeSettings.columns,
             rows = homeSettings.rows,
-            gridCurrentPage = gridCurrentPage,
+            gridIndex = gridHorizontalPagerState.currentPage,
+            infiniteScroll = homeSettings.infiniteScroll,
+            pageCount = homeSettings.pageCount,
             // Dock Dimensions
             dockColumns = homeSettings.dockColumns,
             dockRows = homeSettings.dockRows,
-            dockGridCurrentPage = dockGridCurrentPage,
+            dockIndex = dockGridHorizontalPagerState.currentPage,
+            dockInfiniteScroll = homeSettings.dockInfiniteScroll,
+            dockPageCount = homeSettings.dockPageCount,
             dockHeight = visibleDockHeight,
             // Screen and Layout
             screenWidth = screenWidth,

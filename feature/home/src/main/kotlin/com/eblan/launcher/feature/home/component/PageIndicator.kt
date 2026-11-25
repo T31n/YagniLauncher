@@ -31,6 +31,8 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.unit.constrainHeight
+import androidx.compose.ui.unit.constrainWidth
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.feature.home.util.calculatePage
 import kotlin.math.abs
@@ -102,9 +104,9 @@ private fun PageIndicatorContent(
                     else -> baseWidth
                 }
 
-                val widthPx = widthDp.roundToPx()
+                val widthPx = constraints.constrainWidth(widthDp.roundToPx())
 
-                val heightPx = baseHeight.roundToPx()
+                val heightPx = constraints.constrainHeight(baseHeight.roundToPx())
 
                 val placeable = measurable.measure(
                     constraints.copy(

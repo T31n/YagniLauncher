@@ -195,7 +195,9 @@ internal fun ApplicationFloatingActionButton(
     onClearSearch: () -> Unit,
     onPauseWorkProfile: () -> Unit,
 ) {
-    if (isQuietModeEnabled || (searchBarType != SearchBarType.Floating && !canPauseWorkProfile)) {
+    val showPauseWorkProfile = canPauseWorkProfile && !isQuietModeEnabled
+
+    if (searchBarType != SearchBarType.Floating && !showPauseWorkProfile) {
         return
     }
 
@@ -217,7 +219,7 @@ internal fun ApplicationFloatingActionButton(
                     }
                 }
 
-                if (canPauseWorkProfile) {
+                if (showPauseWorkProfile) {
                     SmallFloatingActionButton(
                         onClick = onPauseWorkProfile,
                     ) {
