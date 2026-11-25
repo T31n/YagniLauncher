@@ -49,7 +49,6 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
-import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
 import com.eblan.launcher.domain.model.grid.GridItem
@@ -69,7 +68,7 @@ import com.eblan.launcher.ui.local.LocalUserManager
 @Composable
 internal fun FolderApplicationInfoPopup(
     // Application Info
-    folderEblanApplicationInfo: FolderEblanApplicationInfo?,
+    folderId: String?,
     isCloseFolderEblanApplicationInfoMenu: Boolean,
     // Layout and Positioning
     paddingValues: PaddingValues,
@@ -85,7 +84,7 @@ internal fun FolderApplicationInfoPopup(
 
     requireNotNull(popupIntSize)
 
-    requireNotNull(folderEblanApplicationInfo)
+    requireNotNull(folderId)
 
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
@@ -159,12 +158,12 @@ internal fun FolderApplicationInfoPopup(
         ) {
             FolderApplicationInfoMenu(
                 onDelete = {
-                    onDeleteFolderEblanApplicationInfoGridItems(folderEblanApplicationInfo.id)
+                    onDeleteFolderEblanApplicationInfoGridItems(folderId)
 
                     transitionState.targetState = false
                 },
                 onEdit = {
-                    onEditFolderApplicationInfo(folderEblanApplicationInfo.id)
+                    onEditFolderApplicationInfo(folderId)
 
                     transitionState.targetState = false
                 },

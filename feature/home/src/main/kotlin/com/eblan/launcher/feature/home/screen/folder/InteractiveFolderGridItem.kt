@@ -163,8 +163,11 @@ internal fun InteractiveFolderGridItem(
         // Container Background Color
         backgroundColor = folderBackgroundColor,
         customBackgroundColor = customFolderBackgroundColor,
-        // Grid Item Settings
-        gridItemSettings = currentGridItemSettings,
+        // Grid Item Text and Background Colors
+        gridItemTextColor = currentGridItemSettings.textColor,
+        gridItemCustomTextColor = currentGridItemSettings.customTextColor,
+        gridItemBackgroundColor = currentGridItemSettings.backgroundColor,
+        gridItemCustomBackgroundColor = currentGridItemSettings.customBackgroundColor,
         // Text Color
         systemTextColor = systemTextColor,
         systemCustomTextColor = systemCustomTextColor,
@@ -467,7 +470,10 @@ private fun InteractiveApplicationInfoGridItem(
             .fillMaxSize()
             .padding(padding)
             .background(
-                color = getGridItemBackgroundColor(gridItemSettings),
+                color = getGridItemBackgroundColor(
+                    backgroundColor = gridItemSettings.backgroundColor,
+                    customBackgroundColor = gridItemSettings.customBackgroundColor,
+                ),
                 shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
             )
             .run {
@@ -662,7 +668,10 @@ private fun InteractiveShortcutInfoGridItem(
             .fillMaxSize()
             .padding(padding)
             .background(
-                color = getGridItemBackgroundColor(gridItemSettings),
+                color = getGridItemBackgroundColor(
+                    backgroundColor = gridItemSettings.backgroundColor,
+                    customBackgroundColor = gridItemSettings.customBackgroundColor,
+                ),
                 shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
             )
             .run {
@@ -868,7 +877,10 @@ private fun InteractiveShortcutConfigGridItem(
             .fillMaxSize()
             .padding(padding)
             .background(
-                color = getGridItemBackgroundColor(gridItemSettings),
+                color = getGridItemBackgroundColor(
+                    backgroundColor = gridItemSettings.backgroundColor,
+                    customBackgroundColor = gridItemSettings.customBackgroundColor,
+                ),
                 shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
             )
             .run {
@@ -1040,7 +1052,10 @@ private fun InteractiveNestedFolderGridItem(
             .fillMaxSize()
             .padding(padding)
             .background(
-                color = getGridItemBackgroundColor(gridItemSettings),
+                color = getGridItemBackgroundColor(
+                    backgroundColor = gridItemSettings.backgroundColor,
+                    customBackgroundColor = gridItemSettings.customBackgroundColor,
+                ),
                 shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
             )
             .run {
@@ -1161,7 +1176,8 @@ private fun InteractiveNestedFolderGridItem(
                         PreviewNestedFolderGridItem(
                             // Item Data
                             gridItem = currentPreviewNestedFolderGridItem,
-                            gridItemSettings = gridItemSettings,
+                            textColor = gridItemSettings.textColor,
+                            customTextColor = gridItemSettings.customTextColor,
                             // Permissions
                             hasShortcutHostPermission = hasShortcutHostPermission,
                             // Assets and Styling
@@ -1195,7 +1211,8 @@ private fun InteractiveNestedFolderGridItem(
 private fun PreviewNestedFolderGridItem(
     // Item Data
     gridItem: GridItem,
-    gridItemSettings: GridItemSettings,
+    textColor: TextColor,
+    customTextColor: Int,
     // Permissions
     hasShortcutHostPermission: Boolean,
     // Assets and Styling
@@ -1211,10 +1228,16 @@ private fun PreviewNestedFolderGridItem(
     val context = LocalContext.current
 
     key(gridItem.id) {
-        val currentGridItemSettings = if (gridItem.override) {
-            gridItem.gridItemSettings
+        val currentTextColor = if (gridItem.override) {
+            gridItem.gridItemSettings.textColor
         } else {
-            gridItemSettings
+            textColor
+        }
+
+        val currentCustomTextColor = if (gridItem.override) {
+            gridItem.gridItemSettings.customTextColor
+        } else {
+            customTextColor
         }
 
         val alpha = when (val data = gridItem.data) {
@@ -1234,8 +1257,8 @@ private fun PreviewNestedFolderGridItem(
             backgroundColor = folderBackgroundColor,
             customBackgroundColor = customFolderBackgroundColor,
             // Text Color
-            textColor = currentGridItemSettings.textColor,
-            customTextColor = currentGridItemSettings.customTextColor,
+            textColor = currentTextColor,
+            customTextColor = currentCustomTextColor,
             systemCustomTextColor = systemCustomTextColor,
             systemTextColor = systemTextColor,
             // Default Color

@@ -214,8 +214,13 @@ internal fun PagerScreen(
     val pagerScreenState = rememberPagerScreenState(
         // Settings
         gestureSettings = gestureSettings,
-        homeSettings = homeSettings,
-        experimentalSettings = experimentalSettings,
+        wallpaperScroll = homeSettings.wallpaperScroll,
+        pageCount = homeSettings.pageCount,
+        infiniteScroll = homeSettings.infiniteScroll,
+        initialPage = homeSettings.initialPage,
+        dockInfiniteScroll = homeSettings.dockInfiniteScroll,
+        dockInitialPage = homeSettings.dockInitialPage,
+        dockPageCount = homeSettings.dockPageCount,
         // Dimensions
         screenHeight = screenHeight,
         // Callbacks
@@ -780,8 +785,9 @@ internal fun PagerScreen(
                         // Grid Structure
                         columns = homeSettings.columns,
                         rows = homeSettings.rows,
-                        // Grid Item Settings
-                        gridItemSettings = homeSettings.gridItemSettings,
+                        // Grid Item Text Colors
+                        gridItemTextColor = homeSettings.gridItemSettings.textColor,
+                        gridItemCustomTextColor = homeSettings.gridItemSettings.customTextColor,
                         // Drag and Style
                         dragIntOffset = pagerScreenState.dragIntOffset,
                         textColor = textColor,
@@ -964,8 +970,9 @@ internal fun PagerScreen(
                             // Grid Structure
                             columns = homeSettings.dockColumns,
                             rows = homeSettings.dockRows,
-                            // Grid Item Settings
-                            gridItemSettings = homeSettings.dockGridItemSettings,
+                            // Grid Item Text Colors
+                            gridItemTextColor = homeSettings.dockGridItemSettings.textColor,
+                            gridItemCustomTextColor = homeSettings.dockGridItemSettings.customTextColor,
                             // Drag and Style
                             dragIntOffset = pagerScreenState.dragIntOffset,
                             textColor = textColor,
@@ -1316,10 +1323,10 @@ internal fun PagerScreen(
                 onDismiss = pagerScreenState::dismissApplicationScreen,
                 onDragEnd = pagerScreenState::handleOnDragEndApplicationScreen,
                 onVerticalDrag = pagerScreenState::verticalDragApplicationScreen,
-                onDragFolderEblanApplicationInfo = { folderEblanApplicationInfo, movingGridItem ->
+                onDragFolderEblanApplicationInfo = { folderId, movingGridItem ->
                     pagerScreenState.dragFolderEblanApplicationInfo(
                         // Data
-                        folderEblanApplicationInfo = folderEblanApplicationInfo,
+                        folderId = folderId,
                         gridItem = movingGridItem,
                         // Callbacks
                         onDragFolderEblanApplicationInfoToGrid = contract::dragFolderEblanApplicationInfoToGrid,
@@ -1517,8 +1524,16 @@ internal fun PagerScreen(
                 contract = contract,
                 // Layout
                 paddingValues = paddingValues,
-                // Content
-                homeSettings = homeSettings,
+                // Dock Settings
+                enableDock = homeSettings.enableDock,
+                dockHeight = homeSettings.dockHeight,
+                dockColumns = homeSettings.dockColumns,
+                dockRows = homeSettings.dockRows,
+                dockGridItemSettings = homeSettings.dockGridItemSettings,
+                // Grid Settings
+                columns = homeSettings.columns,
+                rows = homeSettings.rows,
+                gridItemSettings = homeSettings.gridItemSettings,
                 // Appearance
                 textColor = textColor,
                 lockMovement = experimentalSettings.lockMovement,
@@ -1549,7 +1564,7 @@ internal fun PagerScreen(
                     folderBorderColor = folderSettings.folderBorderColor,
                     customFolderBorderColor = folderSettings.customFolderBorderColor,
                     folderBorderWidth = folderSettings.borderWidth,
-                    appDrawerSettings = appDrawerSettings,
+                    gridItemSettings = appDrawerSettings.gridItemSettings,
                     folderCornerRadius = folderSettings.folderCornerRadius,
                     folderCellWidth = folderSettings.folderCellWidth,
                     folderCellHeight = folderSettings.folderCellHeight,
@@ -1611,10 +1626,13 @@ internal fun PagerScreen(
             }
         }
 
-        if (pagerScreenState.showFolderEblanApplicationInfoMenu && pagerScreenState.selectedFolderEblanApplicationInfo != null) {
+        val selectedFolderEblanApplicationInfo =
+            pagerScreenState.selectedFolderEblanApplicationInfo
+
+        if (pagerScreenState.showFolderEblanApplicationInfoMenu && selectedFolderEblanApplicationInfo != null) {
             FolderApplicationInfoPopup(
                 // Application Info
-                folderEblanApplicationInfo = pagerScreenState.selectedFolderEblanApplicationInfo,
+                folderId = selectedFolderEblanApplicationInfo.id,
                 isCloseFolderEblanApplicationInfoMenu = pagerScreenState.isCloseFolderEblanApplicationInfoMenu,
                 // Layout and Positioning
                 paddingValues = paddingValues,

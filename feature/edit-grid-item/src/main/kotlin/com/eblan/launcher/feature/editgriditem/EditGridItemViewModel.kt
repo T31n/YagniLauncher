@@ -22,6 +22,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
+import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.repository.GridRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
@@ -153,12 +154,16 @@ internal class EditGridItemViewModel @Inject constructor(
     }
 
     fun addApplicationInfosToFolder(
-        folderGridItem: GridItem,
+        folderId: String,
+        page: Int,
+        associate: Associate,
         eblanApplicationInfos: List<EblanApplicationInfo>,
     ) {
         viewModelScope.launch {
             addApplicationInfosToFolderGridItemUseCase(
-                folderGridItem = folderGridItem,
+                folderId = folderId,
+                page = page,
+                associate = associate,
                 eblanApplicationInfos = eblanApplicationInfos,
             )
         }

@@ -303,7 +303,7 @@ internal suspend fun handleConflictingGridItem(
     val movingFolderGridItem = calculateMovingFolderGridItem(
         // Grid Items
         movingGridItem = moveGridItemResult.movingGridItem,
-        conflictingGridItem = conflictingGridItem,
+        conflictingGridItemId = conflictingGridItem.id,
         folderGridItems = folderGridItems.value,
     )
 
@@ -544,7 +544,7 @@ private fun getStartPosition(
 private fun calculateMovingFolderGridItem(
     // Grid Items
     movingGridItem: GridItem,
-    conflictingGridItem: GridItem,
+    conflictingGridItemId: String,
     folderGridItems: List<GridItem>?,
 ): GridItem {
     val maxIndex = folderGridItems?.maxOfOrNull { currentFolderGridItem ->
@@ -560,23 +560,23 @@ private fun calculateMovingFolderGridItem(
     val movingData = when (val data = movingGridItem.data) {
         is GridItemData.ApplicationInfo -> data.copy(
             index = maxIndex,
-            folderId = conflictingGridItem.id,
+            folderId = conflictingGridItemId,
         )
 
         is GridItemData.ShortcutConfig -> data.copy(
             index = maxIndex,
-            folderId = conflictingGridItem.id,
+            folderId = conflictingGridItemId,
         )
 
         is GridItemData.ShortcutInfo -> data.copy(
             index = maxIndex,
-            folderId = conflictingGridItem.id,
+            folderId = conflictingGridItemId,
         )
 
         is GridItemData.Folder -> {
             data.copy(
                 index = maxIndex,
-                folderId = conflictingGridItem.id,
+                folderId = conflictingGridItemId,
             )
         }
 

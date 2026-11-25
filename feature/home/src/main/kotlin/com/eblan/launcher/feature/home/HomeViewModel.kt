@@ -20,12 +20,9 @@ package com.eblan.launcher.feature.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
-import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
-import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderEntry
-import com.eblan.launcher.domain.model.folder.FolderPopup
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData.ShortcutConfig
@@ -633,7 +630,9 @@ internal class HomeViewModel @Inject constructor(
     }
 
     override fun moveFolderGridItem(
-        folderPopup: FolderPopup,
+        columns: Int,
+        rows: Int,
+        folderGridItems: List<GridItem>,
         movingGridItem: GridItem,
         dragX: Int,
         dragY: Int,
@@ -647,7 +646,9 @@ internal class HomeViewModel @Inject constructor(
             delay(moveDelay)
 
             val folderMoveGridItemResult = moveFolderGridItemUseCase(
-                folderPopup = folderPopup,
+                columns = columns,
+                rows = rows,
+                folderGridItems = folderGridItems,
                 movingGridItem = movingGridItem,
                 dragX = dragX,
                 dragY = dragY,
@@ -856,7 +857,9 @@ internal class HomeViewModel @Inject constructor(
     }
 
     override fun moveFolderEblanApplicationInfoGridItem(
-        folderGridItemPopup: FolderEblanApplicationInfoPopup,
+        columns: Int,
+        rows: Int,
+        folderEblanApplicationInfoGridItems: List<FolderEblanApplicationInfoGridItem>,
         folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
         dragX: Int,
         dragY: Int,
@@ -871,7 +874,9 @@ internal class HomeViewModel @Inject constructor(
 
             val moveFolderEblanApplicationInfoGridItemResult =
                 moveFolderEblanApplicationInfoGridItemUseCase(
-                    folderGridItemPopup = folderGridItemPopup,
+                    columns = columns,
+                    rows = rows,
+                    folderEblanApplicationInfoGridItems = folderEblanApplicationInfoGridItems,
                     folderEblanApplicationInfoGridItem = folderEblanApplicationInfoGridItem,
                     dragX = dragX,
                     dragY = dragY,
@@ -951,7 +956,7 @@ internal class HomeViewModel @Inject constructor(
     }
 
     override fun dragFolderEblanApplicationInfoToGrid(
-        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        folderId: String,
         movingGridItem: GridItem,
     ) {
         viewModelScope.launch {
@@ -969,7 +974,7 @@ internal class HomeViewModel @Inject constructor(
                 GridItemSource.NewFolder(
                     folderGridItems = getRecursiveFolderEblanApplicationInfosUseCase(
                         id = movingGridItem.id,
-                        folderId = folderEblanApplicationInfo.id,
+                        folderId = folderId,
                     ),
                 )
             }

@@ -95,7 +95,10 @@ internal fun FolderGridItem(
         .fillMaxSize()
         .padding(gridItemSettings.padding.dp)
         .background(
-            color = getGridItemBackgroundColor(gridItemSettings),
+            color = getGridItemBackgroundColor(
+                backgroundColor = gridItemSettings.backgroundColor,
+                customBackgroundColor = gridItemSettings.customBackgroundColor,
+            ),
             shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
         )
 
@@ -142,7 +145,8 @@ internal fun FolderGridItem(
                         PreviewFolderGridItem(
                             // Item and Settings
                             gridItem = currentFolderGridItem,
-                            gridItemSettings = gridItemSettings,
+                            textColor = gridItemSettings.textColor,
+                            customTextColor = gridItemSettings.customTextColor,
                             // Appearance and Colors
                             iconPackFilePaths = iconPackFilePaths,
                             folderBackgroundColor = folderBackgroundColor,
@@ -172,7 +176,7 @@ internal fun FolderGridItem(
 
     GridItemLayoutType(
         // Settings and Modifier
-        gridItemSettings = gridItemSettings,
+        layoutType = gridItemSettings.layoutType,
         modifier = itemModifier,
         // Alignment and Arrangement
         horizontalAlignment = horizontalAlignment,
@@ -190,7 +194,8 @@ internal fun FolderGridItem(
 private fun PreviewFolderGridItem(
     // Item and Settings
     gridItem: GridItem,
-    gridItemSettings: GridItemSettings,
+    textColor: TextColor,
+    customTextColor: Int,
     // Appearance and Colors
     iconPackFilePaths: Map<String, String?>,
     folderBackgroundColor: BackgroundColor,
@@ -204,10 +209,16 @@ private fun PreviewFolderGridItem(
     val context = LocalContext.current
 
     key(gridItem.id) {
-        val currentGridItemSettings = if (gridItem.override) {
-            gridItem.gridItemSettings
+        val currentTextColor = if (gridItem.override) {
+            gridItem.gridItemSettings.textColor
         } else {
-            gridItemSettings
+            textColor
+        }
+
+        val currentCustomTextColor = if (gridItem.override) {
+            gridItem.gridItemSettings.customTextColor
+        } else {
+            customTextColor
         }
 
         val alpha = when (val data = gridItem.data) {
@@ -227,8 +238,8 @@ private fun PreviewFolderGridItem(
             backgroundColor = folderBackgroundColor,
             customBackgroundColor = customFolderBackgroundColor,
             // Text Color
-            textColor = currentGridItemSettings.textColor,
-            customTextColor = currentGridItemSettings.customTextColor,
+            textColor = currentTextColor,
+            customTextColor = currentCustomTextColor,
             systemCustomTextColor = systemCustomTextColor,
             systemTextColor = systemTextColor,
             // Default Color

@@ -20,7 +20,6 @@ package com.eblan.launcher.feature.home.contract
 import androidx.compose.runtime.Stable
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
-import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderEntry
@@ -53,7 +52,9 @@ internal interface AppDrawerFolderContract {
     fun closeFolderEblanApplicationInfoEntries()
 
     fun moveFolderEblanApplicationInfoGridItem(
-        folderGridItemPopup: FolderEblanApplicationInfoPopup,
+        columns: Int,
+        rows: Int,
+        folderEblanApplicationInfoGridItems: List<FolderEblanApplicationInfoGridItem>,
         folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
         dragX: Int,
         dragY: Int,
@@ -74,7 +75,7 @@ internal interface AppDrawerFolderContract {
     )
 
     fun dragFolderEblanApplicationInfoToGrid(
-        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        folderId: String,
         movingGridItem: GridItem,
     )
 

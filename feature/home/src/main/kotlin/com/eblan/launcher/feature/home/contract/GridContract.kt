@@ -19,7 +19,6 @@ package com.eblan.launcher.feature.home.contract
 
 import androidx.compose.runtime.Stable
 import com.eblan.launcher.domain.model.folder.FolderEntry
-import com.eblan.launcher.domain.model.folder.FolderPopup
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.model.launcherapps.PinItemRequestType
@@ -113,7 +112,9 @@ internal interface GridFolderContract {
     )
 
     fun moveFolderGridItem(
-        folderPopup: FolderPopup,
+        columns: Int,
+        rows: Int,
+        folderGridItems: List<GridItem>,
         movingGridItem: GridItem,
         dragX: Int,
         dragY: Int,

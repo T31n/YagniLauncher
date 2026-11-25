@@ -62,7 +62,6 @@ import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.grid.MoveFolderEblanApplicationInfoGridItemResult
-import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
@@ -106,7 +105,7 @@ internal fun FolderApplicationScreen(
     folderBorderColor: BackgroundColor,
     customFolderBorderColor: Int,
     folderBorderWidth: Int,
-    appDrawerSettings: AppDrawerSettings,
+    gridItemSettings: GridItemSettings,
     folderCornerRadius: Int,
     folderCellWidth: Int,
     folderCellHeight: Int,
@@ -248,7 +247,7 @@ internal fun FolderApplicationScreen(
         isFirstFolderEblanApplicationInfo,
         animations,
         isLastFolderEblanApplicationInfo,
-        appDrawerSettings.gridItemSettings,
+        gridItemSettings,
     ) {
         handleIsCloseFolder(
             // Folder Information
@@ -263,7 +262,7 @@ internal fun FolderApplicationScreen(
             // Animation and Settings
             animations = animations,
             progress = progress,
-            gridItemSettings = appDrawerSettings.gridItemSettings,
+            gridItemSettings = gridItemSettings,
             // Callbacks
             onAnimateToScrollToPage = folderGridHorizontalPagerState::animateScrollToPage,
             onMoveFolderEblanApplicationInfoGridItemOutsideFolder = onMoveFolderEblanApplicationInfoGridItemOutsideFolder,
@@ -290,7 +289,9 @@ internal fun FolderApplicationScreen(
             // Folder Item State
             currentPage = folderGridHorizontalPagerState.currentPage,
             folderEntry = folderEntry,
-            folderEblanApplicationInfoPopup = previewFolderEblanApplicationInfo,
+            columns = previewFolderEblanApplicationInfo.columns,
+            rows = previewFolderEblanApplicationInfo.rows,
+            folderEblanApplicationInfoGridItems = previewFolderEblanApplicationInfo.folderEblanApplicationInfoGridItems,
             folderCellWidth = folderCellWidth,
             folderCellHeight = folderCellHeight,
             isLastFolderEblanApplicationInfoGridItem = isLastFolderEblanApplicationInfo,
@@ -491,7 +492,7 @@ internal fun FolderApplicationScreen(
                                 systemCustomTextColor = systemCustomTextColor,
                                 folderCornerRadius = folderCornerRadius,
                                 // Layout and Settings
-                                appDrawerSettings = appDrawerSettings,
+                                gridItemSettings = gridItemSettings,
                                 paddingValues = paddingValues,
                                 iconPackFilePaths = iconPackFilePaths,
                                 // State and Progress
@@ -522,8 +523,8 @@ internal fun FolderApplicationScreen(
                     // Appearance
                     folderBackgroundColor = folderBackgroundColor,
                     customFolderBackgroundColor = customFolderBackgroundColor,
-                    textColor = appDrawerSettings.gridItemSettings.textColor,
-                    customTextColor = appDrawerSettings.gridItemSettings.customTextColor,
+                    textColor = gridItemSettings.textColor,
+                    customTextColor = gridItemSettings.customTextColor,
                     systemTextColor = systemTextColor,
                     systemCustomTextColor = systemCustomTextColor,
                 )

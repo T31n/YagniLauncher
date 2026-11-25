@@ -76,7 +76,6 @@ import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderEntry
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.grid.MoveFolderEblanApplicationInfoGridItemResult
-import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_COLUMNS
@@ -115,7 +114,7 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
     systemCustomTextColor: Int,
     folderCornerRadius: Int,
     // Layout and Settings
-    appDrawerSettings: AppDrawerSettings,
+    gridItemSettings: GridItemSettings,
     paddingValues: PaddingValues,
     iconPackFilePaths: Map<String, String?>,
     // State and Progress
@@ -146,8 +145,11 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
         // Container Background Color
         backgroundColor = folderBackgroundColor,
         customBackgroundColor = customFolderBackgroundColor,
-        // Grid Item Settings
-        gridItemSettings = appDrawerSettings.gridItemSettings,
+        // Grid Item Text and Background Colors
+        gridItemTextColor = gridItemSettings.textColor,
+        gridItemCustomTextColor = gridItemSettings.customTextColor,
+        gridItemBackgroundColor = gridItemSettings.backgroundColor,
+        gridItemCustomBackgroundColor = gridItemSettings.customBackgroundColor,
         // Text Color
         systemTextColor = systemTextColor,
         systemCustomTextColor = systemCustomTextColor,
@@ -156,44 +158,44 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
     val padding = if (animations) {
         lerp(
             1.dp,
-            appDrawerSettings.gridItemSettings.padding.dp,
+            gridItemSettings.padding.dp,
             progress,
         )
     } else {
-        appDrawerSettings.gridItemSettings.padding.dp
+        gridItemSettings.padding.dp
     }
 
     val iconPadding = if (animations) {
         lerp(
             0.dp,
-            appDrawerSettings.gridItemSettings.iconPadding.dp,
+            gridItemSettings.iconPadding.dp,
             progress,
         )
     } else {
-        appDrawerSettings.gridItemSettings.iconPadding.dp
+        gridItemSettings.iconPadding.dp
     }
 
     val textPadding = if (animations) {
         lerp(
             0.dp,
-            appDrawerSettings.gridItemSettings.textPadding.dp,
+            gridItemSettings.textPadding.dp,
             progress,
         )
     } else {
-        appDrawerSettings.gridItemSettings.textPadding.dp
+        gridItemSettings.textPadding.dp
     }
 
     val iconSize = if (animations) {
         lerp(
-            appDrawerSettings.gridItemSettings.iconSize.dp / maxOf(
+            gridItemSettings.iconSize.dp / maxOf(
                 FOLDER_PREVIEW_COLUMNS,
                 FOLDER_PREVIEW_ROWS,
             ),
-            appDrawerSettings.gridItemSettings.iconSize.dp,
+            gridItemSettings.iconSize.dp,
             progress,
         )
     } else {
-        appDrawerSettings.gridItemSettings.iconSize.dp
+        gridItemSettings.iconSize.dp
     }
 
     val hasInteraction = isSelected && isVisibleOverlay
@@ -208,11 +210,11 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
     }
 
     val horizontalAlignment =
-        getHorizontalAlignment(horizontalAlignment = appDrawerSettings.gridItemSettings.horizontalAlignment)
+        getHorizontalAlignment(horizontalAlignment = gridItemSettings.horizontalAlignment)
     val verticalArrangement =
-        getVerticalArrangement(verticalArrangement = appDrawerSettings.gridItemSettings.verticalArrangement)
+        getVerticalArrangement(verticalArrangement = gridItemSettings.verticalArrangement)
 
-    val maxLines = if (appDrawerSettings.gridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
+    val maxLines = if (gridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
 
     val sharedElementKey = SharedElementKey(
         id = folderEblanApplicationInfoGridItem.id,
@@ -239,7 +241,7 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
                 // Item and Data
                 folderEblanApplicationInfoGridItem = folderEblanApplicationInfoGridItem,
                 data = data,
-                appDrawerSettings = appDrawerSettings,
+                gridItemSettings = gridItemSettings,
                 iconPackFilePaths = iconPackFilePaths,
                 // Layout and Alignment
                 paddingValues = paddingValues,
@@ -271,7 +273,7 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
                 data = data,
                 folderEblanApplicationInfoGridItem = folderEblanApplicationInfoGridItem,
                 folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
-                appDrawerSettings = appDrawerSettings,
+                gridItemSettings = gridItemSettings,
                 iconPackFilePaths = iconPackFilePaths,
                 // Animation
                 sharedTransitionScope = sharedTransitionScope,
@@ -318,7 +320,7 @@ private fun InteractiveEblanApplicationInfoItem(
     // Item and Data
     folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
     data: FolderEblanApplicationInfoGridItemData.ApplicationInfo,
-    appDrawerSettings: AppDrawerSettings,
+    gridItemSettings: GridItemSettings,
     iconPackFilePaths: Map<String, String?>,
     // Layout and Alignment
     paddingValues: PaddingValues,
@@ -385,9 +387,12 @@ private fun InteractiveEblanApplicationInfoItem(
             .fillMaxSize()
             .padding(padding)
             .background(
-                color = getGridItemBackgroundColor(appDrawerSettings.gridItemSettings),
+                color = getGridItemBackgroundColor(
+                    backgroundColor = gridItemSettings.backgroundColor,
+                    customBackgroundColor = gridItemSettings.customBackgroundColor,
+                ),
                 shape = RoundedCornerShape(
-                    size = appDrawerSettings.gridItemSettings.cornerRadius.dp,
+                    size = gridItemSettings.cornerRadius.dp,
                 ),
             )
             .run {
@@ -472,7 +477,7 @@ private fun InteractiveEblanApplicationInfoItem(
             color = textColor,
             textAlign = TextAlign.Center,
             maxLines = maxLines,
-            fontSize = appDrawerSettings.gridItemSettings.textSize.sp,
+            fontSize = gridItemSettings.textSize.sp,
             overflow = TextOverflow.Ellipsis,
         )
     }
@@ -484,7 +489,7 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
     data: FolderEblanApplicationInfoGridItemData.Folder,
     folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
-    appDrawerSettings: AppDrawerSettings,
+    gridItemSettings: GridItemSettings,
     iconPackFilePaths: Map<String, String?>,
     // Animation
     sharedTransitionScope: SharedTransitionScope,
@@ -526,7 +531,7 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    val maxLines = if (appDrawerSettings.gridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
+    val maxLines = if (gridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
 
     val textAlpha = if (hasInteraction) 0f else 1f
     val iconAlpha = if (hasInteraction || isVisibleFolder) 0f else 1f
@@ -541,9 +546,12 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
             .fillMaxSize()
             .padding(padding)
             .background(
-                color = getGridItemBackgroundColor(appDrawerSettings.gridItemSettings),
+                color = getGridItemBackgroundColor(
+                    backgroundColor = gridItemSettings.backgroundColor,
+                    customBackgroundColor = gridItemSettings.customBackgroundColor,
+                ),
                 shape = RoundedCornerShape(
-                    size = appDrawerSettings.gridItemSettings.cornerRadius.dp,
+                    size = gridItemSettings.cornerRadius.dp,
                 ),
             )
             .run {
@@ -644,7 +652,8 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
                         PreviewFolderEblanApplicationInfoItem(
                             // Item Data
                             folderEblanApplicationInfoGridItem = currentPreviewFolderEblanApplicationInfoGridItem,
-                            gridItemSettings = appDrawerSettings.gridItemSettings,
+                            textColor = gridItemSettings.textColor,
+                            customTextColor = gridItemSettings.customTextColor,
                             // Appearance
                             alpha = iconAlpha,
                             folderBackgroundColor = folderBackgroundColor,
@@ -667,7 +676,7 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
             color = textColor,
             textAlign = TextAlign.Center,
             maxLines = maxLines,
-            fontSize = appDrawerSettings.gridItemSettings.textSize.sp,
+            fontSize = gridItemSettings.textSize.sp,
             overflow = TextOverflow.Ellipsis,
         )
     }
@@ -677,7 +686,8 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
 private fun PreviewFolderEblanApplicationInfoItem(
     // Item Data
     folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
-    gridItemSettings: GridItemSettings,
+    textColor: TextColor,
+    customTextColor: Int,
     // Appearance
     alpha: Float,
     folderBackgroundColor: BackgroundColor,
@@ -697,8 +707,8 @@ private fun PreviewFolderEblanApplicationInfoItem(
             backgroundColor = folderBackgroundColor,
             customBackgroundColor = customFolderBackgroundColor,
             // Text Color
-            textColor = gridItemSettings.textColor,
-            customTextColor = gridItemSettings.customTextColor,
+            textColor = textColor,
+            customTextColor = customTextColor,
             systemCustomTextColor = systemCustomTextColor,
             systemTextColor = systemTextColor,
             // Default Color

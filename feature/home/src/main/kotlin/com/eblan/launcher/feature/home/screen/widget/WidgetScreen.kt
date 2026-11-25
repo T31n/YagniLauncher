@@ -233,7 +233,7 @@ internal fun WidgetScreen(
             if (eblanAppWidgetProviderInfos.keys.size > 1) {
                 EblanAppWidgetProviderInfoTabRow(
                     currentPage = horizontalPagerState.currentPage,
-                    eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfos,
+                    eblanUsers = eblanAppWidgetProviderInfos.keys,
                     onAnimateScrollToPage = horizontalPagerState::animateScrollToPage,
                 )
 
@@ -291,13 +291,13 @@ internal fun WidgetScreen(
 @Composable
 private fun EblanAppWidgetProviderInfoTabRow(
     currentPage: Int,
-    eblanAppWidgetProviderInfos: Map<EblanUser, Map<EblanApplicationInfoGroup, List<EblanAppWidgetProviderInfo>>>,
+    eblanUsers: Set<EblanUser>,
     onAnimateScrollToPage: suspend (Int) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
 
     SecondaryTabRow(selectedTabIndex = currentPage) {
-        eblanAppWidgetProviderInfos.keys.forEachIndexed { index, eblanUser ->
+        eblanUsers.forEachIndexed { index, eblanUser ->
             Tab(
                 selected = currentPage == index,
                 onClick = {
@@ -373,7 +373,7 @@ private fun EblanAppWidgetProvidersPage(
                     EblanApplicationInfoItem(
                         // Application Info
                         eblanApplicationInfoGroup = eblanApplicationInfoGroup,
-                        eblanAppWidgetProviderInfos = eblanApplicationInfoGroups,
+                        eblanAppWidgetProviderInfos = eblanApplicationInfoGroups[eblanApplicationInfoGroup].orEmpty(),
                         // Layout Dimensions
                         screenWidth = screenWidth,
                         screenHeight = screenHeight,
@@ -395,7 +395,7 @@ private fun EblanAppWidgetProvidersPage(
 private fun EblanApplicationInfoItem(
     // Application Info
     eblanApplicationInfoGroup: EblanApplicationInfoGroup,
-    eblanAppWidgetProviderInfos: Map<EblanApplicationInfoGroup, List<EblanAppWidgetProviderInfo>>,
+    eblanAppWidgetProviderInfos: List<EblanAppWidgetProviderInfo>,
     // Layout Dimensions
     screenWidth: Int,
     screenHeight: Int,
@@ -457,7 +457,7 @@ private fun EblanApplicationInfoItem(
             Column(modifier = Modifier.fillMaxWidth()) {
                 Spacer(modifier = Modifier.height(10.dp))
 
-                eblanAppWidgetProviderInfos[eblanApplicationInfoGroup]?.forEach { eblanAppWidgetProviderInfo ->
+                eblanAppWidgetProviderInfos.forEach { eblanAppWidgetProviderInfo ->
                     EblanAppWidgetProviderInfoItem(
                         // Widget Info
                         eblanAppWidgetProviderInfo = eblanAppWidgetProviderInfo,

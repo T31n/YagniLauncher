@@ -80,10 +80,9 @@ import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.domain.model.folder.FolderPopup
 import com.eblan.launcher.domain.model.grid.Associate
+import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.home.PageItem
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
-import com.eblan.launcher.domain.model.userdata.FolderSettings
-import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.GridLayout
 import com.eblan.launcher.feature.home.component.HomeHandler
@@ -109,8 +108,11 @@ internal fun EditGridPageScreen(
     modifier: Modifier = Modifier,
     // Configuration
     hasShortcutHostPermission: Boolean,
-    homeSettings: HomeSettings,
-    folderSettings: FolderSettings,
+    initialPage: Int,
+    columns: Int,
+    rows: Int,
+    gridItemSettings: GridItemSettings,
+    folderCornerRadius: Int,
     // Appearance
     textColor: TextColor,
     folderBackgroundColor: BackgroundColor,
@@ -136,8 +138,8 @@ internal fun EditGridPageScreen(
 
     var currentPageItems by remember(pageItems) { mutableStateOf(pageItems) }
     val pageItemsToDelete = remember { mutableStateListOf<PageItem>() }
-    var selectedId by remember(homeSettings.initialPage) {
-        mutableIntStateOf(homeSettings.initialPage)
+    var selectedId by remember(initialPage) {
+        mutableIntStateOf(initialPage)
     }
     var scrollToLastTrigger by remember { mutableIntStateOf(0) }
 
@@ -254,14 +256,14 @@ internal fun EditGridPageScreen(
                             ) {
                                 GridLayout(
                                     gridItems = pageItem.gridItems,
-                                    columns = homeSettings.columns,
-                                    rows = homeSettings.rows,
+                                    columns = columns,
+                                    rows = rows,
                                     animate = false,
                                     modifier = Modifier.fillMaxSize(),
                                     content = { currentGridItem ->
                                         PageGridItem(
                                             gridItem = currentGridItem,
-                                            gridItemSettings = homeSettings.gridItemSettings,
+                                            gridItemSettings = gridItemSettings,
                                             folderPopupGridItems = folderPopupGridItems,
                                             hasShortcutHostPermission = hasShortcutHostPermission,
                                             textColor = textColor,
@@ -272,7 +274,7 @@ internal fun EditGridPageScreen(
                                             folderBorderColor = folderBorderColor,
                                             customFolderBorderColor = customFolderBorderColor,
                                             folderBorderWidth = folderBorderWidth,
-                                            folderCornerRadius = folderSettings.folderCornerRadius,
+                                            folderCornerRadius = folderCornerRadius,
                                             iconPackFilePaths = iconPackFilePaths,
                                         )
                                     },
@@ -352,8 +354,12 @@ internal fun EditDockGridPageScreen(
     folderPopupGridItems: Map<String, FolderPopup>,
     hasShortcutHostPermission: Boolean,
     // Settings
-    homeSettings: HomeSettings,
-    folderSettings: FolderSettings,
+    dockInitialPage: Int,
+    dockHeight: Int,
+    dockColumns: Int,
+    dockRows: Int,
+    dockGridItemSettings: GridItemSettings,
+    folderCornerRadius: Int,
     // Appearance
     textColor: TextColor,
     systemTextColor: TextColor,
@@ -374,8 +380,8 @@ internal fun EditDockGridPageScreen(
 
     var currentPageItems by remember(pageItems) { mutableStateOf(pageItems) }
     val pageItemsToDelete = remember { mutableStateListOf<PageItem>() }
-    var selectedId by remember(homeSettings.dockInitialPage) {
-        mutableIntStateOf(homeSettings.dockInitialPage)
+    var selectedId by remember(dockInitialPage) {
+        mutableIntStateOf(dockInitialPage)
     }
     val lazyListState = rememberLazyListState()
 
@@ -389,7 +395,7 @@ internal fun EditDockGridPageScreen(
             }
         }
 
-    val cardHeight = homeSettings.dockHeight.dp
+    val cardHeight = dockHeight.dp
 
     EditPageScaffold(
         modifier = modifier,
@@ -465,8 +471,8 @@ internal fun EditDockGridPageScreen(
                     ) {
                         GridLayout(
                             gridItems = pageItem.gridItems,
-                            columns = homeSettings.dockColumns,
-                            rows = homeSettings.dockRows,
+                            columns = dockColumns,
+                            rows = dockRows,
                             animate = false,
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -474,7 +480,7 @@ internal fun EditDockGridPageScreen(
                             content = { currentGridItem ->
                                 PageGridItem(
                                     gridItem = currentGridItem,
-                                    gridItemSettings = homeSettings.dockGridItemSettings,
+                                    gridItemSettings = dockGridItemSettings,
                                     folderPopupGridItems = folderPopupGridItems,
                                     hasShortcutHostPermission = hasShortcutHostPermission,
                                     textColor = textColor,
@@ -485,7 +491,7 @@ internal fun EditDockGridPageScreen(
                                     folderBorderColor = folderBorderColor,
                                     customFolderBorderColor = customFolderBorderColor,
                                     folderBorderWidth = folderBorderWidth,
-                                    folderCornerRadius = folderSettings.folderCornerRadius,
+                                    folderCornerRadius = folderCornerRadius,
                                     iconPackFilePaths = iconPackFilePaths,
                                 )
                             },

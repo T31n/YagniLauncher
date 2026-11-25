@@ -256,7 +256,8 @@ internal fun FolderScreen(
             isFirstFolderGridItem = isFirstFolderGridItem,
             animations = animations,
             isLastFolderGridItem = isLastFolderGridItem,
-            folderPopup = folderPopup,
+            folderPage = folderPopup.folderGridItem.page,
+            folderAssociate = folderPopup.folderGridItem.associate,
             // Callbacks
             onAnimateToScrollToPage = folderGridHorizontalPagerState::animateScrollToPage,
             onMoveFolderGridItemOutsideFolder = onMoveFolderGridItemOutsideFolder,
@@ -294,7 +295,9 @@ internal fun FolderScreen(
             moveGridItemResult = moveGridItemResult,
             // Folder
             folderEntry = folderEntry,
-            folderPopup = folderPopup,
+            columns = folderPopup.columns,
+            rows = folderPopup.rows,
+            folderGridItems = folderPopup.folderGridItems,
             folderPopupIntOffset = folderPopupIntOffset,
             folderCellWidth = folderCellWidth,
             folderCellHeight = folderCellHeight,
@@ -545,7 +548,8 @@ private suspend fun handleIsCloseFolder(
     isFirstFolderGridItem: Boolean,
     animations: Boolean,
     isLastFolderGridItem: Boolean,
-    folderPopup: FolderPopup,
+    folderPage: Int,
+    folderAssociate: Associate,
     // Callbacks
     onAnimateToScrollToPage: suspend (Int) -> Unit,
     onMoveFolderGridItemOutsideFolder: (
@@ -573,8 +577,9 @@ private suspend fun handleIsCloseFolder(
         isDragging = isDragging,
         moveGridItemResult = moveGridItemResult,
         isVisibleOverlay = isVisibleOverlay,
-        // UI
-        folderPopup = folderPopup,
+        // Folder
+        folderPage = folderPage,
+        folderAssociate = folderAssociate,
         // Callbacks
         onMoveFolderGridItemOutsideFolder = onMoveFolderGridItemOutsideFolder,
     )
@@ -591,8 +596,9 @@ private fun handleMoveFolderGridItemOutsideFolder(
     isDragging: State<Boolean>,
     moveGridItemResult: State<MoveGridItemResult?>,
     isVisibleOverlay: State<Boolean>,
-    // UI
-    folderPopup: FolderPopup,
+    // Folder
+    folderPage: Int,
+    folderAssociate: Associate,
     // Callbacks
     onMoveFolderGridItemOutsideFolder: (
         gridItem: GridItem,
@@ -611,7 +617,7 @@ private fun handleMoveFolderGridItemOutsideFolder(
     val newGridItem = when (val data = gridItem.data) {
         is GridItemData.ApplicationInfo -> {
             gridItem.copy(
-                page = folderPopup.folderGridItem.page,
+                page = folderPage,
                 startColumn = -1,
                 startRow = -1,
                 data = data.copy(
@@ -623,7 +629,7 @@ private fun handleMoveFolderGridItemOutsideFolder(
 
         is GridItemData.Folder -> {
             gridItem.copy(
-                page = folderPopup.folderGridItem.page,
+                page = folderPage,
                 startColumn = -1,
                 startRow = -1,
                 data = data.copy(
@@ -635,7 +641,7 @@ private fun handleMoveFolderGridItemOutsideFolder(
 
         is GridItemData.ShortcutConfig -> {
             gridItem.copy(
-                page = folderPopup.folderGridItem.page,
+                page = folderPage,
                 startColumn = -1,
                 startRow = -1,
                 data = data.copy(
@@ -647,7 +653,7 @@ private fun handleMoveFolderGridItemOutsideFolder(
 
         is GridItemData.ShortcutInfo -> {
             gridItem.copy(
-                page = folderPopup.folderGridItem.page,
+                page = folderPage,
                 startColumn = -1,
                 startRow = -1,
                 data = data.copy(
@@ -664,7 +670,7 @@ private fun handleMoveFolderGridItemOutsideFolder(
         newGridItem,
         SharedElementKey(
             id = gridItem.id,
-            parent = when (folderPopup.folderGridItem.associate) {
+            parent = when (folderAssociate) {
                 Associate.Grid -> SharedElementKey.Parent.Grid
                 Associate.Dock -> SharedElementKey.Parent.Dock
             },

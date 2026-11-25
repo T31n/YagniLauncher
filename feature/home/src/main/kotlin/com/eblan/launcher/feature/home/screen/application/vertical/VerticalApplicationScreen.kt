@@ -64,10 +64,10 @@ import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderEntry
 import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.launcherapps.EblanUser
 import com.eblan.launcher.domain.model.launcherapps.EblanUserPageKey
 import com.eblan.launcher.domain.model.launcherapps.EblanUserType
-import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.SearchBarType
 import com.eblan.launcher.domain.model.userdata.TextColor
@@ -111,7 +111,12 @@ internal fun VerticalApplicationScreen(
     isVisibleFolderEblanApplicationInfos: Boolean,
     folderEblanApplicationInfoEntries: List<FolderEntry>,
     // System and Appearance
-    appDrawerSettings: AppDrawerSettings,
+    backgroundColor: BackgroundColor,
+    customBackgroundColor: Int,
+    searchBarType: SearchBarType,
+    appDrawerColumns: Int,
+    appDrawerRowsHeight: Int,
+    gridItemSettings: GridItemSettings,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     animations: Boolean,
@@ -126,7 +131,7 @@ internal fun VerticalApplicationScreen(
     onVerticalDrag: (Float) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onDragFolderEblanApplicationInfo: (
-        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        folderId: String,
         movingGridItem: GridItem,
     ) -> Unit,
     onDragApplicationInfo: (GridItem) -> Unit,
@@ -174,8 +179,8 @@ internal fun VerticalApplicationScreen(
             modifier = Modifier.align(Alignment.CenterHorizontally),
             color = getApplicationScreenTextColor(
                 // Background Colors
-                backgroundColor = appDrawerSettings.backgroundColor,
-                customBackgroundColor = appDrawerSettings.customBackgroundColor,
+                backgroundColor = backgroundColor,
+                customBackgroundColor = customBackgroundColor,
                 // Text Colors
                 systemTextColor = systemTextColor,
                 systemCustomTextColor = systemCustomTextColor,
@@ -184,7 +189,7 @@ internal fun VerticalApplicationScreen(
             ),
         )
 
-        if (appDrawerSettings.searchBarType == SearchBarType.Top) {
+        if (searchBarType == SearchBarType.Top) {
             ApplicationSearchBar(
                 // State
                 searchBarState = searchBarState,
@@ -192,8 +197,8 @@ internal fun VerticalApplicationScreen(
                 // Focus
                 focusRequester = focusRequester,
                 // Appearance
-                backgroundColor = appDrawerSettings.backgroundColor,
-                customBackgroundColor = appDrawerSettings.customBackgroundColor,
+                backgroundColor = backgroundColor,
+                customBackgroundColor = customBackgroundColor,
                 systemTextColor = systemTextColor,
                 systemCustomTextColor = systemCustomTextColor,
             )
@@ -225,8 +230,8 @@ internal fun VerticalApplicationScreen(
                 // State
                 currentPage = horizontalPagerState.currentPage,
                 // Appearance
-                backgroundColor = appDrawerSettings.backgroundColor,
-                customBackgroundColor = appDrawerSettings.customBackgroundColor,
+                backgroundColor = backgroundColor,
+                customBackgroundColor = customBackgroundColor,
                 systemTextColor = systemTextColor,
                 systemCustomTextColor = systemCustomTextColor,
                 // Callbacks
@@ -251,7 +256,11 @@ internal fun VerticalApplicationScreen(
                 animations = animations,
                 isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
                 // Settings and Data
-                appDrawerSettings = appDrawerSettings,
+                backgroundColor = backgroundColor,
+                customBackgroundColor = customBackgroundColor,
+                appDrawerColumns = appDrawerColumns,
+                appDrawerRowsHeight = appDrawerRowsHeight,
+                gridItemSettings = gridItemSettings,
                 getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
                 folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                 // Folder Appearance
@@ -298,7 +307,11 @@ private fun EblanApplicationInfosPage(
     animations: Boolean,
     isVisibleFolderEblanApplicationInfos: Boolean,
     // Settings and Data
-    appDrawerSettings: AppDrawerSettings,
+    backgroundColor: BackgroundColor,
+    customBackgroundColor: Int,
+    appDrawerColumns: Int,
+    appDrawerRowsHeight: Int,
+    gridItemSettings: GridItemSettings,
     getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     // Folder Appearance
@@ -320,7 +333,7 @@ private fun EblanApplicationInfosPage(
     onVerticalDrag: (Float) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onDragFolderEblanApplicationInfo: (
-        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        folderId: String,
         movingGridItem: GridItem,
     ) -> Unit,
     onDragApplicationInfo: (GridItem) -> Unit,
@@ -378,8 +391,8 @@ private fun EblanApplicationInfosPage(
                 // User
                 userHandle = userHandle,
                 // Appearance
-                backgroundColor = appDrawerSettings.backgroundColor,
-                customBackgroundColor = appDrawerSettings.customBackgroundColor,
+                backgroundColor = backgroundColor,
+                customBackgroundColor = customBackgroundColor,
                 systemTextColor = systemTextColor,
                 systemCustomTextColor = systemCustomTextColor,
                 // Callbacks
@@ -395,7 +408,11 @@ private fun EblanApplicationInfosPage(
                 // State
                 swipeY = swipeY,
                 animations = animations,
-                appDrawerSettings = appDrawerSettings,
+                backgroundColor = backgroundColor,
+                customBackgroundColor = customBackgroundColor,
+                appDrawerColumns = appDrawerColumns,
+                appDrawerRowsHeight = appDrawerRowsHeight,
+                gridItemSettings = gridItemSettings,
                 eblanUserPageKey = eblanUserPageKey,
                 getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
                 isVisibleOverlay = isVisibleOverlay,
@@ -437,7 +454,11 @@ private fun EblanApplicationInfosGrid(
     // State
     swipeY: Float,
     animations: Boolean,
-    appDrawerSettings: AppDrawerSettings,
+    backgroundColor: BackgroundColor,
+    customBackgroundColor: Int,
+    appDrawerColumns: Int,
+    appDrawerRowsHeight: Int,
+    gridItemSettings: GridItemSettings,
     eblanUserPageKey: EblanUserPageKey,
     getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
     isVisibleOverlay: Boolean,
@@ -459,7 +480,7 @@ private fun EblanApplicationInfosGrid(
     onVerticalDrag: (Float) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onDragFolderEblanApplicationInfo: (
-        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        folderId: String,
         movingGridItem: GridItem,
     ) -> Unit,
     onDragApplicationInfo: (GridItem) -> Unit,
@@ -515,7 +536,7 @@ private fun EblanApplicationInfosGrid(
             .fillMaxSize(),
     ) {
         LazyVerticalGrid(
-            columns = GridCells.Fixed(count = appDrawerSettings.appDrawerColumns),
+            columns = GridCells.Fixed(count = appDrawerColumns),
             state = lazyGridState,
             modifier = Modifier.weight(1f),
             contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
@@ -534,7 +555,9 @@ private fun EblanApplicationInfosGrid(
                                 EblanApplicationInfoItem(
                                     // Application Data and Settings
                                     eblanApplicationInfo = data.eblanApplicationInfo,
-                                    appDrawerSettings = appDrawerSettings,
+                                    gridItemSettings = gridItemSettings,
+                                    backgroundColor = backgroundColor,
+                                    customBackgroundColor = customBackgroundColor,
                                     iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
                                     // Layout and UI State
                                     sharedTransitionScope = sharedTransitionScope,
@@ -546,7 +569,7 @@ private fun EblanApplicationInfosGrid(
                                     isSwiping = swipeY != 0f,
                                     systemTextColor = systemTextColor,
                                     systemCustomTextColor = systemCustomTextColor,
-                                    modifier = Modifier.height(appDrawerSettings.appDrawerRowsHeight.dp),
+                                    modifier = Modifier.height(appDrawerRowsHeight.dp),
                                     // Callbacks
                                     onDismiss = onDismiss,
                                     onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
@@ -559,7 +582,9 @@ private fun EblanApplicationInfosGrid(
                                 FolderEblanApplicationInfoItem(
                                     // Core Data
                                     folderEblanApplicationInfo = data.folderEblanApplicationInfo,
-                                    appDrawerSettings = appDrawerSettings,
+                                    gridItemSettings = gridItemSettings,
+                                    backgroundColor = backgroundColor,
+                                    customBackgroundColor = customBackgroundColor,
                                     folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                                     folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
                                     iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
@@ -582,7 +607,7 @@ private fun EblanApplicationInfosGrid(
                                     folderBorderWidth = folderBorderWidth,
                                     // Interaction
                                     drag = drag,
-                                    modifier = Modifier.height(appDrawerSettings.appDrawerRowsHeight.dp),
+                                    modifier = Modifier.height(appDrawerRowsHeight.dp),
                                     // Callbacks
                                     onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                                     onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
@@ -598,15 +623,16 @@ private fun EblanApplicationInfosGrid(
                         privateEblanUser = getEblanApplicationInfosByLabelAndTag.privateEblanUser,
                         privateEblanApplicationInfos = getEblanApplicationInfosByLabelAndTag.privateEblanApplicationInfos,
                         // App Drawer and Appearance Settings
-                        appDrawerSettings = appDrawerSettings,
+                        gridItemSettings = gridItemSettings,
+                        appDrawerRowsHeight = appDrawerRowsHeight,
                         iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
                         // Space State
                         isQuietModeEnabled = privateIsQuiteModeEnabled,
                         isVisibleOverlay = isVisibleOverlay,
                         // Layout and Colors
                         paddingValues = paddingValues,
-                        backgroundColor = appDrawerSettings.backgroundColor,
-                        customBackgroundColor = appDrawerSettings.customBackgroundColor,
+                        backgroundColor = backgroundColor,
+                        customBackgroundColor = customBackgroundColor,
                         systemTextColor = systemTextColor,
                         systemCustomTextColor = systemCustomTextColor,
                         // Callbacks
@@ -627,7 +653,9 @@ private fun EblanApplicationInfosGrid(
                                 EblanApplicationInfoItem(
                                     // Application Data and Settings
                                     eblanApplicationInfo = data.eblanApplicationInfo,
-                                    appDrawerSettings = appDrawerSettings,
+                                    gridItemSettings = gridItemSettings,
+                                    backgroundColor = backgroundColor,
+                                    customBackgroundColor = customBackgroundColor,
                                     iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
                                     // Layout and UI State
                                     sharedTransitionScope = sharedTransitionScope,
@@ -639,7 +667,7 @@ private fun EblanApplicationInfosGrid(
                                     isSwiping = swipeY != 0f,
                                     systemTextColor = systemTextColor,
                                     systemCustomTextColor = systemCustomTextColor,
-                                    modifier = Modifier.height(appDrawerSettings.appDrawerRowsHeight.dp),
+                                    modifier = Modifier.height(appDrawerRowsHeight.dp),
                                     // Callbacks
                                     onDismiss = onDismiss,
                                     onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
@@ -659,7 +687,7 @@ private fun EblanApplicationInfosGrid(
             // Scroll and List
             lazyGridState = lazyGridState,
             canScroll = canScroll,
-            appDrawerColumns = appDrawerSettings.appDrawerColumns,
+            appDrawerColumns = appDrawerColumns,
             // UI Settings
             isPrivateSpaceEntryPointHidden = isDefaultLauncher &&
                 eblanUserPageKey.eblanUser.eblanUserType == EblanUserType.Personal &&

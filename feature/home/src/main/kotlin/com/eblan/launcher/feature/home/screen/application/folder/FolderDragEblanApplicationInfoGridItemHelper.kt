@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
-import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderEntry
 import com.eblan.launcher.domain.model.grid.MoveFolderEblanApplicationInfoGridItemResult
 import com.eblan.launcher.feature.home.model.Drag
@@ -39,7 +38,9 @@ internal fun handleDragFolderEblanApplicationInfoGridItem(
     // Folder Item State
     currentPage: Int,
     folderEntry: FolderEntry,
-    folderEblanApplicationInfoPopup: FolderEblanApplicationInfoPopup,
+    columns: Int,
+    rows: Int,
+    folderEblanApplicationInfoGridItems: List<FolderEblanApplicationInfoGridItem>,
     folderCellWidth: Int,
     folderCellHeight: Int,
     isLastFolderEblanApplicationInfoGridItem: Boolean,
@@ -55,7 +56,9 @@ internal fun handleDragFolderEblanApplicationInfoGridItem(
     isInProgress: Boolean,
     // Callbacks
     onMoveFolderEblanApplicationInfoGridItem: (
-        folderEblanApplicationInfoPopup: FolderEblanApplicationInfoPopup,
+        columns: Int,
+        rows: Int,
+        folderEblanApplicationInfoGridItems: List<FolderEblanApplicationInfoGridItem>,
         folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
         dragX: Int,
         dragY: Int,
@@ -85,8 +88,8 @@ internal fun handleDragFolderEblanApplicationInfoGridItem(
         screenWidth = screenWidth,
         screenHeight = screenHeight,
         // Grid Dimensions
-        columns = folderEblanApplicationInfoPopup.columns,
-        rows = folderEblanApplicationInfoPopup.rows,
+        columns = columns,
+        rows = rows,
         paddingValues = paddingValues,
         // Cell Dimensions
         folderCellWidth = folderCellWidth,
@@ -100,7 +103,9 @@ internal fun handleDragFolderEblanApplicationInfoGridItem(
         folderGridDragPosition.y in 0 until folderGridDragPosition.height
     ) {
         onMoveFolderEblanApplicationInfoGridItem(
-            folderEblanApplicationInfoPopup,
+            columns,
+            rows,
+            folderEblanApplicationInfoGridItems,
             moveFolderEblanApplicationInfoGridItemResult.folderEblanApplicationInfoGridItem,
             folderGridDragPosition.x,
             folderGridDragPosition.y,

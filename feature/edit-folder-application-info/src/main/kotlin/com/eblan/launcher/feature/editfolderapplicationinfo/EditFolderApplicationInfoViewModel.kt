@@ -174,12 +174,12 @@ internal class EditFolderApplicationInfoViewModel @Inject constructor(
     }
 
     fun addEblanApplicationInfosToFolder(
-        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        folderId: String,
         eblanApplicationInfos: List<EblanApplicationInfo>,
     ) {
         viewModelScope.launch {
             addEblanApplicationInfosToFolderUseCase(
-                folderEblanApplicationInfo = folderEblanApplicationInfo,
+                folderId = folderId,
                 eblanApplicationInfos = eblanApplicationInfos,
             )
         }

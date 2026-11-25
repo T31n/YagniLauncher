@@ -23,14 +23,17 @@ import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.application.SyncEblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.ApplicationInfoGridItem
 import com.eblan.launcher.domain.model.grid.Associate
+import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.iconpackinfo.EblanIconPackInfo
 import com.eblan.launcher.domain.model.shortcutconfig.EblanShortcutConfig
+import com.eblan.launcher.domain.model.userdata.ColorSchemeSettings
+import com.eblan.launcher.domain.model.userdata.ColorSource
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
-import com.eblan.launcher.domain.model.userdata.FolderSettings
 import com.eblan.launcher.domain.model.userdata.GeneralSettings
-import com.eblan.launcher.domain.model.userdata.HomeSettings
+import com.eblan.launcher.domain.model.userdata.IconShape
+import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.domain.platform.AppWidgetManagerWrapper
 import com.eblan.launcher.domain.platform.FileManager
 import com.eblan.launcher.domain.platform.IconKeyGenerator
@@ -93,9 +96,22 @@ class SyncDataUseCase @Inject constructor(
 
             updateEblanApplicationInfos(
                 experimentalSettings = userData.experimentalSettings,
-                homeSettings = userData.homeSettings,
-                folderSettings = userData.folderSettings,
-                generalSettings = userData.generalSettings,
+                addNewAppsToHomeScreen = userData.homeSettings.addNewAppsToHomeScreen,
+                initialPage = userData.homeSettings.initialPage,
+                gridItemSettings = userData.homeSettings.gridItemSettings,
+                pageCount = userData.homeSettings.pageCount,
+                columns = userData.homeSettings.columns,
+                rows = userData.homeSettings.rows,
+                dockGridItemSettings = userData.homeSettings.dockGridItemSettings,
+                dockColumns = userData.homeSettings.dockColumns,
+                maxFolderColumns = userData.folderSettings.maxFolderColumns,
+                maxFolderRows = userData.folderSettings.maxFolderRows,
+                iconTint = userData.generalSettings.iconTint,
+                colorSource = userData.generalSettings.colorSource,
+                customSeedColor = userData.generalSettings.customSeedColor,
+                iconShape = userData.generalSettings.iconShape,
+                theme = userData.generalSettings.theme,
+                colorSchemeSettings = userData.generalSettings.colorSchemeSettings,
             )
 
             updateAppWidgetProviderInfos()
@@ -172,9 +188,22 @@ class SyncDataUseCase @Inject constructor(
     /** Synchronizes installed applications and their related shortcut-configuration records. */
     private suspend fun updateEblanApplicationInfos(
         experimentalSettings: ExperimentalSettings,
-        homeSettings: HomeSettings,
-        folderSettings: FolderSettings,
-        generalSettings: GeneralSettings,
+        addNewAppsToHomeScreen: Boolean,
+        initialPage: Int,
+        gridItemSettings: GridItemSettings,
+        pageCount: Int,
+        columns: Int,
+        rows: Int,
+        dockGridItemSettings: GridItemSettings,
+        dockColumns: Int,
+        maxFolderColumns: Int,
+        maxFolderRows: Int,
+        iconTint: Boolean,
+        colorSource: ColorSource,
+        customSeedColor: Int,
+        iconShape: IconShape,
+        theme: Theme,
+        colorSchemeSettings: ColorSchemeSettings,
     ) {
         val newEblanShortcutConfigs = mutableSetOf<EblanShortcutConfig>()
 
@@ -187,12 +216,12 @@ class SyncDataUseCase @Inject constructor(
 
         val newSyncEblanApplicationInfos = buildList {
             launcherAppsWrapper.getActivityListWithCacheIcons(
-                iconTint = generalSettings.iconTint,
-                colorSource = generalSettings.colorSource,
-                customSeedColor = generalSettings.customSeedColor,
-                iconShape = generalSettings.iconShape,
-                theme = generalSettings.theme,
-                colorSchemeSettings = generalSettings.colorSchemeSettings,
+                iconTint = iconTint,
+                colorSource = colorSource,
+                customSeedColor = customSeedColor,
+                iconShape = iconShape,
+                theme = theme,
+                colorSchemeSettings = colorSchemeSettings,
             )
                 .forEach { launcherAppsActivityInfo ->
                     currentCoroutineContext().ensureActive()
@@ -218,12 +247,18 @@ class SyncDataUseCase @Inject constructor(
         }
 
         addNewApplicationsToHomeScreen(
-            homeSettings = homeSettings,
-            experimentalSettings = experimentalSettings,
+            addNewAppsToHomeScreen = addNewAppsToHomeScreen,
+            initialPage = initialPage,
+            gridItemSettings = gridItemSettings,
+            pageCount = pageCount,
+            columns = columns,
+            rows = rows,
+            firstLaunch = experimentalSettings.firstLaunch,
             newSyncEblanApplicationInfos = newSyncEblanApplicationInfos,
             oldSyncEblanApplicationInfos = oldSyncEblanApplicationInfos,
             applicationInfoGridItems = newApplicationInfoGridItems,
-            folderSettings = folderSettings,
+            maxFolderColumns = maxFolderColumns,
+            maxFolderRows = maxFolderRows,
         )
 
         val oldDeleteEblanApplicationInfos = oldSyncEblanApplicationInfos
@@ -254,7 +289,10 @@ class SyncDataUseCase @Inject constructor(
         insertApplicationInfoGridItems(
             eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos(),
             experimentalSettings = experimentalSettings,
-            homeSettings = homeSettings,
+            columns = columns,
+            dockColumns = dockColumns,
+            gridItemSettings = gridItemSettings,
+            dockGridItemSettings = dockGridItemSettings,
         )
 
         applicationInfoGridItemRepository.insertApplicationInfoGridItems(applicationInfoGridItems = newApplicationInfoGridItems)
@@ -262,15 +300,21 @@ class SyncDataUseCase @Inject constructor(
 
     /** Adds newly installed non-system applications to the home screen when configured to do so. */
     private suspend fun addNewApplicationsToHomeScreen(
-        homeSettings: HomeSettings,
-        experimentalSettings: ExperimentalSettings,
+        addNewAppsToHomeScreen: Boolean,
+        initialPage: Int,
+        gridItemSettings: GridItemSettings,
+        pageCount: Int,
+        columns: Int,
+        rows: Int,
+        firstLaunch: Boolean,
         newSyncEblanApplicationInfos: List<SyncEblanApplicationInfo>,
         oldSyncEblanApplicationInfos: List<SyncEblanApplicationInfo>,
         applicationInfoGridItems: MutableList<ApplicationInfoGridItem>,
-        folderSettings: FolderSettings,
+        maxFolderColumns: Int,
+        maxFolderRows: Int,
     ) {
-        if (!homeSettings.addNewAppsToHomeScreen ||
-            experimentalSettings.firstLaunch ||
+        if (!addNewAppsToHomeScreen ||
+            firstLaunch ||
             oldSyncEblanApplicationInfos.isEmpty()
         ) {
             return
@@ -313,10 +357,15 @@ class SyncDataUseCase @Inject constructor(
                 packageName = currentAddNewEblanApplicationInfo.packageName,
                 icon = currentAddNewEblanApplicationInfo.icon,
                 label = currentAddNewEblanApplicationInfo.label,
-                homeSettings = homeSettings,
+                initialPage = initialPage,
+                gridItemSettings = gridItemSettings,
+                pageCount = pageCount,
+                columns = columns,
+                rows = rows,
                 applicationInfoGridItems = applicationInfoGridItems,
                 folderGridItemRepository = folderGridItemRepository,
-                folderSettings = folderSettings,
+                maxFolderColumns = maxFolderColumns,
+                maxFolderRows = maxFolderRows,
             )
         }
     }
@@ -440,7 +489,10 @@ class SyncDataUseCase @Inject constructor(
     private suspend fun insertApplicationInfoGridItems(
         eblanApplicationInfos: List<EblanApplicationInfo>,
         experimentalSettings: ExperimentalSettings,
-        homeSettings: HomeSettings,
+        columns: Int,
+        dockColumns: Int,
+        gridItemSettings: GridItemSettings,
+        dockGridItemSettings: GridItemSettings,
     ) {
         if (!experimentalSettings.firstLaunch) return
 
@@ -500,8 +552,8 @@ class SyncDataUseCase @Inject constructor(
                     customIcon = null,
                     customLabel = null,
                     gridItemSettings = when (associate) {
-                        Associate.Dock -> homeSettings.dockGridItemSettings
-                        Associate.Grid -> homeSettings.gridItemSettings
+                        Associate.Dock -> dockGridItemSettings
+                        Associate.Grid -> gridItemSettings
                     },
                     doubleTap = eblanAction,
                     swipeUp = eblanAction,
@@ -512,23 +564,23 @@ class SyncDataUseCase @Inject constructor(
             )
         }
 
-        eblanApplicationInfosBySystem.take(homeSettings.columns)
+        eblanApplicationInfosBySystem.take(columns)
             .forEachIndexed { index, launcherAppsActivityInfo ->
                 insertApplicationInfoGridItem(
                     index = index,
                     eblanApplicationInfo = launcherAppsActivityInfo,
-                    columns = homeSettings.columns,
+                    columns = columns,
                     associate = Associate.Grid,
                 )
             }
 
-        eblanApplicationInfosBySystem.drop(homeSettings.columns)
-            .take(homeSettings.dockColumns)
+        eblanApplicationInfosBySystem.drop(columns)
+            .take(dockColumns)
             .forEachIndexed { index, launcherAppsActivityInfo ->
                 insertApplicationInfoGridItem(
                     index = index,
                     eblanApplicationInfo = launcherAppsActivityInfo,
-                    columns = homeSettings.dockColumns,
+                    columns = dockColumns,
                     associate = Associate.Dock,
                 )
             }

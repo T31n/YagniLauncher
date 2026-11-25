@@ -21,7 +21,10 @@ import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.model.iconpackinfo.EblanIconPackInfo
 import com.eblan.launcher.domain.model.launcherapps.FastLauncherAppsActivityInfo
-import com.eblan.launcher.domain.model.userdata.GeneralSettings
+import com.eblan.launcher.domain.model.userdata.ColorSchemeSettings
+import com.eblan.launcher.domain.model.userdata.ColorSource
+import com.eblan.launcher.domain.model.userdata.IconShape
+import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.domain.platform.FileManager
 import com.eblan.launcher.domain.platform.IconKeyGenerator
 import com.eblan.launcher.domain.platform.IconPackManager
@@ -73,7 +76,12 @@ class UpdateIconPacksUseCase @Inject constructor(
                     iconPackManager = iconPackManager,
                     fastLauncherAppsActivityInfos = launcherAppsWrapper.getFastActivityList(),
                     iconKeyGenerator = iconKeyGenerator,
-                    generalSettings = generalSettings,
+                    iconTint = generalSettings.iconTint,
+                    colorSource = generalSettings.colorSource,
+                    customSeedColor = generalSettings.customSeedColor,
+                    iconShape = generalSettings.iconShape,
+                    theme = generalSettings.theme,
+                    colorSchemeSettings = generalSettings.colorSchemeSettings,
                 )
 
                 val iconFile = File(
@@ -108,7 +116,12 @@ class UpdateIconPacksUseCase @Inject constructor(
         iconPackManager: IconPackManager,
         fastLauncherAppsActivityInfos: List<FastLauncherAppsActivityInfo>,
         iconKeyGenerator: IconKeyGenerator,
-        generalSettings: GeneralSettings,
+        iconTint: Boolean,
+        colorSource: ColorSource,
+        customSeedColor: Int,
+        iconShape: IconShape,
+        theme: Theme,
+        colorSchemeSettings: ColorSchemeSettings,
     ) {
         if (iconPackPackageName.isEmpty()) return
 
@@ -133,7 +146,12 @@ class UpdateIconPacksUseCase @Inject constructor(
                 iconPackPackageName = iconPackPackageName,
                 file = file,
                 componentName = currentFastLauncherAppsActivityInfo.componentName,
-                generalSettings = generalSettings,
+                iconTint = iconTint,
+                colorSource = colorSource,
+                customSeedColor = customSeedColor,
+                iconShape = iconShape,
+                theme = theme,
+                colorSchemeSettings = colorSchemeSettings,
             )
         }
     }

@@ -20,7 +20,6 @@ package com.eblan.launcher.domain.usecase.folder
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
-import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.repository.EblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.FolderEblanApplicationInfoRepository
 import com.eblan.launcher.domain.repository.FolderGridItemTransaction
@@ -36,21 +35,21 @@ class AddEblanApplicationInfosToFolderUseCase @Inject constructor(
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     /**
-     * Assigns sequential folder indices after the existing items in [folderEblanApplicationInfo]
+     * Assigns sequential folder indices after the existing items in [folderId]
      * and persists the updated application records.
      *
-     * @param folderEblanApplicationInfo The target application-drawer folder.
+     * @param folderId The identifier of the target application-drawer folder.
      * @param eblanApplicationInfos The applications to append to the folder.
      */
     suspend operator fun invoke(
-        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        folderId: String,
         eblanApplicationInfos: List<EblanApplicationInfo>,
     ) = withContext(defaultDispatcher) {
         folderGridItemTransaction.withTransaction {
             val maxApplicationIndex = eblanApplicationInfoRepository.getEblanApplicationInfos()
                 .asSequence()
                 .filter { currentEblanApplicationInfo ->
-                    currentEblanApplicationInfo.folderId == folderEblanApplicationInfo.id
+                    currentEblanApplicationInfo.folderId == folderId
                 }
                 .maxOfOrNull { currentEblanApplicationInfo ->
                     currentEblanApplicationInfo.folderIndex + 1
@@ -60,7 +59,7 @@ class AddEblanApplicationInfosToFolderUseCase @Inject constructor(
                 folderEblanApplicationInfoRepository.getFolderEblanApplicationInfos()
                     .asSequence()
                     .filter { currentFolderEblanApplicationInfo ->
-                        currentFolderEblanApplicationInfo.folderId == folderEblanApplicationInfo.id
+                        currentFolderEblanApplicationInfo.folderId == folderId
                     }
                     .maxOfOrNull { currentFolderEblanApplicationInfo ->
                         currentFolderEblanApplicationInfo.folderIndex + 1
@@ -72,7 +71,7 @@ class AddEblanApplicationInfosToFolderUseCase @Inject constructor(
                 eblanApplicationInfos = eblanApplicationInfos.mapIndexed { index, currentEblanApplicationInfo ->
                     currentEblanApplicationInfo.copy(
                         folderIndex = startIndex + index,
-                        folderId = folderEblanApplicationInfo.id,
+                        folderId = folderId,
                     )
                 },
             )

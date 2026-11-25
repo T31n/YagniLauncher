@@ -22,10 +22,12 @@ import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.ApplicationInfoGridItem
 import com.eblan.launcher.domain.model.grid.Associate
+import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.launcherapps.LauncherAppsActivityInfo
-import com.eblan.launcher.domain.model.userdata.FolderSettings
-import com.eblan.launcher.domain.model.userdata.GeneralSettings
-import com.eblan.launcher.domain.model.userdata.HomeSettings
+import com.eblan.launcher.domain.model.userdata.ColorSchemeSettings
+import com.eblan.launcher.domain.model.userdata.ColorSource
+import com.eblan.launcher.domain.model.userdata.IconShape
+import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.domain.platform.AppWidgetManagerWrapper
 import com.eblan.launcher.domain.platform.FileManager
 import com.eblan.launcher.domain.platform.IconKeyGenerator
@@ -95,7 +97,12 @@ class AddPackageUseCase @Inject constructor(
                 colorSchemeSettings = userData.generalSettings.colorSchemeSettings,
             ).onEach { currentLauncherAppsActivityInfo ->
                 addEblanApplicationInfo(
-                    homeSettings = userData.homeSettings,
+                    addNewAppsToHomeScreen = userData.homeSettings.addNewAppsToHomeScreen,
+                    initialPage = userData.homeSettings.initialPage,
+                    gridItemSettings = userData.homeSettings.gridItemSettings,
+                    pageCount = userData.homeSettings.pageCount,
+                    columns = userData.homeSettings.columns,
+                    rows = userData.homeSettings.rows,
                     serialNumber = currentLauncherAppsActivityInfo.serialNumber,
                     componentName = currentLauncherAppsActivityInfo.componentName,
                     packageName = currentLauncherAppsActivityInfo.packageName,
@@ -104,7 +111,8 @@ class AddPackageUseCase @Inject constructor(
                     lastUpdateTime = currentLauncherAppsActivityInfo.lastUpdateTime,
                     flags = currentLauncherAppsActivityInfo.flags,
                     applicationInfoGridItems = newApplicationInfoGridItems,
-                    folderSettings = userData.folderSettings,
+                    maxFolderColumns = userData.folderSettings.maxFolderColumns,
+                    maxFolderRows = userData.folderSettings.maxFolderRows,
                 )
             }
 
@@ -130,14 +138,24 @@ class AddPackageUseCase @Inject constructor(
             addIconPackInfos(
                 iconPackPackageName = userData.generalSettings.iconPackPackageName,
                 launcherAppsActivityInfos = launcherAppsActivityInfosByPackageName,
-                generalSettings = userData.generalSettings,
+                iconTint = userData.generalSettings.iconTint,
+                colorSource = userData.generalSettings.colorSource,
+                customSeedColor = userData.generalSettings.customSeedColor,
+                iconShape = userData.generalSettings.iconShape,
+                theme = userData.generalSettings.theme,
+                colorSchemeSettings = userData.generalSettings.colorSchemeSettings,
             )
         }
     }
 
     /** Stores an activity and queues a home-screen item when that setting is enabled. */
     private suspend fun addEblanApplicationInfo(
-        homeSettings: HomeSettings,
+        addNewAppsToHomeScreen: Boolean,
+        initialPage: Int,
+        gridItemSettings: GridItemSettings,
+        pageCount: Int,
+        columns: Int,
+        rows: Int,
         serialNumber: Long,
         componentName: String,
         packageName: String,
@@ -146,7 +164,8 @@ class AddPackageUseCase @Inject constructor(
         lastUpdateTime: Long,
         flags: Int,
         applicationInfoGridItems: MutableList<ApplicationInfoGridItem>,
-        folderSettings: FolderSettings,
+        maxFolderColumns: Int,
+        maxFolderRows: Int,
     ) {
         eblanApplicationInfoRepository.upsertEblanApplicationInfo(
             eblanApplicationInfo = EblanApplicationInfo(
@@ -165,7 +184,7 @@ class AddPackageUseCase @Inject constructor(
             ),
         )
 
-        if (!homeSettings.addNewAppsToHomeScreen) return
+        if (!addNewAppsToHomeScreen) return
 
         val gridItems = gridRepository.getGridItems().toGridItems()
             .filter { currentGridItem ->
@@ -179,10 +198,15 @@ class AddPackageUseCase @Inject constructor(
             packageName = packageName,
             icon = activityIcon,
             label = activityLabel,
-            homeSettings = homeSettings,
+            initialPage = initialPage,
+            gridItemSettings = gridItemSettings,
+            pageCount = pageCount,
+            columns = columns,
+            rows = rows,
             applicationInfoGridItems = applicationInfoGridItems,
             folderGridItemRepository = folderGridItemRepository,
-            folderSettings = folderSettings,
+            maxFolderColumns = maxFolderColumns,
+            maxFolderRows = maxFolderRows,
         )
     }
 
@@ -259,7 +283,12 @@ class AddPackageUseCase @Inject constructor(
     private suspend fun addIconPackInfos(
         iconPackPackageName: String,
         launcherAppsActivityInfos: List<LauncherAppsActivityInfo>,
-        generalSettings: GeneralSettings,
+        iconTint: Boolean,
+        colorSource: ColorSource,
+        customSeedColor: Int,
+        iconShape: IconShape,
+        theme: Theme,
+        colorSchemeSettings: ColorSchemeSettings,
     ) {
         if (iconPackPackageName.isEmpty()) return
 
@@ -285,7 +314,12 @@ class AddPackageUseCase @Inject constructor(
                 iconPackPackageName = iconPackPackageName,
                 file = file,
                 componentName = currentLauncherAppsActivityInfo.componentName,
-                generalSettings = generalSettings,
+                iconTint = iconTint,
+                colorSource = colorSource,
+                customSeedColor = customSeedColor,
+                iconShape = iconShape,
+                theme = theme,
+                colorSchemeSettings = colorSchemeSettings,
             )
         }
     }

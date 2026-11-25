@@ -70,7 +70,6 @@ import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
-import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
@@ -97,7 +96,9 @@ import kotlin.uuid.Uuid
 internal fun FolderEblanApplicationInfoItem(
     // Core Data
     folderEblanApplicationInfo: FolderEblanApplicationInfo,
-    appDrawerSettings: AppDrawerSettings,
+    gridItemSettings: GridItemSettings,
+    backgroundColor: BackgroundColor,
+    customBackgroundColor: Int,
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     folderEblanApplicationInfoEntries: List<FolderEntry>,
     iconPackFilePaths: Map<String, String?>,
@@ -124,7 +125,7 @@ internal fun FolderEblanApplicationInfoItem(
     // Callbacks
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onDragFolderEblanApplicationInfo: (
-        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        folderId: String,
         movingGridItem: GridItem,
     ) -> Unit,
     onLongPressFolderApplicationInfo: (
@@ -145,14 +146,15 @@ internal fun FolderEblanApplicationInfoItem(
 
     val graphicsLayer = rememberGraphicsLayer()
 
-    val gridItemSettings = appDrawerSettings.gridItemSettings
-
     val textColor = getGridItemTextColorFromBackgroundColor(
         // Container Background Color
-        backgroundColor = appDrawerSettings.backgroundColor,
-        customBackgroundColor = appDrawerSettings.customBackgroundColor,
-        // Grid Item Settings
-        gridItemSettings = gridItemSettings,
+        backgroundColor = backgroundColor,
+        customBackgroundColor = customBackgroundColor,
+        // Grid Item Text and Background Colors
+        gridItemTextColor = gridItemSettings.textColor,
+        gridItemCustomTextColor = gridItemSettings.customTextColor,
+        gridItemBackgroundColor = gridItemSettings.backgroundColor,
+        gridItemCustomBackgroundColor = gridItemSettings.customBackgroundColor,
         // Text Color
         systemTextColor = systemTextColor,
         systemCustomTextColor = systemCustomTextColor,
@@ -202,8 +204,10 @@ internal fun FolderEblanApplicationInfoItem(
     ) {
         handleDragFolderEblanApplicationInfoItem(
             // Item Data
-            folderEblanApplicationInfo = folderEblanApplicationInfo,
-            gridItemSettings = appDrawerSettings.gridItemSettings,
+            folderId = folderEblanApplicationInfo.id,
+            folderLabel = folderEblanApplicationInfo.label,
+            folderIcon = folderEblanApplicationInfo.icon,
+            gridItemSettings = gridItemSettings,
             // Drag State
             drag = drag,
             isLongPress = isLongPress,
@@ -218,11 +222,14 @@ internal fun FolderEblanApplicationInfoItem(
     }
 
     val itemModifier = modifier
-        .padding(appDrawerSettings.gridItemSettings.padding.dp)
+        .padding(gridItemSettings.padding.dp)
         .background(
-            color = getGridItemBackgroundColor(appDrawerSettings.gridItemSettings),
+            color = getGridItemBackgroundColor(
+                backgroundColor = gridItemSettings.backgroundColor,
+                customBackgroundColor = gridItemSettings.customBackgroundColor,
+            ),
             shape = RoundedCornerShape(
-                size = appDrawerSettings.gridItemSettings.cornerRadius.dp,
+                size = gridItemSettings.cornerRadius.dp,
             ),
         )
         .run {
@@ -333,7 +340,8 @@ internal fun FolderEblanApplicationInfoItem(
                             // Item Data
                             folderEblanApplicationInfoGridItem = currentFolderEblanApplicationInfoGridItem,
                             // Item Settings
-                            gridItemSettings = appDrawerSettings.gridItemSettings,
+                            textColor = gridItemSettings.textColor,
+                            customTextColor = gridItemSettings.customTextColor,
                             iconPackFilePaths = iconPackFilePaths,
                             // Folder Colors
                             folderBackgroundColor = folderBackgroundColor,
@@ -357,7 +365,7 @@ internal fun FolderEblanApplicationInfoItem(
             color = textColor,
             textAlign = TextAlign.Center,
             maxLines = maxLines,
-            fontSize = appDrawerSettings.gridItemSettings.textSize.sp,
+            fontSize = gridItemSettings.textSize.sp,
             overflow = TextOverflow.Ellipsis,
         )
     }
@@ -372,14 +380,14 @@ internal fun FolderEblanApplicationInfoItem(
             color = textColor,
             textAlign = TextAlign.Center,
             maxLines = maxLines,
-            fontSize = appDrawerSettings.gridItemSettings.textSize.sp,
+            fontSize = gridItemSettings.textSize.sp,
             overflow = TextOverflow.Ellipsis,
         )
     }
 
     GridItemLayoutType(
         // Settings and Modifier
-        gridItemSettings = gridItemSettings,
+        layoutType = gridItemSettings.layoutType,
         modifier = itemModifier,
         // Alignment and Arrangement
         horizontalAlignment = horizontalAlignment,
@@ -398,7 +406,8 @@ private fun PreviewFolderEblanApplicationInfoItem(
     // Item Data
     folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
     // Item Settings
-    gridItemSettings: GridItemSettings,
+    textColor: TextColor,
+    customTextColor: Int,
     iconPackFilePaths: Map<String, String?>,
     // Folder Colors
     folderBackgroundColor: BackgroundColor,
@@ -417,8 +426,8 @@ private fun PreviewFolderEblanApplicationInfoItem(
             backgroundColor = folderBackgroundColor,
             customBackgroundColor = customFolderBackgroundColor,
             // Text Color
-            textColor = gridItemSettings.textColor,
-            customTextColor = gridItemSettings.customTextColor,
+            textColor = textColor,
+            customTextColor = customTextColor,
             systemCustomTextColor = systemCustomTextColor,
             systemTextColor = systemTextColor,
             // Default Color
@@ -474,7 +483,9 @@ private fun PreviewFolderEblanApplicationInfoItem(
 
 internal fun handleDragFolderEblanApplicationInfoItem(
     // Item Data
-    folderEblanApplicationInfo: FolderEblanApplicationInfo,
+    folderId: String,
+    folderLabel: String,
+    folderIcon: String?,
     gridItemSettings: GridItemSettings,
     // Drag State
     drag: Drag,
@@ -484,8 +495,8 @@ internal fun handleDragFolderEblanApplicationInfoItem(
     onUpdateIsLongPress: (Boolean) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onDragFolderEblanApplicationInfo: (
-        folderEblanApplicationInfo: FolderEblanApplicationInfo,
-        gridItem: GridItem,
+        folderId: String,
+        movingGridItem: GridItem,
     ) -> Unit,
 ) {
     if (!isLongPress) return
@@ -506,8 +517,8 @@ internal fun handleDragFolderEblanApplicationInfoItem(
                 columnSpan = 1,
                 rowSpan = 1,
                 data = GridItemData.Folder(
-                    label = folderEblanApplicationInfo.label,
-                    icon = folderEblanApplicationInfo.icon,
+                    label = folderLabel,
+                    icon = folderIcon,
                     index = -1,
                     folderId = null,
                 ),
@@ -520,7 +531,7 @@ internal fun handleDragFolderEblanApplicationInfoItem(
             )
 
             onDragFolderEblanApplicationInfo(
-                folderEblanApplicationInfo,
+                folderId,
                 gridItem,
             )
         }

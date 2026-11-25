@@ -265,8 +265,11 @@ private fun Success(
                     screenHeight = screenHeight,
                     // Configuration
                     hasShortcutHostPermission = homeData.hasShortcutHostPermission,
-                    homeSettings = homeData.userData.homeSettings,
-                    folderSettings = homeData.userData.folderSettings,
+                    initialPage = homeData.userData.homeSettings.initialPage,
+                    columns = homeData.userData.homeSettings.columns,
+                    rows = homeData.userData.homeSettings.rows,
+                    gridItemSettings = homeData.userData.homeSettings.gridItemSettings,
+                    folderCornerRadius = homeData.userData.folderSettings.folderCornerRadius,
                     // Appearance
                     textColor = textColor,
                     folderBackgroundColor = homeData.userData.folderSettings.folderBackgroundColor,
@@ -287,8 +290,12 @@ private fun Success(
                     folderPopupGridItems = homeData.folderPopups,
                     hasShortcutHostPermission = homeData.hasShortcutHostPermission,
                     // Settings
-                    homeSettings = homeData.userData.homeSettings,
-                    folderSettings = homeData.userData.folderSettings,
+                    dockInitialPage = homeData.userData.homeSettings.dockInitialPage,
+                    dockHeight = homeData.userData.homeSettings.dockHeight,
+                    dockColumns = homeData.userData.homeSettings.dockColumns,
+                    dockRows = homeData.userData.homeSettings.dockRows,
+                    dockGridItemSettings = homeData.userData.homeSettings.dockGridItemSettings,
+                    folderCornerRadius = homeData.userData.folderSettings.folderCornerRadius,
                     // Appearance
                     textColor = textColor,
                     systemTextColor = textColor,

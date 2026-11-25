@@ -44,7 +44,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.domain.model.application.AppDrawerGridItem
 import com.eblan.launcher.domain.model.grid.GridItem
-import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.util.getGridItemTextColor
 import kotlin.math.hypot
@@ -101,8 +100,9 @@ internal fun SparkleGridLayout(
     // Grid Structure
     columns: Int,
     rows: Int,
-    // Grid Item Settings
-    gridItemSettings: GridItemSettings,
+    // Grid Item Text Colors
+    gridItemTextColor: TextColor,
+    gridItemCustomTextColor: Int,
     // Drag and Style
     dragIntOffset: IntOffset,
     textColor: TextColor,
@@ -113,11 +113,11 @@ internal fun SparkleGridLayout(
 
     val currentTextColor = getGridItemTextColor(
         // Grid Item Text Colors
-        gridItemTextColor = gridItemSettings.textColor,
-        gridItemCustomTextColor = gridItemSettings.customTextColor,
+        gridItemTextColor = gridItemTextColor,
+        gridItemCustomTextColor = gridItemCustomTextColor,
         // System Text Colors
         systemTextColor = textColor,
-        systemCustomTextColor = gridItemSettings.customTextColor,
+        systemCustomTextColor = gridItemCustomTextColor,
     )
 
     Canvas(

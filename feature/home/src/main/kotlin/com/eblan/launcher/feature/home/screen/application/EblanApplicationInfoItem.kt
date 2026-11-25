@@ -63,7 +63,8 @@ import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
-import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
+import com.eblan.launcher.domain.model.grid.GridItemSettings
+import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.domain.model.userdata.TextColor
@@ -88,7 +89,9 @@ import kotlin.uuid.Uuid
 internal fun EblanApplicationInfoItem(
     // Application Data and Settings
     eblanApplicationInfo: EblanApplicationInfo,
-    appDrawerSettings: AppDrawerSettings,
+    gridItemSettings: GridItemSettings,
+    backgroundColor: BackgroundColor,
+    customBackgroundColor: Int,
     iconPackFilePaths: Map<String, String?>,
     // Layout and UI State
     sharedTransitionScope: SharedTransitionScope,
@@ -133,14 +136,15 @@ internal fun EblanApplicationInfoItem(
     val currentOnLongPressApplicationInfo by rememberUpdatedState(onLongPressApplicationInfo)
     val currentOnDismiss by rememberUpdatedState(onDismiss)
 
-    val gridItemSettings = appDrawerSettings.gridItemSettings
-
     val textColor = getGridItemTextColorFromBackgroundColor(
         // Container Background Color
-        backgroundColor = appDrawerSettings.backgroundColor,
-        customBackgroundColor = appDrawerSettings.customBackgroundColor,
-        // Grid Item Settings
-        gridItemSettings = gridItemSettings,
+        backgroundColor = backgroundColor,
+        customBackgroundColor = customBackgroundColor,
+        // Grid Item Text and Background Colors
+        gridItemTextColor = gridItemSettings.textColor,
+        gridItemCustomTextColor = gridItemSettings.customTextColor,
+        gridItemBackgroundColor = gridItemSettings.backgroundColor,
+        gridItemCustomBackgroundColor = gridItemSettings.customBackgroundColor,
         // Text Color
         systemTextColor = systemTextColor,
         systemCustomTextColor = systemCustomTextColor,
@@ -192,7 +196,7 @@ internal fun EblanApplicationInfoItem(
         handleDragEblanApplicationInfoItem(
             // Application Info
             eblanApplicationInfo = eblanApplicationInfo,
-            appDrawerSettings = appDrawerSettings,
+            gridItemSettings = gridItemSettings,
             // Drag State
             drag = drag,
             isLongPress = isLongPress,
@@ -207,7 +211,10 @@ internal fun EblanApplicationInfoItem(
     val itemModifier = modifier
         .padding(gridItemSettings.padding.dp)
         .background(
-            color = getGridItemBackgroundColor(gridItemSettings),
+            color = getGridItemBackgroundColor(
+                backgroundColor = gridItemSettings.backgroundColor,
+                customBackgroundColor = gridItemSettings.customBackgroundColor,
+            ),
             shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
         )
         .run {
@@ -325,7 +332,7 @@ internal fun EblanApplicationInfoItem(
 
     GridItemLayoutType(
         // Settings and Modifier
-        gridItemSettings = gridItemSettings,
+        layoutType = gridItemSettings.layoutType,
         modifier = itemModifier,
         // Alignment and Arrangement
         horizontalAlignment = horizontalAlignment,
@@ -373,7 +380,7 @@ internal fun handleOnTapEblanApplicationInfoItem(
 internal fun handleDragEblanApplicationInfoItem(
     // Application Info
     eblanApplicationInfo: EblanApplicationInfo,
-    appDrawerSettings: AppDrawerSettings,
+    gridItemSettings: GridItemSettings,
     // Drag State
     drag: Drag,
     isLongPress: Boolean,
@@ -415,7 +422,7 @@ internal fun handleDragEblanApplicationInfoItem(
                 data = data,
                 associate = Associate.Grid,
                 override = false,
-                gridItemSettings = appDrawerSettings.gridItemSettings,
+                gridItemSettings = gridItemSettings,
                 doubleTap = eblanAction,
                 swipeUp = eblanAction,
                 swipeDown = eblanAction,

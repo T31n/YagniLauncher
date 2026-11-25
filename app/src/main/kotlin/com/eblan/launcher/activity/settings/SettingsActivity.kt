@@ -39,7 +39,7 @@ import androidx.navigation.compose.rememberNavController
 import com.eblan.launcher.activity.main.MainActivity
 import com.eblan.launcher.designsystem.theme.getDefaultColorScheme
 import com.eblan.launcher.domain.model.userdata.GeneralSettings
-import com.eblan.launcher.model.ApplicationTheme
+import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.navigation.SettingsNavHost
 import com.eblan.launcher.platform.accessibilitymanager.AndroidAccessibilityManagerWrapper
 import com.eblan.launcher.platform.colorscheme.MaterialColorSchemeResolver
@@ -118,7 +118,7 @@ class SettingsActivity : AppCompatActivity() {
                 )
 
                 MainContent(
-                    applicationTheme = applicationTheme,
+                    systemBarsTheme = applicationTheme?.systemBarsTheme,
                     colorScheme = colorScheme,
                 )
             }
@@ -127,11 +127,11 @@ class SettingsActivity : AppCompatActivity() {
 
     @Composable
     private fun MainContent(
-        applicationTheme: ApplicationTheme?,
+        systemBarsTheme: Theme?,
         colorScheme: ColorScheme?,
     ) {
         when {
-            applicationTheme == null || colorScheme == null -> {
+            systemBarsTheme == null || colorScheme == null -> {
                 SideEffect {
                     enableEdgeToEdge()
                 }
@@ -150,7 +150,7 @@ class SettingsActivity : AppCompatActivity() {
 
                 SideEffect {
                     handleEdgeToEdge(
-                        theme = applicationTheme.systemBarsTheme,
+                        theme = systemBarsTheme,
                         materialColorSchemeResolver = colorSchemeResolver,
                     )
                 }

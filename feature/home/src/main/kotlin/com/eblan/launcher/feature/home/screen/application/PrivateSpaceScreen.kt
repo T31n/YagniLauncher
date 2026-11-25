@@ -69,8 +69,8 @@ import coil3.request.addLastModifiedToFileCacheKey
 import coil3.request.crossfade
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
+import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.launcherapps.EblanUser
-import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.R
@@ -92,7 +92,8 @@ internal fun LazyGridScope.privateSpace(
     privateEblanUser: EblanUser?,
     privateEblanApplicationInfos: List<EblanApplicationInfo>,
     // App Drawer and Appearance Settings
-    appDrawerSettings: AppDrawerSettings,
+    gridItemSettings: GridItemSettings,
+    appDrawerRowsHeight: Int,
     iconPackFilePaths: Map<String, String?>,
     // Space State
     isQuietModeEnabled: Boolean,
@@ -140,7 +141,10 @@ internal fun LazyGridScope.privateSpace(
                 // Application Info
                 eblanApplicationInfo = eblanApplicationInfo,
                 // Settings and Styling
-                appDrawerSettings = appDrawerSettings,
+                gridItemSettings = gridItemSettings,
+                appDrawerRowsHeight = appDrawerRowsHeight,
+                backgroundColor = backgroundColor,
+                customBackgroundColor = customBackgroundColor,
                 iconPackFilePaths = iconPackFilePaths,
                 isVisibleOverlay = isVisibleOverlay,
                 systemTextColor = systemTextColor,
@@ -250,7 +254,10 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
     // Application Info
     eblanApplicationInfo: EblanApplicationInfo,
     // Settings and Styling
-    appDrawerSettings: AppDrawerSettings,
+    gridItemSettings: GridItemSettings,
+    appDrawerRowsHeight: Int,
+    backgroundColor: BackgroundColor,
+    customBackgroundColor: Int,
     iconPackFilePaths: Map<String, String?>,
     isVisibleOverlay: Boolean,
     systemTextColor: TextColor,
@@ -275,20 +282,21 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
 
     val currentOnDismiss by rememberUpdatedState(onDismiss)
 
-    val gridItemSettings = appDrawerSettings.gridItemSettings
-
     val textColor = getGridItemTextColorFromBackgroundColor(
         // Container Background Color
-        backgroundColor = appDrawerSettings.backgroundColor,
-        customBackgroundColor = appDrawerSettings.customBackgroundColor,
-        // Grid Item Settings
-        gridItemSettings = gridItemSettings,
+        backgroundColor = backgroundColor,
+        customBackgroundColor = customBackgroundColor,
+        // Grid Item Text and Background Colors
+        gridItemTextColor = gridItemSettings.textColor,
+        gridItemCustomTextColor = gridItemSettings.customTextColor,
+        gridItemBackgroundColor = gridItemSettings.backgroundColor,
+        gridItemCustomBackgroundColor = gridItemSettings.customBackgroundColor,
         // Text Color
         systemTextColor = systemTextColor,
         systemCustomTextColor = systemCustomTextColor,
     )
 
-    val appDrawerRowsHeight = appDrawerSettings.appDrawerRowsHeight.dp
+    val rowHeight = appDrawerRowsHeight.dp
 
     val maxLines = if (gridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
 
@@ -320,10 +328,13 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
     }
 
     val itemModifier = modifier
-        .height(appDrawerRowsHeight)
+        .height(rowHeight)
         .padding(gridItemSettings.padding.dp)
         .background(
-            color = getGridItemBackgroundColor(gridItemSettings),
+            color = getGridItemBackgroundColor(
+                backgroundColor = gridItemSettings.backgroundColor,
+                customBackgroundColor = gridItemSettings.customBackgroundColor,
+            ),
             shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
         )
         .pointerInput(key1 = isVisibleOverlay) {
@@ -412,7 +423,7 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
 
     GridItemLayoutType(
         // Settings and Modifier
-        gridItemSettings = gridItemSettings,
+        layoutType = gridItemSettings.layoutType,
         modifier = itemModifier,
         // Alignment and Arrangement
         horizontalAlignment = horizontalAlignment,

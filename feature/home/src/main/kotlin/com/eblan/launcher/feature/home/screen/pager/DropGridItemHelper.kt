@@ -288,8 +288,12 @@ internal fun handleAppWidgetLauncherResult(
         updateAppWidgetOptions(
             // Manager
             androidAppWidgetManagerWrapper = androidAppWidgetManagerWrapper,
-            // Data
-            data = newData,
+            // Widget Data
+            appWidgetId = newData.appWidgetId,
+            minResizeWidth = newData.minResizeWidth,
+            minResizeHeight = newData.minResizeHeight,
+            maxResizeWidth = newData.maxResizeWidth,
+            maxResizeHeight = newData.maxResizeHeight,
             // Dimensions
             width = with(density) { data.minWidth.dp.roundToPx() },
             height = with(density) { data.minHeight.dp.roundToPx() },
@@ -572,8 +576,12 @@ private fun onDragEndWidget(
         updateAppWidgetOptions(
             // Manager
             androidAppWidgetManagerWrapper = androidAppWidgetManagerWrapper,
-            // Data
-            data = newData,
+            // Widget Data
+            appWidgetId = newData.appWidgetId,
+            minResizeWidth = newData.minResizeWidth,
+            minResizeHeight = newData.minResizeHeight,
+            maxResizeWidth = newData.maxResizeWidth,
+            maxResizeHeight = newData.maxResizeHeight,
             // Dimensions
             width = minWidthPx,
             height = minHeightPx,
@@ -930,8 +938,8 @@ private suspend fun handleNewGridItemSource(
         return cancelAndDeleteGridItem(
             // Context
             context = context,
-            // Result
-            moveGridItemResult = currentMoveGridItemResult,
+            // Item
+            movingGridItem = currentMoveGridItemResult.movingGridItem,
             // Callbacks
             onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
             onUpdateIsDragging = onUpdateIsDragging,
@@ -943,8 +951,8 @@ private suspend fun handleNewGridItemSource(
         return cancelAndDeleteGridItem(
             // Context
             context = context,
-            // Result
-            moveGridItemResult = currentMoveGridItemResult,
+            // Item
+            movingGridItem = currentMoveGridItemResult.movingGridItem,
             // Callbacks
             onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
             onUpdateIsDragging = onUpdateIsDragging,
@@ -1037,8 +1045,8 @@ private fun handleNewFolderGridItemSource(
         return cancelAndDeleteGridItem(
             // Context
             context = context,
-            // Result
-            moveGridItemResult = currentMoveGridItemResult,
+            // Item
+            movingGridItem = currentMoveGridItemResult.movingGridItem,
             // Callbacks
             onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
             onUpdateIsDragging = onUpdateIsDragging,
@@ -1050,8 +1058,8 @@ private fun handleNewFolderGridItemSource(
         return cancelAndDeleteGridItem(
             // Context
             context = context,
-            // Result
-            moveGridItemResult = currentMoveGridItemResult,
+            // Item
+            movingGridItem = currentMoveGridItemResult.movingGridItem,
             // Callbacks
             onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
             onUpdateIsDragging = onUpdateIsDragging,
@@ -1107,8 +1115,8 @@ private fun handlePinGridItemSource(
         return cancelAndDeleteGridItem(
             // Context
             context = context,
-            // Result
-            moveGridItemResult = currentMoveGridItemResult,
+            // Item
+            movingGridItem = currentMoveGridItemResult.movingGridItem,
             // Callbacks
             onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
             onUpdateIsDragging = onUpdateIsDragging,
@@ -1120,8 +1128,8 @@ private fun handlePinGridItemSource(
         return cancelAndDeleteGridItem(
             // Context
             context = context,
-            // Result
-            moveGridItemResult = currentMoveGridItemResult,
+            // Item
+            movingGridItem = currentMoveGridItemResult.movingGridItem,
             // Callbacks
             onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
             onUpdateIsDragging = onUpdateIsDragging,
@@ -1175,8 +1183,8 @@ private fun handlePinGridItemSource(
 private fun cancelAndDeleteGridItem(
     // Context
     context: Context,
-    // Result
-    moveGridItemResult: MoveGridItemResult,
+    // Item
+    movingGridItem: GridItem,
     // Callbacks
     onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
@@ -1186,7 +1194,7 @@ private fun cancelAndDeleteGridItem(
 
     onUpdateIsDragging(false)
 
-    onResetGridAfterDeleteGridItem(moveGridItemResult.movingGridItem)
+    onResetGridAfterDeleteGridItem(movingGridItem)
 
     Toast.makeText(
         context,

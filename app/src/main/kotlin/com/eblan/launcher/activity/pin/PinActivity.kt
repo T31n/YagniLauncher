@@ -32,8 +32,8 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.domain.model.userdata.GeneralSettings
+import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.feature.pin.PinScreen
-import com.eblan.launcher.model.ApplicationTheme
 import com.eblan.launcher.platform.colorscheme.MaterialColorSchemeResolver
 import com.eblan.launcher.platform.launcherapps.AndroidLauncherAppsWrapper
 import com.eblan.launcher.platform.launcherapps.PinItemRequestWrapper
@@ -120,7 +120,7 @@ class PinActivity : ComponentActivity() {
                 )
 
                 MainContent(
-                    applicationTheme = applicationTheme,
+                    systemBarsTheme = applicationTheme?.systemBarsTheme,
                     colorScheme = colorScheme,
                     pinItemRequest = pinItemRequest,
                     homeIntent = homeIntent,
@@ -131,19 +131,19 @@ class PinActivity : ComponentActivity() {
 
     @Composable
     private fun MainContent(
-        applicationTheme: ApplicationTheme?,
+        systemBarsTheme: Theme?,
         colorScheme: ColorScheme?,
         pinItemRequest: PinItemRequest,
         homeIntent: Intent,
     ) {
         when {
-            applicationTheme == null || colorScheme == null -> {}
+            systemBarsTheme == null || colorScheme == null -> {}
 
             else -> {
                 val colorSchemeResolver = LocalMaterialColorSchemeResolver.current
                 SideEffect {
                     handleEdgeToEdge(
-                        theme = applicationTheme.systemBarsTheme,
+                        theme = systemBarsTheme,
                         materialColorSchemeResolver = colorSchemeResolver,
                     )
                 }

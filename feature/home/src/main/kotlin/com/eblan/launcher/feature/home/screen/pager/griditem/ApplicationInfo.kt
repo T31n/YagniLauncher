@@ -141,7 +141,10 @@ internal fun InteractiveApplicationInfoGridItem(
         .fillMaxSize()
         .padding(gridItemSettings.padding.dp)
         .background(
-            color = getGridItemBackgroundColor(gridItemSettings),
+            color = getGridItemBackgroundColor(
+                backgroundColor = gridItemSettings.backgroundColor,
+                customBackgroundColor = gridItemSettings.customBackgroundColor,
+            ),
             shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
         )
         .whiteBox(
@@ -285,7 +288,7 @@ internal fun InteractiveApplicationInfoGridItem(
 
     GridItemLayoutType(
         // Settings and Modifier
-        gridItemSettings = gridItemSettings,
+        layoutType = gridItemSettings.layoutType,
         modifier = itemModifier,
         // Alignment and Arrangement
         horizontalAlignment = horizontalAlignment,

@@ -26,6 +26,7 @@ import com.eblan.launcher.domain.model.grid.ApplicationInfoGridItem
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
+import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.grid.PartialApplicationInfoGridItem
 import com.eblan.launcher.domain.model.grid.PartialShortcutConfigGridItem
 import com.eblan.launcher.domain.model.grid.PartialShortcutInfoGridItem
@@ -39,8 +40,6 @@ import com.eblan.launcher.domain.model.shortcutconfig.EblanShortcutConfig
 import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfo
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
-import com.eblan.launcher.domain.model.userdata.FolderSettings
-import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.domain.model.widget.AppWidgetManagerAppWidgetProviderInfo
 import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
 import com.eblan.launcher.domain.model.widget.PartialUpdateWidgetGridItem
@@ -447,10 +446,15 @@ internal suspend fun addNewApplicationToHomeScreen(
     packageName: String,
     icon: String?,
     label: String,
-    homeSettings: HomeSettings,
+    initialPage: Int,
+    gridItemSettings: GridItemSettings,
+    pageCount: Int,
+    columns: Int,
+    rows: Int,
     applicationInfoGridItems: MutableList<ApplicationInfoGridItem>,
     folderGridItemRepository: FolderGridItemRepository,
-    folderSettings: FolderSettings,
+    maxFolderColumns: Int,
+    maxFolderRows: Int,
 ) {
     val alreadyOnHome = gridItems.any { currentGridItem ->
         when (val data = currentGridItem.data) {
@@ -462,8 +466,8 @@ internal suspend fun addNewApplicationToHomeScreen(
                 val previewFolderGridItems =
                     folderGridItemRepository.getFolderGridItemWrappers()
                         .asPreviewFolders(
-                            maxFolderColumns = folderSettings.maxFolderColumns,
-                            maxFolderRows = folderSettings.maxFolderRows,
+                            maxFolderColumns = maxFolderColumns,
+                            maxFolderRows = maxFolderRows,
                         )
 
                 val folderGridItems = getRecursiveFolderGridItems(
@@ -509,7 +513,7 @@ internal suspend fun addNewApplicationToHomeScreen(
 
     val gridItem = GridItem(
         id = Uuid.random().toHexString(),
-        page = homeSettings.initialPage,
+        page = initialPage,
         startColumn = 0,
         startRow = 0,
         columnSpan = 1,
@@ -517,7 +521,7 @@ internal suspend fun addNewApplicationToHomeScreen(
         data = data,
         associate = Associate.Grid,
         override = false,
-        gridItemSettings = homeSettings.gridItemSettings,
+        gridItemSettings = gridItemSettings,
         doubleTap = eblanAction,
         swipeUp = eblanAction,
         swipeDown = eblanAction,
@@ -526,9 +530,9 @@ internal suspend fun addNewApplicationToHomeScreen(
     val newGridItem = findAvailableRegionByPage(
         gridItems = gridItems,
         gridItem = gridItem,
-        pageCount = homeSettings.pageCount,
-        columns = homeSettings.columns,
-        rows = homeSettings.rows,
+        pageCount = pageCount,
+        columns = columns,
+        rows = rows,
     )
 
     if (newGridItem != null) {

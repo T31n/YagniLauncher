@@ -40,14 +40,18 @@ class AddApplicationInfosToFolderGridItemUseCase @Inject constructor(
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     /**
-     * Creates new application grid items linked to [folderGridItem] starting after its current
+     * Creates new application grid items linked to [folderId] starting after its current
      * highest child index and persists them.
      *
-     * @param folderGridItem The target folder grid item.
+     * @param folderId The identifier of the target folder grid item.
+     * @param page The page of the target folder grid item.
+     * @param associate The grid container associated with the target folder.
      * @param eblanApplicationInfos The applications to append to the folder.
      */
     suspend operator fun invoke(
-        folderGridItem: GridItem,
+        folderId: String,
+        page: Int,
+        associate: Associate,
         eblanApplicationInfos: List<EblanApplicationInfo>,
     ) = withContext(defaultDispatcher) {
         val homeSettings = userDataRepository.userDataFlow.first().homeSettings
@@ -55,7 +59,7 @@ class AddApplicationInfosToFolderGridItemUseCase @Inject constructor(
         gridRepository.withTransaction {
             val gridItems = gridRepository.getGridItems()
 
-            val gridItemSettings = when (folderGridItem.associate) {
+            val gridItemSettings = when (associate) {
                 Associate.Grid -> homeSettings.gridItemSettings
                 Associate.Dock -> homeSettings.dockGridItemSettings
             }
@@ -63,19 +67,19 @@ class AddApplicationInfosToFolderGridItemUseCase @Inject constructor(
             val startIndex = sequenceOf(
                 gridItems.applicationInfoGridItems
                     .asSequence()
-                    .filter { it.folderId == folderGridItem.id }
+                    .filter { it.folderId == folderId }
                     .map { it.index + 1 },
                 gridItems.shortcutInfoGridItems
                     .asSequence()
-                    .filter { it.folderId == folderGridItem.id }
+                    .filter { it.folderId == folderId }
                     .map { it.index + 1 },
                 gridItems.shortcutConfigGridItems
                     .asSequence()
-                    .filter { it.folderId == folderGridItem.id }
+                    .filter { it.folderId == folderId }
                     .map { it.index + 1 },
                 gridItems.folderGridItems
                     .asSequence()
-                    .filter { it.folderId == folderGridItem.id }
+                    .filter { it.folderId == folderId }
                     .map { it.index + 1 },
             ).flatten().maxOrNull() ?: 0
 
@@ -88,7 +92,7 @@ class AddApplicationInfosToFolderGridItemUseCase @Inject constructor(
             val newGridItems = eblanApplicationInfos.mapIndexed { index, eblanApplicationInfo ->
                 GridItem(
                     id = Uuid.random().toHexString(),
-                    page = folderGridItem.page,
+                    page = page,
                     startColumn = -1,
                     startRow = -1,
                     columnSpan = 1,
@@ -102,9 +106,9 @@ class AddApplicationInfosToFolderGridItemUseCase @Inject constructor(
                         customIcon = eblanApplicationInfo.customIcon,
                         customLabel = eblanApplicationInfo.customLabel,
                         index = startIndex + index,
-                        folderId = folderGridItem.id,
+                        folderId = folderId,
                     ),
-                    associate = folderGridItem.associate,
+                    associate = associate,
                     override = false,
                     gridItemSettings = gridItemSettings,
                     doubleTap = eblanAction,

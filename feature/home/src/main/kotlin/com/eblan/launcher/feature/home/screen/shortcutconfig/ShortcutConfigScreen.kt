@@ -231,7 +231,7 @@ internal fun ShortcutConfigScreen(
             if (eblanShortcutConfigs.keys.size > 1) {
                 EblanShortcutConfigTabRow(
                     currentPage = horizontalPagerState.currentPage,
-                    eblanShortcutConfigs = eblanShortcutConfigs,
+                    eblanUsers = eblanShortcutConfigs.keys,
                     onAnimateScrollToPage = horizontalPagerState::animateScrollToPage,
                 )
 
@@ -277,13 +277,13 @@ internal fun ShortcutConfigScreen(
 @Composable
 private fun EblanShortcutConfigTabRow(
     currentPage: Int,
-    eblanShortcutConfigs: Map<EblanUser, Map<EblanApplicationInfoGroup, List<EblanShortcutConfig>>>,
+    eblanUsers: Set<EblanUser>,
     onAnimateScrollToPage: suspend (Int) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
 
     SecondaryTabRow(selectedTabIndex = currentPage) {
-        eblanShortcutConfigs.keys.forEachIndexed { index, eblanUser ->
+        eblanUsers.forEachIndexed { index, eblanUser ->
             Tab(
                 selected = currentPage == index,
                 onClick = {
@@ -359,7 +359,7 @@ private fun EblanShortcutConfigsPage(
                     EblanApplicationInfoItem(
                         // Application Info
                         eblanApplicationInfoGroup = eblanApplicationInfoGroup,
-                        eblanShortcutConfigs = eblanShortcutConfigs[serialNumber].orEmpty(),
+                        eblanShortcutConfigs = eblanShortcutConfigs[serialNumber].orEmpty()[eblanApplicationInfoGroup].orEmpty(),
                         // Grid and Visibility
                         gridItemSettings = gridItemSettings,
                         isVisibleOverlay = isVisibleOverlay,
@@ -378,7 +378,7 @@ private fun EblanShortcutConfigsPage(
 private fun EblanApplicationInfoItem(
     // Application Info
     eblanApplicationInfoGroup: EblanApplicationInfoGroup,
-    eblanShortcutConfigs: Map<EblanApplicationInfoGroup, List<EblanShortcutConfig>>,
+    eblanShortcutConfigs: List<EblanShortcutConfig>,
     // Grid and Visibility
     gridItemSettings: GridItemSettings,
     isVisibleOverlay: Boolean,
@@ -436,7 +436,7 @@ private fun EblanApplicationInfoItem(
             Column(modifier = Modifier.fillMaxWidth()) {
                 Spacer(modifier = Modifier.height(10.dp))
 
-                eblanShortcutConfigs[eblanApplicationInfoGroup]?.forEach { eblanShortcutConfig ->
+                eblanShortcutConfigs.forEach { eblanShortcutConfig ->
                     EblanShortcutConfigItem(
                         // Shortcut and Grid Configuration
                         eblanShortcutConfig = eblanShortcutConfig,
