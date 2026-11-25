@@ -21,8 +21,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,30 +34,20 @@ import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SearchBarState
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
-import com.eblan.launcher.designsystem.component.EblanDialog
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.SearchBarType
 import com.eblan.launcher.domain.model.userdata.TextColor
-import com.eblan.launcher.feature.home.R
 import com.eblan.launcher.feature.home.util.getApplicationScreenTextColor
 import com.eblan.launcher.feature.home.util.getBackgroundColor
 import kotlinx.coroutines.launch
@@ -249,91 +237,6 @@ internal fun ApplicationFloatingActionButton(
                         contentDescription = null,
                     )
                 }
-            }
-        }
-    }
-}
-
-@Composable
-internal fun SearchApplicationsDialog(
-    initialLabel: String,
-    modifier: Modifier = Modifier,
-    onDismissRequest: () -> Unit,
-    onSearch: (String) -> Unit,
-) {
-    var value by remember { mutableStateOf(initialLabel) }
-
-    val focusRequester = remember { FocusRequester() }
-
-    LaunchedEffect(key1 = Unit) {
-        focusRequester.requestFocus()
-    }
-
-    EblanDialog(
-        modifier = modifier,
-        onDismissRequest = onDismissRequest,
-    ) {
-        Text(
-            text = stringResource(commonR.string.search_applications),
-            style = MaterialTheme.typography.titleLarge,
-        )
-
-        TextField(
-            value = value,
-            onValueChange = { currentLabel ->
-                value = currentLabel
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .focusRequester(focusRequester),
-            singleLine = true,
-            label = {
-                Text(text = stringResource(commonR.string.search_applications))
-            },
-            trailingIcon = if (value.isNotEmpty()) {
-                {
-                    IconButton(
-                        onClick = {
-                            value = ""
-                        },
-                    ) {
-                        Icon(
-                            imageVector = EblanLauncherIcons.Close,
-                            contentDescription = null,
-                        )
-                    }
-                }
-            } else {
-                null
-            },
-            keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Search,
-            ),
-            keyboardActions = KeyboardActions(
-                onSearch = {
-                    onSearch(value)
-                    onDismissRequest()
-                },
-            ),
-        )
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End,
-        ) {
-            TextButton(
-                onClick = onDismissRequest,
-            ) {
-                Text(text = stringResource(commonR.string.cancel))
-            }
-
-            TextButton(
-                onClick = {
-                    onSearch(value)
-                    onDismissRequest()
-                },
-            ) {
-                Text(text = stringResource(R.string.search))
             }
         }
     }

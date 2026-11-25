@@ -48,9 +48,15 @@ internal class DefaultUserManagerWrapper @Inject constructor(
         enableQuiteMode: Boolean,
         userHandle: UserHandle,
     ): Boolean = withContext(ioDispatcher) {
-        userManager.requestQuietModeEnabled(
-            enableQuiteMode,
-            userHandle,
-        )
+        try {
+            userManager.requestQuietModeEnabled(
+                enableQuiteMode,
+                userHandle,
+            )
+        } catch (_: SecurityException) {
+            false
+        } catch (_: IllegalArgumentException) {
+            false
+        }
     }
 }
