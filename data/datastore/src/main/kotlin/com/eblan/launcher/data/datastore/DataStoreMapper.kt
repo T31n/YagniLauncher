@@ -439,13 +439,15 @@ private fun AppDrawerTypeProto.toAppDrawerType(): AppDrawerType = when (this) {
 }
 
 private fun SearchBarType.toSearchBarTypeProto(): SearchBarTypeProto = when (this) {
-    SearchBarType.Top -> SearchBarTypeProto.Top
-    SearchBarType.Floating -> SearchBarTypeProto.Floating
+    SearchBarType.Top -> SearchBarTypeProto.SearchBarTypeTop
+    SearchBarType.Floating -> SearchBarTypeProto.SearchBarTypeFloating
+    SearchBarType.None -> SearchBarTypeProto.SearchBarTypeNone
 }
 
 private fun SearchBarTypeProto.toSearchBarType(): SearchBarType = when (this) {
-    SearchBarTypeProto.Top, SearchBarTypeProto.UNRECOGNIZED -> SearchBarType.Top
-    SearchBarTypeProto.Floating -> SearchBarType.Floating
+    SearchBarTypeProto.SearchBarTypeTop, SearchBarTypeProto.UNRECOGNIZED -> SearchBarType.Top
+    SearchBarTypeProto.SearchBarTypeFloating -> SearchBarType.Floating
+    SearchBarTypeProto.SearchBarTypeNone -> SearchBarType.None
 }
 
 private fun LayoutType.toLayoutTypeProto(): LayoutTypeProto = when (this) {

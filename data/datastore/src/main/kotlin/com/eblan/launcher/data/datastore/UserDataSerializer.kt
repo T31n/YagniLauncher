@@ -123,7 +123,7 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
         showKeyboard = false
         fuzzySearch = false
         blurBehind = false
-        searchBarTypeProto = SearchBarTypeProto.Top
+        searchBarTypeProto = SearchBarTypeProto.SearchBarTypeTop
     }.build()
 
     private val defaultGestureSettingsProto = GestureSettingsProto.newBuilder().apply {

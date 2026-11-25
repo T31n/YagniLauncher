@@ -498,4 +498,5 @@ private fun AppDrawerType.getTitle(): String = when (this) {
 private fun SearchBarType.getTitle(): String = when (this) {
     SearchBarType.Top -> stringResource(R.string.top)
     SearchBarType.Floating -> stringResource(R.string.floating)
+    SearchBarType.None -> stringResource(commonR.string.none)
 }

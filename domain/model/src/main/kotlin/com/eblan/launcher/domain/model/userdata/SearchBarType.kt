@@ -20,4 +20,5 @@ package com.eblan.launcher.domain.model.userdata
 enum class SearchBarType {
     Top,
     Floating,
+    None,
 }

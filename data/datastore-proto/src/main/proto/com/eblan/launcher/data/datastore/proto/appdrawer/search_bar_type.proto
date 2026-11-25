@@ -4,6 +4,7 @@ option java_package = "com.eblan.launcher.data.datastore.proto.appdrawer";
 option java_multiple_files = true;
 
 enum SearchBarTypeProto {
-  Top = 0;
-  Floating = 1;
+  SearchBarTypeTop = 0;
+  SearchBarTypeFloating = 1;
+  SearchBarTypeNone = 2;
 }

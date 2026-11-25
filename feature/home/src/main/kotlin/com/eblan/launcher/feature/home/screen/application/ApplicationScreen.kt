@@ -714,6 +714,8 @@ private fun ApplicationScreenEffect(
                     SearchBarType.Floating -> {
                         onShowSearchDialog()
                     }
+
+                    SearchBarType.None -> Unit
                 }
             }
         }
