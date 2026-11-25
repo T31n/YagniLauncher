@@ -41,7 +41,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,6 +57,7 @@ import com.eblan.launcher.designsystem.component.EblanDialog
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
+import com.eblan.launcher.domain.model.userdata.SearchBarType
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.R
 import com.eblan.launcher.feature.home.util.getApplicationScreenTextColor
@@ -185,35 +185,69 @@ private fun getSearchBarColors(
 }
 
 @Composable
-internal fun FloatingSearchActionButton(
+internal fun ApplicationFloatingActionButton(
+    searchBarType: SearchBarType,
     hasSearchQuery: Boolean,
+    canPauseWorkProfile: Boolean,
+    isQuietModeEnabled: Boolean,
     modifier: Modifier = Modifier,
     onShowSearchDialog: () -> Unit,
     onClearSearch: () -> Unit,
+    onPauseWorkProfile: () -> Unit,
 ) {
+    if (isQuietModeEnabled || (searchBarType != SearchBarType.Floating && !canPauseWorkProfile)) {
+        return
+    }
+
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(EblanSpacing.medium),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (hasSearchQuery) {
-            SmallFloatingActionButton(
-                onClick = onClearSearch,
-            ) {
-                Icon(
-                    imageVector = EblanLauncherIcons.Close,
-                    contentDescription = null,
-                )
-            }
-        }
+        when (searchBarType) {
+            SearchBarType.Floating -> {
+                if (hasSearchQuery) {
+                    SmallFloatingActionButton(
+                        onClick = onClearSearch,
+                    ) {
+                        Icon(
+                            imageVector = EblanLauncherIcons.Close,
+                            contentDescription = null,
+                        )
+                    }
+                }
 
-        FloatingActionButton(
-            onClick = onShowSearchDialog,
-        ) {
-            Icon(
-                imageVector = EblanLauncherIcons.Search,
-                contentDescription = null,
-            )
+                if (canPauseWorkProfile) {
+                    SmallFloatingActionButton(
+                        onClick = onPauseWorkProfile,
+                    ) {
+                        Icon(
+                            imageVector = EblanLauncherIcons.WorkOff,
+                            contentDescription = null,
+                        )
+                    }
+                }
+
+                FloatingActionButton(
+                    onClick = onShowSearchDialog,
+                ) {
+                    Icon(
+                        imageVector = EblanLauncherIcons.Search,
+                        contentDescription = null,
+                    )
+                }
+            }
+
+            SearchBarType.Top, SearchBarType.None -> {
+                FloatingActionButton(
+                    onClick = onPauseWorkProfile,
+                ) {
+                    Icon(
+                        imageVector = EblanLauncherIcons.WorkOff,
+                        contentDescription = null,
+                    )
+                }
+            }
         }
     }
 }

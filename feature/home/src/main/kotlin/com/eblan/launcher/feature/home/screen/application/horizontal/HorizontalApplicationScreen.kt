@@ -35,8 +35,6 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.BottomSheetDefaults.DragHandle
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
@@ -51,8 +49,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.dp
-import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.domain.model.application.AppDrawerGridItemData
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
@@ -72,10 +68,10 @@ import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.HorizontalAppDrawerGridLayout
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
+import com.eblan.launcher.feature.home.screen.application.ApplicationFloatingActionButton
 import com.eblan.launcher.feature.home.screen.application.ApplicationSearchBar
 import com.eblan.launcher.feature.home.screen.application.EblanApplicationInfoItem
 import com.eblan.launcher.feature.home.screen.application.EblanApplicationInfoTabRow
-import com.eblan.launcher.feature.home.screen.application.FloatingSearchActionButton
 import com.eblan.launcher.feature.home.screen.application.FolderEblanApplicationInfoItem
 import com.eblan.launcher.feature.home.screen.application.PrivateSpaceEblanApplicationInfoItem
 import com.eblan.launcher.feature.home.screen.application.PrivateSpaceStickyHeader
@@ -154,6 +150,12 @@ internal fun HorizontalApplicationScreen(
 ) {
     val layoutDirection = LocalLayoutDirection.current
 
+    val scope = rememberCoroutineScope()
+
+    val userManager = LocalUserManager.current
+
+    val isDefaultLauncher by produceIsDefaultLauncherState()
+
     val searchBarState = rememberSearchBarState()
 
     val eblanUserPageKeys =
@@ -162,6 +164,26 @@ internal fun HorizontalApplicationScreen(
                 currentEblanUserPageKey.eblanUser.serialNumber
             }
         }
+
+    val currentEblanUserPageKey = remember(
+        key1 = getEblanApplicationInfosByLabelAndTag,
+        key2 = horizontalPagerState.currentPage,
+    ) {
+        getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos.keys.toList()
+            .getOrNull(horizontalPagerState.currentPage)
+    }
+
+    val currentUserHandle = currentEblanUserPageKey?.let { eblanUserPageKey ->
+        userManager.getUserForSerialNumber(serialNumber = eblanUserPageKey.eblanUser.serialNumber)
+    }
+
+    val isQuietModeEnabled = currentEblanUserPageKey?.eblanUser?.isQuietModeEnabled == true
+
+    val canPauseWorkProfile = isDefaultLauncher &&
+        currentEblanUserPageKey != null &&
+        currentEblanUserPageKey.eblanUser.eblanUserType != EblanUserType.Private &&
+        currentEblanUserPageKey.eblanUser.serialNumber > 0 &&
+        currentUserHandle != null
 
     Box(
         modifier = modifier
@@ -296,19 +318,30 @@ internal fun HorizontalApplicationScreen(
             }
         }
 
-        if (appDrawerSettings.searchBarType == SearchBarType.Floating) {
-            FloatingSearchActionButton(
-                hasSearchQuery = textFieldState.text.isNotEmpty(),
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(
-                        end = EblanSpacing.large,
-                        bottom = paddingValues.calculateBottomPadding() + EblanSpacing.large,
-                    ),
-                onShowSearchDialog = onShowSearchDialog,
-                onClearSearch = onClearSearch,
-            )
-        }
+        ApplicationFloatingActionButton(
+            searchBarType = appDrawerSettings.searchBarType,
+            hasSearchQuery = textFieldState.text.isNotEmpty(),
+            canPauseWorkProfile = canPauseWorkProfile,
+            isQuietModeEnabled = isQuietModeEnabled,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(
+                    end = EblanSpacing.large,
+                    bottom = paddingValues.calculateBottomPadding() + EblanSpacing.large,
+                ),
+            onShowSearchDialog = onShowSearchDialog,
+            onClearSearch = onClearSearch,
+            onPauseWorkProfile = {
+                if (currentUserHandle != null) {
+                    scope.launch {
+                        userManager.requestQuietModeEnabled(
+                            enableQuiteMode = true,
+                            userHandle = currentUserHandle,
+                        )
+                    }
+                }
+            },
+        )
     }
 }
 
@@ -373,8 +406,6 @@ private fun EblanApplicationInfosPage(
     ) -> Unit,
     onTapFolderApplicationInfo: (folderEntry: FolderEntry) -> Unit,
 ) {
-    val scope = rememberCoroutineScope()
-
     val userManager = LocalUserManager.current
 
     val eblanUserPageKey =
@@ -399,8 +430,6 @@ private fun EblanApplicationInfosPage(
 
     val userHandle =
         userManager.getUserForSerialNumber(serialNumber = eblanUserPageKey.eblanUser.serialNumber)
-
-    val isDefaultLauncher by produceIsDefaultLauncherState()
 
     val isQuietModeEnabled = eblanUserPageKey.eblanUser.isQuietModeEnabled
 
@@ -512,38 +541,6 @@ private fun EblanApplicationInfosPage(
                         onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
                         onTapFolderApplicationInfo = onTapFolderApplicationInfo,
                     )
-
-                    if (isDefaultLauncher &&
-                        eblanUserPageKey.eblanUser.serialNumber > 0 && userHandle != null
-                    ) {
-                        FloatingActionButton(
-                            modifier = Modifier
-                                .align(Alignment.BottomEnd)
-                                .padding(
-                                    end = EblanSpacing.large,
-                                    bottom = paddingValues.calculateBottomPadding() +
-                                        EblanSpacing.large +
-                                        if (appDrawerSettings.searchBarType == SearchBarType.Floating) {
-                                            56.dp + EblanSpacing.medium
-                                        } else {
-                                            0.dp
-                                        },
-                                ),
-                            onClick = {
-                                scope.launch {
-                                    userManager.requestQuietModeEnabled(
-                                        enableQuiteMode = true,
-                                        userHandle = userHandle,
-                                    )
-                                }
-                            },
-                        ) {
-                            Icon(
-                                imageVector = EblanLauncherIcons.WorkOff,
-                                contentDescription = null,
-                            )
-                        }
-                    }
                 }
             }
         }
