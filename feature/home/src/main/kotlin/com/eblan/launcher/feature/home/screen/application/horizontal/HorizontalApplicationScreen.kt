@@ -51,6 +51,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.domain.model.application.AppDrawerGridItemData
@@ -66,6 +67,7 @@ import com.eblan.launcher.domain.model.launcherapps.EblanUserPageKey
 import com.eblan.launcher.domain.model.launcherapps.EblanUserType
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
+import com.eblan.launcher.domain.model.userdata.SearchBarType
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.HorizontalAppDrawerGridLayout
 import com.eblan.launcher.feature.home.model.Drag
@@ -73,6 +75,7 @@ import com.eblan.launcher.feature.home.model.SharedElementKey
 import com.eblan.launcher.feature.home.screen.application.ApplicationSearchBar
 import com.eblan.launcher.feature.home.screen.application.EblanApplicationInfoItem
 import com.eblan.launcher.feature.home.screen.application.EblanApplicationInfoTabRow
+import com.eblan.launcher.feature.home.screen.application.FloatingSearchActionButton
 import com.eblan.launcher.feature.home.screen.application.FolderEblanApplicationInfoItem
 import com.eblan.launcher.feature.home.screen.application.PrivateSpaceEblanApplicationInfoItem
 import com.eblan.launcher.feature.home.screen.application.PrivateSpaceStickyHeader
@@ -146,6 +149,8 @@ internal fun HorizontalApplicationScreen(
         intSize: IntSize,
     ) -> Unit,
     onTapFolderApplicationInfo: (folderEntry: FolderEntry) -> Unit,
+    onShowSearchDialog: () -> Unit,
+    onClearSearch: () -> Unit,
 ) {
     val layoutDirection = LocalLayoutDirection.current
 
@@ -158,7 +163,7 @@ internal fun HorizontalApplicationScreen(
             }
         }
 
-    Column(
+    Box(
         modifier = modifier
             .fillMaxSize()
             .padding(
@@ -178,112 +183,130 @@ internal fun HorizontalApplicationScreen(
                 )
             },
     ) {
-        DragHandle(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            color = getApplicationScreenTextColor(
-                // Background Colors
-                backgroundColor = appDrawerSettings.backgroundColor,
-                customBackgroundColor = appDrawerSettings.customBackgroundColor,
-                // Text Colors
-                systemTextColor = systemTextColor,
-                systemCustomTextColor = systemCustomTextColor,
-                // Defaults
-                defaultColor = MaterialTheme.colorScheme.onSurface,
-            ),
-        )
+        Column(modifier = Modifier.fillMaxSize()) {
+            DragHandle(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                color = getApplicationScreenTextColor(
+                    // Background Colors
+                    backgroundColor = appDrawerSettings.backgroundColor,
+                    customBackgroundColor = appDrawerSettings.customBackgroundColor,
+                    // Text Colors
+                    systemTextColor = systemTextColor,
+                    systemCustomTextColor = systemCustomTextColor,
+                    // Defaults
+                    defaultColor = MaterialTheme.colorScheme.onSurface,
+                ),
+            )
 
-        ApplicationSearchBar(
-            // State
-            searchBarState = searchBarState,
-            textFieldState = textFieldState,
-            // Focus
-            focusRequester = focusRequester,
-            // Appearance
-            backgroundColor = appDrawerSettings.backgroundColor,
-            customBackgroundColor = appDrawerSettings.customBackgroundColor,
-            systemTextColor = systemTextColor,
-            systemCustomTextColor = systemCustomTextColor,
-        )
+            if (appDrawerSettings.searchBarType == SearchBarType.Top) {
+                ApplicationSearchBar(
+                    // State
+                    searchBarState = searchBarState,
+                    textFieldState = textFieldState,
+                    // Focus
+                    focusRequester = focusRequester,
+                    // Appearance
+                    backgroundColor = appDrawerSettings.backgroundColor,
+                    customBackgroundColor = appDrawerSettings.customBackgroundColor,
+                    systemTextColor = systemTextColor,
+                    systemCustomTextColor = systemCustomTextColor,
+                )
+            }
 
-        if (eblanApplicationInfoTags.isNotEmpty()) {
-            LazyRow(
-                modifier = Modifier.fillMaxWidth(),
-                contentPadding = PaddingValues(horizontal = EblanSpacing.medium),
-                horizontalArrangement = Arrangement.spacedBy(EblanSpacing.small),
-            ) {
-                items(eblanApplicationInfoTags) { eblanApplicationInfoTag ->
-                    TagElevatedFilterChip(
-                        // Data
-                        eblanApplicationInfoTag = eblanApplicationInfoTag,
-                        selectedEblanApplicationInfoTag = selectedEblanApplicationInfoTagId,
-                        // Callbacks
-                        onUpdateEblanApplicationInfoTag = onUpdateSelectedEblanApplicationInfoTagId,
-                    )
+            if (eblanApplicationInfoTags.isNotEmpty()) {
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(horizontal = EblanSpacing.medium),
+                    horizontalArrangement = Arrangement.spacedBy(EblanSpacing.small),
+                ) {
+                    items(eblanApplicationInfoTags) { eblanApplicationInfoTag ->
+                        TagElevatedFilterChip(
+                            // Data
+                            eblanApplicationInfoTag = eblanApplicationInfoTag,
+                            selectedEblanApplicationInfoTag = selectedEblanApplicationInfoTagId,
+                            // Callbacks
+                            onUpdateEblanApplicationInfoTag = onUpdateSelectedEblanApplicationInfoTagId,
+                        )
+                    }
                 }
+            }
+
+            if (eblanUserPageKeys.size > 1) {
+                EblanApplicationInfoTabRow(
+                    // Data
+                    eblanUserPageKeys = eblanUserPageKeys,
+                    eblanApplicationInfos = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos,
+                    // State
+                    currentPage = horizontalPagerState.currentPage,
+                    // Appearance
+                    backgroundColor = appDrawerSettings.backgroundColor,
+                    customBackgroundColor = appDrawerSettings.customBackgroundColor,
+                    systemTextColor = systemTextColor,
+                    systemCustomTextColor = systemCustomTextColor,
+                    // Callbacks
+                    onAnimateScrollToPage = horizontalPagerState::animateScrollToPage,
+                )
+            }
+
+            HorizontalPager(
+                modifier = Modifier.fillMaxSize(),
+                state = horizontalPagerState,
+                userScrollEnabled = !isVisibleOverlay,
+            ) { index ->
+                EblanApplicationInfosPage(
+                    // Scope and Layout
+                    sharedTransitionScope = sharedTransitionScope,
+                    paddingValues = paddingValues,
+                    // Application Info and Drawer
+                    appDrawerSettings = appDrawerSettings,
+                    getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
+                    index = index,
+                    // Folder Configuration
+                    folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+                    folderCornerRadius = folderCornerRadius,
+                    folderBackgroundColor = folderBackgroundColor,
+                    customFolderBackgroundColor = customFolderBackgroundColor,
+                    folderBorderColor = folderBorderColor,
+                    customFolderBorderColor = customFolderBorderColor,
+                    folderBorderWidth = folderBorderWidth,
+                    isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
+                    folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
+                    // State and UI Flags
+                    isVisibleOverlay = isVisibleOverlay,
+                    isScrollInProgress = horizontalPagerState.isScrollInProgress,
+                    animations = animations,
+                    // Appearance and Theming
+                    systemTextColor = systemTextColor,
+                    systemCustomTextColor = systemCustomTextColor,
+                    // Drag and Gesture State
+                    drag = drag,
+                    swipeY = swipeY,
+                    // Callbacks
+                    onDismiss = onDismiss,
+                    onDragEnd = onDragEnd,
+                    onVerticalDrag = onVerticalDrag,
+                    onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+                    onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
+                    onDragApplicationInfo = onDragApplicationInfo,
+                    onLongPressApplicationInfo = onLongPressApplicationInfo,
+                    onLongPressFolderApplicationInfo = onLongPressFolderApplicationInfo,
+                    onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
+                    onTapFolderApplicationInfo = onTapFolderApplicationInfo,
+                )
             }
         }
 
-        if (eblanUserPageKeys.size > 1) {
-            EblanApplicationInfoTabRow(
-                // Data
-                eblanUserPageKeys = eblanUserPageKeys,
-                eblanApplicationInfos = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos,
-                // State
-                currentPage = horizontalPagerState.currentPage,
-                // Appearance
-                backgroundColor = appDrawerSettings.backgroundColor,
-                customBackgroundColor = appDrawerSettings.customBackgroundColor,
-                systemTextColor = systemTextColor,
-                systemCustomTextColor = systemCustomTextColor,
-                // Callbacks
-                onAnimateScrollToPage = horizontalPagerState::animateScrollToPage,
-            )
-        }
-
-        HorizontalPager(
-            modifier = Modifier.fillMaxSize(),
-            state = horizontalPagerState,
-            userScrollEnabled = !isVisibleOverlay,
-        ) { index ->
-            EblanApplicationInfosPage(
-                // Scope and Layout
-                sharedTransitionScope = sharedTransitionScope,
-                paddingValues = paddingValues,
-                // Application Info and Drawer
-                appDrawerSettings = appDrawerSettings,
-                getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
-                index = index,
-                // Folder Configuration
-                folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
-                folderCornerRadius = folderCornerRadius,
-                folderBackgroundColor = folderBackgroundColor,
-                customFolderBackgroundColor = customFolderBackgroundColor,
-                folderBorderColor = folderBorderColor,
-                customFolderBorderColor = customFolderBorderColor,
-                folderBorderWidth = folderBorderWidth,
-                isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
-                folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
-                // State and UI Flags
-                isVisibleOverlay = isVisibleOverlay,
-                isScrollInProgress = horizontalPagerState.isScrollInProgress,
-                animations = animations,
-                // Appearance and Theming
-                systemTextColor = systemTextColor,
-                systemCustomTextColor = systemCustomTextColor,
-                // Drag and Gesture State
-                drag = drag,
-                swipeY = swipeY,
-                // Callbacks
-                onDismiss = onDismiss,
-                onDragEnd = onDragEnd,
-                onVerticalDrag = onVerticalDrag,
-                onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
-                onDragApplicationInfo = onDragApplicationInfo,
-                onLongPressApplicationInfo = onLongPressApplicationInfo,
-                onLongPressFolderApplicationInfo = onLongPressFolderApplicationInfo,
-                onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
-                onTapFolderApplicationInfo = onTapFolderApplicationInfo,
+        if (appDrawerSettings.searchBarType == SearchBarType.Floating) {
+            FloatingSearchActionButton(
+                hasSearchQuery = textFieldState.text.isNotEmpty(),
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(
+                        end = EblanSpacing.large,
+                        bottom = paddingValues.calculateBottomPadding() + EblanSpacing.large,
+                    ),
+                onShowSearchDialog = onShowSearchDialog,
+                onClearSearch = onClearSearch,
             )
         }
     }
@@ -498,7 +521,13 @@ private fun EblanApplicationInfosPage(
                                 .align(Alignment.BottomEnd)
                                 .padding(
                                     end = EblanSpacing.large,
-                                    bottom = paddingValues.calculateBottomPadding() + EblanSpacing.large,
+                                    bottom = paddingValues.calculateBottomPadding() +
+                                        EblanSpacing.large +
+                                        if (appDrawerSettings.searchBarType == SearchBarType.Floating) {
+                                            56.dp + EblanSpacing.medium
+                                        } else {
+                                            0.dp
+                                        },
                                 ),
                             onClick = {
                                 scope.launch {

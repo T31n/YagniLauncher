@@ -50,6 +50,7 @@ import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.AppDrawerType
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
+import com.eblan.launcher.domain.model.userdata.SearchBarType
 import com.eblan.launcher.feature.settings.appdrawer.dialog.EditHorizontalGridDialog
 import com.eblan.launcher.feature.settings.appdrawer.dialog.EditVerticalGridDialog
 import com.eblan.launcher.feature.settings.appdrawer.dialog.HiddenEblanApplicationInfosDialog
@@ -241,6 +242,24 @@ private fun Success(
                 },
             )
         }
+
+        SettingsDropdownItem(
+            // Content
+            title = stringResource(R.string.search_bar_type),
+            options = SearchBarType.entries,
+            selected = appDrawerSettings.searchBarType,
+            label = { currentSearchBarType ->
+                currentSearchBarType.getTitle()
+            },
+            // Layout
+            shape = EblanShapes.middle,
+            // Actions
+            onSelectedChange = { currentSearchBarType ->
+                onUpdateAppDrawerSettings(
+                    appDrawerSettings.copy(searchBarType = currentSearchBarType),
+                )
+            },
+        )
 
         SettingsDropdownItem(
             // Content
@@ -473,4 +492,10 @@ private fun Success(
 private fun AppDrawerType.getTitle(): String = when (this) {
     AppDrawerType.Vertical -> stringResource(R.string.vertical)
     AppDrawerType.Horizontal -> stringResource(R.string.horizontal)
+}
+
+@Composable
+private fun SearchBarType.getTitle(): String = when (this) {
+    SearchBarType.Top -> stringResource(R.string.top)
+    SearchBarType.Floating -> stringResource(R.string.floating)
 }

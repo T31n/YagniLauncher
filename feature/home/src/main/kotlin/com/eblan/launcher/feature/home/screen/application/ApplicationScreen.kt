@@ -37,6 +37,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.ElevatedFilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
@@ -84,6 +85,7 @@ import com.eblan.launcher.domain.model.launcherapps.EblanUserPageKey
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.AppDrawerType
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
+import com.eblan.launcher.domain.model.userdata.SearchBarType
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.R
 import com.eblan.launcher.feature.home.component.HomeHandler
@@ -179,6 +181,8 @@ internal fun ApplicationScreen(
 
     var selectedEblanApplicationInfoTagId by remember { mutableStateOf<Long?>(null) }
 
+    var showSearchDialog by remember { mutableStateOf(false) }
+
     LaunchedEffect(key1 = eblanApplicationInfoTags) {
         if (selectedEblanApplicationInfoTagId != null &&
             eblanApplicationInfoTags.none { tag -> tag.id == selectedEblanApplicationInfoTagId }
@@ -203,10 +207,17 @@ internal fun ApplicationScreen(
         // State and Focus
         selectedEblanApplicationInfoTagId = selectedEblanApplicationInfoTagId,
         textFieldState = textFieldState,
+        searchBarType = appDrawerSettings.searchBarType,
         showKeyboard = appDrawerSettings.showKeyboard,
         focusRequester = focusRequester,
         // Callbacks
         onDismiss = onDismiss,
+        onShowSearchDialog = {
+            showSearchDialog = true
+        },
+        onHideSearchDialog = {
+            showSearchDialog = false
+        },
         onGetEblanApplicationInfosByLabel = onGetEblanApplicationInfosByLabel,
         onGetEblanApplicationInfosByTagId = onGetEblanApplicationInfosByTagId,
     )
@@ -292,6 +303,13 @@ internal fun ApplicationScreen(
                     onLongPressFolderApplicationInfo = onLongPressFolderApplicationInfo,
                     onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
                     onTapFolderApplicationInfo = onTapFolderApplicationInfo,
+                    onShowSearchDialog = {
+                        showSearchDialog = true
+                    },
+                    onClearSearch = {
+                        textFieldState.clearText()
+                        onGetEblanApplicationInfosByLabel("")
+                    },
                 )
             }
 
@@ -339,9 +357,29 @@ internal fun ApplicationScreen(
                     onLongPressFolderApplicationInfo = onLongPressFolderApplicationInfo,
                     onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
                     onTapFolderApplicationInfo = onTapFolderApplicationInfo,
+                    onShowSearchDialog = {
+                        showSearchDialog = true
+                    },
+                    onClearSearch = {
+                        textFieldState.clearText()
+                        onGetEblanApplicationInfosByLabel("")
+                    },
                 )
             }
         }
+    }
+
+    if (showSearchDialog) {
+        SearchApplicationsDialog(
+            initialLabel = textFieldState.text.toString(),
+            onDismissRequest = {
+                showSearchDialog = false
+            },
+            onSearch = { query ->
+                textFieldState.setTextAndPlaceCursorAtEnd(query)
+                onGetEblanApplicationInfosByLabel(query)
+            },
+        )
     }
 }
 
@@ -616,10 +654,13 @@ private fun ApplicationScreenEffect(
     // State and Focus
     selectedEblanApplicationInfoTagId: Long?,
     textFieldState: TextFieldState,
+    searchBarType: SearchBarType,
     showKeyboard: Boolean,
     focusRequester: FocusRequester,
     // Callbacks
     onDismiss: () -> Unit,
+    onShowSearchDialog: () -> Unit,
+    onHideSearchDialog: () -> Unit,
     onGetEblanApplicationInfosByLabel: (String) -> Unit,
     onGetEblanApplicationInfosByTagId: (Long?) -> Unit,
 ) {
@@ -630,10 +671,12 @@ private fun ApplicationScreenEffect(
     val isScreenDismissed = swipeY == screenHeight.toFloat()
     val shouldFocusSearch = swipeY == 0f && showKeyboard
 
-    LaunchedEffect(key1 = textFieldState) {
-        snapshotFlow { textFieldState.text }.debounce(500L.milliseconds).onEach { currentCharSequence ->
-            onGetEblanApplicationInfosByLabel(currentCharSequence.toString())
-        }.collect()
+    LaunchedEffect(key1 = textFieldState, key2 = searchBarType) {
+        if (searchBarType == SearchBarType.Top) {
+            snapshotFlow { textFieldState.text }.debounce(500L.milliseconds).onEach { currentCharSequence ->
+                onGetEblanApplicationInfosByLabel(currentCharSequence.toString())
+            }.collect()
+        }
     }
 
     LaunchedEffect(key1 = selectedEblanApplicationInfoTagId) {
@@ -643,10 +686,15 @@ private fun ApplicationScreenEffect(
     LaunchedEffect(
         key1 = isScreenDismissed,
         key2 = shouldFocusSearch,
+        key3 = searchBarType,
     ) {
         when {
             isScreenDismissed -> {
+                onHideSearchDialog()
+
                 textFieldState.clearText()
+
+                onGetEblanApplicationInfosByLabel("")
 
                 horizontalPagerState.scrollToPage(0)
 
@@ -656,9 +704,17 @@ private fun ApplicationScreenEffect(
             }
 
             shouldFocusSearch -> {
-                focusRequester.requestFocus()
+                when (searchBarType) {
+                    SearchBarType.Top -> {
+                        focusRequester.requestFocus()
 
-                keyboardController?.show()
+                        keyboardController?.show()
+                    }
+
+                    SearchBarType.Floating -> {
+                        onShowSearchDialog()
+                    }
+                }
             }
         }
     }

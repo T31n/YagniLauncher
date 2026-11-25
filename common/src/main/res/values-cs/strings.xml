@@ -47,4 +47,7 @@
     <string name="folders">Složky</string>
     <string name="folder">Složka</string>
     <string name="custom">Vlastní</string>
+    <string name="add_applications">Přidat aplikace</string>
+    <string name="add_applications_to_folder">Přidat aplikace do této složky</string>
+    <string name="cache">Mezipaměť</string>
 </resources>

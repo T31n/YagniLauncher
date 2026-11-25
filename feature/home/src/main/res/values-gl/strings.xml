@@ -33,4 +33,5 @@
     <string name="request_permissions">Solicitar permisos</string>
     <string name="allow_permissions_so_we_can_inform_you_about_important_crash_reports_and_make_phone_shortcuts">Permite os permisos para que poidamos informarte sobre informes de erros importantes e crear atallos do teléfono</string>
     <string name="later">Máis tarde</string>
+    <string name="search">Buscar</string>
 </resources>

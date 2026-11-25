@@ -47,4 +47,7 @@
     <string name="folders">Cartafoles</string>
     <string name="folder">Cartafol</string>
     <string name="custom">Personalizado</string>
+    <string name="add_applications">Engadir aplicacións</string>
+    <string name="add_applications_to_folder">Engadir aplicacións a este cartafol</string>
+    <string name="cache">Caché</string>
 </resources>

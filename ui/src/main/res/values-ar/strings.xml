@@ -69,4 +69,5 @@
     <string name="text_padding">حشو الخط</string>
     <string name="layout_type">نوع تنسيق الشاشة</string>
     <string name="vertical_alignment">المحاذاة العمودية</string>
+    <string name="select_applications">اختر التطبيقات</string>
 </resources>

@@ -33,4 +33,5 @@
     <string name="request_permissions">Запрос на разрешения</string>
     <string name="allow_permissions_so_we_can_inform_you_about_important_crash_reports_and_make_phone_shortcuts">Предоставьте разрешения, чтобы мы могли сообщать вам о важных отчетах о сбоях и создавать ярлыки на телефоне</string>
     <string name="later">Позже</string>
+    <string name="search">Поиск</string>
 </resources>

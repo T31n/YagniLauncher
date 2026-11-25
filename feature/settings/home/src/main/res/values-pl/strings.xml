@@ -62,4 +62,7 @@
     <string name="transition_effect_flip">Obrót</string>
     <string name="transition_effect_parallax">Paralaksa</string>
     <string name="transition_effect_stack">Stos</string>
+    <string name="screen_orientation">Orientacja ekranu</string>
+    <string name="portrait">Pionowa</string>
+    <string name="landscape">Pozioma</string>
 </resources>

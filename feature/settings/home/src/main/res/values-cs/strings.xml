@@ -62,4 +62,7 @@
     <string name="transition_effect_flip">Překlopení</string>
     <string name="transition_effect_parallax">Paralaxa</string>
     <string name="transition_effect_stack">Stoh</string>
+    <string name="screen_orientation">Orientace obrazovky</string>
+    <string name="portrait">Na výšku</string>
+    <string name="landscape">Na šířku</string>
 </resources>
