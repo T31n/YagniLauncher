@@ -18,6 +18,7 @@
 <resources>
     <string name="import_icon_pack">Импорт пакета иконок</string>
     <string name="caching_icon_pack">Кэширование пакета иконок</string>
+    <string name="caching_icon_pack_description">Кэширование иконок для ваших приложений. Это может занять некоторое время.</string>
     <string name="no_icon_packs">Нет пакетов иконок</string>
     <string name="select_icon_pack">Выбрать пакет иконок</string>
     <string name="please_import_an_icon_pack_first">Пожалуйста, импортируйте пакет иконок сначала</string>

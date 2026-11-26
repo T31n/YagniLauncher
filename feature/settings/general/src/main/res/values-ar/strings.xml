@@ -23,6 +23,7 @@
     <string name="square">مربع</string>
     <string name="import_icon_pack">استيراد حزمة الايقونات</string>
     <string name="caching_icon_pack">جارٍ تخزين حزمة الأيقونات مؤقتًا</string>
+    <string name="caching_icon_pack_description">جارٍ تخزين الأيقونات مؤقتًا لتطبيقاتك. قد يستغرق هذا بعض الوقت.</string>
     <string name="diamond">معين</string>
     <string name="icon_shape">شكل الايقونه</string>
     <string name="shield">درع</string>

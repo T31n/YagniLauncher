@@ -18,6 +18,7 @@
 <resources>
     <string name="import_icon_pack">Importar paquete de iconas</string>
     <string name="caching_icon_pack">Almacenando paquete de iconas na caché</string>
+    <string name="caching_icon_pack_description">Almacenando as iconas das túas aplicacións na caché. Isto pode levar un momento.</string>
     <string name="no_icon_packs">Non hai paquetes de iconas</string>
     <string name="select_icon_pack">Seleccionar paquete de iconas</string>
     <string name="please_import_an_icon_pack_first">Importa primeiro un paquete de iconas</string>

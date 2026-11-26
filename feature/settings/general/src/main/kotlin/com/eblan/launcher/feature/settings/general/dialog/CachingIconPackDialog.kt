@@ -55,6 +55,11 @@ internal fun CachingIconPackDialog(
             style = MaterialTheme.typography.titleLarge,
         )
 
+        Text(
+            text = stringResource(R.string.caching_icon_pack_description),
+            style = MaterialTheme.typography.bodyMedium,
+        )
+
         if (progress > 0f) {
             LinearProgressIndicator(
                 progress = { progress },
