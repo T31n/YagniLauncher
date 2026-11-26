@@ -97,12 +97,24 @@ internal class DefaultImageSerializer @Inject constructor(
                 }
 
                 if (createNew) {
-                    FileOutputStream(file).use { currentFileOutputStream ->
-                        bitmap.compress(
-                            Bitmap.CompressFormat.PNG,
-                            100,
-                            currentFileOutputStream,
-                        )
+                    val parentDir = file.parentFile?.apply { if (!exists()) mkdirs() }
+                    val tempFile = File.createTempFile("tmp_${file.name}", ".png", parentDir)
+
+                    try {
+                        FileOutputStream(tempFile).use { currentFileOutputStream ->
+                            bitmap.compress(
+                                Bitmap.CompressFormat.PNG,
+                                100,
+                                currentFileOutputStream,
+                            )
+                        }
+
+                        if (!tempFile.renameTo(file)) {
+                            tempFile.delete()
+                        }
+                    } catch (e: Throwable) {
+                        tempFile.delete()
+                        throw e
                     }
                 }
             }

@@ -75,4 +75,6 @@
     <string name="ghost">Ghost</string>
     <string name="pac_man">Pac-Man</string>
     <string name="icon_shape">Icon Shape</string>
+    <string name="importing_into_cache">Importing %1$s into cache</string>
+    <string name="loading_icons_from_cache_is_faster">Loading icons from cache is faster</string>
 </resources>

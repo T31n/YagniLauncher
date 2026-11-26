@@ -75,4 +75,6 @@
     <string name="ghost">Duch</string>
     <string name="pac_man">Pac-Man</string>
     <string name="icon_shape">Tvar ikony</string>
+    <string name="importing_into_cache">Importování %1$s do keše</string>
+    <string name="loading_icons_from_cache_is_faster">Načítání ikon z keše je rychlejší</string>
 </resources>

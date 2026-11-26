@@ -75,4 +75,6 @@
     <string name="cat">قطة</string>
     <string name="ghost">شبح</string>
     <string name="pac_man">باك مان</string>
+    <string name="importing_into_cache">جارٍ استيراد %1$s إلى ذاكرة التخزين المؤقت</string>
+    <string name="loading_icons_from_cache_is_faster">تحميل الأيقونات من ذاكرة التخزين المؤقت أسرع</string>
 </resources>

@@ -31,7 +31,6 @@ interface AndroidNotificationManagerWrapper {
 
     companion object {
         const val CHANNEL_ID = "Yagni Launcher"
-        const val ICON_PACK_SERVICE_NOTIFICATION_ID = 1
         const val CRASH_NOTIFICATION_ID = 2
     }
 }

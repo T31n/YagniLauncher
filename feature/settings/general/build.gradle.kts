@@ -30,5 +30,6 @@ dependencies {
     implementation(projects.common)
     implementation(projects.domain.platform)
     implementation(projects.domain.repository)
+    implementation(projects.domain.useCase)
     implementation(projects.platform)
 }

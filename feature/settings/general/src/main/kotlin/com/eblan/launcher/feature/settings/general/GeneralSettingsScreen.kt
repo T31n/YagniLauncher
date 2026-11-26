@@ -59,9 +59,10 @@ import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.feature.settings.general.dialog.ImportIconPackInfoDialog
+import com.eblan.launcher.feature.settings.general.dialog.ImportIconPackProgressDialog
 import com.eblan.launcher.feature.settings.general.dialog.SelectIconPackInfoDialog
 import com.eblan.launcher.feature.settings.general.model.GeneralSettingsUiState
-import com.eblan.launcher.platform.service.IconPackService
+import com.eblan.launcher.feature.settings.general.model.ImportIconPackProgress
 import com.eblan.launcher.ui.dialog.ColorPickerDialog
 import com.eblan.launcher.ui.local.LocalLocaleWrapper
 import com.eblan.launcher.ui.settings.SettingsColumnItem
@@ -79,15 +80,19 @@ internal fun GeneralSettingsRoute(
 ) {
     val generalSettingsUiState by viewModel.generalSettingsUiState.collectAsStateWithLifecycle()
     val eblanIconPackInfos by viewModel.eblanIconPacks.collectAsStateWithLifecycle()
+    val importIconPackProgress by viewModel.importIconPackProgress.collectAsStateWithLifecycle()
 
     GeneralSettingsScreen(
         // State
         generalSettingsUiState = generalSettingsUiState,
+        importIconPackProgress = importIconPackProgress,
         // Content
         eblanIconPackInfos = eblanIconPackInfos,
         modifier = modifier,
         // Actions
+        onCancelImportIconPack = viewModel::cancelImportIconPack,
         onDeleteEblanIconPackInfo = viewModel::deleteIconPackInfo,
+        onImportIconPack = viewModel::importIconPack,
         onNavigateUp = onNavigateUp,
         onUpdateGeneralSettings = viewModel::updateGeneralSettings,
     )
@@ -98,11 +103,17 @@ internal fun GeneralSettingsRoute(
 internal fun GeneralSettingsScreen(
     // State
     generalSettingsUiState: GeneralSettingsUiState,
+    importIconPackProgress: ImportIconPackProgress?,
     // Content
     eblanIconPackInfos: List<EblanIconPackInfo>,
     modifier: Modifier = Modifier,
     // Actions
+    onCancelImportIconPack: () -> Unit,
     onDeleteEblanIconPackInfo: (EblanIconPackInfo) -> Unit,
+    onImportIconPack: (
+        packageName: String,
+        label: String,
+    ) -> Unit,
     onNavigateUp: () -> Unit,
     onUpdateGeneralSettings: (GeneralSettings) -> Unit,
 ) {
@@ -133,10 +144,13 @@ internal fun GeneralSettingsScreen(
                 Success(
                     // Icon Packs
                     eblanIconPackInfos = eblanIconPackInfos,
+                    importIconPackProgress = importIconPackProgress,
                     // Settings
                     generalSettings = generalSettingsUiState.generalSettings,
                     // Callbacks
+                    onCancelImportIconPack = onCancelImportIconPack,
                     onDeleteEblanIconPackInfo = onDeleteEblanIconPackInfo,
+                    onImportIconPack = onImportIconPack,
                     onUpdateGeneralSettings = onUpdateGeneralSettings,
                 )
             }
@@ -148,12 +162,18 @@ internal fun GeneralSettingsScreen(
 private fun Success(
     // Icon Packs
     eblanIconPackInfos: List<EblanIconPackInfo>,
+    importIconPackProgress: ImportIconPackProgress?,
     // Settings
     generalSettings: GeneralSettings,
     // UI
     modifier: Modifier = Modifier,
     // Callbacks
+    onCancelImportIconPack: () -> Unit,
     onDeleteEblanIconPackInfo: (EblanIconPackInfo) -> Unit,
+    onImportIconPack: (
+        packageName: String,
+        label: String,
+    ) -> Unit,
     onUpdateGeneralSettings: (GeneralSettings) -> Unit,
 ) {
     val context = LocalContext.current
@@ -401,14 +421,16 @@ private fun Success(
             onDismissRequest = {
                 showImportIconPackDialog = false
             },
-            onUpdateIconPackInfo = { packageName, label ->
-                val intent = Intent(context, IconPackService::class.java).apply {
-                    putExtra(IconPackService.ICON_PACK_PACKAGE_NAME, packageName)
-                    putExtra(IconPackService.ICON_PACK_LABEL, label)
-                }
+            onUpdateIconPackInfo = onImportIconPack,
+        )
+    }
 
-                context.startForegroundService(intent)
-            },
+    if (importIconPackProgress != null) {
+        ImportIconPackProgressDialog(
+            // State
+            importIconPackProgress = importIconPackProgress,
+            // Actions
+            onCancelImport = onCancelImportIconPack,
         )
     }
 
