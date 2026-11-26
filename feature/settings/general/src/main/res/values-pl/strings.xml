@@ -17,6 +17,7 @@
   -->
 <resources>
     <string name="import_icon_pack">Importuj paczkę ikon</string>
+    <string name="caching_icon_pack">Zapisywanie paczki ikon w pamięci podręcznej</string>
     <string name="no_icon_packs">Brak paczek ikon</string>
     <string name="select_icon_pack">Wybierz paczkę ikon</string>
     <string name="please_import_an_icon_pack_first">Najpierw zaimportuj paczkę ikon</string>

@@ -59,7 +59,10 @@ class UpdateIconPacksUseCase @Inject constructor(
      *
      * @param iconPackPackageName The package name of the icon pack to refresh.
      */
-    suspend operator fun invoke(iconPackPackageName: String) {
+    suspend operator fun invoke(
+        iconPackPackageName: String,
+        onProgress: (Float) -> Unit = {},
+    ) {
         withContext(ioDispatcher) {
             val generalSettings = userDataRepository.userDataFlow.first().generalSettings
 
@@ -82,6 +85,7 @@ class UpdateIconPacksUseCase @Inject constructor(
                     iconShape = generalSettings.iconShape,
                     theme = generalSettings.theme,
                     colorSchemeSettings = generalSettings.colorSchemeSettings,
+                    onProgress = onProgress,
                 )
 
                 val iconFile = File(
@@ -105,6 +109,8 @@ class UpdateIconPacksUseCase @Inject constructor(
                         label = eblanApplicationInfo.label,
                     ),
                 )
+
+                onProgress(1f)
             }
         }
     }
@@ -122,6 +128,7 @@ class UpdateIconPacksUseCase @Inject constructor(
         iconShape: IconShape,
         theme: Theme,
         colorSchemeSettings: ColorSchemeSettings,
+        onProgress: (Float) -> Unit,
     ) {
         if (iconPackPackageName.isEmpty()) return
 
@@ -132,7 +139,9 @@ class UpdateIconPacksUseCase @Inject constructor(
 
         val appFilter = iconPackManager.getIconPackComponents(packageName = iconPackPackageName)
 
-        fastLauncherAppsActivityInfos.forEach { currentFastLauncherAppsActivityInfo ->
+        val total = fastLauncherAppsActivityInfos.size
+
+        fastLauncherAppsActivityInfos.forEachIndexed { index, currentFastLauncherAppsActivityInfo ->
             currentCoroutineContext().ensureActive()
 
             val file = File(
@@ -153,6 +162,8 @@ class UpdateIconPacksUseCase @Inject constructor(
                 theme = theme,
                 colorSchemeSettings = colorSchemeSettings,
             )
+
+            onProgress((index + 1).toFloat() / total)
         }
     }
 }

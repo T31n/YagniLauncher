@@ -17,6 +17,7 @@
   -->
 <resources>
     <string name="import_icon_pack">Importar pacote de ícones</string>
+    <string name="caching_icon_pack">Armazenando pacote de ícones em cache</string>
     <string name="no_icon_packs">Nenhum pacote de ícones</string>
     <string name="select_icon_pack">Selecionar pacote de ícones</string>
     <string name="please_import_an_icon_pack_first">Importe primeiro um pacote de ícones</string>

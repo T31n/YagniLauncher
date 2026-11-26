@@ -27,15 +27,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.eblan.launcher.designsystem.theme.EblanSpacing
 
 @Composable
 fun EblanDialog(
     modifier: Modifier = Modifier,
+    properties: DialogProperties = DialogProperties(),
     onDismissRequest: () -> Unit,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    Dialog(onDismissRequest = onDismissRequest) {
+    Dialog(
+        onDismissRequest = onDismissRequest,
+        properties = properties,
+    ) {
         ElevatedCard(
             modifier = modifier,
             shape = MaterialTheme.shapes.extraLarge,

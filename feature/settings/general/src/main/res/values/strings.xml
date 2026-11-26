@@ -17,6 +17,7 @@
   -->
 <resources>
     <string name="import_icon_pack">Import Icon Pack</string>
+    <string name="caching_icon_pack">Caching Icon Pack</string>
     <string name="no_icon_packs">No icon packs</string>
     <string name="select_icon_pack">Select Icon Pack</string>
     <string name="please_import_an_icon_pack_first">Please import an icon pack first</string>

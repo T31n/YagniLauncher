@@ -58,10 +58,11 @@ import com.eblan.launcher.domain.model.userdata.ColorSource
 import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.Theme
+import com.eblan.launcher.feature.settings.general.dialog.CachingIconPackDialog
 import com.eblan.launcher.feature.settings.general.dialog.ImportIconPackInfoDialog
 import com.eblan.launcher.feature.settings.general.dialog.SelectIconPackInfoDialog
 import com.eblan.launcher.feature.settings.general.model.GeneralSettingsUiState
-import com.eblan.launcher.platform.service.IconPackService
+import com.eblan.launcher.feature.settings.general.model.IconPackCacheProgress
 import com.eblan.launcher.ui.dialog.ColorPickerDialog
 import com.eblan.launcher.ui.local.LocalLocaleWrapper
 import com.eblan.launcher.ui.settings.SettingsColumnItem
@@ -79,17 +80,21 @@ internal fun GeneralSettingsRoute(
 ) {
     val generalSettingsUiState by viewModel.generalSettingsUiState.collectAsStateWithLifecycle()
     val eblanIconPackInfos by viewModel.eblanIconPacks.collectAsStateWithLifecycle()
+    val iconPackCacheState by viewModel.iconPackCacheProgress.collectAsStateWithLifecycle()
 
     GeneralSettingsScreen(
         // State
         generalSettingsUiState = generalSettingsUiState,
+        iconPackCacheProgress = iconPackCacheState,
         // Content
         eblanIconPackInfos = eblanIconPackInfos,
         modifier = modifier,
         // Actions
+        onCancelUpdateIconPackInfo = viewModel::cancelUpdateIconPackInfo,
         onDeleteEblanIconPackInfo = viewModel::deleteIconPackInfo,
         onNavigateUp = onNavigateUp,
         onUpdateGeneralSettings = viewModel::updateGeneralSettings,
+        onUpdateIconPackInfo = viewModel::updateIconPackInfo,
     )
 }
 
@@ -98,13 +103,16 @@ internal fun GeneralSettingsRoute(
 internal fun GeneralSettingsScreen(
     // State
     generalSettingsUiState: GeneralSettingsUiState,
+    iconPackCacheProgress: IconPackCacheProgress,
     // Content
     eblanIconPackInfos: List<EblanIconPackInfo>,
     modifier: Modifier = Modifier,
     // Actions
+    onCancelUpdateIconPackInfo: () -> Unit,
     onDeleteEblanIconPackInfo: (EblanIconPackInfo) -> Unit,
     onNavigateUp: () -> Unit,
     onUpdateGeneralSettings: (GeneralSettings) -> Unit,
+    onUpdateIconPackInfo: (String) -> Unit,
 ) {
     Scaffold(
         modifier = modifier,
@@ -133,11 +141,15 @@ internal fun GeneralSettingsScreen(
                 Success(
                     // Icon Packs
                     eblanIconPackInfos = eblanIconPackInfos,
+                    // State
+                    iconPackCacheProgress = iconPackCacheProgress,
                     // Settings
                     generalSettings = generalSettingsUiState.generalSettings,
                     // Callbacks
+                    onCancelUpdateIconPackInfo = onCancelUpdateIconPackInfo,
                     onDeleteEblanIconPackInfo = onDeleteEblanIconPackInfo,
                     onUpdateGeneralSettings = onUpdateGeneralSettings,
+                    onUpdateIconPackInfo = onUpdateIconPackInfo,
                 )
             }
         }
@@ -148,13 +160,17 @@ internal fun GeneralSettingsScreen(
 private fun Success(
     // Icon Packs
     eblanIconPackInfos: List<EblanIconPackInfo>,
+    // State
+    iconPackCacheProgress: IconPackCacheProgress,
     // Settings
     generalSettings: GeneralSettings,
     // UI
     modifier: Modifier = Modifier,
     // Callbacks
+    onCancelUpdateIconPackInfo: () -> Unit,
     onDeleteEblanIconPackInfo: (EblanIconPackInfo) -> Unit,
     onUpdateGeneralSettings: (GeneralSettings) -> Unit,
+    onUpdateIconPackInfo: (String) -> Unit,
 ) {
     val context = LocalContext.current
     val localeWrapper = LocalLocaleWrapper.current
@@ -401,14 +417,14 @@ private fun Success(
             onDismissRequest = {
                 showImportIconPackDialog = false
             },
-            onUpdateIconPackInfo = { packageName, label ->
-                val intent = Intent(context, IconPackService::class.java).apply {
-                    putExtra(IconPackService.ICON_PACK_PACKAGE_NAME, packageName)
-                    putExtra(IconPackService.ICON_PACK_LABEL, label)
-                }
+            onUpdateIconPackInfo = onUpdateIconPackInfo,
+        )
+    }
 
-                context.startForegroundService(intent)
-            },
+    if (iconPackCacheProgress.isInProgress) {
+        CachingIconPackDialog(
+            progress = iconPackCacheProgress.progress,
+            onCancel = onCancelUpdateIconPackInfo,
         )
     }
 

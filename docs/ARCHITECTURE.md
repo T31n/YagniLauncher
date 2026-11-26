@@ -30,7 +30,7 @@ The codebase has five main groups:
 
 1. **Domain** — Pure Kotlin models, repository and platform contracts, use cases, and grid algorithms. No Android SDK imports.
 2. **Data** — Persistence implementations: Room database, Proto DataStore preferences, and the repositories that combine them.
-3. **Platform** — Android system integrations and other platform-specific implementations. It implements Domain contracts where needed and exposes Android-facing wrappers to consumers that require them. This includes Android Service components (accessibility, notification listener, and icon-pack updates).
+3. **Platform** — Android system integrations and other platform-specific implementations. It implements Domain contracts where needed and exposes Android-facing wrappers to consumers that require them. This includes Android Service components (accessibility and notification listener).
 4. **Presentation** — Compose UI and ViewModels: the `feature:*` screens plus the `ui` and `design-system` component libraries.
 5. **Android Entry Points** — `app`, which provides the Application, Activity, and root navigation graph.
 
@@ -71,7 +71,6 @@ Concrete persistence implementations behind the `domain:repository` interfaces:
 Additionally, it contains Android Service components:
 - `EblanAccessibilityService` — global actions via accessibility
 - `EblanNotificationListenerService` — notification counts
-- `IconPackService` — icon pack cache updates
 
 `domain:platform` contains Android-independent contracts needed by domain logic. The `platform` module implements and binds the relevant contracts. Some Android-facing wrapper interfaces also live in `platform` for consumers such as `ui`.
 

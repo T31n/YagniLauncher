@@ -23,15 +23,8 @@
         tools:ignore="PackageVisibilityPolicy" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
 
     <application>
-        <service
-            android:name=".service.IconPackService"
-            android:exported="false"
-            android:foregroundServiceType="dataSync" />
-
         <service
             android:name=".service.EblanAccessibilityService"
             android:exported="false"

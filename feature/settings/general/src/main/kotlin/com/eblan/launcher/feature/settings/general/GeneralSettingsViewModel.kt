@@ -23,11 +23,17 @@ import com.eblan.launcher.domain.model.iconpackinfo.EblanIconPackInfo
 import com.eblan.launcher.domain.model.userdata.GeneralSettings
 import com.eblan.launcher.domain.repository.EblanIconPackInfoRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
+import com.eblan.launcher.domain.usecase.iconpack.UpdateIconPacksUseCase
 import com.eblan.launcher.feature.settings.general.model.GeneralSettingsUiState
+import com.eblan.launcher.feature.settings.general.model.IconPackCacheProgress
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -35,6 +41,7 @@ import javax.inject.Inject
 internal class GeneralSettingsViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository,
     private val eblanIconPackInfoRepository: EblanIconPackInfoRepository,
+    private val updateIconPacksUseCase: UpdateIconPacksUseCase,
 ) : ViewModel() {
     val generalSettingsUiState = userDataRepository.userDataFlow.map { userData ->
         GeneralSettingsUiState.Success(generalSettings = userData.generalSettings)
@@ -50,6 +57,11 @@ internal class GeneralSettingsViewModel @Inject constructor(
         initialValue = emptyList(),
     )
 
+    private var iconPackInfoJob: Job? = null
+
+    private val _iconPackCacheProgress = MutableStateFlow(IconPackCacheProgress())
+    val iconPackCacheProgress = _iconPackCacheProgress.asStateFlow()
+
     fun deleteIconPackInfo(eblanIconPackInfo: EblanIconPackInfo) {
         viewModelScope.launch {
             eblanIconPackInfoRepository.deleteEblanIconPackInfo(eblanIconPackInfo = eblanIconPackInfo)
@@ -60,5 +72,35 @@ internal class GeneralSettingsViewModel @Inject constructor(
         viewModelScope.launch {
             userDataRepository.updateGeneralSettings(generalSettings = generalSettings)
         }
+    }
+
+    fun updateIconPackInfo(iconPackPackageName: String) {
+        iconPackInfoJob?.cancel()
+
+        _iconPackCacheProgress.update {
+            IconPackCacheProgress(
+                isInProgress = true,
+                progress = 0f,
+            )
+        }
+
+        iconPackInfoJob = viewModelScope.launch {
+            updateIconPacksUseCase(
+                iconPackPackageName = iconPackPackageName,
+                onProgress = { currentProgress ->
+                    _iconPackCacheProgress.update { state ->
+                        state.copy(progress = currentProgress)
+                    }
+                },
+            )
+
+            _iconPackCacheProgress.update { IconPackCacheProgress() }
+        }
+    }
+
+    fun cancelUpdateIconPackInfo() {
+        iconPackInfoJob?.cancel()
+        iconPackInfoJob = null
+        _iconPackCacheProgress.update { IconPackCacheProgress() }
     }
 }

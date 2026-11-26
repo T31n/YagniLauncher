@@ -19,6 +19,4 @@
     <string name="accessibility_service_label">Yagni Launcher</string>
     <string name="accessibility_service_description">Akcje gestów Yagni Launcher</string>
     <string name="notification_listener_service">Usługa nasłuchiwania powiadomień Yagni</string>
-    <string name="importing_into_cache">Importowanie %1$s do pamięci podręcznej</string>
-    <string name="loading_icons_from_cache_is_faster">Wczytywanie ikon z pamięci podręcznej jest szybsze</string>
 </resources>

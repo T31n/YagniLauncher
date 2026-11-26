@@ -51,10 +51,7 @@ internal fun ImportIconPackInfoDialog(
     modifier: Modifier = Modifier,
     // Actions
     onDismissRequest: () -> Unit,
-    onUpdateIconPackInfo: (
-        packageName: String,
-        label: String,
-    ) -> Unit,
+    onUpdateIconPackInfo: (String) -> Unit,
 ) {
     val packageManagerIconPacks by produceIconPackInfosState()
 
@@ -106,10 +103,7 @@ internal fun ImportIconPackInfoDialog(
                             },
                             modifier = Modifier
                                 .clickable {
-                                    onUpdateIconPackInfo(
-                                        currentPackageManagerIconPack.packageName,
-                                        currentPackageManagerIconPack.label,
-                                    )
+                                    onUpdateIconPackInfo(currentPackageManagerIconPack.packageName)
 
                                     onDismissRequest()
                                 }
