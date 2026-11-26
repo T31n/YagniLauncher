@@ -75,6 +75,6 @@
     <string name="ghost">Призрак</string>
     <string name="pac_man">Пакман</string>
     <string name="icon_shape">Форма иконки</string>
-    <string name="importing_into_cache">Импорт %1$s в кэш</string>
+    <string name="caching">Импорт %1$s в кэш</string>
     <string name="loading_icons_from_cache_is_faster">Загрузка иконок с кэша быстрее</string>
 </resources>

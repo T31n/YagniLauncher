@@ -75,6 +75,6 @@
     <string name="ghost">Duch</string>
     <string name="pac_man">Pac-Man</string>
     <string name="icon_shape">Kształt ikony</string>
-    <string name="importing_into_cache">Importowanie %1$s do pamięci podręcznej</string>
+    <string name="caching">Importowanie %1$s do pamięci podręcznej</string>
     <string name="loading_icons_from_cache_is_faster">Wczytywanie ikon z pamięci podręcznej jest szybsze</string>
 </resources>

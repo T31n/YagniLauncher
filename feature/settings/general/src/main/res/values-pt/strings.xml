@@ -75,6 +75,6 @@
     <string name="ghost">Fantasma</string>
     <string name="pac_man">Pac-Man</string>
     <string name="icon_shape">Formato do ícone</string>
-    <string name="importing_into_cache">Importando %1$s para o cache</string>
+    <string name="caching">Importando %1$s para o cache</string>
     <string name="loading_icons_from_cache_is_faster">Carregar ícones do cache é mais rápido</string>
 </resources>

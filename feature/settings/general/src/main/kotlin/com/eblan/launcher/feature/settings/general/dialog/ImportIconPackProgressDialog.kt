@@ -53,7 +53,7 @@ internal fun ImportIconPackProgressDialog(
     ) {
         Text(
             text = stringResource(
-                R.string.importing_into_cache,
+                R.string.caching,
                 importIconPackProgress.label,
             ),
             style = MaterialTheme.typography.titleLarge,
