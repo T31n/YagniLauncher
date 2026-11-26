@@ -42,7 +42,6 @@ import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
@@ -53,10 +52,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
-import coil3.request.addLastModifiedToFileCacheKey
-import coil3.request.crossfade
+import coil3.size.Size
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.GridItem
@@ -67,6 +63,7 @@ import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.GridItemLayoutType
+import com.eblan.launcher.feature.home.component.LauncherIconImage
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
@@ -116,7 +113,6 @@ internal fun EblanApplicationInfoItem(
     ) -> Unit,
 ) {
     val density = LocalDensity.current
-    val context = LocalContext.current
     val launcherApps = LocalLauncherApps.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -275,14 +271,9 @@ internal fun EblanApplicationInfoItem(
         }
 
     val iconContent: @Composable () -> Unit = {
-        AsyncImage(
-            model = ImageRequest.Builder(context)
-                .data(iconPath)
-                .addLastModifiedToFileCacheKey(true)
-                .size(iconSizePx)
-                .crossfade(false)
-                .build(),
-            contentDescription = null,
+        LauncherIconImage(
+            iconPath = iconPath,
+            size = Size(width = iconSizePx, height = iconSizePx),
             modifier = Modifier
                 .size(gridItemSettings.iconSize.dp)
                 .padding(gridItemSettings.iconPadding.dp)

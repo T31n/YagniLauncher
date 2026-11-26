@@ -30,18 +30,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
-import coil3.request.ImageRequest.Builder
-import coil3.request.addLastModifiedToFileCacheKey
-import coil3.size.Size
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.feature.home.component.GridItemLayoutType
+import com.eblan.launcher.feature.home.component.LauncherIconImage
 import com.eblan.launcher.feature.home.util.getGridItemBackgroundColor
 import com.eblan.launcher.feature.home.util.getGridItemIconPath
 import com.eblan.launcher.feature.home.util.getGridItemLabel
@@ -63,8 +59,6 @@ internal fun ShortcutInfoGridItem(
     // Modifier
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
-
     val alpha = if (hasShortcutHostPermission && data.isEnabled) 1f else 0.3f
 
     val iconPath = getGridItemIconPath(data = data)
@@ -80,6 +74,7 @@ internal fun ShortcutInfoGridItem(
             ),
             shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
         )
+
     val commonModifier = Modifier
         .size(gridItemSettings.iconSize.dp)
         .padding(gridItemSettings.iconPadding.dp)
@@ -87,26 +82,16 @@ internal fun ShortcutInfoGridItem(
 
     val iconContent: @Composable () -> Unit = {
         Box(modifier = commonModifier) {
-            AsyncImage(
-                model = Builder(context)
-                    .data(iconPath)
-                    .addLastModifiedToFileCacheKey(true)
-                    .size(Size.ORIGINAL)
-                    .build(),
-                contentDescription = null,
+            LauncherIconImage(
+                iconPath = iconPath,
                 modifier = Modifier.matchParentSize(),
             )
 
-            AsyncImage(
-                model = Builder(context)
-                    .data(data.eblanApplicationInfoIcon)
-                    .addLastModifiedToFileCacheKey(true)
-                    .size(Size.ORIGINAL)
-                    .build(),
+            LauncherIconImage(
+                iconPath = data.eblanApplicationInfoIcon,
                 modifier = Modifier
                     .size((gridItemSettings.iconSize * 0.25).dp)
                     .align(Alignment.BottomEnd),
-                contentDescription = null,
             )
         }
     }

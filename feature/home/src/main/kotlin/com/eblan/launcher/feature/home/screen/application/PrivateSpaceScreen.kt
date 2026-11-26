@@ -44,12 +44,9 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
@@ -61,10 +58,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
-import coil3.request.addLastModifiedToFileCacheKey
-import coil3.request.crossfade
+import coil3.size.Size
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.GridItemSettings
@@ -72,6 +66,7 @@ import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.R
 import com.eblan.launcher.feature.home.component.GridItemLayoutType
+import com.eblan.launcher.feature.home.component.LauncherIconImage
 import com.eblan.launcher.feature.home.util.getApplicationScreenTextColor
 import com.eblan.launcher.feature.home.util.getGridItemBackgroundColor
 import com.eblan.launcher.feature.home.util.getGridItemTextColorFromBackgroundColor
@@ -267,7 +262,6 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
         intSize: IntSize,
     ) -> Unit,
 ) {
-    val context = LocalContext.current
     val density = LocalDensity.current
     val launcherApps = LocalLauncherApps.current
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -379,17 +373,10 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
         }
 
     val iconContent: @Composable () -> Unit = {
-        AsyncImage(
-            model = ImageRequest.Builder(context)
-                .data(eblanApplicationInfo.customIcon ?: icon)
-                .addLastModifiedToFileCacheKey(true)
-                .size(iconSizePx)
-                .crossfade(false)
-                .build(),
-            contentDescription = null,
+        LauncherIconImage(
+            iconPath = eblanApplicationInfo.customIcon ?: icon,
+            size = Size(width = iconSizePx, height = iconSizePx),
             modifier = iconModifier,
-            placeholder = ColorPainter(Color.Transparent),
-            error = ColorPainter(Color.Transparent),
         )
     }
 

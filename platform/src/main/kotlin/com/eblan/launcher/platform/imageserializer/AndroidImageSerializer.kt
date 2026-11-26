@@ -23,9 +23,12 @@ import com.eblan.launcher.domain.model.userdata.ColorSchemeSettings
 import com.eblan.launcher.domain.model.userdata.ColorSource
 import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.Theme
+import kotlinx.coroutines.flow.SharedFlow
 import java.io.File
 
 interface AndroidImageSerializer {
+    val updatedPaths: SharedFlow<String>
+
     suspend fun createByteArray(drawable: Drawable): ByteArray?
 
     suspend fun createByteArray(bitmap: Bitmap?): ByteArray?

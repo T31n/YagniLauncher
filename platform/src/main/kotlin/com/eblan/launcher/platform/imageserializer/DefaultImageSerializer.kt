@@ -41,6 +41,9 @@ import com.eblan.launcher.domain.model.userdata.IconShape
 import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.platform.colorscheme.MaterialColorSchemeResolver
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -58,6 +61,9 @@ internal class DefaultImageSerializer @Inject constructor(
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : AndroidImageSerializer {
+    private val _updatedPaths = MutableSharedFlow<String>(extraBufferCapacity = 256)
+    override val updatedPaths: SharedFlow<String> = _updatedPaths.asSharedFlow()
+
     override suspend fun createByteArray(drawable: Drawable): ByteArray? = withContext(defaultDispatcher) {
         val bitmap = drawable.toBitmap() ?: return@withContext null
 
@@ -98,7 +104,7 @@ internal class DefaultImageSerializer @Inject constructor(
 
                 if (createNew) {
                     val parentDir = file.parentFile?.apply { if (!exists()) mkdirs() }
-                    val tempFile = File.createTempFile("tmp_${file.name}", ".png", parentDir)
+                    val tempFile = File.createTempFile("tmp_${file.name}", ".tmp", parentDir)
 
                     try {
                         FileOutputStream(tempFile).use { currentFileOutputStream ->
@@ -109,12 +115,13 @@ internal class DefaultImageSerializer @Inject constructor(
                             )
                         }
 
-                        if (!tempFile.renameTo(file)) {
+                        if (tempFile.renameTo(file)) {
+                            _updatedPaths.emit(file.absolutePath)
+                        }
+                    } finally {
+                        if (tempFile.exists()) {
                             tempFile.delete()
                         }
-                    } catch (e: Throwable) {
-                        tempFile.delete()
-                        throw e
                     }
                 }
             }

@@ -47,7 +47,6 @@ import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -57,9 +56,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import coil3.request.ImageRequest.Builder
-import coil3.request.addLastModifiedToFileCacheKey
-import coil3.size.Size
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
@@ -74,6 +70,7 @@ import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.GridItemLayoutType
+import com.eblan.launcher.feature.home.component.LauncherIconImage
 import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.model.Drag
@@ -405,8 +402,6 @@ private fun PreviewFolderEblanApplicationInfoItem(
     modifier: Modifier = Modifier,
 ) {
     key(folderEblanApplicationInfoGridItem.id) {
-        val context = LocalContext.current
-
         val folderIconTint = getTextColorFromBackgroundColor(
             // Background Color
             backgroundColor = folderBackgroundColor,
@@ -430,13 +425,8 @@ private fun PreviewFolderEblanApplicationInfoItem(
                     icon = data.icon,
                 )
 
-                AsyncImage(
-                    model = Builder(context)
-                        .data(iconPath)
-                        .addLastModifiedToFileCacheKey(true)
-                        .size(Size.ORIGINAL)
-                        .build(),
-                    contentDescription = null,
+                LauncherIconImage(
+                    iconPath = iconPath,
                     modifier = commonModifier,
                 )
             }
@@ -445,13 +435,8 @@ private fun PreviewFolderEblanApplicationInfoItem(
                 val icon = data.icon
 
                 if (icon != null) {
-                    AsyncImage(
-                        model = Builder(context)
-                            .data(icon)
-                            .addLastModifiedToFileCacheKey(true)
-                            .size(Size.ORIGINAL)
-                            .build(),
-                        contentDescription = null,
+                    LauncherIconImage(
+                        iconPath = icon,
                         modifier = commonModifier,
                     )
                 } else {

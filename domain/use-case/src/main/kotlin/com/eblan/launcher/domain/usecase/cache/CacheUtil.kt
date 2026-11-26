@@ -31,9 +31,10 @@ import java.io.File
 /** Cache directories whose files are tracked by a path column in the database. */
 internal val referenceCheckedDirectoryNames = listOf(
     FileManager.ICONS_DIR,
-    FileManager.TINTED_ICONS_DIR,
-    FileManager.SHAPED_ICONS_DIR,
-    FileManager.TINTED_SHAPED_ICONS_DIR,
+    FileManager.THEMED_ICONS_DIR,
+    "tinted_icons",
+    "shaped_icons",
+    "tinted_shaped_icons",
     FileManager.WIDGETS_DIR,
     FileManager.SHORTCUTS_DIR,
     FileManager.SHORTCUT_INTENT_ICONS_DIR,

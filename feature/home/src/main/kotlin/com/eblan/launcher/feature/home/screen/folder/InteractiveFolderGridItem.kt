@@ -64,10 +64,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
-import coil3.request.ImageRequest.Builder
-import coil3.request.addLastModifiedToFileCacheKey
-import coil3.size.Size
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.folder.FolderEntry
 import com.eblan.launcher.domain.model.grid.GridItem
@@ -78,6 +74,7 @@ import com.eblan.launcher.domain.model.userdata.EblanActionType
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_COLUMNS
 import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_ROWS
+import com.eblan.launcher.feature.home.component.LauncherIconImage
 import com.eblan.launcher.feature.home.component.PreviewFolderGridLayout
 import com.eblan.launcher.feature.home.component.gridItemSharedElement
 import com.eblan.launcher.feature.home.component.swipeGestures
@@ -523,10 +520,8 @@ private fun InteractiveApplicationInfoGridItem(
                 .size(iconSize)
                 .alpha(alpha),
         ) {
-            AsyncImage(
-                model = Builder(context).data(iconPath)
-                    .addLastModifiedToFileCacheKey(true).size(Size.ORIGINAL).build(),
-                contentDescription = null,
+            LauncherIconImage(
+                iconPath = iconPath,
                 modifier = Modifier
                     .matchParentSize()
                     .padding(iconPadding)
@@ -725,9 +720,8 @@ private fun InteractiveShortcutInfoGridItem(
         Box(
             modifier = Modifier.size(iconSize),
         ) {
-            AsyncImage(
-                model = Builder(context).data(iconPath).addLastModifiedToFileCacheKey(true)
-                    .size(Size.ORIGINAL).build(),
+            LauncherIconImage(
+                iconPath = iconPath,
                 modifier = Modifier
                     .matchParentSize()
                     .padding(iconPadding)
@@ -755,17 +749,14 @@ private fun InteractiveShortcutInfoGridItem(
 
                         drawLayer(graphicsLayer)
                     },
-                contentDescription = null,
             )
 
-            AsyncImage(
-                model = Builder(context).data(data.eblanApplicationInfoIcon).size(Size.ORIGINAL)
-                    .build(),
+            LauncherIconImage(
+                iconPath = data.eblanApplicationInfoIcon,
                 modifier = Modifier
                     .size(iconSize * 0.25f)
                     .alpha(alpha)
                     .align(Alignment.BottomEnd),
-                contentDescription = null,
             )
         }
 
@@ -923,10 +914,8 @@ private fun InteractiveShortcutConfigGridItem(
         horizontalAlignment = horizontalAlignment,
         verticalArrangement = verticalArrangement,
     ) {
-        AsyncImage(
-            model = Builder(context).data(iconPath).addLastModifiedToFileCacheKey(true)
-                .size(Size.ORIGINAL).build(),
-            contentDescription = null,
+        LauncherIconImage(
+            iconPath = iconPath,
             modifier = Modifier
                 .size(iconSize)
                 .padding(iconPadding)
@@ -1125,9 +1114,8 @@ private fun InteractiveNestedFolderGridItem(
             .alpha(iconAlpha)
 
         if (data.icon != null) {
-            AsyncImage(
-                model = data.icon,
-                contentDescription = null,
+            LauncherIconImage(
+                iconPath = data.icon,
                 modifier = commonModifier,
             )
         } else {
@@ -1207,8 +1195,6 @@ private fun PreviewNestedFolderGridItem(
     // Layout
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
-
     key(gridItem.id) {
         val (currentGridItemTextColor, currentGridItemCustomTextColor) = if (gridItem.override) {
             gridItem.gridItemSettings.textColor to gridItem.gridItemSettings.customTextColor
@@ -1259,10 +1245,8 @@ private fun PreviewNestedFolderGridItem(
                     else -> null
                 }
 
-                AsyncImage(
-                    model = Builder(context).data(iconPath)
-                        .addLastModifiedToFileCacheKey(true).size(Size.ORIGINAL).build(),
-                    contentDescription = null,
+                LauncherIconImage(
+                    iconPath = iconPath,
                     modifier = commonModifier,
                 )
             }
@@ -1275,29 +1259,23 @@ private fun PreviewNestedFolderGridItem(
                     else -> data.applicationIcon
                 }
 
-                AsyncImage(
-                    model = Builder(context).data(icon).addLastModifiedToFileCacheKey(true)
-                        .size(Size.ORIGINAL).build(),
-                    contentDescription = null,
+                LauncherIconImage(
+                    iconPath = icon,
                     modifier = commonModifier,
                 )
             }
 
             is GridItemData.ShortcutInfo -> {
-                AsyncImage(
-                    model = Builder(context).data(data.customIcon ?: data.icon)
-                        .addLastModifiedToFileCacheKey(true).size(Size.ORIGINAL).build(),
-                    contentDescription = null,
+                LauncherIconImage(
+                    iconPath = data.customIcon ?: data.icon,
                     modifier = commonModifier,
                 )
             }
 
             is GridItemData.Folder -> {
                 if (data.icon != null) {
-                    AsyncImage(
-                        model = Builder(context).data(data.icon).addLastModifiedToFileCacheKey(true)
-                            .size(Size.ORIGINAL).build(),
-                        contentDescription = null,
+                    LauncherIconImage(
+                        iconPath = data.icon,
                         modifier = commonModifier,
                     )
                 } else {
