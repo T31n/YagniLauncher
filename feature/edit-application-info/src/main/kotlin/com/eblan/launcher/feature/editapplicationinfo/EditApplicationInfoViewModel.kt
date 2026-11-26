@@ -34,6 +34,7 @@ import com.eblan.launcher.domain.usecase.application.GetEblanApplicationInfosTag
 import com.eblan.launcher.domain.usecase.application.UpdateEblanApplicationInfoCustomIconUseCase
 import com.eblan.launcher.domain.usecase.folder.GetFolderEblanApplicationInfoPopupsUseCase
 import com.eblan.launcher.domain.usecase.folder.GetTopLevelFolderEblanApplicationInfosUseCase
+import com.eblan.launcher.domain.usecase.grid.ResetGridItemCustomIconUseCase
 import com.eblan.launcher.domain.usecase.iconpack.GetIconPackComponentsUseCase
 import com.eblan.launcher.feature.editapplicationinfo.model.EditApplicationInfoUiState
 import com.eblan.launcher.feature.editapplicationinfo.navigation.EditApplicationInfoRouteData
@@ -56,6 +57,7 @@ internal class EditApplicationInfoViewModel @Inject constructor(
     private val eblanApplicationInfoTagRepository: EblanApplicationInfoTagRepository,
     private val eblanApplicationInfoTagCrossRefRepository: EblanApplicationInfoTagCrossRefRepository,
     private val updateEblanApplicationInfoCustomIconUseCase: UpdateEblanApplicationInfoCustomIconUseCase,
+    private val resetGridItemCustomIconUseCase: ResetGridItemCustomIconUseCase,
     private val folderEblanApplicationInfoRepository: FolderEblanApplicationInfoRepository,
     userDataRepository: UserDataRepository,
     getFolderEblanApplicationInfoPopupsUseCase: GetFolderEblanApplicationInfoPopupsUseCase,
@@ -126,6 +128,15 @@ internal class EditApplicationInfoViewModel @Inject constructor(
 
     fun updateEblanApplicationInfo(eblanApplicationInfo: EblanApplicationInfo) {
         viewModelScope.launch {
+            val previousCustomIcon = eblanApplicationInfoRepository.getEblanApplicationInfoByComponentName(
+                serialNumber = eblanApplicationInfo.serialNumber,
+                componentName = eblanApplicationInfo.componentName,
+            )?.customIcon
+
+            if (previousCustomIcon != null && eblanApplicationInfo.customIcon == null) {
+                resetGridItemCustomIconUseCase(customIcon = previousCustomIcon)
+            }
+
             eblanApplicationInfoRepository.updateEblanApplicationInfo(eblanApplicationInfo = eblanApplicationInfo)
 
             getApplicationInfo()
