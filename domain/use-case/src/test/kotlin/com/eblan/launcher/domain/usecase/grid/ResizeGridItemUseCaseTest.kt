@@ -366,6 +366,48 @@ class ResizeGridItemUseCaseTest {
         assertEquals(1, resizedGridItem.rowSpan)
     }
 
+    @Test
+    fun `returns resizing grid item when item id does not exist`() = runTest(dispatcher) {
+        val gridItems = GridItems(
+            applicationInfoGridItems = emptyList(),
+            widgetGridItems = emptyList(),
+            shortcutInfoGridItems = emptyList(),
+            shortcutConfigGridItems = emptyList(),
+            folderGridItems = emptyList(),
+        )
+
+        val gridRepository = FakeGridRepository(
+            initialGridItems = gridItems,
+        )
+
+        val resizeGridItemUseCase = ResizeGridItemUseCase(
+            gridRepository = gridRepository,
+            defaultDispatcher = dispatcher,
+        )
+
+        val resizingGridItem = getApplicationInfoGridItem(
+            id = "missing",
+            columnSpan = 2,
+            rowSpan = 2,
+        )
+
+        val gridItem = GridItems(
+            applicationInfoGridItems = listOf(resizingGridItem),
+            widgetGridItems = emptyList(),
+            shortcutInfoGridItems = emptyList(),
+            shortcutConfigGridItems = emptyList(),
+            folderGridItems = emptyList(),
+        ).toGridItems().first()
+
+        val result = resizeGridItemUseCase(
+            resizingGridItem = gridItem,
+            columns = 5,
+            rows = 4,
+        )
+
+        assertEquals(gridItem, result)
+    }
+
     private fun getApplicationInfoGridItem(
         id: String = "app",
         page: Int = 0,

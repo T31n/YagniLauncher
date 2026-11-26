@@ -32,22 +32,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.eblan.launcher.designsystem.component.EblanDialog
-import com.eblan.launcher.domain.model.grid.GridItem
-import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun EditFolderLabelDialog(
     // Item Data
-    gridItem: GridItem,
-    data: GridItemData.Folder,
+    label: String,
     // Modifiers
     modifier: Modifier = Modifier,
     // Callbacks
     onDismissRequest: () -> Unit,
-    onUpdateGridItem: (GridItem) -> Unit,
+    onUpdateLabel: (String) -> Unit,
 ) {
-    var value by remember { mutableStateOf(data.label) }
+    var value by remember { mutableStateOf(label) }
 
     var isError by remember { mutableStateOf(false) }
 
@@ -93,11 +90,7 @@ internal fun EditFolderLabelDialog(
             TextButton(
                 onClick = {
                     if (value.isNotBlank()) {
-                        onUpdateGridItem(
-                            gridItem.copy(
-                                data = data.copy(label = value),
-                            ),
-                        )
+                        onUpdateLabel(value)
 
                         onDismissRequest()
                     } else {

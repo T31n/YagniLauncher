@@ -23,13 +23,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.grid.LayoutType
 
 @Composable
 internal fun GridItemLayoutType(
     // Settings and Modifier
-    gridItemSettings: GridItemSettings,
+    layoutType: LayoutType,
     modifier: Modifier = Modifier,
     // Alignment and Arrangement
     horizontalAlignment: Alignment.Horizontal,
@@ -41,7 +40,7 @@ internal fun GridItemLayoutType(
     labelContent: @Composable () -> Unit,
     labelOnlyContent: @Composable () -> Unit,
 ) {
-    when (gridItemSettings.layoutType) {
+    when (layoutType) {
         LayoutType.TopIconBottomLabel -> {
             Column(
                 modifier = modifier,

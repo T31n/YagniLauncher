@@ -34,7 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.eblan.launcher.activity.settings.SettingsActivity
-import com.eblan.launcher.model.ApplicationTheme
+import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.navigation.MainNavHost
 import com.eblan.launcher.platform.accessibilitymanager.AndroidAccessibilityManagerWrapper
 import com.eblan.launcher.platform.colorscheme.MaterialColorSchemeResolver
@@ -145,8 +145,6 @@ class MainActivity : AppCompatActivity() {
                 val applicationTheme by produceApplicationThemeState(
                     theme = generalSettings?.theme,
                     systemBarsTheme = generalSettings?.systemBarsTheme,
-                    colorSource = generalSettings?.colorSource,
-                    customSeedColor = generalSettings?.customSeedColor,
                 )
 
                 val colorScheme by produceColorSchemeState(
@@ -157,7 +155,7 @@ class MainActivity : AppCompatActivity() {
                 )
 
                 MainContent(
-                    applicationTheme = applicationTheme,
+                    systemBarsTheme = applicationTheme?.systemBarsTheme,
                     colorScheme = colorScheme,
                 )
             }
@@ -175,11 +173,15 @@ class MainActivity : AppCompatActivity() {
 
     @Composable
     private fun MainContent(
-        applicationTheme: ApplicationTheme?,
+        systemBarsTheme: Theme?,
         colorScheme: ColorScheme?,
     ) {
         when {
-            applicationTheme == null || colorScheme == null -> enableEdgeToEdge()
+            systemBarsTheme == null || colorScheme == null -> {
+                SideEffect {
+                    enableEdgeToEdge()
+                }
+            }
 
             else -> {
                 val colorSchemeResolver = LocalMaterialColorSchemeResolver.current
@@ -187,7 +189,7 @@ class MainActivity : AppCompatActivity() {
 
                 SideEffect {
                     handleEdgeToEdge(
-                        theme = applicationTheme.systemBarsTheme,
+                        theme = systemBarsTheme,
                         materialColorSchemeResolver = colorSchemeResolver,
                     )
                 }

@@ -55,7 +55,10 @@ import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
-import com.eblan.launcher.domain.model.userdata.GeneralSettings
+import com.eblan.launcher.domain.model.userdata.ColorSchemeSettings
+import com.eblan.launcher.domain.model.userdata.ColorSource
+import com.eblan.launcher.domain.model.userdata.IconShape
+import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.feature.editfolderapplicationinfo.dialog.EditFolderLabelDialog
 import com.eblan.launcher.feature.editfolderapplicationinfo.model.EditFolderApplicationInfoUiState
 import com.eblan.launcher.ui.dialog.AddFolderDialog
@@ -129,7 +132,7 @@ internal fun EditFolderApplicationInfoScreen(
     onUpdateFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
     onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
     onAddEblanApplicationInfosToFolder: (
-        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        folderId: String,
         eblanApplicationInfos: List<EblanApplicationInfo>,
     ) -> Unit,
 ) {
@@ -168,7 +171,12 @@ internal fun EditFolderApplicationInfoScreen(
                     folderEblanApplicationInfos = folderEblanApplicationInfos,
                     topLevelFolderEblanApplicationInfos = folderEblanApplicationInfos,
                     folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
-                    generalSettings = editFolderApplicationInfoUiState.generalSettings,
+                    iconTint = editFolderApplicationInfoUiState.generalSettings.iconTint,
+                    colorSource = editFolderApplicationInfoUiState.generalSettings.colorSource,
+                    customSeedColor = editFolderApplicationInfoUiState.generalSettings.customSeedColor,
+                    iconShape = editFolderApplicationInfoUiState.generalSettings.iconShape,
+                    theme = editFolderApplicationInfoUiState.generalSettings.theme,
+                    colorSchemeSettings = editFolderApplicationInfoUiState.generalSettings.colorSchemeSettings,
                     // Icon Packs
                     iconPackComponents = iconPackComponents,
                     // Callbacks
@@ -194,7 +202,12 @@ internal fun Success(
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
-    generalSettings: GeneralSettings,
+    iconTint: Boolean,
+    colorSource: ColorSource,
+    customSeedColor: Int,
+    iconShape: IconShape,
+    theme: Theme,
+    colorSchemeSettings: ColorSchemeSettings,
     // Icon Packs
     iconPackComponents: List<IconPackComponent>,
     // Modifier
@@ -214,7 +227,7 @@ internal fun Success(
     onUpdateFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
     onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
     onAddEblanApplicationInfosToFolder: (
-        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        folderId: String,
         eblanApplicationInfos: List<EblanApplicationInfo>,
     ) -> Unit,
 ) {
@@ -298,7 +311,12 @@ internal fun Success(
                 iconPackComponents = iconPackComponents,
                 iconPackPackageName = iconPackPackageName,
                 iconPackInfoLabel = iconPackInfoLabel,
-                generalSettings = generalSettings,
+                iconTint = iconTint,
+                colorSource = colorSource,
+                customSeedColor = customSeedColor,
+                iconShape = iconShape,
+                theme = theme,
+                colorSchemeSettings = colorSchemeSettings,
                 // Callbacks
                 onDismissRequest = {
                     onResetIconPackPackageName()
@@ -318,12 +336,16 @@ internal fun Success(
         if (showEditLabelDialog) {
             EditFolderLabelDialog(
                 // Data
-                folderEblanApplicationInfo = folderEblanApplicationInfo,
+                label = folderEblanApplicationInfo.label,
                 // Callbacks
                 onDismissRequest = {
                     showEditLabelDialog = false
                 },
-                onUpdateFolderEblanApplicationInfo = onUpdateFolderEblanApplicationInfo,
+                onUpdateLabel = { currentLabel ->
+                    onUpdateFolderEblanApplicationInfo(
+                        folderEblanApplicationInfo.copy(label = currentLabel),
+                    )
+                },
             )
         }
 
@@ -346,7 +368,7 @@ internal fun Success(
                 },
                 onAddApplications = { selectedEblanApplicationInfos ->
                     onAddEblanApplicationInfosToFolder(
-                        folderEblanApplicationInfo,
+                        folderEblanApplicationInfo.id,
                         selectedEblanApplicationInfos,
                     )
                 },

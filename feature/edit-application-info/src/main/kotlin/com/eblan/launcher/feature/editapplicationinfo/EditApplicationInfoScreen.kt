@@ -61,7 +61,10 @@ import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
-import com.eblan.launcher.domain.model.userdata.GeneralSettings
+import com.eblan.launcher.domain.model.userdata.ColorSchemeSettings
+import com.eblan.launcher.domain.model.userdata.ColorSource
+import com.eblan.launcher.domain.model.userdata.IconShape
+import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.feature.editapplicationinfo.R.string.hide_from_drawer
 import com.eblan.launcher.feature.editapplicationinfo.R.string.view_hidden_apps_in_app_drawer_settings
 import com.eblan.launcher.feature.editapplicationinfo.dialog.AddTagDialog
@@ -184,7 +187,12 @@ internal fun EditApplicationInfoScreen(
                     folderEblanApplicationInfos = folderEblanApplicationInfos,
                     folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                     topLevelFolderEblanApplicationInfos = topLevelFolderEblanApplicationInfos,
-                    generalSettings = editApplicationInfoUiState.generalSettings,
+                    iconTint = editApplicationInfoUiState.generalSettings.iconTint,
+                    colorSource = editApplicationInfoUiState.generalSettings.colorSource,
+                    customSeedColor = editApplicationInfoUiState.generalSettings.customSeedColor,
+                    iconShape = editApplicationInfoUiState.generalSettings.iconShape,
+                    theme = editApplicationInfoUiState.generalSettings.theme,
+                    colorSchemeSettings = editApplicationInfoUiState.generalSettings.colorSchemeSettings,
                     // Icon Pack
                     iconPackComponents = iconPackComponents,
                     // Callbacks
@@ -214,7 +222,12 @@ private fun Success(
     folderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     topLevelFolderEblanApplicationInfos: List<FolderEblanApplicationInfo>,
-    generalSettings: GeneralSettings,
+    iconTint: Boolean,
+    colorSource: ColorSource,
+    customSeedColor: Int,
+    iconShape: IconShape,
+    theme: Theme,
+    colorSchemeSettings: ColorSchemeSettings,
     // Icon Pack
     iconPackComponents: List<IconPackComponent>,
     // Modifier
@@ -334,7 +347,12 @@ private fun Success(
             iconPackComponents = iconPackComponents,
             iconPackPackageName = iconPackPackageName,
             iconPackInfoLabel = iconPackInfoLabel,
-            generalSettings = generalSettings,
+            iconTint = iconTint,
+            colorSource = colorSource,
+            customSeedColor = customSeedColor,
+            iconShape = iconShape,
+            theme = theme,
+            colorSchemeSettings = colorSchemeSettings,
             // Callbacks
             onDismissRequest = {
                 onResetIconPackPackageName()
@@ -426,14 +444,18 @@ private fun Tags(
     }
 
     if (showUpdateTagDialog) {
-        UpdateTagDialog(
-            eblanApplicationInfoTagUi = selectedEblanApplicationInfoTagUi,
-            onDeleteEblanApplicationInfoTag = onDeleteEblanApplicationInfoTag,
-            onDismissRequest = {
-                showUpdateTagDialog = false
-            },
-            onUpdateEblanApplicationInfoTag = onUpdateEblanApplicationInfoTag,
-        )
+        selectedEblanApplicationInfoTagUi?.let { currentEblanApplicationInfoTagUi ->
+            UpdateTagDialog(
+                id = currentEblanApplicationInfoTagUi.id,
+                name = currentEblanApplicationInfoTagUi.name,
+                index = currentEblanApplicationInfoTagUi.index,
+                onDeleteEblanApplicationInfoTag = onDeleteEblanApplicationInfoTag,
+                onDismissRequest = {
+                    showUpdateTagDialog = false
+                },
+                onUpdateEblanApplicationInfoTag = onUpdateEblanApplicationInfoTag,
+            )
+        }
     }
 }
 
@@ -538,7 +560,8 @@ private fun Folders(
         folderEblanApplicationInfos.forEach { currentFolderEblanApplicationInfo ->
             FolderEblanApplicationInfoItem(
                 // Application Info
-                folderEblanApplicationInfo = currentFolderEblanApplicationInfo,
+                id = currentFolderEblanApplicationInfo.id,
+                label = currentFolderEblanApplicationInfo.label,
                 eblanApplicationInfo = eblanApplicationInfo,
                 folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                 // Callbacks
@@ -569,7 +592,8 @@ private fun Folders(
 @Composable
 private fun FolderEblanApplicationInfoItem(
     // Application Info
-    folderEblanApplicationInfo: FolderEblanApplicationInfo,
+    id: String,
+    label: String,
     eblanApplicationInfo: EblanApplicationInfo,
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     // Layout
@@ -579,9 +603,9 @@ private fun FolderEblanApplicationInfoItem(
 ) {
     val folderIndex = remember(
         key1 = folderEblanApplicationInfoPopups,
-        key2 = folderEblanApplicationInfo,
+        key2 = id,
     ) {
-        folderEblanApplicationInfoPopups[folderEblanApplicationInfo.id]?.folderEblanApplicationInfoGridItems?.maxOfOrNull { currentFolderEblanApplicationInfoGridItem ->
+        folderEblanApplicationInfoPopups[id]?.folderEblanApplicationInfoGridItems?.maxOfOrNull { currentFolderEblanApplicationInfoGridItem ->
             when (val data = currentFolderEblanApplicationInfoGridItem.data) {
                 is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> data.folderIndex + 1
                 is FolderEblanApplicationInfoGridItemData.Folder -> data.folderIndex + 1
@@ -589,7 +613,7 @@ private fun FolderEblanApplicationInfoItem(
         } ?: 0
     }
 
-    val selected = folderEblanApplicationInfo.id == eblanApplicationInfo.folderId
+    val selected = id == eblanApplicationInfo.folderId
 
     FilterChip(
         modifier = modifier,
@@ -601,13 +625,13 @@ private fun FolderEblanApplicationInfoItem(
                 onUpdateEblanApplicationInfo(
                     eblanApplicationInfo.copy(
                         folderIndex = folderIndex,
-                        folderId = folderEblanApplicationInfo.id,
+                        folderId = id,
                     ),
                 )
             }
         },
         label = {
-            Text(text = folderEblanApplicationInfo.label)
+            Text(text = label)
         },
         leadingIcon = if (selected) {
             {

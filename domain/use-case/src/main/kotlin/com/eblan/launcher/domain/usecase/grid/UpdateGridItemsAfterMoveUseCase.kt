@@ -72,7 +72,7 @@ class UpdateGridItemsAfterMoveUseCase @Inject constructor(
                             )
 
                             addMovingGridItemIntoFolder(
-                                conflictingGridItem = conflictingGridItem,
+                                conflictingGridItemId = conflictingGridItem.id,
                                 movingGridItem = movingGridItem,
                                 folderGridItems = folderGridItems,
                             )
@@ -100,7 +100,7 @@ class UpdateGridItemsAfterMoveUseCase @Inject constructor(
 
     /** Adds the moved item to an existing folder and assigns it the next child index. */
     private suspend fun addMovingGridItemIntoFolder(
-        conflictingGridItem: GridItem,
+        conflictingGridItemId: String,
         movingGridItem: GridItem,
         folderGridItems: List<GridItem>,
     ) {
@@ -117,22 +117,22 @@ class UpdateGridItemsAfterMoveUseCase @Inject constructor(
         val newData = when (val folderData = movingGridItem.data) {
             is GridItemData.ApplicationInfo -> folderData.copy(
                 index = index,
-                folderId = conflictingGridItem.id,
+                folderId = conflictingGridItemId,
             )
 
             is GridItemData.ShortcutInfo -> folderData.copy(
                 index = index,
-                folderId = conflictingGridItem.id,
+                folderId = conflictingGridItemId,
             )
 
             is GridItemData.ShortcutConfig -> folderData.copy(
                 index = index,
-                folderId = conflictingGridItem.id,
+                folderId = conflictingGridItemId,
             )
 
             is GridItemData.Folder -> folderData.copy(
                 index = index,
-                folderId = conflictingGridItem.id,
+                folderId = conflictingGridItemId,
             )
 
             else -> error("Unsupported addMovingGridItemIntoFolder")

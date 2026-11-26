@@ -134,7 +134,7 @@ internal fun InteractiveGridItem(
         gridItemCustomTextColor = currentGridItemSettings.customTextColor,
         // System Text Colors
         systemTextColor = textColor,
-        systemCustomTextColor = gridItemSettings.customTextColor,
+        systemCustomTextColor = systemCustomTextColor,
         // Background Color
         backgroundColor = currentGridItemSettings.backgroundColor,
         customBackgroundColor = currentGridItemSettings.customBackgroundColor,
@@ -400,6 +400,8 @@ private fun InteractiveWidgetGridItem(
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
     var intSize by remember { mutableStateOf(IntSize.Zero) }
 
+    val currentGridItem by rememberUpdatedState(gridItem)
+    val currentSharedElementKey by rememberUpdatedState(sharedElementKey)
     val currentOnLongPressGridItem by rememberUpdatedState(onLongPressGridItem)
 
     Box(
@@ -444,11 +446,11 @@ private fun InteractiveWidgetGridItem(
                     if (!isVisibleOverlay) {
                         currentAppWidgetHostView.setOnLongClickListener {
                             currentOnLongPressGridItem(
-                                gridItem,
+                                currentGridItem,
                                 { graphicsLayer.toImageBitmap() },
                                 intOffset,
                                 intSize,
-                                sharedElementKey,
+                                currentSharedElementKey,
                             )
 
                             true
@@ -465,11 +467,11 @@ private fun InteractiveWidgetGridItem(
                         onLongPress = if (!isVisibleOverlay) {
                             {
                                 currentOnLongPressGridItem(
-                                    gridItem,
+                                    currentGridItem,
                                     { graphicsLayer.toImageBitmap() },
                                     intOffset,
                                     intSize,
-                                    sharedElementKey,
+                                    currentSharedElementKey,
                                 )
                             }
                         } else {

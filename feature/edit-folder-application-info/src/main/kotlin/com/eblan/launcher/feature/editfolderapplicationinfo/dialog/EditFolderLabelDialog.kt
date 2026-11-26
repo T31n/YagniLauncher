@@ -32,7 +32,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.eblan.launcher.designsystem.component.EblanDialog
-import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -40,12 +39,12 @@ internal fun EditFolderLabelDialog(
     // Modifier
     modifier: Modifier = Modifier,
     // Data
-    folderEblanApplicationInfo: FolderEblanApplicationInfo,
+    label: String,
     // Callbacks
     onDismissRequest: () -> Unit,
-    onUpdateFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
+    onUpdateLabel: (String) -> Unit,
 ) {
-    var value by remember { mutableStateOf(folderEblanApplicationInfo.label) }
+    var value by remember { mutableStateOf(label) }
 
     var isError by remember { mutableStateOf(false) }
 
@@ -91,7 +90,7 @@ internal fun EditFolderLabelDialog(
             TextButton(
                 onClick = {
                     if (value.isNotBlank()) {
-                        onUpdateFolderEblanApplicationInfo(folderEblanApplicationInfo.copy(label = value))
+                        onUpdateLabel(value)
 
                         onDismissRequest()
                     } else {

@@ -50,14 +50,16 @@ internal suspend fun deleteGridItemData(
 ) {
     /** Unpins a shortcut or releases a widget ID when the item owns either resource. */
     suspend fun delete(
-        gridItem: GridItem,
+        data: GridItemData,
         appWidgetHostWrapper: AppWidgetHostWrapper,
         launcherAppsWrapper: LauncherAppsWrapper,
     ) {
-        when (val data = gridItem.data) {
+        when (data) {
             is GridItemData.ShortcutInfo -> updatePinShortcutsByPackageName(
-                launcherAppsWrapper,
-                data,
+                launcherAppsWrapper = launcherAppsWrapper,
+                shortcutId = data.shortcutId,
+                packageName = data.packageName,
+                serialNumber = data.serialNumber,
             )
 
             is GridItemData.Widget -> appWidgetHostWrapper.deleteAppWidgetId(data.appWidgetId)
@@ -66,13 +68,13 @@ internal suspend fun deleteGridItemData(
         }
     }
 
-    when (gridItem.data) {
+    when (val data = gridItem.data) {
         is GridItemData.ApplicationInfo,
         is GridItemData.ShortcutConfig,
         is GridItemData.ShortcutInfo,
         is GridItemData.Widget,
         -> delete(
-            gridItem = gridItem,
+            data = data,
             appWidgetHostWrapper = appWidgetHostWrapper,
             launcherAppsWrapper = launcherAppsWrapper,
         )
@@ -82,7 +84,7 @@ internal suspend fun deleteGridItemData(
             folderId = gridItem.id,
         ).forEach { currentGridItem ->
             delete(
-                gridItem = currentGridItem,
+                data = currentGridItem.data,
                 appWidgetHostWrapper = appWidgetHostWrapper,
                 launcherAppsWrapper = launcherAppsWrapper,
             )
@@ -382,24 +384,26 @@ internal fun FolderGridItem.asGridItem(): GridItem = GridItem(
 /** Removes a shortcut from the launcher's pinned shortcut list when permission is available. */
 private suspend fun updatePinShortcutsByPackageName(
     launcherAppsWrapper: LauncherAppsWrapper,
-    data: GridItemData.ShortcutInfo,
+    shortcutId: String,
+    packageName: String,
+    serialNumber: Long,
 ) {
     if (!launcherAppsWrapper.hasShortcutHostPermission) return
 
     val shortcutIds = launcherAppsWrapper.getFastShortcuts(
         shortcutQuery = ShortcutQuery(
-            packageName = data.packageName,
+            packageName = packageName,
             shortcutQueryFlag = ShortcutQueryFlag.Pinned,
         ),
     )?.map { currentFastLauncherAppsShortcutInfo ->
         currentFastLauncherAppsShortcutInfo.shortcutId
     } ?: return
 
-    if (data.shortcutId !in shortcutIds) return
+    if (shortcutId !in shortcutIds) return
 
     launcherAppsWrapper.pinShortcuts(
-        packageName = data.packageName,
-        shortcutIds = shortcutIds - data.shortcutId,
-        serialNumber = data.serialNumber,
+        packageName = packageName,
+        shortcutIds = shortcutIds - shortcutId,
+        serialNumber = serialNumber,
     )
 }

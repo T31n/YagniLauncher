@@ -62,9 +62,7 @@ import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.domain.model.launcherapps.PinItemRequestType
 import com.eblan.launcher.domain.model.userdata.EblanAction
 import com.eblan.launcher.domain.model.userdata.EblanActionType
-import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
 import com.eblan.launcher.domain.model.userdata.GestureSettings
-import com.eblan.launcher.domain.model.userdata.HomeSettings
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.GridItemSource
 import com.eblan.launcher.feature.home.model.PageDirection
@@ -109,7 +107,13 @@ internal class PagerScreenState(
     private val androidUserManagerWrapper: AndroidUserManagerWrapper,
     private val pinItemRequestWrapper: PinItemRequestWrapper,
     private val gestureSettings: GestureSettings,
-    private val homeSettings: HomeSettings,
+    private val wallpaperScroll: Boolean,
+    private val pageCount: Int,
+    private val infiniteScroll: Boolean,
+    private val initialPage: Int,
+    private val dockInfiniteScroll: Boolean,
+    private val dockInitialPage: Int,
+    private val dockPageCount: Int,
     private val androidWallpaperManagerWrapper: AndroidWallpaperManagerWrapper,
     private val onGetPinGridItem: (PinItemRequestType) -> Unit,
     private val onResetPinGridItem: () -> Unit,
@@ -935,20 +939,20 @@ internal class PagerScreenState(
         horizontalPagerState: PagerState,
         windowToken: IBinder,
     ) {
-        if (!homeSettings.wallpaperScroll || homeSettings.pageCount <= 1) return
+        if (!wallpaperScroll || pageCount <= 1) return
 
         var reverseXOffset: Float
 
         snapshotFlow { horizontalPagerState.currentPageOffsetFraction }.onStart {
             androidWallpaperManagerWrapper.setWallpaperOffsetSteps(
-                xStep = 1f / (homeSettings.pageCount - 1),
+                xStep = 1f / (pageCount - 1),
                 yStep = 1f,
             )
         }.collect { offsetFraction ->
             val page = calculatePage(
                 index = horizontalPagerState.currentPage,
-                infiniteScroll = homeSettings.infiniteScroll,
-                pageCount = homeSettings.pageCount,
+                infiniteScroll = infiniteScroll,
+                pageCount = pageCount,
             )
 
             val scrollProgress = page + offsetFraction
@@ -961,7 +965,7 @@ internal class PagerScreenState(
                     xOffset = reverseXOffset,
                     yOffset = 0f,
                 )
-            } else if (scrollProgress > homeSettings.pageCount - 1) {
+            } else if (scrollProgress > pageCount - 1) {
                 reverseXOffset = 1f - offsetFraction
 
                 androidWallpaperManagerWrapper.setWallpaperOffsets(
@@ -970,7 +974,7 @@ internal class PagerScreenState(
                     yOffset = 0f,
                 )
             } else {
-                val xOffset = scrollProgress / (homeSettings.pageCount - 1)
+                val xOffset = scrollProgress / (pageCount - 1)
 
                 androidWallpaperManagerWrapper.setWallpaperOffsets(
                     windowToken = windowToken,
@@ -1011,47 +1015,47 @@ internal class PagerScreenState(
 
         scope.launch {
             gridHorizontalPagerState.animateScrollToPage(
-                if (homeSettings.infiniteScroll) {
+                if (infiniteScroll) {
                     getInfiniteScrollInitialPage(
                         currentPage = gridHorizontalPagerState.currentPage,
-                        initialPage = homeSettings.initialPage,
-                        pageCount = homeSettings.pageCount,
+                        initialPage = initialPage,
+                        pageCount = pageCount,
                     )
                 } else {
-                    homeSettings.initialPage
+                    initialPage
                 },
             )
         }
 
         scope.launch {
             dockGridHorizontalPagerState.animateScrollToPage(
-                if (homeSettings.dockInfiniteScroll) {
+                if (dockInfiniteScroll) {
                     getInfiniteScrollInitialPage(
                         currentPage = dockGridHorizontalPagerState.currentPage,
-                        initialPage = homeSettings.dockInitialPage,
-                        pageCount = homeSettings.dockPageCount,
+                        initialPage = dockInitialPage,
+                        pageCount = dockPageCount,
                     )
                 } else {
-                    homeSettings.dockInitialPage
+                    dockInitialPage
                 },
             )
         }
 
-        if (homeSettings.wallpaperScroll && homeSettings.pageCount > 1) {
+        if (wallpaperScroll && pageCount > 1) {
             val page = calculatePage(
                 index = gridHorizontalPagerState.currentPage,
-                infiniteScroll = homeSettings.infiniteScroll,
-                pageCount = homeSettings.pageCount,
+                infiniteScroll = infiniteScroll,
+                pageCount = pageCount,
             )
 
             androidWallpaperManagerWrapper.setWallpaperOffsetSteps(
-                xStep = 1f / (homeSettings.pageCount - 1),
+                xStep = 1f / (pageCount - 1),
                 yStep = 1f,
             )
 
             androidWallpaperManagerWrapper.setWallpaperOffsets(
                 windowToken = windowToken,
-                xOffset = page.toFloat() / (homeSettings.pageCount - 1),
+                xOffset = page.toFloat() / (pageCount - 1),
                 yOffset = 0f,
             )
         }
@@ -1624,11 +1628,11 @@ internal class PagerScreenState(
 
     fun dragFolderEblanApplicationInfo(
         // Data
-        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        folderId: String,
         gridItem: GridItem,
         // Callbacks
         onDragFolderEblanApplicationInfoToGrid: (
-            folderEblanApplicationInfo: FolderEblanApplicationInfo,
+            folderId: String,
             movingGridItem: GridItem,
         ) -> Unit,
         onUpdateGridItemSource: (GridItemSource) -> Unit,
@@ -1651,7 +1655,7 @@ internal class PagerScreenState(
         dismissApplicationScreen()
 
         onDragFolderEblanApplicationInfoToGrid(
-            folderEblanApplicationInfo,
+            folderId,
             gridItem,
         )
     }
@@ -1792,8 +1796,13 @@ internal class PagerScreenState(
 internal fun rememberPagerScreenState(
     // Settings
     gestureSettings: GestureSettings,
-    homeSettings: HomeSettings,
-    experimentalSettings: ExperimentalSettings,
+    wallpaperScroll: Boolean,
+    pageCount: Int,
+    infiniteScroll: Boolean,
+    initialPage: Int,
+    dockInfiniteScroll: Boolean,
+    dockInitialPage: Int,
+    dockPageCount: Int,
     // Dimensions
     screenHeight: Int,
     // Callbacks
@@ -1821,8 +1830,13 @@ internal fun rememberPagerScreenState(
     return remember(
         screenHeight,
         gestureSettings,
-        homeSettings,
-        experimentalSettings,
+        wallpaperScroll,
+        pageCount,
+        infiniteScroll,
+        initialPage,
+        dockInfiniteScroll,
+        dockInitialPage,
+        dockPageCount,
     ) {
         PagerScreenState(
             density = density,
@@ -1835,7 +1849,13 @@ internal fun rememberPagerScreenState(
             androidUserManagerWrapper = androidUserManagerWrapper,
             pinItemRequestWrapper = pinItemRequestWrapper,
             gestureSettings = gestureSettings,
-            homeSettings = homeSettings,
+            wallpaperScroll = wallpaperScroll,
+            pageCount = pageCount,
+            infiniteScroll = infiniteScroll,
+            initialPage = initialPage,
+            dockInfiniteScroll = dockInfiniteScroll,
+            dockInitialPage = dockInitialPage,
+            dockPageCount = dockPageCount,
             androidWallpaperManagerWrapper = androidWallpaperManagerWrapper,
             onGetPinGridItem = onGetPinGridItem,
             onResetPinGridItem = onResetPinGridItem,

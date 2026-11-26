@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.HorizontalAlignment
 import com.eblan.launcher.domain.model.grid.HorizontalArrangement
 import com.eblan.launcher.domain.model.grid.VerticalAlignment
@@ -134,8 +133,12 @@ internal fun getVerticalAlignment(verticalAlignment: VerticalAlignment): Alignme
 internal fun updateAppWidgetOptions(
     // Manager
     androidAppWidgetManagerWrapper: AndroidAppWidgetManagerWrapper,
-    // Data
-    data: GridItemData.Widget,
+    // Widget Data
+    appWidgetId: Int,
+    minResizeWidth: Int,
+    minResizeHeight: Int,
+    maxResizeWidth: Int,
+    maxResizeHeight: Int,
     // Dimensions
     width: Int,
     height: Int,
@@ -159,30 +162,30 @@ internal fun updateAppWidgetOptions(
     val maxWidthByGridDp = with(density) { maxWidthByGridPx.toDp().value.roundToInt() }
     val maxHeightByGridDp = with(density) { maxHeightByGridPx.toDp().value.roundToInt() }
 
-    val maxWidthDp = if (data.maxResizeWidth > 0) {
+    val maxWidthDp = if (maxResizeWidth > 0) {
         minOf(
-            data.maxResizeWidth,
+            maxResizeWidth,
             maxWidthByGridDp,
         )
     } else {
         maxWidthByGridDp
     }
-    val maxHeightDp = if (data.maxResizeHeight > 0) {
+    val maxHeightDp = if (maxResizeHeight > 0) {
         minOf(
-            data.maxResizeHeight,
+            maxResizeHeight,
             maxHeightByGridDp,
         )
     } else {
         maxHeightByGridDp
     }
 
-    val minWidthDp = if (data.minResizeWidth > 0) {
-        data.minResizeWidth
+    val minWidthDp = if (minResizeWidth > 0) {
+        minResizeWidth
     } else {
         with(density) { width.toDp().value.roundToInt() }
     }
-    val minHeightDp = if (data.minResizeHeight > 0) {
-        data.minResizeHeight
+    val minHeightDp = if (minResizeHeight > 0) {
+        minResizeHeight
     } else {
         with(density) { height.toDp().value.roundToInt() }
     }
@@ -201,7 +204,7 @@ internal fun updateAppWidgetOptions(
     }
 
     androidAppWidgetManagerWrapper.updateAppWidgetOptions(
-        appWidgetId = data.appWidgetId,
+        appWidgetId = appWidgetId,
         options = options,
     )
 }

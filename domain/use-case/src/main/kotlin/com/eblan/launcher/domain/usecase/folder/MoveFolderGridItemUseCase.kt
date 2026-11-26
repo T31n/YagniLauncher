@@ -19,7 +19,6 @@ package com.eblan.launcher.domain.usecase.folder
 
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
-import com.eblan.launcher.domain.model.folder.FolderPopup
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.MoveGridItemResult
@@ -36,7 +35,9 @@ class MoveFolderGridItemUseCase @Inject constructor(
     /**
      * Moves a folder child to the index indicated by its drag position on the current page.
      *
-     * @param folderPopup The folder popup containing the ordered grid items.
+     * @param columns The number of columns in the folder popup grid.
+     * @param rows The number of rows in the folder popup grid.
+     * @param folderGridItems The ordered child items in the folder popup.
      * @param movingGridItem The child item being moved.
      * @param dragX The horizontal drag coordinate in pixels.
      * @param dragY The vertical drag coordinate in pixels.
@@ -46,7 +47,9 @@ class MoveFolderGridItemUseCase @Inject constructor(
      * @return A successful move result for the moved child.
      */
     suspend operator fun invoke(
-        folderPopup: FolderPopup,
+        columns: Int,
+        rows: Int,
+        folderGridItems: List<GridItem>,
         movingGridItem: GridItem,
         dragX: Int,
         dragY: Int,
@@ -54,35 +57,35 @@ class MoveFolderGridItemUseCase @Inject constructor(
         gridHeight: Int,
         currentPage: Int,
     ): MoveGridItemResult = withContext(defaultDispatcher) {
-        val gridItemsPerPage = folderPopup.columns * folderPopup.rows
+        val gridItemsPerPage = columns * rows
 
-        val cellWidth = gridWidth / folderPopup.columns
-        val cellHeight = gridHeight / folderPopup.rows
+        val cellWidth = gridWidth / columns
+        val cellHeight = gridHeight / rows
 
         val targetColumn = dragX / cellWidth
         val targetRow = dragY / cellHeight
 
         val targetIndex =
-            currentPage * gridItemsPerPage + targetRow * folderPopup.columns + targetColumn
+            currentPage * gridItemsPerPage + targetRow * columns + targetColumn
 
-        val folderGridItems = folderPopup.folderGridItems.toMutableList()
+        val updatedFolderGridItems = folderGridItems.toMutableList()
 
         val movingIndex =
-            folderGridItems.indexOfFirst { currentGridItem ->
+            updatedFolderGridItems.indexOfFirst { currentGridItem ->
                 currentGridItem.id == movingGridItem.id
             }
 
         if (movingIndex != -1) {
-            folderGridItems.add(
+            updatedFolderGridItems.add(
                 targetIndex.coerceIn(
                     0,
-                    folderGridItems.size - 1,
+                    updatedFolderGridItems.size - 1,
                 ),
-                folderGridItems.removeAt(movingIndex),
+                updatedFolderGridItems.removeAt(movingIndex),
             )
         }
 
-        val indexedGridItems = folderGridItems.mapIndexed { index, gridItem ->
+        val indexedGridItems = updatedFolderGridItems.mapIndexed { index, gridItem ->
             when (val data = gridItem.data) {
                 is GridItemData.ApplicationInfo -> gridItem.copy(data = data.copy(index = index))
 

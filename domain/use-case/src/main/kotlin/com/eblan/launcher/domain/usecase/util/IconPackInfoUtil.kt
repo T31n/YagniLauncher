@@ -18,7 +18,10 @@
 package com.eblan.launcher.domain.usecase.util
 
 import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
-import com.eblan.launcher.domain.model.userdata.GeneralSettings
+import com.eblan.launcher.domain.model.userdata.ColorSchemeSettings
+import com.eblan.launcher.domain.model.userdata.ColorSource
+import com.eblan.launcher.domain.model.userdata.IconShape
+import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.domain.platform.FileManager
 import com.eblan.launcher.domain.platform.IconKeyGenerator
 import com.eblan.launcher.domain.platform.IconPackManager
@@ -31,7 +34,12 @@ internal suspend fun cacheIconPackFile(
     iconPackPackageName: String,
     file: File,
     componentName: String,
-    generalSettings: GeneralSettings,
+    iconTint: Boolean,
+    colorSource: ColorSource,
+    customSeedColor: Int,
+    iconShape: IconShape,
+    theme: Theme,
+    colorSchemeSettings: ColorSchemeSettings,
 ) {
     appFilter.find { currentIconPackComponent ->
         componentName == currentIconPackComponent.componentName.removePrefix("ComponentInfo{")
@@ -41,12 +49,12 @@ internal suspend fun cacheIconPackFile(
             packageName = iconPackPackageName,
             drawableName = currentIconPackComponent.drawableName,
             file = file,
-            iconTint = generalSettings.iconTint,
-            colorSource = generalSettings.colorSource,
-            customSeedColor = generalSettings.customSeedColor,
-            iconShape = generalSettings.iconShape,
-            theme = generalSettings.theme,
-            colorSchemeSettings = generalSettings.colorSchemeSettings,
+            iconTint = iconTint,
+            colorSource = colorSource,
+            customSeedColor = customSeedColor,
+            iconShape = iconShape,
+            theme = theme,
+            colorSchemeSettings = colorSchemeSettings,
         )
     }
 }

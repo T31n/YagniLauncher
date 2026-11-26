@@ -34,8 +34,6 @@ import com.eblan.launcher.ui.local.LocalWallpaperManager
 fun produceApplicationThemeState(
     theme: Theme?,
     systemBarsTheme: Theme?,
-    colorSource: ColorSource?,
-    customSeedColor: Int?,
 ): State<ApplicationTheme?> {
     val wallpaperManager = LocalWallpaperManager.current
 
@@ -43,15 +41,9 @@ fun produceApplicationThemeState(
         null,
         theme,
         systemBarsTheme,
-        colorSource,
-        customSeedColor,
         wallpaperManager,
     ) {
-        if (theme == null ||
-            systemBarsTheme == null ||
-            colorSource == null ||
-            customSeedColor == null
-        ) {
+        if (theme == null || systemBarsTheme == null) {
             value = null
             return@produceState
         }
@@ -68,8 +60,6 @@ fun produceApplicationThemeState(
                     colorHints = colorHints,
                     hintSupportsDarkTheme = wallpaperManager.hintSupportsDarkTheme,
                 ),
-                colorSource = colorSource,
-                customSeedColor = customSeedColor,
             )
         }
     }
@@ -102,13 +92,13 @@ fun produceColorSchemeState(
         }
 
         wallpaperManager.getColorsChanged().collect { colorHints ->
-            val theme = resolveTheme(
+            val resolvedTheme = resolveTheme(
                 theme = theme,
                 colorHints = colorHints,
                 hintSupportsDarkTheme = wallpaperManager.hintSupportsDarkTheme,
             )
 
-            val isDarkTheme = when (theme) {
+            val isDarkTheme = when (resolvedTheme) {
                 Theme.System -> isSystemDarkTheme
                 Theme.Light -> false
                 Theme.Dark -> true

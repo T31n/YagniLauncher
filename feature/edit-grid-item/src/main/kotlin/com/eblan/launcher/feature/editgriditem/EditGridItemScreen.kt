@@ -45,10 +45,14 @@ import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.designsystem.theme.EblanShapes
 import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
+import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
-import com.eblan.launcher.domain.model.userdata.GeneralSettings
+import com.eblan.launcher.domain.model.userdata.ColorSchemeSettings
+import com.eblan.launcher.domain.model.userdata.ColorSource
+import com.eblan.launcher.domain.model.userdata.IconShape
+import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.feature.editgriditem.dialog.EditFolderLabelDialog
 import com.eblan.launcher.feature.editgriditem.model.EditGridItemUiState
 import com.eblan.launcher.ui.dialog.EditCustomLabelDialog
@@ -115,7 +119,9 @@ internal fun EditGridItemScreen(
         byteArray: ByteArray,
     ) -> Unit,
     onAddApplicationInfosToFolder: (
-        folderGridItem: GridItem,
+        folderId: String,
+        page: Int,
+        associate: Associate,
         eblanApplicationInfos: List<EblanApplicationInfo>,
     ) -> Unit,
 ) {
@@ -154,7 +160,12 @@ internal fun EditGridItemScreen(
                     // Data
                     eblanApplicationInfos = eblanApplicationInfos,
                     gridItem = editGridItemUiState.gridItem,
-                    generalSettings = editGridItemUiState.generalSettings,
+                    iconTint = editGridItemUiState.generalSettings.iconTint,
+                    colorSource = editGridItemUiState.generalSettings.colorSource,
+                    customSeedColor = editGridItemUiState.generalSettings.customSeedColor,
+                    iconShape = editGridItemUiState.generalSettings.iconShape,
+                    theme = editGridItemUiState.generalSettings.theme,
+                    colorSchemeSettings = editGridItemUiState.generalSettings.colorSchemeSettings,
                     iconPackComponents = iconPackComponents,
                     // Actions
                     onResetIconPackPackageName = onResetIconPackPackageName,
@@ -176,7 +187,12 @@ private fun Success(
     // Data
     eblanApplicationInfos: List<EblanApplicationInfo>,
     gridItem: GridItem,
-    generalSettings: GeneralSettings,
+    iconTint: Boolean,
+    colorSource: ColorSource,
+    customSeedColor: Int,
+    iconShape: IconShape,
+    theme: Theme,
+    colorSchemeSettings: ColorSchemeSettings,
     iconPackComponents: List<IconPackComponent>,
     // Modifier
     modifier: Modifier = Modifier,
@@ -195,7 +211,9 @@ private fun Success(
         byteArray: ByteArray,
     ) -> Unit,
     onAddApplicationInfosToFolder: (
-        folderGridItem: GridItem,
+        folderId: String,
+        page: Int,
+        associate: Associate,
         eblanApplicationInfos: List<EblanApplicationInfo>,
     ) -> Unit,
 ) {
@@ -212,7 +230,12 @@ private fun Success(
                     // Item Data
                     gridItem = gridItem,
                     data = data,
-                    generalSettings = generalSettings,
+                    iconTint = iconTint,
+                    colorSource = colorSource,
+                    customSeedColor = customSeedColor,
+                    iconShape = iconShape,
+                    theme = theme,
+                    colorSchemeSettings = colorSchemeSettings,
                     // Icon Packs
                     iconPackComponents = iconPackComponents,
                     // Callbacks
@@ -232,7 +255,12 @@ private fun Success(
                     gridItem = gridItem,
                     data = data,
                     eblanApplicationInfos = eblanApplicationInfos,
-                    generalSettings = generalSettings,
+                    iconTint = iconTint,
+                    colorSource = colorSource,
+                    customSeedColor = customSeedColor,
+                    iconShape = iconShape,
+                    theme = theme,
+                    colorSchemeSettings = colorSchemeSettings,
                     // Icon Packs
                     iconPackComponents = iconPackComponents,
                     // Actions
@@ -252,7 +280,12 @@ private fun Success(
                     // Shortcut Data
                     gridItem = gridItem,
                     data = data,
-                    generalSettings = generalSettings,
+                    iconTint = iconTint,
+                    colorSource = colorSource,
+                    customSeedColor = customSeedColor,
+                    iconShape = iconShape,
+                    theme = theme,
+                    colorSchemeSettings = colorSchemeSettings,
                     // Icon Packs
                     iconPackComponents = iconPackComponents,
                     // Actions
@@ -271,7 +304,12 @@ private fun Success(
                     // Grid Item
                     gridItem = gridItem,
                     data = data,
-                    generalSettings = generalSettings,
+                    iconTint = iconTint,
+                    colorSource = colorSource,
+                    customSeedColor = customSeedColor,
+                    iconShape = iconShape,
+                    theme = theme,
+                    colorSchemeSettings = colorSchemeSettings,
                     // Icon Packs
                     iconPackComponents = iconPackComponents,
                     // Actions
@@ -329,7 +367,12 @@ private fun EditApplicationInfo(
     // Item Data
     gridItem: GridItem,
     data: GridItemData.ApplicationInfo,
-    generalSettings: GeneralSettings,
+    iconTint: Boolean,
+    colorSource: ColorSource,
+    customSeedColor: Int,
+    iconShape: IconShape,
+    theme: Theme,
+    colorSchemeSettings: ColorSchemeSettings,
     // Icon Packs
     iconPackComponents: List<IconPackComponent>,
     // Modifier
@@ -354,7 +397,12 @@ private fun EditApplicationInfo(
     EditCustomIcon(
         gridItem = gridItem,
         customIcon = data.customIcon,
-        generalSettings = generalSettings,
+        iconTint = iconTint,
+        colorSource = colorSource,
+        customSeedColor = customSeedColor,
+        iconShape = iconShape,
+        theme = theme,
+        colorSchemeSettings = colorSchemeSettings,
         iconPackComponents = iconPackComponents,
         modifier = modifier,
         onResetIconPackPackageName = onResetIconPackPackageName,
@@ -407,7 +455,12 @@ private fun EditFolder(
     gridItem: GridItem,
     data: GridItemData.Folder,
     eblanApplicationInfos: List<EblanApplicationInfo>,
-    generalSettings: GeneralSettings,
+    iconTint: Boolean,
+    colorSource: ColorSource,
+    customSeedColor: Int,
+    iconShape: IconShape,
+    theme: Theme,
+    colorSchemeSettings: ColorSchemeSettings,
     modifier: Modifier = Modifier,
     // Icon Packs
     iconPackComponents: List<IconPackComponent>,
@@ -426,7 +479,9 @@ private fun EditFolder(
         byteArray: ByteArray,
     ) -> Unit,
     onAddApplicationInfosToFolder: (
-        folderGridItem: GridItem,
+        folderId: String,
+        page: Int,
+        associate: Associate,
         eblanApplicationInfos: List<EblanApplicationInfo>,
     ) -> Unit,
 ) {
@@ -436,7 +491,12 @@ private fun EditFolder(
     EditCustomIcon(
         gridItem = gridItem,
         customIcon = data.icon,
-        generalSettings = generalSettings,
+        iconTint = iconTint,
+        colorSource = colorSource,
+        customSeedColor = customSeedColor,
+        iconShape = iconShape,
+        theme = theme,
+        colorSchemeSettings = colorSchemeSettings,
         iconPackComponents = iconPackComponents,
         modifier = modifier,
         onResetIconPackPackageName = onResetIconPackPackageName,
@@ -482,13 +542,18 @@ private fun EditFolder(
     if (showEditLabelDialog) {
         EditFolderLabelDialog(
             // Item Data
-            gridItem = gridItem,
-            data = data,
+            label = data.label,
             // Callbacks
             onDismissRequest = {
                 showEditLabelDialog = false
             },
-            onUpdateGridItem = onUpdateGridItem,
+            onUpdateLabel = { currentLabel ->
+                onUpdateGridItem(
+                    gridItem.copy(
+                        data = data.copy(label = currentLabel),
+                    ),
+                )
+            },
         )
     }
 
@@ -502,7 +567,9 @@ private fun EditFolder(
             },
             onAddApplications = { selectedEblanApplicationInfos ->
                 onAddApplicationInfosToFolder(
-                    gridItem,
+                    gridItem.id,
+                    gridItem.page,
+                    gridItem.associate,
                     selectedEblanApplicationInfos,
                 )
             },
@@ -515,7 +582,12 @@ private fun EditShortcutInfo(
     // Shortcut Data
     gridItem: GridItem,
     data: GridItemData.ShortcutInfo,
-    generalSettings: GeneralSettings,
+    iconTint: Boolean,
+    colorSource: ColorSource,
+    customSeedColor: Int,
+    iconShape: IconShape,
+    theme: Theme,
+    colorSchemeSettings: ColorSchemeSettings,
     // Icon Packs
     iconPackComponents: List<IconPackComponent>,
     // Layout
@@ -540,7 +612,12 @@ private fun EditShortcutInfo(
     EditCustomIcon(
         gridItem = gridItem,
         customIcon = data.customIcon,
-        generalSettings = generalSettings,
+        iconTint = iconTint,
+        colorSource = colorSource,
+        customSeedColor = customSeedColor,
+        iconShape = iconShape,
+        theme = theme,
+        colorSchemeSettings = colorSchemeSettings,
         iconPackComponents = iconPackComponents,
         modifier = modifier,
         onResetIconPackPackageName = onResetIconPackPackageName,
@@ -592,7 +669,12 @@ private fun EditShortcutConfig(
     // Grid Item
     gridItem: GridItem,
     data: GridItemData.ShortcutConfig,
-    generalSettings: GeneralSettings,
+    iconTint: Boolean,
+    colorSource: ColorSource,
+    customSeedColor: Int,
+    iconShape: IconShape,
+    theme: Theme,
+    colorSchemeSettings: ColorSchemeSettings,
     // Icon Packs
     iconPackComponents: List<IconPackComponent>,
     // Modifier
@@ -617,7 +699,12 @@ private fun EditShortcutConfig(
     EditCustomIcon(
         gridItem = gridItem,
         customIcon = data.customIcon,
-        generalSettings = generalSettings,
+        iconTint = iconTint,
+        colorSource = colorSource,
+        customSeedColor = customSeedColor,
+        iconShape = iconShape,
+        theme = theme,
+        colorSchemeSettings = colorSchemeSettings,
         iconPackComponents = iconPackComponents,
         modifier = modifier,
         onResetIconPackPackageName = onResetIconPackPackageName,
@@ -668,7 +755,12 @@ private fun EditShortcutConfig(
 private fun EditCustomIcon(
     gridItem: GridItem,
     customIcon: String?,
-    generalSettings: GeneralSettings,
+    iconTint: Boolean,
+    colorSource: ColorSource,
+    customSeedColor: Int,
+    iconShape: IconShape,
+    theme: Theme,
+    colorSchemeSettings: ColorSchemeSettings,
     iconPackComponents: List<IconPackComponent>,
     modifier: Modifier = Modifier,
     onResetIconPackPackageName: () -> Unit,
@@ -714,7 +806,12 @@ private fun EditCustomIcon(
             iconPackComponents = iconPackComponents,
             iconPackPackageName = iconPackPackageName,
             iconPackInfoLabel = iconPackLabel,
-            generalSettings = generalSettings,
+            iconTint = iconTint,
+            colorSource = colorSource,
+            customSeedColor = customSeedColor,
+            iconShape = iconShape,
+            theme = theme,
+            colorSchemeSettings = colorSchemeSettings,
             // Callbacks
             onDismissRequest = {
                 onResetIconPackPackageName()

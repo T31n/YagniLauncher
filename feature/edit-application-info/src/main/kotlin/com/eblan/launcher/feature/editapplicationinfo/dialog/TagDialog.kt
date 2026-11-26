@@ -127,14 +127,14 @@ internal fun AddTagDialog(
 @Composable
 internal fun UpdateTagDialog(
     modifier: Modifier = Modifier,
-    eblanApplicationInfoTagUi: EblanApplicationInfoTagUi?,
+    id: Long,
+    name: String,
+    index: Int,
     onDeleteEblanApplicationInfoTag: (EblanApplicationInfoTag) -> Unit,
     onDismissRequest: () -> Unit,
     onUpdateEblanApplicationInfoTag: (EblanApplicationInfoTag) -> Unit,
 ) {
-    if (eblanApplicationInfoTagUi == null) return
-
-    var value by remember { mutableStateOf(eblanApplicationInfoTagUi.name) }
+    var value by remember { mutableStateOf(name) }
 
     var isError by remember { mutableStateOf(false) }
 
@@ -156,9 +156,9 @@ internal fun UpdateTagDialog(
                 onClick = {
                     onDeleteEblanApplicationInfoTag(
                         EblanApplicationInfoTag(
-                            id = eblanApplicationInfoTagUi.id,
-                            name = eblanApplicationInfoTagUi.name,
-                            index = eblanApplicationInfoTagUi.index,
+                            id = id,
+                            name = name,
+                            index = index,
                         ),
                     )
 
@@ -209,9 +209,9 @@ internal fun UpdateTagDialog(
                     if (value.isNotBlank()) {
                         onUpdateEblanApplicationInfoTag(
                             EblanApplicationInfoTag(
-                                id = eblanApplicationInfoTagUi.id,
+                                id = id,
                                 name = value,
-                                index = eblanApplicationInfoTagUi.index,
+                                index = index,
                             ),
                         )
 

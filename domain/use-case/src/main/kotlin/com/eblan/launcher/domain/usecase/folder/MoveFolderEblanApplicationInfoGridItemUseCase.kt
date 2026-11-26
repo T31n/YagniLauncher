@@ -21,7 +21,6 @@ import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
-import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.grid.MoveFolderEblanApplicationInfoGridItemResult
 import com.eblan.launcher.domain.repository.FolderGridItemTransaction
 import kotlinx.coroutines.CoroutineDispatcher
@@ -36,7 +35,9 @@ class MoveFolderEblanApplicationInfoGridItemUseCase @Inject constructor(
     /**
      * Moves a folder child to the index indicated by its drag position on the current page.
      *
-     * @param folderGridItemPopup The folder popup containing the ordered child items.
+     * @param columns The number of columns in the folder popup grid.
+     * @param rows The number of rows in the folder popup grid.
+     * @param folderEblanApplicationInfoGridItems The ordered child items in the folder popup.
      * @param folderEblanApplicationInfoGridItem The child item being moved.
      * @param dragX The horizontal drag coordinate in pixels.
      * @param dragY The vertical drag coordinate in pixels.
@@ -46,7 +47,9 @@ class MoveFolderEblanApplicationInfoGridItemUseCase @Inject constructor(
      * @return A successful move result for the moved child.
      */
     suspend operator fun invoke(
-        folderGridItemPopup: FolderEblanApplicationInfoPopup,
+        columns: Int,
+        rows: Int,
+        folderEblanApplicationInfoGridItems: List<FolderEblanApplicationInfoGridItem>,
         folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
         dragX: Int,
         dragY: Int,
@@ -54,37 +57,37 @@ class MoveFolderEblanApplicationInfoGridItemUseCase @Inject constructor(
         gridHeight: Int,
         currentPage: Int,
     ): MoveFolderEblanApplicationInfoGridItemResult = withContext(defaultDispatcher) {
-        val gridItemsPerPage = folderGridItemPopup.columns * folderGridItemPopup.rows
+        val gridItemsPerPage = columns * rows
 
-        val cellWidth = gridWidth / folderGridItemPopup.columns
-        val cellHeight = gridHeight / folderGridItemPopup.rows
+        val cellWidth = gridWidth / columns
+        val cellHeight = gridHeight / rows
 
         val targetColumn = dragX / cellWidth
         val targetRow = dragY / cellHeight
 
         val targetIndex =
-            currentPage * gridItemsPerPage + targetRow * folderGridItemPopup.columns + targetColumn
+            currentPage * gridItemsPerPage + targetRow * columns + targetColumn
 
-        val folderEblanApplicationInfoGridItems =
-            folderGridItemPopup.folderEblanApplicationInfoGridItems.toMutableList()
+        val updatedFolderEblanApplicationInfoGridItems =
+            folderEblanApplicationInfoGridItems.toMutableList()
 
         val movingIndex =
-            folderEblanApplicationInfoGridItems.indexOfFirst { currentFolderEblanApplicationInfoGridItem ->
+            updatedFolderEblanApplicationInfoGridItems.indexOfFirst { currentFolderEblanApplicationInfoGridItem ->
                 currentFolderEblanApplicationInfoGridItem.id == folderEblanApplicationInfoGridItem.id
             }
 
         if (movingIndex != -1) {
-            folderEblanApplicationInfoGridItems.add(
+            updatedFolderEblanApplicationInfoGridItems.add(
                 targetIndex.coerceIn(
                     0,
-                    folderEblanApplicationInfoGridItems.size - 1,
+                    updatedFolderEblanApplicationInfoGridItems.size - 1,
                 ),
-                folderEblanApplicationInfoGridItems.removeAt(movingIndex),
+                updatedFolderEblanApplicationInfoGridItems.removeAt(movingIndex),
             )
         }
 
         val indexedGridItems =
-            folderEblanApplicationInfoGridItems.mapIndexed { index, eblanApplicationInfoGridItem ->
+            updatedFolderEblanApplicationInfoGridItems.mapIndexed { index, eblanApplicationInfoGridItem ->
                 when (val data = eblanApplicationInfoGridItem.data) {
                     is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
                         eblanApplicationInfoGridItem.copy(data = data.copy(folderIndex = index))

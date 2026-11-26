@@ -479,8 +479,12 @@ private fun resizeWidgetGridItem(
         updateAppWidgetOptions(
             // Manager
             androidAppWidgetManagerWrapper = appWidgetManager,
-            // Data
-            data = data,
+            // Widget Data
+            appWidgetId = data.appWidgetId,
+            minResizeWidth = data.minResizeWidth,
+            minResizeHeight = data.minResizeHeight,
+            maxResizeWidth = data.maxResizeWidth,
+            maxResizeHeight = data.maxResizeHeight,
             // Dimensions
             width = allowedWidth,
             height = allowedHeight,

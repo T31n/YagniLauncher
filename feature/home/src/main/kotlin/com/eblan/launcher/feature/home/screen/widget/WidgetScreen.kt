@@ -82,6 +82,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.eblan.launcher.designsystem.component.VerticalSlideReveal
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
@@ -95,6 +96,7 @@ import com.eblan.launcher.feature.home.R
 import com.eblan.launcher.feature.home.component.ScreenEffect
 import com.eblan.launcher.feature.home.component.getEblanUserTypeTitle
 import com.eblan.launcher.feature.home.component.rememberNestedScrollConnectionEffect
+import com.eblan.launcher.feature.home.contract.WidgetScreenContract
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import kotlinx.coroutines.launch
@@ -103,6 +105,8 @@ import kotlin.uuid.Uuid
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun WidgetScreen(
+    // Contract
+    contract: WidgetScreenContract,
     // Grid Configuration
     columns: Int,
     rows: Int,
@@ -113,18 +117,14 @@ internal fun WidgetScreen(
     paddingValues: PaddingValues,
     // State
     alpha: Float,
-    isVisibleOverlay: Boolean,
     swipeY: Float,
-    eblanAppWidgetProviderInfos: Map<EblanUser, Map<EblanApplicationInfoGroup, List<EblanAppWidgetProviderInfo>>>,
     // Interaction
     drag: Drag,
     modifier: Modifier = Modifier,
     // Actions
     onDismiss: () -> Unit,
-    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onVerticalDrag: (Float) -> Unit,
     onDragEnd: () -> Unit,
-    onGetEblanAppWidgetProviderInfosByLabel: (String) -> Unit,
     onDragWidget: (
         gridItem: GridItem,
         imageBitmap: ImageBitmap,
@@ -133,6 +133,9 @@ internal fun WidgetScreen(
         sharedElementKey: SharedElementKey,
     ) -> Unit,
 ) {
+    val isVisibleOverlay by contract.isVisibleOverlay.collectAsStateWithLifecycle()
+    val eblanAppWidgetProviderInfos by contract.eblanAppWidgetProviderInfos.collectAsStateWithLifecycle()
+
     val layoutDirection = LocalLayoutDirection.current
 
     val scope = rememberCoroutineScope()
@@ -155,8 +158,8 @@ internal fun WidgetScreen(
         swipeY = swipeY,
         // Callbacks
         onDismiss = onDismiss,
-        onGetLabel = onGetEblanAppWidgetProviderInfosByLabel,
-        onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
+        onGetLabel = contract::getEblanAppWidgetProviderInfosByLabel,
+        onUpdateIsVisibleOverlay = contract::updateIsVisibleOverlay,
     )
 
     Surface(
@@ -230,7 +233,7 @@ internal fun WidgetScreen(
             if (eblanAppWidgetProviderInfos.keys.size > 1) {
                 EblanAppWidgetProviderInfoTabRow(
                     currentPage = horizontalPagerState.currentPage,
-                    eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfos,
+                    eblanUsers = eblanAppWidgetProviderInfos.keys,
                     onAnimateScrollToPage = horizontalPagerState::animateScrollToPage,
                 )
 
@@ -288,13 +291,13 @@ internal fun WidgetScreen(
 @Composable
 private fun EblanAppWidgetProviderInfoTabRow(
     currentPage: Int,
-    eblanAppWidgetProviderInfos: Map<EblanUser, Map<EblanApplicationInfoGroup, List<EblanAppWidgetProviderInfo>>>,
+    eblanUsers: Set<EblanUser>,
     onAnimateScrollToPage: suspend (Int) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
 
     SecondaryTabRow(selectedTabIndex = currentPage) {
-        eblanAppWidgetProviderInfos.keys.forEachIndexed { index, eblanUser ->
+        eblanUsers.forEachIndexed { index, eblanUser ->
             Tab(
                 selected = currentPage == index,
                 onClick = {
@@ -370,7 +373,7 @@ private fun EblanAppWidgetProvidersPage(
                     EblanApplicationInfoItem(
                         // Application Info
                         eblanApplicationInfoGroup = eblanApplicationInfoGroup,
-                        eblanAppWidgetProviderInfos = eblanApplicationInfoGroups,
+                        eblanAppWidgetProviderInfos = eblanApplicationInfoGroups[eblanApplicationInfoGroup].orEmpty(),
                         // Layout Dimensions
                         screenWidth = screenWidth,
                         screenHeight = screenHeight,
@@ -392,7 +395,7 @@ private fun EblanAppWidgetProvidersPage(
 private fun EblanApplicationInfoItem(
     // Application Info
     eblanApplicationInfoGroup: EblanApplicationInfoGroup,
-    eblanAppWidgetProviderInfos: Map<EblanApplicationInfoGroup, List<EblanAppWidgetProviderInfo>>,
+    eblanAppWidgetProviderInfos: List<EblanAppWidgetProviderInfo>,
     // Layout Dimensions
     screenWidth: Int,
     screenHeight: Int,
@@ -454,7 +457,7 @@ private fun EblanApplicationInfoItem(
             Column(modifier = Modifier.fillMaxWidth()) {
                 Spacer(modifier = Modifier.height(10.dp))
 
-                eblanAppWidgetProviderInfos[eblanApplicationInfoGroup]?.forEach { eblanAppWidgetProviderInfo ->
+                eblanAppWidgetProviderInfos.forEach { eblanAppWidgetProviderInfo ->
                     EblanAppWidgetProviderInfoItem(
                         // Widget Info
                         eblanAppWidgetProviderInfo = eblanAppWidgetProviderInfo,

@@ -53,7 +53,10 @@ import com.eblan.launcher.designsystem.component.EblanDialog
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.domain.model.iconpackinfo.IconPackComponent
-import com.eblan.launcher.domain.model.userdata.GeneralSettings
+import com.eblan.launcher.domain.model.userdata.ColorSchemeSettings
+import com.eblan.launcher.domain.model.userdata.ColorSource
+import com.eblan.launcher.domain.model.userdata.IconShape
+import com.eblan.launcher.domain.model.userdata.Theme
 import com.eblan.launcher.ui.local.LocalIconPackManager
 import com.eblan.launcher.ui.local.LocalImageSerializer
 import kotlinx.coroutines.FlowPreview
@@ -71,7 +74,12 @@ fun IconPackInfoFilesDialog(
     iconPackComponents: List<IconPackComponent>,
     iconPackPackageName: String?,
     iconPackInfoLabel: String?,
-    generalSettings: GeneralSettings,
+    iconTint: Boolean,
+    colorSource: ColorSource,
+    customSeedColor: Int,
+    iconShape: IconShape,
+    theme: Theme,
+    colorSchemeSettings: ColorSchemeSettings,
     // Modifier
     modifier: Modifier = Modifier,
     // Callbacks
@@ -79,9 +87,7 @@ fun IconPackInfoFilesDialog(
     onUpdateIcon: (ByteArray) -> Unit,
     onSearchIconPackInfoComponent: (String) -> Unit,
 ) {
-    requireNotNull(iconPackPackageName)
-
-    requireNotNull(iconPackInfoLabel)
+    if (iconPackPackageName == null || iconPackInfoLabel == null) return
     val scope = rememberCoroutineScope()
 
     val imageSerializer = LocalImageSerializer.current
@@ -152,20 +158,36 @@ fun IconPackInfoFilesDialog(
                         key = { currentIconPackComponent -> currentIconPackComponent.drawableName },
                     ) { iconPackInfoComponent ->
 
-                        var drawable by remember(iconPackInfoComponent, generalSettings) {
+                        var drawable by remember(
+                            iconPackInfoComponent,
+                            iconTint,
+                            colorSource,
+                            customSeedColor,
+                            iconShape,
+                            theme,
+                            colorSchemeSettings,
+                        ) {
                             mutableStateOf<Drawable?>(null)
                         }
 
-                        LaunchedEffect(key1 = iconPackInfoComponent, key2 = generalSettings) {
+                        LaunchedEffect(
+                            iconPackInfoComponent,
+                            iconTint,
+                            colorSource,
+                            customSeedColor,
+                            iconShape,
+                            theme,
+                            colorSchemeSettings,
+                        ) {
                             drawable = iconPackManager.loadDrawableFromIconPack(
                                 packageName = iconPackPackageName,
                                 drawableName = iconPackInfoComponent.drawableName,
-                                iconTint = generalSettings.iconTint,
-                                colorSource = generalSettings.colorSource,
-                                customSeedColor = generalSettings.customSeedColor,
-                                iconShape = generalSettings.iconShape,
-                                theme = generalSettings.theme,
-                                colorSchemeSettings = generalSettings.colorSchemeSettings,
+                                iconTint = iconTint,
+                                colorSource = colorSource,
+                                customSeedColor = customSeedColor,
+                                iconShape = iconShape,
+                                theme = theme,
+                                colorSchemeSettings = colorSchemeSettings,
                             )
                         }
 
@@ -174,19 +196,18 @@ fun IconPackInfoFilesDialog(
                             contentDescription = null,
                             modifier = Modifier
                                 .size(48.dp)
-                                .clickable {
+                                .clickable(enabled = drawable != null) {
+                                    val currentDrawable = drawable ?: return@clickable
+
                                     scope.launch {
-                                        val icon = drawable?.let { currentDrawable ->
-                                            imageSerializer.createByteArray(
-                                                drawable = currentDrawable,
-                                            )
-                                        }
+                                        val icon = imageSerializer.createByteArray(
+                                            drawable = currentDrawable,
+                                        )
 
                                         if (icon != null) {
                                             onUpdateIcon(icon)
+                                            onDismissRequest()
                                         }
-
-                                        onDismissRequest()
                                     }
                                 }
                                 .padding(EblanSpacing.extraSmall),

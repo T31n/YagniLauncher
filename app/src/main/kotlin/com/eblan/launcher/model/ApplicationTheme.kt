@@ -17,12 +17,9 @@
  */
 package com.eblan.launcher.model
 
-import com.eblan.launcher.domain.model.userdata.ColorSource
 import com.eblan.launcher.domain.model.userdata.Theme
 
 data class ApplicationTheme(
     val theme: Theme,
     val systemBarsTheme: Theme,
-    val colorSource: ColorSource,
-    val customSeedColor: Int,
 )

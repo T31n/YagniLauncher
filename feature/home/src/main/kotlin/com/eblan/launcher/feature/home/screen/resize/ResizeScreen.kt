@@ -28,43 +28,49 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.domain.model.grid.Associate
-import com.eblan.launcher.domain.model.grid.GridItem
-import com.eblan.launcher.domain.model.userdata.HomeSettings
+import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.HomeHandler
+import com.eblan.launcher.feature.home.contract.ResizeScreenContract
 import com.eblan.launcher.feature.home.util.PAGE_INDICATOR_HEIGHT
 
 @Composable
 internal fun ResizeScreen(
+    // Contract
+    contract: ResizeScreenContract,
     // Layout
     paddingValues: PaddingValues,
     modifier: Modifier = Modifier,
-    // Content
-    homeSettings: HomeSettings,
-    resizeGridItem: GridItem,
+    // Dock Settings
+    enableDock: Boolean,
+    dockHeight: Int,
+    dockColumns: Int,
+    dockRows: Int,
+    dockGridItemSettings: GridItemSettings,
+    // Grid Settings
+    columns: Int,
+    rows: Int,
+    gridItemSettings: GridItemSettings,
     // Appearance
     textColor: TextColor,
+    dockTextColor: TextColor,
     lockMovement: Boolean,
     // Callbacks
-    onResizeCancel: () -> Unit,
-    onResizeEnd: () -> Unit,
-    onResizeGridItem: (
-        gridItem: GridItem,
-        columns: Int,
-        rows: Int,
-    ) -> Unit,
     onUpdateIsResizing: (Boolean) -> Unit,
 ) {
+    val resizeGridItem = contract.resizeGridItem.collectAsStateWithLifecycle().value ?: return
+
     val density = LocalDensity.current
 
-    val dockHeight = when (homeSettings.enableDock) {
-        true -> homeSettings.dockHeight
+    val currentDockHeight = when (enableDock) {
+        true -> dockHeight
         false -> 0
     }.dp
 
     val dockHeightPx = with(density) {
-        dockHeight.roundToPx()
+        currentDockHeight.roundToPx()
     }
 
     val pageIndicatorHeightPx = with(density) {
@@ -72,11 +78,11 @@ internal fun ResizeScreen(
     }
 
     BackHandler {
-        onResizeCancel()
+        contract.resetGrid()
     }
 
     HomeHandler {
-        onResizeCancel()
+        contract.resetGrid()
     }
 
     BoxWithConstraints(
@@ -88,7 +94,7 @@ internal fun ResizeScreen(
                     onTap = {
                         onUpdateIsResizing(false)
 
-                        onResizeEnd()
+                        contract.resetGridAfterResize()
                     },
                 )
             },
@@ -97,8 +103,8 @@ internal fun ResizeScreen(
             Associate.Grid -> {
                 val gridHeight = constraints.maxHeight - pageIndicatorHeightPx - dockHeightPx
 
-                val cellWidth = constraints.maxWidth / homeSettings.columns
-                val cellHeight = gridHeight / homeSettings.rows
+                val cellWidth = constraints.maxWidth / columns
+                val cellHeight = gridHeight / rows
 
                 val x = resizeGridItem.startColumn * cellWidth
                 val y = resizeGridItem.startRow * cellHeight
@@ -118,22 +124,22 @@ internal fun ResizeScreen(
                     cellWidth = cellWidth,
                     cellHeight = cellHeight,
                     // Grid Structure
-                    columns = homeSettings.columns,
-                    rows = homeSettings.rows,
+                    columns = columns,
+                    rows = rows,
                     // Grid Item
                     gridItem = resizeGridItem,
-                    gridItemSettings = homeSettings.gridItemSettings,
+                    gridItemSettings = gridItemSettings,
                     // Behavior and Appearance
                     lockMovement = lockMovement,
                     textColor = textColor,
                     // Callbacks
-                    onResizeGridItem = onResizeGridItem,
+                    onResizeGridItem = contract::resizeGridItem,
                 )
             }
 
             Associate.Dock -> {
-                val cellWidth = constraints.maxWidth / homeSettings.dockColumns
-                val cellHeight = dockHeightPx / homeSettings.dockRows
+                val cellWidth = constraints.maxWidth / dockColumns
+                val cellHeight = dockHeightPx / dockRows
 
                 val x = resizeGridItem.startColumn * cellWidth
                 val y = resizeGridItem.startRow * cellHeight
@@ -155,16 +161,16 @@ internal fun ResizeScreen(
                     cellWidth = cellWidth,
                     cellHeight = cellHeight,
                     // Grid Structure
-                    columns = homeSettings.dockColumns,
-                    rows = homeSettings.dockRows,
+                    columns = dockColumns,
+                    rows = dockRows,
                     // Grid Item
                     gridItem = resizeGridItem,
-                    gridItemSettings = homeSettings.dockGridItemSettings,
+                    gridItemSettings = dockGridItemSettings,
                     // Behavior and Appearance
                     lockMovement = lockMovement,
-                    textColor = textColor,
+                    textColor = dockTextColor,
                     // Callbacks
-                    onResizeGridItem = onResizeGridItem,
+                    onResizeGridItem = contract::resizeGridItem,
                 )
             }
         }

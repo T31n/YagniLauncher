@@ -69,8 +69,8 @@ import coil3.request.addLastModifiedToFileCacheKey
 import coil3.request.crossfade
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
+import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.launcherapps.EblanUser
-import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.R
@@ -92,7 +92,8 @@ internal fun LazyGridScope.privateSpace(
     privateEblanUser: EblanUser?,
     privateEblanApplicationInfos: List<EblanApplicationInfo>,
     // App Drawer and Appearance Settings
-    appDrawerSettings: AppDrawerSettings,
+    gridItemSettings: GridItemSettings,
+    appDrawerRowsHeight: Int,
     iconPackFilePaths: Map<String, String?>,
     // Space State
     isQuietModeEnabled: Boolean,
@@ -135,12 +136,20 @@ internal fun LazyGridScope.privateSpace(
     }
 
     if (!isQuietModeEnabled) {
-        items(privateEblanApplicationInfos) { eblanApplicationInfo ->
+        items(
+            items = privateEblanApplicationInfos,
+            key = { currentEblanApplicationInfo ->
+                "${currentEblanApplicationInfo.serialNumber} ${currentEblanApplicationInfo.componentName}"
+            },
+        ) { eblanApplicationInfo ->
             PrivateSpaceEblanApplicationInfoItem(
                 // Application Info
                 eblanApplicationInfo = eblanApplicationInfo,
                 // Settings and Styling
-                appDrawerSettings = appDrawerSettings,
+                gridItemSettings = gridItemSettings,
+                appDrawerRowsHeight = appDrawerRowsHeight,
+                backgroundColor = backgroundColor,
+                customBackgroundColor = customBackgroundColor,
                 iconPackFilePaths = iconPackFilePaths,
                 isVisibleOverlay = isVisibleOverlay,
                 systemTextColor = systemTextColor,
@@ -250,7 +259,10 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
     // Application Info
     eblanApplicationInfo: EblanApplicationInfo,
     // Settings and Styling
-    appDrawerSettings: AppDrawerSettings,
+    gridItemSettings: GridItemSettings,
+    appDrawerRowsHeight: Int,
+    backgroundColor: BackgroundColor,
+    customBackgroundColor: Int,
     iconPackFilePaths: Map<String, String?>,
     isVisibleOverlay: Boolean,
     systemTextColor: TextColor,
@@ -273,22 +285,27 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
 
     val scope = rememberCoroutineScope()
 
+    val currentEblanApplicationInfo by rememberUpdatedState(eblanApplicationInfo)
     val currentOnDismiss by rememberUpdatedState(onDismiss)
-
-    val gridItemSettings = appDrawerSettings.gridItemSettings
+    val currentOnLongPressPrivateSpaceApplicationInfoItem by rememberUpdatedState(
+        onLongPressPrivateSpaceApplicationInfoItem,
+    )
 
     val textColor = getGridItemTextColorFromBackgroundColor(
         // Container Background Color
-        backgroundColor = appDrawerSettings.backgroundColor,
-        customBackgroundColor = appDrawerSettings.customBackgroundColor,
-        // Grid Item Settings
-        gridItemSettings = gridItemSettings,
+        backgroundColor = backgroundColor,
+        customBackgroundColor = customBackgroundColor,
+        // Grid Item Text and Background Colors
+        gridItemTextColor = gridItemSettings.textColor,
+        gridItemCustomTextColor = gridItemSettings.customTextColor,
+        gridItemBackgroundColor = gridItemSettings.backgroundColor,
+        gridItemCustomBackgroundColor = gridItemSettings.customBackgroundColor,
         // Text Color
         systemTextColor = systemTextColor,
         systemCustomTextColor = systemCustomTextColor,
     )
 
-    val appDrawerRowsHeight = appDrawerSettings.appDrawerRowsHeight.dp
+    val rowHeight = appDrawerRowsHeight.dp
 
     val maxLines = if (gridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
 
@@ -312,6 +329,9 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
         paddingValues.calculateTopPadding().roundToPx()
     }
 
+    val currentLeftPadding by rememberUpdatedState(leftPadding)
+    val currentTopPadding by rememberUpdatedState(topPadding)
+
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
     var intSize by remember { mutableStateOf(IntSize.Zero) }
 
@@ -320,10 +340,13 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
     }
 
     val itemModifier = modifier
-        .height(appDrawerRowsHeight)
+        .height(rowHeight)
         .padding(gridItemSettings.padding.dp)
         .background(
-            color = getGridItemBackgroundColor(gridItemSettings),
+            color = getGridItemBackgroundColor(
+                backgroundColor = gridItemSettings.backgroundColor,
+                customBackgroundColor = gridItemSettings.customBackgroundColor,
+            ),
             shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
         )
         .pointerInput(key1 = isVisibleOverlay) {
@@ -333,15 +356,15 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
                         scope.launch {
                             handleOnTapEblanApplicationInfoItem(
                                 // Application Info
-                                serialNumber = eblanApplicationInfo.serialNumber,
-                                componentName = eblanApplicationInfo.componentName,
+                                serialNumber = currentEblanApplicationInfo.serialNumber,
+                                componentName = currentEblanApplicationInfo.componentName,
                                 launcherApps = launcherApps,
                                 // Position and Size
                                 intOffset = intOffset,
                                 intSize = intSize,
                                 // Padding
-                                leftPadding = leftPadding,
-                                topPadding = topPadding,
+                                leftPadding = currentLeftPadding,
+                                topPadding = currentTopPadding,
                                 // Controller
                                 keyboardController = keyboardController,
                             )
@@ -357,14 +380,14 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
                         scope.launch {
                             handleOnLongPressPrivateSpaceEblanApplicationInfoItem(
                                 // Application Info
-                                eblanApplicationInfo = eblanApplicationInfo,
+                                eblanApplicationInfo = currentEblanApplicationInfo,
                                 // Position and Size
                                 intOffset = intOffset,
                                 intSize = intSize,
                                 // Keyboard
                                 keyboardController = keyboardController,
                                 // Callbacks
-                                onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
+                                onLongPressPrivateSpaceApplicationInfoItem = currentOnLongPressPrivateSpaceApplicationInfoItem,
                             )
                         }
                     }
@@ -412,7 +435,7 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
 
     GridItemLayoutType(
         // Settings and Modifier
-        gridItemSettings = gridItemSettings,
+        layoutType = gridItemSettings.layoutType,
         modifier = itemModifier,
         // Alignment and Arrangement
         horizontalAlignment = horizontalAlignment,
