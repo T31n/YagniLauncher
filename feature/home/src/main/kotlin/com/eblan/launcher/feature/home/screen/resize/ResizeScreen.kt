@@ -28,49 +28,44 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.domain.model.grid.Associate
+import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.HomeHandler
-import com.eblan.launcher.feature.home.contract.ResizeScreenContract
 import com.eblan.launcher.feature.home.util.PAGE_INDICATOR_HEIGHT
 
 @Composable
 internal fun ResizeScreen(
-    // Contract
-    contract: ResizeScreenContract,
     // Layout
     paddingValues: PaddingValues,
     modifier: Modifier = Modifier,
-    // Dock Settings
-    enableDock: Boolean,
+    // Content
     dockHeight: Int,
-    dockColumns: Int,
-    dockRows: Int,
-    dockGridItemSettings: GridItemSettings,
-    // Grid Settings
     columns: Int,
     rows: Int,
     gridItemSettings: GridItemSettings,
+    dockColumns: Int,
+    dockRows: Int,
+    dockGridItemSettings: GridItemSettings,
+    resizeGridItem: GridItem,
     // Appearance
     textColor: TextColor,
-    dockTextColor: TextColor,
     lockMovement: Boolean,
     // Callbacks
+    onResizeCancel: () -> Unit,
+    onResizeEnd: () -> Unit,
+    onResizeGridItem: (
+        gridItem: GridItem,
+        columns: Int,
+        rows: Int,
+    ) -> Unit,
     onUpdateIsResizing: (Boolean) -> Unit,
 ) {
-    val resizeGridItem = contract.resizeGridItem.collectAsStateWithLifecycle().value ?: return
-
     val density = LocalDensity.current
 
-    val currentDockHeight = when (enableDock) {
-        true -> dockHeight
-        false -> 0
-    }.dp
-
     val dockHeightPx = with(density) {
-        currentDockHeight.roundToPx()
+        dockHeight.dp.roundToPx()
     }
 
     val pageIndicatorHeightPx = with(density) {
@@ -78,11 +73,11 @@ internal fun ResizeScreen(
     }
 
     BackHandler {
-        contract.resetGrid()
+        onResizeCancel()
     }
 
     HomeHandler {
-        contract.resetGrid()
+        onResizeCancel()
     }
 
     BoxWithConstraints(
@@ -94,7 +89,7 @@ internal fun ResizeScreen(
                     onTap = {
                         onUpdateIsResizing(false)
 
-                        contract.resetGridAfterResize()
+                        onResizeEnd()
                     },
                 )
             },
@@ -128,12 +123,15 @@ internal fun ResizeScreen(
                     rows = rows,
                     // Grid Item
                     gridItem = resizeGridItem,
-                    gridItemSettings = gridItemSettings,
+                    gridItemTextColor = gridItemSettings.textColor,
+                    gridItemCustomTextColor = gridItemSettings.customTextColor,
+                    gridItemBackgroundColor = gridItemSettings.backgroundColor,
+                    gridItemCustomBackgroundColor = gridItemSettings.customBackgroundColor,
                     // Behavior and Appearance
                     lockMovement = lockMovement,
                     textColor = textColor,
                     // Callbacks
-                    onResizeGridItem = contract::resizeGridItem,
+                    onResizeGridItem = onResizeGridItem,
                 )
             }
 
@@ -165,12 +163,15 @@ internal fun ResizeScreen(
                     rows = dockRows,
                     // Grid Item
                     gridItem = resizeGridItem,
-                    gridItemSettings = dockGridItemSettings,
+                    gridItemTextColor = dockGridItemSettings.textColor,
+                    gridItemCustomTextColor = dockGridItemSettings.customTextColor,
+                    gridItemBackgroundColor = dockGridItemSettings.backgroundColor,
+                    gridItemCustomBackgroundColor = dockGridItemSettings.customBackgroundColor,
                     // Behavior and Appearance
                     lockMovement = lockMovement,
-                    textColor = dockTextColor,
+                    textColor = textColor,
                     // Callbacks
-                    onResizeGridItem = contract::resizeGridItem,
+                    onResizeGridItem = onResizeGridItem,
                 )
             }
         }

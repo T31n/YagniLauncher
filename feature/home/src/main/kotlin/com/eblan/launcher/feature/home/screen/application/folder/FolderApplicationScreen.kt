@@ -53,9 +53,9 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderEntry
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.GridItem
@@ -69,7 +69,6 @@ import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.FolderGridLayout
 import com.eblan.launcher.feature.home.component.FolderTitle
 import com.eblan.launcher.feature.home.component.HomeHandler
-import com.eblan.launcher.feature.home.contract.FolderApplicationScreenContract
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.PageDirection
 import com.eblan.launcher.feature.home.model.SharedElementKey
@@ -85,21 +84,22 @@ import kotlin.uuid.Uuid
 
 @Composable
 internal fun FolderApplicationScreen(
-    // Contract
-    contract: FolderApplicationScreenContract,
     // Core State and Layout
     sharedTransitionScope: SharedTransitionScope,
     folderEntry: FolderEntry,
     paddingValues: PaddingValues,
     safeDrawingHeight: Int,
     safeDrawingWidth: Int,
+    isVisibleOverlay: Boolean,
     screenWidth: Int,
     screenHeight: Int,
     modifier: Modifier = Modifier,
     // Folder Content and Appearance
+    folderEblanApplicationInfoEntries: List<FolderEntry>,
     animations: Boolean,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
+    folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
     folderBorderColor: BackgroundColor,
@@ -109,17 +109,35 @@ internal fun FolderApplicationScreen(
     folderCornerRadius: Int,
     folderCellWidth: Int,
     folderCellHeight: Int,
+    iconPackFilePaths: Map<String, String?>,
     // Drag and Drop State
+    moveFolderEblanApplicationInfoGridItemResult: MoveFolderEblanApplicationInfoGridItemResult?,
     drag: Drag,
     isDragging: Boolean,
     lockMovement: Boolean,
     dragIntOffset: IntOffset,
     showFolderEblanApplicationInfoGridItemMenu: Boolean,
     // Actions and Callbacks
+    onUpsertFolderEblanApplicationInfoEntry: (FolderEntry) -> Unit,
+    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
+    onMoveFolderEblanApplicationInfoGridItem: (
+        columns: Int,
+        rows: Int,
+        folderEblanApplicationInfoGridItems: List<FolderEblanApplicationInfoGridItem>,
+        folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
+        dragX: Int,
+        dragY: Int,
+        gridWidth: Int,
+        gridHeight: Int,
+        currentPage: Int,
+    ) -> Unit,
     onDismissFolderEblanApplicationGridItemPopup: () -> Unit,
+    onResetGrid: () -> Unit,
+    onResetGridAfterMoveFolderEblanApplicationInfo: () -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
     onMoveFolderEblanApplicationInfoGridItemOutsideFolder: (
-        folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
+        folderId: String,
+        isFolder: Boolean,
         movingGridItem: GridItem,
     ) -> Unit,
     onLongPressFolderEblanApplicationInfoGridItem: (
@@ -137,14 +155,6 @@ internal fun FolderApplicationScreen(
     onDismiss: () -> Unit,
     onTapFolderEblanApplicationInfoItem: (FolderEntry) -> Unit,
 ) {
-    val isVisibleOverlay by contract.isVisibleOverlay.collectAsStateWithLifecycle()
-    val folderEblanApplicationInfoEntries by contract.folderEblanApplicationInfoEntries.collectAsStateWithLifecycle()
-    val folderEblanApplicationInfoPopups by contract.folderEblanApplicationInfoPopups.collectAsStateWithLifecycle()
-    val getEblanApplicationInfosByLabelAndTag by contract.getEblanApplicationInfosByLabelAndTag.collectAsStateWithLifecycle()
-    val moveFolderEblanApplicationInfoGridItemResult by contract.moveFolderEblanApplicationInfoGridItemResult.collectAsStateWithLifecycle()
-
-    val iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths
-
     val previewFolderEblanApplicationInfo = folderEblanApplicationInfoPopups[folderEntry.id] ?: return
 
     val folderPopupIntOffset = IntOffset(
@@ -159,12 +169,28 @@ internal fun FolderApplicationScreen(
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
 
+    val leftPadding = with(density) {
+        paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
+    }
+
+    val topPadding = with(density) {
+        paddingValues.calculateTopPadding().roundToPx()
+    }
+
+    val rightPadding = with(density) {
+        paddingValues.calculateRightPadding(layoutDirection).roundToPx()
+    }
+
+    val bottomPadding = with(density) {
+        paddingValues.calculateBottomPadding().roundToPx()
+    }
+
     val folderPopupLayoutInfo = getFolderPopupLayoutInfo(
         // Environment
         density = density,
-        layoutDirection = layoutDirection,
         // Layout
-        paddingValues = paddingValues,
+        leftPadding = leftPadding,
+        topPadding = topPadding,
         safeDrawingWidth = safeDrawingWidth,
         safeDrawingHeight = safeDrawingHeight,
         // Popup
@@ -226,8 +252,8 @@ internal fun FolderApplicationScreen(
     val currentDrag = rememberUpdatedState(drag)
     val currentIsDragging = rememberUpdatedState(isDragging)
     val currentIsVisibleOverlay = rememberUpdatedState(isVisibleOverlay)
-    val currentMoveFolderEblanApplicationInfoGridItemResult =
-        rememberUpdatedState(moveFolderEblanApplicationInfoGridItemResult)
+    val currentMovingFolderEblanApplicationInfoGridItem =
+        rememberUpdatedState(moveFolderEblanApplicationInfoGridItemResult?.folderEblanApplicationInfoGridItem)
     val currentLockMovement = rememberUpdatedState(lockMovement)
 
     val isInProgress by remember {
@@ -258,7 +284,7 @@ internal fun FolderApplicationScreen(
             drag = currentDrag,
             isDragging = currentIsDragging,
             isVisibleOverlay = currentIsVisibleOverlay,
-            moveFolderEblanApplicationInfoGridItemResult = currentMoveFolderEblanApplicationInfoGridItemResult,
+            movingFolderEblanApplicationInfoGridItem = currentMovingFolderEblanApplicationInfoGridItem,
             // Animation and Settings
             animations = animations,
             progress = progress,
@@ -285,7 +311,10 @@ internal fun FolderApplicationScreen(
             // Screen Dimensions
             screenHeight = screenHeight,
             screenWidth = screenWidth,
-            paddingValues = paddingValues,
+            leftPadding = leftPadding,
+            topPadding = topPadding,
+            rightPadding = rightPadding,
+            bottomPadding = bottomPadding,
             // Folder Item State
             currentPage = folderGridHorizontalPagerState.currentPage,
             folderEntry = folderEntry,
@@ -295,7 +324,7 @@ internal fun FolderApplicationScreen(
             folderCellWidth = folderCellWidth,
             folderCellHeight = folderCellHeight,
             isLastFolderEblanApplicationInfoGridItem = isLastFolderEblanApplicationInfo,
-            moveFolderEblanApplicationInfoGridItemResult = currentMoveFolderEblanApplicationInfoGridItemResult.value,
+            movingFolderEblanApplicationInfoGridItem = currentMovingFolderEblanApplicationInfoGridItem.value,
             // Drag State
             drag = currentDrag.value,
             dragIntOffset = dragIntOffset,
@@ -306,8 +335,8 @@ internal fun FolderApplicationScreen(
             lockMovement = currentLockMovement.value,
             isInProgress = isInProgress,
             // Callbacks
-            onMoveFolderEblanApplicationInfoGridItem = contract::moveFolderEblanApplicationInfoGridItem,
-            onUpsertFolderEblanApplicationInfoEntry = contract::upsertFolderEblanApplicationInfoEntry,
+            onMoveFolderEblanApplicationInfoGridItem = onMoveFolderEblanApplicationInfoGridItem,
+            onUpsertFolderEblanApplicationInfoEntry = onUpsertFolderEblanApplicationInfoEntry,
         )
     }
 
@@ -323,10 +352,10 @@ internal fun FolderApplicationScreen(
             isVisibleOverlay = isVisibleOverlay,
             isLastFolderGridItem = isLastFolderEblanApplicationInfo,
             // Callbacks
-            onResetGrid = contract::resetGrid,
-            onResetGridAfterMoveFolder = contract::resetGridAfterMoveFolderEblanApplicationInfo,
+            onResetGrid = onResetGrid,
+            onResetGridAfterMoveFolder = onResetGridAfterMoveFolderEblanApplicationInfo,
             onUpdateIsDragging = onUpdateIsDragging,
-            onUpdateIsVisibleOverlay = contract::updateIsVisibleOverlay,
+            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
         )
     }
 
@@ -361,10 +390,10 @@ internal fun FolderApplicationScreen(
         handleAnimateScrollToPage(
             // Environment and Layout
             density = density,
-            layoutDirection = layoutDirection,
             screenWidth = screenWidth,
             columns = previewFolderEblanApplicationInfo.columns,
-            paddingValues = paddingValues,
+            leftPadding = leftPadding,
+            rightPadding = rightPadding,
             // Drag and Gesture
             drag = drag,
             isDragging = currentIsDragging.value,
@@ -389,7 +418,7 @@ internal fun FolderApplicationScreen(
             isLastFolderEblanApplicationInfo &&
             !isInProgress,
     ) {
-        contract.upsertFolderEblanApplicationInfoEntry(folderEntry.copy(isCloseFolder = true))
+        onUpsertFolderEblanApplicationInfoEntry(folderEntry.copy(isCloseFolder = true))
     }
 
     HomeHandler(
@@ -397,7 +426,7 @@ internal fun FolderApplicationScreen(
             isLastFolderEblanApplicationInfo &&
             !isInProgress,
     ) {
-        contract.upsertFolderEblanApplicationInfoEntry(folderEntry.copy(isCloseFolder = true))
+        onUpsertFolderEblanApplicationInfoEntry(folderEntry.copy(isCloseFolder = true))
     }
 
     Box(
@@ -409,7 +438,7 @@ internal fun FolderApplicationScreen(
                         onPress = {
                             awaitRelease()
 
-                            contract.upsertFolderEblanApplicationInfoEntry(folderEntry.copy(isCloseFolder = true))
+                            onUpsertFolderEblanApplicationInfoEntry(folderEntry.copy(isCloseFolder = true))
                         },
                     )
                 }
@@ -480,8 +509,10 @@ internal fun FolderApplicationScreen(
                                 animations = animations,
                                 // Folder Item and Content
                                 folderEblanApplicationInfoGridItem = currentFolderEblanApplicationInfoGridItem,
-                                folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
-                                folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
+                                previewNestedFolderEblanApplicationInfoGridItems = folderEblanApplicationInfoPopups[currentFolderEblanApplicationInfoGridItem.id]?.previewFolderEblanApplicationInfoGridItems,
+                                isVisibleFolder = folderEblanApplicationInfoEntries.any { currentFolderEntry ->
+                                    currentFolderEntry.id == currentFolderEblanApplicationInfoGridItem.id
+                                },
                                 // Styling and Colors
                                 folderBackgroundColor = folderBackgroundColor,
                                 customFolderBackgroundColor = customFolderBackgroundColor,
@@ -493,14 +524,15 @@ internal fun FolderApplicationScreen(
                                 folderCornerRadius = folderCornerRadius,
                                 // Layout and Settings
                                 gridItemSettings = gridItemSettings,
-                                paddingValues = paddingValues,
+                                leftPadding = leftPadding,
+                                topPadding = topPadding,
                                 iconPackFilePaths = iconPackFilePaths,
                                 // State and Progress
                                 isVisibleOverlay = isVisibleOverlay,
                                 isScrollInProgress = folderGridHorizontalPagerState.isScrollInProgress,
                                 isInProgress = isInProgress,
                                 progress = progress.value,
-                                moveFolderEblanApplicationInfoGridItemResult = moveFolderEblanApplicationInfoGridItemResult,
+                                movingFolderEblanApplicationInfoGridItemId = moveFolderEblanApplicationInfoGridItemResult?.folderEblanApplicationInfoGridItem?.id,
                                 drag = drag,
                                 showFolderEblanApplicationInfoGridItemMenu = showFolderEblanApplicationInfoGridItemMenu,
                                 // Callbacks
@@ -516,7 +548,7 @@ internal fun FolderApplicationScreen(
                 FolderTitle(
                     // Content
                     label = previewFolderEblanApplicationInfo.folderEblanApplicationInfo.label,
-                    gridItemsByPage = previewFolderEblanApplicationInfo.folderEblanApplicationInfoGridItemsByPage,
+                    pageCount = previewFolderEblanApplicationInfo.folderEblanApplicationInfoGridItemsByPage.size,
                     progress = progress.value,
                     // State
                     folderGridHorizontalPagerState = folderGridHorizontalPagerState,
@@ -542,7 +574,7 @@ private suspend fun handleIsCloseFolder(
     drag: State<Drag>,
     isDragging: State<Boolean>,
     isVisibleOverlay: State<Boolean>,
-    moveFolderEblanApplicationInfoGridItemResult: State<MoveFolderEblanApplicationInfoGridItemResult?>,
+    movingFolderEblanApplicationInfoGridItem: State<FolderEblanApplicationInfoGridItem?>,
     // Animation and Settings
     animations: Boolean,
     progress: Animatable<Float, AnimationVector1D>,
@@ -550,7 +582,8 @@ private suspend fun handleIsCloseFolder(
     // Callbacks
     onAnimateToScrollToPage: suspend (Int) -> Unit,
     onMoveFolderEblanApplicationInfoGridItemOutsideFolder: (
-        folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
+        folderId: String,
+        isFolder: Boolean,
         movingGridItem: GridItem,
     ) -> Unit,
     onCloseFolder: (
@@ -575,7 +608,7 @@ private suspend fun handleIsCloseFolder(
         drag = drag,
         isDragging = isDragging,
         isVisibleOverlay = isVisibleOverlay,
-        moveFolderEblanApplicationInfoGridItemResult = moveFolderEblanApplicationInfoGridItemResult,
+        movingFolderEblanApplicationInfoGridItem = movingFolderEblanApplicationInfoGridItem,
         // Callbacks
         onMoveFolderEblanApplicationInfoGridItemOutsideFolder = onMoveFolderEblanApplicationInfoGridItemOutsideFolder,
     )
@@ -593,16 +626,16 @@ private fun handleMoveFolderGridItemOutsideFolder(
     drag: State<Drag>,
     isDragging: State<Boolean>,
     isVisibleOverlay: State<Boolean>,
-    moveFolderEblanApplicationInfoGridItemResult: State<MoveFolderEblanApplicationInfoGridItemResult?>,
+    movingFolderEblanApplicationInfoGridItem: State<FolderEblanApplicationInfoGridItem?>,
     // Callbacks
     onMoveFolderEblanApplicationInfoGridItemOutsideFolder: (
-        folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
+        folderId: String,
+        isFolder: Boolean,
         movingGridItem: GridItem,
     ) -> Unit,
 ) {
     val folderEblanApplicationInfoGridItem =
-        moveFolderEblanApplicationInfoGridItemResult.value?.folderEblanApplicationInfoGridItem
-            ?: return
+        movingFolderEblanApplicationInfoGridItem.value ?: return
 
     if (drag.value != Drag.Dragging ||
         !isDragging.value ||
@@ -673,7 +706,8 @@ private fun handleMoveFolderGridItemOutsideFolder(
     }
 
     onMoveFolderEblanApplicationInfoGridItemOutsideFolder(
-        folderEblanApplicationInfoGridItem,
+        folderEblanApplicationInfoGridItem.id,
+        folderEblanApplicationInfoGridItem.data is FolderEblanApplicationInfoGridItemData.Folder,
         gridItem,
     )
 }

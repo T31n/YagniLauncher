@@ -17,7 +17,6 @@
  */
 package com.eblan.launcher.feature.home.screen.pager
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.State
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
@@ -43,7 +42,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 internal suspend fun handlePageDirection(
     // State
-    folderGridItemEntries: State<List<FolderEntry>>,
+    hasFolderGridItemEntries: State<Boolean>,
     // Pagination
     pageDirection: PageDirection?,
     currentPage: Int,
@@ -52,7 +51,7 @@ internal suspend fun handlePageDirection(
 ) {
     delay(500L.milliseconds)
 
-    if (pageDirection == null || folderGridItemEntries.value.isNotEmpty()) return
+    if (pageDirection == null || hasFolderGridItemEntries.value) return
 
     when (pageDirection) {
         PageDirection.Left -> onAnimateScrollToPage(currentPage - 1)
@@ -68,22 +67,14 @@ internal fun handleAnimateScrollToPage(
     // Layout
     screenWidth: Int,
     density: Density,
-    layoutDirection: LayoutDirection,
-    paddingValues: PaddingValues,
+    leftPadding: Int,
+    rightPadding: Int,
     gridItemSource: GridItemSource?,
     // Callbacks
     onUpdateDockPageDirection: (PageDirection?) -> Unit,
     onUpdateGridPageDirection: (PageDirection?) -> Unit,
 ) {
     if (gridItemSource == null || !isDragging) return
-
-    val leftPadding = with(density) {
-        paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
-    }
-
-    val rightPadding = with(density) {
-        paddingValues.calculateRightPadding(layoutDirection).roundToPx()
-    }
 
     val horizontalPadding = leftPadding + rightPadding
 
@@ -126,7 +117,10 @@ internal fun handleDragGridItem(
     screenHeight: Int,
     density: Density,
     layoutDirection: LayoutDirection,
-    paddingValues: PaddingValues,
+    leftPadding: Int,
+    topPadding: Int,
+    rightPadding: Int,
+    bottomPadding: Int,
     // Drag State
     drag: Drag,
     dragIntOffset: IntOffset,
@@ -160,22 +154,6 @@ internal fun handleDragGridItem(
         lockMovement
     ) {
         return
-    }
-
-    val leftPadding = with(density) {
-        paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
-    }
-
-    val rightPadding = with(density) {
-        paddingValues.calculateRightPadding(layoutDirection).roundToPx()
-    }
-
-    val topPadding = with(density) {
-        paddingValues.calculateTopPadding().roundToPx()
-    }
-
-    val bottomPadding = with(density) {
-        paddingValues.calculateBottomPadding().roundToPx()
     }
 
     val horizontalPadding = leftPadding + rightPadding
@@ -269,7 +247,7 @@ internal fun handleDragGridItem(
 
 internal suspend fun handleConflictingGridItem(
     // Grid Item State
-    gridItem: State<GridItem>,
+    gridItemId: State<String>,
     folderGridItems: State<List<GridItem>?>,
     moveGridItemResult: MoveGridItemResult?,
     // Drag State
@@ -295,7 +273,7 @@ internal suspend fun handleConflictingGridItem(
         !isVisibleOverlay.value ||
         !isDragging.value ||
         lockMovement.value ||
-        conflictingGridItem.id != gridItem.value.id
+        conflictingGridItem.id != gridItemId.value
     ) {
         return
     }

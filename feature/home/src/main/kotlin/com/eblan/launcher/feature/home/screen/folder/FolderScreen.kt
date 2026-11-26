@@ -53,7 +53,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.domain.model.folder.FolderEntry
 import com.eblan.launcher.domain.model.folder.FolderPopup
 import com.eblan.launcher.domain.model.grid.Associate
@@ -66,7 +65,6 @@ import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.FolderGridLayout
 import com.eblan.launcher.feature.home.component.FolderTitle
 import com.eblan.launcher.feature.home.component.HomeHandler
-import com.eblan.launcher.feature.home.contract.FolderScreenContract
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.PageDirection
 import com.eblan.launcher.feature.home.model.SharedElementKey
@@ -81,8 +79,6 @@ import kotlin.math.roundToInt
 
 @Composable
 internal fun FolderScreen(
-    // Contract
-    contract: FolderScreenContract,
     // Transition and Layout
     sharedTransitionScope: SharedTransitionScope,
     modifier: Modifier = Modifier,
@@ -93,6 +89,7 @@ internal fun FolderScreen(
     screenWidth: Int,
     // Folder Content and Settings
     folderEntry: FolderEntry,
+    folderGridItemEntries: List<FolderEntry>,
     gridItemSettings: GridItemSettings,
     folderCellWidth: Int,
     folderCellHeight: Int,
@@ -111,10 +108,12 @@ internal fun FolderScreen(
     folderBorderWidth: Int,
     // Drag and Drop State
     drag: Drag,
+    moveGridItemResult: MoveGridItemResult?,
     isDragging: Boolean,
     dragIntOffset: IntOffset,
     lockMovement: Boolean,
     // Overlay and Permission State
+    isVisibleOverlay: Boolean,
     hasShortcutHostPermission: Boolean,
     showFolderGridItemMenu: Boolean,
     // Folder Actions
@@ -122,9 +121,14 @@ internal fun FolderScreen(
         folderEntry: FolderEntry,
         isFirstFolderGridItem: Boolean,
     ) -> Unit,
+    onDismiss: () -> Unit,
     onOpenAppDrawer: () -> Unit,
+    onResetGrid: () -> Unit,
+    onResetGridAfterMoveFolder: () -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
+    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onDismissFolderGridItemMenu: () -> Unit,
+    onUpsertFolderGridItemEntry: (FolderEntry) -> Unit,
     onDragFolderGridItem: () -> Unit,
     onLongPressFolderGridItem: (
         gridItem: GridItem,
@@ -133,16 +137,23 @@ internal fun FolderScreen(
         intSize: IntSize,
         sharedElementKey: SharedElementKey,
     ) -> Unit,
+    onMoveFolderGridItem: (
+        columns: Int,
+        rows: Int,
+        folderGridItems: List<GridItem>,
+        movingGridItem: GridItem,
+        dragX: Int,
+        dragY: Int,
+        gridWidth: Int,
+        gridHeight: Int,
+        currentPage: Int,
+    ) -> Unit,
     onMoveFolderGridItemOutsideFolder: (
         gridItem: GridItem,
         sharedElementKey: SharedElementKey,
     ) -> Unit,
 ) {
     val folderPopup = folderPopups[folderEntry.id] ?: return
-
-    val folderGridItemEntries by contract.folderGridItemEntries.collectAsStateWithLifecycle()
-    val moveGridItemResult by contract.movedGridItemResult.collectAsStateWithLifecycle()
-    val isVisibleOverlay by contract.isVisibleOverlay.collectAsStateWithLifecycle()
 
     val folderPopupIntOffset = IntOffset(
         x = folderEntry.x,
@@ -156,12 +167,25 @@ internal fun FolderScreen(
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
 
+    val leftPadding = with(density) {
+        paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
+    }
+    val topPadding = with(density) {
+        paddingValues.calculateTopPadding().roundToPx()
+    }
+    val rightPadding = with(density) {
+        paddingValues.calculateRightPadding(layoutDirection).roundToPx()
+    }
+    val bottomPadding = with(density) {
+        paddingValues.calculateBottomPadding().roundToPx()
+    }
+
     val folderPopupLayoutInfo = getFolderPopupLayoutInfo(
         // Environment
         density = density,
-        layoutDirection = layoutDirection,
         // Layout
-        paddingValues = paddingValues,
+        leftPadding = leftPadding,
+        topPadding = topPadding,
         safeDrawingWidth = safeDrawingWidth,
         safeDrawingHeight = safeDrawingHeight,
         // Popup
@@ -223,7 +247,7 @@ internal fun FolderScreen(
     val currentDrag = rememberUpdatedState(drag)
     val currentIsDragging = rememberUpdatedState(isDragging)
     val currentIsVisibleOverlay = rememberUpdatedState(isVisibleOverlay)
-    val currentMoveGridItemResult = rememberUpdatedState(moveGridItemResult)
+    val currentMovingGridItem = rememberUpdatedState(moveGridItemResult?.movingGridItem)
     val currentLockMovement = rememberUpdatedState(lockMovement)
 
     val isInProgress by remember {
@@ -249,15 +273,15 @@ internal fun FolderScreen(
             drag = currentDrag,
             isDragging = currentIsDragging,
             isVisibleOverlay = currentIsVisibleOverlay,
-            moveGridItemResult = currentMoveGridItemResult,
+            movingGridItem = currentMovingGridItem,
             // Item and Animation Properties
             folderEntry = folderEntry,
             progress = progress,
             isFirstFolderGridItem = isFirstFolderGridItem,
             animations = animations,
             isLastFolderGridItem = isLastFolderGridItem,
-            folderPage = folderPopup.folderGridItem.page,
-            folderAssociate = folderPopup.folderGridItem.associate,
+            folderGridItemPage = folderPopup.folderGridItem.page,
+            folderGridItemAssociate = folderPopup.folderGridItem.associate,
             // Callbacks
             onAnimateToScrollToPage = folderGridHorizontalPagerState::animateScrollToPage,
             onMoveFolderGridItemOutsideFolder = onMoveFolderGridItemOutsideFolder,
@@ -268,8 +292,8 @@ internal fun FolderScreen(
     LaunchedEffect(
         drag,
         dragIntOffset,
-        folderEntry,
         moveGridItemResult,
+        folderEntry,
         isLastFolderGridItem,
         isInProgress,
     ) {
@@ -280,7 +304,10 @@ internal fun FolderScreen(
             // Screen
             screenWidth = screenWidth,
             screenHeight = screenHeight,
-            paddingValues = paddingValues,
+            leftPadding = leftPadding,
+            topPadding = topPadding,
+            rightPadding = rightPadding,
+            bottomPadding = bottomPadding,
             // State
             currentPage = folderGridHorizontalPagerState.currentPage,
             isDragging = currentIsDragging.value,
@@ -292,7 +319,7 @@ internal fun FolderScreen(
             // Drag And Position
             drag = drag,
             dragIntOffset = dragIntOffset,
-            moveGridItemResult = moveGridItemResult,
+            movingGridItem = moveGridItemResult?.movingGridItem,
             // Folder
             folderEntry = folderEntry,
             columns = folderPopup.columns,
@@ -302,8 +329,8 @@ internal fun FolderScreen(
             folderCellWidth = folderCellWidth,
             folderCellHeight = folderCellHeight,
             // Callbacks
-            onMoveFolderGridItem = contract::moveFolderGridItem,
-            onUpsertFolderGridItemEntry = contract::upsertFolderGridItemEntry,
+            onMoveFolderGridItem = onMoveFolderGridItem,
+            onUpsertFolderGridItemEntry = onUpsertFolderGridItemEntry,
         )
     }
 
@@ -319,10 +346,10 @@ internal fun FolderScreen(
             isVisibleOverlay = currentIsVisibleOverlay.value,
             isLastFolderGridItem = isLastFolderGridItem,
             // Callbacks
-            onResetGrid = contract::resetGrid,
-            onResetGridAfterMoveFolder = contract::resetGridAfterMoveFolder,
+            onResetGrid = onResetGrid,
+            onResetGridAfterMoveFolder = onResetGridAfterMoveFolder,
             onUpdateIsDragging = onUpdateIsDragging,
-            onUpdateIsVisibleOverlay = contract::updateIsVisibleOverlay,
+            onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
         )
     }
 
@@ -357,10 +384,10 @@ internal fun FolderScreen(
         handleAnimateScrollToPage(
             // Environment and Layout
             density = density,
-            layoutDirection = layoutDirection,
             screenWidth = screenWidth,
             columns = folderPopup.columns,
-            paddingValues = paddingValues,
+            leftPadding = leftPadding,
+            rightPadding = rightPadding,
             // Drag and Gesture
             drag = drag,
             isDragging = currentIsDragging.value,
@@ -385,7 +412,7 @@ internal fun FolderScreen(
             isLastFolderGridItem &&
             !isInProgress,
     ) {
-        contract.upsertFolderGridItemEntry(folderEntry.copy(isCloseFolder = true))
+        onUpsertFolderGridItemEntry(folderEntry.copy(isCloseFolder = true))
     }
 
     HomeHandler(
@@ -393,7 +420,7 @@ internal fun FolderScreen(
             isLastFolderGridItem &&
             !isInProgress,
     ) {
-        contract.upsertFolderGridItemEntry(folderEntry.copy(isCloseFolder = true))
+        onUpsertFolderGridItemEntry(folderEntry.copy(isCloseFolder = true))
     }
 
     Box(
@@ -405,7 +432,7 @@ internal fun FolderScreen(
                         onPress = {
                             awaitRelease()
 
-                            contract.upsertFolderGridItemEntry(
+                            onUpsertFolderGridItemEntry(
                                 folderEntry.copy(
                                     isCloseFolder = true,
                                 ),
@@ -476,20 +503,23 @@ internal fun FolderScreen(
                                 // Grid Item
                                 gridItem = currentFolderGridItem,
                                 gridItemSettings = gridItemSettings,
-                                folderGridItemEntries = folderGridItemEntries,
+                                isVisibleFolder = folderGridItemEntries.any { currentFolderEntry ->
+                                    currentFolderEntry.id == currentFolderGridItem.id
+                                },
                                 sharedTransitionScope = sharedTransitionScope,
                                 drag = drag,
                                 hasShortcutHostPermission = hasShortcutHostPermission,
                                 isScrollInProgress = folderGridHorizontalPagerState.isScrollInProgress,
                                 statusBarNotifications = statusBarNotifications,
                                 isVisibleOverlay = isVisibleOverlay,
-                                moveGridItemResult = moveGridItemResult,
+                                movingGridItemId = moveGridItemResult?.movingGridItem?.id,
                                 progress = progress.value,
                                 showFolderGridItemMenu = showFolderGridItemMenu,
-                                folderPopups = folderPopups,
+                                previewNestedFolderGridItems = folderPopups[currentFolderGridItem.id]?.previewFolderGridItems,
                                 minCellWidthPx = folderPopupLayoutInfo.minCellWidthPx,
                                 minCellHeightPx = folderPopupLayoutInfo.minCellHeightPx,
-                                paddingValues = paddingValues,
+                                leftPadding = leftPadding,
+                                topPadding = topPadding,
                                 sharedElementKey = SharedElementKey(
                                     id = currentFolderGridItem.id,
                                     parent = SharedElementKey.Parent.Folder,
@@ -506,9 +536,9 @@ internal fun FolderScreen(
                                 customFolderBorderColor = customFolderBorderColor,
                                 folderBorderWidth = folderBorderWidth,
                                 // Callbacks
-                                onDismiss = contract::closeFolderGridItemEntries,
+                                onDismiss = onDismiss,
                                 onOpenAppDrawer = onOpenAppDrawer,
-                                onUpsertFolderGridItemEntry = contract::upsertFolderGridItemEntry,
+                                onUpsertFolderGridItemEntry = onUpsertFolderGridItemEntry,
                                 onLongPressFolderGridItem = onLongPressFolderGridItem,
                                 onDragFolderGridItem = onDragFolderGridItem,
                             )
@@ -519,7 +549,7 @@ internal fun FolderScreen(
                 FolderTitle(
                     // Content
                     label = folderPopup.folderGridItem.label,
-                    gridItemsByPage = folderPopup.folderGridItemsByPage,
+                    pageCount = folderPopup.folderGridItemsByPage.size,
                     progress = progress.value,
                     // State
                     folderGridHorizontalPagerState = folderGridHorizontalPagerState,
@@ -541,15 +571,15 @@ private suspend fun handleIsCloseFolder(
     drag: State<Drag>,
     isDragging: State<Boolean>,
     isVisibleOverlay: State<Boolean>,
-    moveGridItemResult: State<MoveGridItemResult?>,
+    movingGridItem: State<GridItem?>,
     // Item and Animation Properties
     folderEntry: FolderEntry,
     progress: Animatable<Float, AnimationVector1D>,
     isFirstFolderGridItem: Boolean,
     animations: Boolean,
     isLastFolderGridItem: Boolean,
-    folderPage: Int,
-    folderAssociate: Associate,
+    folderGridItemPage: Int,
+    folderGridItemAssociate: Associate,
     // Callbacks
     onAnimateToScrollToPage: suspend (Int) -> Unit,
     onMoveFolderGridItemOutsideFolder: (
@@ -575,11 +605,11 @@ private suspend fun handleIsCloseFolder(
         // State
         drag = drag,
         isDragging = isDragging,
-        moveGridItemResult = moveGridItemResult,
+        movingGridItem = movingGridItem,
         isVisibleOverlay = isVisibleOverlay,
-        // Folder
-        folderPage = folderPage,
-        folderAssociate = folderAssociate,
+        // UI
+        folderGridItemPage = folderGridItemPage,
+        folderGridItemAssociate = folderGridItemAssociate,
         // Callbacks
         onMoveFolderGridItemOutsideFolder = onMoveFolderGridItemOutsideFolder,
     )
@@ -594,18 +624,18 @@ private fun handleMoveFolderGridItemOutsideFolder(
     // State
     drag: State<Drag>,
     isDragging: State<Boolean>,
-    moveGridItemResult: State<MoveGridItemResult?>,
+    movingGridItem: State<GridItem?>,
     isVisibleOverlay: State<Boolean>,
-    // Folder
-    folderPage: Int,
-    folderAssociate: Associate,
+    // UI
+    folderGridItemPage: Int,
+    folderGridItemAssociate: Associate,
     // Callbacks
     onMoveFolderGridItemOutsideFolder: (
         gridItem: GridItem,
         sharedElementKey: SharedElementKey,
     ) -> Unit,
 ) {
-    val gridItem = moveGridItemResult.value?.movingGridItem ?: return
+    val gridItem = movingGridItem.value ?: return
 
     if (drag.value != Drag.Dragging ||
         !isDragging.value ||
@@ -617,7 +647,7 @@ private fun handleMoveFolderGridItemOutsideFolder(
     val newGridItem = when (val data = gridItem.data) {
         is GridItemData.ApplicationInfo -> {
             gridItem.copy(
-                page = folderPage,
+                page = folderGridItemPage,
                 startColumn = -1,
                 startRow = -1,
                 data = data.copy(
@@ -629,7 +659,7 @@ private fun handleMoveFolderGridItemOutsideFolder(
 
         is GridItemData.Folder -> {
             gridItem.copy(
-                page = folderPage,
+                page = folderGridItemPage,
                 startColumn = -1,
                 startRow = -1,
                 data = data.copy(
@@ -641,7 +671,7 @@ private fun handleMoveFolderGridItemOutsideFolder(
 
         is GridItemData.ShortcutConfig -> {
             gridItem.copy(
-                page = folderPage,
+                page = folderGridItemPage,
                 startColumn = -1,
                 startRow = -1,
                 data = data.copy(
@@ -653,7 +683,7 @@ private fun handleMoveFolderGridItemOutsideFolder(
 
         is GridItemData.ShortcutInfo -> {
             gridItem.copy(
-                page = folderPage,
+                page = folderGridItemPage,
                 startColumn = -1,
                 startRow = -1,
                 data = data.copy(
@@ -670,7 +700,7 @@ private fun handleMoveFolderGridItemOutsideFolder(
         newGridItem,
         SharedElementKey(
             id = gridItem.id,
-            parent = when (folderAssociate) {
+            parent = when (folderGridItemAssociate) {
                 Associate.Grid -> SharedElementKey.Parent.Grid
                 Associate.Dock -> SharedElementKey.Parent.Dock
             },

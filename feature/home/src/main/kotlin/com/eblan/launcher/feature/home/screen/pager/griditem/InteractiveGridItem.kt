@@ -45,7 +45,6 @@ import androidx.compose.ui.unit.round
 import androidx.compose.ui.viewinterop.AndroidView
 import coil3.compose.AsyncImage
 import com.eblan.launcher.domain.model.folder.FolderEntry
-import com.eblan.launcher.domain.model.folder.FolderPopup
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
@@ -96,11 +95,12 @@ internal fun InteractiveGridItem(
     isScrollInProgress: Boolean,
     isVisibleOverlay: Boolean,
     isVisibleFolderGridItems: Boolean,
+    isVisibleFolder: Boolean,
     lockMovement: Boolean,
     isDragging: Boolean,
     showGridItemMenu: Boolean,
-    folderPopups: Map<String, FolderPopup>,
-    folderGridItemEntries: List<FolderEntry>,
+    folderGridItems: List<GridItem>?,
+    previewFolderGridItems: List<GridItem>?,
     modifier: Modifier = Modifier,
     // Callbacks
     onOpenAppDrawer: () -> Unit,
@@ -155,14 +155,6 @@ internal fun InteractiveGridItem(
         topOffset = topOffset,
     )
 
-    val isVisibleFolder = remember(
-        key1 = gridItem,
-        key2 = folderGridItemEntries,
-        key3 = isVisibleFolderGridItems,
-    ) {
-        isVisibleFolderGridItems && folderGridItemEntries.any { currentFolderEntry -> currentFolderEntry.id == gridItem.id }
-    }
-
     val horizontalAlignment =
         getHorizontalAlignment(horizontalAlignment = currentGridItemSettings.horizontalAlignment)
     val verticalArrangement =
@@ -198,8 +190,8 @@ internal fun InteractiveGridItem(
                 isScrollInProgress = isScrollInProgress,
                 hasInteraction = hasInteraction,
                 animations = animations,
-                statusBarNotifications = statusBarNotifications,
-                iconPackFilePaths = iconPackFilePaths,
+                hasNotifications = (statusBarNotifications[data.packageName] ?: 0) > 0,
+                iconPackFilePath = iconPackFilePaths[data.componentName],
                 // Appearance
                 textColor = currentTextColor,
                 maxLines = maxLines,
@@ -288,7 +280,8 @@ internal fun InteractiveGridItem(
                 sharedElementKey = sharedElementKey,
                 // Configuration
                 iconPackFilePaths = iconPackFilePaths,
-                folderPopups = folderPopups,
+                folderGridItems = folderGridItems,
+                previewFolderGridItems = previewFolderGridItems,
                 gridItemSettings = currentGridItemSettings,
                 // State
                 isScrollInProgress = isScrollInProgress,
@@ -400,8 +393,6 @@ private fun InteractiveWidgetGridItem(
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
     var intSize by remember { mutableStateOf(IntSize.Zero) }
 
-    val currentGridItem by rememberUpdatedState(gridItem)
-    val currentSharedElementKey by rememberUpdatedState(sharedElementKey)
     val currentOnLongPressGridItem by rememberUpdatedState(onLongPressGridItem)
 
     Box(
@@ -446,11 +437,11 @@ private fun InteractiveWidgetGridItem(
                     if (!isVisibleOverlay) {
                         currentAppWidgetHostView.setOnLongClickListener {
                             currentOnLongPressGridItem(
-                                currentGridItem,
+                                gridItem,
                                 { graphicsLayer.toImageBitmap() },
                                 intOffset,
                                 intSize,
-                                currentSharedElementKey,
+                                sharedElementKey,
                             )
 
                             true
@@ -467,11 +458,11 @@ private fun InteractiveWidgetGridItem(
                         onLongPress = if (!isVisibleOverlay) {
                             {
                                 currentOnLongPressGridItem(
-                                    currentGridItem,
+                                    gridItem,
                                     { graphicsLayer.toImageBitmap() },
                                     intOffset,
                                     intSize,
-                                    currentSharedElementKey,
+                                    sharedElementKey,
                                 )
                             }
                         } else {

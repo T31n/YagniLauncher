@@ -32,10 +32,8 @@ import android.os.Process
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.IntentSenderRequest
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.GridItem
@@ -57,7 +55,6 @@ internal suspend fun handleDropGridItem(
     // Context and Environment
     context: Context,
     density: Density,
-    layoutDirection: LayoutDirection,
     // Android System Wrappers
     androidAppWidgetHostWrapper: AndroidAppWidgetHostWrapper,
     androidAppWidgetManagerWrapper: AndroidAppWidgetManagerWrapper,
@@ -66,12 +63,9 @@ internal suspend fun handleDropGridItem(
     // Grid and Layout Configuration
     columns: Int,
     rows: Int,
-    dockColumns: Int,
-    dockRows: Int,
-    screenHeight: Int,
-    screenWidth: Int,
+    safeDrawingHeight: Int,
+    safeDrawingWidth: Int,
     dockHeight: Int,
-    paddingValues: PaddingValues,
     // Drag and Drop State
     drag: Drag,
     gridItemSource: GridItemSource?,
@@ -110,26 +104,14 @@ internal suspend fun handleDropGridItem(
 
     val gridSize = calculateGridSize(
         // Screen Dimensions
-        screenWidth = screenWidth,
-        screenHeight = screenHeight,
+        safeDrawingWidth = safeDrawingWidth,
+        safeDrawingHeight = safeDrawingHeight,
         dockHeight = dockHeight,
         // Display Properties
         density = density,
-        layoutDirection = layoutDirection,
-        // Layout and Association
-        paddingValues = paddingValues,
+        // Association
         associate = currentMoveGridItemResult.movingGridItem.associate,
     )
-
-    val targetColumns = when (currentMoveGridItemResult.movingGridItem.associate) {
-        Associate.Grid -> columns
-        Associate.Dock -> dockColumns
-    }
-
-    val targetRows = when (currentMoveGridItemResult.movingGridItem.associate) {
-        Associate.Grid -> rows
-        Associate.Dock -> dockRows
-    }
 
     val isLongPress = isVisibleOverlay && !isDragging
 
@@ -180,8 +162,8 @@ internal suspend fun handleDropGridItem(
                 androidLauncherAppsWrapper = androidLauncherAppsWrapper,
                 androidUserManagerWrapper = androidUserManagerWrapper,
                 // Grid Dimensions
-                columns = targetColumns,
-                rows = targetRows,
+                columns = columns,
+                rows = rows,
                 gridSize = gridSize,
                 // Drag and Overlay State
                 isDragging = isDragging,
@@ -228,8 +210,8 @@ internal suspend fun handleDropGridItem(
                 context = context,
                 density = density,
                 // Grid Dimensions
-                columns = targetColumns,
-                rows = targetRows,
+                columns = columns,
+                rows = rows,
                 gridSize = gridSize,
                 // Current State
                 currentGridItemSource = currentGridItemSource,
@@ -263,14 +245,10 @@ internal fun handleAppWidgetLauncherResult(
     lastAppWidgetId: Int,
     // Screen and Grid Configuration
     columns: Int,
-    rows: Int,
-    dockColumns: Int,
-    dockRows: Int,
     density: Density,
-    screenWidth: Int,
-    screenHeight: Int,
-    paddingValues: PaddingValues,
-    layoutDirection: LayoutDirection,
+    rows: Int,
+    safeDrawingWidth: Int,
+    safeDrawingHeight: Int,
     dockHeight: Int,
     // Callbacks
     onUpdateWidgetGridItem: (GridItem) -> Unit,
@@ -281,26 +259,14 @@ internal fun handleAppWidgetLauncherResult(
 
     val data = movingGridItem.data as GridItemData.Widget
 
-    val targetColumns = when (movingGridItem.associate) {
-        Associate.Grid -> columns
-        Associate.Dock -> dockColumns
-    }
-
-    val targetRows = when (movingGridItem.associate) {
-        Associate.Grid -> rows
-        Associate.Dock -> dockRows
-    }
-
     val gridSize = calculateGridSize(
         // Screen Dimensions
-        screenWidth = screenWidth,
-        screenHeight = screenHeight,
+        safeDrawingWidth = safeDrawingWidth,
+        safeDrawingHeight = safeDrawingHeight,
         dockHeight = dockHeight,
         // Display Properties
         density = density,
-        layoutDirection = layoutDirection,
-        // Layout and Association
-        paddingValues = paddingValues,
+        // Association
         associate = movingGridItem.associate,
     )
 
@@ -322,8 +288,8 @@ internal fun handleAppWidgetLauncherResult(
             width = with(density) { data.minWidth.dp.roundToPx() },
             height = with(density) { data.minHeight.dp.roundToPx() },
             density = density,
-            columns = targetColumns,
-            rows = targetRows,
+            columns = columns,
+            rows = rows,
             gridWidth = gridSize.width,
             gridHeight = gridSize.height,
             startColumn = movingGridItem.startColumn,
@@ -636,7 +602,6 @@ private fun onDragEndWidget(
 
 private fun onDragEndPinShortcut(
     // Grid and Item Data
-    gridItem: GridItem,
     moveGridItemResult: MoveGridItemResult,
     pinItemRequest: PinItemRequest?,
     // Callbacks
@@ -656,7 +621,7 @@ private fun onDragEndPinShortcut(
             onResetGrid()
         }
     } else {
-        onDeleteGridItem(gridItem)
+        onDeleteGridItem(moveGridItemResult.movingGridItem)
     }
 
     onUpdateIsDragging(false)
@@ -697,7 +662,9 @@ private suspend fun onDragEndShortcutConfig(
     androidLauncherAppsWrapper: AndroidLauncherAppsWrapper,
     androidUserManagerWrapper: AndroidUserManagerWrapper,
     // Data
-    data: GridItemData.ShortcutConfig,
+    serialNumber: Long,
+    packageName: String,
+    componentName: String,
     gridItem: GridItem,
     // Callbacks
     onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
@@ -706,12 +673,12 @@ private suspend fun onDragEndShortcutConfig(
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
 ) {
-    val serialNumber =
+    val currentUserSerialNumber =
         androidUserManagerWrapper.getSerialNumberForUser(userHandle = Process.myUserHandle())
 
-    if (serialNumber == data.serialNumber) {
+    if (currentUserSerialNumber == serialNumber) {
         val intent = Intent(Intent.ACTION_CREATE_SHORTCUT).setComponent(
-            ComponentName.unflattenFromString(data.componentName),
+            ComponentName.unflattenFromString(componentName),
         )
 
         try {
@@ -721,9 +688,9 @@ private suspend fun onDragEndShortcutConfig(
         }
     } else {
         val shortcutConfigIntent = androidLauncherAppsWrapper.getShortcutConfigIntent(
-            serialNumber = data.serialNumber,
-            packageName = data.packageName,
-            componentName = data.componentName,
+            serialNumber = serialNumber,
+            packageName = packageName,
+            componentName = componentName,
         )
 
         if (shortcutConfigIntent != null) {
@@ -780,32 +747,14 @@ private fun startAppWidgetConfigureActivityForResult(
 
 private fun calculateGridSize(
     // Screen Dimensions
-    screenWidth: Int,
-    screenHeight: Int,
+    safeDrawingWidth: Int,
+    safeDrawingHeight: Int,
     dockHeight: Int,
     // Display Properties
     density: Density,
-    layoutDirection: LayoutDirection,
-    // Layout and Association
-    paddingValues: PaddingValues,
+    // Association
     associate: Associate,
 ): IntSize {
-    val leftPadding = with(density) {
-        paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
-    }
-
-    val rightPadding = with(density) {
-        paddingValues.calculateRightPadding(layoutDirection).roundToPx()
-    }
-
-    val topPadding = with(density) {
-        paddingValues.calculateTopPadding().roundToPx()
-    }
-
-    val bottomPadding = with(density) {
-        paddingValues.calculateBottomPadding().roundToPx()
-    }
-
     val dockHeightPx = with(density) {
         dockHeight.dp.roundToPx()
     }
@@ -813,12 +762,6 @@ private fun calculateGridSize(
     val pageIndicatorHeightPx = with(density) {
         PAGE_INDICATOR_HEIGHT.roundToPx()
     }
-
-    val horizontalPadding = leftPadding + rightPadding
-    val verticalPadding = topPadding + bottomPadding
-
-    val safeDrawingWidth = screenWidth - horizontalPadding
-    val safeDrawingHeight = screenHeight - verticalPadding
 
     val gridHeight = when (associate) {
         Associate.Grid -> safeDrawingHeight - dockHeightPx - pageIndicatorHeightPx
@@ -962,8 +905,8 @@ private suspend fun handleNewGridItemSource(
         return cancelAndDeleteGridItem(
             // Context
             context = context,
-            // Item
-            movingGridItem = currentMoveGridItemResult.movingGridItem,
+            // Result
+            moveGridItemResult = currentMoveGridItemResult,
             // Callbacks
             onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
             onUpdateIsDragging = onUpdateIsDragging,
@@ -975,8 +918,8 @@ private suspend fun handleNewGridItemSource(
         return cancelAndDeleteGridItem(
             // Context
             context = context,
-            // Item
-            movingGridItem = currentMoveGridItemResult.movingGridItem,
+            // Result
+            moveGridItemResult = currentMoveGridItemResult,
             // Callbacks
             onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
             onUpdateIsDragging = onUpdateIsDragging,
@@ -1019,7 +962,9 @@ private suspend fun handleNewGridItemSource(
                     androidLauncherAppsWrapper = androidLauncherAppsWrapper,
                     androidUserManagerWrapper = androidUserManagerWrapper,
                     // Data
-                    data = data,
+                    serialNumber = data.serialNumber,
+                    packageName = data.packageName,
+                    componentName = data.componentName,
                     gridItem = movingGridItem,
                     // Callbacks
                     onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
@@ -1069,8 +1014,8 @@ private fun handleNewFolderGridItemSource(
         return cancelAndDeleteGridItem(
             // Context
             context = context,
-            // Item
-            movingGridItem = currentMoveGridItemResult.movingGridItem,
+            // Result
+            moveGridItemResult = currentMoveGridItemResult,
             // Callbacks
             onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
             onUpdateIsDragging = onUpdateIsDragging,
@@ -1082,8 +1027,8 @@ private fun handleNewFolderGridItemSource(
         return cancelAndDeleteGridItem(
             // Context
             context = context,
-            // Item
-            movingGridItem = currentMoveGridItemResult.movingGridItem,
+            // Result
+            moveGridItemResult = currentMoveGridItemResult,
             // Callbacks
             onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
             onUpdateIsDragging = onUpdateIsDragging,
@@ -1139,8 +1084,8 @@ private fun handlePinGridItemSource(
         return cancelAndDeleteGridItem(
             // Context
             context = context,
-            // Item
-            movingGridItem = currentMoveGridItemResult.movingGridItem,
+            // Result
+            moveGridItemResult = currentMoveGridItemResult,
             // Callbacks
             onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
             onUpdateIsDragging = onUpdateIsDragging,
@@ -1152,8 +1097,8 @@ private fun handlePinGridItemSource(
         return cancelAndDeleteGridItem(
             // Context
             context = context,
-            // Item
-            movingGridItem = currentMoveGridItemResult.movingGridItem,
+            // Result
+            moveGridItemResult = currentMoveGridItemResult,
             // Callbacks
             onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
             onUpdateIsDragging = onUpdateIsDragging,
@@ -1167,7 +1112,6 @@ private fun handlePinGridItemSource(
         when (val data = movingGridItem.data) {
             is GridItemData.ShortcutInfo -> onDragEndPinShortcut(
                 // Grid and Item Data
-                gridItem = movingGridItem,
                 moveGridItemResult = currentMoveGridItemResult,
                 pinItemRequest = currentGridItemSource.pinItemRequest,
                 // Callbacks
@@ -1207,8 +1151,8 @@ private fun handlePinGridItemSource(
 private fun cancelAndDeleteGridItem(
     // Context
     context: Context,
-    // Item
-    movingGridItem: GridItem,
+    // Result
+    moveGridItemResult: MoveGridItemResult,
     // Callbacks
     onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
     onUpdateIsDragging: (Boolean) -> Unit,
@@ -1218,7 +1162,7 @@ private fun cancelAndDeleteGridItem(
 
     onUpdateIsDragging(false)
 
-    onResetGridAfterDeleteGridItem(movingGridItem)
+    onResetGridAfterDeleteGridItem(moveGridItemResult.movingGridItem)
 
     Toast.makeText(
         context,

@@ -44,7 +44,6 @@ import coil3.request.ImageRequest.Builder
 import coil3.request.addLastModifiedToFileCacheKey
 import coil3.size.Size
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
-import com.eblan.launcher.domain.model.folder.FolderPopup
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
@@ -61,13 +60,12 @@ import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
 @Composable
 internal fun FolderGridItem(
     // Item Data
-    gridItem: GridItem,
     data: GridItemData.Folder,
     // Settings and Configuration
     gridItemSettings: GridItemSettings,
     iconPackFilePaths: Map<String, String?>,
     hasShortcutHostPermission: Boolean,
-    folderPopupGridItems: Map<String, FolderPopup>,
+    previewFolderGridItems: List<GridItem>?,
     maxLines: Int,
     // Appearance and Colors
     textColor: Color,
@@ -136,7 +134,7 @@ internal fun FolderGridItem(
             ) {
                 PreviewFolderGridLayout(
                     // Data
-                    gridItems = folderPopupGridItems[gridItem.id]?.previewFolderGridItems,
+                    gridItems = previewFolderGridItems,
                     // Layout
                     modifier = Modifier.fillMaxSize(),
                     // Callbacks
@@ -145,8 +143,8 @@ internal fun FolderGridItem(
                         PreviewFolderGridItem(
                             // Item and Settings
                             gridItem = currentFolderGridItem,
-                            textColor = gridItemSettings.textColor,
-                            customTextColor = gridItemSettings.customTextColor,
+                            gridItemTextColor = gridItemSettings.textColor,
+                            gridItemCustomTextColor = gridItemSettings.customTextColor,
                             // Appearance and Colors
                             iconPackFilePaths = iconPackFilePaths,
                             folderBackgroundColor = folderBackgroundColor,
@@ -175,7 +173,7 @@ internal fun FolderGridItem(
     }
 
     GridItemLayoutType(
-        // Settings and Modifier
+        // Layout and Modifier
         layoutType = gridItemSettings.layoutType,
         modifier = itemModifier,
         // Alignment and Arrangement
@@ -194,8 +192,8 @@ internal fun FolderGridItem(
 private fun PreviewFolderGridItem(
     // Item and Settings
     gridItem: GridItem,
-    textColor: TextColor,
-    customTextColor: Int,
+    gridItemTextColor: TextColor,
+    gridItemCustomTextColor: Int,
     // Appearance and Colors
     iconPackFilePaths: Map<String, String?>,
     folderBackgroundColor: BackgroundColor,
@@ -209,16 +207,10 @@ private fun PreviewFolderGridItem(
     val context = LocalContext.current
 
     key(gridItem.id) {
-        val currentTextColor = if (gridItem.override) {
-            gridItem.gridItemSettings.textColor
+        val (currentGridItemTextColor, currentGridItemCustomTextColor) = if (gridItem.override) {
+            gridItem.gridItemSettings.textColor to gridItem.gridItemSettings.customTextColor
         } else {
-            textColor
-        }
-
-        val currentCustomTextColor = if (gridItem.override) {
-            gridItem.gridItemSettings.customTextColor
-        } else {
-            customTextColor
+            gridItemTextColor to gridItemCustomTextColor
         }
 
         val alpha = when (val data = gridItem.data) {
@@ -238,8 +230,8 @@ private fun PreviewFolderGridItem(
             backgroundColor = folderBackgroundColor,
             customBackgroundColor = customFolderBackgroundColor,
             // Text Color
-            textColor = currentTextColor,
-            customTextColor = currentCustomTextColor,
+            textColor = currentGridItemTextColor,
+            customTextColor = currentGridItemCustomTextColor,
             systemCustomTextColor = systemCustomTextColor,
             systemTextColor = systemTextColor,
             // Default Color

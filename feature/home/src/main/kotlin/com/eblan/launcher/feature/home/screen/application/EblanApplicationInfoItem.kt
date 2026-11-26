@@ -21,7 +21,6 @@ import android.graphics.Rect
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -45,7 +44,6 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.text.style.TextAlign
@@ -90,17 +88,18 @@ internal fun EblanApplicationInfoItem(
     // Application Data and Settings
     eblanApplicationInfo: EblanApplicationInfo,
     gridItemSettings: GridItemSettings,
-    backgroundColor: BackgroundColor,
-    customBackgroundColor: Int,
-    iconPackFilePaths: Map<String, String?>,
+    iconPackFilePath: String?,
     // Layout and UI State
     sharedTransitionScope: SharedTransitionScope,
     drag: Drag,
-    paddingValues: PaddingValues,
+    leftPadding: Int,
+    topPadding: Int,
     animations: Boolean,
     isVisibleOverlay: Boolean,
     isScrollInProgress: Boolean,
     isSwiping: Boolean,
+    backgroundColor: BackgroundColor,
+    customBackgroundColor: Int,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     modifier: Modifier = Modifier,
@@ -117,7 +116,6 @@ internal fun EblanApplicationInfoItem(
     ) -> Unit,
 ) {
     val density = LocalDensity.current
-    val layoutDirection = LocalLayoutDirection.current
     val context = LocalContext.current
     val launcherApps = LocalLauncherApps.current
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -133,7 +131,6 @@ internal fun EblanApplicationInfoItem(
 
     val alpha = if (isLongPress) 0f else 1f
 
-    val currentEblanApplicationInfo by rememberUpdatedState(eblanApplicationInfo)
     val currentOnLongPressApplicationInfo by rememberUpdatedState(onLongPressApplicationInfo)
     val currentOnDismiss by rememberUpdatedState(onDismiss)
 
@@ -141,7 +138,7 @@ internal fun EblanApplicationInfoItem(
         // Container Background Color
         backgroundColor = backgroundColor,
         customBackgroundColor = customBackgroundColor,
-        // Grid Item Text and Background Colors
+        // Grid Item Colors
         gridItemTextColor = gridItemSettings.textColor,
         gridItemCustomTextColor = gridItemSettings.customTextColor,
         gridItemBackgroundColor = gridItemSettings.backgroundColor,
@@ -154,7 +151,7 @@ internal fun EblanApplicationInfoItem(
     val maxLines = if (gridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
 
     val iconPath = getIconPath(
-        iconPackFilePath = iconPackFilePaths[eblanApplicationInfo.componentName],
+        iconPackFilePath = iconPackFilePath,
         customIcon = eblanApplicationInfo.customIcon,
         icon = eblanApplicationInfo.icon,
     )
@@ -173,14 +170,6 @@ internal fun EblanApplicationInfoItem(
     val verticalAlignment =
         getVerticalAlignment(verticalAlignment = gridItemSettings.verticalAlignment)
 
-    val leftPadding = with(density) {
-        paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
-    }
-
-    val topPadding = with(density) {
-        paddingValues.calculateTopPadding().roundToPx()
-    }
-
     val iconSizePx = with(density) {
         gridItemSettings.iconSize.dp.roundToPx()
     }
@@ -189,10 +178,6 @@ internal fun EblanApplicationInfoItem(
         id = "${eblanApplicationInfo.serialNumber} ${eblanApplicationInfo.packageName} ${eblanApplicationInfo.componentName}",
         parent = SharedElementKey.Parent.SwipeY,
     )
-
-    val currentLeftPadding by rememberUpdatedState(leftPadding)
-    val currentTopPadding by rememberUpdatedState(topPadding)
-    val currentSharedElementKey by rememberUpdatedState(sharedElementKey)
 
     LaunchedEffect(
         key1 = drag,
@@ -229,15 +214,15 @@ internal fun EblanApplicationInfoItem(
                         onTap = {
                             handleOnTapEblanApplicationInfoItem(
                                 // Application Info
-                                serialNumber = currentEblanApplicationInfo.serialNumber,
-                                componentName = currentEblanApplicationInfo.componentName,
+                                serialNumber = eblanApplicationInfo.serialNumber,
+                                componentName = eblanApplicationInfo.componentName,
                                 launcherApps = launcherApps,
                                 // Position and Size
                                 intOffset = intOffset,
                                 intSize = intSize,
                                 // Padding
-                                leftPadding = currentLeftPadding,
-                                topPadding = currentTopPadding,
+                                leftPadding = leftPadding,
+                                topPadding = topPadding,
                                 // Controller
                                 keyboardController = keyboardController,
                             )
@@ -251,11 +236,11 @@ internal fun EblanApplicationInfoItem(
                                 keyboardController?.hide()
 
                                 currentOnLongPressApplicationInfo(
-                                    currentEblanApplicationInfo,
+                                    eblanApplicationInfo,
                                     graphicsLayer.toImageBitmap(),
                                     intOffset,
                                     intSize,
-                                    currentSharedElementKey,
+                                    sharedElementKey,
                                 )
                             }
                         },
@@ -336,7 +321,7 @@ internal fun EblanApplicationInfoItem(
     }
 
     GridItemLayoutType(
-        // Settings and Modifier
+        // Layout and Modifier
         layoutType = gridItemSettings.layoutType,
         modifier = itemModifier,
         // Alignment and Arrangement

@@ -17,13 +17,11 @@
  */
 package com.eblan.launcher.feature.home.screen.application.folder
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
 import com.eblan.launcher.domain.model.folder.FolderEntry
-import com.eblan.launcher.domain.model.grid.MoveFolderEblanApplicationInfoGridItemResult
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.util.calculateFolderGridDragPosition
 
@@ -34,7 +32,10 @@ internal fun handleDragFolderEblanApplicationInfoGridItem(
     // Screen Dimensions
     screenHeight: Int,
     screenWidth: Int,
-    paddingValues: PaddingValues,
+    leftPadding: Int,
+    topPadding: Int,
+    rightPadding: Int,
+    bottomPadding: Int,
     // Folder Item State
     currentPage: Int,
     folderEntry: FolderEntry,
@@ -44,7 +45,7 @@ internal fun handleDragFolderEblanApplicationInfoGridItem(
     folderCellWidth: Int,
     folderCellHeight: Int,
     isLastFolderEblanApplicationInfoGridItem: Boolean,
-    moveFolderEblanApplicationInfoGridItemResult: MoveFolderEblanApplicationInfoGridItemResult?,
+    movingFolderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem?,
     // Drag State
     drag: Drag,
     dragIntOffset: IntOffset,
@@ -73,7 +74,7 @@ internal fun handleDragFolderEblanApplicationInfoGridItem(
         !isVisibleOverlay ||
         !isDragging ||
         lockMovement ||
-        moveFolderEblanApplicationInfoGridItemResult == null ||
+        movingFolderEblanApplicationInfoGridItem == null ||
         !isLastFolderEblanApplicationInfoGridItem ||
         isInProgress
     ) {
@@ -90,7 +91,10 @@ internal fun handleDragFolderEblanApplicationInfoGridItem(
         // Grid Dimensions
         columns = columns,
         rows = rows,
-        paddingValues = paddingValues,
+        leftPadding = leftPadding,
+        topPadding = topPadding,
+        rightPadding = rightPadding,
+        bottomPadding = bottomPadding,
         // Cell Dimensions
         folderCellWidth = folderCellWidth,
         folderCellHeight = folderCellHeight,
@@ -106,7 +110,7 @@ internal fun handleDragFolderEblanApplicationInfoGridItem(
             columns,
             rows,
             folderEblanApplicationInfoGridItems,
-            moveFolderEblanApplicationInfoGridItemResult.folderEblanApplicationInfoGridItem,
+            movingFolderEblanApplicationInfoGridItem,
             folderGridDragPosition.x,
             folderGridDragPosition.y,
             folderGridDragPosition.width,

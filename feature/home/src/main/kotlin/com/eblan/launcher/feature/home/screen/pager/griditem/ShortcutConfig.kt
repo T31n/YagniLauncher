@@ -119,9 +119,6 @@ internal fun InteractiveShortcutConfigGridItem(
 
     val alpha = if (hasInteraction) 0f else 1f
 
-    val currentGridItem by rememberUpdatedState(gridItem)
-    val currentData by rememberUpdatedState(data)
-    val currentSharedElementKey by rememberUpdatedState(sharedElementKey)
     val currentOnOpenAppDrawer by rememberUpdatedState(onOpenAppDrawer)
     val currentOnLongPressGridItem by rememberUpdatedState(onLongPressGridItem)
 
@@ -144,14 +141,14 @@ internal fun InteractiveShortcutConfigGridItem(
         )
         .run {
             if (!isVisibleOverlay) {
-                pointerInput(key1 = gridItem.doubleTap.eblanActionType != EblanActionType.None) {
+                pointerInput(key1 = Unit) {
                     detectTapGestures(
                         onDoubleTap = if (gridItem.doubleTap.eblanActionType != EblanActionType.None) {
                             {
                                 handleEblanAction(
                                     // Context and Action
                                     context = context,
-                                    eblanAction = currentGridItem.doubleTap,
+                                    eblanAction = gridItem.doubleTap,
                                     // System Wrappers
                                     launcherApps = launcherApps,
                                     statusBarManagerWrapper = androidStatusBarManagerWrapper,
@@ -164,15 +161,15 @@ internal fun InteractiveShortcutConfigGridItem(
                         },
                         onLongPress = {
                             currentOnLongPressGridItem(
-                                currentGridItem,
+                                gridItem,
                                 { graphicsLayer.toImageBitmap() },
                                 intOffset,
                                 intSize,
-                                currentSharedElementKey,
+                                sharedElementKey,
                             )
                         },
                         onTap = {
-                            currentData.shortcutIntentUri?.let { currentShortcutIntentUri ->
+                            data.shortcutIntentUri?.let { currentShortcutIntentUri ->
                                 context.startActivity(parseUri(currentShortcutIntentUri, 0))
                             }
                         },
@@ -187,7 +184,7 @@ internal fun InteractiveShortcutConfigGridItem(
             swipeDown = gridItem.swipeDown,
             swipeUp = gridItem.swipeUp,
             // Actions
-            onOpenAppDrawer = currentOnOpenAppDrawer,
+            onOpenAppDrawer = onOpenAppDrawer,
         )
 
     val iconModifier = Modifier
@@ -258,7 +255,7 @@ internal fun InteractiveShortcutConfigGridItem(
     }
 
     GridItemLayoutType(
-        // Settings and Modifier
+        // Layout and Modifier
         layoutType = gridItemSettings.layoutType,
         modifier = itemModifier,
         // Alignment and Arrangement

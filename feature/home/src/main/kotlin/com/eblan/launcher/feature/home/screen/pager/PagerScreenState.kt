@@ -1752,11 +1752,13 @@ internal class PagerScreenState(
 
     fun moveFolderEblanApplicationInfoGridItemOutsideFolder(
         // Grid Items
-        folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
+        folderId: String,
+        isFolder: Boolean,
         movingGridItem: GridItem,
         // Actions
         onMoveFolderEblanApplicationInfoGridItemOutsideFolder: (
-            folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
+            folderId: String,
+            isFolder: Boolean,
             movingGridItem: GridItem,
         ) -> Unit,
     ) {
@@ -1765,7 +1767,8 @@ internal class PagerScreenState(
         dismissApplicationScreen()
 
         onMoveFolderEblanApplicationInfoGridItemOutsideFolder(
-            folderEblanApplicationInfoGridItem,
+            folderId,
+            isFolder,
             movingGridItem,
         )
     }

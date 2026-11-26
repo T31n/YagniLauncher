@@ -17,13 +17,11 @@
  */
 package com.eblan.launcher.feature.home.screen.folder
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import com.eblan.launcher.domain.model.folder.FolderEntry
 import com.eblan.launcher.domain.model.grid.GridItem
-import com.eblan.launcher.domain.model.grid.MoveGridItemResult
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.util.calculateFolderGridDragPosition
 
@@ -34,7 +32,10 @@ internal fun handleDragFolderGridItem(
     // Screen
     screenWidth: Int,
     screenHeight: Int,
-    paddingValues: PaddingValues,
+    leftPadding: Int,
+    topPadding: Int,
+    rightPadding: Int,
+    bottomPadding: Int,
     // State
     currentPage: Int,
     isDragging: Boolean,
@@ -46,7 +47,7 @@ internal fun handleDragFolderGridItem(
     // Drag And Position
     drag: Drag,
     dragIntOffset: IntOffset,
-    moveGridItemResult: MoveGridItemResult?,
+    movingGridItem: GridItem?,
     // Folder
     folderEntry: FolderEntry,
     columns: Int,
@@ -60,7 +61,7 @@ internal fun handleDragFolderGridItem(
         columns: Int,
         rows: Int,
         folderGridItems: List<GridItem>,
-        movingFolderGridItem: GridItem,
+        movingGridItem: GridItem,
         dragX: Int,
         dragY: Int,
         gridWidth: Int,
@@ -74,7 +75,7 @@ internal fun handleDragFolderGridItem(
         !isVisibleOverlay ||
         !isDragging ||
         lockMovement ||
-        moveGridItemResult == null ||
+        movingGridItem == null ||
         !isLastFolderGridItem ||
         isInProgress
     ) {
@@ -91,7 +92,10 @@ internal fun handleDragFolderGridItem(
         // Grid Dimensions
         columns = columns,
         rows = rows,
-        paddingValues = paddingValues,
+        leftPadding = leftPadding,
+        topPadding = topPadding,
+        rightPadding = rightPadding,
+        bottomPadding = bottomPadding,
         // Cell Dimensions
         folderCellWidth = folderCellWidth,
         folderCellHeight = folderCellHeight,
@@ -107,7 +111,7 @@ internal fun handleDragFolderGridItem(
             columns,
             rows,
             folderGridItems,
-            moveGridItemResult.movingGridItem,
+            movingGridItem,
             folderGridDragPosition.x,
             folderGridDragPosition.y,
             folderGridDragPosition.width,

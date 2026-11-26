@@ -21,7 +21,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
-import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
 import com.eblan.launcher.domain.model.folder.FolderEntry
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.GridItem
@@ -60,7 +59,6 @@ import com.eblan.launcher.domain.usecase.launcherapps.SyncDataUseCase
 import com.eblan.launcher.domain.usecase.page.CachePageItemsUseCase
 import com.eblan.launcher.domain.usecase.page.UpdatePageItemsUseCase
 import com.eblan.launcher.domain.usecase.pin.GetPinGridItemUseCase
-import com.eblan.launcher.feature.home.contract.HomeContract
 import com.eblan.launcher.feature.home.model.GridItemSource
 import com.eblan.launcher.feature.home.model.HomeUiState
 import com.eblan.launcher.feature.home.model.Screen
@@ -70,7 +68,6 @@ import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterIsInstance
@@ -114,39 +111,37 @@ internal class HomeViewModel @Inject constructor(
     private val getRecursiveFolderEblanApplicationInfosUseCase: GetRecursiveFolderEblanApplicationInfosUseCase,
     private val deleteFolderEblanApplicationInfoGridItemsUseCase: DeleteFolderEblanApplicationInfoGridItemsUseCase,
     private val cleanupFolderGridItemsUseCase: CleanupFolderGridItemsUseCase,
-) : ViewModel(),
-    HomeContract {
-    override val homeUiState: StateFlow<HomeUiState> =
-        getHomeDataUseCase().map(HomeUiState::Success).stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = HomeUiState.Loading,
-        )
+) : ViewModel() {
+    val homeUiState = getHomeDataUseCase().map(HomeUiState::Success).stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = HomeUiState.Loading,
+    )
 
     private val _screen = MutableStateFlow(Screen.Pager)
-    override val screen: StateFlow<Screen> = _screen.asStateFlow()
+    val screen = _screen.asStateFlow()
 
     private val _moveGridItemResult = MutableStateFlow<MoveGridItemResult?>(null)
-    override val movedGridItemResult = _moveGridItemResult.asStateFlow()
+    val movedGridItemResult = _moveGridItemResult.asStateFlow()
 
     private val defaultDelay = 500L.milliseconds
     private val moveDelay = 50L.milliseconds
 
     private val _pageItems = MutableStateFlow<List<PageItem>?>(null)
-    override val pageItems: StateFlow<List<PageItem>?> = _pageItems.asStateFlow()
+    val pageItems = _pageItems.asStateFlow()
 
     private var moveGridItemJob: Job? = null
 
     private val _pinGridItem = MutableStateFlow<GridItem?>(null)
-    override val pinGridItem = _pinGridItem.asStateFlow()
+    val pinGridItem = _pinGridItem.asStateFlow()
 
-    override val eblanShortcutInfosGroup = getEblanShortcutInfosUseCase().stateIn(
+    val eblanShortcutInfosGroup = getEblanShortcutInfosUseCase().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = emptyMap(),
     )
 
-    override val eblanAppWidgetProviderInfosGroup =
+    val eblanAppWidgetProviderInfosGroup =
         eblanAppWidgetProviderInfoRepository.eblanAppWidgetProviderInfosFlow.map { eblanAppWidgetProviderInfos ->
             eblanAppWidgetProviderInfos.groupBy { eblanAppWidgetProviderInfo ->
                 eblanAppWidgetProviderInfo.packageName
@@ -159,7 +154,7 @@ internal class HomeViewModel @Inject constructor(
 
     private val _eblanApplicationInfoLabel = MutableStateFlow("")
     private val _eblanApplicationInfoTagId = MutableStateFlow<Long?>(null)
-    override val getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTagUseCase(
+    val getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTagUseCase(
         labelFlow = _eblanApplicationInfoLabel,
         eblanApplicationInfoTagIdFlow = _eblanApplicationInfoTagId,
     ).stateIn(
@@ -174,7 +169,7 @@ internal class HomeViewModel @Inject constructor(
     )
 
     private val _eblanAppWidgetProviderInfoLabel = MutableStateFlow("")
-    override val eblanAppWidgetProviderInfos =
+    val eblanAppWidgetProviderInfos =
         getEblanAppWidgetProviderInfosByLabelUseCase(labelFlow = _eblanAppWidgetProviderInfoLabel).stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
@@ -182,14 +177,14 @@ internal class HomeViewModel @Inject constructor(
         )
 
     private val _eblanShortcutConfigLabel = MutableStateFlow("")
-    override val eblanShortcutConfigs =
+    val eblanShortcutConfigs =
         getEblanShortcutConfigsByLabelUseCase(labelFlow = _eblanShortcutConfigLabel).stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = emptyMap(),
         )
 
-    override val eblanApplicationInfoTags = getEblanApplicationTagsUseCase().stateIn(
+    val eblanApplicationInfoTags = getEblanApplicationTagsUseCase().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = emptyList(),
@@ -202,7 +197,7 @@ internal class HomeViewModel @Inject constructor(
     private var shortcutsChangedJob: Job? = null
 
     private val _folderGridItemEntries = MutableStateFlow<List<FolderEntry>>(emptyList())
-    override val folderGridItemEntries = combine(
+    val folderGridItemEntries = combine(
         _folderGridItemEntries,
         homeUiState.filterIsInstance<HomeUiState.Success>(),
     ) { folderEntries, currentHomeUiState ->
@@ -224,13 +219,13 @@ internal class HomeViewModel @Inject constructor(
     )
 
     private val _resizeGridItem = MutableStateFlow<GridItem?>(null)
-    override val resizeGridItem = _resizeGridItem.asStateFlow()
+    val resizeGridItem = _resizeGridItem.asStateFlow()
 
     private val _gridItemSource = MutableStateFlow<GridItemSource?>(null)
-    override val gridItemSource = _gridItemSource.asStateFlow()
+    val gridItemSource = _gridItemSource.asStateFlow()
 
     private val _isVisibleOverlay = MutableStateFlow(false)
-    override val isVisibleOverlay = _isVisibleOverlay.asStateFlow()
+    val isVisibleOverlay = _isVisibleOverlay.asStateFlow()
 
     private val _folderEblanApplicationInfoPopups =
         getFolderEblanApplicationInfoPopupsUseCase().stateIn(
@@ -239,7 +234,7 @@ internal class HomeViewModel @Inject constructor(
             initialValue = null,
         )
 
-    override val folderEblanApplicationInfoPopups =
+    val folderEblanApplicationInfoPopups =
         _folderEblanApplicationInfoPopups.filterNotNull().stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
@@ -248,7 +243,7 @@ internal class HomeViewModel @Inject constructor(
 
     private val _folderEblanApplicationInfoEntries =
         MutableStateFlow<List<FolderEntry>>(emptyList())
-    override val folderEblanApplicationInfoEntries = combine(
+    val folderEblanApplicationInfoEntries = combine(
         _folderEblanApplicationInfoEntries,
         _folderEblanApplicationInfoPopups.filterNotNull(),
     ) { folderEntries, currentFolderPopups ->
@@ -271,10 +266,10 @@ internal class HomeViewModel @Inject constructor(
 
     private val _moveFolderEblanApplicationInfoGridItemResult =
         MutableStateFlow<MoveFolderEblanApplicationInfoGridItemResult?>(null)
-    override val moveFolderEblanApplicationInfoGridItemResult =
+    val moveFolderEblanApplicationInfoGridItemResult =
         _moveFolderEblanApplicationInfoGridItemResult.asStateFlow()
 
-    override fun moveGridItem(
+    fun moveGridItem(
         movingGridItem: GridItem,
         x: Int,
         y: Int,
@@ -304,11 +299,11 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    override fun cancelPendingMoveGridItem() {
+    fun cancelPendingMoveGridItem() {
         moveGridItemJob?.cancel()
     }
 
-    override fun resizeGridItem(
+    fun resizeGridItem(
         resizingGridItem: GridItem,
         columns: Int,
         rows: Int,
@@ -328,7 +323,7 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    override fun showPageCache(
+    fun showPageCache(
         gridItems: List<GridItem>,
         associate: Associate,
     ) {
@@ -355,7 +350,7 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    override fun saveEditPage(
+    fun saveEditPage(
         id: Int,
         pageItems: List<PageItem>,
         pageItemsToDelete: List<PageItem>,
@@ -381,13 +376,13 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    override fun cancelEditPage() {
+    fun updateScreen(screen: Screen) {
         _screen.update {
-            Screen.Pager
+            screen
         }
     }
 
-    override fun resetGridAfterResize() {
+    fun resetGridAfterResize() {
         viewModelScope.launch {
             moveGridItemJob?.cancelAndJoin()
 
@@ -405,7 +400,7 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    override fun updateGridItemsAfterMove(moveGridItemResult: MoveGridItemResult) {
+    fun updateGridItemsAfterMove(moveGridItemResult: MoveGridItemResult) {
         viewModelScope.launch {
             moveGridItemJob?.cancelAndJoin()
 
@@ -417,7 +412,7 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    override fun resetGrid() {
+    fun resetGrid() {
         viewModelScope.launch {
             moveGridItemJob?.cancelAndJoin()
 
@@ -439,7 +434,7 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    override fun resetGridAfterDeleteGridItem(gridItem: GridItem) {
+    fun resetGridAfterDeleteGridItem(gridItem: GridItem) {
         viewModelScope.launch {
             moveGridItemJob?.cancelAndJoin()
 
@@ -455,31 +450,31 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    override fun getEblanApplicationInfosByLabel(label: String) {
+    fun getEblanApplicationInfosByLabel(label: String) {
         _eblanApplicationInfoLabel.update {
             label
         }
     }
 
-    override fun getEblanAppWidgetProviderInfosByLabel(label: String) {
+    fun getEblanAppWidgetProviderInfosByLabel(label: String) {
         _eblanAppWidgetProviderInfoLabel.update {
             label
         }
     }
 
-    override fun getEblanShortcutConfigsByLabel(label: String) {
+    fun getEblanShortcutConfigsByLabel(label: String) {
         _eblanShortcutConfigLabel.update {
             label
         }
     }
 
-    override fun deleteGridItem(gridItem: GridItem) {
+    fun deleteGridItem(gridItem: GridItem) {
         viewModelScope.launch {
             deleteGridItemUseCase(gridItem = gridItem)
         }
     }
 
-    override fun getPinGridItem(pinItemRequestType: PinItemRequestType) {
+    fun getPinGridItem(pinItemRequestType: PinItemRequestType) {
         viewModelScope.launch {
             _pinGridItem.update {
                 getPinGridItemUseCase(pinItemRequestType = pinItemRequestType)
@@ -487,13 +482,13 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    override fun resetPinGridItem() {
+    fun resetPinGridItem() {
         _pinGridItem.update {
             null
         }
     }
 
-    override fun updateShortcutConfigIntoShortcutInfoGridItem(
+    fun updateShortcutConfigIntoShortcutInfoGridItem(
         moveGridItemResult: MoveGridItemResult,
         pinItemRequestType: PinItemRequestType.ShortcutInfo,
     ) {
@@ -558,7 +553,7 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    override fun updateShortcutConfigGridItem(
+    fun updateShortcutConfigGridItem(
         moveGridItemResult: MoveGridItemResult,
         shortcutIntentName: String?,
         shortcutIntentIcon: ByteArray?,
@@ -595,21 +590,19 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    override fun getEblanApplicationInfosByTagId(id: Long?) {
+    fun getEblanApplicationInfosByTagId(id: Long?) {
         _eblanApplicationInfoTagId.update {
             id
         }
     }
 
-    override fun startSyncData() {
-        syncDataJob?.cancel()
-
+    fun startSyncData() {
         syncDataJob = viewModelScope.launch {
             syncDataUseCase()
         }
     }
 
-    override fun stopSyncData() {
+    fun stopSyncData() {
         syncDataJob?.cancel()
         packageRemovedJob?.cancel()
         packageAddedJob?.cancel()
@@ -623,7 +616,7 @@ internal class HomeViewModel @Inject constructor(
         shortcutsChangedJob = null
     }
 
-    override fun upsertFolderGridItemEntry(folderEntry: FolderEntry) {
+    fun upsertFolderGridItemEntry(folderEntry: FolderEntry) {
         _folderGridItemEntries.update { folderEntries ->
             folderEntries
                 .filterNot { currentFolderEntry -> currentFolderEntry.id == folderEntry.id }
@@ -631,7 +624,7 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    override fun moveFolderGridItem(
+    fun moveFolderGridItem(
         columns: Int,
         rows: Int,
         folderGridItems: List<GridItem>,
@@ -665,7 +658,7 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    override fun resetGridAfterMoveFolder() {
+    fun resetGridAfterMoveFolder() {
         viewModelScope.launch {
             moveGridItemJob?.cancelAndJoin()
 
@@ -685,7 +678,7 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    override fun moveFolderGridItemOutsideFolder(movingGridItem: GridItem) {
+    fun moveFolderGridItemOutsideFolder(movingGridItem: GridItem) {
         viewModelScope.launch {
             moveGridItemJob?.cancelAndJoin()
 
@@ -707,19 +700,19 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    override fun updateGridItemSource(gridItemSource: GridItemSource) {
+    fun updateGridItemSource(gridItemSource: GridItemSource) {
         _gridItemSource.update {
             gridItemSource
         }
     }
 
-    override fun updateIsVisibleOverlay(isVisibleOverlay: Boolean) {
+    fun updateIsVisibleOverlay(isVisibleOverlay: Boolean) {
         _isVisibleOverlay.update {
             isVisibleOverlay
         }
     }
 
-    override fun showFolderWhenDragging(
+    fun showFolderWhenDragging(
         folderEntry: FolderEntry,
         movingGridItem: GridItem,
     ) {
@@ -746,25 +739,25 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    override fun updateMoveGridItemResult(moveGridItemResult: MoveGridItemResult) {
+    fun updateMoveGridItemResult(moveGridItemResult: MoveGridItemResult) {
         _moveGridItemResult.update {
             moveGridItemResult
         }
     }
 
-    override fun updateResizeGridItem(resizeGridItem: GridItem) {
+    fun updateResizeGridItem(resizeGridItem: GridItem) {
         _resizeGridItem.update {
             resizeGridItem
         }
     }
 
-    override fun deleteFolderGridItemEntry(folderEntry: FolderEntry) {
+    fun deleteFolderGridItemEntry(folderEntry: FolderEntry) {
         _folderGridItemEntries.update { folderEntries ->
             folderEntries.filterNot { currentFolderEntry -> currentFolderEntry.id == folderEntry.id }
         }
     }
 
-    override fun packageRemove(
+    fun packageRemove(
         serialNumber: Long,
         packageName: String,
     ) {
@@ -778,7 +771,7 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    override fun packageAdded(
+    fun packageAdded(
         serialNumber: Long,
         packageName: String,
     ) {
@@ -792,7 +785,7 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    override fun packageChanged(
+    fun packageChanged(
         serialNumber: Long,
         packageName: String,
     ) {
@@ -806,7 +799,7 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    override fun shortcutsChanged(
+    fun shortcutsChanged(
         serialNumber: Long,
         packageName: String,
     ) {
@@ -820,11 +813,11 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    override fun resetFolderGridItemEntries() {
+    fun resetFolderGridItemEntries() {
         _folderGridItemEntries.update { emptyList() }
     }
 
-    override fun closeFolderGridItemEntries() {
+    fun closeFolderGridItemEntries() {
         _folderGridItemEntries.update { folderEntries ->
             folderEntries.map { folderEntry ->
                 folderEntry.copy(isCloseFolder = true)
@@ -832,7 +825,7 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    override fun upsertFolderEblanApplicationInfoEntry(folderEntry: FolderEntry) {
+    fun upsertFolderEblanApplicationInfoEntry(folderEntry: FolderEntry) {
         _folderEblanApplicationInfoEntries.update { folderEntries ->
             folderEntries
                 .filterNot { currentFolderEntry -> currentFolderEntry.id == folderEntry.id }
@@ -840,17 +833,17 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    override fun deleteFolderEblanApplicationInfoEntry(folderEntry: FolderEntry) {
+    fun deleteFolderEblanApplicationInfoEntry(folderEntry: FolderEntry) {
         _folderEblanApplicationInfoEntries.update { folderEntries ->
             folderEntries.filterNot { currentFolderEntry -> currentFolderEntry.id == folderEntry.id }
         }
     }
 
-    override fun resetFolderEblanApplicationInfoEntries() {
+    fun resetFolderEblanApplicationInfoEntries() {
         _folderEblanApplicationInfoEntries.update { emptyList() }
     }
 
-    override fun closeFolderEblanApplicationInfoEntries() {
+    fun closeFolderEblanApplicationInfoEntries() {
         _folderEblanApplicationInfoEntries.update { folderEntries ->
             folderEntries.map { folderEntry ->
                 folderEntry.copy(isCloseFolder = true)
@@ -858,7 +851,7 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    override fun moveFolderEblanApplicationInfoGridItem(
+    fun moveFolderEblanApplicationInfoGridItem(
         columns: Int,
         rows: Int,
         folderEblanApplicationInfoGridItems: List<FolderEblanApplicationInfoGridItem>,
@@ -893,7 +886,7 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    override fun updateMoveFolderEblanApplicationInfoGridItemResult(
+    fun updateMoveFolderEblanApplicationInfoGridItemResult(
         moveFolderEblanApplicationInfoGridItemResult: MoveFolderEblanApplicationInfoGridItemResult,
     ) {
         _moveFolderEblanApplicationInfoGridItemResult.update {
@@ -901,7 +894,7 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    override fun resetGridAfterMoveFolderEblanApplicationInfo() {
+    fun resetGridAfterMoveFolderEblanApplicationInfo() {
         viewModelScope.launch {
             moveGridItemJob?.cancelAndJoin()
 
@@ -919,8 +912,9 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    override fun moveFolderEblanApplicationInfoGridItemOutsideFolder(
-        folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
+    fun moveFolderEblanApplicationInfoGridItemOutsideFolder(
+        folderId: String,
+        isFolder: Boolean,
         movingGridItem: GridItem,
     ) {
         viewModelScope.launch {
@@ -936,28 +930,24 @@ internal class HomeViewModel @Inject constructor(
                 )
             }
 
-            when (folderEblanApplicationInfoGridItem.data) {
-                is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
-                    _gridItemSource.update {
-                        GridItemSource.New
-                    }
+            if (isFolder) {
+                _gridItemSource.update {
+                    GridItemSource.NewFolder(
+                        folderGridItems = getRecursiveFolderEblanApplicationInfosUseCase(
+                            id = movingGridItem.id,
+                            folderId = folderId,
+                        ),
+                    )
                 }
-
-                is FolderEblanApplicationInfoGridItemData.Folder -> {
-                    _gridItemSource.update {
-                        GridItemSource.NewFolder(
-                            folderGridItems = getRecursiveFolderEblanApplicationInfosUseCase(
-                                id = movingGridItem.id,
-                                folderId = folderEblanApplicationInfoGridItem.id,
-                            ),
-                        )
-                    }
+            } else {
+                _gridItemSource.update {
+                    GridItemSource.New
                 }
             }
         }
     }
 
-    override fun dragFolderEblanApplicationInfoToGrid(
+    fun dragFolderEblanApplicationInfoToGrid(
         folderId: String,
         movingGridItem: GridItem,
     ) {
@@ -983,13 +973,13 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    override fun deleteFolderEblanApplicationInfoGridItems(folderId: String) {
+    fun deleteFolderEblanApplicationInfoGridItems(folderId: String) {
         viewModelScope.launch {
             deleteFolderEblanApplicationInfoGridItemsUseCase(folderId = folderId)
         }
     }
 
-    override fun updateGridItemsAfterMoveNewFolder(
+    fun updateGridItemsAfterMoveNewFolder(
         folderGridItems: List<GridItem>,
         moveGridItemResult: MoveGridItemResult,
     ) {

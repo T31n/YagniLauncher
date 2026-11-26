@@ -20,7 +20,7 @@ package com.eblan.launcher.feature.home.screen.resize
 import androidx.compose.runtime.Composable
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
-import com.eblan.launcher.domain.model.grid.GridItemSettings
+import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.util.getGridItemTextColor
 
@@ -41,7 +41,10 @@ internal fun ResizeOverlay(
     rows: Int,
     // Grid Item
     gridItem: GridItem,
-    gridItemSettings: GridItemSettings,
+    gridItemTextColor: TextColor,
+    gridItemCustomTextColor: Int,
+    gridItemBackgroundColor: BackgroundColor,
+    gridItemCustomBackgroundColor: Int,
     // Behavior and Appearance
     lockMovement: Boolean,
     textColor: TextColor,
@@ -52,22 +55,37 @@ internal fun ResizeOverlay(
         rows: Int,
     ) -> Unit,
 ) {
-    val currentGridItemSettings = if (gridItem.override) {
-        gridItem.gridItemSettings
+    val currentGridItemTextColor = if (gridItem.override) {
+        gridItem.gridItemSettings.textColor
     } else {
-        gridItemSettings
+        gridItemTextColor
+    }
+    val currentGridItemCustomTextColor = if (gridItem.override) {
+        gridItem.gridItemSettings.customTextColor
+    } else {
+        gridItemCustomTextColor
+    }
+    val currentGridItemBackgroundColor = if (gridItem.override) {
+        gridItem.gridItemSettings.backgroundColor
+    } else {
+        gridItemBackgroundColor
+    }
+    val currentGridItemCustomBackgroundColor = if (gridItem.override) {
+        gridItem.gridItemSettings.customBackgroundColor
+    } else {
+        gridItemCustomBackgroundColor
     }
 
     val currentTextColor = getGridItemTextColor(
         // Grid Item Text Colors
-        gridItemTextColor = currentGridItemSettings.textColor,
-        gridItemCustomTextColor = currentGridItemSettings.customTextColor,
+        gridItemTextColor = currentGridItemTextColor,
+        gridItemCustomTextColor = currentGridItemCustomTextColor,
         // System Text Colors
         systemTextColor = textColor,
-        systemCustomTextColor = gridItemSettings.customTextColor,
+        systemCustomTextColor = gridItemCustomTextColor,
         // Background Color
-        backgroundColor = currentGridItemSettings.backgroundColor,
-        customBackgroundColor = currentGridItemSettings.customBackgroundColor,
+        backgroundColor = currentGridItemBackgroundColor,
+        customBackgroundColor = currentGridItemCustomBackgroundColor,
     )
 
     when (val data = gridItem.data) {
@@ -102,8 +120,13 @@ internal fun ResizeOverlay(
 
         is GridItemData.Widget -> {
             WidgetGridItemResizeOverlay(
-                // Item Data
-                data = data,
+                // Widget Data
+                appWidgetId = data.appWidgetId,
+                resizeMode = data.resizeMode,
+                minResizeWidth = data.minResizeWidth,
+                minResizeHeight = data.minResizeHeight,
+                maxResizeWidth = data.maxResizeWidth,
+                maxResizeHeight = data.maxResizeHeight,
                 gridItem = gridItem,
                 // Dimensions
                 columns = columns,

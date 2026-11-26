@@ -51,11 +51,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.theme.EblanSpacing
+import com.eblan.launcher.domain.model.application.AppDrawerGridItem
 import com.eblan.launcher.domain.model.application.AppDrawerGridItemData
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
@@ -111,11 +114,11 @@ internal fun VerticalApplicationScreen(
     isVisibleFolderEblanApplicationInfos: Boolean,
     folderEblanApplicationInfoEntries: List<FolderEntry>,
     // System and Appearance
+    appDrawerColumns: Int,
+    appDrawerRowsHeight: Int,
     backgroundColor: BackgroundColor,
     customBackgroundColor: Int,
     searchBarType: SearchBarType,
-    appDrawerColumns: Int,
-    appDrawerRowsHeight: Int,
     gridItemSettings: GridItemSettings,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
@@ -131,7 +134,7 @@ internal fun VerticalApplicationScreen(
     onVerticalDrag: (Float) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onDragFolderEblanApplicationInfo: (
-        folderId: String,
+        folderEblanApplicationInfo: FolderEblanApplicationInfo,
         movingGridItem: GridItem,
     ) -> Unit,
     onDragApplicationInfo: (GridItem) -> Unit,
@@ -156,16 +159,29 @@ internal fun VerticalApplicationScreen(
     ) -> Unit,
     onTapFolderApplicationInfo: (folderEntry: FolderEntry) -> Unit,
 ) {
+    val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
 
     val searchBarState = rememberSearchBarState()
 
-    val eblanUserPageKeys =
+    val eblanUsers =
         remember(key1 = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos) {
-            getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos.keys.distinctBy { currentEblanUserPageKey ->
-                currentEblanUserPageKey.eblanUser.serialNumber
+            getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos.keys.map { currentEblanUserPageKey ->
+                currentEblanUserPageKey.eblanUser
+            }.distinctBy { currentEblanUser ->
+                currentEblanUser.serialNumber
             }
         }
+
+    val leftPadding = with(density) {
+        paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
+    }
+
+    val topPadding = with(density) {
+        paddingValues.calculateTopPadding().roundToPx()
+    }
+
+    val bottomPadding = paddingValues.calculateBottomPadding()
 
     Column(
         modifier = modifier
@@ -222,11 +238,11 @@ internal fun VerticalApplicationScreen(
             }
         }
 
-        if (eblanUserPageKeys.size > 1) {
+        if (eblanUsers.size > 1) {
             EblanApplicationInfoTabRow(
                 // Data
-                eblanUserPageKeys = eblanUserPageKeys,
-                eblanApplicationInfos = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos,
+                eblanUsers = eblanUsers,
+                eblanApplicationInfoKeys = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos.keys,
                 // State
                 currentPage = horizontalPagerState.currentPage,
                 // Appearance
@@ -247,7 +263,9 @@ internal fun VerticalApplicationScreen(
             EblanApplicationInfosPage(
                 // Scope and Layout
                 sharedTransitionScope = sharedTransitionScope,
-                paddingValues = paddingValues,
+                leftPadding = leftPadding,
+                topPadding = topPadding,
+                bottomPadding = bottomPadding,
                 screenHeight = screenHeight,
                 index = index,
                 // Animation and State
@@ -256,10 +274,10 @@ internal fun VerticalApplicationScreen(
                 animations = animations,
                 isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
                 // Settings and Data
-                backgroundColor = backgroundColor,
-                customBackgroundColor = customBackgroundColor,
                 appDrawerColumns = appDrawerColumns,
                 appDrawerRowsHeight = appDrawerRowsHeight,
+                backgroundColor = backgroundColor,
+                customBackgroundColor = customBackgroundColor,
                 gridItemSettings = gridItemSettings,
                 getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
                 folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
@@ -297,7 +315,9 @@ internal fun VerticalApplicationScreen(
 private fun EblanApplicationInfosPage(
     // Scope and Layout
     sharedTransitionScope: SharedTransitionScope,
-    paddingValues: PaddingValues,
+    leftPadding: Int,
+    topPadding: Int,
+    bottomPadding: Dp,
     screenHeight: Int,
     index: Int,
     modifier: Modifier = Modifier,
@@ -307,10 +327,10 @@ private fun EblanApplicationInfosPage(
     animations: Boolean,
     isVisibleFolderEblanApplicationInfos: Boolean,
     // Settings and Data
-    backgroundColor: BackgroundColor,
-    customBackgroundColor: Int,
     appDrawerColumns: Int,
     appDrawerRowsHeight: Int,
+    backgroundColor: BackgroundColor,
+    customBackgroundColor: Int,
     gridItemSettings: GridItemSettings,
     getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
@@ -333,7 +353,7 @@ private fun EblanApplicationInfosPage(
     onVerticalDrag: (Float) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onDragFolderEblanApplicationInfo: (
-        folderId: String,
+        folderEblanApplicationInfo: FolderEblanApplicationInfo,
         movingGridItem: GridItem,
     ) -> Unit,
     onDragApplicationInfo: (GridItem) -> Unit,
@@ -385,6 +405,14 @@ private fun EblanApplicationInfosPage(
 
     val isQuietModeEnabled = eblanUserPageKey.eblanUser.isQuietModeEnabled
 
+    val privateEblanUser = getEblanApplicationInfosByLabelAndTag.privateEblanUser
+
+    val isPrivateSpaceVisible = privateEblanUser != null &&
+        !(
+            privateEblanUser.isPrivateSpaceEntryPointHidden &&
+                privateEblanUser.isPrivateSpaceLocked
+            )
+
     Box(modifier = modifier.fillMaxSize()) {
         if (isQuietModeEnabled) {
             QuiteModeScreen(
@@ -403,18 +431,25 @@ private fun EblanApplicationInfosPage(
             EblanApplicationInfosGrid(
                 // Layout
                 sharedTransitionScope = sharedTransitionScope,
-                paddingValues = paddingValues,
+                leftPadding = leftPadding,
+                topPadding = topPadding,
+                bottomPadding = bottomPadding,
                 screenHeight = screenHeight,
                 // State
                 swipeY = swipeY,
                 animations = animations,
-                backgroundColor = backgroundColor,
-                customBackgroundColor = customBackgroundColor,
                 appDrawerColumns = appDrawerColumns,
                 appDrawerRowsHeight = appDrawerRowsHeight,
+                backgroundColor = backgroundColor,
+                customBackgroundColor = customBackgroundColor,
                 gridItemSettings = gridItemSettings,
-                eblanUserPageKey = eblanUserPageKey,
-                getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
+                eblanUserType = eblanUserPageKey.eblanUser.eblanUserType,
+                appDrawerGridItems = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos[eblanUserPageKey].orEmpty(),
+                iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
+                privateSerialNumber = privateEblanUser?.serialNumber,
+                isPrivateSpaceVisible = isPrivateSpaceVisible,
+                isPrivateQuietModeEnabled = privateEblanUser?.isQuietModeEnabled == true,
+                privateEblanApplicationInfos = getEblanApplicationInfosByLabelAndTag.privateEblanApplicationInfos,
                 isVisibleOverlay = isVisibleOverlay,
                 systemTextColor = systemTextColor,
                 systemCustomTextColor = systemCustomTextColor,
@@ -448,19 +483,26 @@ private fun EblanApplicationInfosPage(
 private fun EblanApplicationInfosGrid(
     // Layout
     sharedTransitionScope: SharedTransitionScope,
-    paddingValues: PaddingValues,
+    leftPadding: Int,
+    topPadding: Int,
+    bottomPadding: Dp,
     screenHeight: Int,
     modifier: Modifier = Modifier,
     // State
     swipeY: Float,
     animations: Boolean,
-    backgroundColor: BackgroundColor,
-    customBackgroundColor: Int,
     appDrawerColumns: Int,
     appDrawerRowsHeight: Int,
+    backgroundColor: BackgroundColor,
+    customBackgroundColor: Int,
     gridItemSettings: GridItemSettings,
-    eblanUserPageKey: EblanUserPageKey,
-    getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
+    eblanUserType: EblanUserType,
+    appDrawerGridItems: List<AppDrawerGridItem>,
+    iconPackFilePaths: Map<String, String?>,
+    privateSerialNumber: Long?,
+    isPrivateSpaceVisible: Boolean,
+    isPrivateQuietModeEnabled: Boolean,
+    privateEblanApplicationInfos: List<EblanApplicationInfo>,
     isVisibleOverlay: Boolean,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
@@ -480,7 +522,7 @@ private fun EblanApplicationInfosGrid(
     onVerticalDrag: (Float) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onDragFolderEblanApplicationInfo: (
-        folderId: String,
+        folderEblanApplicationInfo: FolderEblanApplicationInfo,
         movingGridItem: GridItem,
     ) -> Unit,
     onDragApplicationInfo: (GridItem) -> Unit,
@@ -518,9 +560,6 @@ private fun EblanApplicationInfosGrid(
         onDragEnd = onDragEnd,
     )
 
-    val privateIsQuiteModeEnabled =
-        getEblanApplicationInfosByLabelAndTag.privateEblanUser?.isQuietModeEnabled == true
-
     val isDefaultLauncher by produceIsDefaultLauncherState()
     val isScreenDismissed = swipeY.toInt() == screenHeight
 
@@ -539,13 +578,13 @@ private fun EblanApplicationInfosGrid(
             columns = GridCells.Fixed(count = appDrawerColumns),
             state = lazyGridState,
             modifier = Modifier.weight(1f),
-            contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
+            contentPadding = PaddingValues(bottom = bottomPadding),
             userScrollEnabled = !isVisibleOverlay,
         ) {
-            when (eblanUserPageKey.eblanUser.eblanUserType) {
+            when (eblanUserType) {
                 EblanUserType.Personal -> {
                     items(
-                        items = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos[eblanUserPageKey].orEmpty(),
+                        items = appDrawerGridItems,
                         key = { currentAppDrawerGridItem ->
                             currentAppDrawerGridItem.id
                         },
@@ -556,17 +595,18 @@ private fun EblanApplicationInfosGrid(
                                     // Application Data and Settings
                                     eblanApplicationInfo = data.eblanApplicationInfo,
                                     gridItemSettings = gridItemSettings,
-                                    backgroundColor = backgroundColor,
-                                    customBackgroundColor = customBackgroundColor,
-                                    iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
+                                    iconPackFilePath = iconPackFilePaths[data.eblanApplicationInfo.componentName],
                                     // Layout and UI State
                                     sharedTransitionScope = sharedTransitionScope,
                                     drag = drag,
-                                    paddingValues = paddingValues,
+                                    leftPadding = leftPadding,
+                                    topPadding = topPadding,
                                     animations = animations,
                                     isVisibleOverlay = isVisibleOverlay,
                                     isScrollInProgress = lazyGridState.isScrollInProgress,
                                     isSwiping = swipeY != 0f,
+                                    backgroundColor = backgroundColor,
+                                    customBackgroundColor = customBackgroundColor,
                                     systemTextColor = systemTextColor,
                                     systemCustomTextColor = systemCustomTextColor,
                                     modifier = Modifier.height(appDrawerRowsHeight.dp),
@@ -583,20 +623,22 @@ private fun EblanApplicationInfosGrid(
                                     // Core Data
                                     folderEblanApplicationInfo = data.folderEblanApplicationInfo,
                                     gridItemSettings = gridItemSettings,
-                                    backgroundColor = backgroundColor,
-                                    customBackgroundColor = customBackgroundColor,
-                                    folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
-                                    folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
-                                    iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
+                                    previewFolderEblanApplicationInfoGridItems = folderEblanApplicationInfoPopups[data.folderEblanApplicationInfo.id]?.previewFolderEblanApplicationInfoGridItems,
+                                    iconPackFilePaths = iconPackFilePaths,
                                     // Animation and Transition
                                     sharedTransitionScope = sharedTransitionScope,
                                     animations = animations,
                                     // Visibility and State
                                     isVisibleOverlay = isVisibleOverlay,
-                                    isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
+                                    isVisibleFolder = isVisibleFolderEblanApplicationInfos &&
+                                        folderEblanApplicationInfoEntries.any { currentFolderEntry ->
+                                            currentFolderEntry.id == data.folderEblanApplicationInfo.id
+                                        },
                                     isScrollInProgress = lazyGridState.isScrollInProgress,
                                     isSwiping = swipeY != 0f,
                                     // Styling and Appearance
+                                    backgroundColor = backgroundColor,
+                                    customBackgroundColor = customBackgroundColor,
                                     systemTextColor = systemTextColor,
                                     systemCustomTextColor = systemCustomTextColor,
                                     folderCornerRadius = folderCornerRadius,
@@ -620,17 +662,19 @@ private fun EblanApplicationInfosGrid(
 
                     privateSpace(
                         // User and Application Data
-                        privateEblanUser = getEblanApplicationInfosByLabelAndTag.privateEblanUser,
-                        privateEblanApplicationInfos = getEblanApplicationInfosByLabelAndTag.privateEblanApplicationInfos,
+                        privateSerialNumber = privateSerialNumber,
+                        isPrivateSpaceVisible = isPrivateSpaceVisible,
+                        privateEblanApplicationInfos = privateEblanApplicationInfos,
                         // App Drawer and Appearance Settings
                         gridItemSettings = gridItemSettings,
                         appDrawerRowsHeight = appDrawerRowsHeight,
-                        iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
+                        iconPackFilePaths = iconPackFilePaths,
                         // Space State
-                        isQuietModeEnabled = privateIsQuiteModeEnabled,
+                        isQuietModeEnabled = isPrivateQuietModeEnabled,
                         isVisibleOverlay = isVisibleOverlay,
                         // Layout and Colors
-                        paddingValues = paddingValues,
+                        leftPadding = leftPadding,
+                        topPadding = topPadding,
                         backgroundColor = backgroundColor,
                         customBackgroundColor = customBackgroundColor,
                         systemTextColor = systemTextColor,
@@ -643,7 +687,7 @@ private fun EblanApplicationInfosGrid(
 
                 else -> {
                     items(
-                        items = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos[eblanUserPageKey].orEmpty(),
+                        items = appDrawerGridItems,
                         key = { currentAppDrawerGridItem ->
                             currentAppDrawerGridItem.id
                         },
@@ -654,17 +698,18 @@ private fun EblanApplicationInfosGrid(
                                     // Application Data and Settings
                                     eblanApplicationInfo = data.eblanApplicationInfo,
                                     gridItemSettings = gridItemSettings,
-                                    backgroundColor = backgroundColor,
-                                    customBackgroundColor = customBackgroundColor,
-                                    iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
+                                    iconPackFilePath = iconPackFilePaths[data.eblanApplicationInfo.componentName],
                                     // Layout and UI State
                                     sharedTransitionScope = sharedTransitionScope,
                                     drag = drag,
-                                    paddingValues = paddingValues,
+                                    leftPadding = leftPadding,
+                                    topPadding = topPadding,
                                     animations = animations,
                                     isVisibleOverlay = isVisibleOverlay,
                                     isScrollInProgress = lazyGridState.isScrollInProgress,
                                     isSwiping = swipeY != 0f,
+                                    backgroundColor = backgroundColor,
+                                    customBackgroundColor = customBackgroundColor,
                                     systemTextColor = systemTextColor,
                                     systemCustomTextColor = systemCustomTextColor,
                                     modifier = Modifier.height(appDrawerRowsHeight.dp),
@@ -690,13 +735,8 @@ private fun EblanApplicationInfosGrid(
             appDrawerColumns = appDrawerColumns,
             // UI Settings
             isPrivateSpaceEntryPointHidden = isDefaultLauncher &&
-                eblanUserPageKey.eblanUser.eblanUserType == EblanUserType.Personal &&
-                getEblanApplicationInfosByLabelAndTag.privateEblanUser?.let { privateEblanUser ->
-                    !(
-                        privateEblanUser.isPrivateSpaceEntryPointHidden &&
-                            privateEblanUser.isPrivateSpaceLocked
-                        )
-                } == true,
+                eblanUserType == EblanUserType.Personal &&
+                isPrivateSpaceVisible,
         )
     }
 }

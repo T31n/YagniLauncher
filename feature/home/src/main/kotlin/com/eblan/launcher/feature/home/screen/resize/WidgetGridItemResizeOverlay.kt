@@ -44,7 +44,6 @@ import androidx.compose.ui.unit.dp
 import com.eblan.launcher.domain.grid.isGridItemSpanWithinBounds
 import com.eblan.launcher.domain.grid.resizeWidgetGridItemWithPixels
 import com.eblan.launcher.domain.model.grid.GridItem
-import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.SideAnchor
 import com.eblan.launcher.feature.home.component.dashedResizeOutline
 import com.eblan.launcher.feature.home.component.resizeHandleModifier
@@ -58,8 +57,13 @@ import kotlin.math.roundToInt
 
 @Composable
 internal fun WidgetGridItemResizeOverlay(
-    // Item Data
-    data: GridItemData.Widget,
+    // Widget Data
+    appWidgetId: Int,
+    resizeMode: Int,
+    minResizeWidth: Int,
+    minResizeHeight: Int,
+    maxResizeWidth: Int,
+    maxResizeHeight: Int,
     gridItem: GridItem,
     // Dimensions
     columns: Int,
@@ -163,7 +167,11 @@ internal fun WidgetGridItemResizeOverlay(
     ) {
         resizeWidgetGridItem(
             // Widget Data and Manager
-            data = data,
+            appWidgetId = appWidgetId,
+            minResizeWidth = minResizeWidth,
+            minResizeHeight = minResizeHeight,
+            maxResizeWidth = maxResizeWidth,
+            maxResizeHeight = maxResizeHeight,
             appWidgetManager = appWidgetManager,
             // Grid Item and Dimensions
             gridItem = gridItem,
@@ -211,7 +219,7 @@ internal fun WidgetGridItemResizeOverlay(
     ) {
         Box(
             modifier = Modifier.run {
-                if (data.resizeMode == AppWidgetProviderInfo.RESIZE_VERTICAL || data.resizeMode == AppWidgetProviderInfo.RESIZE_BOTH) {
+                if (resizeMode == AppWidgetProviderInfo.RESIZE_VERTICAL || resizeMode == AppWidgetProviderInfo.RESIZE_BOTH) {
                     align(Alignment.TopCenter)
                         .offset(y = (-15).dp)
                         .resizeHandleModifier(color = color)
@@ -241,7 +249,7 @@ internal fun WidgetGridItemResizeOverlay(
 
         Box(
             modifier = Modifier.run {
-                if (data.resizeMode == AppWidgetProviderInfo.RESIZE_HORIZONTAL || data.resizeMode == AppWidgetProviderInfo.RESIZE_BOTH) {
+                if (resizeMode == AppWidgetProviderInfo.RESIZE_HORIZONTAL || resizeMode == AppWidgetProviderInfo.RESIZE_BOTH) {
                     align(Alignment.CenterEnd)
                         .offset(15.dp)
                         .resizeHandleModifier(color = color)
@@ -270,7 +278,7 @@ internal fun WidgetGridItemResizeOverlay(
 
         Box(
             modifier = Modifier.run {
-                if (data.resizeMode == AppWidgetProviderInfo.RESIZE_VERTICAL || data.resizeMode == AppWidgetProviderInfo.RESIZE_BOTH) {
+                if (resizeMode == AppWidgetProviderInfo.RESIZE_VERTICAL || resizeMode == AppWidgetProviderInfo.RESIZE_BOTH) {
                     align(Alignment.BottomCenter)
                         .offset(y = 15.dp)
                         .resizeHandleModifier(color = color)
@@ -299,7 +307,7 @@ internal fun WidgetGridItemResizeOverlay(
 
         Box(
             modifier = Modifier.run {
-                if (data.resizeMode == AppWidgetProviderInfo.RESIZE_HORIZONTAL || data.resizeMode == AppWidgetProviderInfo.RESIZE_BOTH) {
+                if (resizeMode == AppWidgetProviderInfo.RESIZE_HORIZONTAL || resizeMode == AppWidgetProviderInfo.RESIZE_BOTH) {
                     align(Alignment.CenterStart)
                         .offset((-15).dp)
                         .resizeHandleModifier(color = color)
@@ -371,7 +379,11 @@ private fun getWidgetBorderY(
 
 private fun resizeWidgetGridItem(
     // Widget Data and Manager
-    data: GridItemData.Widget,
+    appWidgetId: Int,
+    minResizeWidth: Int,
+    minResizeHeight: Int,
+    maxResizeWidth: Int,
+    maxResizeHeight: Int,
     appWidgetManager: AndroidAppWidgetManagerWrapper,
     // Grid Item and Dimensions
     gridItem: GridItem,
@@ -391,10 +403,10 @@ private fun resizeWidgetGridItem(
     // Callback
     onResizeWidgetGridItem: (GridItem, Int, Int) -> Unit,
 ) {
-    val minResizeWidthPx = with(density) { data.minResizeWidth.dp.roundToPx() }
-    val minResizeHeightPx = with(density) { data.minResizeHeight.dp.roundToPx() }
-    val maxResizeWidthPx = with(density) { data.maxResizeWidth.dp.roundToPx() }
-    val maxResizeHeightPx = with(density) { data.maxResizeHeight.dp.roundToPx() }
+    val minResizeWidthPx = with(density) { minResizeWidth.dp.roundToPx() }
+    val minResizeHeightPx = with(density) { minResizeHeight.dp.roundToPx() }
+    val maxResizeWidthPx = with(density) { maxResizeWidth.dp.roundToPx() }
+    val maxResizeHeightPx = with(density) { maxResizeHeight.dp.roundToPx() }
 
     val allowedWidth =
         if (minResizeWidthPx > 0 && currentWidth <= minResizeWidthPx) {
@@ -480,11 +492,11 @@ private fun resizeWidgetGridItem(
             // Manager
             androidAppWidgetManagerWrapper = appWidgetManager,
             // Widget Data
-            appWidgetId = data.appWidgetId,
-            minResizeWidth = data.minResizeWidth,
-            minResizeHeight = data.minResizeHeight,
-            maxResizeWidth = data.maxResizeWidth,
-            maxResizeHeight = data.maxResizeHeight,
+            appWidgetId = appWidgetId,
+            minResizeWidth = minResizeWidth,
+            minResizeHeight = minResizeHeight,
+            maxResizeWidth = maxResizeWidth,
+            maxResizeHeight = maxResizeHeight,
             // Dimensions
             width = allowedWidth,
             height = allowedHeight,

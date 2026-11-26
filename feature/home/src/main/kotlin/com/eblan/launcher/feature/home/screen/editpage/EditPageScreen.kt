@@ -75,7 +75,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.core.util.Consumer
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.domain.model.folder.FolderPopup
@@ -86,7 +85,7 @@ import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.GridLayout
 import com.eblan.launcher.feature.home.component.HomeHandler
-import com.eblan.launcher.feature.home.contract.EditPageContract
+import com.eblan.launcher.feature.home.model.Screen
 import com.eblan.launcher.feature.home.screen.editpage.griditem.PageGridItem
 import com.eblan.launcher.ui.lazylist.DraggableColumnItem
 import com.eblan.launcher.ui.lazylist.dragColumnContainer
@@ -96,9 +95,8 @@ import com.eblan.launcher.common.R as commonR
 
 @Composable
 internal fun EditGridPageScreen(
-    // Contract
-    contract: EditPageContract,
     // Content
+    pageItems: List<PageItem>?,
     folderPopupGridItems: Map<String, FolderPopup>,
     iconPackFilePaths: Map<String, String?>,
     // Layout
@@ -120,10 +118,17 @@ internal fun EditGridPageScreen(
     folderBorderColor: BackgroundColor,
     customFolderBorderColor: Int,
     folderBorderWidth: Int,
-    systemTextColor: TextColor,
     systemCustomTextColor: Int,
+    // Actions
+    onSaveEditPage: (
+        id: Int,
+        pageItems: List<PageItem>,
+        pageItemsToDelete: List<PageItem>,
+        associate: Associate,
+    ) -> Unit,
+    onUpdateScreen: (Screen) -> Unit,
 ) {
-    val pageItems = contract.pageItems.collectAsStateWithLifecycle().value ?: return
+    requireNotNull(pageItems)
 
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
@@ -173,14 +178,17 @@ internal fun EditGridPageScreen(
             scrollToLastTrigger++
         },
         onSave = {
-            contract.saveEditPage(
-                id = selectedId,
-                pageItems = currentPageItems,
-                pageItemsToDelete = pageItemsToDelete,
-                associate = Associate.Grid,
+            onSaveEditPage(
+                selectedId,
+                currentPageItems,
+                pageItemsToDelete,
+                Associate.Grid,
             )
         },
-        onCancel = contract::cancelEditPage,
+        onCancel = {
+            onUpdateScreen(Screen.Pager)
+        },
+        onUpdateScreen = onUpdateScreen,
     ) { contentPadding ->
         BoxWithConstraints(
             modifier = Modifier
@@ -267,7 +275,6 @@ internal fun EditGridPageScreen(
                                             folderPopupGridItems = folderPopupGridItems,
                                             hasShortcutHostPermission = hasShortcutHostPermission,
                                             textColor = textColor,
-                                            systemTextColor = systemTextColor,
                                             systemCustomTextColor = systemCustomTextColor,
                                             folderBackgroundColor = folderBackgroundColor,
                                             customFolderBackgroundColor = customFolderBackgroundColor,
@@ -348,9 +355,8 @@ private fun getGridSize(
 
 @Composable
 internal fun EditDockGridPageScreen(
-    // Contract
-    contract: EditPageContract,
     // Content
+    pageItems: List<PageItem>?,
     folderPopupGridItems: Map<String, FolderPopup>,
     hasShortcutHostPermission: Boolean,
     // Settings
@@ -362,7 +368,6 @@ internal fun EditDockGridPageScreen(
     folderCornerRadius: Int,
     // Appearance
     textColor: TextColor,
-    systemTextColor: TextColor,
     systemCustomTextColor: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
@@ -373,8 +378,16 @@ internal fun EditDockGridPageScreen(
     // Layout
     paddingValues: PaddingValues,
     modifier: Modifier = Modifier,
+    // Callbacks
+    onSaveEditPage: (
+        id: Int,
+        pageItems: List<PageItem>,
+        pageItemsToDelete: List<PageItem>,
+        associate: Associate,
+    ) -> Unit,
+    onUpdateScreen: (Screen) -> Unit,
 ) {
-    val pageItems = contract.pageItems.collectAsStateWithLifecycle().value ?: return
+    requireNotNull(pageItems)
 
     val scope = rememberCoroutineScope()
 
@@ -413,14 +426,17 @@ internal fun EditDockGridPageScreen(
             }
         },
         onSave = {
-            contract.saveEditPage(
-                id = selectedId,
-                pageItems = currentPageItems,
-                pageItemsToDelete = pageItemsToDelete,
-                associate = Associate.Dock,
+            onSaveEditPage(
+                selectedId,
+                currentPageItems,
+                pageItemsToDelete,
+                Associate.Dock,
             )
         },
-        onCancel = contract::cancelEditPage,
+        onCancel = {
+            onUpdateScreen(Screen.Pager)
+        },
+        onUpdateScreen = onUpdateScreen,
     ) { contentPadding ->
         LazyColumn(
             modifier = Modifier
@@ -484,7 +500,6 @@ internal fun EditDockGridPageScreen(
                                     folderPopupGridItems = folderPopupGridItems,
                                     hasShortcutHostPermission = hasShortcutHostPermission,
                                     textColor = textColor,
-                                    systemTextColor = systemTextColor,
                                     systemCustomTextColor = systemCustomTextColor,
                                     folderBackgroundColor = folderBackgroundColor,
                                     customFolderBackgroundColor = customFolderBackgroundColor,
@@ -528,6 +543,7 @@ private fun EditPageScaffold(
     onAdd: () -> Unit,
     onSave: () -> Unit,
     onCancel: () -> Unit,
+    onUpdateScreen: (Screen) -> Unit,
     modifier: Modifier = Modifier,
     content: @Composable (PaddingValues) -> Unit,
 ) {
@@ -540,7 +556,7 @@ private fun EditPageScaffold(
             scope.launch {
                 handleActionMainIntent(
                     intent = intent,
-                    onCancel = onCancel,
+                    onUpdateScreen = onUpdateScreen,
                 )
             }
         }
@@ -670,7 +686,7 @@ internal fun PageButtons(
 
 internal fun handleActionMainIntent(
     intent: Intent,
-    onCancel: () -> Unit,
+    onUpdateScreen: (Screen) -> Unit,
 ) {
     if (intent.action != Intent.ACTION_MAIN && !intent.hasCategory(Intent.CATEGORY_HOME)) {
         return
@@ -680,5 +696,5 @@ internal fun handleActionMainIntent(
         return
     }
 
-    onCancel()
+    onUpdateScreen(Screen.Pager)
 }

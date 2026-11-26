@@ -86,8 +86,8 @@ internal fun InteractiveApplicationInfoGridItem(
     isScrollInProgress: Boolean,
     hasInteraction: Boolean,
     animations: Boolean,
-    statusBarNotifications: Map<String, Int>,
-    iconPackFilePaths: Map<String, String?>,
+    hasNotifications: Boolean,
+    iconPackFilePath: String?,
     // Appearance
     textColor: Color,
     maxLines: Int,
@@ -125,20 +125,15 @@ internal fun InteractiveApplicationInfoGridItem(
 
     val alpha = if (hasInteraction) 0f else 1f
 
-    val currentGridItem by rememberUpdatedState(gridItem)
-    val currentData by rememberUpdatedState(data)
-    val currentSourceBounds by rememberUpdatedState(sourceBounds)
-    val currentSharedElementKey by rememberUpdatedState(sharedElementKey)
     val currentOnOpenAppDrawer by rememberUpdatedState(onOpenAppDrawer)
     val currentOnLongPressGridItem by rememberUpdatedState(onLongPressGridItem)
 
     val iconPath = getGridItemIconPath(
         data = data,
-        iconPackFilePath = iconPackFilePaths[data.componentName],
+        iconPackFilePath = iconPackFilePath,
     )
     val label = getGridItemLabel(data = data).toString()
 
-    val hasNotifications = (statusBarNotifications[data.packageName] ?: 0) > 0
     val isNotificationAccessGranted by produceIsNotificationAccessGrantedState()
 
     val itemModifier = modifier
@@ -157,14 +152,14 @@ internal fun InteractiveApplicationInfoGridItem(
         )
         .run {
             if (!isVisibleOverlay) {
-                pointerInput(key1 = gridItem.doubleTap.eblanActionType != EblanActionType.None) {
+                pointerInput(key1 = Unit) {
                     detectTapGestures(
                         onDoubleTap = if (gridItem.doubleTap.eblanActionType != EblanActionType.None) {
                             {
                                 handleEblanAction(
                                     // Context and Action
                                     context = context,
-                                    eblanAction = currentGridItem.doubleTap,
+                                    eblanAction = gridItem.doubleTap,
                                     // System Wrappers
                                     launcherApps = androidLauncherAppsWrapper,
                                     statusBarManagerWrapper = androidStatusBarManagerWrapper,
@@ -177,18 +172,18 @@ internal fun InteractiveApplicationInfoGridItem(
                         },
                         onLongPress = {
                             currentOnLongPressGridItem(
-                                currentGridItem,
+                                gridItem,
                                 { graphicsLayer.toImageBitmap() },
                                 intOffset,
                                 intSize,
-                                currentSharedElementKey,
+                                sharedElementKey,
                             )
                         },
                         onTap = {
                             androidLauncherAppsWrapper.startMainActivity(
-                                serialNumber = currentData.serialNumber,
-                                componentName = currentData.componentName,
-                                sourceBounds = currentSourceBounds,
+                                serialNumber = data.serialNumber,
+                                componentName = data.componentName,
+                                sourceBounds = sourceBounds,
                             )
                         },
                     )
@@ -202,7 +197,7 @@ internal fun InteractiveApplicationInfoGridItem(
             swipeDown = gridItem.swipeDown,
             swipeUp = gridItem.swipeUp,
             // Actions
-            onOpenAppDrawer = currentOnOpenAppDrawer,
+            onOpenAppDrawer = onOpenAppDrawer,
         )
 
     val iconModifier = Modifier
@@ -291,7 +286,7 @@ internal fun InteractiveApplicationInfoGridItem(
     }
 
     GridItemLayoutType(
-        // Settings and Modifier
+        // Layout and Modifier
         layoutType = gridItemSettings.layoutType,
         modifier = itemModifier,
         // Alignment and Arrangement

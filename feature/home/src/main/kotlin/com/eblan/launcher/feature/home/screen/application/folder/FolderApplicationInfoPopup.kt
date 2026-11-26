@@ -49,13 +49,10 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
-import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfo
-import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfoByGroup
-import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
 import com.eblan.launcher.feature.home.component.HomeHandler
 import com.eblan.launcher.feature.home.component.popup
 import com.eblan.launcher.feature.home.model.SharedElementKey
@@ -68,7 +65,7 @@ import com.eblan.launcher.ui.local.LocalUserManager
 @Composable
 internal fun FolderApplicationInfoPopup(
     // Application Info
-    folderId: String?,
+    folderEblanApplicationInfoId: String?,
     isCloseFolderEblanApplicationInfoMenu: Boolean,
     // Layout and Positioning
     paddingValues: PaddingValues,
@@ -84,7 +81,7 @@ internal fun FolderApplicationInfoPopup(
 
     requireNotNull(popupIntSize)
 
-    requireNotNull(folderId)
+    requireNotNull(folderEblanApplicationInfoId)
 
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
@@ -158,12 +155,12 @@ internal fun FolderApplicationInfoPopup(
         ) {
             FolderApplicationInfoMenu(
                 onDelete = {
-                    onDeleteFolderEblanApplicationInfoGridItems(folderId)
+                    onDeleteFolderEblanApplicationInfoGridItems(folderEblanApplicationInfoId)
 
                     transitionState.targetState = false
                 },
                 onEdit = {
-                    onEditFolderApplicationInfo(folderId)
+                    onEditFolderApplicationInfo(folderEblanApplicationInfoId)
 
                     transitionState.targetState = false
                 },
@@ -175,9 +172,10 @@ internal fun FolderApplicationInfoPopup(
 @Composable
 internal fun FolderApplicationInfoGridItemPopup(
     // Folder Data
-    folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem?,
-    eblanAppWidgetProviderInfosGroup: Map<String, List<EblanAppWidgetProviderInfo>>,
-    eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
+    folderEblanApplicationInfoGridItemId: String?,
+    folderEblanApplicationInfoGridItemData: FolderEblanApplicationInfoGridItemData?,
+    hasAppWidgets: Boolean,
+    eblanShortcutInfosByPackageName: List<EblanShortcutInfo>?,
     gridItemSettings: GridItemSettings,
     // Popup Configuration
     popupIntOffset: IntOffset?,
@@ -209,7 +207,9 @@ internal fun FolderApplicationInfoGridItemPopup(
 
     requireNotNull(popupIntSize)
 
-    requireNotNull(folderEblanApplicationInfoGridItem)
+    requireNotNull(folderEblanApplicationInfoGridItemId)
+
+    requireNotNull(folderEblanApplicationInfoGridItemData)
 
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
@@ -283,11 +283,12 @@ internal fun FolderApplicationInfoGridItemPopup(
         ) {
             FolderApplicationInfoGridItemPopupContent(
                 // Item Data
-                folderEblanApplicationInfoGridItem = folderEblanApplicationInfoGridItem,
+                folderEblanApplicationInfoGridItemId = folderEblanApplicationInfoGridItemId,
+                folderEblanApplicationInfoGridItemData = folderEblanApplicationInfoGridItemData,
                 gridItemSettings = gridItemSettings,
                 // Providers and Shortcuts
-                eblanAppWidgetProviderInfosGroup = eblanAppWidgetProviderInfosGroup,
-                eblanShortcutInfosGroup = eblanShortcutInfosGroup,
+                hasAppWidgets = hasAppWidgets,
+                eblanShortcutInfosByPackageName = eblanShortcutInfosByPackageName,
                 // State and Permissions
                 hasShortcutHostPermission = hasShortcutHostPermission,
                 isVisibleOverlay = isVisibleOverlay,
@@ -312,11 +313,12 @@ internal fun FolderApplicationInfoGridItemPopup(
 @Composable
 private fun FolderApplicationInfoGridItemPopupContent(
     // Item Data
-    folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
+    folderEblanApplicationInfoGridItemId: String,
+    folderEblanApplicationInfoGridItemData: FolderEblanApplicationInfoGridItemData,
     gridItemSettings: GridItemSettings,
     // Providers and Shortcuts
-    eblanAppWidgetProviderInfosGroup: Map<String, List<EblanAppWidgetProviderInfo>>,
-    eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
+    hasAppWidgets: Boolean,
+    eblanShortcutInfosByPackageName: List<EblanShortcutInfo>?,
     // State and Permissions
     hasShortcutHostPermission: Boolean,
     isVisibleOverlay: Boolean,
@@ -345,8 +347,9 @@ private fun FolderApplicationInfoGridItemPopupContent(
     val userManager = LocalUserManager.current
     val context = LocalContext.current
 
-    when (val data = folderEblanApplicationInfoGridItem.data) {
+    when (folderEblanApplicationInfoGridItemData) {
         is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
+            val data = folderEblanApplicationInfoGridItemData
             ApplicationInfoMenu(
                 // Item Data
                 icon = data.icon,
@@ -354,15 +357,8 @@ private fun FolderApplicationInfoGridItemPopupContent(
                 isVisibleOverlay = isVisibleOverlay,
                 hasShortcutHostPermission = hasShortcutHostPermission,
                 gridItemSettings = gridItemSettings,
-                eblanShortcutInfosGroup = eblanShortcutInfosGroup[
-                    EblanShortcutInfoByGroup(
-                        serialNumber = data.serialNumber,
-                        packageName = data.packageName,
-                    ),
-                ],
-                eblanAppWidgetProviderInfosByPackageName = eblanAppWidgetProviderInfosGroup[
-                    data.packageName,
-                ],
+                eblanShortcutInfosGroup = eblanShortcutInfosByPackageName,
+                hasAppWidgets = hasAppWidgets,
                 // Modifier
                 modifier = modifier,
                 // Callbacks
@@ -442,12 +438,12 @@ private fun FolderApplicationInfoGridItemPopupContent(
             FolderApplicationInfoMenu(
                 modifier = modifier,
                 onDelete = {
-                    onDeleteFolderEblanApplicationInfoGridItems(folderEblanApplicationInfoGridItem.id)
+                    onDeleteFolderEblanApplicationInfoGridItems(folderEblanApplicationInfoGridItemId)
 
                     onDismiss()
                 },
                 onEdit = {
-                    onEditFolderApplicationInfo(folderEblanApplicationInfoGridItem.id)
+                    onEditFolderApplicationInfo(folderEblanApplicationInfoGridItemId)
 
                     onDismiss()
                 },

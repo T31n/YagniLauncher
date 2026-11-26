@@ -117,7 +117,7 @@ internal fun getGridItemTextColorFromBackgroundColor(
     // Container Background Color
     backgroundColor: BackgroundColor,
     customBackgroundColor: Int,
-    // Grid Item Text and Background Colors
+    // Grid Item Colors
     gridItemTextColor: TextColor,
     gridItemCustomTextColor: Int,
     gridItemBackgroundColor: BackgroundColor,

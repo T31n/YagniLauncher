@@ -58,8 +58,6 @@ import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfo
-import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfoByGroup
-import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
 import com.eblan.launcher.feature.home.component.HomeHandler
 import com.eblan.launcher.feature.home.component.popup
 import com.eblan.launcher.feature.home.model.SharedElementKey
@@ -80,8 +78,8 @@ internal fun FolderGridItemPopup(
     popupIntSize: IntSize?,
     paddingValues: PaddingValues,
     // Widget and Shortcut Data
-    eblanAppWidgetProviderInfosGroup: Map<String, List<EblanAppWidgetProviderInfo>>,
-    eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
+    hasAppWidgets: Boolean,
+    eblanShortcutInfosByPackageName: List<EblanShortcutInfo>?,
     // Modifier
     modifier: Modifier = Modifier,
     // Actions
@@ -191,8 +189,8 @@ internal fun FolderGridItemPopup(
                 folderGridItem = folderGridItem,
                 gridItemSettings = gridItemSettings,
                 // Content Providers
-                eblanAppWidgetProviderInfosGroup = eblanAppWidgetProviderInfosGroup,
-                eblanShortcutInfosGroup = eblanShortcutInfosGroup,
+                hasAppWidgets = hasAppWidgets,
+                eblanShortcutInfosByPackageName = eblanShortcutInfosByPackageName,
                 // State
                 hasShortcutHostPermission = hasShortcutHostPermission,
                 isVisibleOverlay = isVisibleOverlay,
@@ -234,8 +232,8 @@ private fun FolderGridItemPopupContent(
     folderGridItem: GridItem,
     gridItemSettings: GridItemSettings,
     // Content Providers
-    eblanAppWidgetProviderInfosGroup: Map<String, List<EblanAppWidgetProviderInfo>>,
-    eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
+    hasAppWidgets: Boolean,
+    eblanShortcutInfosByPackageName: List<EblanShortcutInfo>?,
     // State
     hasShortcutHostPermission: Boolean,
     isVisibleOverlay: Boolean,
@@ -271,13 +269,8 @@ private fun FolderGridItemPopupContent(
                         icon = data.icon,
                         gridItemSettings = gridItemSettings,
                         // App Data
-                        eblanAppWidgetProviderInfosByPackageName = eblanAppWidgetProviderInfosGroup[data.packageName],
-                        eblanShortcutInfosByPackageName = eblanShortcutInfosGroup[
-                            EblanShortcutInfoByGroup(
-                                serialNumber = data.serialNumber,
-                                packageName = data.packageName,
-                            ),
-                        ],
+                        hasAppWidgets = hasAppWidgets,
+                        eblanShortcutInfosByPackageName = eblanShortcutInfosByPackageName,
                         // Permissions and State
                         hasShortcutHostPermission = hasShortcutHostPermission,
                         isVisibleOverlay = isVisibleOverlay,
@@ -357,7 +350,7 @@ private fun ApplicationInfoFolderGridItemPopupContent(
     icon: String?,
     gridItemSettings: GridItemSettings,
     // App Data
-    eblanAppWidgetProviderInfosByPackageName: List<EblanAppWidgetProviderInfo>?,
+    hasAppWidgets: Boolean,
     eblanShortcutInfosByPackageName: List<EblanShortcutInfo>?,
     // Permissions and State
     hasShortcutHostPermission: Boolean,
@@ -427,7 +420,7 @@ private fun ApplicationInfoFolderGridItemPopupContent(
                         Icon(imageVector = EblanLauncherIcons.Delete, contentDescription = null)
                     }
 
-                    if (!eblanAppWidgetProviderInfosByPackageName.isNullOrEmpty()) {
+                    if (hasAppWidgets) {
                         IconButton(
                             onClick = onWidgets,
                         ) {

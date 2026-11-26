@@ -38,10 +38,10 @@ import com.eblan.launcher.feature.home.util.PAGE_INDICATOR_HEIGHT
 import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
 
 @Composable
-internal fun <T> FolderTitle(
+internal fun FolderTitle(
     // Content
     label: String,
-    gridItemsByPage: Map<Int, List<T>>,
+    pageCount: Int,
     progress: Float,
     // State
     folderGridHorizontalPagerState: PagerState,
@@ -75,7 +75,7 @@ internal fun <T> FolderTitle(
             .padding(horizontal = 10.dp)
             .alpha(if (progress > 0.5) 1f else 0f),
     ) {
-        if (gridItemsByPage.size > 1) {
+        if (pageCount > 1) {
             Row(
                 modifier = Modifier.matchParentSize(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -90,7 +90,7 @@ internal fun <T> FolderTitle(
                 PageIndicator(
                     // Pager State and Pagination
                     gridHorizontalPagerState = folderGridHorizontalPagerState,
-                    pageCount = gridItemsByPage.size,
+                    pageCount = pageCount,
                     infiniteScroll = false,
                     // Appearance and Layout
                     color = color,

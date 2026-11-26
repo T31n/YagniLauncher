@@ -74,15 +74,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.designsystem.theme.EblanSpacing
-import com.eblan.launcher.domain.model.application.AppDrawerGridItem
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
+import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
+import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderEntry
 import com.eblan.launcher.domain.model.grid.GridItem
+import com.eblan.launcher.domain.model.launcherapps.EblanUser
 import com.eblan.launcher.domain.model.launcherapps.EblanUserPageKey
 import com.eblan.launcher.domain.model.launcherapps.EblanUserType
 import com.eblan.launcher.domain.model.userdata.AppDrawerSettings
@@ -93,7 +94,6 @@ import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.R
 import com.eblan.launcher.feature.home.component.HomeHandler
 import com.eblan.launcher.feature.home.component.getEblanUserTypeTitle
-import com.eblan.launcher.feature.home.contract.ApplicationScreenContract
 import com.eblan.launcher.feature.home.dialog.SearchApplicationsDialog
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.SharedElementKey
@@ -113,8 +113,6 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 internal fun ApplicationScreen(
-    // Contract
-    contract: ApplicationScreenContract,
     // Layout and Transition
     sharedTransitionScope: SharedTransitionScope,
     screenHeight: Int,
@@ -126,8 +124,11 @@ internal fun ApplicationScreen(
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
     // Application Data
+    eblanApplicationInfoTags: List<EblanApplicationInfoTag>,
+    getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
     appDrawerSettings: AppDrawerSettings,
     // Folder Settings
+    folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     folderCornerRadius: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
@@ -135,15 +136,20 @@ internal fun ApplicationScreen(
     customFolderBorderColor: Int,
     folderBorderWidth: Int,
     isVisibleFolderEblanApplicationInfos: Boolean,
+    folderEblanApplicationInfoEntries: List<FolderEntry>,
     // Gesture and State
+    isVisibleOverlay: Boolean,
     swipeY: Float,
     drag: Drag,
     // Actions and Callbacks
     onDismiss: () -> Unit,
     onDragEnd: () -> Unit,
+    onGetEblanApplicationInfosByLabel: (String) -> Unit,
+    onGetEblanApplicationInfosByTagId: (Long?) -> Unit,
     onVerticalDrag: (Float) -> Unit,
+    onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onDragFolderEblanApplicationInfo: (
-        folderId: String,
+        folderEblanApplicationInfo: FolderEblanApplicationInfo,
         movingGridItem: GridItem,
     ) -> Unit,
     onDragApplicationInfo: (GridItem) -> Unit,
@@ -168,15 +174,6 @@ internal fun ApplicationScreen(
     ) -> Unit,
     onTapFolderApplicationInfo: (folderEntry: FolderEntry) -> Unit,
 ) {
-    val eblanApplicationInfoTags by contract.eblanApplicationInfoTags.collectAsStateWithLifecycle()
-    val getEblanApplicationInfosByLabelAndTag by contract.getEblanApplicationInfosByLabelAndTag.collectAsStateWithLifecycle()
-    val folderEblanApplicationInfoPopups by contract.folderEblanApplicationInfoPopups.collectAsStateWithLifecycle()
-    val folderEblanApplicationInfoEntries by contract.folderEblanApplicationInfoEntries.collectAsStateWithLifecycle()
-    val isVisibleOverlay by contract.isVisibleOverlay.collectAsStateWithLifecycle()
-
-    val hasVisibleFolderEblanApplicationInfos =
-        isVisibleFolderEblanApplicationInfos && folderEblanApplicationInfoEntries.isNotEmpty()
-
     val layoutDirection = LocalLayoutDirection.current
 
     val scope = rememberCoroutineScope()
@@ -255,8 +252,8 @@ internal fun ApplicationScreen(
         onHideSearchDialog = {
             showSearchDialog = false
         },
-        onGetEblanApplicationInfosByLabel = contract::getEblanApplicationInfosByLabel,
-        onGetEblanApplicationInfosByTagId = contract::getEblanApplicationInfosByTagId,
+        onGetEblanApplicationInfosByLabel = onGetEblanApplicationInfosByLabel,
+        onGetEblanApplicationInfosByTagId = onGetEblanApplicationInfosByTagId,
     )
 
     Surface(
@@ -316,14 +313,14 @@ internal fun ApplicationScreen(
                         folderBorderColor = folderBorderColor,
                         customFolderBorderColor = customFolderBorderColor,
                         folderBorderWidth = folderBorderWidth,
-                        isVisibleFolderEblanApplicationInfos = hasVisibleFolderEblanApplicationInfos,
+                        isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
                         folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
                         // System and Appearance
+                        appDrawerColumns = appDrawerSettings.appDrawerColumns,
+                        appDrawerRowsHeight = appDrawerSettings.appDrawerRowsHeight,
                         backgroundColor = appDrawerSettings.backgroundColor,
                         customBackgroundColor = appDrawerSettings.customBackgroundColor,
                         searchBarType = appDrawerSettings.searchBarType,
-                        appDrawerColumns = appDrawerSettings.appDrawerColumns,
-                        appDrawerRowsHeight = appDrawerSettings.appDrawerRowsHeight,
                         gridItemSettings = appDrawerSettings.gridItemSettings,
                         systemTextColor = systemTextColor,
                         systemCustomTextColor = systemCustomTextColor,
@@ -339,7 +336,7 @@ internal fun ApplicationScreen(
                             selectedEblanApplicationInfoTagId = currentSelectedEblanApplicationInfoTagId
                         },
                         onVerticalDrag = onVerticalDrag,
-                        onUpdateIsVisibleOverlay = contract::updateIsVisibleOverlay,
+                        onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                         onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
                         onDragApplicationInfo = onDragApplicationInfo,
                         onLongPressApplicationInfo = onLongPressApplicationInfo,
@@ -356,7 +353,8 @@ internal fun ApplicationScreen(
                         paddingValues = paddingValues,
                         // Application Info and Data
                         eblanApplicationInfoTags = eblanApplicationInfoTags,
-                        getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
+                        eblanApplicationInfos = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos,
+                        iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
                         horizontalPagerState = horizontalPagerState,
                         textFieldState = textFieldState,
                         selectedEblanApplicationInfoTagId = selectedEblanApplicationInfoTagId,
@@ -369,19 +367,19 @@ internal fun ApplicationScreen(
                         folderBorderColor = folderBorderColor,
                         customFolderBorderColor = customFolderBorderColor,
                         folderBorderWidth = folderBorderWidth,
-                        isVisibleFolderEblanApplicationInfos = hasVisibleFolderEblanApplicationInfos,
+                        isVisibleFolderEblanApplicationInfos = isVisibleFolderEblanApplicationInfos,
                         folderEblanApplicationInfoEntries = folderEblanApplicationInfoEntries,
                         // Theme and Appearance
                         systemTextColor = systemTextColor,
                         systemCustomTextColor = systemCustomTextColor,
                         // Settings and Interaction
                         animations = animations,
-                        backgroundColor = appDrawerSettings.backgroundColor,
-                        customBackgroundColor = appDrawerSettings.customBackgroundColor,
-                        searchBarType = appDrawerSettings.searchBarType,
                         horizontalAppDrawerRows = appDrawerSettings.horizontalAppDrawerRows,
                         horizontalAppDrawerColumns = appDrawerSettings.horizontalAppDrawerColumns,
                         appDrawerRowsHeight = appDrawerSettings.appDrawerRowsHeight,
+                        backgroundColor = appDrawerSettings.backgroundColor,
+                        customBackgroundColor = appDrawerSettings.customBackgroundColor,
+                        searchBarType = appDrawerSettings.searchBarType,
                         gridItemSettings = appDrawerSettings.gridItemSettings,
                         drag = drag,
                         swipeY = swipeY,
@@ -391,7 +389,7 @@ internal fun ApplicationScreen(
                         },
                         onDismiss = onDismiss,
                         onVerticalDrag = onVerticalDrag,
-                        onUpdateIsVisibleOverlay = contract::updateIsVisibleOverlay,
+                        onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
                         onDragEnd = onDragEnd,
                         onDragFolderEblanApplicationInfo = onDragFolderEblanApplicationInfo,
                         onDragApplicationInfo = onDragApplicationInfo,
@@ -419,7 +417,7 @@ internal fun ApplicationScreen(
                 },
                 onClearSearch = {
                     textFieldState.clearText()
-                    contract.getEblanApplicationInfosByLabel("")
+                    onGetEblanApplicationInfosByLabel("")
                 },
                 onPauseWorkProfile = {
                     if (currentUserHandle != null) {
@@ -443,7 +441,7 @@ internal fun ApplicationScreen(
             },
             onSearch = { query ->
                 textFieldState.setTextAndPlaceCursorAtEnd(query)
-                contract.getEblanApplicationInfosByLabel(query)
+                onGetEblanApplicationInfosByLabel(query)
             },
         )
     }
@@ -569,8 +567,8 @@ internal fun TagElevatedFilterChip(
 @Composable
 internal fun EblanApplicationInfoTabRow(
     // Data
-    eblanUserPageKeys: List<EblanUserPageKey>,
-    eblanApplicationInfos: Map<EblanUserPageKey, List<AppDrawerGridItem>>,
+    eblanUsers: List<EblanUser>,
+    eblanApplicationInfoKeys: Set<EblanUserPageKey>,
     // State
     currentPage: Int,
     // Appearance
@@ -585,14 +583,14 @@ internal fun EblanApplicationInfoTabRow(
     val scope = rememberCoroutineScope()
 
     val currentEblanUserPageKey =
-        eblanApplicationInfos.keys.toList().getOrNull(currentPage) ?: return
+        eblanApplicationInfoKeys.toList().getOrNull(currentPage) ?: return
 
     val selectedTabIndex = remember(
-        key1 = eblanUserPageKeys,
+        key1 = eblanUsers,
         key2 = currentEblanUserPageKey,
     ) {
-        eblanUserPageKeys.indexOfFirst { currentIndexedEblanUserPageKey ->
-            currentIndexedEblanUserPageKey.eblanUser.serialNumber == currentEblanUserPageKey.eblanUser.serialNumber
+        eblanUsers.indexOfFirst { currentIndexedEblanUser ->
+            currentIndexedEblanUser.serialNumber == currentEblanUserPageKey.eblanUser.serialNumber
         }.coerceAtLeast(0)
     }
 
@@ -636,13 +634,13 @@ internal fun EblanApplicationInfoTabRow(
             )
         },
     ) {
-        eblanUserPageKeys.forEach { eblanUserPageKey ->
+        eblanUsers.forEach { eblanUser ->
             Tab(
-                selected = currentEblanUserPageKey.eblanUser.serialNumber == eblanUserPageKey.eblanUser.serialNumber,
+                selected = currentEblanUserPageKey.eblanUser.serialNumber == eblanUser.serialNumber,
                 onClick = {
                     scope.launch {
-                        val targetPage = eblanApplicationInfos.keys.indexOfFirst { currentKeyEblanUserPageKey ->
-                            currentKeyEblanUserPageKey.eblanUser.serialNumber == eblanUserPageKey.eblanUser.serialNumber
+                        val targetPage = eblanApplicationInfoKeys.indexOfFirst { currentKeyEblanUserPageKey ->
+                            currentKeyEblanUserPageKey.eblanUser.serialNumber == eblanUser.serialNumber
                         }
 
                         if (targetPage >= 0) {
@@ -654,7 +652,7 @@ internal fun EblanApplicationInfoTabRow(
                 unselectedContentColor = contentColor.copy(alpha = 0.6f),
                 text = {
                     Text(
-                        text = eblanUserPageKey.eblanUser.eblanUserType.getEblanUserTypeTitle(),
+                        text = eblanUser.eblanUserType.getEblanUserTypeTitle(),
                         maxLines = 1,
                     )
                 },

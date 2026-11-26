@@ -71,15 +71,12 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.eblan.launcher.designsystem.theme.EblanSpacing
-import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
 import com.eblan.launcher.feature.home.component.HomeHandler
-import com.eblan.launcher.feature.home.contract.AppWidgetScreenContract
 import com.eblan.launcher.feature.home.model.SharedElementKey
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -88,10 +85,10 @@ import kotlin.uuid.Uuid
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun AppWidgetScreen(
-    // Contract
-    contract: AppWidgetScreenContract,
     // Data
-    eblanApplicationInfoGroup: EblanApplicationInfoGroup?,
+    eblanAppWidgetProviderInfos: List<EblanAppWidgetProviderInfo>,
+    icon: String?,
+    label: String?,
     // Grid
     columns: Int,
     rows: Int,
@@ -103,6 +100,7 @@ internal fun AppWidgetScreen(
     modifier: Modifier = Modifier,
     // Interaction
     swipeY: Float,
+    isVisibleOverlay: Boolean,
     // Callbacks
     onDismiss: () -> Unit,
     onVerticalDrag: (Float) -> Unit,
@@ -115,11 +113,6 @@ internal fun AppWidgetScreen(
         sharedElementKey: SharedElementKey,
     ) -> Unit,
 ) {
-    requireNotNull(eblanApplicationInfoGroup)
-
-    val eblanAppWidgetProviderInfosGroup by contract.eblanAppWidgetProviderInfosGroup.collectAsStateWithLifecycle()
-    val isVisibleOverlay by contract.isVisibleOverlay.collectAsStateWithLifecycle()
-
     val layoutDirection = LocalLayoutDirection.current
 
     val focusManager = LocalFocusManager.current
@@ -128,7 +121,7 @@ internal fun AppWidgetScreen(
 
     val scrimAlpha = (1f - (swipeY / screenHeight.toFloat())).coerceIn(0f, 1f) * 0.32f
 
-    LaunchedEffect(key1 = eblanApplicationInfoGroup) {
+    LaunchedEffect(key1 = label, key2 = icon) {
         focusManager.clearFocus()
         keyboardController?.hide()
     }
@@ -203,14 +196,14 @@ internal fun AppWidgetScreen(
                 DragHandle()
 
                 AsyncImage(
-                    model = eblanApplicationInfoGroup.icon,
+                    model = icon,
                     contentDescription = null,
                     modifier = Modifier.size(40.dp),
                 )
 
                 Spacer(modifier = Modifier.height(5.dp))
 
-                Text(text = eblanApplicationInfoGroup.label.toString())
+                Text(text = label.toString())
 
                 Spacer(modifier = Modifier.height(5.dp))
 
@@ -218,7 +211,7 @@ internal fun AppWidgetScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center,
                 ) {
-                    items(items = eblanAppWidgetProviderInfosGroup[eblanApplicationInfoGroup.packageName].orEmpty()) { eblanAppWidgetProviderInfo ->
+                    items(items = eblanAppWidgetProviderInfos) { eblanAppWidgetProviderInfo ->
                         EblanAppWidgetScreenItem(
                             // Widget Info
                             eblanAppWidgetProviderInfo = eblanAppWidgetProviderInfo,

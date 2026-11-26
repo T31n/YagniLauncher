@@ -42,7 +42,6 @@ internal fun PageGridItem(
     hasShortcutHostPermission: Boolean,
     // Colors
     textColor: TextColor,
-    systemTextColor: TextColor,
     systemCustomTextColor: Int,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
@@ -66,7 +65,7 @@ internal fun PageGridItem(
         gridItemCustomTextColor = currentGridItemSettings.customTextColor,
         // System Text Colors
         systemTextColor = textColor,
-        systemCustomTextColor = systemCustomTextColor,
+        systemCustomTextColor = gridItemSettings.customTextColor,
         // Background Color
         backgroundColor = currentGridItemSettings.backgroundColor,
         customBackgroundColor = currentGridItemSettings.customBackgroundColor,
@@ -103,7 +102,8 @@ internal fun PageGridItem(
 
         is GridItemData.Widget -> WidgetGridItem(
             modifier = modifier,
-            data = data,
+            preview = data.preview,
+            icon = data.icon,
         )
 
         is GridItemData.ShortcutInfo ->
@@ -127,13 +127,12 @@ internal fun PageGridItem(
         is GridItemData.Folder ->
             FolderGridItem(
                 // Item Data
-                gridItem = gridItem,
                 data = data,
                 // Settings and Configuration
                 gridItemSettings = currentGridItemSettings,
                 iconPackFilePaths = iconPackFilePaths,
                 hasShortcutHostPermission = hasShortcutHostPermission,
-                folderPopupGridItems = folderPopupGridItems,
+                previewFolderGridItems = folderPopupGridItems[gridItem.id]?.previewFolderGridItems,
                 maxLines = maxLines,
                 // Appearance and Colors
                 textColor = currentTextColor,
@@ -142,7 +141,7 @@ internal fun PageGridItem(
                 folderBorderColor = folderBorderColor,
                 customFolderBorderColor = customFolderBorderColor,
                 folderBorderWidth = folderBorderWidth,
-                systemTextColor = systemTextColor,
+                systemTextColor = textColor,
                 systemCustomTextColor = systemCustomTextColor,
                 folderCornerRadius = folderCornerRadius,
                 // Layout and Arrangement
@@ -173,9 +172,13 @@ internal fun PageGridItem(
 }
 
 @Composable
-private fun WidgetGridItem(modifier: Modifier = Modifier, data: GridItemData.Widget) {
+private fun WidgetGridItem(
+    preview: String?,
+    icon: String?,
+    modifier: Modifier = Modifier,
+) {
     AsyncImage(
-        model = data.preview ?: data.icon,
+        model = preview ?: icon,
         contentDescription = null,
         modifier = modifier.fillMaxSize(),
     )

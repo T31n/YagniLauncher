@@ -27,7 +27,7 @@ import com.eblan.launcher.domain.model.grid.LayoutType
 
 @Composable
 internal fun GridItemLayoutType(
-    // Settings and Modifier
+    // Layout and Modifier
     layoutType: LayoutType,
     modifier: Modifier = Modifier,
     // Alignment and Arrangement

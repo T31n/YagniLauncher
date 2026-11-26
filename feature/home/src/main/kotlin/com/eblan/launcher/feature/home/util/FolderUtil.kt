@@ -18,7 +18,6 @@
 package com.eblan.launcher.feature.home.util
 
 import android.graphics.RectF
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
@@ -83,9 +82,9 @@ internal fun getAnimatedRect(
 internal fun getFolderPopupLayoutInfo(
     // Environment
     density: Density,
-    layoutDirection: LayoutDirection,
     // Layout
-    paddingValues: PaddingValues,
+    leftPadding: Int,
+    topPadding: Int,
     safeDrawingWidth: Int,
     safeDrawingHeight: Int,
     // Popup
@@ -97,14 +96,6 @@ internal fun getFolderPopupLayoutInfo(
     columns: Int,
     rows: Int,
 ): FolderPopupLayoutInfo {
-    val leftPadding = with(density) {
-        paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
-    }
-
-    val topPadding = with(density) {
-        paddingValues.calculateTopPadding().roundToPx()
-    }
-
     val minCellWidthPx = with(density) { folderCellWidth.dp.roundToPx() }
     val minCellHeightPx = with(density) { folderCellHeight.dp.roundToPx() }
 
@@ -194,10 +185,10 @@ internal suspend fun handlePageDirection(
 internal fun handleAnimateScrollToPage(
     // Environment and Layout
     density: Density,
-    layoutDirection: LayoutDirection,
     screenWidth: Int,
     columns: Int,
-    paddingValues: PaddingValues,
+    leftPadding: Int,
+    rightPadding: Int,
     // Drag and Gesture
     drag: Drag,
     isDragging: Boolean,
@@ -228,11 +219,11 @@ internal fun handleAnimateScrollToPage(
         calculateFolderPageDirection(
             // Environment
             density = density,
-            layoutDirection = layoutDirection,
             // Screen
             screenWidth = screenWidth,
             columns = columns,
-            paddingValues = paddingValues,
+            leftPadding = leftPadding,
+            rightPadding = rightPadding,
             // Folder
             folderCellWidth = folderCellWidth,
             // Offsets
@@ -252,7 +243,10 @@ internal fun calculateFolderGridDragPosition(
     // Grid Dimensions
     columns: Int,
     rows: Int,
-    paddingValues: PaddingValues,
+    leftPadding: Int,
+    topPadding: Int,
+    rightPadding: Int,
+    bottomPadding: Int,
     // Cell Dimensions
     folderCellWidth: Int,
     folderCellHeight: Int,
@@ -260,22 +254,6 @@ internal fun calculateFolderGridDragPosition(
     folderPopupIntOffset: IntOffset,
     dragIntOffset: IntOffset,
 ): FolderGridDragPosition {
-    val leftPadding = with(density) {
-        paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
-    }
-
-    val rightPadding = with(density) {
-        paddingValues.calculateRightPadding(layoutDirection).roundToPx()
-    }
-
-    val topPadding = with(density) {
-        paddingValues.calculateTopPadding().roundToPx()
-    }
-
-    val bottomPadding = with(density) {
-        paddingValues.calculateBottomPadding().roundToPx()
-    }
-
     val horizontalPadding = leftPadding + rightPadding
     val verticalPadding = topPadding + bottomPadding
 
@@ -400,25 +378,17 @@ internal fun handleDropFolderGridItem(
 private fun calculateFolderPageDirection(
     // Environment
     density: Density,
-    layoutDirection: LayoutDirection,
     // Screen
     screenWidth: Int,
     columns: Int,
-    paddingValues: PaddingValues,
+    leftPadding: Int,
+    rightPadding: Int,
     // Folder
     folderCellWidth: Int,
     // Offsets
     dragIntOffset: IntOffset,
     folderPopupIntOffset: IntOffset,
 ): PageDirection? {
-    val leftPadding = with(density) {
-        paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
-    }
-
-    val rightPadding = with(density) {
-        paddingValues.calculateRightPadding(layoutDirection).roundToPx()
-    }
-
     val horizontalPadding = leftPadding + rightPadding
 
     val safeDrawingWidth = screenWidth - horizontalPadding

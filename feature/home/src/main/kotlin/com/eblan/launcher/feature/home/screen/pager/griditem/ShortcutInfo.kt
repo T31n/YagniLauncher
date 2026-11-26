@@ -130,11 +130,6 @@ internal fun InteractiveShortcutInfoGridItem(
     val iconPath = getGridItemIconPath(data = data)
     val label = getGridItemLabel(data = data).toString()
 
-    val currentGridItem by rememberUpdatedState(gridItem)
-    val currentData by rememberUpdatedState(data)
-    val currentHasShortcutHostPermission by rememberUpdatedState(hasShortcutHostPermission)
-    val currentSourceBounds by rememberUpdatedState(sourceBounds)
-    val currentSharedElementKey by rememberUpdatedState(sharedElementKey)
     val currentOnOpenAppDrawer by rememberUpdatedState(onOpenAppDrawer)
     val currentOnLongPressGridItem by rememberUpdatedState(onLongPressGridItem)
 
@@ -154,14 +149,14 @@ internal fun InteractiveShortcutInfoGridItem(
         )
         .run {
             if (!isVisibleOverlay) {
-                pointerInput(key1 = gridItem.doubleTap.eblanActionType != EblanActionType.None) {
+                pointerInput(key1 = Unit) {
                     detectTapGestures(
                         onDoubleTap = if (gridItem.doubleTap.eblanActionType != EblanActionType.None) {
                             {
                                 handleEblanAction(
                                     // Context and Action
                                     context = context,
-                                    eblanAction = currentGridItem.doubleTap,
+                                    eblanAction = gridItem.doubleTap,
                                     // System Wrappers
                                     launcherApps = androidLauncherAppsWrapper,
                                     statusBarManagerWrapper = androidStatusBarManagerWrapper,
@@ -174,23 +169,23 @@ internal fun InteractiveShortcutInfoGridItem(
                         },
                         onLongPress = {
                             currentOnLongPressGridItem(
-                                currentGridItem,
+                                gridItem,
                                 { graphicsLayer.toImageBitmap() },
                                 intOffset,
                                 intSize,
-                                currentSharedElementKey,
+                                sharedElementKey,
                             )
                         },
                         onTap = {
                             if (
-                                currentHasShortcutHostPermission &&
-                                currentData.isEnabled
+                                hasShortcutHostPermission &&
+                                data.isEnabled
                             ) {
                                 androidLauncherAppsWrapper.startShortcut(
-                                    serialNumber = currentData.serialNumber,
-                                    packageName = currentData.packageName,
-                                    id = currentData.shortcutId,
-                                    sourceBounds = currentSourceBounds,
+                                    serialNumber = data.serialNumber,
+                                    packageName = data.packageName,
+                                    id = data.shortcutId,
+                                    sourceBounds = sourceBounds,
                                 )
                             }
                         },
@@ -205,7 +200,7 @@ internal fun InteractiveShortcutInfoGridItem(
             swipeDown = gridItem.swipeDown,
             swipeUp = gridItem.swipeUp,
             // Actions
-            onOpenAppDrawer = currentOnOpenAppDrawer,
+            onOpenAppDrawer = onOpenAppDrawer,
         )
 
     val iconModifier = Modifier
@@ -295,7 +290,7 @@ internal fun InteractiveShortcutInfoGridItem(
     }
 
     GridItemLayoutType(
-        // Settings and Modifier
+        // Layout and Modifier
         layoutType = gridItemSettings.layoutType,
         modifier = itemModifier,
         // Alignment and Arrangement

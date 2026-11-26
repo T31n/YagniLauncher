@@ -23,7 +23,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -52,7 +51,6 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -70,7 +68,6 @@ import coil3.request.crossfade
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.grid.GridItemSettings
-import com.eblan.launcher.domain.model.launcherapps.EblanUser
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.R
@@ -89,7 +86,8 @@ import kotlinx.coroutines.launch
 
 internal fun LazyGridScope.privateSpace(
     // User and Application Data
-    privateEblanUser: EblanUser?,
+    privateSerialNumber: Long?,
+    isPrivateSpaceVisible: Boolean,
     privateEblanApplicationInfos: List<EblanApplicationInfo>,
     // App Drawer and Appearance Settings
     gridItemSettings: GridItemSettings,
@@ -99,7 +97,8 @@ internal fun LazyGridScope.privateSpace(
     isQuietModeEnabled: Boolean,
     isVisibleOverlay: Boolean,
     // Layout and Colors
-    paddingValues: PaddingValues,
+    leftPadding: Int,
+    topPadding: Int,
     backgroundColor: BackgroundColor,
     customBackgroundColor: Int,
     systemTextColor: TextColor,
@@ -112,20 +111,14 @@ internal fun LazyGridScope.privateSpace(
         intSize: IntSize,
     ) -> Unit,
 ) {
-    if (
-        privateEblanUser == null ||
-        (
-            privateEblanUser.isPrivateSpaceEntryPointHidden &&
-                privateEblanUser.isPrivateSpaceLocked
-            )
-    ) {
+    if (!isPrivateSpaceVisible || privateSerialNumber == null) {
         return
     }
 
     stickyHeader {
         PrivateSpaceStickyHeader(
             // Device State
-            serialNumber = privateEblanUser.serialNumber,
+            serialNumber = privateSerialNumber,
             isQuietModeEnabled = isQuietModeEnabled,
             // Appearance
             backgroundColor = backgroundColor,
@@ -136,25 +129,21 @@ internal fun LazyGridScope.privateSpace(
     }
 
     if (!isQuietModeEnabled) {
-        items(
-            items = privateEblanApplicationInfos,
-            key = { currentEblanApplicationInfo ->
-                "${currentEblanApplicationInfo.serialNumber} ${currentEblanApplicationInfo.componentName}"
-            },
-        ) { eblanApplicationInfo ->
+        items(privateEblanApplicationInfos) { eblanApplicationInfo ->
             PrivateSpaceEblanApplicationInfoItem(
                 // Application Info
                 eblanApplicationInfo = eblanApplicationInfo,
                 // Settings and Styling
                 gridItemSettings = gridItemSettings,
                 appDrawerRowsHeight = appDrawerRowsHeight,
+                iconPackFilePath = iconPackFilePaths[eblanApplicationInfo.componentName],
+                isVisibleOverlay = isVisibleOverlay,
                 backgroundColor = backgroundColor,
                 customBackgroundColor = customBackgroundColor,
-                iconPackFilePaths = iconPackFilePaths,
-                isVisibleOverlay = isVisibleOverlay,
                 systemTextColor = systemTextColor,
                 systemCustomTextColor = systemCustomTextColor,
-                paddingValues = paddingValues,
+                leftPadding = leftPadding,
+                topPadding = topPadding,
                 // Actions
                 onDismiss = onDismiss,
                 onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
@@ -261,13 +250,14 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
     // Settings and Styling
     gridItemSettings: GridItemSettings,
     appDrawerRowsHeight: Int,
+    iconPackFilePath: String?,
+    isVisibleOverlay: Boolean,
     backgroundColor: BackgroundColor,
     customBackgroundColor: Int,
-    iconPackFilePaths: Map<String, String?>,
-    isVisibleOverlay: Boolean,
     systemTextColor: TextColor,
     systemCustomTextColor: Int,
-    paddingValues: PaddingValues,
+    leftPadding: Int,
+    topPadding: Int,
     modifier: Modifier = Modifier,
     // Actions
     onDismiss: () -> Unit,
@@ -279,23 +269,18 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
 ) {
     val context = LocalContext.current
     val density = LocalDensity.current
-    val layoutDirection = LocalLayoutDirection.current
     val launcherApps = LocalLauncherApps.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val scope = rememberCoroutineScope()
 
-    val currentEblanApplicationInfo by rememberUpdatedState(eblanApplicationInfo)
     val currentOnDismiss by rememberUpdatedState(onDismiss)
-    val currentOnLongPressPrivateSpaceApplicationInfoItem by rememberUpdatedState(
-        onLongPressPrivateSpaceApplicationInfoItem,
-    )
 
     val textColor = getGridItemTextColorFromBackgroundColor(
         // Container Background Color
         backgroundColor = backgroundColor,
         customBackgroundColor = customBackgroundColor,
-        // Grid Item Text and Background Colors
+        // Grid Item Colors
         gridItemTextColor = gridItemSettings.textColor,
         gridItemCustomTextColor = gridItemSettings.customTextColor,
         gridItemBackgroundColor = gridItemSettings.backgroundColor,
@@ -305,12 +290,11 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
         systemCustomTextColor = systemCustomTextColor,
     )
 
-    val rowHeight = appDrawerRowsHeight.dp
+    val appDrawerRowsHeightDp = appDrawerRowsHeight.dp
 
     val maxLines = if (gridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
 
-    val icon = iconPackFilePaths[eblanApplicationInfo.componentName]
-        ?: eblanApplicationInfo.icon
+    val icon = iconPackFilePath ?: eblanApplicationInfo.icon
 
     val horizontalAlignment =
         getHorizontalAlignment(horizontalAlignment = gridItemSettings.horizontalAlignment)
@@ -321,17 +305,6 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
     val verticalAlignment =
         getVerticalAlignment(verticalAlignment = gridItemSettings.verticalAlignment)
 
-    val leftPadding = with(density) {
-        paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
-    }
-
-    val topPadding = with(density) {
-        paddingValues.calculateTopPadding().roundToPx()
-    }
-
-    val currentLeftPadding by rememberUpdatedState(leftPadding)
-    val currentTopPadding by rememberUpdatedState(topPadding)
-
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
     var intSize by remember { mutableStateOf(IntSize.Zero) }
 
@@ -340,7 +313,7 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
     }
 
     val itemModifier = modifier
-        .height(rowHeight)
+        .height(appDrawerRowsHeightDp)
         .padding(gridItemSettings.padding.dp)
         .background(
             color = getGridItemBackgroundColor(
@@ -356,15 +329,15 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
                         scope.launch {
                             handleOnTapEblanApplicationInfoItem(
                                 // Application Info
-                                serialNumber = currentEblanApplicationInfo.serialNumber,
-                                componentName = currentEblanApplicationInfo.componentName,
+                                serialNumber = eblanApplicationInfo.serialNumber,
+                                componentName = eblanApplicationInfo.componentName,
                                 launcherApps = launcherApps,
                                 // Position and Size
                                 intOffset = intOffset,
                                 intSize = intSize,
                                 // Padding
-                                leftPadding = currentLeftPadding,
-                                topPadding = currentTopPadding,
+                                leftPadding = leftPadding,
+                                topPadding = topPadding,
                                 // Controller
                                 keyboardController = keyboardController,
                             )
@@ -380,14 +353,14 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
                         scope.launch {
                             handleOnLongPressPrivateSpaceEblanApplicationInfoItem(
                                 // Application Info
-                                eblanApplicationInfo = currentEblanApplicationInfo,
+                                eblanApplicationInfo = eblanApplicationInfo,
                                 // Position and Size
                                 intOffset = intOffset,
                                 intSize = intSize,
                                 // Keyboard
                                 keyboardController = keyboardController,
                                 // Callbacks
-                                onLongPressPrivateSpaceApplicationInfoItem = currentOnLongPressPrivateSpaceApplicationInfoItem,
+                                onLongPressPrivateSpaceApplicationInfoItem = onLongPressPrivateSpaceApplicationInfoItem,
                             )
                         }
                     }
@@ -434,7 +407,7 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
     }
 
     GridItemLayoutType(
-        // Settings and Modifier
+        // Layout and Modifier
         layoutType = gridItemSettings.layoutType,
         modifier = itemModifier,
         // Alignment and Arrangement

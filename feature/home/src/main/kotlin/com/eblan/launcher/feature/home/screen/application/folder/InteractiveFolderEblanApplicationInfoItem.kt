@@ -24,7 +24,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -53,8 +52,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -72,10 +69,8 @@ import coil3.size.Size
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItem
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoGridItemData
-import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderEntry
 import com.eblan.launcher.domain.model.grid.GridItemSettings
-import com.eblan.launcher.domain.model.grid.MoveFolderEblanApplicationInfoGridItemResult
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_COLUMNS
@@ -102,8 +97,8 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
     animations: Boolean,
     // Folder Item and Content
     folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
-    folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
-    folderEblanApplicationInfoEntries: List<FolderEntry>,
+    previewNestedFolderEblanApplicationInfoGridItems: List<FolderEblanApplicationInfoGridItem>?,
+    isVisibleFolder: Boolean,
     // Styling and Colors
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
@@ -115,14 +110,15 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
     folderCornerRadius: Int,
     // Layout and Settings
     gridItemSettings: GridItemSettings,
-    paddingValues: PaddingValues,
+    leftPadding: Int,
+    topPadding: Int,
     iconPackFilePaths: Map<String, String?>,
     // State and Progress
     isVisibleOverlay: Boolean,
     isScrollInProgress: Boolean,
     isInProgress: Boolean,
     progress: Float,
-    moveFolderEblanApplicationInfoGridItemResult: MoveFolderEblanApplicationInfoGridItemResult?,
+    movingFolderEblanApplicationInfoGridItemId: String?,
     drag: Drag,
     showFolderEblanApplicationInfoGridItemMenu: Boolean,
     modifier: Modifier = Modifier,
@@ -139,13 +135,13 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
     onTapFolderEblanApplicationInfoItem: (FolderEntry) -> Unit,
 ) {
     val isSelected =
-        moveFolderEblanApplicationInfoGridItemResult != null && moveFolderEblanApplicationInfoGridItemResult.folderEblanApplicationInfoGridItem.id == folderEblanApplicationInfoGridItem.id
+        movingFolderEblanApplicationInfoGridItemId == folderEblanApplicationInfoGridItem.id
 
     val textColor = getGridItemTextColorFromBackgroundColor(
         // Container Background Color
         backgroundColor = folderBackgroundColor,
         customBackgroundColor = customFolderBackgroundColor,
-        // Grid Item Text and Background Colors
+        // Grid Item Colors
         gridItemTextColor = gridItemSettings.textColor,
         gridItemCustomTextColor = gridItemSettings.customTextColor,
         gridItemBackgroundColor = gridItemSettings.backgroundColor,
@@ -200,15 +196,6 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
 
     val hasInteraction = isSelected && isVisibleOverlay
 
-    val isVisibleFolder = remember(
-        key1 = folderEblanApplicationInfoGridItem,
-        key2 = folderEblanApplicationInfoEntries,
-    ) {
-        folderEblanApplicationInfoEntries.any { currentFolderEntry ->
-            currentFolderEntry.id == folderEblanApplicationInfoGridItem.id
-        }
-    }
-
     val horizontalAlignment =
         getHorizontalAlignment(horizontalAlignment = gridItemSettings.horizontalAlignment)
     val verticalArrangement =
@@ -242,9 +229,10 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
                 folderEblanApplicationInfoGridItem = folderEblanApplicationInfoGridItem,
                 data = data,
                 gridItemSettings = gridItemSettings,
-                iconPackFilePaths = iconPackFilePaths,
+                iconPackFilePath = iconPackFilePaths[data.componentName],
                 // Layout and Alignment
-                paddingValues = paddingValues,
+                leftPadding = leftPadding,
+                topPadding = topPadding,
                 horizontalAlignment = horizontalAlignment,
                 verticalArrangement = verticalArrangement,
                 padding = padding,
@@ -272,7 +260,7 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
                 // Data
                 data = data,
                 folderEblanApplicationInfoGridItem = folderEblanApplicationInfoGridItem,
-                folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
+                previewNestedFolderEblanApplicationInfoGridItems = previewNestedFolderEblanApplicationInfoGridItems,
                 gridItemSettings = gridItemSettings,
                 iconPackFilePaths = iconPackFilePaths,
                 // Animation
@@ -321,9 +309,10 @@ private fun InteractiveEblanApplicationInfoItem(
     folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
     data: FolderEblanApplicationInfoGridItemData.ApplicationInfo,
     gridItemSettings: GridItemSettings,
-    iconPackFilePaths: Map<String, String?>,
+    iconPackFilePath: String?,
     // Layout and Alignment
-    paddingValues: PaddingValues,
+    leftPadding: Int,
+    topPadding: Int,
     horizontalAlignment: Alignment.Horizontal,
     verticalArrangement: Arrangement.Vertical,
     padding: Dp,
@@ -351,29 +340,11 @@ private fun InteractiveEblanApplicationInfoItem(
     ) -> Unit,
 ) {
     val context = LocalContext.current
-    val density = LocalDensity.current
     val launcherApps = LocalLauncherApps.current
-    val layoutDirection = LocalLayoutDirection.current
     val keyboardController = LocalSoftwareKeyboardController.current
-    val currentFolderEblanApplicationInfoGridItem by rememberUpdatedState(
-        folderEblanApplicationInfoGridItem,
-    )
-    val currentData by rememberUpdatedState(data)
-    val currentSharedElementKey by rememberUpdatedState(sharedElementKey)
     val currentOnDismiss by rememberUpdatedState(onDismiss)
-    val currentOnLongPressFolderEblanApplicationInfoGridItem by rememberUpdatedState(
-        onLongPressFolderEblanApplicationInfoGridItem,
-    )
 
-    val leftPadding = with(density) {
-        paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
-    }
-
-    val topPadding = with(density) {
-        paddingValues.calculateTopPadding().roundToPx()
-    }
-
-    val alpha = if (hasInteraction) 0f else 1f
+    val itemAlpha = if (hasInteraction) 0f else 1f
 
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
     var intSize by remember { mutableStateOf(IntSize.Zero) }
@@ -387,8 +358,6 @@ private fun InteractiveEblanApplicationInfoItem(
         left + intSize.width,
         top + intSize.height,
     )
-
-    val currentSourceBounds by rememberUpdatedState(sourceBounds)
 
     val graphicsLayer = rememberGraphicsLayer()
 
@@ -411,9 +380,9 @@ private fun InteractiveEblanApplicationInfoItem(
                         detectTapGestures(
                             onTap = {
                                 launcherApps.startMainActivity(
-                                    serialNumber = currentData.serialNumber,
-                                    componentName = currentData.componentName,
-                                    sourceBounds = currentSourceBounds,
+                                    serialNumber = data.serialNumber,
+                                    componentName = data.componentName,
+                                    sourceBounds = sourceBounds,
                                 )
 
                                 currentOnDismiss()
@@ -421,12 +390,12 @@ private fun InteractiveEblanApplicationInfoItem(
                             onLongPress = {
                                 keyboardController?.hide()
 
-                                currentOnLongPressFolderEblanApplicationInfoGridItem(
-                                    currentFolderEblanApplicationInfoGridItem,
+                                onLongPressFolderEblanApplicationInfoGridItem(
+                                    folderEblanApplicationInfoGridItem,
                                     { graphicsLayer.toImageBitmap() },
                                     intOffset,
                                     intSize,
-                                    currentSharedElementKey,
+                                    sharedElementKey,
                                 )
                             },
                         )
@@ -442,7 +411,7 @@ private fun InteractiveEblanApplicationInfoItem(
             model = Builder(context)
                 .data(
                     getIconPath(
-                        iconPackFilePath = iconPackFilePaths[data.componentName],
+                        iconPackFilePath = iconPackFilePath,
                         customIcon = data.customIcon,
                         icon = data.icon,
                     ),
@@ -473,13 +442,13 @@ private fun InteractiveEblanApplicationInfoItem(
 
                     drawLayer(graphicsLayer)
                 }
-                .alpha(alpha),
+                .alpha(itemAlpha),
         )
 
         Text(
             modifier = Modifier
                 .padding(textPadding)
-                .alpha(alpha),
+                .alpha(itemAlpha),
             text = getLabel(
                 customLabel = data.customLabel,
                 label = data.label,
@@ -498,7 +467,7 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
     // Data
     data: FolderEblanApplicationInfoGridItemData.Folder,
     folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
-    folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
+    previewNestedFolderEblanApplicationInfoGridItems: List<FolderEblanApplicationInfoGridItem>?,
     gridItemSettings: GridItemSettings,
     iconPackFilePaths: Map<String, String?>,
     // Animation
@@ -540,16 +509,6 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
     onTapFolderEblanApplicationInfoItem: (FolderEntry) -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
-    val currentFolderEblanApplicationInfoGridItem by rememberUpdatedState(
-        folderEblanApplicationInfoGridItem,
-    )
-    val currentSharedElementKey by rememberUpdatedState(sharedElementKey)
-    val currentOnTapFolderEblanApplicationInfoItem by rememberUpdatedState(
-        onTapFolderEblanApplicationInfoItem,
-    )
-    val currentOnLongPressFolderEblanApplicationInfoGridItem by rememberUpdatedState(
-        onLongPressFolderEblanApplicationInfoGridItem,
-    )
 
     val maxLines = if (gridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
 
@@ -579,9 +538,9 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
                     pointerInput(key1 = Unit) {
                         detectTapGestures(
                             onTap = {
-                                currentOnTapFolderEblanApplicationInfoItem(
+                                onTapFolderEblanApplicationInfoItem(
                                     FolderEntry(
-                                        id = currentFolderEblanApplicationInfoGridItem.id,
+                                        id = folderEblanApplicationInfoGridItem.id,
                                         x = intOffset.x,
                                         y = intOffset.y,
                                         width = intSize.width,
@@ -593,12 +552,12 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
                             onLongPress = {
                                 keyboardController?.hide()
 
-                                currentOnLongPressFolderEblanApplicationInfoGridItem(
-                                    currentFolderEblanApplicationInfoGridItem,
+                                onLongPressFolderEblanApplicationInfoGridItem(
+                                    folderEblanApplicationInfoGridItem,
                                     { graphicsLayer.toImageBitmap() },
                                     intOffset,
                                     intSize,
-                                    currentSharedElementKey,
+                                    sharedElementKey,
                                 )
                             },
                         )
@@ -661,7 +620,7 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
             ) {
                 PreviewFolderGridLayout(
                     // Data
-                    gridItems = folderEblanApplicationInfoPopups[folderEblanApplicationInfoGridItem.id]?.previewFolderEblanApplicationInfoGridItems,
+                    gridItems = previewNestedFolderEblanApplicationInfoGridItems,
                     // Layout
                     modifier = Modifier.fillMaxSize(),
                     // Callbacks
@@ -672,10 +631,10 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
                         PreviewFolderEblanApplicationInfoItem(
                             // Item Data
                             folderEblanApplicationInfoGridItem = currentPreviewFolderEblanApplicationInfoGridItem,
-                            textColor = gridItemSettings.textColor,
-                            customTextColor = gridItemSettings.customTextColor,
+                            gridItemTextColor = gridItemSettings.textColor,
+                            gridItemCustomTextColor = gridItemSettings.customTextColor,
                             // Appearance
-                            alpha = iconAlpha,
+                            itemAlpha = iconAlpha,
                             folderBackgroundColor = folderBackgroundColor,
                             customFolderBackgroundColor = customFolderBackgroundColor,
                             systemTextColor = systemTextColor,
@@ -706,10 +665,10 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
 private fun PreviewFolderEblanApplicationInfoItem(
     // Item Data
     folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem,
-    textColor: TextColor,
-    customTextColor: Int,
+    gridItemTextColor: TextColor,
+    gridItemCustomTextColor: Int,
     // Appearance
-    alpha: Float,
+    itemAlpha: Float,
     folderBackgroundColor: BackgroundColor,
     customFolderBackgroundColor: Int,
     systemTextColor: TextColor,
@@ -727,8 +686,8 @@ private fun PreviewFolderEblanApplicationInfoItem(
             backgroundColor = folderBackgroundColor,
             customBackgroundColor = customFolderBackgroundColor,
             // Text Color
-            textColor = textColor,
-            customTextColor = customTextColor,
+            textColor = gridItemTextColor,
+            customTextColor = gridItemCustomTextColor,
             systemCustomTextColor = systemCustomTextColor,
             systemTextColor = systemTextColor,
             // Default Color
@@ -738,7 +697,7 @@ private fun PreviewFolderEblanApplicationInfoItem(
         val commonModifier = modifier
             .fillMaxSize()
             .padding(1.dp)
-            .alpha(alpha)
+            .alpha(itemAlpha)
 
         when (val data = folderEblanApplicationInfoGridItem.data) {
             is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {

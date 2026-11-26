@@ -57,8 +57,6 @@ import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfo
-import com.eblan.launcher.domain.model.shortcutinfo.EblanShortcutInfoByGroup
-import com.eblan.launcher.domain.model.widget.EblanAppWidgetProviderInfo
 import com.eblan.launcher.feature.home.component.HomeHandler
 import com.eblan.launcher.feature.home.component.popup
 import com.eblan.launcher.feature.home.model.SharedElementKey
@@ -73,8 +71,8 @@ import com.eblan.launcher.ui.local.LocalUserManager
 internal fun ApplicationInfoPopup(
     // Application Data
     eblanApplicationInfo: EblanApplicationInfo?,
-    eblanAppWidgetProviderInfos: Map<String, List<EblanAppWidgetProviderInfo>>,
-    eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
+    hasAppWidgets: Boolean,
+    eblanShortcutInfosByPackageName: List<EblanShortcutInfo>?,
     // Settings and State
     gridItemSettings: GridItemSettings,
     hasShortcutHostPermission: Boolean,
@@ -186,15 +184,8 @@ internal fun ApplicationInfoPopup(
                 isVisibleOverlay = isVisibleOverlay,
                 hasShortcutHostPermission = hasShortcutHostPermission,
                 gridItemSettings = gridItemSettings,
-                eblanShortcutInfosGroup = eblanShortcutInfosGroup[
-                    EblanShortcutInfoByGroup(
-                        serialNumber = eblanApplicationInfo.serialNumber,
-                        packageName = eblanApplicationInfo.packageName,
-                    ),
-                ],
-                eblanAppWidgetProviderInfosByPackageName = eblanAppWidgetProviderInfos[
-                    eblanApplicationInfo.packageName,
-                ],
+                eblanShortcutInfosGroup = eblanShortcutInfosByPackageName,
+                hasAppWidgets = hasAppWidgets,
                 // Callbacks
                 onApplicationInfo = {
                     launcherApps.startAppDetailsActivity(
@@ -274,7 +265,7 @@ internal fun ApplicationInfoPopup(
 internal fun PrivateApplicationInfoPopup(
     // Application Info
     eblanApplicationInfo: EblanApplicationInfo?,
-    eblanShortcutInfosGroup: Map<EblanShortcutInfoByGroup, List<EblanShortcutInfo>>,
+    eblanShortcutInfosByPackageName: List<EblanShortcutInfo>?,
     hasShortcutHostPermission: Boolean,
     // Popup Layout
     popupIntOffset: IntOffset?,
@@ -372,12 +363,7 @@ internal fun PrivateApplicationInfoPopup(
                 // Application State
                 hasShortcutHostPermission = hasShortcutHostPermission,
                 isUserInstalled = packageManager.isUserInstalled(flags = eblanApplicationInfo.flags),
-                eblanShortcutInfosGroup = eblanShortcutInfosGroup[
-                    EblanShortcutInfoByGroup(
-                        serialNumber = eblanApplicationInfo.serialNumber,
-                        packageName = eblanApplicationInfo.packageName,
-                    ),
-                ],
+                eblanShortcutInfosGroup = eblanShortcutInfosByPackageName,
                 // Callbacks
                 onUninstall = {
                     handleOnUninstall(
@@ -449,7 +435,7 @@ internal fun ApplicationInfoMenu(
     hasShortcutHostPermission: Boolean,
     gridItemSettings: GridItemSettings,
     eblanShortcutInfosGroup: List<EblanShortcutInfo>?,
-    eblanAppWidgetProviderInfosByPackageName: List<EblanAppWidgetProviderInfo>?,
+    hasAppWidgets: Boolean,
     // Modifier
     modifier: Modifier = Modifier,
     // Callbacks
@@ -525,7 +511,7 @@ internal fun ApplicationInfoMenu(
                         }
                     }
 
-                    if (!eblanAppWidgetProviderInfosByPackageName.isNullOrEmpty()) {
+                    if (hasAppWidgets) {
                         IconButton(
                             onClick = onWidgets,
                         ) {
