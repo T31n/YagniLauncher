@@ -33,6 +33,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -80,22 +81,26 @@ internal class GeneralSettingsViewModel @Inject constructor(
         importIconPackJob?.cancel()
 
         importIconPackJob = viewModelScope.launch {
-            _importIconPackProgress.value = ImportIconPackProgress(label = label)
-
-            updateIconPacksUseCase(iconPackPackageName = packageName) { current, total ->
-                _importIconPackProgress.value = ImportIconPackProgress(
-                    label = label,
-                    current = current,
-                    total = total,
-                )
+            _importIconPackProgress.update {
+                ImportIconPackProgress(label = label)
             }
 
-            _importIconPackProgress.value = null
+            updateIconPacksUseCase(iconPackPackageName = packageName) { current, total ->
+                _importIconPackProgress.update {
+                    ImportIconPackProgress(
+                        label = label,
+                        current = current,
+                        total = total,
+                    )
+                }
+            }
+
+            _importIconPackProgress.update { null }
         }
     }
 
     fun cancelImportIconPack() {
         importIconPackJob?.cancel()
-        _importIconPackProgress.value = null
+        _importIconPackProgress.update { null }
     }
 }
