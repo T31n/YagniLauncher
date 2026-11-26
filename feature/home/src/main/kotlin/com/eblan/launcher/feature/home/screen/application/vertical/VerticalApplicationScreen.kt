@@ -62,7 +62,6 @@ import com.eblan.launcher.domain.model.application.AppDrawerGridItem
 import com.eblan.launcher.domain.model.application.AppDrawerGridItemData
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
-import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfo
 import com.eblan.launcher.domain.model.folder.FolderEblanApplicationInfoPopup
 import com.eblan.launcher.domain.model.folder.FolderEntry
@@ -98,7 +97,12 @@ internal fun VerticalApplicationScreen(
     modifier: Modifier = Modifier,
     // Application Info
     eblanApplicationInfoTags: List<EblanApplicationInfoTag>,
-    getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
+    eblanApplicationInfos: Map<EblanUserPageKey, List<AppDrawerGridItem>>,
+    iconPackFilePaths: Map<String, String?>,
+    privateSerialNumber: Long?,
+    isPrivateSpaceVisible: Boolean,
+    isPrivateQuietModeEnabled: Boolean,
+    privateEblanApplicationInfos: List<EblanApplicationInfo>,
     horizontalPagerState: PagerState,
     textFieldState: TextFieldState,
     selectedEblanApplicationInfoTagId: Long?,
@@ -134,7 +138,7 @@ internal fun VerticalApplicationScreen(
     onVerticalDrag: (Float) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onDragFolderEblanApplicationInfo: (
-        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        folderId: String,
         movingGridItem: GridItem,
     ) -> Unit,
     onDragApplicationInfo: (GridItem) -> Unit,
@@ -165,8 +169,8 @@ internal fun VerticalApplicationScreen(
     val searchBarState = rememberSearchBarState()
 
     val eblanUsers =
-        remember(key1 = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos) {
-            getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos.keys.map { currentEblanUserPageKey ->
+        remember(key1 = eblanApplicationInfos) {
+            eblanApplicationInfos.keys.map { currentEblanUserPageKey ->
                 currentEblanUserPageKey.eblanUser
             }.distinctBy { currentEblanUser ->
                 currentEblanUser.serialNumber
@@ -242,7 +246,7 @@ internal fun VerticalApplicationScreen(
             EblanApplicationInfoTabRow(
                 // Data
                 eblanUsers = eblanUsers,
-                eblanApplicationInfoKeys = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos.keys,
+                eblanApplicationInfoKeys = eblanApplicationInfos.keys,
                 // State
                 currentPage = horizontalPagerState.currentPage,
                 // Appearance
@@ -279,7 +283,12 @@ internal fun VerticalApplicationScreen(
                 backgroundColor = backgroundColor,
                 customBackgroundColor = customBackgroundColor,
                 gridItemSettings = gridItemSettings,
-                getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
+                eblanApplicationInfos = eblanApplicationInfos,
+                iconPackFilePaths = iconPackFilePaths,
+                privateSerialNumber = privateSerialNumber,
+                isPrivateSpaceVisible = isPrivateSpaceVisible,
+                isPrivateQuietModeEnabled = isPrivateQuietModeEnabled,
+                privateEblanApplicationInfos = privateEblanApplicationInfos,
                 folderEblanApplicationInfoPopups = folderEblanApplicationInfoPopups,
                 // Folder Appearance
                 folderCornerRadius = folderCornerRadius,
@@ -332,7 +341,12 @@ private fun EblanApplicationInfosPage(
     backgroundColor: BackgroundColor,
     customBackgroundColor: Int,
     gridItemSettings: GridItemSettings,
-    getEblanApplicationInfosByLabelAndTag: GetEblanApplicationInfosByLabelAndTag,
+    eblanApplicationInfos: Map<EblanUserPageKey, List<AppDrawerGridItem>>,
+    iconPackFilePaths: Map<String, String?>,
+    privateSerialNumber: Long?,
+    isPrivateSpaceVisible: Boolean,
+    isPrivateQuietModeEnabled: Boolean,
+    privateEblanApplicationInfos: List<EblanApplicationInfo>,
     folderEblanApplicationInfoPopups: Map<String, FolderEblanApplicationInfoPopup>,
     // Folder Appearance
     folderCornerRadius: Int,
@@ -353,7 +367,7 @@ private fun EblanApplicationInfosPage(
     onVerticalDrag: (Float) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onDragFolderEblanApplicationInfo: (
-        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        folderId: String,
         movingGridItem: GridItem,
     ) -> Unit,
     onDragApplicationInfo: (GridItem) -> Unit,
@@ -381,8 +395,8 @@ private fun EblanApplicationInfosPage(
 ) {
     val userManager = LocalUserManager.current
 
-    val eblanUserPageKey = remember(key1 = getEblanApplicationInfosByLabelAndTag, key2 = index) {
-        getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos.keys.toList()
+    val eblanUserPageKey = remember(key1 = eblanApplicationInfos, key2 = index) {
+        eblanApplicationInfos.keys.toList()
             .getOrElse(
                 index = index,
                 defaultValue = {
@@ -404,14 +418,6 @@ private fun EblanApplicationInfosPage(
         userManager.getUserForSerialNumber(serialNumber = eblanUserPageKey.eblanUser.serialNumber)
 
     val isQuietModeEnabled = eblanUserPageKey.eblanUser.isQuietModeEnabled
-
-    val privateEblanUser = getEblanApplicationInfosByLabelAndTag.privateEblanUser
-
-    val isPrivateSpaceVisible = privateEblanUser != null &&
-        !(
-            privateEblanUser.isPrivateSpaceEntryPointHidden &&
-                privateEblanUser.isPrivateSpaceLocked
-            )
 
     Box(modifier = modifier.fillMaxSize()) {
         if (isQuietModeEnabled) {
@@ -444,12 +450,12 @@ private fun EblanApplicationInfosPage(
                 customBackgroundColor = customBackgroundColor,
                 gridItemSettings = gridItemSettings,
                 eblanUserType = eblanUserPageKey.eblanUser.eblanUserType,
-                appDrawerGridItems = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos[eblanUserPageKey].orEmpty(),
-                iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
-                privateSerialNumber = privateEblanUser?.serialNumber,
+                appDrawerGridItems = eblanApplicationInfos[eblanUserPageKey].orEmpty(),
+                iconPackFilePaths = iconPackFilePaths,
+                privateSerialNumber = privateSerialNumber,
                 isPrivateSpaceVisible = isPrivateSpaceVisible,
-                isPrivateQuietModeEnabled = privateEblanUser?.isQuietModeEnabled == true,
-                privateEblanApplicationInfos = getEblanApplicationInfosByLabelAndTag.privateEblanApplicationInfos,
+                isPrivateQuietModeEnabled = isPrivateQuietModeEnabled,
+                privateEblanApplicationInfos = privateEblanApplicationInfos,
                 isVisibleOverlay = isVisibleOverlay,
                 systemTextColor = systemTextColor,
                 systemCustomTextColor = systemCustomTextColor,
@@ -522,7 +528,7 @@ private fun EblanApplicationInfosGrid(
     onVerticalDrag: (Float) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onDragFolderEblanApplicationInfo: (
-        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        folderId: String,
         movingGridItem: GridItem,
     ) -> Unit,
     onDragApplicationInfo: (GridItem) -> Unit,

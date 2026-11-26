@@ -30,7 +30,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.GridItem
-import com.eblan.launcher.domain.model.grid.GridItemSettings
+import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.HomeHandler
 import com.eblan.launcher.feature.home.util.PAGE_INDICATOR_HEIGHT
@@ -44,10 +44,16 @@ internal fun ResizeScreen(
     dockHeight: Int,
     columns: Int,
     rows: Int,
-    gridItemSettings: GridItemSettings,
+    gridItemTextColor: TextColor,
+    gridItemCustomTextColor: Int,
+    gridItemBackgroundColor: BackgroundColor,
+    gridItemCustomBackgroundColor: Int,
     dockColumns: Int,
     dockRows: Int,
-    dockGridItemSettings: GridItemSettings,
+    dockGridItemTextColor: TextColor,
+    dockGridItemCustomTextColor: Int,
+    dockGridItemBackgroundColor: BackgroundColor,
+    dockGridItemCustomBackgroundColor: Int,
     resizeGridItem: GridItem,
     // Appearance
     textColor: TextColor,
@@ -123,10 +129,10 @@ internal fun ResizeScreen(
                     rows = rows,
                     // Grid Item
                     gridItem = resizeGridItem,
-                    gridItemTextColor = gridItemSettings.textColor,
-                    gridItemCustomTextColor = gridItemSettings.customTextColor,
-                    gridItemBackgroundColor = gridItemSettings.backgroundColor,
-                    gridItemCustomBackgroundColor = gridItemSettings.customBackgroundColor,
+                    gridItemTextColor = gridItemTextColor,
+                    gridItemCustomTextColor = gridItemCustomTextColor,
+                    gridItemBackgroundColor = gridItemBackgroundColor,
+                    gridItemCustomBackgroundColor = gridItemCustomBackgroundColor,
                     // Behavior and Appearance
                     lockMovement = lockMovement,
                     textColor = textColor,
@@ -163,10 +169,10 @@ internal fun ResizeScreen(
                     rows = dockRows,
                     // Grid Item
                     gridItem = resizeGridItem,
-                    gridItemTextColor = dockGridItemSettings.textColor,
-                    gridItemCustomTextColor = dockGridItemSettings.customTextColor,
-                    gridItemBackgroundColor = dockGridItemSettings.backgroundColor,
-                    gridItemCustomBackgroundColor = dockGridItemSettings.customBackgroundColor,
+                    gridItemTextColor = dockGridItemTextColor,
+                    gridItemCustomTextColor = dockGridItemCustomTextColor,
+                    gridItemBackgroundColor = dockGridItemBackgroundColor,
+                    gridItemCustomBackgroundColor = dockGridItemCustomBackgroundColor,
                     // Behavior and Appearance
                     lockMovement = lockMovement,
                     textColor = textColor,

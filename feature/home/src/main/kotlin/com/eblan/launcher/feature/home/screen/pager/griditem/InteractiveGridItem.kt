@@ -69,7 +69,7 @@ internal fun InteractiveGridItem(
     gridItem: GridItem,
     gridItemSettings: GridItemSettings,
     sharedElementKey: SharedElementKey,
-    statusBarNotifications: Map<String, Int>,
+    hasNotifications: Boolean,
     moveGridItemResult: MoveGridItemResult?,
     // Layout and Dimensions
     cellWidth: Int,
@@ -190,7 +190,7 @@ internal fun InteractiveGridItem(
                 isScrollInProgress = isScrollInProgress,
                 hasInteraction = hasInteraction,
                 animations = animations,
-                hasNotifications = (statusBarNotifications[data.packageName] ?: 0) > 0,
+                hasNotifications = hasNotifications,
                 iconPackFilePath = iconPackFilePaths[data.componentName],
                 // Appearance
                 textColor = currentTextColor,

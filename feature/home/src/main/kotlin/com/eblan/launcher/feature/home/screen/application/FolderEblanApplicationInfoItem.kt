@@ -123,7 +123,7 @@ internal fun FolderEblanApplicationInfoItem(
     // Callbacks
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onDragFolderEblanApplicationInfo: (
-        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        folderId: String,
         movingGridItem: GridItem,
     ) -> Unit,
     onLongPressFolderApplicationInfo: (
@@ -479,7 +479,7 @@ internal fun handleDragFolderEblanApplicationInfoItem(
     onUpdateIsLongPress: (Boolean) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onDragFolderEblanApplicationInfo: (
-        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        folderId: String,
         gridItem: GridItem,
     ) -> Unit,
 ) {
@@ -515,7 +515,7 @@ internal fun handleDragFolderEblanApplicationInfoItem(
             )
 
             onDragFolderEblanApplicationInfo(
-                folderEblanApplicationInfo,
+                folderEblanApplicationInfo.id,
                 gridItem,
             )
         }

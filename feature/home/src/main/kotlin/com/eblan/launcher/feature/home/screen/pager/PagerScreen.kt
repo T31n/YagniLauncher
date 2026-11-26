@@ -981,7 +981,9 @@ internal fun PagerScreen(
                                     id = currentGridItem.id,
                                     parent = SharedElementKey.Parent.Grid,
                                 ),
-                                statusBarNotifications = statusBarNotifications,
+                                hasNotifications = (currentGridItem.data as? GridItemData.ApplicationInfo)?.packageName?.let { packageName ->
+                                    (statusBarNotifications[packageName] ?: 0) > 0
+                                } == true,
                                 moveGridItemResult = moveGridItemResult,
                                 // Layout and Dimensions
                                 cellWidth = safeDrawingWidth / homeSettings.columns,
@@ -1176,7 +1178,9 @@ internal fun PagerScreen(
                                         id = currentDockGridItem.id,
                                         parent = SharedElementKey.Parent.Dock,
                                     ),
-                                    statusBarNotifications = statusBarNotifications,
+                                    hasNotifications = (currentDockGridItem.data as? GridItemData.ApplicationInfo)?.packageName?.let { packageName ->
+                                        (statusBarNotifications[packageName] ?: 0) > 0
+                                    } == true,
                                     moveGridItemResult = moveGridItemResult,
                                     // Layout and Dimensions
                                     cellWidth = safeDrawingWidth / homeSettings.dockColumns,
@@ -1505,10 +1509,10 @@ internal fun PagerScreen(
                 onGetEblanApplicationInfosByTagId = onGetEblanApplicationInfosByTagId,
                 onVerticalDrag = pagerScreenState::verticalDragApplicationScreen,
                 onUpdateIsVisibleOverlay = onUpdateIsVisibleOverlay,
-                onDragFolderEblanApplicationInfo = { folderEblanApplicationInfo, movingGridItem ->
+                onDragFolderEblanApplicationInfo = { folderId, movingGridItem ->
                     pagerScreenState.dragFolderEblanApplicationInfo(
                         // Data
-                        folderId = folderEblanApplicationInfo.id,
+                        folderId = folderId,
                         gridItem = movingGridItem,
                         // Callbacks
                         onDragFolderEblanApplicationInfoToGrid = onDragFolderEblanApplicationInfo,
@@ -1724,10 +1728,16 @@ internal fun PagerScreen(
                 dockHeight = visibleDockHeight,
                 columns = homeSettings.columns,
                 rows = homeSettings.rows,
-                gridItemSettings = homeSettings.gridItemSettings,
+                gridItemTextColor = homeSettings.gridItemSettings.textColor,
+                gridItemCustomTextColor = homeSettings.gridItemSettings.customTextColor,
+                gridItemBackgroundColor = homeSettings.gridItemSettings.backgroundColor,
+                gridItemCustomBackgroundColor = homeSettings.gridItemSettings.customBackgroundColor,
                 dockColumns = homeSettings.dockColumns,
                 dockRows = homeSettings.dockRows,
-                dockGridItemSettings = homeSettings.dockGridItemSettings,
+                dockGridItemTextColor = homeSettings.dockGridItemSettings.textColor,
+                dockGridItemCustomTextColor = homeSettings.dockGridItemSettings.customTextColor,
+                dockGridItemBackgroundColor = homeSettings.dockGridItemSettings.backgroundColor,
+                dockGridItemCustomBackgroundColor = homeSettings.dockGridItemSettings.customBackgroundColor,
                 resizeGridItem = resizeGridItem,
                 // Appearance
                 textColor = textColor,

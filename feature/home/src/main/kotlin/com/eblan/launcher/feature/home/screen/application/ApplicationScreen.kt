@@ -149,7 +149,7 @@ internal fun ApplicationScreen(
     onVerticalDrag: (Float) -> Unit,
     onUpdateIsVisibleOverlay: (Boolean) -> Unit,
     onDragFolderEblanApplicationInfo: (
-        folderEblanApplicationInfo: FolderEblanApplicationInfo,
+        folderId: String,
         movingGridItem: GridItem,
     ) -> Unit,
     onDragApplicationInfo: (GridItem) -> Unit,
@@ -293,6 +293,13 @@ internal fun ApplicationScreen(
         Box(modifier = Modifier.fillMaxSize()) {
             when (appDrawerSettings.appDrawerType) {
                 AppDrawerType.Vertical -> {
+                    val privateEblanUser = getEblanApplicationInfosByLabelAndTag.privateEblanUser
+                    val isPrivateSpaceVisible = privateEblanUser != null &&
+                        !(
+                            privateEblanUser.isPrivateSpaceEntryPointHidden &&
+                                privateEblanUser.isPrivateSpaceLocked
+                            )
+
                     VerticalApplicationScreen(
                         // Layout and Transition
                         sharedTransitionScope = sharedTransitionScope,
@@ -300,7 +307,12 @@ internal fun ApplicationScreen(
                         paddingValues = paddingValues,
                         // Application Info
                         eblanApplicationInfoTags = eblanApplicationInfoTags,
-                        getEblanApplicationInfosByLabelAndTag = getEblanApplicationInfosByLabelAndTag,
+                        eblanApplicationInfos = getEblanApplicationInfosByLabelAndTag.eblanApplicationInfos,
+                        iconPackFilePaths = getEblanApplicationInfosByLabelAndTag.iconPackFilePaths,
+                        privateSerialNumber = privateEblanUser?.serialNumber,
+                        isPrivateSpaceVisible = isPrivateSpaceVisible,
+                        isPrivateQuietModeEnabled = privateEblanUser?.isQuietModeEnabled == true,
+                        privateEblanApplicationInfos = getEblanApplicationInfosByLabelAndTag.privateEblanApplicationInfos,
                         horizontalPagerState = horizontalPagerState,
                         textFieldState = textFieldState,
                         selectedEblanApplicationInfoTagId = selectedEblanApplicationInfoTagId,
