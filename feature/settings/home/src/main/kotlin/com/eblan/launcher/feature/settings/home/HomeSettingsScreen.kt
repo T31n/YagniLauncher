@@ -127,7 +127,6 @@ private fun Success(
 ) {
     var showGridDialog by remember { mutableStateOf(false) }
     var showDockGridDialog by remember { mutableStateOf(false) }
-    var showDockHeightDialog by remember { mutableStateOf(false) }
     var showDockCustomBackgroundColorDialog by remember { mutableStateOf(false) }
     var showDockPaddingDialog by remember { mutableStateOf(false) }
     var showDockCornerRadiusDialog by remember { mutableStateOf(false) }
@@ -315,18 +314,6 @@ private fun Success(
             },
         )
 
-        SettingsColumnItem(
-            // Content
-            title = stringResource(R.string.dock_height),
-            subtitle = "${homeSettings.dockHeightPercentage}%",
-            // Layout
-            shape = EblanShapes.middle,
-            // Actions
-            onClick = {
-                showDockHeightDialog = true
-            },
-        )
-
         SettingsSwitchItem(
             // Content
             title = stringResource(R.string.dock_infinite_scroll),
@@ -466,27 +453,6 @@ private fun Success(
                     homeSettings.copy(
                         dockColumns = dockColumns,
                         dockRows = dockRows,
-                    ),
-                )
-            },
-        )
-    }
-
-    if (showDockHeightDialog) {
-        SliderDialog(
-            // Content
-            title = stringResource(R.string.dock_height),
-            value = homeSettings.dockHeightPercentage,
-            valueRange = 8..45,
-            valueLabel = { "$it%" },
-            // Callbacks
-            onDismissRequest = {
-                showDockHeightDialog = false
-            },
-            onUpdateValue = { currentDockHeightPercentage ->
-                onUpdateHomeSettings(
-                    homeSettings.copy(
-                        dockHeightPercentage = currentDockHeightPercentage,
                     ),
                 )
             },

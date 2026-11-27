@@ -831,7 +831,7 @@ private fun Success(
                     hasShortcutHostPermission = homeData.hasShortcutHostPermission,
                     // Settings
                     dockInitialPage = homeData.userData.homeSettings.dockInitialPage,
-                    dockHeightPercentage = homeData.userData.homeSettings.dockHeightPercentage,
+                    rows = homeData.userData.homeSettings.rows,
                     dockColumns = homeData.userData.homeSettings.dockColumns,
                     dockRows = homeData.userData.homeSettings.dockRows,
                     dockGridItemSettings = homeData.userData.homeSettings.dockGridItemSettings,

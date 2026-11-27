@@ -290,3 +290,31 @@ fun getWidgetGridItemSize(
 
     return width to height
 }
+
+/**
+ * Calculates the dock height in pixels proportionally from the home grid and dock row counts.
+ *
+ * Divides [availableHeight] evenly across `rows + dockRows` so dock cells match home grid cell
+ * height, capped at half of [availableHeight] to preserve space for the home grid.
+ *
+ * @param enableDock Whether the dock is enabled.
+ * @param rows The number of rows in the home grid.
+ * @param dockRows The number of rows in the dock.
+ * @param availableHeight The vertical space in pixels shared by the home grid and dock.
+ * @return The dock height in pixels, or `0` if the dock is disabled or any input is non-positive.
+ */
+fun getDockHeight(
+    enableDock: Boolean,
+    rows: Int,
+    dockRows: Int,
+    availableHeight: Int,
+): Int {
+    if (!enableDock || rows <= 0 || dockRows <= 0 || availableHeight <= 0) {
+        return 0
+    }
+
+    val totalRows = rows + dockRows
+    val proportionalHeight = (availableHeight.toLong() * dockRows / totalRows).toInt()
+
+    return proportionalHeight.coerceAtMost(availableHeight / 2)
+}

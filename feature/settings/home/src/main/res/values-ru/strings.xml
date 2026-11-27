@@ -19,8 +19,6 @@
     <string name="dock_grid">Сетка док-панели</string>
     <string name="dock_columns_is_not_valid">Колонки док-панели неверны</string>
     <string name="dock_rows_is_not_valid">Строки док-панели неверны</string>
-    <string name="dock_height">Высота док-панели</string>
-    <string name="dock_height_is_not_valid">Высота док-панели неверна</string>
     <string name="infinite_scrolling">Бесконечная прокрутка</string>
     <string name="seamless_loop_page_scroll">Бесшовная циклическая прокрутка страницы</string>
     <string name="wallpaper_scrolling">Прокрутка обоев</string>

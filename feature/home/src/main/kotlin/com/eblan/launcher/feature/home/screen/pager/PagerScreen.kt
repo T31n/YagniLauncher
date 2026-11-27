@@ -96,6 +96,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
+import com.eblan.launcher.domain.grid.getDockHeight
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
@@ -147,7 +148,6 @@ import com.eblan.launcher.feature.home.screen.shortcutconfig.ShortcutConfigScree
 import com.eblan.launcher.feature.home.screen.widget.AppWidgetScreen
 import com.eblan.launcher.feature.home.screen.widget.WidgetScreen
 import com.eblan.launcher.feature.home.util.PAGE_INDICATOR_HEIGHT
-import com.eblan.launcher.feature.home.util.calculateDockHeightPx
 import com.eblan.launcher.feature.home.util.calculatePage
 import com.eblan.launcher.feature.home.util.getBackgroundColor
 import com.eblan.launcher.feature.home.util.getTextColor
@@ -393,11 +393,15 @@ internal fun PagerScreen(
 
     val safeDrawingHeight = screenHeight - verticalPadding
 
-    val dockHeightPx = calculateDockHeightPx(
+    val pageIndicatorHeightPx = with(density) {
+        PAGE_INDICATOR_HEIGHT.roundToPx()
+    }
+
+    val dockHeightPx = getDockHeight(
         enableDock = homeSettings.enableDock,
-        dockHeightPercentage = homeSettings.dockHeightPercentage,
-        safeDrawingHeight = safeDrawingHeight,
-        density = density,
+        rows = homeSettings.rows,
+        dockRows = homeSettings.dockRows,
+        availableHeight = safeDrawingHeight - pageIndicatorHeightPx,
     )
 
     val dockHeight = with(density) {
@@ -405,10 +409,6 @@ internal fun PagerScreen(
     }
 
     val dockTopLeft = safeDrawingHeight - dockHeightPx
-
-    val pageIndicatorHeightPx = with(density) {
-        PAGE_INDICATOR_HEIGHT.roundToPx()
-    }
 
     val gridHeight = safeDrawingHeight - pageIndicatorHeightPx - dockHeightPx
 

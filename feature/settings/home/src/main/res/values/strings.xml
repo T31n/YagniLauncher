@@ -19,8 +19,6 @@
     <string name="dock_grid">Dock Grid</string>
     <string name="dock_columns_is_not_valid">Dock columns is not valid</string>
     <string name="dock_rows_is_not_valid">Dock rows is not valid</string>
-    <string name="dock_height">Dock Height</string>
-    <string name="dock_height_is_not_valid">Dock Height is not valid</string>
     <string name="infinite_scrolling">Infinite Scrolling</string>
     <string name="seamless_loop_page_scroll">Seamless loop page scroll</string>
     <string name="wallpaper_scrolling">Wallpaper Scrolling</string>

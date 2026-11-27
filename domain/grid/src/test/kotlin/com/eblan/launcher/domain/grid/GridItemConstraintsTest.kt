@@ -1104,6 +1104,71 @@ class GridItemConstraintsTest {
         }
     }
 
+    @Nested
+    inner class GetDockHeight {
+        @Test
+        fun `returns zero when dock is disabled`() {
+            assertEquals(
+                0,
+                getDockHeight(
+                    enableDock = false,
+                    rows = 5,
+                    dockRows = 1,
+                    availableHeight = 1200,
+                ),
+            )
+        }
+
+        @Test
+        fun `returns zero when inputs are non-positive`() {
+            assertEquals(0, getDockHeight(enableDock = true, rows = 0, dockRows = 1, availableHeight = 1200))
+            assertEquals(0, getDockHeight(enableDock = true, rows = 5, dockRows = 0, availableHeight = 1200))
+            assertEquals(0, getDockHeight(enableDock = true, rows = 5, dockRows = 1, availableHeight = 0))
+            assertEquals(0, getDockHeight(enableDock = true, rows = 5, dockRows = 1, availableHeight = -100))
+        }
+
+        @Test
+        fun `matches home row height for single-row dock`() {
+            val availableHeight = 1200
+            val dockHeight = getDockHeight(
+                enableDock = true,
+                rows = 5,
+                dockRows = 1,
+                availableHeight = availableHeight,
+            )
+
+            assertEquals(200, dockHeight)
+            assertEquals((availableHeight - dockHeight) / 5, dockHeight)
+        }
+
+        @Test
+        fun `scales proportionally for multi-row dock`() {
+            val availableHeight = 1400
+            val dockHeight = getDockHeight(
+                enableDock = true,
+                rows = 5,
+                dockRows = 2,
+                availableHeight = availableHeight,
+            )
+
+            assertEquals(400, dockHeight)
+            assertEquals((availableHeight - dockHeight) / 5, dockHeight / 2)
+        }
+
+        @Test
+        fun `caps dock height at half of available height`() {
+            assertEquals(
+                600,
+                getDockHeight(
+                    enableDock = true,
+                    rows = 2,
+                    dockRows = 4,
+                    availableHeight = 1200,
+                ),
+            )
+        }
+    }
+
     private fun getGridItem(
         id: String = "Test",
         page: Int = 0,

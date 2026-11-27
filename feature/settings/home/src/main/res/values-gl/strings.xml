@@ -19,8 +19,6 @@
     <string name="dock_grid">Grade da dock</string>
     <string name="dock_columns_is_not_valid">As columnas da dock non son válidas</string>
     <string name="dock_rows_is_not_valid">As filas da dock non son válidas</string>
-    <string name="dock_height">Altura da dock</string>
-    <string name="dock_height_is_not_valid">A altura da dock non é válida</string>
     <string name="infinite_scrolling">Desprazamento infinito</string>
     <string name="seamless_loop_page_scroll">Desprazamento de páxinas en bucle continuo</string>
     <string name="wallpaper_scrolling">Desprazamento do fondo de pantalla</string>

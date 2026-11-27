@@ -20,6 +20,7 @@ package com.eblan.launcher.domain.usecase.pin
 import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.grid.findAvailableRegionByPage
+import com.eblan.launcher.domain.grid.getDockHeight
 import com.eblan.launcher.domain.grid.getWidgetGridItemSize
 import com.eblan.launcher.domain.grid.getWidgetGridItemSpan
 import com.eblan.launcher.domain.model.grid.Associate
@@ -101,11 +102,12 @@ class AddPinWidgetToHomeScreenUseCase @Inject constructor(
 
         val initialPage = homeSettings.initialPage
 
-        val dockHeight = if (homeSettings.enableDock) {
-            rootHeight * homeSettings.dockHeightPercentage.coerceIn(8, 45) / 100
-        } else {
-            0
-        }
+        val dockHeight = getDockHeight(
+            enableDock = homeSettings.enableDock,
+            rows = rows,
+            dockRows = homeSettings.dockRows,
+            availableHeight = rootHeight,
+        )
 
         val eblanApplicationInfoIcon =
             launcherAppsWrapper.getFastActivityList(

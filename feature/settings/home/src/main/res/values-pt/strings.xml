@@ -19,8 +19,6 @@
     <string name="dock_grid">Grade da doca</string>
     <string name="dock_columns_is_not_valid">As colunas da doca não são válidas</string>
     <string name="dock_rows_is_not_valid">As linhas da doca não são válidas</string>
-    <string name="dock_height">Altura da doca</string>
-    <string name="dock_height_is_not_valid">A altura da doca não é válida</string>
     <string name="infinite_scrolling">Rolagem infinita</string>
     <string name="seamless_loop_page_scroll">Rolagem de páginas em loop contínuo</string>
     <string name="wallpaper_scrolling">Rolagem do papel de parede</string>

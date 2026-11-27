@@ -38,5 +38,4 @@ message HomeSettingsProto {
   optional BackgroundColorProto dockBackgroundColorProto = 35;
   optional ScreenOrientationProto screenOrientationProto = 36;
   optional PageIndicatorTypeProto pageIndicatorTypeProto = 37;
-  optional int32 dockHeightPercentage = 38;
 }

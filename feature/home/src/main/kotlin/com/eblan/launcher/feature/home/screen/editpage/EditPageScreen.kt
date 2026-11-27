@@ -77,6 +77,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.util.Consumer
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.designsystem.theme.EblanSpacing
+import com.eblan.launcher.domain.grid.getDockHeight
 import com.eblan.launcher.domain.model.folder.FolderPopup
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.GridItemSettings
@@ -87,7 +88,7 @@ import com.eblan.launcher.feature.home.component.GridLayout
 import com.eblan.launcher.feature.home.component.HomeHandler
 import com.eblan.launcher.feature.home.model.Screen
 import com.eblan.launcher.feature.home.screen.editpage.griditem.PageGridItem
-import com.eblan.launcher.feature.home.util.calculateDockHeightPx
+import com.eblan.launcher.feature.home.util.PAGE_INDICATOR_HEIGHT
 import com.eblan.launcher.ui.lazylist.DraggableColumnItem
 import com.eblan.launcher.ui.lazylist.dragColumnContainer
 import com.eblan.launcher.ui.lazylist.rememberLazyColumnDragDropState
@@ -323,7 +324,7 @@ internal fun EditDockGridPageScreen(
     hasShortcutHostPermission: Boolean,
     // Settings
     dockInitialPage: Int,
-    dockHeightPercentage: Int,
+    rows: Int,
     dockColumns: Int,
     dockRows: Int,
     dockGridItemSettings: GridItemSettings,
@@ -379,12 +380,16 @@ internal fun EditDockGridPageScreen(
 
     val safeDrawingHeight = (screenHeight - verticalPadding).coerceAtLeast(0)
 
+    val pageIndicatorHeightPx = with(density) {
+        PAGE_INDICATOR_HEIGHT.roundToPx()
+    }
+
     val cardHeight = with(density) {
-        calculateDockHeightPx(
+        getDockHeight(
             enableDock = true,
-            dockHeightPercentage = dockHeightPercentage,
-            safeDrawingHeight = safeDrawingHeight,
-            density = density,
+            rows = rows,
+            dockRows = dockRows,
+            availableHeight = safeDrawingHeight - pageIndicatorHeightPx,
         ).toDp()
     }
 
