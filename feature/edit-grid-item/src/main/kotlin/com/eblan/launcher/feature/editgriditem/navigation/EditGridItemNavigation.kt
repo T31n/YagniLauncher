@@ -24,7 +24,7 @@ import androidx.navigation.compose.dialog
 import com.eblan.launcher.feature.editgriditem.EditGridItemRoute
 
 fun NavController.navigateToEditGridItemScreen(id: String) {
-    navigate(EditGridItemRouteData(id = id))
+    navigate(EditGridItemRouteData(id))
 }
 
 fun NavGraphBuilder.editGridItemScreen(

@@ -170,7 +170,7 @@ internal class HomeViewModel @Inject constructor(
 
     private val _eblanAppWidgetProviderInfoLabel = MutableStateFlow("")
     val eblanAppWidgetProviderInfos =
-        getEblanAppWidgetProviderInfosByLabelUseCase(labelFlow = _eblanAppWidgetProviderInfoLabel).stateIn(
+        getEblanAppWidgetProviderInfosByLabelUseCase(_eblanAppWidgetProviderInfoLabel).stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = emptyMap(),
@@ -178,7 +178,7 @@ internal class HomeViewModel @Inject constructor(
 
     private val _eblanShortcutConfigLabel = MutableStateFlow("")
     val eblanShortcutConfigs =
-        getEblanShortcutConfigsByLabelUseCase(labelFlow = _eblanShortcutConfigLabel).stateIn(
+        getEblanShortcutConfigsByLabelUseCase(_eblanShortcutConfigLabel).stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = emptyMap(),
@@ -404,7 +404,7 @@ internal class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             moveGridItemJob?.cancelAndJoin()
 
-            updateGridItemsAfterMoveUseCase(moveGridItemResult = moveGridItemResult)
+            updateGridItemsAfterMoveUseCase(moveGridItemResult)
 
             if (moveGridItemResult.conflictingGridItem == null) {
                 resetGridState()
@@ -424,7 +424,7 @@ internal class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             moveGridItemJob?.cancelAndJoin()
 
-            deleteGridItemUseCase(gridItem = gridItem)
+            deleteGridItemUseCase(gridItem)
 
             _moveGridItemResult.update {
                 null
@@ -456,14 +456,14 @@ internal class HomeViewModel @Inject constructor(
 
     fun deleteGridItem(gridItem: GridItem) {
         viewModelScope.launch {
-            deleteGridItemUseCase(gridItem = gridItem)
+            deleteGridItemUseCase(gridItem)
         }
     }
 
     fun getPinGridItem(pinItemRequestType: PinItemRequestType) {
         viewModelScope.launch {
             _pinGridItem.update {
-                getPinGridItemUseCase(pinItemRequestType = pinItemRequestType)
+                getPinGridItemUseCase(pinItemRequestType)
             }
         }
     }
@@ -483,7 +483,7 @@ internal class HomeViewModel @Inject constructor(
 
             val movingGridItem = moveGridItemResult.movingGridItem
 
-            gridRepository.deleteGridItemById(gridItem = movingGridItem)
+            gridRepository.deleteGridItemById(movingGridItem)
 
             val eblanApplicationInfoIcon =
                 launcherAppsWrapper.getFastActivityList(
@@ -533,9 +533,9 @@ internal class HomeViewModel @Inject constructor(
                 folderId = null,
             )
 
-            gridRepository.insertGridItem(gridItem = movingGridItem.copy(data = data))
+            gridRepository.insertGridItem(movingGridItem.copy(data = data))
 
-            updateGridItemsAfterMoveUseCase(moveGridItemResult = moveGridItemResult)
+            updateGridItemsAfterMoveUseCase(moveGridItemResult)
 
             resetGridState()
         }
@@ -571,7 +571,7 @@ internal class HomeViewModel @Inject constructor(
             val newMovingGridItem = movingGridItem.copy(data = newData)
 
             updateGridItemsAfterMoveUseCase(
-                moveGridItemResult = moveGridItemResult.copy(movingGridItem = newMovingGridItem),
+                moveGridItemResult.copy(movingGridItem = newMovingGridItem),
             )
 
             resetGridState()
@@ -672,7 +672,7 @@ internal class HomeViewModel @Inject constructor(
 
             closeFolderGridItemEntries()
 
-            gridRepository.updateGridItem(gridItem = movingGridItem)
+            gridRepository.updateGridItem(movingGridItem)
 
             _moveGridItemResult.update {
                 MoveGridItemResult(
@@ -707,7 +707,7 @@ internal class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             moveGridItemJob?.cancelAndJoin()
 
-            gridRepository.updateGridItem(gridItem = movingGridItem)
+            gridRepository.updateGridItem(movingGridItem)
 
             _folderGridItemEntries.update { currentFolderEntries ->
                 currentFolderEntries + folderEntry
@@ -921,7 +921,7 @@ internal class HomeViewModel @Inject constructor(
             if (isFolder) {
                 _gridItemSource.update {
                     GridItemSource.NewFolder(
-                        folderGridItems = getRecursiveFolderEblanApplicationInfosUseCase(
+                        getRecursiveFolderEblanApplicationInfosUseCase(
                             id = movingGridItem.id,
                             folderId = folderId,
                         ),
@@ -952,7 +952,7 @@ internal class HomeViewModel @Inject constructor(
 
             _gridItemSource.update {
                 GridItemSource.NewFolder(
-                    folderGridItems = getRecursiveFolderEblanApplicationInfosUseCase(
+                    getRecursiveFolderEblanApplicationInfosUseCase(
                         id = movingGridItem.id,
                         folderId = folderId,
                     ),
@@ -963,7 +963,7 @@ internal class HomeViewModel @Inject constructor(
 
     fun deleteFolderEblanApplicationInfoGridItems(folderId: String) {
         viewModelScope.launch {
-            deleteFolderEblanApplicationInfoGridItemsUseCase(folderId = folderId)
+            deleteFolderEblanApplicationInfoGridItemsUseCase(folderId)
         }
     }
 
@@ -975,9 +975,9 @@ internal class HomeViewModel @Inject constructor(
             moveGridItemJob?.cancelAndJoin()
 
             gridRepository.withTransaction {
-                gridRepository.upsertGridItems(gridItems = folderGridItems)
+                gridRepository.upsertGridItems(folderGridItems)
 
-                updateGridItemsAfterMoveUseCase(moveGridItemResult = moveGridItemResult)
+                updateGridItemsAfterMoveUseCase(moveGridItemResult)
             }
 
             if (moveGridItemResult.conflictingGridItem == null) {

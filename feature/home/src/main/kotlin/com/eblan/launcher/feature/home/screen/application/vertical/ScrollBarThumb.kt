@@ -84,7 +84,7 @@ internal fun ScrollBarThumb(
         isPrivateSpaceEntryPointHidden = isPrivateSpaceEntryPointHidden,
     )
 
-    val viewPortThumbY by remember(key1 = lazyGridState) {
+    val viewPortThumbY by remember(lazyGridState) {
         derivedStateOf {
             getViewPortThumbY(
                 // Grid State
@@ -157,7 +157,7 @@ internal fun ScrollBarThumb(
                         color = MaterialTheme.colorScheme.primary,
                         shape = MaterialTheme.shapes.medium,
                     )
-                    .pointerInput(key1 = lazyGridState) {
+                    .pointerInput(lazyGridState) {
                         detectDragGestures(
                             onDragStart = {
                                 thumbY = viewPortThumbY

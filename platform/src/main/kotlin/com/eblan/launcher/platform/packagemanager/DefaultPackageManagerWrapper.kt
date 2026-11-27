@@ -113,7 +113,7 @@ internal class DefaultPackageManagerWrapper @Inject constructor(
                     packageName = resolveInfo.activityInfo.applicationInfo.packageName,
                     icon = resolveInfo.activityInfo.applicationInfo.loadIcon(packageManager)
                         .let { currentDrawable ->
-                            imageSerializer.createByteArray(drawable = currentDrawable)
+                            imageSerializer.createByteArray(currentDrawable)
                         },
                     label = resolveInfo.activityInfo.applicationInfo.loadLabel(packageManager)
                         .toString(),
@@ -129,7 +129,7 @@ internal class DefaultPackageManagerWrapper @Inject constructor(
         serialNumber: Long?,
     ): ApplicationInfo? = try {
         if (serialNumber != null) {
-            val userHandle = androidUserManagerWrapper.getUserForSerialNumber(serialNumber = serialNumber)
+            val userHandle = androidUserManagerWrapper.getUserForSerialNumber(serialNumber)
 
             if (userHandle != null) {
                 launcherApps.getApplicationInfo(

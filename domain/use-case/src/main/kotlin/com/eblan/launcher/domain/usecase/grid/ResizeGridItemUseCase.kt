@@ -84,7 +84,7 @@ class ResizeGridItemUseCase @Inject constructor(
                     rows = rows,
                 )
             } else {
-                gridRepository.upsertGridItems(gridItems = gridItems)
+                gridRepository.upsertGridItems(gridItems)
 
                 resizingGridItem
             }
@@ -114,7 +114,7 @@ class ResizeGridItemUseCase @Inject constructor(
         )
 
         return if (resolvedGridItems != null) {
-            gridRepository.upsertGridItems(gridItems = resolvedGridItems)
+            gridRepository.upsertGridItems(resolvedGridItems)
 
             resizingGridItem
         } else {

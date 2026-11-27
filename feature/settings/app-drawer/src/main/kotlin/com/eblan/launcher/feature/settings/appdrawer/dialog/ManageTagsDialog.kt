@@ -58,9 +58,7 @@ internal fun ManageTagsDialog(
 
     val lazyListState = rememberLazyListState()
 
-    val lazyColumnDragDropState = rememberLazyColumnDragDropState(
-        lazyListState = lazyListState,
-    ) { from, to ->
+    val lazyColumnDragDropState = rememberLazyColumnDragDropState(lazyListState) { from, to ->
         currentEblanApplicationInfoTags = currentEblanApplicationInfoTags.toMutableList().apply {
             add(
                 index = to,
@@ -88,7 +86,7 @@ internal fun ManageTagsDialog(
             else -> {
                 LazyColumn(
                     modifier = Modifier
-                        .dragColumnContainer(lazyColumnDragDropState = lazyColumnDragDropState)
+                        .dragColumnContainer(lazyColumnDragDropState)
                         .weight(
                             weight = 1f,
                             fill = false,

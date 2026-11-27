@@ -55,7 +55,7 @@ internal fun rememberLazyRowDragDropState(
 ): LazyRowDragDropState {
     val scope = rememberCoroutineScope()
 
-    val state = remember(key1 = lazyListState) {
+    val state = remember(lazyListState) {
         LazyRowDragDropState(
             state = lazyListState,
             onMove = onMove,

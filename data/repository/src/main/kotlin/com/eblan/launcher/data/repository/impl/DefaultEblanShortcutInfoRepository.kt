@@ -42,7 +42,7 @@ internal class DefaultEblanShortcutInfoRepository @Inject constructor(private va
             currentEblanShortcutInfo.asEntity()
         }
 
-        eblanShortcutInfoDao.upsertEblanShortcutInfoEntities(entities = entities)
+        eblanShortcutInfoDao.upsertEblanShortcutInfoEntities(entities)
     }
 
     override suspend fun deleteEblanShortcutInfos(eblanShortcutInfos: List<EblanShortcutInfo>) {
@@ -50,7 +50,7 @@ internal class DefaultEblanShortcutInfoRepository @Inject constructor(private va
             currentEblanShortcutInfo.asEntity()
         }
 
-        eblanShortcutInfoDao.deleteEblanShortcutInfoEntities(entities = entities)
+        eblanShortcutInfoDao.deleteEblanShortcutInfoEntities(entities)
     }
 
     override suspend fun getEblanShortcutInfosByPackageName(

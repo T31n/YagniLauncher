@@ -44,7 +44,7 @@ internal class GeneralSettingsViewModel @Inject constructor(
     private val updateIconPacksUseCase: UpdateIconPacksUseCase,
 ) : ViewModel() {
     val generalSettingsUiState = userDataRepository.userDataFlow.map { userData ->
-        GeneralSettingsUiState.Success(generalSettings = userData.generalSettings)
+        GeneralSettingsUiState.Success(userData.generalSettings)
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
@@ -64,13 +64,13 @@ internal class GeneralSettingsViewModel @Inject constructor(
 
     fun deleteIconPackInfo(eblanIconPackInfo: EblanIconPackInfo) {
         viewModelScope.launch {
-            eblanIconPackInfoRepository.deleteEblanIconPackInfo(eblanIconPackInfo = eblanIconPackInfo)
+            eblanIconPackInfoRepository.deleteEblanIconPackInfo(eblanIconPackInfo)
         }
     }
 
     fun updateGeneralSettings(generalSettings: GeneralSettings) {
         viewModelScope.launch {
-            userDataRepository.updateGeneralSettings(generalSettings = generalSettings)
+            userDataRepository.updateGeneralSettings(generalSettings)
         }
     }
 

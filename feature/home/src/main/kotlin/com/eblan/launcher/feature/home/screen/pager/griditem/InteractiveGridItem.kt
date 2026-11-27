@@ -156,13 +156,13 @@ internal fun InteractiveGridItem(
     )
 
     val horizontalAlignment =
-        getHorizontalAlignment(horizontalAlignment = currentGridItemSettings.horizontalAlignment)
+        getHorizontalAlignment(currentGridItemSettings.horizontalAlignment)
     val verticalArrangement =
-        getVerticalArrangement(verticalArrangement = currentGridItemSettings.verticalArrangement)
+        getVerticalArrangement(currentGridItemSettings.verticalArrangement)
     val horizontalArrangement =
-        getHorizontalArrangement(horizontalArrangement = currentGridItemSettings.horizontalArrangement)
+        getHorizontalArrangement(currentGridItemSettings.horizontalArrangement)
     val verticalAlignment =
-        getVerticalAlignment(verticalAlignment = currentGridItemSettings.verticalAlignment)
+        getVerticalAlignment(currentGridItemSettings.verticalAlignment)
 
     val maxLines = if (currentGridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
 
@@ -384,7 +384,7 @@ private fun InteractiveWidgetGridItem(
     val appWidgetHost = LocalAppWidgetHost.current
     val appWidgetManager = LocalAppWidgetManager.current
 
-    val appWidgetInfo = appWidgetManager.getAppWidgetInfo(appWidgetId = data.appWidgetId)
+    val appWidgetInfo = appWidgetManager.getAppWidgetInfo(data.appWidgetId)
 
     val graphicsLayer = rememberGraphicsLayer()
 
@@ -453,7 +453,7 @@ private fun InteractiveWidgetGridItem(
             AsyncImage(
                 model = data.preview ?: data.icon,
                 contentDescription = null,
-                modifier = commonModifier.pointerInput(key1 = isVisibleOverlay) {
+                modifier = commonModifier.pointerInput(isVisibleOverlay) {
                     detectTapGestures(
                         onLongPress = if (!isVisibleOverlay) {
                             {

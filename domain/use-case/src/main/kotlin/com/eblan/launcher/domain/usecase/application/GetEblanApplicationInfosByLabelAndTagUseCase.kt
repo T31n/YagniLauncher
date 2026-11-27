@@ -133,7 +133,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
         val groupedUsers = eblanApplicationInfos
             .groupBy { currentEblanApplicationInfo ->
                 EblanUserPageKey(
-                    eblanUser = launcherAppsWrapper.getUser(serialNumber = currentEblanApplicationInfo.serialNumber),
+                    eblanUser = launcherAppsWrapper.getUser(currentEblanApplicationInfo.serialNumber),
                     page = 0,
                 )
             }
@@ -153,7 +153,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
                 }
             ) {
                 val personalEblanUserPageKey = EblanUserPageKey(
-                    eblanUser = launcherAppsWrapper.getUser(serialNumber = 0L),
+                    eblanUser = launcherAppsWrapper.getUser(0L),
                     page = 0,
                 )
 
@@ -199,7 +199,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
         val pageSize = (horizontalAppDrawerColumns * horizontalAppDrawerRows).coerceAtLeast(1)
 
         val groupedUsers = eblanApplicationInfos.groupBy { currentEblanApplicationInfo ->
-            launcherAppsWrapper.getUser(serialNumber = currentEblanApplicationInfo.serialNumber)
+            launcherAppsWrapper.getUser(currentEblanApplicationInfo.serialNumber)
         }.filterKeys { currentEblanUser ->
             !(
                 currentEblanUser.eblanUserType == EblanUserType.Private &&
@@ -221,7 +221,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
                     currentEblanUser.eblanUserType == EblanUserType.Personal
                 }
             ) {
-                val personalEblanUser = launcherAppsWrapper.getUser(serialNumber = 0L)
+                val personalEblanUser = launcherAppsWrapper.getUser(0L)
 
                 (groupedUsers + (personalEblanUser to emptyList())).toSortedMap(
                     nullsLast(
@@ -274,7 +274,7 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
     ): List<EblanApplicationInfo> {
         val eblanApplicationInfosByTag = when {
             tagId != null ->
-                eblanApplicationInfoRepository.getEblanApplicationInfosByTagId(id = tagId)
+                eblanApplicationInfoRepository.getEblanApplicationInfosByTagId(tagId)
 
             excludeTaggedApps ->
                 eblanApplicationInfoRepository.getEblanApplicationInfosWithoutTag()
@@ -348,8 +348,8 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
                 (items - itemsByLabel.toSet())
                     .map { currentItem ->
                         currentItem to jaroWinklerSimilarityWrapper.apply(
-                            left = normalize(text = label),
-                            right = normalize(text = getLabel(currentItem)),
+                            left = normalize(label),
+                            right = normalize(getLabel(currentItem)),
                         )
                     }
                     .filter { (_, score) -> score >= 0.85 }
@@ -377,10 +377,10 @@ class GetEblanApplicationInfosByLabelAndTagUseCase @Inject constructor(
 
 private fun EblanApplicationInfo.toAppDrawerGridItem(): AppDrawerGridItem = AppDrawerGridItem(
     id = "${serialNumber}_$componentName",
-    data = AppDrawerGridItemData.ApplicationInfo(eblanApplicationInfo = this),
+    data = AppDrawerGridItemData.ApplicationInfo(this),
 )
 
 private fun FolderEblanApplicationInfo.toAppDrawerGridItem(): AppDrawerGridItem = AppDrawerGridItem(
     id = id,
-    data = AppDrawerGridItemData.Folder(folderEblanApplicationInfo = this),
+    data = AppDrawerGridItemData.Folder(this),
 )

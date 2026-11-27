@@ -84,12 +84,12 @@ internal suspend fun getCacheSnapshot(
         eblanApplicationInfoRepository.getEblanApplicationInfos().forEach { currentEblanApplicationInfo ->
             currentCoroutineContext().ensureActive()
 
-            add(iconKeyGenerator.getHashedName(name = currentEblanApplicationInfo.componentName))
+            add(iconKeyGenerator.getHashedName(currentEblanApplicationInfo.componentName))
         }
     }
 
     val referenceCheckedDirectories = referenceCheckedDirectoryNames.map { currentDirectoryName ->
-        fileManager.getFilesDirectory(name = currentDirectoryName)
+        fileManager.getFilesDirectory(currentDirectoryName)
     }
 
     val filesRoot = referenceCheckedDirectories.firstOrNull()?.parentFile
@@ -102,7 +102,7 @@ internal suspend fun getCacheSnapshot(
     return scanCache(
         referenceCheckedDirectories = referenceCheckedDirectories + legacyDirectories,
         legacyDirectories = legacyDirectories,
-        iconPacksDirectory = fileManager.getFilesDirectory(name = FileManager.ICON_PACKS_DIR),
+        iconPacksDirectory = fileManager.getFilesDirectory(FileManager.ICON_PACKS_DIR),
         referencedPaths = fileReferenceRepository.getReferencedFilePaths(),
         keptIconPackPackageNames = keptIconPackPackageNames,
         installedIconPackFileNames = installedIconPackFileNames,

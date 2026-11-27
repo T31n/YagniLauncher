@@ -51,7 +51,7 @@ internal class GestureSettingsViewModel @Inject constructor(
 
     fun updateGestureSettings(gestureSettings: GestureSettings) {
         viewModelScope.launch {
-            userDataRepository.updateGestureSettings(gestureSettings = gestureSettings)
+            userDataRepository.updateGestureSettings(gestureSettings)
         }
     }
 }

@@ -55,7 +55,7 @@ internal fun SearchApplicationsDialog(
 
     val focusRequester = remember { FocusRequester() }
 
-    LaunchedEffect(key1 = Unit) {
+    LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
 

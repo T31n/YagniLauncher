@@ -113,7 +113,7 @@ class FakeGridRepository(initialGridItems: GridItems) : GridRepository {
         }
 
         return transactionMutex.withLock {
-            withContext(TransactionContextElement(owner = this)) {
+            withContext(TransactionContextElement(this)) {
                 val snapshotGridItems = _gridItemsFlow.value
                 try {
                     block()

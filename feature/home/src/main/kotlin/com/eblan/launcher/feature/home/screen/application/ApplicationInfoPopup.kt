@@ -136,7 +136,7 @@ internal fun ApplicationInfoPopup(
         }
     }
 
-    LaunchedEffect(key1 = isCloseEblanApplicationInfoMenu) {
+    LaunchedEffect(isCloseEblanApplicationInfoMenu) {
         if (isCloseEblanApplicationInfoMenu) {
             transitionState.targetState = false
         }
@@ -318,7 +318,7 @@ internal fun PrivateApplicationInfoPopup(
         }
     }
 
-    LaunchedEffect(key1 = isClosePrivateEblanApplicationInfoMenu) {
+    LaunchedEffect(isClosePrivateEblanApplicationInfoMenu) {
         if (isClosePrivateEblanApplicationInfoMenu) {
             transitionState.targetState = false
         }
@@ -362,7 +362,7 @@ internal fun PrivateApplicationInfoPopup(
             PrivateApplicationInfoMenu(
                 // Application State
                 hasShortcutHostPermission = hasShortcutHostPermission,
-                isUserInstalled = packageManager.isUserInstalled(flags = eblanApplicationInfo.flags),
+                isUserInstalled = packageManager.isUserInstalled(eblanApplicationInfo.flags),
                 eblanShortcutInfosGroup = eblanShortcutInfosByPackageName,
                 // Callbacks
                 onUninstall = {

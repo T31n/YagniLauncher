@@ -41,11 +41,11 @@ internal class DefaultWidgetGridItemRepository @Inject constructor(private val w
             currentWidgetGridItem.asEntity()
         }
 
-        widgetGridItemDao.deleteWidgetGridItemEntities(entities = entities)
+        widgetGridItemDao.deleteWidgetGridItemEntities(entities)
     }
 
     override suspend fun deleteWidgetGridItem(widgetGridItem: WidgetGridItem) {
-        widgetGridItemDao.deleteWidgetGridItemEntity(entity = widgetGridItem.asEntity())
+        widgetGridItemDao.deleteWidgetGridItemEntity(widgetGridItem.asEntity())
     }
 
     override suspend fun deleteWidgetGridItemByPackageName(
@@ -59,15 +59,15 @@ internal class DefaultWidgetGridItemRepository @Inject constructor(private val w
     }
 
     override suspend fun updatePartialWidgetGridItems(partialUpdateWidgetGridItems: List<PartialUpdateWidgetGridItem>) {
-        widgetGridItemDao.updatePartialWidgetGridItems(partialUpdateWidgetGridItems = partialUpdateWidgetGridItems)
+        widgetGridItemDao.updatePartialWidgetGridItems(partialUpdateWidgetGridItems)
     }
 
     override suspend fun insertWidgetGridItem(widgetGridItem: WidgetGridItem) {
-        widgetGridItemDao.insertWidgetGridItemEntity(entity = widgetGridItem.asEntity())
+        widgetGridItemDao.insertWidgetGridItemEntity(widgetGridItem.asEntity())
     }
 
     override suspend fun upsertWidgetGridItem(widgetGridItem: WidgetGridItem) {
-        widgetGridItemDao.upsertWidgetGridItemEntity(entity = widgetGridItem.asEntity())
+        widgetGridItemDao.upsertWidgetGridItemEntity(widgetGridItem.asEntity())
     }
 
     override suspend fun upsertWidgetGridItems(widgetGridItems: List<WidgetGridItem>) {
@@ -75,7 +75,7 @@ internal class DefaultWidgetGridItemRepository @Inject constructor(private val w
             currentWidgetGridItem.asEntity()
         }
 
-        widgetGridItemDao.upsertWidgetGridItemEntities(entities = entities)
+        widgetGridItemDao.upsertWidgetGridItemEntities(entities)
     }
 
     override suspend fun deleteWidgetGridItems(widgetGridItems: List<WidgetGridItem>) {
@@ -83,10 +83,10 @@ internal class DefaultWidgetGridItemRepository @Inject constructor(private val w
             currentWidgetGridItem.asEntity()
         }
 
-        widgetGridItemDao.deleteWidgetGridItemEntities(entities = entities)
+        widgetGridItemDao.deleteWidgetGridItemEntities(entities)
     }
 
     override suspend fun deleteWidgetGridItemById(id: String) {
-        widgetGridItemDao.deleteWidgetGridItemEntityById(id = id)
+        widgetGridItemDao.deleteWidgetGridItemEntityById(id)
     }
 }

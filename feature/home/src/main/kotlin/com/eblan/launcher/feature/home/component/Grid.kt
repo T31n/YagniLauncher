@@ -155,7 +155,7 @@ internal fun SparkleGridLayout(
         }
 
         fun drawSparkle(center: Offset) {
-            val alpha = fadeAlpha(center = center)
+            val alpha = fadeAlpha(center)
 
             if (alpha == 0f) return
 
@@ -171,7 +171,7 @@ internal fun SparkleGridLayout(
         for (row in 0..rows) {
             for (column in 0..columns) {
                 drawSparkle(
-                    center = Offset(
+                    Offset(
                         x = column * cellWidth,
                         y = row * cellHeight,
                     ),

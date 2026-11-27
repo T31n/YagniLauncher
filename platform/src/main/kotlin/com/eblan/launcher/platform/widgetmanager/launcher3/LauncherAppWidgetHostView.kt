@@ -79,7 +79,7 @@ internal class LauncherAppWidgetHostView(context: Context) :
     }
 
     override fun onTouchEvent(ev: MotionEvent): Boolean {
-        mLongPressHelper.onTouchEvent(ev = ev)
+        mLongPressHelper.onTouchEvent(ev)
 
         return true
     }
@@ -90,7 +90,7 @@ internal class LauncherAppWidgetHostView(context: Context) :
         }
 
         // Trigger CheckLongPress ACTION_CANCEL thus cancelling the long press callback
-        cancelMotionEvent(view = view)
+        cancelMotionEvent(view)
 
         return view.performLongClick()
     }

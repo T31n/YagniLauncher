@@ -90,7 +90,7 @@ class UpdateGridItemsAfterMoveUseCase @Inject constructor(
                         }
                     }
                 } else {
-                    gridRepository.updateGridItem(gridItem = movingGridItem)
+                    gridRepository.updateGridItem(movingGridItem)
                 }
 
                 cleanupFolderGridItemsUseCase()
@@ -138,9 +138,7 @@ class UpdateGridItemsAfterMoveUseCase @Inject constructor(
             else -> error("Unsupported addMovingGridItemIntoFolder")
         }
 
-        gridRepository.updateGridItem(
-            gridItem = movingGridItem.copy(data = newData),
-        )
+        gridRepository.updateGridItem(movingGridItem.copy(data = newData))
     }
 
     /** Creates a new folder containing the conflicting item followed by the moved item. */
@@ -205,7 +203,7 @@ class UpdateGridItemsAfterMoveUseCase @Inject constructor(
         }
 
         gridRepository.upsertGridItems(
-            gridItems = listOf(
+            listOf(
                 conflictingGridItem.copy(
                     id = id,
                     data = GridItemData.Folder(

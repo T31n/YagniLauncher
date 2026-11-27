@@ -225,7 +225,7 @@ internal fun handleOnUninstall(
     popupIntSize: IntSize,
 ) {
     val userHandle =
-        userManager.getUserForSerialNumber(serialNumber = serialNumber) ?: return
+        userManager.getUserForSerialNumber(serialNumber) ?: return
 
     if (userHandle != myUserHandle()) {
         launcherApps.startAppDetailsActivity(

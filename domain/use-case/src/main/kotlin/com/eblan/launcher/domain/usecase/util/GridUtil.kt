@@ -391,7 +391,7 @@ private suspend fun updatePinShortcutsByPackageName(
     if (!launcherAppsWrapper.hasShortcutHostPermission) return
 
     val shortcutIds = launcherAppsWrapper.getFastShortcuts(
-        shortcutQuery = ShortcutQuery(
+        ShortcutQuery(
             packageName = packageName,
             shortcutQueryFlag = ShortcutQueryFlag.Pinned,
         ),

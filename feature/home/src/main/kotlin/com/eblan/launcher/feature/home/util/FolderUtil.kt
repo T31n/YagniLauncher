@@ -105,7 +105,7 @@ internal fun getFolderPopupLayoutInfo(
     val availableHeight = (safeDrawingHeight - topPadding * 2).coerceAtLeast(0)
 
     val folderTitleHeightPx = with(density) {
-        getPageIndicatorHeight(pageIndicatorType = PageIndicatorType.Dots).dp.roundToPx()
+        getPageIndicatorHeight(PageIndicatorType.Dots).dp.roundToPx()
     }
 
     val folderGridWidthPx =
@@ -265,18 +265,18 @@ internal fun calculateFolderGridDragPosition(
     val localDragX = dragIntOffset.x - leftPadding
     val localDragY = dragIntOffset.y - topPadding
 
-    val minCellWidthPx = with(receiver = density) {
+    val minCellWidthPx = with(density) {
         folderCellWidth.dp.roundToPx()
     }
-    val minCellHeightPx = with(receiver = density) {
+    val minCellHeightPx = with(density) {
         folderCellHeight.dp.roundToPx()
     }
 
     val availableWidth = safeDrawingWidth.coerceAtLeast(0)
     val availableHeight = safeDrawingHeight.coerceAtLeast(0)
 
-    val folderTitleHeightPx = with(receiver = density) {
-        getPageIndicatorHeight(pageIndicatorType = PageIndicatorType.Dots).dp.roundToPx()
+    val folderTitleHeightPx = with(density) {
+        getPageIndicatorHeight(PageIndicatorType.Dots).dp.roundToPx()
     }
 
     val folderGridWidthPx =
@@ -291,13 +291,13 @@ internal fun calculateFolderGridDragPosition(
         safeDrawingWidth -
             folderGridWidthPx +
             leftPadding
-        ).coerceAtLeast(minimumValue = leftPadding)
+        ).coerceAtLeast(leftPadding)
 
     val maximumY = (
         safeDrawingHeight -
             endHeight +
             topPadding
-        ).coerceAtLeast(minimumValue = topPadding)
+        ).coerceAtLeast(topPadding)
 
     val endIntOffset = IntOffset(
         x = folderPopupIntOffset.x.coerceIn(
@@ -398,7 +398,7 @@ private fun calculateFolderPageDirection(
     val availableWidth = safeDrawingWidth.coerceAtLeast(0)
 
     val cellWidthDp = folderCellWidth.dp
-    val cellWidthPx = with(receiver = density) { cellWidthDp.roundToPx() }
+    val cellWidthPx = with(density) { cellWidthDp.roundToPx() }
 
     val folderGridWidthPx = (cellWidthPx * columns)
         .coerceAtMost(availableWidth)

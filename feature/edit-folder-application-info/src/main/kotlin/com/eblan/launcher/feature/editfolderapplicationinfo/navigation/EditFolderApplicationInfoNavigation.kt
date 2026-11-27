@@ -24,7 +24,7 @@ import androidx.navigation.compose.dialog
 import com.eblan.launcher.feature.editfolderapplicationinfo.EditFolderApplicationInfoRoute
 
 fun NavController.navigateToEditFolderApplicationScreen(id: String) {
-    navigate(EditFolderApplicationInfoRouteData(id = id))
+    navigate(EditFolderApplicationInfoRouteData(id))
 }
 
 fun NavGraphBuilder.editFolderApplicationScreen(

@@ -101,7 +101,7 @@ class MoveFolderGridItemUseCase @Inject constructor(
             }
         }
 
-        gridRepository.upsertGridItems(gridItems = indexedGridItems)
+        gridRepository.upsertGridItems(indexedGridItems)
 
         MoveGridItemResult(
             isSuccess = true,

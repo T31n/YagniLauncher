@@ -206,7 +206,7 @@ internal fun ApplicationScreen(
 
     val currentUserHandle = remember(key1 = currentEblanUserPageKey, key2 = userManager) {
         currentEblanUserPageKey?.let { eblanUserPageKey ->
-            userManager.getUserForSerialNumber(serialNumber = eblanUserPageKey.eblanUser.serialNumber)
+            userManager.getUserForSerialNumber(eblanUserPageKey.eblanUser.serialNumber)
         }
     }
 
@@ -217,7 +217,7 @@ internal fun ApplicationScreen(
         currentEblanUserPageKey.eblanUser.eblanUserType == EblanUserType.Work &&
         currentUserHandle != null
 
-    LaunchedEffect(key1 = eblanApplicationInfoTags) {
+    LaunchedEffect(eblanApplicationInfoTags) {
         if (selectedEblanApplicationInfoTagId != null &&
             eblanApplicationInfoTags.none { tag -> tag.id == selectedEblanApplicationInfoTagId }
         ) {
@@ -271,7 +271,7 @@ internal fun ApplicationScreen(
             }
             .run {
                 if (!isVisibleOverlay) {
-                    pointerInput(key1 = Unit) {
+                    pointerInput(Unit) {
                         detectVerticalDragGestures(
                             onVerticalDrag = { _, dragAmount ->
                                 onVerticalDrag(dragAmount)
@@ -495,7 +495,7 @@ internal fun QuiteModeScreen(
         modifier = modifier
             .fillMaxSize()
             .padding(EblanSpacing.medium)
-            .pointerInput(key1 = Unit) {
+            .pointerInput(Unit) {
                 detectVerticalDragGestures(
                     onVerticalDrag = { _, dragAmount ->
                         onVerticalDrag(dragAmount)
@@ -691,7 +691,7 @@ private fun BlurBehindEffect(
 
     val radius = (progress * 20f).roundToInt()
 
-    DisposableEffect(key1 = window) {
+    DisposableEffect(window) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             window.addFlags(
                 WindowManager.LayoutParams.FLAG_BLUR_BEHIND,
@@ -755,7 +755,7 @@ private fun ApplicationScreenEffect(
         }
     }
 
-    LaunchedEffect(key1 = selectedEblanApplicationInfoTagId) {
+    LaunchedEffect(selectedEblanApplicationInfoTagId) {
         onGetEblanApplicationInfosByTagId(selectedEblanApplicationInfoTagId)
     }
 
@@ -797,7 +797,7 @@ private fun ApplicationScreenEffect(
         }
     }
 
-    DisposableEffect(key1 = Unit) {
+    DisposableEffect(Unit) {
         onDispose {
             onGetEblanApplicationInfosByLabel("")
             onGetEblanApplicationInfosByTagId(null)

@@ -57,7 +57,7 @@ class UpdateEblanApplicationInfoCustomIconUseCase @Inject constructor(
         ) ?: return@withContext
 
         eblanApplicationInfoRepository.updateEblanApplicationInfo(
-            eblanApplicationInfo = eblanApplicationInfo.copy(
+            eblanApplicationInfo.copy(
                 customIcon = customIcon,
             ),
         )
@@ -82,7 +82,7 @@ class UpdateEblanApplicationInfoCustomIconUseCase @Inject constructor(
         ) ?: return@withContext
 
         eblanApplicationInfoRepository.updateEblanApplicationInfo(
-            eblanApplicationInfo = eblanApplicationInfo.copy(
+            eblanApplicationInfo.copy(
                 customIcon = customIcon,
             ),
         )

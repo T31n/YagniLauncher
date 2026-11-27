@@ -43,7 +43,7 @@ class Migration22To23Test {
     @Throws(IOException::class)
     fun migrate22To23_applicationInfoGridItemEntity() {
         helper.createDatabase(testDatabase, 22).use { db ->
-            insertFolderParent(db = db)
+            insertFolderParent(db)
 
             db.execSQL(
                 """
@@ -142,7 +142,7 @@ class Migration22To23Test {
     @Throws(IOException::class)
     fun migrate22To23_folderGridItemEntity() {
         helper.createDatabase(testDatabase, 22).use { db ->
-            insertFolderParent(db = db)
+            insertFolderParent(db)
 
             db.execSQL(
                 """
@@ -231,7 +231,7 @@ class Migration22To23Test {
     @Throws(IOException::class)
     fun migrate22To23_shortcutConfigGridItemEntity() {
         helper.createDatabase(testDatabase, 22).use { db ->
-            insertFolderParent(db = db)
+            insertFolderParent(db)
 
             db.execSQL(
                 """
@@ -336,7 +336,7 @@ class Migration22To23Test {
     @Throws(IOException::class)
     fun migrate22To23_shortcutInfoGridItemEntity() {
         helper.createDatabase(testDatabase, 22).use { db ->
-            insertFolderParent(db = db)
+            insertFolderParent(db)
 
             db.execSQL(
                 """

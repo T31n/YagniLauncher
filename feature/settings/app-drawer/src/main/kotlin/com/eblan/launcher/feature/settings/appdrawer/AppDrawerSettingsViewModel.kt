@@ -76,29 +76,25 @@ internal class AppDrawerSettingsViewModel @Inject constructor(
 
     fun updateAppDrawerSettings(appDrawerSettings: AppDrawerSettings) {
         viewModelScope.launch {
-            userDataRepository.updateAppDrawerSettings(appDrawerSettings = appDrawerSettings)
+            userDataRepository.updateAppDrawerSettings(appDrawerSettings)
         }
     }
 
     fun updateEblanApplicationInfo(eblanApplicationInfo: EblanApplicationInfo) {
         viewModelScope.launch {
-            eblanApplicationInfoRepository.upsertEblanApplicationInfo(eblanApplicationInfo = eblanApplicationInfo)
+            eblanApplicationInfoRepository.upsertEblanApplicationInfo(eblanApplicationInfo)
         }
     }
 
     fun updateEblanApplicationInfoTags(eblanApplicationInfoTags: List<EblanApplicationInfoTag>) {
         viewModelScope.launch {
-            eblanApplicationInfoTagRepository.updateEblanApplicationInfoTags(
-                eblanApplicationInfoTags = eblanApplicationInfoTags,
-            )
+            eblanApplicationInfoTagRepository.updateEblanApplicationInfoTags(eblanApplicationInfoTags)
         }
     }
 
     fun updateFolderEblanApplicationInfos(folderEblanApplicationInfos: List<FolderEblanApplicationInfo>) {
         viewModelScope.launch {
-            folderEblanApplicationInfoRepository.updateFolderEblanApplicationInfos(
-                folderEblanApplicationInfos = folderEblanApplicationInfos,
-            )
+            folderEblanApplicationInfoRepository.updateFolderEblanApplicationInfos(folderEblanApplicationInfos)
         }
     }
 }

@@ -193,7 +193,7 @@ internal fun WidgetGridItemResizeOverlay(
         )
     }
 
-    LaunchedEffect(key1 = isResizing) {
+    LaunchedEffect(isResizing) {
         if (!isResizing) {
             launch { currentX.animateTo(targetValue = x) }
             launch { currentY.animateTo(targetValue = y) }
@@ -222,7 +222,7 @@ internal fun WidgetGridItemResizeOverlay(
                 if (resizeMode == AppWidgetProviderInfo.RESIZE_VERTICAL || resizeMode == AppWidgetProviderInfo.RESIZE_BOTH) {
                     align(Alignment.TopCenter)
                         .offset(y = (-15).dp)
-                        .resizeHandleModifier(color = color)
+                        .resizeHandleModifier(color)
                         .pointerInput(Unit) {
                             detectDragGestures(
                                 onDragStart = {
@@ -252,7 +252,7 @@ internal fun WidgetGridItemResizeOverlay(
                 if (resizeMode == AppWidgetProviderInfo.RESIZE_HORIZONTAL || resizeMode == AppWidgetProviderInfo.RESIZE_BOTH) {
                     align(Alignment.CenterEnd)
                         .offset(15.dp)
-                        .resizeHandleModifier(color = color)
+                        .resizeHandleModifier(color)
                         .pointerInput(Unit) {
                             detectDragGestures(
                                 onDragStart = {
@@ -281,7 +281,7 @@ internal fun WidgetGridItemResizeOverlay(
                 if (resizeMode == AppWidgetProviderInfo.RESIZE_VERTICAL || resizeMode == AppWidgetProviderInfo.RESIZE_BOTH) {
                     align(Alignment.BottomCenter)
                         .offset(y = 15.dp)
-                        .resizeHandleModifier(color = color)
+                        .resizeHandleModifier(color)
                         .pointerInput(Unit) {
                             detectDragGestures(
                                 onDragStart = {
@@ -310,7 +310,7 @@ internal fun WidgetGridItemResizeOverlay(
                 if (resizeMode == AppWidgetProviderInfo.RESIZE_HORIZONTAL || resizeMode == AppWidgetProviderInfo.RESIZE_BOTH) {
                     align(Alignment.CenterStart)
                         .offset((-15).dp)
-                        .resizeHandleModifier(color = color)
+                        .resizeHandleModifier(color)
                         .pointerInput(Unit) {
                             detectDragGestures(
                                 onDragStart = {

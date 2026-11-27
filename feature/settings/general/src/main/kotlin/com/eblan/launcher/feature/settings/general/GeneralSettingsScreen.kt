@@ -231,7 +231,7 @@ private fun Success(
             shape = EblanShapes.middle,
             // Actions
             onSelectedChange = { currentLanguageTag ->
-                localeWrapper.setApplicationLanguageTag(languageTag = currentLanguageTag)
+                localeWrapper.setApplicationLanguageTag(currentLanguageTag)
             },
         )
 

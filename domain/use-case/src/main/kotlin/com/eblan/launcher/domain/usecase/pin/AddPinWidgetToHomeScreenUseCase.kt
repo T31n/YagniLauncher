@@ -107,7 +107,7 @@ class AddPinWidgetToHomeScreenUseCase @Inject constructor(
         val initialPage = homeSettings.initialPage
 
         val pageIndicatorHeight =
-            (getPageIndicatorHeight(pageIndicatorType = homeSettings.pageIndicatorType) * density.coerceAtLeast(0f))
+            (getPageIndicatorHeight(homeSettings.pageIndicatorType) * density.coerceAtLeast(0f))
                 .roundToInt()
 
         val availableHeight = (rootHeight - pageIndicatorHeight).coerceAtLeast(0)
@@ -239,7 +239,7 @@ class AddPinWidgetToHomeScreenUseCase @Inject constructor(
                     data = data.copy(preview = previewPath),
                 )
 
-                gridRepository.insertGridItem(gridItem = updatedGridItem)
+                gridRepository.insertGridItem(updatedGridItem)
 
                 updatedGridItem
             } else {

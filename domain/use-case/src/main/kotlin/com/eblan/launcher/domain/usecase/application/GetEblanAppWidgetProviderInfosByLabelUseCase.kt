@@ -58,7 +58,7 @@ class GetEblanAppWidgetProviderInfosByLabelUseCase @Inject constructor(
                 { currentEblanAppWidgetProviderInfo -> currentEblanAppWidgetProviderInfo.applicationLabel?.lowercase() },
             ),
         ).groupBy { currentEblanAppWidgetProviderInfo ->
-            launcherAppsWrapper.getUser(serialNumber = currentEblanAppWidgetProviderInfo.serialNumber)
+            launcherAppsWrapper.getUser(currentEblanAppWidgetProviderInfo.serialNumber)
         }.mapValues { entry ->
             entry.value.groupBy { currentEblanAppWidgetProviderInfo ->
                 EblanApplicationInfoGroup(

@@ -57,7 +57,7 @@ class UpdateFolderEblanApplicationInfoCustomIconUseCase @Inject constructor(
         ) ?: return@withContext
 
         folderEblanApplicationInfoRepository.upsertFolderEblanApplicationInfo(
-            folderEblanApplicationInfo = folderEblanApplicationInfo.copy(
+            folderEblanApplicationInfo.copy(
                 icon = icon,
             ),
         )
@@ -82,7 +82,7 @@ class UpdateFolderEblanApplicationInfoCustomIconUseCase @Inject constructor(
         ) ?: return@withContext
 
         folderEblanApplicationInfoRepository.upsertFolderEblanApplicationInfo(
-            folderEblanApplicationInfo = folderEblanApplicationInfo.copy(
+            folderEblanApplicationInfo.copy(
                 icon = icon,
             ),
         )

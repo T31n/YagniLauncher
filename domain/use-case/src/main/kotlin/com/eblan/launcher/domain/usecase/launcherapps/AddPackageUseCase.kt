@@ -131,9 +131,7 @@ class AddPackageUseCase @Inject constructor(
                 packageName = packageName,
             )
 
-            applicationInfoGridItemRepository.insertApplicationInfoGridItems(
-                applicationInfoGridItems = newApplicationInfoGridItems,
-            )
+            applicationInfoGridItemRepository.insertApplicationInfoGridItems(newApplicationInfoGridItems)
 
             addIconPackInfos(
                 iconPackPackageName = userData.generalSettings.iconPackPackageName,
@@ -168,7 +166,7 @@ class AddPackageUseCase @Inject constructor(
         maxFolderRows: Int,
     ) {
         eblanApplicationInfoRepository.upsertEblanApplicationInfo(
-            eblanApplicationInfo = EblanApplicationInfo(
+            EblanApplicationInfo(
                 componentName = componentName,
                 serialNumber = serialNumber,
                 packageName = packageName,
@@ -230,9 +228,7 @@ class AddPackageUseCase @Inject constructor(
                 )
             }
 
-        eblanAppWidgetProviderInfoRepository.upsertEblanAppWidgetProviderInfos(
-            eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfos,
-        )
+        eblanAppWidgetProviderInfoRepository.upsertEblanAppWidgetProviderInfos(eblanAppWidgetProviderInfos)
     }
 
     /** Imports launcher shortcuts for the specified package when shortcut data is available. */
@@ -249,9 +245,7 @@ class AddPackageUseCase @Inject constructor(
             }
 
         if (eblanShortcutInfos != null) {
-            eblanShortcutInfoRepository.upsertEblanShortcutInfos(
-                eblanShortcutInfos = eblanShortcutInfos,
-            )
+            eblanShortcutInfoRepository.upsertEblanShortcutInfos(eblanShortcutInfos)
         }
     }
 
@@ -274,9 +268,7 @@ class AddPackageUseCase @Inject constructor(
             )
         }
 
-        eblanShortcutConfigRepository.upsertEblanShortcutConfigs(
-            eblanShortcutConfigs = eblanShortcutConfigs,
-        )
+        eblanShortcutConfigRepository.upsertEblanShortcutConfigs(eblanShortcutConfigs)
     }
 
     /** Caches icon-pack images for the activities discovered in the newly added package. */
@@ -293,19 +285,19 @@ class AddPackageUseCase @Inject constructor(
         if (iconPackPackageName.isEmpty()) return
 
         val iconPackInfoDirectory = File(
-            fileManager.getFilesDirectory(name = FileManager.ICON_PACKS_DIR),
+            fileManager.getFilesDirectory(FileManager.ICON_PACKS_DIR),
             iconPackPackageName,
         ).apply { if (!exists()) mkdirs() }
 
         val appFilter =
-            iconPackManager.getIconPackComponents(packageName = iconPackPackageName)
+            iconPackManager.getIconPackComponents(iconPackPackageName)
 
         launcherAppsActivityInfos.forEach { currentLauncherAppsActivityInfo ->
             currentCoroutineContext().ensureActive()
 
             val file = File(
                 iconPackInfoDirectory,
-                iconKeyGenerator.getHashedName(name = currentLauncherAppsActivityInfo.componentName),
+                iconKeyGenerator.getHashedName(currentLauncherAppsActivityInfo.componentName),
             )
 
             cacheIconPackFile(

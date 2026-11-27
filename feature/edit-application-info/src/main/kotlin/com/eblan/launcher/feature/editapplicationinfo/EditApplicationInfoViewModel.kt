@@ -126,7 +126,7 @@ internal class EditApplicationInfoViewModel @Inject constructor(
 
     fun updateEblanApplicationInfo(eblanApplicationInfo: EblanApplicationInfo) {
         viewModelScope.launch {
-            eblanApplicationInfoRepository.updateEblanApplicationInfo(eblanApplicationInfo = eblanApplicationInfo)
+            eblanApplicationInfoRepository.updateEblanApplicationInfo(eblanApplicationInfo)
 
             getApplicationInfo()
         }
@@ -148,26 +148,26 @@ internal class EditApplicationInfoViewModel @Inject constructor(
 
     fun addEblanApplicationInfoTag(eblanApplicationInfoTag: EblanApplicationInfoTag) {
         viewModelScope.launch {
-            eblanApplicationInfoTagRepository.insertEblanApplicationInfoTag(eblanApplicationInfoTag = eblanApplicationInfoTag)
+            eblanApplicationInfoTagRepository.insertEblanApplicationInfoTag(eblanApplicationInfoTag)
         }
     }
 
     fun updateEblanApplicationInfoTag(eblanApplicationInfoTag: EblanApplicationInfoTag) {
         viewModelScope.launch {
-            eblanApplicationInfoTagRepository.updateEblanApplicationInfoTag(eblanApplicationInfoTag = eblanApplicationInfoTag)
+            eblanApplicationInfoTagRepository.updateEblanApplicationInfoTag(eblanApplicationInfoTag)
         }
     }
 
     fun deleteEblanApplicationInfoTag(eblanApplicationInfoTag: EblanApplicationInfoTag) {
         viewModelScope.launch {
-            eblanApplicationInfoTagRepository.deleteEblanApplicationInfoTag(eblanApplicationInfoTag = eblanApplicationInfoTag)
+            eblanApplicationInfoTagRepository.deleteEblanApplicationInfoTag(eblanApplicationInfoTag)
         }
     }
 
     fun addEblanApplicationInfoTagCrossRef(id: Long) {
         viewModelScope.launch {
             eblanApplicationInfoTagCrossRefRepository.insertEblanApplicationInfoTagCrossRef(
-                eblanApplicationInfoTagCrossRef = EblanApplicationInfoTagCrossRef(
+                EblanApplicationInfoTagCrossRef(
                     componentName = editApplicationInfoRouteData.componentName,
                     serialNumber = editApplicationInfoRouteData.serialNumber,
                     id = id,
@@ -216,9 +216,7 @@ internal class EditApplicationInfoViewModel @Inject constructor(
 
     fun addFolderEblanApplicationInfo(folderEblanApplicationInfo: FolderEblanApplicationInfo) {
         viewModelScope.launch {
-            folderEblanApplicationInfoRepository.insertFolderEblanApplicationInfo(
-                folderEblanApplicationInfo = folderEblanApplicationInfo,
-            )
+            folderEblanApplicationInfoRepository.insertFolderEblanApplicationInfo(folderEblanApplicationInfo)
         }
     }
 

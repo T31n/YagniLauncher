@@ -155,7 +155,7 @@ internal fun HorizontalApplicationScreen(
     val searchBarState = rememberSearchBarState()
 
     val eblanUsers =
-        remember(key1 = eblanApplicationInfos) {
+        remember(eblanApplicationInfos) {
             eblanApplicationInfos.keys.map { currentEblanUserPageKey ->
                 currentEblanUserPageKey.eblanUser
             }.distinctBy { currentEblanUser ->
@@ -402,7 +402,7 @@ private fun EblanApplicationInfosPage(
         }
 
     val userHandle =
-        userManager.getUserForSerialNumber(serialNumber = eblanUserPageKey.eblanUser.serialNumber)
+        userManager.getUserForSerialNumber(eblanUserPageKey.eblanUser.serialNumber)
 
     val isQuietModeEnabled = eblanUserPageKey.eblanUser.isQuietModeEnabled
 

@@ -169,7 +169,7 @@ internal fun VerticalApplicationScreen(
     val searchBarState = rememberSearchBarState()
 
     val eblanUsers =
-        remember(key1 = eblanApplicationInfos) {
+        remember(eblanApplicationInfos) {
             eblanApplicationInfos.keys.map { currentEblanUserPageKey ->
                 currentEblanUserPageKey.eblanUser
             }.distinctBy { currentEblanUser ->
@@ -415,7 +415,7 @@ private fun EblanApplicationInfosPage(
     }
 
     val userHandle =
-        userManager.getUserForSerialNumber(serialNumber = eblanUserPageKey.eblanUser.serialNumber)
+        userManager.getUserForSerialNumber(eblanUserPageKey.eblanUser.serialNumber)
 
     val isQuietModeEnabled = eblanUserPageKey.eblanUser.isQuietModeEnabled
 
@@ -569,7 +569,7 @@ private fun EblanApplicationInfosGrid(
     val isDefaultLauncher by produceIsDefaultLauncherState()
     val isScreenDismissed = swipeY.toInt() == screenHeight
 
-    LaunchedEffect(key1 = isScreenDismissed) {
+    LaunchedEffect(isScreenDismissed) {
         if (isScreenDismissed) {
             lazyGridState.scrollToItem(0)
         }
@@ -581,7 +581,7 @@ private fun EblanApplicationInfosGrid(
             .fillMaxSize(),
     ) {
         LazyVerticalGrid(
-            columns = GridCells.Fixed(count = appDrawerColumns),
+            columns = GridCells.Fixed(appDrawerColumns),
             state = lazyGridState,
             modifier = Modifier.weight(1f),
             contentPadding = PaddingValues(bottom = bottomPadding),

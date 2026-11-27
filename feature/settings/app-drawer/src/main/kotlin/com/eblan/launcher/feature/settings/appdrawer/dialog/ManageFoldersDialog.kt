@@ -58,9 +58,7 @@ internal fun ManageFoldersDialog(
 
     val lazyListState = rememberLazyListState()
 
-    val lazyColumnDragDropState = rememberLazyColumnDragDropState(
-        lazyListState = lazyListState,
-    ) { from, to ->
+    val lazyColumnDragDropState = rememberLazyColumnDragDropState(lazyListState) { from, to ->
         currentFolderEblanApplicationInfos =
             currentFolderEblanApplicationInfos.toMutableList().apply {
                 add(
@@ -89,7 +87,7 @@ internal fun ManageFoldersDialog(
             else -> {
                 LazyColumn(
                     modifier = Modifier
-                        .dragColumnContainer(lazyColumnDragDropState = lazyColumnDragDropState)
+                        .dragColumnContainer(lazyColumnDragDropState)
                         .weight(
                             weight = 1f,
                             fill = false,

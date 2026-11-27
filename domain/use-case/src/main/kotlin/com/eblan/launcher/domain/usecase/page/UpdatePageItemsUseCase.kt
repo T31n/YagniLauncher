@@ -91,10 +91,10 @@ class UpdatePageItemsUseCase @Inject constructor(
                 }
 
                 if (gridItemsToDelete.isNotEmpty()) {
-                    gridRepository.deleteGridItems(gridItems = gridItemsToDelete)
+                    gridRepository.deleteGridItems(gridItemsToDelete)
                 }
 
-                gridRepository.upsertGridItems(gridItems = gridItems)
+                gridRepository.upsertGridItems(gridItems)
 
                 previewFolders
             }
@@ -105,7 +105,7 @@ class UpdatePageItemsUseCase @Inject constructor(
                 when (associate) {
                     Associate.Grid -> {
                         userDataRepository.updateHomeSettings(
-                            homeSettings = userData.homeSettings.copy(
+                            userData.homeSettings.copy(
                                 pageCount = pageItems.size,
                                 initialPage = newInitialPage,
                             ),
@@ -114,7 +114,7 @@ class UpdatePageItemsUseCase @Inject constructor(
 
                     Associate.Dock -> {
                         userDataRepository.updateHomeSettings(
-                            homeSettings = userData.homeSettings.copy(
+                            userData.homeSettings.copy(
                                 dockPageCount = pageItems.size,
                                 dockInitialPage = newInitialPage,
                             ),

@@ -26,7 +26,7 @@ import javax.inject.Inject
 internal class DefaultEblanApplicationInfoTagCrossRefRepository @Inject constructor(private val eblanApplicationInfoTagCrossRefDao: EblanApplicationInfoTagCrossRefDao) : EblanApplicationInfoTagCrossRefRepository {
     override suspend fun insertEblanApplicationInfoTagCrossRef(eblanApplicationInfoTagCrossRef: EblanApplicationInfoTagCrossRef) {
         eblanApplicationInfoTagCrossRefDao.insertEblanApplicationInfoTagCrossRefEntity(
-            entity = eblanApplicationInfoTagCrossRef.asEntity(),
+            eblanApplicationInfoTagCrossRef.asEntity(),
         )
     }
 

@@ -67,7 +67,7 @@ internal class ExperimentalSettingsViewModel @Inject constructor(
 
     fun updateExperimentalSettings(experimentalSettings: ExperimentalSettings) {
         viewModelScope.launch {
-            userDataRepository.updateExperimentalSettings(experimentalSettings = experimentalSettings)
+            userDataRepository.updateExperimentalSettings(experimentalSettings)
         }
     }
 

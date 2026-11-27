@@ -99,7 +99,7 @@ class MoveFolderEblanApplicationInfoGridItemUseCase @Inject constructor(
                 }
             }
 
-        folderGridItemTransaction.upsertFolderGridItemsTransaction(folderEblanApplicationInfos = indexedGridItems)
+        folderGridItemTransaction.upsertFolderGridItemsTransaction(indexedGridItems)
 
         MoveFolderEblanApplicationInfoGridItemResult(
             isSuccess = true,

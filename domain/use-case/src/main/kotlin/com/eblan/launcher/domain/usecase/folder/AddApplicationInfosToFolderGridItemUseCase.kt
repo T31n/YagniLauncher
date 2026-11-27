@@ -117,7 +117,7 @@ class AddApplicationInfosToFolderGridItemUseCase @Inject constructor(
                 )
             }
 
-            gridRepository.upsertGridItems(gridItems = newGridItems)
+            gridRepository.upsertGridItems(newGridItems)
         }
     }
 }

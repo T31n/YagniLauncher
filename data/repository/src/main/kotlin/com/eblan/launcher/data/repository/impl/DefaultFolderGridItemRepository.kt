@@ -44,11 +44,11 @@ internal class DefaultFolderGridItemRepository @Inject constructor(private val f
     }
 
     override suspend fun updateFolderGridItem(folderGridItem: FolderGridItem) {
-        folderGridItemDao.updateFolderGridItemEntity(entity = folderGridItem.asEntity())
+        folderGridItemDao.updateFolderGridItemEntity(folderGridItem.asEntity())
     }
 
     override suspend fun deleteFolderGridItem(folderGridItem: FolderGridItem) {
-        folderGridItemDao.deleteFolderGridItemEntity(entity = folderGridItem.asEntity())
+        folderGridItemDao.deleteFolderGridItemEntity(folderGridItem.asEntity())
     }
 
     override suspend fun deleteFolderGridItems(folderGridItems: List<FolderGridItem>) {
@@ -56,15 +56,15 @@ internal class DefaultFolderGridItemRepository @Inject constructor(private val f
             currentFolderGridItem.asEntity()
         }
 
-        folderGridItemDao.deleteFolderGridItemEntities(entities = entities)
+        folderGridItemDao.deleteFolderGridItemEntities(entities)
     }
 
     override suspend fun insertFolderGridItem(folderGridItem: FolderGridItem) {
-        folderGridItemDao.insertFolderGridItemEntity(entity = folderGridItem.asEntity())
+        folderGridItemDao.insertFolderGridItemEntity(folderGridItem.asEntity())
     }
 
     override suspend fun upsertFolderGridItem(folderGridItem: FolderGridItem) {
-        folderGridItemDao.upsertFolderGridItemEntity(entity = folderGridItem.asEntity())
+        folderGridItemDao.upsertFolderGridItemEntity(folderGridItem.asEntity())
     }
 
     override suspend fun upsertFolderGridItems(folderGridItems: List<FolderGridItem>) {
@@ -72,10 +72,10 @@ internal class DefaultFolderGridItemRepository @Inject constructor(private val f
             currentFolderGridItem.asEntity()
         }
 
-        folderGridItemDao.upsertFolderGridItemEntities(entities = entities)
+        folderGridItemDao.upsertFolderGridItemEntities(entities)
     }
 
     override suspend fun deleteFolderGridItemById(id: String) {
-        folderGridItemDao.deleteFolderGridItemEntityById(id = id)
+        folderGridItemDao.deleteFolderGridItemEntityById(id)
     }
 }

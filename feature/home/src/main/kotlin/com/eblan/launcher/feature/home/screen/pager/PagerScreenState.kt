@@ -201,7 +201,7 @@ internal class PagerScreenState(
             dragIntOffset = offset
 
             scope.launch {
-                handlePinItemRequest(pinItemRequest = pinItemRequestWrapper.getPinItemRequest())
+                handlePinItemRequest(pinItemRequestWrapper.getPinItemRequest())
             }
         }
 
@@ -358,7 +358,7 @@ internal class PagerScreenState(
         }
 
         onUpdateGridItemSource(
-            GridItemSource.Pin(pinItemRequest = pinItemRequest),
+            GridItemSource.Pin(pinItemRequest),
         )
 
         onUpdateMoveGridItemResult(
@@ -797,7 +797,7 @@ internal class PagerScreenState(
         val shortcutInfo = shortcutInfo ?: return
 
         val serialNumber =
-            androidUserManagerWrapper.getSerialNumberForUser(userHandle = shortcutInfo.userHandle)
+            androidUserManagerWrapper.getSerialNumberForUser(shortcutInfo.userHandle)
 
         val icon = androidLauncherAppsWrapper.getShortcutBadgedIconByteArray(
             shortcutInfo = shortcutInfo,
@@ -824,7 +824,7 @@ internal class PagerScreenState(
         val componentName = appWidgetProviderInfo.provider.flattenToString()
 
         val serialNumber = androidUserManagerWrapper.getSerialNumberForUser(
-            userHandle = appWidgetProviderInfo.profile,
+            appWidgetProviderInfo.profile,
         )
 
         val preview = androidAppWidgetManagerWrapper.loadPreviewImageByteArray(

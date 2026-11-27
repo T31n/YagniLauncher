@@ -174,7 +174,7 @@ internal fun WidgetScreen(
             }
             .run {
                 if (!isVisibleOverlay) {
-                    pointerInput(key1 = Unit) {
+                    pointerInput(Unit) {
                         detectVerticalDragGestures(
                             onVerticalDrag = { _, dragAmount ->
                                 onVerticalDrag(dragAmount)
@@ -541,19 +541,17 @@ private fun EblanAppWidgetProviderInfoItem(
             modifier = Modifier
                 .width(160.dp)
                 .height(100.dp)
-                .onGloballyPositioned(
-                    onGloballyPositioned = { currentLayoutCoordinates ->
-                        intOffset = currentLayoutCoordinates.positionInRoot().round()
+                .onGloballyPositioned { currentLayoutCoordinates ->
+                    intOffset = currentLayoutCoordinates.positionInRoot().round()
 
-                        intSize = currentLayoutCoordinates.size
-                    },
-                )
+                    intSize = currentLayoutCoordinates.size
+                }
                 .drawWithContent {
                     graphicsLayer.record {
                         this@drawWithContent.drawContent()
                     }
 
-                    drawLayer(graphicsLayer = graphicsLayer)
+                    drawLayer(graphicsLayer)
                 },
             contentAlignment = Alignment.Center,
         ) {

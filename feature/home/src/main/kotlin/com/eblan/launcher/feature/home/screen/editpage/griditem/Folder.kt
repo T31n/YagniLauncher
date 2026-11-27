@@ -97,7 +97,7 @@ internal fun FolderGridItem(
                 backgroundColor = gridItemSettings.backgroundColor,
                 customBackgroundColor = gridItemSettings.customBackgroundColor,
             ),
-            shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
+            shape = RoundedCornerShape(gridItemSettings.cornerRadius.dp),
         )
 
     val commonModifier = Modifier
@@ -259,7 +259,7 @@ private fun PreviewFolderGridItem(
             }
 
             is GridItemData.ShortcutConfig -> {
-                val iconPath = getGridItemIconPath(data = data)
+                val iconPath = getGridItemIconPath(data)
 
                 AsyncImage(
                     model = Builder(context)
@@ -273,7 +273,7 @@ private fun PreviewFolderGridItem(
             is GridItemData.ShortcutInfo -> {
                 AsyncImage(
                     model = Builder(context)
-                        .data(getGridItemIconPath(data = data))
+                        .data(getGridItemIconPath(data))
                         .addLastModifiedToFileCacheKey(true).build(),
                     contentDescription = null,
                     modifier = commonModifier,

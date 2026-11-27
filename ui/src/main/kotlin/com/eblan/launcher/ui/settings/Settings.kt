@@ -108,7 +108,7 @@ fun SettingsSwitch(
         Switch(
             checked = checked,
             onCheckedChange = onCheckedChange,
-            thumbContent = { SettingsSwitchThumbIcon(checked = checked) },
+            thumbContent = { SettingsSwitchThumbIcon(checked) },
         )
     }
 }
@@ -310,7 +310,7 @@ fun SettingsSwitchItem(
         Switch(
             checked = checked,
             onCheckedChange = onCheckedChange,
-            thumbContent = { SettingsSwitchThumbIcon(checked = checked) },
+            thumbContent = { SettingsSwitchThumbIcon(checked) },
         )
     }
 }

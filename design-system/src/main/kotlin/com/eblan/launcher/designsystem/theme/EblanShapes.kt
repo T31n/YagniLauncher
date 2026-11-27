@@ -29,7 +29,7 @@ object EblanShapes {
         bottomEnd = 4.dp,
     )
 
-    val middle: Shape = RoundedCornerShape(size = 4.dp)
+    val middle: Shape = RoundedCornerShape(4.dp)
 
     val last: Shape = RoundedCornerShape(
         topStart = 4.dp,

@@ -35,12 +35,12 @@ internal suspend fun getCustomIcon(
     iconKeyGenerator: IconKeyGenerator,
     uri: String,
 ): String? = try {
-    val bytes = contentResolverWrapper.openInputStream(uri = uri) ?: return null
+    val bytes = contentResolverWrapper.openInputStream(uri) ?: return null
 
     val customIconsDirectory =
-        fileManager.getFilesDirectory(name = FileManager.CUSTOM_ICONS_DIR)
+        fileManager.getFilesDirectory(FileManager.CUSTOM_ICONS_DIR)
 
-    val name = iconKeyGenerator.getHashedName(name = Uuid.random().toHexString())
+    val name = iconKeyGenerator.getHashedName(Uuid.random().toHexString())
 
     val newFile = File(customIconsDirectory, name)
 
@@ -62,9 +62,9 @@ internal suspend fun getCustomIcon(
     byteArray: ByteArray,
 ): String? {
     val customIconsDirectory =
-        fileManager.getFilesDirectory(name = FileManager.CUSTOM_ICONS_DIR)
+        fileManager.getFilesDirectory(FileManager.CUSTOM_ICONS_DIR)
 
-    val name = iconKeyGenerator.getHashedName(name = Uuid.random().toHexString())
+    val name = iconKeyGenerator.getHashedName(Uuid.random().toHexString())
 
     return fileManager.updateAndGetFilePath(
         directory = customIconsDirectory,

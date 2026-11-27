@@ -31,26 +31,26 @@ internal class DefaultUserDataRepository @Inject constructor(private val userDat
     override val userDataFlow = userDataStore.userDataFlow
 
     override suspend fun updateHomeSettings(homeSettings: HomeSettings) {
-        userDataStore.updateHomeSettings(homeSettings = homeSettings)
+        userDataStore.updateHomeSettings(homeSettings)
     }
 
     override suspend fun updateAppDrawerSettings(appDrawerSettings: AppDrawerSettings) {
-        userDataStore.updateAppDrawerSettings(appDrawerSettings = appDrawerSettings)
+        userDataStore.updateAppDrawerSettings(appDrawerSettings)
     }
 
     override suspend fun updateGeneralSettings(generalSettings: GeneralSettings) {
-        userDataStore.updateGeneralSettings(generalSettings = generalSettings)
+        userDataStore.updateGeneralSettings(generalSettings)
     }
 
     override suspend fun updateGestureSettings(gestureSettings: GestureSettings) {
-        userDataStore.updateGestureSettings(gestureSettings = gestureSettings)
+        userDataStore.updateGestureSettings(gestureSettings)
     }
 
     override suspend fun updateExperimentalSettings(experimentalSettings: ExperimentalSettings) {
-        userDataStore.updateExperimentalSettings(experimentalSettings = experimentalSettings)
+        userDataStore.updateExperimentalSettings(experimentalSettings)
     }
 
     override suspend fun updateFolderSettings(folderSettings: FolderSettings) {
-        userDataStore.updateFolderSettings(folderSettings = folderSettings)
+        userDataStore.updateFolderSettings(folderSettings)
     }
 }

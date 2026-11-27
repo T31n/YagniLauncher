@@ -46,7 +46,7 @@ internal class DefaultEblanApplicationInfoRepository @Inject constructor(
         }
 
     override suspend fun upsertEblanApplicationInfo(eblanApplicationInfo: EblanApplicationInfo) {
-        eblanApplicationInfoDao.upsertEblanApplicationInfoEntity(entity = eblanApplicationInfo.asEntity())
+        eblanApplicationInfoDao.upsertEblanApplicationInfoEntity(eblanApplicationInfo.asEntity())
     }
 
     override suspend fun deleteEblanApplicationInfoByPackageName(
@@ -64,19 +64,19 @@ internal class DefaultEblanApplicationInfoRepository @Inject constructor(
             currentEblanApplicationInfo.asEntity()
         }
 
-        eblanApplicationInfoDao.deleteEblanApplicationInfoEntities(entities = entities)
+        eblanApplicationInfoDao.deleteEblanApplicationInfoEntities(entities)
     }
 
     override suspend fun upsertSyncEblanApplicationInfos(syncEblanApplicationInfos: List<SyncEblanApplicationInfo>) {
-        eblanApplicationInfoDao.upsertSyncEblanApplicationInfoEntities(syncEblanApplicationInfos = syncEblanApplicationInfos)
+        eblanApplicationInfoDao.upsertSyncEblanApplicationInfoEntities(syncEblanApplicationInfos)
     }
 
     override suspend fun deleteSyncEblanApplicationInfos(deleteEblanApplicationInfos: List<DeleteEblanApplicationInfo>) {
-        eblanApplicationInfoDao.deleteSyncEblanApplicationInfoEntities(deleteEblanApplicationInfos = deleteEblanApplicationInfos)
+        eblanApplicationInfoDao.deleteSyncEblanApplicationInfoEntities(deleteEblanApplicationInfos)
     }
 
     override suspend fun updateEblanApplicationInfo(eblanApplicationInfo: EblanApplicationInfo) {
-        eblanApplicationInfoDao.updateEblanApplicationInfoEntity(entity = eblanApplicationInfo.asEntity())
+        eblanApplicationInfoDao.updateEblanApplicationInfoEntity(eblanApplicationInfo.asEntity())
     }
 
     override suspend fun getEblanApplicationInfoByComponentName(
@@ -109,7 +109,7 @@ internal class DefaultEblanApplicationInfoRepository @Inject constructor(
         }
     }
 
-    override suspend fun getEblanApplicationInfosByTagId(id: Long): List<EblanApplicationInfo> = eblanApplicationInfoDao.getEblanApplicationInfoEntitiesByTagId(id = id).map { currentEblanApplicationInfoEntity ->
+    override suspend fun getEblanApplicationInfosByTagId(id: Long): List<EblanApplicationInfo> = eblanApplicationInfoDao.getEblanApplicationInfoEntitiesByTagId(id).map { currentEblanApplicationInfoEntity ->
         currentEblanApplicationInfoEntity.asModel()
     }
 
@@ -123,7 +123,7 @@ internal class DefaultEblanApplicationInfoRepository @Inject constructor(
             currentEblanApplicationInfo.asEntity()
         }
 
-        eblanApplicationInfoDao.updateEblanApplicationInfoEntities(entities = entities)
+        eblanApplicationInfoDao.updateEblanApplicationInfoEntities(entities)
     }
 
     override suspend fun upsertEblanApplicationInfos(eblanApplicationInfos: List<EblanApplicationInfo>) {
@@ -131,7 +131,7 @@ internal class DefaultEblanApplicationInfoRepository @Inject constructor(
             currentEblanApplicationInfo.asEntity()
         }
 
-        eblanApplicationInfoDao.upsertEblanApplicationInfoEntities(entities = entities)
+        eblanApplicationInfoDao.upsertEblanApplicationInfoEntities(entities)
     }
 
     private fun EblanApplicationInfoTagEntity.asModel(): EblanApplicationInfoTag = EblanApplicationInfoTag(

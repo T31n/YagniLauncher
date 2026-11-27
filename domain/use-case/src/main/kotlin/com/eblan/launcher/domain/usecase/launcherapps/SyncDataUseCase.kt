@@ -120,7 +120,7 @@ class SyncDataUseCase @Inject constructor(
 
             updateEblanLauncherShortcutInfos()
 
-            updateEblanIconPackInfos(generalSettings = userData.generalSettings)
+            updateEblanIconPackInfos(userData.generalSettings)
 
             cleanupFolderGridItemsUseCase()
 
@@ -148,12 +148,10 @@ class SyncDataUseCase @Inject constructor(
                 personalApplicationInfosByPackageName[currentEblanIconPackInfo.packageName]
 
             if (eblanApplicationInfo == null) {
-                eblanIconPackInfoRepository.deleteEblanIconPackInfo(
-                    eblanIconPackInfo = currentEblanIconPackInfo,
-                )
+                eblanIconPackInfoRepository.deleteEblanIconPackInfo(currentEblanIconPackInfo)
             } else if (currentEblanIconPackInfo.packageName != generalSettings.iconPackPackageName) {
                 val iconFile = File(
-                    fileManager.getFilesDirectory(name = FileManager.ICONS_DIR),
+                    fileManager.getFilesDirectory(FileManager.ICONS_DIR),
                     iconKeyGenerator.getActivityIconKey(
                         serialNumber = 0L,
                         componentName = eblanApplicationInfo.componentName,
@@ -167,7 +165,7 @@ class SyncDataUseCase @Inject constructor(
                 )
 
                 eblanIconPackInfoRepository.upsertEblanIconPackInfo(
-                    eblanIconPackInfo = EblanIconPackInfo(
+                    EblanIconPackInfo(
                         packageName = eblanApplicationInfo.packageName,
                         icon = icon,
                         label = eblanApplicationInfo.label,
@@ -182,7 +180,7 @@ class SyncDataUseCase @Inject constructor(
             activeIconPackPackageName !in personalApplicationInfosByPackageName
         ) {
             userDataRepository.updateGeneralSettings(
-                generalSettings = generalSettings.copy(iconPackPackageName = ""),
+                generalSettings.copy(iconPackPackageName = ""),
             )
         } else {
             updateIconPacksUseCase(
@@ -275,17 +273,13 @@ class SyncDataUseCase @Inject constructor(
                 currentSyncEblanApplicationInfo.toDeleteEblanApplicationInfo()
             }
 
-        eblanApplicationInfoRepository.deleteSyncEblanApplicationInfos(
-            deleteEblanApplicationInfos = oldDeleteEblanApplicationInfos,
-        )
+        eblanApplicationInfoRepository.deleteSyncEblanApplicationInfos(oldDeleteEblanApplicationInfos)
 
-        eblanApplicationInfoRepository.upsertSyncEblanApplicationInfos(
-            syncEblanApplicationInfos = newSyncEblanApplicationInfos,
-        )
+        eblanApplicationInfoRepository.upsertSyncEblanApplicationInfos(newSyncEblanApplicationInfos)
 
         cleanupFolderEblanApplicationInfosUseCase()
 
-        updateEblanShortcutConfigs(newEblanShortcutConfigs = newEblanShortcutConfigs)
+        updateEblanShortcutConfigs(newEblanShortcutConfigs)
 
         updateApplicationInfoGridItems(
             eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos(),
@@ -301,7 +295,7 @@ class SyncDataUseCase @Inject constructor(
             dockGridItemSettings = dockGridItemSettings,
         )
 
-        applicationInfoGridItemRepository.insertApplicationInfoGridItems(applicationInfoGridItems = newApplicationInfoGridItems)
+        applicationInfoGridItemRepository.insertApplicationInfoGridItems(newApplicationInfoGridItems)
     }
 
     /** Adds newly installed non-system applications to the home screen when configured to do so. */
@@ -336,14 +330,14 @@ class SyncDataUseCase @Inject constructor(
             oldSyncEblanApplicationInfos.filterNot { currentSyncEblanApplicationInfo ->
                 currentCoroutineContext().ensureActive()
 
-                packageManagerWrapper.isSystem(flags = currentSyncEblanApplicationInfo.flags)
+                packageManagerWrapper.isSystem(currentSyncEblanApplicationInfo.flags)
             }
 
         val newNonSystemApplications =
             newSyncEblanApplicationInfos.filterNot { currentSyncEblanApplicationInfo ->
                 currentCoroutineContext().ensureActive()
 
-                packageManagerWrapper.isSystem(flags = currentSyncEblanApplicationInfo.flags)
+                packageManagerWrapper.isSystem(currentSyncEblanApplicationInfo.flags)
             }
 
         val newAddNewEblanApplicationInfos = newNonSystemApplications
@@ -402,13 +396,9 @@ class SyncDataUseCase @Inject constructor(
                     currentEblanAppWidgetProviderInfo.serialNumber to currentEblanAppWidgetProviderInfo.componentName
                 }
 
-        eblanAppWidgetProviderInfoRepository.deleteEblanAppWidgetProviderInfos(
-            eblanAppWidgetProviderInfos = deleteEblanAppWidgetProviderInfos,
-        )
+        eblanAppWidgetProviderInfoRepository.deleteEblanAppWidgetProviderInfos(deleteEblanAppWidgetProviderInfos)
 
-        eblanAppWidgetProviderInfoRepository.upsertEblanAppWidgetProviderInfos(
-            eblanAppWidgetProviderInfos = newEblanAppWidgetProviderInfos,
-        )
+        eblanAppWidgetProviderInfoRepository.upsertEblanAppWidgetProviderInfos(newEblanAppWidgetProviderInfos)
 
         updateWidgetGridItems(
             eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos(),
@@ -425,7 +415,7 @@ class SyncDataUseCase @Inject constructor(
         if (!launcherAppsWrapper.hasShortcutHostPermission) return
 
         val launcherAppsShortcutInfos =
-            launcherAppsWrapper.getShortcutsWithCacheIcons(shortcutQuery = null) ?: return
+            launcherAppsWrapper.getShortcutsWithCacheIcons(null) ?: return
 
         val oldEblanShortcutInfos = eblanShortcutInfoRepository.getEblanShortcutInfos()
 
@@ -442,13 +432,9 @@ class SyncDataUseCase @Inject constructor(
                 )
             }
 
-        eblanShortcutInfoRepository.deleteEblanShortcutInfos(
-            eblanShortcutInfos = deleteEblanShortcutInfos,
-        )
+        eblanShortcutInfoRepository.deleteEblanShortcutInfos(deleteEblanShortcutInfos)
 
-        eblanShortcutInfoRepository.upsertEblanShortcutInfos(
-            eblanShortcutInfos = newEblanShortcutInfos,
-        )
+        eblanShortcutInfoRepository.upsertEblanShortcutInfos(newEblanShortcutInfos)
 
         updateShortcutInfoGridItems(
             eblanShortcutInfos = eblanShortcutInfoRepository.getEblanShortcutInfos(),
@@ -473,13 +459,9 @@ class SyncDataUseCase @Inject constructor(
                 currentEblanShortcutConfig.serialNumber to currentEblanShortcutConfig.componentName
             }
 
-        eblanShortcutConfigRepository.deleteEblanShortcutConfigs(
-            eblanShortcutConfigs = deleteEblanShortcutConfigs,
-        )
+        eblanShortcutConfigRepository.deleteEblanShortcutConfigs(deleteEblanShortcutConfigs)
 
-        eblanShortcutConfigRepository.upsertEblanShortcutConfigs(
-            eblanShortcutConfigs = newEblanShortcutConfigs.toList(),
-        )
+        eblanShortcutConfigRepository.upsertEblanShortcutConfigs(newEblanShortcutConfigs.toList())
 
         updateShortcutConfigGridItems(
             eblanShortcutConfigs = eblanShortcutConfigRepository.getEblanShortcutConfigs(),
@@ -518,7 +500,7 @@ class SyncDataUseCase @Inject constructor(
         val eblanApplicationInfosBySystem = eblanApplicationInfos.filter { currentEblanApplicationInfo ->
             currentCoroutineContext().ensureActive()
 
-            packageManagerWrapper.isSystem(flags = currentEblanApplicationInfo.flags)
+            packageManagerWrapper.isSystem(currentEblanApplicationInfo.flags)
         }
 
         val applicationInfoGridItems = mutableListOf<ApplicationInfoGridItem>()
@@ -591,10 +573,10 @@ class SyncDataUseCase @Inject constructor(
                 )
             }
 
-        applicationInfoGridItemRepository.insertApplicationInfoGridItems(applicationInfoGridItems = applicationInfoGridItems)
+        applicationInfoGridItemRepository.insertApplicationInfoGridItems(applicationInfoGridItems)
 
         userDataRepository.updateExperimentalSettings(
-            experimentalSettings = experimentalSettings.copy(
+            experimentalSettings.copy(
                 firstLaunch = false,
             ),
         )

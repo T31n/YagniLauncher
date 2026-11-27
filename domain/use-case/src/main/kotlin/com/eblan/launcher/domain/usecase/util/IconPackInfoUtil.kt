@@ -86,7 +86,7 @@ internal suspend fun getIconPackFilePaths(
     return componentNames.associateWith { currentComponentName ->
         val iconPackInfoFile = File(
             iconPackDirectory,
-            iconKeyGenerator.getHashedName(name = currentComponentName),
+            iconKeyGenerator.getHashedName(currentComponentName),
         )
 
         iconPackInfoFile

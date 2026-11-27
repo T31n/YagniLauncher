@@ -393,9 +393,7 @@ internal fun PagerScreen(
 
     val safeDrawingHeight = screenHeight - verticalPadding
 
-    val pageIndicatorHeight = getPageIndicatorHeight(
-        pageIndicatorType = homeSettings.pageIndicatorType,
-    ).dp
+    val pageIndicatorHeight = getPageIndicatorHeight(homeSettings.pageIndicatorType).dp
 
     val pageIndicatorHeightPx = with(density) {
         pageIndicatorHeight.roundToPx()
@@ -694,7 +692,7 @@ internal fun PagerScreen(
         )
     }
 
-    LaunchedEffect(key1 = pagerScreenState.widgetGridItem) {
+    LaunchedEffect(pagerScreenState.widgetGridItem) {
         handleBoundWidgetEffect(
             // Context and Host
             activity = activity,
@@ -710,7 +708,7 @@ internal fun PagerScreen(
         )
     }
 
-    LaunchedEffect(key1 = gridHorizontalPagerState) {
+    LaunchedEffect(gridHorizontalPagerState) {
         pagerScreenState.handleWallpaperScrollEffect(
             horizontalPagerState = gridHorizontalPagerState,
             windowToken = view.windowToken,
@@ -755,7 +753,7 @@ internal fun PagerScreen(
         )
     }
 
-    LaunchedEffect(key1 = pagerScreenState.gridPageDirection) {
+    LaunchedEffect(pagerScreenState.gridPageDirection) {
         handlePageDirection(
             // State
             hasFolderGridItemEntries = hasFolderGridItemEntries,
@@ -767,7 +765,7 @@ internal fun PagerScreen(
         )
     }
 
-    LaunchedEffect(key1 = pagerScreenState.dockPageDirection) {
+    LaunchedEffect(pagerScreenState.dockPageDirection) {
         handlePageDirection(
             // State
             hasFolderGridItemEntries = hasFolderGridItemEntries,
@@ -779,11 +777,11 @@ internal fun PagerScreen(
         )
     }
 
-    LaunchedEffect(key1 = pagerScreenState.hasDoubleTap) {
+    LaunchedEffect(pagerScreenState.hasDoubleTap) {
         pagerScreenState.handleHasDoubleTap()
     }
 
-    LaunchedEffect(key1 = homeSettings.infiniteScroll) {
+    LaunchedEffect(homeSettings.infiniteScroll) {
         gridHorizontalPagerState.scrollToPage(
             if (homeSettings.infiniteScroll) {
                 (Int.MAX_VALUE / 2) + homeSettings.initialPage
@@ -793,7 +791,7 @@ internal fun PagerScreen(
         )
     }
 
-    LaunchedEffect(key1 = homeSettings.dockInfiniteScroll) {
+    LaunchedEffect(homeSettings.dockInfiniteScroll) {
         dockGridHorizontalPagerState.scrollToPage(
             if (homeSettings.dockInfiniteScroll) {
                 (Int.MAX_VALUE / 2) + homeSettings.dockInitialPage
@@ -808,7 +806,7 @@ internal fun PagerScreen(
         key2 = pagerScreenState,
     ) {
         val listener = Consumer<Intent> { currentIntent ->
-            pagerScreenState.handleEblanActionIntent(intent = currentIntent)
+            pagerScreenState.handleEblanActionIntent(currentIntent)
         }
 
         activity.addOnNewIntentListener(listener)
@@ -868,7 +866,7 @@ internal fun PagerScreen(
             .onGloballyPositioned { currentLayoutCoordinates ->
                 sharedTransitionLayoutCoordinates = currentLayoutCoordinates
             }
-            .pointerInput(key1 = pagerScreenState) {
+            .pointerInput(pagerScreenState) {
                 detectDragGesturesAfterLongPress(
                     onDragStart = { pointerOffset ->
                         val rootPointerOffset = requireNotNull(sharedTransitionLayoutCoordinates)
@@ -883,7 +881,7 @@ internal fun PagerScreen(
                         pagerScreenState.updateDrag(Drag.Cancel)
                     },
                     onDrag = { _, dragAmount ->
-                        pagerScreenState.drag(dragAmount = dragAmount)
+                        pagerScreenState.drag(dragAmount)
                     },
                 )
             }
@@ -908,19 +906,19 @@ internal fun PagerScreen(
                             pagerScreenState.verticalDragStart()
                         },
                         onVerticalDrag = { _, dragAmount ->
-                            pagerScreenState.verticalDrag(dragAmount = dragAmount)
+                            pagerScreenState.verticalDrag(dragAmount)
                         },
                         onDragEnd = pagerScreenState::verticalDragEnd,
                         onDragCancel = pagerScreenState::verticalDragCancel,
                     )
                 }
-                .pointerInput(key1 = pagerScreenState) {
+                .pointerInput(pagerScreenState) {
                     detectTapGestures(
                         onDoubleTap = {
-                            pagerScreenState.updateHasDoubleTap(value = true)
+                            pagerScreenState.updateHasDoubleTap(true)
                         },
                         onLongPress = { currentOffset ->
-                            pagerScreenState.showSettingsMenu(offset = currentOffset)
+                            pagerScreenState.showSettingsMenu(currentOffset)
                         },
                     )
                 },
@@ -2021,7 +2019,7 @@ private fun SharedTransitionScope.OverlayImage(
         DpSize(width = overlayIntSize.width.toDp(), height = overlayIntSize.height.toDp())
     }
 
-    LaunchedEffect(key1 = isVisibleOverlay) {
+    LaunchedEffect(isVisibleOverlay) {
         if (!isVisibleOverlay) {
             onResetOverlay()
         }
@@ -2043,7 +2041,7 @@ private fun SharedTransitionScope.OverlayImage(
             .run {
                 if (animations) {
                     sharedElementWithCallerManagedVisibility(
-                        rememberSharedContentState(key = sharedElementKey),
+                        rememberSharedContentState(sharedElementKey),
                         visible = isVisibleOverlay,
                     )
                 } else {
@@ -2123,7 +2121,7 @@ private fun SyncDataEffect(
                         if (syncData &&
                             pinItemRequestWrapper.getPinItemRequest() == null
                         ) {
-                            launcherAppsWrapper.unregisterCallback(callback = launcherAppsCallback)
+                            launcherAppsWrapper.unregisterCallback(launcherAppsCallback)
 
                             onStopSyncData()
                         }
@@ -2141,7 +2139,7 @@ private fun SyncDataEffect(
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(lifecycleEventObserver)
 
-            launcherAppsWrapper.unregisterCallback(callback = launcherAppsCallback)
+            launcherAppsWrapper.unregisterCallback(launcherAppsCallback)
 
             onStopSyncData()
 
@@ -2170,7 +2168,7 @@ private fun GridPagerIndicator(
 
     var isScrollInProgress by remember { mutableStateOf(false) }
 
-    LaunchedEffect(key1 = gridHorizontalPagerState) {
+    LaunchedEffect(gridHorizontalPagerState) {
         snapshotFlow { gridHorizontalPagerState.isScrollInProgress }
             .debounce(100L.milliseconds)
             .onEach { currentIsScrollInProgress -> isScrollInProgress = currentIsScrollInProgress }
@@ -2277,7 +2275,7 @@ private fun getLauncherAppsCallback(
     override fun onPackageRemoved(packageName: String?, user: UserHandle?) {
         if (packageName != null && user != null) {
             onPackageRemoved(
-                userManagerWrapper.getSerialNumberForUser(userHandle = user),
+                userManagerWrapper.getSerialNumberForUser(user),
                 packageName,
             )
         }
@@ -2286,7 +2284,7 @@ private fun getLauncherAppsCallback(
     override fun onPackageAdded(packageName: String?, user: UserHandle?) {
         if (packageName != null && user != null) {
             onPackageAdded(
-                userManagerWrapper.getSerialNumberForUser(userHandle = user),
+                userManagerWrapper.getSerialNumberForUser(user),
                 packageName,
             )
         }
@@ -2295,7 +2293,7 @@ private fun getLauncherAppsCallback(
     override fun onPackageChanged(packageName: String?, user: UserHandle?) {
         if (packageName != null && user != null) {
             onPackageChanged(
-                userManagerWrapper.getSerialNumberForUser(userHandle = user),
+                userManagerWrapper.getSerialNumberForUser(user),
                 packageName,
             )
         }
@@ -2321,7 +2319,7 @@ private fun getLauncherAppsCallback(
         user: UserHandle,
     ) {
         onShortcutsChanged(
-            userManagerWrapper.getSerialNumberForUser(userHandle = user),
+            userManagerWrapper.getSerialNumberForUser(user),
             packageName,
         )
     }

@@ -52,7 +52,7 @@ class DeleteGridItemCustomIconUseCase @Inject constructor(
 
                     if (eblanApplicationInfo != null) {
                         eblanApplicationInfoRepository.updateEblanApplicationInfo(
-                            eblanApplicationInfo = eblanApplicationInfo.copy(customIcon = null),
+                            eblanApplicationInfo.copy(customIcon = null),
                         )
                     }
 
@@ -68,7 +68,7 @@ class DeleteGridItemCustomIconUseCase @Inject constructor(
                 else -> error("Unsupported Grid Item")
             }
 
-            gridRepository.updateGridItem(gridItem = gridItem.copy(data = newData))
+            gridRepository.updateGridItem(gridItem.copy(data = newData))
         }
     }
 }

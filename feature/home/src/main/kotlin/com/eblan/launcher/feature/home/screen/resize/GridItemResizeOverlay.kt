@@ -175,7 +175,7 @@ internal fun GridItemResizeOverlay(
         )
     }
 
-    LaunchedEffect(key1 = isResizing) {
+    LaunchedEffect(isResizing) {
         if (!isResizing) {
             launch { currentX.animateTo(targetValue = x) }
 
@@ -209,7 +209,7 @@ internal fun GridItemResizeOverlay(
             modifier = Modifier
                 .align(Alignment.TopStart)
                 .offset((-15).dp, (-15).dp)
-                .resizeHandleModifier(color = color)
+                .resizeHandleModifier(color)
                 .pointerInput(Unit) {
                     detectDragGestures(
                         onDragStart = {
@@ -239,7 +239,7 @@ internal fun GridItemResizeOverlay(
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .offset(15.dp, (-15).dp)
-                .resizeHandleModifier(color = color)
+                .resizeHandleModifier(color)
                 .pointerInput(Unit) {
                     detectDragGestures(
                         onDragStart = {
@@ -267,7 +267,7 @@ internal fun GridItemResizeOverlay(
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .offset((-15).dp, 15.dp)
-                .resizeHandleModifier(color = color)
+                .resizeHandleModifier(color)
                 .pointerInput(Unit) {
                     detectDragGestures(
                         onDragStart = {
@@ -295,7 +295,7 @@ internal fun GridItemResizeOverlay(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .offset(15.dp, 15.dp)
-                .resizeHandleModifier(color = color)
+                .resizeHandleModifier(color)
                 .pointerInput(Unit) {
                     detectDragGestures(
                         onDragStart = {

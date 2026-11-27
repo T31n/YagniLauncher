@@ -168,7 +168,7 @@ class AddPinShortcutToHomeScreenUseCase @Inject constructor(
                     data = data.copy(icon = iconPath),
                 )
 
-                gridRepository.insertGridItem(gridItem = updatedGridItem)
+                gridRepository.insertGridItem(updatedGridItem)
 
                 updatedGridItem
             } else {

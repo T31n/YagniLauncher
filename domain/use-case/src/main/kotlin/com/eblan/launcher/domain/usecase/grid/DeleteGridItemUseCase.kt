@@ -73,7 +73,7 @@ class DeleteGridItemUseCase @Inject constructor(
                 emptyMap()
             }
 
-            gridRepository.deleteGridItem(gridItem = gridItem)
+            gridRepository.deleteGridItem(gridItem)
 
             cleanupFolderGridItemsUseCase()
 

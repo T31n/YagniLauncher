@@ -62,11 +62,11 @@ class CleanupFolderGridItemsUseCase @Inject constructor(
                 }
 
             if (gridItemsToUpsertById.isNotEmpty()) {
-                gridRepository.upsertGridItems(gridItems = gridItemsToUpsertById.values.toList())
+                gridRepository.upsertGridItems(gridItemsToUpsertById.values.toList())
             }
 
             if (gridItemsToDeleteById.isNotEmpty()) {
-                gridRepository.deleteGridItems(gridItems = gridItemsToDeleteById.values.toList())
+                gridRepository.deleteGridItems(gridItemsToDeleteById.values.toList())
             }
         }
     }

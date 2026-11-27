@@ -113,13 +113,10 @@ class RemovePackageUseCase @Inject constructor(
                 )
 
                 if (serialNumber == 0L) {
-                    eblanIconPackInfoRepository.getEblanIconPackByPackageName(
-                        packageName = packageName,
-                    )?.let { currentEblanIconPackInfo ->
-                        eblanIconPackInfoRepository.deleteEblanIconPackInfo(
-                            eblanIconPackInfo = currentEblanIconPackInfo,
-                        )
-                    }
+                    eblanIconPackInfoRepository.getEblanIconPackByPackageName(packageName)
+                        ?.let { currentEblanIconPackInfo ->
+                            eblanIconPackInfoRepository.deleteEblanIconPackInfo(currentEblanIconPackInfo)
+                        }
                 }
 
                 cleanupFolderGridItemsUseCase()
@@ -129,7 +126,7 @@ class RemovePackageUseCase @Inject constructor(
 
             if (generalSettings != null && generalSettings.iconPackPackageName == packageName) {
                 userDataRepository.updateGeneralSettings(
-                    generalSettings = generalSettings.copy(iconPackPackageName = ""),
+                    generalSettings.copy(iconPackPackageName = ""),
                 )
             }
         }

@@ -131,7 +131,7 @@ internal fun FolderGridItemPopup(
         }
     }
 
-    LaunchedEffect(key1 = isCloseFolderGridItemPopup) {
+    LaunchedEffect(isCloseFolderGridItemPopup) {
         if (isCloseFolderGridItemPopup) {
             transitionState.targetState = false
         }

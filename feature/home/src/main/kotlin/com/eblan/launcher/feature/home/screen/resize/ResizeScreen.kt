@@ -78,7 +78,7 @@ internal fun ResizeScreen(
         modifier = modifier
             .fillMaxSize()
             .padding(paddingValues)
-            .pointerInput(key1 = Unit) {
+            .pointerInput(Unit) {
                 detectTapGestures(
                     onTap = {
                         onUpdateIsResizing(false)

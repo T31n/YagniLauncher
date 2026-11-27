@@ -154,7 +154,7 @@ internal fun EditGridPageScreen(
     val lazyListState = rememberLazyListState()
 
     val lazyRowDragDropState =
-        rememberLazyRowDragDropState(lazyListState = lazyListState) { from, to ->
+        rememberLazyRowDragDropState(lazyListState) { from, to ->
             currentPageItems = currentPageItems.toMutableList().apply {
                 add(
                     index = to,
@@ -163,7 +163,7 @@ internal fun EditGridPageScreen(
             }
         }
 
-    LaunchedEffect(key1 = scrollToLastTrigger) {
+    LaunchedEffect(scrollToLastTrigger) {
         if (scrollToLastTrigger > 0 && currentPageItems.isNotEmpty()) {
             lazyListState.animateScrollToItem(currentPageItems.lastIndex)
         }
@@ -212,7 +212,7 @@ internal fun EditGridPageScreen(
 
             LazyRow(
                 modifier = Modifier
-                    .dragRowContainer(lazyRowDragDropState = lazyRowDragDropState)
+                    .dragRowContainer(lazyRowDragDropState)
                     .fillMaxSize(),
                 state = lazyListState,
                 contentPadding = PaddingValues(horizontal = horizontalEdgePadding),
@@ -365,7 +365,7 @@ internal fun EditDockGridPageScreen(
     val lazyListState = rememberLazyListState()
 
     val lazyColumnDragDropState =
-        rememberLazyColumnDragDropState(lazyListState = lazyListState) { from, to ->
+        rememberLazyColumnDragDropState(lazyListState) { from, to ->
             currentPageItems = currentPageItems.toMutableList().apply {
                 add(
                     index = to,
@@ -383,9 +383,7 @@ internal fun EditDockGridPageScreen(
     val safeDrawingHeight = (screenHeight - verticalPadding).coerceAtLeast(0)
 
     val pageIndicatorHeightPx = with(density) {
-        getPageIndicatorHeight(
-            pageIndicatorType = pageIndicatorType,
-        ).dp.roundToPx()
+        getPageIndicatorHeight(pageIndicatorType).dp.roundToPx()
     }
 
     val cardHeight = with(density) {
@@ -427,7 +425,7 @@ internal fun EditDockGridPageScreen(
     ) { contentPadding ->
         LazyColumn(
             modifier = Modifier
-                .dragColumnContainer(lazyColumnDragDropState = lazyColumnDragDropState)
+                .dragColumnContainer(lazyColumnDragDropState)
                 .fillMaxSize()
                 .padding(contentPadding),
             state = lazyListState,
@@ -577,7 +575,7 @@ private fun EditPageScaffold(
     val layoutDirection = LocalLayoutDirection.current
     val scope = rememberCoroutineScope()
 
-    DisposableEffect(key1 = activity) {
+    DisposableEffect(activity) {
         val listener = Consumer<Intent> { intent ->
             scope.launch {
                 handleActionMainIntent(

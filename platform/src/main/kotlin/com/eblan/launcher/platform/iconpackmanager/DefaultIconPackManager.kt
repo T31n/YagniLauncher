@@ -82,14 +82,14 @@ internal class DefaultIconPackManager @Inject constructor(
 
             autoCloseable.use { currentAutoCloseable ->
                 when (currentAutoCloseable) {
-                    is XmlResourceParser -> parseXml(xmlPullParser = currentAutoCloseable)
+                    is XmlResourceParser -> parseXml(currentAutoCloseable)
 
                     is InputStream -> {
                         val xmlPullParser = XmlPullParserFactory.newInstance().newPullParser()
 
                         xmlPullParser.setInput(currentAutoCloseable.reader())
 
-                        parseXml(xmlPullParser = xmlPullParser)
+                        parseXml(xmlPullParser)
                     }
 
                     else -> emptyList()
@@ -217,7 +217,7 @@ internal class DefaultIconPackManager @Inject constructor(
             Context.CONTEXT_IGNORE_SECURITY,
         )
 
-        val isDarkTheme = materialColorSchemeResolver.isDarkTheme(theme = theme)
+        val isDarkTheme = materialColorSchemeResolver.isDarkTheme(theme)
 
         val configuration = Configuration(packageContext.resources.configuration).apply {
             uiMode = (uiMode and Configuration.UI_MODE_NIGHT_MASK.inv()) or

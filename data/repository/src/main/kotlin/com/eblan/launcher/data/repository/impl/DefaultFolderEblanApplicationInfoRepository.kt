@@ -50,22 +50,22 @@ internal class DefaultFolderEblanApplicationInfoRepository @Inject constructor(p
     }
 
     override suspend fun upsertFolderEblanApplicationInfo(folderEblanApplicationInfo: FolderEblanApplicationInfo) {
-        folderEblanApplicationInfoDao.upsertFolderEblanApplicationInfoEntity(entity = folderEblanApplicationInfo.asEntity())
+        folderEblanApplicationInfoDao.upsertFolderEblanApplicationInfoEntity(folderEblanApplicationInfo.asEntity())
     }
 
-    override suspend fun getFolderEblanApplicationInfoById(id: String): FolderEblanApplicationInfo? = folderEblanApplicationInfoDao.getFolderEblanApplicationInfoEntityById(id = id)?.asModel()
+    override suspend fun getFolderEblanApplicationInfoById(id: String): FolderEblanApplicationInfo? = folderEblanApplicationInfoDao.getFolderEblanApplicationInfoEntityById(id)?.asModel()
 
     override suspend fun insertFolderEblanApplicationInfo(folderEblanApplicationInfo: FolderEblanApplicationInfo) {
-        folderEblanApplicationInfoDao.insertFolderEblanApplicationInfoEntity(entity = folderEblanApplicationInfo.asEntity())
+        folderEblanApplicationInfoDao.insertFolderEblanApplicationInfoEntity(folderEblanApplicationInfo.asEntity())
     }
 
     override suspend fun updateFolderEblanApplicationInfo(folderEblanApplicationInfo: FolderEblanApplicationInfo) {
-        folderEblanApplicationInfoDao.updateFolderEblanApplicationInfoEntity(entity = folderEblanApplicationInfo.asEntity())
+        folderEblanApplicationInfoDao.updateFolderEblanApplicationInfoEntity(folderEblanApplicationInfo.asEntity())
     }
 
     override suspend fun updateFolderEblanApplicationInfos(folderEblanApplicationInfos: List<FolderEblanApplicationInfo>) {
         folderEblanApplicationInfoDao.updateFolderEblanApplicationInfoEntities(
-            entities = folderEblanApplicationInfos.map { currentFolderEblanApplicationInfo ->
+            folderEblanApplicationInfos.map { currentFolderEblanApplicationInfo ->
                 currentFolderEblanApplicationInfo.asEntity()
             },
         )
@@ -73,7 +73,7 @@ internal class DefaultFolderEblanApplicationInfoRepository @Inject constructor(p
 
     override suspend fun upsertFolderEblanApplicationInfos(folderEblanApplicationInfos: List<FolderEblanApplicationInfo>) {
         folderEblanApplicationInfoDao.upsertFolderEblanApplicationInfoEntities(
-            entities = folderEblanApplicationInfos.map { currentFolderEblanApplicationInfo ->
+            folderEblanApplicationInfos.map { currentFolderEblanApplicationInfo ->
                 currentFolderEblanApplicationInfo.asEntity()
             },
         )
@@ -81,7 +81,7 @@ internal class DefaultFolderEblanApplicationInfoRepository @Inject constructor(p
 
     override suspend fun deleteFolderEblanApplicationInfos(folderEblanApplicationInfos: List<FolderEblanApplicationInfo>) {
         folderEblanApplicationInfoDao.deleteFolderEblanApplicationInfoEntities(
-            entities = folderEblanApplicationInfos.map { currentFolderEblanApplicationInfo ->
+            folderEblanApplicationInfos.map { currentFolderEblanApplicationInfo ->
                 currentFolderEblanApplicationInfo.asEntity()
             },
         )
@@ -92,7 +92,7 @@ internal class DefaultFolderEblanApplicationInfoRepository @Inject constructor(p
     }
 
     override suspend fun deleteFolderEblanApplicationInfoById(id: String) {
-        folderEblanApplicationInfoDao.deleteFolderEblanApplicationInfoEntityById(id = id)
+        folderEblanApplicationInfoDao.deleteFolderEblanApplicationInfoEntityById(id)
     }
 
     private fun FolderEblanApplicationInfoWrapperEntity.asModel(): FolderEblanApplicationInfoWrapper = FolderEblanApplicationInfoWrapper(

@@ -33,15 +33,15 @@ internal class DefaultEblanApplicationInfoTagRepository @Inject constructor(priv
         }
 
     override suspend fun insertEblanApplicationInfoTag(eblanApplicationInfoTag: EblanApplicationInfoTag) {
-        eblanApplicationInfoTagDao.insertEblanApplicationInfoTagEntity(entity = eblanApplicationInfoTag.asEntity())
+        eblanApplicationInfoTagDao.insertEblanApplicationInfoTagEntity(eblanApplicationInfoTag.asEntity())
     }
 
     override suspend fun updateEblanApplicationInfoTag(eblanApplicationInfoTag: EblanApplicationInfoTag) {
-        eblanApplicationInfoTagDao.updateEblanApplicationInfoTagEntity(entity = eblanApplicationInfoTag.asEntity())
+        eblanApplicationInfoTagDao.updateEblanApplicationInfoTagEntity(eblanApplicationInfoTag.asEntity())
     }
 
     override suspend fun deleteEblanApplicationInfoTag(eblanApplicationInfoTag: EblanApplicationInfoTag) {
-        eblanApplicationInfoTagDao.deleteEblanApplicationInfoTagEntity(entity = eblanApplicationInfoTag.asEntity())
+        eblanApplicationInfoTagDao.deleteEblanApplicationInfoTagEntity(eblanApplicationInfoTag.asEntity())
     }
 
     override suspend fun updateEblanApplicationInfoTags(eblanApplicationInfoTags: List<EblanApplicationInfoTag>) {
@@ -49,7 +49,7 @@ internal class DefaultEblanApplicationInfoTagRepository @Inject constructor(priv
             currentEblanApplicationInfoTag.asEntity()
         }
 
-        eblanApplicationInfoTagDao.updateEblanApplicationInfoTagEntities(entities = entities)
+        eblanApplicationInfoTagDao.updateEblanApplicationInfoTagEntities(entities)
     }
 
     private fun EblanApplicationInfoTagEntity.asModel(): EblanApplicationInfoTag = EblanApplicationInfoTag(

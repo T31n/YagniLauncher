@@ -120,7 +120,7 @@ class PinScreenViewModel @Inject constructor(
 
     fun updateGridItemData(gridItem: GridItem) {
         viewModelScope.launch {
-            gridRepository.updateGridItem(gridItem = gridItem)
+            gridRepository.updateGridItem(gridItem)
 
             _isBoundWidget.update {
                 true
@@ -130,7 +130,7 @@ class PinScreenViewModel @Inject constructor(
 
     fun deleteGridItem(gridItem: GridItem) {
         viewModelScope.launch {
-            deleteGridItemUseCase(gridItem = gridItem)
+            deleteGridItemUseCase(gridItem)
 
             _isFinished.update {
                 true

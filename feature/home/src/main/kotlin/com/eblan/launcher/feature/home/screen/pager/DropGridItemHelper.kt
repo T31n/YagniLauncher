@@ -432,7 +432,7 @@ internal suspend fun handleShortcutConfigLauncherResult(
             currentIntent.getParcelableExtra(Intent.EXTRA_SHORTCUT_ICON)
         }
     }?.let { bitmap ->
-        androidImageSerializer.createByteArray(bitmap = bitmap)
+        androidImageSerializer.createByteArray(bitmap)
     }
 
     val shortcutIntentUri = result.data?.let { currentIntent ->
@@ -498,7 +498,7 @@ internal suspend fun handleShortcutConfigIntentSenderLauncherResult(
         pinItemRequest.accept()
     ) {
         val serialNumber =
-            androidUserManagerWrapper.getSerialNumberForUser(userHandle = shortcutInfo.userHandle)
+            androidUserManagerWrapper.getSerialNumberForUser(shortcutInfo.userHandle)
 
         val icon = androidLauncherAppsWrapper.getShortcutBadgedIconByteArray(
             shortcutInfo = shortcutInfo,
@@ -673,7 +673,7 @@ private suspend fun onDragEndShortcutConfig(
     onUpdateIsDragging: (Boolean) -> Unit,
 ) {
     val currentUserSerialNumber =
-        androidUserManagerWrapper.getSerialNumberForUser(userHandle = Process.myUserHandle())
+        androidUserManagerWrapper.getSerialNumberForUser(Process.myUserHandle())
 
     if (currentUserSerialNumber == serialNumber) {
         val intent = Intent(Intent.ACTION_CREATE_SHORTCUT).setComponent(

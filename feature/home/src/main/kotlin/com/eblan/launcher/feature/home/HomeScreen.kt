@@ -875,7 +875,7 @@ private fun RequestPermissionsEffect(modifier: Modifier = Modifier) {
 
     var showTextDialog by remember { mutableStateOf(false) }
 
-    LaunchedEffect(key1 = notificationsPermissionState) {
+    LaunchedEffect(notificationsPermissionState) {
         if (notificationsPermissionState.shouldShowRationale) {
             showTextDialog = true
         } else {

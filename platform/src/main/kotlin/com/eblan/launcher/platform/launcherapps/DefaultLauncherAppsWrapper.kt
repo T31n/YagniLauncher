@@ -142,7 +142,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         launcherApps.profiles.filterNot { currentUserHandle ->
             currentCoroutineContext().ensureActive()
 
-            isPrivateSpaceEntryPointHidden(userHandle = currentUserHandle)
+            isPrivateSpaceEntryPointHidden(currentUserHandle)
         }.flatMap { userHandle ->
             currentCoroutineContext().ensureActive()
 
@@ -171,7 +171,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         launcherApps.profiles.filterNot { currentUserHandle ->
             currentCoroutineContext().ensureActive()
 
-            isPrivateSpaceEntryPointHidden(userHandle = currentUserHandle)
+            isPrivateSpaceEntryPointHidden(currentUserHandle)
         }.flatMap { userHandle ->
             currentCoroutineContext().ensureActive()
 
@@ -201,7 +201,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
     ): List<LauncherAppsActivityInfo> = withContext(ioDispatcher) {
         val userHandle = androidUserManagerWrapper.getUserForSerialNumber(serialNumber)
 
-        if (userHandle != null && isUserAvailable(userHandle = userHandle)) {
+        if (userHandle != null && isUserAvailable(userHandle)) {
             try {
                 launcherApps.getActivityList(packageName, userHandle).map { currentLauncherActivityInfo ->
                     currentCoroutineContext().ensureActive()
@@ -231,7 +231,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
     ): List<FastLauncherAppsActivityInfo> = withContext(ioDispatcher) {
         val userHandle = androidUserManagerWrapper.getUserForSerialNumber(serialNumber)
 
-        if (userHandle != null && isUserAvailable(userHandle = userHandle)) {
+        if (userHandle != null && isUserAvailable(userHandle)) {
             try {
                 launcherApps.getActivityList(packageName, userHandle).map { currentLauncherActivityInfo ->
                     currentCoroutineContext().ensureActive()
@@ -271,7 +271,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             launcherApps.profiles.filter { currentUserHandle ->
                 currentCoroutineContext().ensureActive()
 
-                isUserAvailable(userHandle = currentUserHandle)
+                isUserAvailable(currentUserHandle)
             }.flatMap { userHandle ->
                 currentCoroutineContext().ensureActive()
 
@@ -315,7 +315,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             launcherApps.profiles.filter { currentUserHandle ->
                 currentCoroutineContext().ensureActive()
 
-                isUserAvailable(userHandle = currentUserHandle)
+                isUserAvailable(currentUserHandle)
             }.flatMap { userHandle ->
                 currentCoroutineContext().ensureActive()
 
@@ -342,7 +342,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
     ): List<LauncherAppsShortcutInfo>? = withContext(ioDispatcher) {
         val userHandle = androidUserManagerWrapper.getUserForSerialNumber(serialNumber)
 
-        if (hasShortcutHostPermission && userHandle != null && isUserAvailable(userHandle = userHandle)) {
+        if (hasShortcutHostPermission && userHandle != null && isUserAvailable(userHandle)) {
             val shortcutQuery = LauncherApps.ShortcutQuery().apply {
                 setPackage(packageName)
 
@@ -373,7 +373,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
     ): List<ShortcutConfigActivityInfo> = withContext(ioDispatcher) {
         val userHandle = androidUserManagerWrapper.getUserForSerialNumber(serialNumber)
 
-        if (userHandle != null && isUserAvailable(userHandle = userHandle)) {
+        if (userHandle != null && isUserAvailable(userHandle)) {
             try {
                 launcherApps.getShortcutConfigActivityList(packageName, userHandle)
                     .map { currentLauncherActivityInfo ->
@@ -405,7 +405,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         val userHandle = androidUserManagerWrapper.getUserForSerialNumber(serialNumber)
 
         try {
-            if (userHandle != null && isUserAvailable(userHandle = userHandle)) {
+            if (userHandle != null && isUserAvailable(userHandle)) {
                 launcherApps.startMainActivity(
                     ComponentName.unflattenFromString(componentName),
                     userHandle,
@@ -433,7 +433,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         val userHandle = androidUserManagerWrapper.getUserForSerialNumber(serialNumber)
 
         try {
-            if (userHandle != null && isUserAvailable(userHandle = userHandle)) {
+            if (userHandle != null && isUserAvailable(userHandle)) {
                 launcherApps.startShortcut(
                     packageName,
                     id,
@@ -457,7 +457,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         sourceBounds: Rect,
     ) {
         try {
-            if (isUserAvailable(userHandle = myUserHandle())) {
+            if (isUserAvailable(myUserHandle())) {
                 launcherApps.startShortcut(
                     packageName,
                     id,
@@ -483,7 +483,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             try {
                 launcherApps.getShortcutBadgedIconDrawable(shortcutInfo, density)
                     ?.let { drawable ->
-                        imageSerializer.createByteArray(drawable = drawable)
+                        imageSerializer.createByteArray(drawable)
                     }
             } catch (_: IllegalStateException) {
                 null
@@ -503,7 +503,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         val userHandle = androidUserManagerWrapper.getUserForSerialNumber(serialNumber) ?: return
 
         try {
-            if (isUserAvailable(userHandle = userHandle)) {
+            if (isUserAvailable(userHandle)) {
                 launcherApps.startAppDetailsActivity(
                     ComponentName.unflattenFromString(componentName),
                     userHandle,
@@ -530,7 +530,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         return withContext(ioDispatcher) {
             val userHandle = androidUserManagerWrapper.getUserForSerialNumber(serialNumber)
 
-            val launcherActivityInfo = if (userHandle != null && isUserAvailable(userHandle = userHandle)) {
+            val launcherActivityInfo = if (userHandle != null && isUserAvailable(userHandle)) {
                 try {
                     launcherApps.getShortcutConfigActivityList(packageName, userHandle)
                         .find { currentLauncherActivityInfo ->
@@ -566,7 +566,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             )
 
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-            val isQuietModeEnabled = androidUserManagerWrapper.isQuietModeEnabled(userHandle = userHandle)
+            val isQuietModeEnabled = androidUserManagerWrapper.isQuietModeEnabled(userHandle)
 
             val launcherUserInfo = try {
                 launcherApps.getLauncherUserInfo(userHandle)
@@ -577,7 +577,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             } ?: return EblanUser(
                 serialNumber = serialNumber,
                 eblanUserType = EblanUserType.Personal,
-                isPrivateSpaceEntryPointHidden = isPrivateSpaceEntryPointHidden(userHandle = userHandle),
+                isPrivateSpaceEntryPointHidden = isPrivateSpaceEntryPointHidden(userHandle),
                 isQuietModeEnabled = isQuietModeEnabled,
                 isPrivateSpaceLocked = false,
             )
@@ -592,9 +592,9 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             EblanUser(
                 serialNumber = serialNumber,
                 eblanUserType = eblanUserType,
-                isPrivateSpaceEntryPointHidden = isPrivateSpaceEntryPointHidden(userHandle = userHandle),
+                isPrivateSpaceEntryPointHidden = isPrivateSpaceEntryPointHidden(userHandle),
                 isPrivateSpaceLocked = eblanUserType == EblanUserType.Private &&
-                    !isUserAvailable(userHandle = userHandle),
+                    !isUserAvailable(userHandle),
                 isQuietModeEnabled = isQuietModeEnabled,
             )
         } else {
@@ -610,8 +610,8 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
             EblanUser(
                 serialNumber = serialNumber,
                 eblanUserType = eblanUserType,
-                isPrivateSpaceEntryPointHidden = isPrivateSpaceEntryPointHidden(userHandle = userHandle),
-                isQuietModeEnabled = androidUserManagerWrapper.isQuietModeEnabled(userHandle = userHandle),
+                isPrivateSpaceEntryPointHidden = isPrivateSpaceEntryPointHidden(userHandle),
+                isQuietModeEnabled = androidUserManagerWrapper.isQuietModeEnabled(userHandle),
                 isPrivateSpaceLocked = false,
             )
         }
@@ -624,7 +624,7 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
     ) {
         val userHandle = androidUserManagerWrapper.getUserForSerialNumber(serialNumber)
 
-        if (userHandle != null && isUserAvailable(userHandle = userHandle)) {
+        if (userHandle != null && isUserAvailable(userHandle)) {
             try {
                 launcherApps.pinShortcuts(
                     packageName,

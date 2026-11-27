@@ -180,7 +180,7 @@ internal fun InteractiveFolderGridItem(
 
     val icon = data.icon
 
-    LaunchedEffect(key1 = moveGridItemResult) {
+    LaunchedEffect(moveGridItemResult) {
         handleConflictingGridItem(
             // Grid Item State
             gridItemId = currentGridItemId,
@@ -207,7 +207,7 @@ internal fun InteractiveFolderGridItem(
                 backgroundColor = gridItemSettings.backgroundColor,
                 customBackgroundColor = gridItemSettings.customBackgroundColor,
             ),
-            shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
+            shape = RoundedCornerShape(gridItemSettings.cornerRadius.dp),
         )
         .whiteBox(
             textColor = textColor,
@@ -215,7 +215,7 @@ internal fun InteractiveFolderGridItem(
         )
         .run {
             if (!isVisibleOverlay) {
-                pointerInput(key1 = Unit) {
+                pointerInput(Unit) {
                     detectTapGestures(
                         onDoubleTap = if (gridItem.doubleTap.eblanActionType != EblanActionType.None) {
                             {
@@ -269,12 +269,10 @@ internal fun InteractiveFolderGridItem(
         )
 
     val iconModifier = Modifier
-        .onGloballyPositioned(
-            onGloballyPositioned = { currentLayoutCoordinates ->
-                intOffset = currentLayoutCoordinates.positionInRoot().round()
-                intSize = currentLayoutCoordinates.size
-            },
-        )
+        .onGloballyPositioned { currentLayoutCoordinates ->
+            intOffset = currentLayoutCoordinates.positionInRoot().round()
+            intSize = currentLayoutCoordinates.size
+        }
         .gridItemSharedElement(
             // Transition State
             sharedTransitionScope = sharedTransitionScope,
@@ -287,7 +285,7 @@ internal fun InteractiveFolderGridItem(
             graphicsLayer.record {
                 this@drawWithContent.drawContent()
             }
-            drawLayer(graphicsLayer = graphicsLayer)
+            drawLayer(graphicsLayer)
         }
 
     val iconContent: @Composable () -> Unit = {
@@ -295,7 +293,7 @@ internal fun InteractiveFolderGridItem(
             .size(gridItemSettings.iconSize.dp)
             .padding(gridItemSettings.iconPadding.dp)
             .then(iconModifier)
-            .alpha(alpha = iconAlpha)
+            .alpha(iconAlpha)
 
         if (icon != null) {
             AsyncImage(
@@ -365,7 +363,7 @@ internal fun InteractiveFolderGridItem(
         Text(
             modifier = Modifier
                 .padding(gridItemSettings.textPadding.dp)
-                .alpha(alpha = textAlpha),
+                .alpha(textAlpha),
             text = data.label,
             color = textColor,
             textAlign = TextAlign.Center,
@@ -380,7 +378,7 @@ internal fun InteractiveFolderGridItem(
             modifier = Modifier
                 .padding(gridItemSettings.textPadding.dp)
                 .then(iconModifier)
-                .alpha(alpha = textAlpha),
+                .alpha(textAlpha),
             text = data.label,
             color = textColor,
             textAlign = TextAlign.Center,

@@ -49,7 +49,7 @@ class GetIconPackComponentsUseCase @Inject constructor(
                 flowOf(emptyList())
             } else {
                 val iconPackComponents =
-                    iconPackManager.getIconPackComponents(packageName = packageName)
+                    iconPackManager.getIconPackComponents(packageName)
                         .distinctBy { iconPackComponent ->
                             iconPackComponent.drawableName
                         }

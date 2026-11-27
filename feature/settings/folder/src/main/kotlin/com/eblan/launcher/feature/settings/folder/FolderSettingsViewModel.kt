@@ -32,7 +32,7 @@ import javax.inject.Inject
 @HiltViewModel
 internal class FolderSettingsViewModel @Inject constructor(private val userDataRepository: UserDataRepository) : ViewModel() {
     val folderSettingsUiState = userDataRepository.userDataFlow.map { userData ->
-        FolderSettingsUiState.Success(folderSettings = userData.folderSettings)
+        FolderSettingsUiState.Success(userData.folderSettings)
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
@@ -41,7 +41,7 @@ internal class FolderSettingsViewModel @Inject constructor(private val userDataR
 
     fun updateFolderSettings(folderSettings: FolderSettings) {
         viewModelScope.launch {
-            userDataRepository.updateFolderSettings(folderSettings = folderSettings)
+            userDataRepository.updateFolderSettings(folderSettings)
         }
     }
 }

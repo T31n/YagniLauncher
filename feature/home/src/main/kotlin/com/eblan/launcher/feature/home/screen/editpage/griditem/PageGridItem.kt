@@ -72,13 +72,13 @@ internal fun PageGridItem(
     )
 
     val horizontalAlignment =
-        getHorizontalAlignment(horizontalAlignment = currentGridItemSettings.horizontalAlignment)
+        getHorizontalAlignment(currentGridItemSettings.horizontalAlignment)
     val verticalArrangement =
-        getVerticalArrangement(verticalArrangement = currentGridItemSettings.verticalArrangement)
+        getVerticalArrangement(currentGridItemSettings.verticalArrangement)
     val horizontalArrangement =
-        getHorizontalArrangement(horizontalArrangement = currentGridItemSettings.horizontalArrangement)
+        getHorizontalArrangement(currentGridItemSettings.horizontalArrangement)
     val verticalAlignment =
-        getVerticalAlignment(verticalAlignment = currentGridItemSettings.verticalAlignment)
+        getVerticalAlignment(currentGridItemSettings.verticalAlignment)
 
     val maxLines = if (currentGridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
 

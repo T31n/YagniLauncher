@@ -70,7 +70,7 @@ internal fun ApplicationInfoGridItem(
         data = data,
         iconPackFilePath = iconPackFilePaths[data.componentName],
     )
-    val label = getGridItemLabel(data = data).toString()
+    val label = getGridItemLabel(data).toString()
 
     val itemModifier = modifier
         .fillMaxSize()
@@ -80,7 +80,7 @@ internal fun ApplicationInfoGridItem(
                 backgroundColor = gridItemSettings.backgroundColor,
                 customBackgroundColor = gridItemSettings.customBackgroundColor,
             ),
-            shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
+            shape = RoundedCornerShape(gridItemSettings.cornerRadius.dp),
         )
 
     val commonModifier = Modifier

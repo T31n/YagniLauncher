@@ -94,12 +94,12 @@ internal class DefaultAppWidgetManagerWrapper @Inject constructor(
         density: Int,
     ): ByteArray? = withContext(ioDispatcher) {
         appWidgetProviderInfo.loadPreviewImage(context, density)?.let { drawable ->
-            imageSerializer.createByteArray(drawable = drawable)
+            imageSerializer.createByteArray(drawable)
         }
     }
 
     private suspend fun AppWidgetProviderInfo.toEblanAppWidgetProviderInfo(): AppWidgetManagerAppWidgetProviderInfo {
-        val serialNumber = androidUserManagerWrapper.getSerialNumberForUser(userHandle = profile)
+        val serialNumber = androidUserManagerWrapper.getSerialNumberForUser(profile)
 
         val preview = loadPreviewImage(context, 0)?.let { drawable ->
             val directory = fileManager.getFilesDirectory(FileManager.WIDGETS_DIR)
@@ -136,7 +136,7 @@ internal class DefaultAppWidgetManagerWrapper @Inject constructor(
                 maxResizeWidth = maxResizeWidth,
                 maxResizeHeight = maxResizeHeight,
                 preview = preview,
-                lastUpdateTime = getLastUpdateTime(packageName = provider.packageName),
+                lastUpdateTime = getLastUpdateTime(provider.packageName),
                 label = loadLabel(context.packageManager),
                 description = loadDescription(context)?.let(CharSequence::toString),
             )
@@ -156,7 +156,7 @@ internal class DefaultAppWidgetManagerWrapper @Inject constructor(
                 maxResizeWidth = 0,
                 maxResizeHeight = 0,
                 preview = preview,
-                lastUpdateTime = getLastUpdateTime(packageName = provider.packageName),
+                lastUpdateTime = getLastUpdateTime(provider.packageName),
                 label = loadLabel(context.packageManager),
                 description = null,
             )

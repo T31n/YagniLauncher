@@ -22,15 +22,15 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 
 class Migration3To4 : Migration(3, 4) {
     override fun migrate(db: SupportSQLiteDatabase) {
-        updateEblanApplicationInfoEntities(db = db)
+        updateEblanApplicationInfoEntities(db)
 
-        updateEblanAppWidgetProviderInfoEntities(db = db)
+        updateEblanAppWidgetProviderInfoEntities(db)
 
-        updateEblanShortcutConfigEntities(db = db)
+        updateEblanShortcutConfigEntities(db)
 
-        updateApplicationInfoGridItemEntities(db = db)
+        updateApplicationInfoGridItemEntities(db)
 
-        updateWidgetGridItemEntities(db = db)
+        updateWidgetGridItemEntities(db)
     }
 
     private fun updateEblanApplicationInfoEntities(db: SupportSQLiteDatabase) {

@@ -55,7 +55,7 @@ fun rememberLazyColumnDragDropState(
 ): LazyColumnDragDropState {
     val scope = rememberCoroutineScope()
 
-    val state = remember(key1 = lazyListState) {
+    val state = remember(lazyListState) {
         LazyColumnDragDropState(
             state = lazyListState,
             onMove = onMove,
@@ -63,7 +63,7 @@ fun rememberLazyColumnDragDropState(
         )
     }
 
-    LaunchedEffect(key1 = state) {
+    LaunchedEffect(state) {
         state.scrollChannel
             .receiveAsFlow()
             .onEach(lazyListState::scrollBy)
@@ -171,11 +171,11 @@ class LazyColumnDragDropState(
         get() = this.offset + this.size
 }
 
-fun Modifier.dragColumnContainer(lazyColumnDragDropState: LazyColumnDragDropState): Modifier = pointerInput(key1 = lazyColumnDragDropState) {
+fun Modifier.dragColumnContainer(lazyColumnDragDropState: LazyColumnDragDropState): Modifier = pointerInput(lazyColumnDragDropState) {
     detectDragGesturesAfterLongPress(
         onDrag = { change, offset ->
             change.consume()
-            lazyColumnDragDropState.onDrag(offset = offset)
+            lazyColumnDragDropState.onDrag(offset)
         },
         onDragStart = { currentOffset -> lazyColumnDragDropState.onDragStart(currentOffset) },
         onDragEnd = { lazyColumnDragDropState.onDragInterrupted() },

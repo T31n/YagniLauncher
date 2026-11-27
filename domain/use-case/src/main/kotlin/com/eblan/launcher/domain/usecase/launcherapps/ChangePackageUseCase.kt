@@ -104,9 +104,7 @@ class ChangePackageUseCase @Inject constructor(
             if (serialNumber == 0L &&
                 (
                     userData.generalSettings.iconPackPackageName == packageName ||
-                        eblanIconPackInfoRepository.getEblanIconPackByPackageName(
-                            packageName = packageName,
-                        ) != null
+                        eblanIconPackInfoRepository.getEblanIconPackByPackageName(packageName) != null
                     )
             ) {
                 updateIconPacksUseCase(iconPackPackageName = packageName)
@@ -178,13 +176,9 @@ class ChangePackageUseCase @Inject constructor(
                 currentSyncEblanApplicationInfo.toDeleteEblanApplicationInfo()
             }
 
-        eblanApplicationInfoRepository.upsertSyncEblanApplicationInfos(
-            syncEblanApplicationInfos = newSyncEblanApplicationInfosByPackageName,
-        )
+        eblanApplicationInfoRepository.upsertSyncEblanApplicationInfos(newSyncEblanApplicationInfosByPackageName)
 
-        eblanApplicationInfoRepository.deleteSyncEblanApplicationInfos(
-            deleteEblanApplicationInfos = oldDeleteEblanApplicationInfos,
-        )
+        eblanApplicationInfoRepository.deleteSyncEblanApplicationInfos(oldDeleteEblanApplicationInfos)
 
         updateApplicationInfoGridItems(
             eblanApplicationInfos = eblanApplicationInfoRepository.getEblanApplicationInfos(),
@@ -237,13 +231,9 @@ class ChangePackageUseCase @Inject constructor(
                     currentEblanAppWidgetProviderInfo.serialNumber to currentEblanAppWidgetProviderInfo.componentName
                 }
 
-        eblanAppWidgetProviderInfoRepository.deleteEblanAppWidgetProviderInfos(
-            eblanAppWidgetProviderInfos = deleteEblanAppWidgetProviderInfos,
-        )
+        eblanAppWidgetProviderInfoRepository.deleteEblanAppWidgetProviderInfos(deleteEblanAppWidgetProviderInfos)
 
-        eblanAppWidgetProviderInfoRepository.upsertEblanAppWidgetProviderInfos(
-            eblanAppWidgetProviderInfos = newEblanAppWidgetProviderInfosByPackageName,
-        )
+        eblanAppWidgetProviderInfoRepository.upsertEblanAppWidgetProviderInfos(newEblanAppWidgetProviderInfosByPackageName)
 
         updateWidgetGridItems(
             eblanAppWidgetProviderInfos = eblanAppWidgetProviderInfoRepository.getEblanAppWidgetProviderInfos(),
@@ -288,13 +278,9 @@ class ChangePackageUseCase @Inject constructor(
                     )
                 }
 
-        eblanShortcutInfoRepository.upsertEblanShortcutInfos(
-            eblanShortcutInfos = newEblanShortcutInfosByPackageName,
-        )
+        eblanShortcutInfoRepository.upsertEblanShortcutInfos(newEblanShortcutInfosByPackageName)
 
-        eblanShortcutInfoRepository.deleteEblanShortcutInfos(
-            eblanShortcutInfos = deleteEblanShortcutInfos,
-        )
+        eblanShortcutInfoRepository.deleteEblanShortcutInfos(deleteEblanShortcutInfos)
 
         updateShortcutInfoGridItems(
             eblanShortcutInfos = eblanShortcutInfoRepository.getEblanShortcutInfos(),
@@ -323,13 +309,9 @@ class ChangePackageUseCase @Inject constructor(
                 currentEblanShortcutConfig.serialNumber to currentEblanShortcutConfig.componentName
             }
 
-        eblanShortcutConfigRepository.upsertEblanShortcutConfigs(
-            eblanShortcutConfigs = newEblanShortcutConfigs,
-        )
+        eblanShortcutConfigRepository.upsertEblanShortcutConfigs(newEblanShortcutConfigs)
 
-        eblanShortcutConfigRepository.deleteEblanShortcutConfigs(
-            eblanShortcutConfigs = deleteEblanShortcutConfigs,
-        )
+        eblanShortcutConfigRepository.deleteEblanShortcutConfigs(deleteEblanShortcutConfigs)
 
         updateShortcutConfigGridItems(
             eblanShortcutConfigs = eblanShortcutConfigRepository.getEblanShortcutConfigs(),

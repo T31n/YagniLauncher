@@ -315,7 +315,7 @@ private fun ColorPreviewHexRow(
                 ),
         ) {
             if (showAlphaSlider) {
-                drawCheckerboard(squareSize = size.height / 4f)
+                drawCheckerboard(size.height / 4f)
             }
 
             drawRect(color = Color(selectedColor))
@@ -413,7 +413,7 @@ private fun SaturationValueCanvas(
     ) {
         Canvas(
             modifier = Modifier
-                .pointerInput(key1 = Unit) {
+                .pointerInput(Unit) {
                     awaitEachGesture {
                         val down = awaitFirstDown(requireUnconsumed = false)
                         down.consume()
@@ -480,7 +480,7 @@ private fun HueCanvas(
 
     Canvas(
         modifier = modifier
-            .pointerInput(key1 = Unit) {
+            .pointerInput(Unit) {
                 awaitEachGesture {
                     val down = awaitFirstDown(requireUnconsumed = false)
                     down.consume()
@@ -517,7 +517,7 @@ private fun AlphaCanvas(
 
     Canvas(
         modifier = modifier
-            .pointerInput(key1 = Unit) {
+            .pointerInput(Unit) {
                 awaitEachGesture {
                     val down = awaitFirstDown(requireUnconsumed = false)
                     down.consume()
@@ -532,7 +532,7 @@ private fun AlphaCanvas(
             .fillMaxWidth()
             .clip(MaterialTheme.shapes.small),
     ) {
-        drawCheckerboard(squareSize = size.height / 2f)
+        drawCheckerboard(size.height / 2f)
 
         drawRect(
             brush = Brush.horizontalGradient(

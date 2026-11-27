@@ -41,11 +41,11 @@ internal class DefaultShortcutConfigGridItemRepository @Inject constructor(priva
             currentShortcutConfigGridItem.asEntity()
         }
 
-        shortcutConfigGridItemDao.deleteShortcutConfigGridItemEntities(entities = entities)
+        shortcutConfigGridItemDao.deleteShortcutConfigGridItemEntities(entities)
     }
 
     override suspend fun deleteShortcutConfigGridItem(shortcutConfigGridItem: ShortcutConfigGridItem) {
-        shortcutConfigGridItemDao.deleteShortcutConfigGridItemEntity(entity = shortcutConfigGridItem.asEntity())
+        shortcutConfigGridItemDao.deleteShortcutConfigGridItemEntity(shortcutConfigGridItem.asEntity())
     }
 
     override suspend fun getShortcutConfigGridItemsByPackageName(
@@ -72,16 +72,16 @@ internal class DefaultShortcutConfigGridItemRepository @Inject constructor(priva
         partialShortcutConfigGridItems: List<PartialShortcutConfigGridItem>,
     ) {
         shortcutConfigGridItemDao.updatePartialShortcutConfigGridItems(
-            partialShortcutConfigGridItems = partialShortcutConfigGridItems,
+            partialShortcutConfigGridItems,
         )
     }
 
     override suspend fun insertShortcutConfigGridItem(shortcutConfigGridItem: ShortcutConfigGridItem) {
-        shortcutConfigGridItemDao.insertShortcutConfigGridItemEntity(entity = shortcutConfigGridItem.asEntity())
+        shortcutConfigGridItemDao.insertShortcutConfigGridItemEntity(shortcutConfigGridItem.asEntity())
     }
 
     override suspend fun upsertShortcutConfigGridItem(shortcutConfigGridItem: ShortcutConfigGridItem) {
-        shortcutConfigGridItemDao.upsertShortcutConfigGridItemEntity(entity = shortcutConfigGridItem.asEntity())
+        shortcutConfigGridItemDao.upsertShortcutConfigGridItemEntity(shortcutConfigGridItem.asEntity())
     }
 
     override suspend fun upsertShortcutConfigGridItems(shortcutConfigGridItems: List<ShortcutConfigGridItem>) {
@@ -89,10 +89,10 @@ internal class DefaultShortcutConfigGridItemRepository @Inject constructor(priva
             currentShortcutConfigGridItem.asEntity()
         }
 
-        shortcutConfigGridItemDao.upsertShortcutConfigGridItemEntities(entities = entities)
+        shortcutConfigGridItemDao.upsertShortcutConfigGridItemEntities(entities)
     }
 
     override suspend fun deleteShortcutConfigGridItemById(id: String) {
-        shortcutConfigGridItemDao.deleteShortcutConfigGridItemEntityById(id = id)
+        shortcutConfigGridItemDao.deleteShortcutConfigGridItemEntityById(id)
     }
 }

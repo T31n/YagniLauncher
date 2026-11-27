@@ -81,16 +81,16 @@ fun SettingsNavHost(
             onFolder = navController::navigateToFolderSettings,
         )
 
-        homeSettingsScreen(onNavigateUp = navController::navigateUp)
+        homeSettingsScreen(navController::navigateUp)
 
-        folderSettingsScreen(onNavigateUp = navController::navigateUp)
+        folderSettingsScreen(navController::navigateUp)
 
-        appDrawerSettingsScreen(onNavigateUp = navController::navigateUp)
+        appDrawerSettingsScreen(navController::navigateUp)
 
-        gesturesSettingsScreen(onNavigateUp = navController::navigateUp)
+        gesturesSettingsScreen(navController::navigateUp)
 
-        generalSettingsScreen(onNavigateUp = navController::navigateUp)
+        generalSettingsScreen(navController::navigateUp)
 
-        experimentalSettingsScreen(onNavigateUp = navController::navigateUp)
+        experimentalSettingsScreen(navController::navigateUp)
     }
 }

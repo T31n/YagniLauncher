@@ -32,7 +32,7 @@ import javax.inject.Inject
 @HiltViewModel
 internal class HomeSettingsViewModel @Inject constructor(private val userDataRepository: UserDataRepository) : ViewModel() {
     val homeSettingsUiState = userDataRepository.userDataFlow.map { userData ->
-        HomeSettingsUiState.Success(homeSettings = userData.homeSettings)
+        HomeSettingsUiState.Success(userData.homeSettings)
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
@@ -41,7 +41,7 @@ internal class HomeSettingsViewModel @Inject constructor(private val userDataRep
 
     fun updateHomeSettings(homeSettings: HomeSettings) {
         viewModelScope.launch {
-            userDataRepository.updateHomeSettings(homeSettings = homeSettings)
+            userDataRepository.updateHomeSettings(homeSettings)
         }
     }
 }

@@ -95,13 +95,9 @@ internal suspend fun updateApplicationInfoGridItems(
         }
     }
 
-    applicationInfoGridItemRepository.updatePartialApplicationInfoGridItems(
-        partialApplicationInfoGridItems = partialApplicationInfoGridItems,
-    )
+    applicationInfoGridItemRepository.updatePartialApplicationInfoGridItems(partialApplicationInfoGridItems)
 
-    applicationInfoGridItemRepository.deleteApplicationInfoGridItems(
-        applicationInfoGridItems = deleteApplicationInfoGridItems,
-    )
+    applicationInfoGridItemRepository.deleteApplicationInfoGridItems(deleteApplicationInfoGridItems)
 }
 
 /**
@@ -157,11 +153,9 @@ internal suspend fun updateShortcutInfoGridItems(
             }
         }
 
-        shortcutInfoGridItemRepository.updatePartialShortcutInfoGridItems(
-            partialShortcutInfoGridItems = partialShortcutInfoGridItems,
-        )
+        shortcutInfoGridItemRepository.updatePartialShortcutInfoGridItems(partialShortcutInfoGridItems)
 
-        shortcutInfoGridItemRepository.deleteShortcutInfoGridItems(shortcutInfoGridItems = deleteShortcutInfoGridItems)
+        shortcutInfoGridItemRepository.deleteShortcutInfoGridItems(deleteShortcutInfoGridItems)
     }
 }
 
@@ -216,13 +210,9 @@ internal suspend fun updateShortcutConfigGridItems(
         }
     }
 
-    shortcutConfigGridItemRepository.updatePartialShortcutConfigGridItems(
-        partialShortcutConfigGridItems = partialShortcutConfigGridItems,
-    )
+    shortcutConfigGridItemRepository.updatePartialShortcutConfigGridItems(partialShortcutConfigGridItems)
 
-    shortcutConfigGridItemRepository.deleteShortcutConfigGridItems(
-        shortcutConfigGridItems = deleteShortcutConfigGridItems,
-    )
+    shortcutConfigGridItemRepository.deleteShortcutConfigGridItems(deleteShortcutConfigGridItems)
 }
 
 /** Updates widget grid-item metadata or deletes stale items when widgets are supported. */
@@ -254,7 +244,7 @@ internal suspend fun updateWidgetGridItems(
             widgetGridItem.preview != eblanAppWidgetProviderInfo.preview
         ) {
             widgetGridItemRepository.updateWidgetGridItem(
-                widgetGridItem = widgetGridItem.copy(
+                widgetGridItem.copy(
                     preview = eblanAppWidgetProviderInfo.preview,
                 ),
             )
@@ -306,9 +296,9 @@ internal suspend fun updateWidgetGridItems(
         }
     }
 
-    widgetGridItemRepository.updatePartialWidgetGridItems(partialUpdateWidgetGridItems = partialUpdateWidgetGridItems)
+    widgetGridItemRepository.updatePartialWidgetGridItems(partialUpdateWidgetGridItems)
 
-    widgetGridItemRepository.deleteWidgetGridItemsByPackageName(widgetGridItems = deleteWidgetGridItems)
+    widgetGridItemRepository.deleteWidgetGridItemsByPackageName(deleteWidgetGridItems)
 }
 
 /** Converts framework widget-provider metadata to the persisted domain model. */
@@ -621,9 +611,9 @@ private suspend fun resolveApplicationIcon(
         if (iconFile.exists()) {
             iconFile.absolutePath
         } else {
-            getApplicationIcon(componentName = packageName)
+            getApplicationIcon(packageName)
         }
     } else {
-        getApplicationIcon(componentName = packageName)
+        getApplicationIcon(packageName)
     }
 }

@@ -123,7 +123,7 @@ internal fun InteractiveShortcutConfigGridItem(
     val currentOnLongPressGridItem by rememberUpdatedState(onLongPressGridItem)
 
     val iconPath = getGridItemIconPath(data = data)
-    val label = getGridItemLabel(data = data).toString()
+    val label = getGridItemLabel(data).toString()
 
     val itemModifier = modifier
         .fillMaxSize()
@@ -133,7 +133,7 @@ internal fun InteractiveShortcutConfigGridItem(
                 backgroundColor = gridItemSettings.backgroundColor,
                 customBackgroundColor = gridItemSettings.customBackgroundColor,
             ),
-            shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
+            shape = RoundedCornerShape(gridItemSettings.cornerRadius.dp),
         )
         .whiteBox(
             textColor = textColor,
@@ -141,7 +141,7 @@ internal fun InteractiveShortcutConfigGridItem(
         )
         .run {
             if (!isVisibleOverlay) {
-                pointerInput(key1 = Unit) {
+                pointerInput(Unit) {
                     detectTapGestures(
                         onDoubleTap = if (gridItem.doubleTap.eblanActionType != EblanActionType.None) {
                             {
@@ -188,12 +188,10 @@ internal fun InteractiveShortcutConfigGridItem(
         )
 
     val iconModifier = Modifier
-        .onGloballyPositioned(
-            onGloballyPositioned = { currentLayoutCoordinates ->
-                intOffset = currentLayoutCoordinates.positionInRoot().round()
-                intSize = currentLayoutCoordinates.size
-            },
-        )
+        .onGloballyPositioned { currentLayoutCoordinates ->
+            intOffset = currentLayoutCoordinates.positionInRoot().round()
+            intSize = currentLayoutCoordinates.size
+        }
         .gridItemSharedElement(
             // Transition State
             sharedTransitionScope = sharedTransitionScope,
@@ -206,12 +204,12 @@ internal fun InteractiveShortcutConfigGridItem(
             graphicsLayer.record {
                 this@drawWithContent.drawContent()
             }
-            drawLayer(graphicsLayer = graphicsLayer)
+            drawLayer(graphicsLayer)
         }
 
     val iconContent: @Composable () -> Unit = {
         AsyncImage(
-            model = Builder(context = context)
+            model = Builder(context)
                 .data(iconPath)
                 .addLastModifiedToFileCacheKey(true)
                 .size(Size.ORIGINAL)
@@ -221,7 +219,7 @@ internal fun InteractiveShortcutConfigGridItem(
                 .size(gridItemSettings.iconSize.dp)
                 .padding(gridItemSettings.iconPadding.dp)
                 .then(iconModifier)
-                .alpha(alpha = alpha),
+                .alpha(alpha),
         )
     }
 
@@ -229,7 +227,7 @@ internal fun InteractiveShortcutConfigGridItem(
         Text(
             modifier = Modifier
                 .padding(gridItemSettings.textPadding.dp)
-                .alpha(alpha = alpha),
+                .alpha(alpha),
             text = label,
             color = textColor,
             textAlign = TextAlign.Center,
@@ -244,7 +242,7 @@ internal fun InteractiveShortcutConfigGridItem(
             modifier = Modifier
                 .padding(gridItemSettings.textPadding.dp)
                 .then(iconModifier)
-                .alpha(alpha = alpha),
+                .alpha(alpha),
             text = label,
             color = textColor,
             textAlign = TextAlign.Center,

@@ -79,19 +79,19 @@ class CleanupFolderEblanApplicationInfosUseCase @Inject constructor(
 
             if (eblanApplicationInfosToUpdateByKey.isNotEmpty()) {
                 eblanApplicationInfoRepository.updateEblanApplicationInfos(
-                    eblanApplicationInfos = eblanApplicationInfosToUpdateByKey.values.toList(),
+                    eblanApplicationInfosToUpdateByKey.values.toList(),
                 )
             }
 
             if (folderEblanApplicationInfosToUpdateById.isNotEmpty()) {
                 folderEblanApplicationInfoRepository.updateFolderEblanApplicationInfos(
-                    folderEblanApplicationInfos = folderEblanApplicationInfosToUpdateById.values.toList(),
+                    folderEblanApplicationInfosToUpdateById.values.toList(),
                 )
             }
 
             folderEblanApplicationInfoIdsToDelete.forEach { folderEblanApplicationInfoId ->
                 folderEblanApplicationInfoRepository.deleteFolderEblanApplicationInfoById(
-                    id = folderEblanApplicationInfoId,
+                    folderEblanApplicationInfoId,
                 )
             }
         }

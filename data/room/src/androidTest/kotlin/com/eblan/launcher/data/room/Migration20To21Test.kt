@@ -43,7 +43,7 @@ class Migration20To21Test {
     @Throws(IOException::class)
     fun migrate20To21_applicationInfoGridItemEntity() {
         helper.createDatabase(testDatabase, 20).use { db ->
-            insertFolderParent(db = db)
+            insertFolderParent(db)
 
             db.execSQL(
                 """
@@ -138,7 +138,7 @@ class Migration20To21Test {
     @Throws(IOException::class)
     fun migrate20To21_folderGridItemEntity() {
         helper.createDatabase(testDatabase, 20).use { db ->
-            insertFolderParent(db = db)
+            insertFolderParent(db)
 
             db.execSQL(
                 """
@@ -324,7 +324,7 @@ class Migration20To21Test {
     @Throws(IOException::class)
     fun migrate20To21_shortcutInfoGridItemEntity() {
         helper.createDatabase(testDatabase, 20).use { db ->
-            insertFolderParent(db = db)
+            insertFolderParent(db)
 
             db.execSQL(
                 """

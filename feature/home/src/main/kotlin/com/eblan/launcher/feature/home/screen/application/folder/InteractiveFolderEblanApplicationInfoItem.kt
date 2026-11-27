@@ -197,9 +197,9 @@ internal fun InteractiveFolderEblanApplicationInfoItem(
     val hasInteraction = isSelected && isVisibleOverlay
 
     val horizontalAlignment =
-        getHorizontalAlignment(horizontalAlignment = gridItemSettings.horizontalAlignment)
+        getHorizontalAlignment(gridItemSettings.horizontalAlignment)
     val verticalArrangement =
-        getVerticalArrangement(verticalArrangement = gridItemSettings.verticalArrangement)
+        getVerticalArrangement(gridItemSettings.verticalArrangement)
 
     val maxLines = if (gridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
 
@@ -370,13 +370,11 @@ private fun InteractiveEblanApplicationInfoItem(
                     backgroundColor = gridItemSettings.backgroundColor,
                     customBackgroundColor = gridItemSettings.customBackgroundColor,
                 ),
-                shape = RoundedCornerShape(
-                    size = gridItemSettings.cornerRadius.dp,
-                ),
+                shape = RoundedCornerShape(gridItemSettings.cornerRadius.dp),
             )
             .run {
                 if (!isVisibleOverlay && !isInProgress) {
-                    pointerInput(key1 = Unit) {
+                    pointerInput(Unit) {
                         detectTapGestures(
                             onTap = {
                                 launcherApps.startMainActivity(
@@ -529,13 +527,11 @@ private fun InteractiveNestedFolderEblanApplicationInfoItem(
                     backgroundColor = gridItemSettings.backgroundColor,
                     customBackgroundColor = gridItemSettings.customBackgroundColor,
                 ),
-                shape = RoundedCornerShape(
-                    size = gridItemSettings.cornerRadius.dp,
-                ),
+                shape = RoundedCornerShape(gridItemSettings.cornerRadius.dp),
             )
             .run {
                 if (!isVisibleOverlay && !isInProgress) {
-                    pointerInput(key1 = Unit) {
+                    pointerInput(Unit) {
                         detectTapGestures(
                             onTap = {
                                 onTapFolderEblanApplicationInfoItem(

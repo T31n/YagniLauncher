@@ -97,7 +97,7 @@ internal class EditGridItemViewModel @Inject constructor(
 
     fun updateGridItem(gridItem: GridItem) {
         viewModelScope.launch {
-            gridRepository.updateGridItem(gridItem = gridItem)
+            gridRepository.updateGridItem(gridItem)
 
             getGridItem()
         }
@@ -105,7 +105,7 @@ internal class EditGridItemViewModel @Inject constructor(
 
     fun resetGridItemCustomIcon(gridItem: GridItem) {
         viewModelScope.launch {
-            deleteGridItemCustomIconUseCase(gridItem = gridItem)
+            deleteGridItemCustomIconUseCase(gridItem)
 
             getGridItem()
         }
@@ -172,7 +172,7 @@ internal class EditGridItemViewModel @Inject constructor(
     private fun getGridItem() {
         viewModelScope.launch {
             _gridItem.emit(
-                getGridItemByIdUseCase(id = editGridItemRouteData.id),
+                getGridItemByIdUseCase(editGridItemRouteData.id),
             )
         }
     }

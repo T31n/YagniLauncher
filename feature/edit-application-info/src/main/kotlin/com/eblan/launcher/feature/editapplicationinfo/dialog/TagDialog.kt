@@ -53,7 +53,7 @@ internal fun AddTagDialog(
     onDismissRequest: () -> Unit,
     onAddEblanApplicationInfoTag: (EblanApplicationInfoTag) -> Unit,
 ) {
-    val maxIndex = remember(key1 = eblanApplicationInfoTagsUi) {
+    val maxIndex = remember(eblanApplicationInfoTagsUi) {
         eblanApplicationInfoTagsUi.maxOfOrNull { currentEblanApplicationInfoTagUi ->
             currentEblanApplicationInfoTagUi.index
         } ?: 0

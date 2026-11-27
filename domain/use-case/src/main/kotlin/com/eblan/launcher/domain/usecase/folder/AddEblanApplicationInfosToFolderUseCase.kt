@@ -68,7 +68,7 @@ class AddEblanApplicationInfosToFolderUseCase @Inject constructor(
             val startIndex = maxOf(maxApplicationIndex, maxFolderIndex)
 
             eblanApplicationInfoRepository.updateEblanApplicationInfos(
-                eblanApplicationInfos = eblanApplicationInfos.mapIndexed { index, currentEblanApplicationInfo ->
+                eblanApplicationInfos.mapIndexed { index, currentEblanApplicationInfo ->
                     currentEblanApplicationInfo.copy(
                         folderIndex = startIndex + index,
                         folderId = folderId,

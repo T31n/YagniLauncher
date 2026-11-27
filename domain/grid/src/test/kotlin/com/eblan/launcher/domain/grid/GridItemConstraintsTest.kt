@@ -1189,7 +1189,7 @@ class GridItemConstraintsTest {
         fun `returns zero when indicator type is none`() {
             assertEquals(
                 0,
-                getPageIndicatorHeight(pageIndicatorType = PageIndicatorType.None),
+                getPageIndicatorHeight(PageIndicatorType.None),
             )
         }
 
@@ -1200,7 +1200,7 @@ class GridItemConstraintsTest {
                 .forEach { pageIndicatorType ->
                     assertEquals(
                         30,
-                        getPageIndicatorHeight(pageIndicatorType = pageIndicatorType),
+                        getPageIndicatorHeight(pageIndicatorType),
                     )
                 }
         }

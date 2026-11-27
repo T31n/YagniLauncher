@@ -209,9 +209,9 @@ internal fun InteractiveFolderGridItem(
     )
 
     val horizontalAlignment =
-        getHorizontalAlignment(horizontalAlignment = currentGridItemSettings.horizontalAlignment)
+        getHorizontalAlignment(currentGridItemSettings.horizontalAlignment)
     val verticalArrangement =
-        getVerticalArrangement(verticalArrangement = currentGridItemSettings.verticalArrangement)
+        getVerticalArrangement(currentGridItemSettings.verticalArrangement)
 
     val maxLines = if (currentGridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
 
@@ -456,11 +456,11 @@ private fun InteractiveApplicationInfoGridItem(
                     backgroundColor = gridItemSettings.backgroundColor,
                     customBackgroundColor = gridItemSettings.customBackgroundColor,
                 ),
-                shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
+                shape = RoundedCornerShape(gridItemSettings.cornerRadius.dp),
             )
             .run {
                 if (!isVisibleOverlay && !isInProgress) {
-                    pointerInput(key1 = Unit) {
+                    pointerInput(Unit) {
                         detectTapGestures(
                             onDoubleTap = if (gridItem.doubleTap.eblanActionType != EblanActionType.None) {
                                 {
@@ -654,11 +654,11 @@ private fun InteractiveShortcutInfoGridItem(
                     backgroundColor = gridItemSettings.backgroundColor,
                     customBackgroundColor = gridItemSettings.customBackgroundColor,
                 ),
-                shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
+                shape = RoundedCornerShape(gridItemSettings.cornerRadius.dp),
             )
             .run {
                 if (!isVisibleOverlay && !isInProgress) {
-                    pointerInput(key1 = Unit) {
+                    pointerInput(Unit) {
                         detectTapGestures(
                             onDoubleTap = if (gridItem.doubleTap.eblanActionType != EblanActionType.None) {
                                 {
@@ -863,11 +863,11 @@ private fun InteractiveShortcutConfigGridItem(
                     backgroundColor = gridItemSettings.backgroundColor,
                     customBackgroundColor = gridItemSettings.customBackgroundColor,
                 ),
-                shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
+                shape = RoundedCornerShape(gridItemSettings.cornerRadius.dp),
             )
             .run {
                 if (!isVisibleOverlay && !isInProgress) {
-                    pointerInput(key1 = Unit) {
+                    pointerInput(Unit) {
                         detectTapGestures(
                             onDoubleTap = if (gridItem.doubleTap.eblanActionType != EblanActionType.None) {
                                 {
@@ -1038,11 +1038,11 @@ private fun InteractiveNestedFolderGridItem(
                     backgroundColor = gridItemSettings.backgroundColor,
                     customBackgroundColor = gridItemSettings.customBackgroundColor,
                 ),
-                shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
+                shape = RoundedCornerShape(gridItemSettings.cornerRadius.dp),
             )
             .run {
                 if (!isVisibleOverlay && !isInProgress) {
-                    pointerInput(key1 = Unit) {
+                    pointerInput(Unit) {
                         detectTapGestures(
                             onDoubleTap = if (gridItem.doubleTap.eblanActionType != EblanActionType.None) {
                                 {

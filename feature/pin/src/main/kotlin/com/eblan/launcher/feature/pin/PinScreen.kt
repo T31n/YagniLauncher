@@ -182,7 +182,7 @@ private fun PinShortcutScreen(
         )
     }
 
-    LaunchedEffect(key1 = gridItem) {
+    LaunchedEffect(gridItem) {
         handleGridItem(
             // Context and Item
             context = context,
@@ -194,7 +194,7 @@ private fun PinShortcutScreen(
         )
     }
 
-    LaunchedEffect(key1 = isFinished) {
+    LaunchedEffect(isFinished) {
         if (isFinished) {
             onFinish()
         }
@@ -226,9 +226,7 @@ private fun PinShortcutScreen(
                 },
                 onFinish = onFinish,
                 onLongPress = {
-                    pinItemRequestWrapper.updatePinItemRequest(
-                        pinItemRequest = pinItemRequest,
-                    )
+                    pinItemRequestWrapper.updatePinItemRequest(pinItemRequest)
 
                     onDragStart()
 
@@ -315,7 +313,7 @@ private fun PinWidgetScreen(
         )
     }
 
-    LaunchedEffect(key1 = gridItem) {
+    LaunchedEffect(gridItem) {
         handleGridItem(
             // Item
             gridItem = gridItem,
@@ -339,7 +337,7 @@ private fun PinWidgetScreen(
         )
     }
 
-    LaunchedEffect(key1 = deleteAppWidgetId) {
+    LaunchedEffect(deleteAppWidgetId) {
         handleDeleteAppWidgetId(
             // App Widget
             appWidgetId = appWidgetId,
@@ -351,7 +349,7 @@ private fun PinWidgetScreen(
         )
     }
 
-    LaunchedEffect(key1 = isBoundWidget) {
+    LaunchedEffect(isBoundWidget) {
         handleIsBoundWidget(
             // Widget Info
             appWidgetId = appWidgetId,
@@ -365,7 +363,7 @@ private fun PinWidgetScreen(
         )
     }
 
-    LaunchedEffect(key1 = isFinished) {
+    LaunchedEffect(isFinished) {
         if (isFinished) {
             onFinish()
         }
@@ -398,9 +396,7 @@ private fun PinWidgetScreen(
             },
             onFinish = onFinish,
             onLongPress = {
-                pinItemRequestWrapper.updatePinItemRequest(
-                    pinItemRequest = pinItemRequest,
-                )
+                pinItemRequestWrapper.updatePinItemRequest(pinItemRequest)
 
                 onDragStart()
 
@@ -566,7 +562,7 @@ private suspend fun addPinShortcutToHomeScreen(
     ) -> Unit,
 ) {
     val serialNumber =
-        androidUserManagerWrapper.getSerialNumberForUser(userHandle = shortcutInfo.userHandle)
+        androidUserManagerWrapper.getSerialNumberForUser(shortcutInfo.userHandle)
 
     val icon = androidLauncherAppsWrapper.getShortcutBadgedIconByteArray(
         shortcutInfo = shortcutInfo,
@@ -616,7 +612,7 @@ private suspend fun addPinWidgetToHomeScreen(
     ) -> Unit,
 ) {
     val serialNumber =
-        userManager.getSerialNumberForUser(userHandle = appWidgetProviderInfo.profile)
+        userManager.getSerialNumberForUser(appWidgetProviderInfo.profile)
 
     val componentName = appWidgetProviderInfo.provider.flattenToString()
 

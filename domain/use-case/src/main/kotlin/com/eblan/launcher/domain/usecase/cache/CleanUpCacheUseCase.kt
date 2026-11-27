@@ -68,7 +68,7 @@ class CleanUpCacheUseCase @Inject constructor(
             .filter { currentDirectory -> currentDirectory.list().isNullOrEmpty() }
             .forEach { currentDirectory -> currentDirectory.delete() }
 
-        fileManager.getFilesDirectory(name = FileManager.ICON_PACKS_DIR)
+        fileManager.getFilesDirectory(FileManager.ICON_PACKS_DIR)
             .listFiles()
             ?.filter(File::isDirectory)
             ?.filter { currentFile -> currentFile.list().isNullOrEmpty() }

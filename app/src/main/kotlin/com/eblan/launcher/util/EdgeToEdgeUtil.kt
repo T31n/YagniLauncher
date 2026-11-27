@@ -45,8 +45,8 @@ fun ComponentActivity.handleEdgeToEdge(
 
         Theme.Dark ->
             enableEdgeToEdge(
-                statusBarStyle = SystemBarStyle.dark(scrim = Color.TRANSPARENT),
-                navigationBarStyle = SystemBarStyle.dark(scrim = Color.TRANSPARENT),
+                statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
+                navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
             )
 
         Theme.Wallpaper -> handleEdgeToEdge(

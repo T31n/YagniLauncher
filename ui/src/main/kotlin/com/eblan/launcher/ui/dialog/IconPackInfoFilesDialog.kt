@@ -98,7 +98,7 @@ fun IconPackInfoFilesDialog(
 
     val textFieldState = rememberTextFieldState()
 
-    LaunchedEffect(key1 = textFieldState) {
+    LaunchedEffect(textFieldState) {
         snapshotFlow { textFieldState.text }.debounce(500L.milliseconds).onEach { text ->
             onSearchIconPackInfoComponent(text.toString())
         }.collect()

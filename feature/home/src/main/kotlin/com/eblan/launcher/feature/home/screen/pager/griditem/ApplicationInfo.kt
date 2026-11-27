@@ -132,7 +132,7 @@ internal fun InteractiveApplicationInfoGridItem(
         data = data,
         iconPackFilePath = iconPackFilePath,
     )
-    val label = getGridItemLabel(data = data).toString()
+    val label = getGridItemLabel(data).toString()
 
     val isNotificationAccessGranted by produceIsNotificationAccessGrantedState()
 
@@ -144,7 +144,7 @@ internal fun InteractiveApplicationInfoGridItem(
                 backgroundColor = gridItemSettings.backgroundColor,
                 customBackgroundColor = gridItemSettings.customBackgroundColor,
             ),
-            shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
+            shape = RoundedCornerShape(gridItemSettings.cornerRadius.dp),
         )
         .whiteBox(
             textColor = textColor,
@@ -152,7 +152,7 @@ internal fun InteractiveApplicationInfoGridItem(
         )
         .run {
             if (!isVisibleOverlay) {
-                pointerInput(key1 = Unit) {
+                pointerInput(Unit) {
                     detectTapGestures(
                         onDoubleTap = if (gridItem.doubleTap.eblanActionType != EblanActionType.None) {
                             {
@@ -201,12 +201,10 @@ internal fun InteractiveApplicationInfoGridItem(
         )
 
     val iconModifier = Modifier
-        .onGloballyPositioned(
-            onGloballyPositioned = { currentLayoutCoordinates ->
-                intOffset = currentLayoutCoordinates.positionInRoot().round()
-                intSize = currentLayoutCoordinates.size
-            },
-        )
+        .onGloballyPositioned { currentLayoutCoordinates ->
+            intOffset = currentLayoutCoordinates.positionInRoot().round()
+            intSize = currentLayoutCoordinates.size
+        }
         .gridItemSharedElement(
             // Transition State
             sharedTransitionScope = sharedTransitionScope,
@@ -220,7 +218,7 @@ internal fun InteractiveApplicationInfoGridItem(
                 this@drawWithContent.drawContent()
             }
 
-            drawLayer(graphicsLayer = graphicsLayer)
+            drawLayer(graphicsLayer)
         }
 
     val iconContent: @Composable () -> Unit = {
@@ -228,10 +226,10 @@ internal fun InteractiveApplicationInfoGridItem(
             modifier = Modifier
                 .size(gridItemSettings.iconSize.dp)
                 .padding(gridItemSettings.iconPadding.dp)
-                .alpha(alpha = alpha),
+                .alpha(alpha),
         ) {
             AsyncImage(
-                model = Builder(context = context)
+                model = Builder(context)
                     .data(iconPath)
                     .addLastModifiedToFileCacheKey(true)
                     .size(Size.ORIGINAL)
@@ -260,7 +258,7 @@ internal fun InteractiveApplicationInfoGridItem(
         Text(
             modifier = Modifier
                 .padding(gridItemSettings.textPadding.dp)
-                .alpha(alpha = alpha),
+                .alpha(alpha),
             text = label,
             color = textColor,
             textAlign = TextAlign.Center,
@@ -275,7 +273,7 @@ internal fun InteractiveApplicationInfoGridItem(
             modifier = Modifier
                 .padding(gridItemSettings.textPadding.dp)
                 .then(iconModifier)
-                .alpha(alpha = alpha),
+                .alpha(alpha),
             text = label,
             color = textColor,
             textAlign = TextAlign.Center,

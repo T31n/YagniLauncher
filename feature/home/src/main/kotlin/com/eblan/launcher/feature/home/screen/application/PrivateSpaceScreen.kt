@@ -171,7 +171,7 @@ internal fun PrivateSpaceStickyHeader(
     val launcherApps = LocalLauncherApps.current
 
     val userHandle =
-        userManager.getUserForSerialNumber(serialNumber = serialNumber)
+        userManager.getUserForSerialNumber(serialNumber)
 
     val privateSpaceLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartIntentSenderForResult(),
@@ -297,13 +297,13 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
     val icon = iconPackFilePath ?: eblanApplicationInfo.icon
 
     val horizontalAlignment =
-        getHorizontalAlignment(horizontalAlignment = gridItemSettings.horizontalAlignment)
+        getHorizontalAlignment(gridItemSettings.horizontalAlignment)
     val verticalArrangement =
-        getVerticalArrangement(verticalArrangement = gridItemSettings.verticalArrangement)
+        getVerticalArrangement(gridItemSettings.verticalArrangement)
     val horizontalArrangement =
-        getHorizontalArrangement(horizontalArrangement = gridItemSettings.horizontalArrangement)
+        getHorizontalArrangement(gridItemSettings.horizontalArrangement)
     val verticalAlignment =
-        getVerticalAlignment(verticalAlignment = gridItemSettings.verticalAlignment)
+        getVerticalAlignment(gridItemSettings.verticalAlignment)
 
     var intOffset by remember { mutableStateOf(IntOffset.Zero) }
     var intSize by remember { mutableStateOf(IntSize.Zero) }
@@ -320,9 +320,9 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
                 backgroundColor = gridItemSettings.backgroundColor,
                 customBackgroundColor = gridItemSettings.customBackgroundColor,
             ),
-            shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
+            shape = RoundedCornerShape(gridItemSettings.cornerRadius.dp),
         )
-        .pointerInput(key1 = isVisibleOverlay) {
+        .pointerInput(isVisibleOverlay) {
             detectTapGestures(
                 onTap = if (!isVisibleOverlay) {
                     {

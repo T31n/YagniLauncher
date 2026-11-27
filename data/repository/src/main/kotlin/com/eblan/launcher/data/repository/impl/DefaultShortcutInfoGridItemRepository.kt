@@ -41,11 +41,11 @@ internal class DefaultShortcutInfoGridItemRepository @Inject constructor(private
             currentShortcutInfoGridItem.asEntity()
         }
 
-        shortcutInfoGridItemDao.deleteShortcutInfoGridItemEntities(entities = entities)
+        shortcutInfoGridItemDao.deleteShortcutInfoGridItemEntities(entities)
     }
 
     override suspend fun deleteShortcutInfoGridItem(shortcutInfoGridItem: ShortcutInfoGridItem) {
-        shortcutInfoGridItemDao.deleteShortcutInfoGridItemEntity(entity = shortcutInfoGridItem.asEntity())
+        shortcutInfoGridItemDao.deleteShortcutInfoGridItemEntity(shortcutInfoGridItem.asEntity())
     }
 
     override suspend fun getShortcutInfoGridItemsByPackageName(
@@ -69,15 +69,15 @@ internal class DefaultShortcutInfoGridItemRepository @Inject constructor(private
     }
 
     override suspend fun updatePartialShortcutInfoGridItems(partialShortcutInfoGridItems: List<PartialShortcutInfoGridItem>) {
-        shortcutInfoGridItemDao.updatePartialShortcutInfoGridItems(partialShortcutInfoGridItems = partialShortcutInfoGridItems)
+        shortcutInfoGridItemDao.updatePartialShortcutInfoGridItems(partialShortcutInfoGridItems)
     }
 
     override suspend fun insertShortcutInfoGridItem(shortcutInfoGridItem: ShortcutInfoGridItem) {
-        shortcutInfoGridItemDao.insertShortcutInfoGridItemEntity(entity = shortcutInfoGridItem.asEntity())
+        shortcutInfoGridItemDao.insertShortcutInfoGridItemEntity(shortcutInfoGridItem.asEntity())
     }
 
     override suspend fun upsertShortcutInfoGridItem(shortcutInfoGridItem: ShortcutInfoGridItem) {
-        shortcutInfoGridItemDao.upsertShortcutInfoGridItemEntity(entity = shortcutInfoGridItem.asEntity())
+        shortcutInfoGridItemDao.upsertShortcutInfoGridItemEntity(shortcutInfoGridItem.asEntity())
     }
 
     override suspend fun upsertShortcutInfoGridItems(shortcutInfoGridItems: List<ShortcutInfoGridItem>) {
@@ -85,10 +85,10 @@ internal class DefaultShortcutInfoGridItemRepository @Inject constructor(private
             currentShortcutInfoGridItem.asEntity()
         }
 
-        shortcutInfoGridItemDao.upsertShortcutInfoGridItemEntities(entities = entities)
+        shortcutInfoGridItemDao.upsertShortcutInfoGridItemEntities(entities)
     }
 
     override suspend fun deleteShortcutInfoGridItemById(id: String) {
-        shortcutInfoGridItemDao.deleteShortcutInfoGridItemEntityById(id = id)
+        shortcutInfoGridItemDao.deleteShortcutInfoGridItemEntityById(id)
     }
 }

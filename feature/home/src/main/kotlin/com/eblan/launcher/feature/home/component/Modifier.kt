@@ -94,7 +94,7 @@ internal fun Modifier.swipeGestures(
             40.dp.roundToPx()
         }
 
-        pointerInput(key1 = Unit) {
+        pointerInput(Unit) {
             detectVerticalDragGestures(
                 onDragStart = {
                     scope.launch {
@@ -197,7 +197,7 @@ internal fun Modifier.gridItemSharedElement(
 ): Modifier = if (enabled && visible) {
     with(sharedTransitionScope) {
         sharedElementWithCallerManagedVisibility(
-            sharedContentState = rememberSharedContentState(key = sharedElementKey),
+            sharedContentState = rememberSharedContentState(sharedElementKey),
             visible = true,
         )
     }
@@ -435,7 +435,7 @@ internal fun Modifier.dashedResizeOutline(color: Color): Modifier {
     val dashLength = with(density) { 8.dp.toPx() }
     val gapLength = with(density) { 5.dp.toPx() }
 
-    val dashPhase = rememberInfiniteTransition(label = "resizeOutline")
+    val dashPhase = rememberInfiniteTransition("resizeOutline")
         .animateFloat(
             initialValue = 0f,
             targetValue = dashLength + gapLength,

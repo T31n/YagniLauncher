@@ -51,14 +51,14 @@ internal fun ScreenEffect(
     val keyboardController = LocalSoftwareKeyboardController.current
     val isScreenDismissed = swipeY == screenHeight.toFloat()
 
-    LaunchedEffect(key1 = textFieldState) {
+    LaunchedEffect(textFieldState) {
         snapshotFlow { textFieldState.text }.debounce(500L.milliseconds)
             .onEach { currentCharSequence ->
                 onGetLabel(currentCharSequence.toString())
             }.collect()
     }
 
-    LaunchedEffect(key1 = isScreenDismissed) {
+    LaunchedEffect(isScreenDismissed) {
         if (isScreenDismissed) {
             keyboardController?.hide()
         }

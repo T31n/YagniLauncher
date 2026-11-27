@@ -47,7 +47,7 @@ fun AddFolderDialog(
     onDismissRequest: () -> Unit,
     onAddFolderEblanApplicationInfo: (FolderEblanApplicationInfo) -> Unit,
 ) {
-    val maxIndex = remember(key1 = topLevelFolderEblanApplicationInfos) {
+    val maxIndex = remember(topLevelFolderEblanApplicationInfos) {
         topLevelFolderEblanApplicationInfos.maxOfOrNull { currentFolderEblanApplicationInfo ->
             currentFolderEblanApplicationInfo.index
         } ?: 0

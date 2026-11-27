@@ -42,7 +42,7 @@ internal class DefaultEblanAppWidgetProviderInfoRepository @Inject constructor(p
             currentEblanAppWidgetProviderInfo.asEntity()
         }
 
-        eblanAppWidgetProviderInfoDao.upsertEblanAppWidgetProviderInfoEntities(entities = entities)
+        eblanAppWidgetProviderInfoDao.upsertEblanAppWidgetProviderInfoEntities(entities)
     }
 
     override suspend fun deleteEblanAppWidgetProviderInfos(eblanAppWidgetProviderInfos: List<EblanAppWidgetProviderInfo>) {
@@ -51,7 +51,7 @@ internal class DefaultEblanAppWidgetProviderInfoRepository @Inject constructor(p
         }
 
         eblanAppWidgetProviderInfoDao.deleteEblanAppWidgetProviderInfoEntities(
-            entities = entities,
+            entities,
         )
     }
 

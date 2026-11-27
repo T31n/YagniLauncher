@@ -75,7 +75,7 @@ class UpdateGridItemCustomIconUseCase @Inject constructor(
             else -> data
         }
 
-        gridRepository.updateGridItem(gridItem = gridItem.copy(data = newData))
+        gridRepository.updateGridItem(gridItem.copy(data = newData))
     }
 
     /**
@@ -114,6 +114,6 @@ class UpdateGridItemCustomIconUseCase @Inject constructor(
             else -> data
         }
 
-        gridRepository.updateGridItem(gridItem = gridItem.copy(data = newData))
+        gridRepository.updateGridItem(gridItem.copy(data = newData))
     }
 }

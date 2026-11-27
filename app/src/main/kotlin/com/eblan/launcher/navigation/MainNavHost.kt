@@ -49,10 +49,10 @@ fun MainNavHost(
             onEditFolderApplicationInfo = navController::navigateToEditFolderApplicationScreen,
         )
 
-        editGridItemScreen(onNavigateUp = navController::navigateUp)
+        editGridItemScreen(navController::navigateUp)
 
-        editApplicationScreen(onNavigateUp = navController::navigateUp)
+        editApplicationScreen(navController::navigateUp)
 
-        editFolderApplicationScreen(onNavigateUp = navController::navigateUp)
+        editFolderApplicationScreen(navController::navigateUp)
     }
 }

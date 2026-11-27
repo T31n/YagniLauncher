@@ -81,7 +81,7 @@ class EblanApplication :
 
             file.writeText(crashInfo)
 
-            showCrashNotification(file = file)
+            showCrashNotification(file)
         } catch (e: Exception) {
             e.printStackTrace()
         } finally {

@@ -161,13 +161,13 @@ internal fun FolderEblanApplicationInfoItem(
     val maxLines = if (gridItemSettings.singleLineLabel) 1 else Int.MAX_VALUE
 
     val horizontalAlignment =
-        getHorizontalAlignment(horizontalAlignment = gridItemSettings.horizontalAlignment)
+        getHorizontalAlignment(gridItemSettings.horizontalAlignment)
     val verticalArrangement =
-        getVerticalArrangement(verticalArrangement = gridItemSettings.verticalArrangement)
+        getVerticalArrangement(gridItemSettings.verticalArrangement)
     val horizontalArrangement =
-        getHorizontalArrangement(horizontalArrangement = gridItemSettings.horizontalArrangement)
+        getHorizontalArrangement(gridItemSettings.horizontalArrangement)
     val verticalAlignment =
-        getVerticalAlignment(verticalAlignment = gridItemSettings.verticalAlignment)
+        getVerticalAlignment(gridItemSettings.verticalAlignment)
 
     var isLongPress by remember { mutableStateOf(false) }
 
@@ -214,13 +214,11 @@ internal fun FolderEblanApplicationInfoItem(
                 backgroundColor = gridItemSettings.backgroundColor,
                 customBackgroundColor = gridItemSettings.customBackgroundColor,
             ),
-            shape = RoundedCornerShape(
-                size = gridItemSettings.cornerRadius.dp,
-            ),
+            shape = RoundedCornerShape(gridItemSettings.cornerRadius.dp),
         )
         .run {
             if (!isVisibleOverlay) {
-                pointerInput(key1 = Unit) {
+                pointerInput(Unit) {
                     detectTapGestures(
                         onTap = {
                             currentOnTapFolderApplicationInfo(
@@ -257,12 +255,10 @@ internal fun FolderEblanApplicationInfoItem(
         }
 
     val iconModifier = Modifier
-        .onGloballyPositioned(
-            onGloballyPositioned = { currentLayoutCoordinates ->
-                intOffset = currentLayoutCoordinates.positionInRoot().round()
-                intSize = currentLayoutCoordinates.size
-            },
-        )
+        .onGloballyPositioned { currentLayoutCoordinates ->
+            intOffset = currentLayoutCoordinates.positionInRoot().round()
+            intSize = currentLayoutCoordinates.size
+        }
         .gridItemSharedElement(
             // Transition State
             sharedTransitionScope = sharedTransitionScope,
@@ -287,7 +283,7 @@ internal fun FolderEblanApplicationInfoItem(
             .size(gridItemSettings.iconSize.dp)
             .padding(gridItemSettings.iconPadding.dp)
             .then(iconModifier)
-            .alpha(alpha = iconAlpha)
+            .alpha(iconAlpha)
 
         if (icon != null) {
             AsyncImage(
@@ -346,7 +342,7 @@ internal fun FolderEblanApplicationInfoItem(
         Text(
             modifier = Modifier
                 .padding(gridItemSettings.textPadding.dp)
-                .alpha(alpha = textAlpha),
+                .alpha(textAlpha),
             text = folderEblanApplicationInfo.label,
             color = textColor,
             textAlign = TextAlign.Center,
@@ -361,7 +357,7 @@ internal fun FolderEblanApplicationInfoItem(
             modifier = Modifier
                 .padding(gridItemSettings.textPadding.dp)
                 .then(iconModifier)
-                .alpha(alpha = textAlpha),
+                .alpha(textAlpha),
             text = folderEblanApplicationInfo.label,
             color = textColor,
             textAlign = TextAlign.Center,

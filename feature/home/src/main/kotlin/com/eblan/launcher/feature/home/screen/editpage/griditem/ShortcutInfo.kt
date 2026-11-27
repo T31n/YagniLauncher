@@ -67,7 +67,7 @@ internal fun ShortcutInfoGridItem(
 
     val alpha = if (hasShortcutHostPermission && data.isEnabled) 1f else 0.3f
 
-    val iconPath = getGridItemIconPath(data = data)
+    val iconPath = getGridItemIconPath(data)
     val label = getGridItemLabel(data).toString()
 
     val itemModifier = modifier
@@ -78,7 +78,7 @@ internal fun ShortcutInfoGridItem(
                 backgroundColor = gridItemSettings.backgroundColor,
                 customBackgroundColor = gridItemSettings.customBackgroundColor,
             ),
-            shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
+            shape = RoundedCornerShape(gridItemSettings.cornerRadius.dp),
         )
     val commonModifier = Modifier
         .size(gridItemSettings.iconSize.dp)

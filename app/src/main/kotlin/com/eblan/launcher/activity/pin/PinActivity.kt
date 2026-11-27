@@ -89,7 +89,7 @@ class PinActivity : ComponentActivity() {
             .addCategory(Intent.CATEGORY_HOME)
             .setPackage(packageName)
 
-        val pinItemRequest = androidLauncherAppsWrapper.getPinItemRequest(intent = intent)
+        val pinItemRequest = androidLauncherAppsWrapper.getPinItemRequest(intent)
 
         setContent {
             CompositionLocalProvider(

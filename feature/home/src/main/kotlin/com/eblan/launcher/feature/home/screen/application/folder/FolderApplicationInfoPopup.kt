@@ -112,7 +112,7 @@ internal fun FolderApplicationInfoPopup(
         }
     }
 
-    LaunchedEffect(key1 = isCloseFolderEblanApplicationInfoMenu) {
+    LaunchedEffect(isCloseFolderEblanApplicationInfoMenu) {
         if (isCloseFolderEblanApplicationInfoMenu) {
             transitionState.targetState = false
         }
@@ -240,7 +240,7 @@ internal fun FolderApplicationInfoGridItemPopup(
         }
     }
 
-    LaunchedEffect(key1 = isCloseFolderEblanApplicationInfoGridItemMenu) {
+    LaunchedEffect(isCloseFolderEblanApplicationInfoGridItemMenu) {
         if (isCloseFolderEblanApplicationInfoGridItemMenu) {
             transitionState.targetState = false
         }

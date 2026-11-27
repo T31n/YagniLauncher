@@ -121,7 +121,7 @@ class MoveGridItemUseCase @Inject constructor(
                     )
                 }
 
-                gridRepository.upsertGridItems(gridItems = gridItemsByPage)
+                gridRepository.upsertGridItems(gridItemsByPage)
 
                 MoveGridItemResult(
                     isSuccess = true,
@@ -159,7 +159,7 @@ class MoveGridItemUseCase @Inject constructor(
             )
 
             if (resolvedGridItems != null) {
-                gridRepository.upsertGridItems(gridItems = resolvedGridItems)
+                gridRepository.upsertGridItems(resolvedGridItems)
             }
 
             return MoveGridItemResult(
@@ -170,9 +170,9 @@ class MoveGridItemUseCase @Inject constructor(
         }
 
         return when (gridItemSection) {
-            GridItemSection.Left -> getMoveGridItemResult(resolveDirection = ResolveDirection.Left)
+            GridItemSection.Left -> getMoveGridItemResult(ResolveDirection.Left)
 
-            GridItemSection.Right -> getMoveGridItemResult(resolveDirection = ResolveDirection.Right)
+            GridItemSection.Right -> getMoveGridItemResult(ResolveDirection.Right)
 
             GridItemSection.Center -> {
                 if (movingGridItem.data is GridItemData.Widget ||
@@ -185,7 +185,7 @@ class MoveGridItemUseCase @Inject constructor(
                     )
                 }
 
-                gridRepository.upsertGridItems(gridItems = gridItems)
+                gridRepository.upsertGridItems(gridItems)
 
                 MoveGridItemResult(
                     isSuccess = true,
@@ -222,7 +222,7 @@ class MoveGridItemUseCase @Inject constructor(
         )
 
         if (resolvedGridItems != null) {
-            gridRepository.upsertGridItems(gridItems = resolvedGridItems)
+            gridRepository.upsertGridItems(resolvedGridItems)
         }
 
         return MoveGridItemResult(

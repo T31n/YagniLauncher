@@ -89,7 +89,7 @@ class UpdateIconPacksUseCase @Inject constructor(
                 )
 
                 val iconFile = File(
-                    fileManager.getFilesDirectory(name = FileManager.ICONS_DIR),
+                    fileManager.getFilesDirectory(FileManager.ICONS_DIR),
                     iconKeyGenerator.getActivityIconKey(
                         serialNumber = 0L,
                         componentName = eblanApplicationInfo.componentName,
@@ -103,7 +103,7 @@ class UpdateIconPacksUseCase @Inject constructor(
                 )
 
                 eblanIconPackInfoRepository.upsertEblanIconPackInfo(
-                    eblanIconPackInfo = EblanIconPackInfo(
+                    EblanIconPackInfo(
                         packageName = eblanApplicationInfo.packageName,
                         icon = icon,
                         label = eblanApplicationInfo.label,
@@ -133,11 +133,11 @@ class UpdateIconPacksUseCase @Inject constructor(
         if (iconPackPackageName.isEmpty()) return
 
         val iconPackInfoDirectory = File(
-            fileManager.getFilesDirectory(name = FileManager.ICON_PACKS_DIR),
+            fileManager.getFilesDirectory(FileManager.ICON_PACKS_DIR),
             iconPackPackageName,
         ).apply { if (!exists()) mkdirs() }
 
-        val appFilter = iconPackManager.getIconPackComponents(packageName = iconPackPackageName)
+        val appFilter = iconPackManager.getIconPackComponents(iconPackPackageName)
 
         val total = fastLauncherAppsActivityInfos.size
 
@@ -146,7 +146,7 @@ class UpdateIconPacksUseCase @Inject constructor(
 
             val file = File(
                 iconPackInfoDirectory,
-                iconKeyGenerator.getHashedName(name = currentFastLauncherAppsActivityInfo.componentName),
+                iconKeyGenerator.getHashedName(currentFastLauncherAppsActivityInfo.componentName),
             )
 
             cacheIconPackFile(

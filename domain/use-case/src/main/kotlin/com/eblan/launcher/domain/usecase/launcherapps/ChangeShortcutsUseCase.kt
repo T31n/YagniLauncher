@@ -77,13 +77,9 @@ class ChangeShortcutsUseCase @Inject constructor(
                     )
                 }
 
-            eblanShortcutInfoRepository.upsertEblanShortcutInfos(
-                eblanShortcutInfos = newEblanShortcutInfos,
-            )
+            eblanShortcutInfoRepository.upsertEblanShortcutInfos(newEblanShortcutInfos)
 
-            eblanShortcutInfoRepository.deleteEblanShortcutInfos(
-                eblanShortcutInfos = deleteEblanShortcutInfos,
-            )
+            eblanShortcutInfoRepository.deleteEblanShortcutInfos(deleteEblanShortcutInfos)
 
             updateShortcutInfoGridItems(
                 eblanShortcutInfos = eblanShortcutInfoRepository.getEblanShortcutInfos(),

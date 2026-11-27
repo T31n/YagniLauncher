@@ -162,13 +162,13 @@ internal fun EblanApplicationInfoItem(
     )
 
     val horizontalAlignment =
-        getHorizontalAlignment(horizontalAlignment = gridItemSettings.horizontalAlignment)
+        getHorizontalAlignment(gridItemSettings.horizontalAlignment)
     val verticalArrangement =
-        getVerticalArrangement(verticalArrangement = gridItemSettings.verticalArrangement)
+        getVerticalArrangement(gridItemSettings.verticalArrangement)
     val horizontalArrangement =
-        getHorizontalArrangement(horizontalArrangement = gridItemSettings.horizontalArrangement)
+        getHorizontalArrangement(gridItemSettings.horizontalArrangement)
     val verticalAlignment =
-        getVerticalAlignment(verticalAlignment = gridItemSettings.verticalAlignment)
+        getVerticalAlignment(gridItemSettings.verticalAlignment)
 
     val iconSizePx = with(density) {
         gridItemSettings.iconSize.dp.roundToPx()
@@ -205,11 +205,11 @@ internal fun EblanApplicationInfoItem(
                 backgroundColor = gridItemSettings.backgroundColor,
                 customBackgroundColor = gridItemSettings.customBackgroundColor,
             ),
-            shape = RoundedCornerShape(size = gridItemSettings.cornerRadius.dp),
+            shape = RoundedCornerShape(gridItemSettings.cornerRadius.dp),
         )
         .run {
             if (!isVisibleOverlay) {
-                pointerInput(key1 = Unit) {
+                pointerInput(Unit) {
                     detectTapGestures(
                         onTap = {
                             handleOnTapEblanApplicationInfoItem(

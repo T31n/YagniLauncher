@@ -157,17 +157,13 @@ internal class EditFolderApplicationInfoViewModel @Inject constructor(
 
     fun addFolderEblanApplicationInfo(folderEblanApplicationInfo: FolderEblanApplicationInfo) {
         viewModelScope.launch {
-            folderEblanApplicationInfoRepository.insertFolderEblanApplicationInfo(
-                folderEblanApplicationInfo = folderEblanApplicationInfo,
-            )
+            folderEblanApplicationInfoRepository.insertFolderEblanApplicationInfo(folderEblanApplicationInfo)
         }
     }
 
     fun updateFolderEblanApplicationInfo(folderEblanApplicationInfo: FolderEblanApplicationInfo) {
         viewModelScope.launch {
-            folderEblanApplicationInfoRepository.updateFolderEblanApplicationInfo(
-                folderEblanApplicationInfo = folderEblanApplicationInfo,
-            )
+            folderEblanApplicationInfoRepository.updateFolderEblanApplicationInfo(folderEblanApplicationInfo)
 
             getFolderApplicationInfo()
         }
@@ -189,7 +185,7 @@ internal class EditFolderApplicationInfoViewModel @Inject constructor(
         viewModelScope.launch {
             _folderEblanApplicationInfo.emit(
                 folderEblanApplicationInfoRepository.getFolderEblanApplicationInfoById(
-                    id = editFolderApplicationInfoRouteData.id,
+                    editFolderApplicationInfoRouteData.id,
                 ),
             )
         }

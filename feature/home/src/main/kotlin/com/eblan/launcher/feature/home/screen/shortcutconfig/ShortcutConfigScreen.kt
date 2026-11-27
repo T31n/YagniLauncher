@@ -172,7 +172,7 @@ internal fun ShortcutConfigScreen(
             }
             .run {
                 if (!isVisibleOverlay) {
-                    pointerInput(key1 = Unit) {
+                    pointerInput(Unit) {
                         detectVerticalDragGestures(
                             onVerticalDrag = { _, dragAmount ->
                                 onVerticalDrag(dragAmount)

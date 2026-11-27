@@ -68,7 +68,7 @@ internal class DefaultFolderGridItemTransaction @Inject constructor(
 
                 is FolderEblanApplicationInfoGridItemData.Folder -> {
                     folderEblanApplicationInfoModels.add(
-                        folderEblanApplicationInfoGridItem.asModel(data = data),
+                        folderEblanApplicationInfoGridItem.asModel(data),
                     )
                 }
             }
@@ -76,11 +76,11 @@ internal class DefaultFolderGridItemTransaction @Inject constructor(
 
         gridTransaction.withTransaction {
             eblanApplicationInfoRepository.upsertEblanApplicationInfos(
-                eblanApplicationInfos = eblanApplicationInfos,
+                eblanApplicationInfos,
             )
 
             folderEblanApplicationInfoRepository.upsertFolderEblanApplicationInfos(
-                folderEblanApplicationInfos = folderEblanApplicationInfoModels,
+                folderEblanApplicationInfoModels,
             )
         }
     }
@@ -98,7 +98,7 @@ internal class DefaultFolderGridItemTransaction @Inject constructor(
 
                 is FolderEblanApplicationInfoGridItemData.Folder -> {
                     folderEblanApplicationInfoModels.add(
-                        folderEblanApplicationInfoGridItem.asModel(data = data),
+                        folderEblanApplicationInfoGridItem.asModel(data),
                     )
                 }
             }
@@ -106,11 +106,11 @@ internal class DefaultFolderGridItemTransaction @Inject constructor(
 
         gridTransaction.withTransaction {
             eblanApplicationInfoRepository.deleteEblanApplicationInfos(
-                eblanApplicationInfos = eblanApplicationInfos,
+                eblanApplicationInfos,
             )
 
             folderEblanApplicationInfoRepository.deleteFolderEblanApplicationInfos(
-                folderEblanApplicationInfos = folderEblanApplicationInfoModels,
+                folderEblanApplicationInfoModels,
             )
         }
     }
@@ -118,12 +118,12 @@ internal class DefaultFolderGridItemTransaction @Inject constructor(
     override suspend fun updateFolderEblanApplicationInfoGridItem(folderEblanApplicationInfoGridItem: FolderEblanApplicationInfoGridItem) {
         when (val data = folderEblanApplicationInfoGridItem.data) {
             is FolderEblanApplicationInfoGridItemData.ApplicationInfo -> {
-                eblanApplicationInfoRepository.updateEblanApplicationInfo(eblanApplicationInfo = data.asModel())
+                eblanApplicationInfoRepository.updateEblanApplicationInfo(data.asModel())
             }
 
             is FolderEblanApplicationInfoGridItemData.Folder -> {
                 folderEblanApplicationInfoRepository.updateFolderEblanApplicationInfo(
-                    folderEblanApplicationInfo = folderEblanApplicationInfoGridItem.asModel(data = data),
+                    folderEblanApplicationInfoGridItem.asModel(data),
                 )
             }
         }

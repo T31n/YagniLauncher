@@ -140,7 +140,7 @@ internal fun AppWidgetScreen(
             .background(Color.Black.copy(alpha = scrimAlpha))
             .run {
                 if (!isVisibleOverlay) {
-                    pointerInput(key1 = Unit) {
+                    pointerInput(Unit) {
                         detectTapGestures(
                             onTap = {
                                 onDismiss()
@@ -163,7 +163,7 @@ internal fun AppWidgetScreen(
                     top = paddingValues.calculateTopPadding(),
                 )
                 .clip(MaterialTheme.shapes.large)
-                .pointerInput(key1 = Unit) {
+                .pointerInput(Unit) {
                     detectTapGestures {}
                 },
         ) {
@@ -178,7 +178,7 @@ internal fun AppWidgetScreen(
                     .animateContentSize()
                     .run {
                         if (!isVisibleOverlay) {
-                            pointerInput(key1 = Unit) {
+                            pointerInput(Unit) {
                                 detectVerticalDragGestures(
                                     onVerticalDrag = { _, dragAmount ->
                                         onVerticalDrag(dragAmount)
@@ -270,9 +270,7 @@ private fun EblanAppWidgetScreenItem(
             .padding(EblanSpacing.extraLarge)
             .run {
                 if (!isVisibleOverlay) {
-                    pointerInput(
-                        key1 = gridItemSettings,
-                    ) {
+                    pointerInput(gridItemSettings) {
                         detectTapGestures(
                             onLongPress = {
                                 scope.launch {
@@ -352,19 +350,17 @@ private fun EblanAppWidgetScreenItem(
             modifier = Modifier
                 .width(160.dp)
                 .height(100.dp)
-                .onGloballyPositioned(
-                    onGloballyPositioned = { currentLayoutCoordinates ->
-                        intOffset = currentLayoutCoordinates.positionInRoot().round()
+                .onGloballyPositioned { currentLayoutCoordinates ->
+                    intOffset = currentLayoutCoordinates.positionInRoot().round()
 
-                        intSize = currentLayoutCoordinates.size
-                    },
-                )
+                    intSize = currentLayoutCoordinates.size
+                }
                 .drawWithContent {
                     graphicsLayer.record {
                         this@drawWithContent.drawContent()
                     }
 
-                    drawLayer(graphicsLayer = graphicsLayer)
+                    drawLayer(graphicsLayer)
                 },
             contentAlignment = Alignment.Center,
         ) {

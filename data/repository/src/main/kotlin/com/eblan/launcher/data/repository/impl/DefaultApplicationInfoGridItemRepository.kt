@@ -43,11 +43,11 @@ internal class DefaultApplicationInfoGridItemRepository @Inject constructor(
             currentApplicationInfoGridItem.asEntity()
         }
 
-        applicationInfoGridItemDao.deleteApplicationInfoGridItemEntities(entities = entities)
+        applicationInfoGridItemDao.deleteApplicationInfoGridItemEntities(entities)
     }
 
     override suspend fun deleteApplicationInfoGridItem(applicationInfoGridItem: ApplicationInfoGridItem) {
-        applicationInfoGridItemDao.deleteApplicationInfoGridItemEntity(entity = applicationInfoGridItem.asEntity())
+        applicationInfoGridItemDao.deleteApplicationInfoGridItemEntity(applicationInfoGridItem.asEntity())
     }
 
     override suspend fun getApplicationInfoGridItemsByPackageName(
@@ -72,7 +72,7 @@ internal class DefaultApplicationInfoGridItemRepository @Inject constructor(
 
     override suspend fun updatePartialApplicationInfoGridItems(partialApplicationInfoGridItems: List<PartialApplicationInfoGridItem>) {
         applicationInfoGridItemDao.updatePartialApplicationInfoGridItems(
-            partialApplicationInfoGridItems = partialApplicationInfoGridItems,
+            partialApplicationInfoGridItems,
         )
     }
 
@@ -81,15 +81,15 @@ internal class DefaultApplicationInfoGridItemRepository @Inject constructor(
             currentApplicationInfoGridItem.asEntity()
         }
 
-        applicationInfoGridItemDao.insertApplicationInfoGridItemEntities(entities = entities)
+        applicationInfoGridItemDao.insertApplicationInfoGridItemEntities(entities)
     }
 
     override suspend fun insertApplicationInfoGridItem(applicationInfoGridItem: ApplicationInfoGridItem) {
-        applicationInfoGridItemDao.insertApplicationInfoGridItemEntity(entity = applicationInfoGridItem.asEntity())
+        applicationInfoGridItemDao.insertApplicationInfoGridItemEntity(applicationInfoGridItem.asEntity())
     }
 
     override suspend fun upsertApplicationInfoGridItem(applicationInfoGridItem: ApplicationInfoGridItem) {
-        applicationInfoGridItemDao.upsertApplicationInfoGridItemEntity(entity = applicationInfoGridItem.asEntity())
+        applicationInfoGridItemDao.upsertApplicationInfoGridItemEntity(applicationInfoGridItem.asEntity())
     }
 
     override suspend fun upsertApplicationInfoGridItems(applicationInfoGridItems: List<ApplicationInfoGridItem>) {
@@ -97,10 +97,10 @@ internal class DefaultApplicationInfoGridItemRepository @Inject constructor(
             currentApplicationInfoGridItem.asEntity()
         }
 
-        applicationInfoGridItemDao.upsertApplicationInfoGridItemEntities(entities = entities)
+        applicationInfoGridItemDao.upsertApplicationInfoGridItemEntities(entities)
     }
 
     override suspend fun deleteApplicationInfoGridItemById(id: String) {
-        applicationInfoGridItemDao.deleteApplicationInfoGridItemEntityById(id = id)
+        applicationInfoGridItemDao.deleteApplicationInfoGridItemEntityById(id)
     }
 }

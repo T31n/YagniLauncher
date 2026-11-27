@@ -79,7 +79,7 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
                                 )
                             }
 
-                        eblanApplicationInfoRepository.updateEblanApplicationInfos(eblanApplicationInfos = eblanApplicationInfos)
+                        eblanApplicationInfoRepository.updateEblanApplicationInfos(eblanApplicationInfos)
                     }
 
                     is FolderEblanApplicationInfoGridItemData.Folder -> Unit
@@ -87,9 +87,9 @@ class DeleteFolderEblanApplicationInfoGridItemsUseCase @Inject constructor(
             }
 
             val deletedFolder =
-                folderEblanApplicationInfoRepository.getFolderEblanApplicationInfoById(id = folderId)
+                folderEblanApplicationInfoRepository.getFolderEblanApplicationInfoById(folderId)
 
-            folderEblanApplicationInfoRepository.deleteFolderEblanApplicationInfoById(id = folderId)
+            folderEblanApplicationInfoRepository.deleteFolderEblanApplicationInfoById(folderId)
 
             if (deletedFolder?.folderId != null) {
                 cleanupFolderEblanApplicationInfosUseCase()

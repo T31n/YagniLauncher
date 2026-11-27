@@ -57,7 +57,7 @@ class GetEblanShortcutConfigsByLabelUseCase @Inject constructor(
                 { currentEblanShortcutConfig -> currentEblanShortcutConfig.applicationLabel?.lowercase() },
             ),
         ).groupBy { currentEblanShortcutConfig ->
-            launcherAppsWrapper.getUser(serialNumber = currentEblanShortcutConfig.serialNumber)
+            launcherAppsWrapper.getUser(currentEblanShortcutConfig.serialNumber)
         }.mapValues { entry ->
             entry.value.groupBy { currentEblanShortcutConfig ->
                 EblanApplicationInfoGroup(

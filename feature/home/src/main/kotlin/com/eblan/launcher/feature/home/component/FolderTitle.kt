@@ -71,7 +71,7 @@ internal fun FolderTitle(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(getPageIndicatorHeight(pageIndicatorType = PageIndicatorType.Dots).dp)
+            .height(getPageIndicatorHeight(PageIndicatorType.Dots).dp)
             .padding(horizontal = 10.dp)
             .alpha(if (progress > 0.5) 1f else 0f),
     ) {

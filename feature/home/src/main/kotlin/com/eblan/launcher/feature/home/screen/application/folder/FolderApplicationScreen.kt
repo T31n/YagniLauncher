@@ -260,11 +260,11 @@ internal fun FolderApplicationScreen(
         derivedStateOf { progress.isRunning || progress.value != 1f }
     }
 
-    LaunchedEffect(key1 = animations) {
+    LaunchedEffect(animations) {
         if (animations) {
             progress.animateTo(targetValue = 1f)
         } else {
-            progress.snapTo(targetValue = 1f)
+            progress.snapTo(1f)
         }
     }
 
@@ -373,7 +373,7 @@ internal fun FolderApplicationScreen(
         )
     }
 
-    LaunchedEffect(key1 = folderGridHorizontalPagerState.isScrollInProgress) {
+    LaunchedEffect(folderGridHorizontalPagerState.isScrollInProgress) {
         if (folderGridHorizontalPagerState.isScrollInProgress) {
             onDismissFolderEblanApplicationGridItemPopup()
         }
@@ -432,7 +432,7 @@ internal fun FolderApplicationScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .pointerInput(key1 = isLastFolderEblanApplicationInfo) {
+            .pointerInput(isLastFolderEblanApplicationInfo) {
                 if (isLastFolderEblanApplicationInfo) {
                     detectTapGestures(
                         onPress = {
@@ -598,7 +598,7 @@ private suspend fun handleIsCloseFolder(
     if (animations) {
         progress.animateTo(targetValue = 0f)
     } else {
-        progress.snapTo(targetValue = 0f)
+        progress.snapTo(0f)
     }
 
     handleMoveFolderGridItemOutsideFolder(

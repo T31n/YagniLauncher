@@ -47,7 +47,7 @@ internal class DefaultFileManager @Inject constructor(
     ): String? = withContext(ioDispatcher) {
         val file = File(directory, name)
 
-        val oldFile = readFileBytes(file = file)
+        val oldFile = readFileBytes(file)
 
         if (oldFile.contentEquals(byteArray)) {
             file.absolutePath

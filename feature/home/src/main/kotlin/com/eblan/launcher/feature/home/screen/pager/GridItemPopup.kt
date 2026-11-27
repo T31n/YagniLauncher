@@ -128,7 +128,7 @@ internal fun GridItemPopup(
         }
     }
 
-    LaunchedEffect(key1 = isCloseGridItemPopup) {
+    LaunchedEffect(isCloseGridItemPopup) {
         if (isCloseGridItemPopup) {
             transitionState.targetState = false
         }

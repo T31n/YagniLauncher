@@ -42,7 +42,7 @@ internal class DefaultEblanShortcutConfigRepository @Inject constructor(private 
             currentEblanShortcutConfig.asEntity()
         }
 
-        eblanShortcutConfigDao.upsertEblanShortcutConfigEntities(entities = entities)
+        eblanShortcutConfigDao.upsertEblanShortcutConfigEntities(entities)
     }
 
     override suspend fun deleteEblanShortcutConfigByPackageName(
@@ -60,7 +60,7 @@ internal class DefaultEblanShortcutConfigRepository @Inject constructor(private 
             currentEblanShortcutConfig.asEntity()
         }
 
-        eblanShortcutConfigDao.deleteEblanShortcutConfigEntities(entities = entities)
+        eblanShortcutConfigDao.deleteEblanShortcutConfigEntities(entities)
     }
 
     override suspend fun getEblanShortcutConfigsByPackageName(

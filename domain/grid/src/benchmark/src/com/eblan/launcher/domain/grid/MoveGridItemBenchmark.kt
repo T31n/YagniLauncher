@@ -64,7 +64,7 @@ class MoveGridItemBenchmark {
 
     @Setup(Level.Trial)
     fun setUp() {
-        val random = Random(seed = 42)
+        val random = Random(42)
 
         val items = mutableListOf<GridItem>()
         var column = 0

@@ -479,8 +479,8 @@ private fun animateScrollToPage(
     }
 
     when (associate) {
-        Associate.Grid -> animateScrollToPage(onUpdatePageDirection = onUpdateGridPageDirection)
-        Associate.Dock -> animateScrollToPage(onUpdatePageDirection = onUpdateDockPageDirection)
+        Associate.Grid -> animateScrollToPage(onUpdateGridPageDirection)
+        Associate.Dock -> animateScrollToPage(onUpdateDockPageDirection)
         null -> Unit
     }
 }
