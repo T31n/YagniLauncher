@@ -35,7 +35,6 @@ import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.GridItemSource
 import com.eblan.launcher.feature.home.model.PageDirection
 import com.eblan.launcher.feature.home.model.SharedElementKey
-import com.eblan.launcher.feature.home.util.PAGE_INDICATOR_HEIGHT
 import com.eblan.launcher.feature.home.util.calculatePage
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
@@ -111,11 +110,11 @@ internal fun handleDragGridItem(
     dockIndex: Int,
     dockInfiniteScroll: Boolean,
     dockPageCount: Int,
-    dockHeight: Int,
+    dockHeightPx: Int,
     // Screen and Layout
     screenWidth: Int,
     screenHeight: Int,
-    density: Density,
+    pageIndicatorHeightPx: Int,
     layoutDirection: LayoutDirection,
     leftPadding: Int,
     topPadding: Int,
@@ -170,10 +169,6 @@ internal fun handleDragGridItem(
         LayoutDirection.Ltr -> localDragX
     }
 
-    val dockHeightPx = with(density) {
-        dockHeight.dp.roundToPx()
-    }
-
     val isOnDock = dockHeightPx > 0 && localDragY > safeDrawingHeight - dockHeightPx
 
     val gridCurrentPage = calculatePage(
@@ -220,7 +215,6 @@ internal fun handleDragGridItem(
             } else {
                 dragGridItem(
                     // Grid Configuration
-                    density = density,
                     columns = columns,
                     rows = rows,
                     currentPage = gridCurrentPage,
@@ -229,6 +223,7 @@ internal fun handleDragGridItem(
                     moveGridItemResult = moveGridItemResult,
                     // Dimensions
                     dockHeightPx = dockHeightPx,
+                    pageIndicatorHeightPx = pageIndicatorHeightPx,
                     safeDrawingWidth = safeDrawingWidth,
                     safeDrawingHeight = safeDrawingHeight,
                     // Drag Coordinates
@@ -566,7 +561,6 @@ private fun calculateMovingFolderGridItem(
 
 private fun dragGridItem(
     // Grid Configuration
-    density: Density,
     columns: Int,
     rows: Int,
     currentPage: Int,
@@ -575,6 +569,7 @@ private fun dragGridItem(
     moveGridItemResult: MoveGridItemResult?,
     // Dimensions
     dockHeightPx: Int,
+    pageIndicatorHeightPx: Int,
     safeDrawingWidth: Int,
     safeDrawingHeight: Int,
     // Drag Coordinates
@@ -595,10 +590,6 @@ private fun dragGridItem(
     onUpdateSharedElementKey: (SharedElementKey?) -> Unit,
 ) {
     val movingGridItem = moveGridItemResult?.movingGridItem ?: return
-
-    val pageIndicatorHeightPx = with(density) {
-        PAGE_INDICATOR_HEIGHT.roundToPx()
-    }
 
     val gridHeightWithPadding = safeDrawingHeight - dockHeightPx - pageIndicatorHeightPx
 

@@ -46,7 +46,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.clipPath
-import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.lerp
@@ -265,18 +264,13 @@ private fun LinePageIndicator(
                 cornerRadius = cornerRadius,
             )
 
-            val position = pagerPosition(
+            val visualPosition = visualPagerPosition(
                 gridHorizontalPagerState = gridHorizontalPagerState,
                 pageCount = pageCount,
                 infiniteScroll = infiniteScroll,
             )
             val segmentWidth = size.width / pageCount
-            val normalizedPosition = if (infiniteScroll && pageCount > 1) {
-                ((position % pageCount) + pageCount) % pageCount
-            } else {
-                position.coerceIn(0f, (pageCount - 1).coerceAtLeast(0).toFloat())
-            }
-            val startX = normalizedPosition * segmentWidth
+            val startX = visualPosition * segmentWidth
 
             clipPath(trackPath) {
                 drawRoundRect(
@@ -285,15 +279,6 @@ private fun LinePageIndicator(
                     size = Size(width = segmentWidth, height = size.height),
                     cornerRadius = cornerRadius,
                 )
-
-                if (infiniteScroll && startX + segmentWidth > size.width) {
-                    drawRoundRect(
-                        color = color,
-                        topLeft = Offset(x = startX - size.width, y = 0f),
-                        size = Size(width = segmentWidth, height = size.height),
-                        cornerRadius = cornerRadius,
-                    )
-                }
             }
         }
     }
@@ -330,7 +315,7 @@ private fun WormPageIndicator(
                 )
             }
 
-            val (fromPage, toPage, fraction, isWrapping) = resolveTransition(
+            val (fromPage, toPage, fraction) = resolveTransition(
                 pagePosition = pagerPosition(
                     gridHorizontalPagerState = gridHorizontalPagerState,
                     pageCount = pageCount,
@@ -351,25 +336,13 @@ private fun WormPageIndicator(
 
             val left = min(headX, tailX) - radius
             val right = max(headX, tailX) + radius
-            val cycleWidth = pageCount * stepPx
 
-            clipRect {
-                drawRoundRect(
-                    color = color,
-                    topLeft = Offset(x = left, y = 0f),
-                    size = Size(width = right - left, height = size.height),
-                    cornerRadius = CornerRadius(radius, radius),
-                )
-
-                if (isWrapping) {
-                    drawRoundRect(
-                        color = color,
-                        topLeft = Offset(x = left - cycleWidth, y = 0f),
-                        size = Size(width = right - left, height = size.height),
-                        cornerRadius = CornerRadius(radius, radius),
-                    )
-                }
-            }
+            drawRoundRect(
+                color = color,
+                topLeft = Offset(x = left, y = 0f),
+                size = Size(width = right - left, height = size.height),
+                cornerRadius = CornerRadius(radius, radius),
+            )
         }
     }
 }
@@ -408,7 +381,7 @@ private fun JumpingDotPageIndicator(
                 )
             }
 
-            val (fromPage, toPage, fraction, isWrapping) = resolveTransition(
+            val (fromPage, toPage, fraction) = resolveTransition(
                 pagePosition = pagerPosition(
                     gridHorizontalPagerState = gridHorizontalPagerState,
                     pageCount = pageCount,
@@ -425,23 +398,12 @@ private fun JumpingDotPageIndicator(
             val activeX = lerp(fromX, toX, fraction)
             val activeY = baselineY - arc * jumpHeight.toPx()
             val activeRadius = baseRadius * (1f + 0.15f * arc)
-            val cycleWidth = pageCount * stepPx
 
-            clipRect {
-                drawCircle(
-                    color = color,
-                    radius = activeRadius,
-                    center = Offset(x = activeX, y = activeY),
-                )
-
-                if (isWrapping) {
-                    drawCircle(
-                        color = color,
-                        radius = activeRadius,
-                        center = Offset(x = activeX - cycleWidth, y = activeY),
-                    )
-                }
-            }
+            drawCircle(
+                color = color,
+                radius = activeRadius,
+                center = Offset(x = activeX, y = activeY),
+            )
         }
     }
 }
@@ -630,19 +592,8 @@ private fun PacManPageIndicator(
             val pelletRadius = pelletDiameter.toPx() / 2f
             val stepPx = step.toPx()
             val centerY = size.height / 2f
-            val cycleWidth = pageCount * stepPx
 
-            val rawPosition = gridHorizontalPagerState.currentPage +
-                gridHorizontalPagerState.currentPageOffsetFraction
-
-            if (!directionState.lastPosition.isNaN() &&
-                abs(rawPosition - directionState.lastPosition) > 0.005f
-            ) {
-                directionState.facingForward = rawPosition > directionState.lastPosition
-            }
-            directionState.lastPosition = rawPosition
-
-            val (fromPage, toPage, fraction, isWrapping) = resolveTransition(
+            val (fromPage, toPage, fraction) = resolveTransition(
                 pagePosition = pagerPosition(
                     gridHorizontalPagerState = gridHorizontalPagerState,
                     pageCount = pageCount,
@@ -652,16 +603,19 @@ private fun PacManPageIndicator(
                 infiniteScroll = infiniteScroll,
             )
 
-            val fromX = pacRadius + fromPage * stepPx
-            val toX = pacRadius + toPage * stepPx
-            val pacX = lerp(fromX, toX, fraction)
-            val wrappedPacX = pacX - cycleWidth
+            val visualPosition = lerp(fromPage.toFloat(), toPage.toFloat(), fraction)
+            if (!directionState.lastPosition.isNaN() &&
+                abs(visualPosition - directionState.lastPosition) > 0.005f
+            ) {
+                directionState.facingForward = visualPosition > directionState.lastPosition
+            }
+            directionState.lastPosition = visualPosition
+
+            val pacX = pacRadius + visualPosition * stepPx
 
             repeat(pageCount) { index ->
                 val pelletX = pacRadius + index * stepPx
-                val eatenByPrimary = abs(pelletX - pacX) <= pacRadius * 0.6f
-                val eatenByWrapped = isWrapping && abs(pelletX - wrappedPacX) <= pacRadius * 0.6f
-                if (!eatenByPrimary && !eatenByWrapped) {
+                if (abs(pelletX - pacX) > pacRadius * 0.6f) {
                     drawCircle(
                         color = color.copy(alpha = 0.45f),
                         radius = pelletRadius,
@@ -670,32 +624,20 @@ private fun PacManPageIndicator(
                 }
             }
 
-            val chomp = abs(sin(fraction * 2f * PI)).toFloat()
+            val travelSpan = abs(toPage - fromPage).coerceAtLeast(1)
+            val chomp = abs(sin(fraction * 2f * PI * travelSpan)).toFloat()
             val mouthHalfAngle = lerp(18f, 46f, chomp)
             val baseAngle = if (directionState.facingForward) 0f else 180f
             val pacSize = Size(width = pacRadius * 2f, height = pacRadius * 2f)
 
-            clipRect {
-                drawArc(
-                    color = color,
-                    startAngle = baseAngle + mouthHalfAngle,
-                    sweepAngle = 360f - 2f * mouthHalfAngle,
-                    useCenter = true,
-                    topLeft = Offset(x = pacX - pacRadius, y = centerY - pacRadius),
-                    size = pacSize,
-                )
-
-                if (isWrapping) {
-                    drawArc(
-                        color = color,
-                        startAngle = baseAngle + mouthHalfAngle,
-                        sweepAngle = 360f - 2f * mouthHalfAngle,
-                        useCenter = true,
-                        topLeft = Offset(x = wrappedPacX - pacRadius, y = centerY - pacRadius),
-                        size = pacSize,
-                    )
-                }
-            }
+            drawArc(
+                color = color,
+                startAngle = baseAngle + mouthHalfAngle,
+                sweepAngle = 360f - 2f * mouthHalfAngle,
+                useCenter = true,
+                topLeft = Offset(x = pacX - pacRadius, y = centerY - pacRadius),
+                size = pacSize,
+            )
         }
     }
 }
@@ -720,7 +662,6 @@ private data class PageTransition(
     val fromPage: Int,
     val toPage: Int,
     val fraction: Float,
-    val isWrapping: Boolean,
 )
 
 private fun pagerPosition(
@@ -734,6 +675,23 @@ private fun pagerPosition(
         pageCount = pageCount,
     )
     return currentPage + gridHorizontalPagerState.currentPageOffsetFraction
+}
+
+private fun visualPagerPosition(
+    gridHorizontalPagerState: PagerState,
+    pageCount: Int,
+    infiniteScroll: Boolean,
+): Float {
+    val (fromPage, toPage, fraction) = resolveTransition(
+        pagePosition = pagerPosition(
+            gridHorizontalPagerState = gridHorizontalPagerState,
+            pageCount = pageCount,
+            infiniteScroll = infiniteScroll,
+        ),
+        pageCount = pageCount,
+        infiniteScroll = infiniteScroll,
+    )
+    return lerp(fromPage.toFloat(), toPage.toFloat(), fraction)
 }
 
 private fun rawPageDistance(
@@ -769,19 +727,18 @@ private fun resolveTransition(
     infiniteScroll: Boolean,
 ): PageTransition {
     if (pageCount <= 1) {
-        return PageTransition(fromPage = 0, toPage = 0, fraction = 0f, isWrapping = false)
+        return PageTransition(fromPage = 0, toPage = 0, fraction = 0f)
     }
 
     return if (infiniteScroll) {
         val base = floor(pagePosition).toInt()
         val fraction = (pagePosition - base).coerceIn(0f, 1f)
         val fromPage = base.mod(pageCount)
-        val toPage = fromPage + 1
+        val toPage = (base + 1).mod(pageCount)
         PageTransition(
             fromPage = fromPage,
             toPage = toPage,
             fraction = fraction,
-            isWrapping = toPage >= pageCount,
         )
     } else {
         val clamped = pagePosition.coerceIn(0f, (pageCount - 1).toFloat())
@@ -792,7 +749,6 @@ private fun resolveTransition(
             fromPage = fromPage,
             toPage = toPage,
             fraction = fraction,
-            isWrapping = false,
         )
     }
 }

@@ -24,6 +24,8 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
+import com.eblan.launcher.domain.grid.getPageIndicatorHeight
+import com.eblan.launcher.domain.model.userdata.PageIndicatorType
 import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_COLUMNS
 import com.eblan.launcher.domain.usecase.util.FOLDER_PREVIEW_ROWS
 import com.eblan.launcher.feature.home.model.Drag
@@ -103,7 +105,7 @@ internal fun getFolderPopupLayoutInfo(
     val availableHeight = (safeDrawingHeight - topPadding * 2).coerceAtLeast(0)
 
     val folderTitleHeightPx = with(density) {
-        PAGE_INDICATOR_HEIGHT.roundToPx()
+        getPageIndicatorHeight(pageIndicatorType = PageIndicatorType.Dots).dp.roundToPx()
     }
 
     val folderGridWidthPx =
@@ -274,7 +276,7 @@ internal fun calculateFolderGridDragPosition(
     val availableHeight = safeDrawingHeight.coerceAtLeast(0)
 
     val folderTitleHeightPx = with(receiver = density) {
-        PAGE_INDICATOR_HEIGHT.roundToPx()
+        getPageIndicatorHeight(pageIndicatorType = PageIndicatorType.Dots).dp.roundToPx()
     }
 
     val folderGridWidthPx =

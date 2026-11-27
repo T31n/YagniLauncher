@@ -19,8 +19,6 @@
     <string name="dock_grid">Siatka doku</string>
     <string name="dock_columns_is_not_valid">Nieprawidłowa liczba kolumn doku</string>
     <string name="dock_rows_is_not_valid">Nieprawidłowa liczba wierszy doku</string>
-    <string name="dock_height">Wysokość doku</string>
-    <string name="dock_height_is_not_valid">Nieprawidłowa wysokość doku</string>
     <string name="infinite_scrolling">Nieskończone przewijanie</string>
     <string name="seamless_loop_page_scroll">Płynne zapętlenie przewijania stron</string>
     <string name="wallpaper_scrolling">Przewijanie tapety</string>

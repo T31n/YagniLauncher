@@ -90,6 +90,7 @@ class PinScreenViewModel @Inject constructor(
         maxResizeHeight: Int,
         rootWidth: Int,
         rootHeight: Int,
+        density: Float,
         preview: ByteArray?,
     ) {
         viewModelScope.launch {
@@ -110,6 +111,7 @@ class PinScreenViewModel @Inject constructor(
                     maxResizeHeight = maxResizeHeight,
                     rootWidth = rootWidth,
                     rootHeight = rootHeight,
+                    density = density,
                     preview = preview,
                 )
             }

@@ -87,7 +87,6 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
         infiniteScroll = false
         dockColumns = 5
         dockRows = 1
-        dockHeight = 100
         initialPage = 0
         wallpaperScroll = false
         gridItemSettingsProto = defaultGridItemSettingsProto

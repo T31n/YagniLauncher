@@ -20,23 +20,23 @@ package com.eblan.launcher.feature.settings.folder.dialog
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.component.EblanDialog
 import com.eblan.launcher.feature.settings.folder.R
+import com.eblan.launcher.ui.dialog.LabeledSlider
 import com.eblan.launcher.common.R as commonR
+
+private val FOLDER_CELL_DIMENSION_RANGE = 40..160
+private const val FOLDER_CELL_DIMENSION_STEP = 4
 
 @Composable
 internal fun EditFolderCellDimensionDialog(
@@ -52,11 +52,22 @@ internal fun EditFolderCellDimensionDialog(
         folderCellHeight: Int,
     ) -> Unit,
 ) {
-    var currentFolderCellWidth by remember { mutableStateOf("$folderCellWidth") }
-    var currentFolderCellHeight by remember { mutableStateOf("$folderCellHeight") }
-
-    var isErrorFolderCellWidth by remember { mutableStateOf(false) }
-    var isErrorFolderCellHeight by remember { mutableStateOf(false) }
+    var currentFolderCellWidth by remember(folderCellWidth) {
+        mutableIntStateOf(
+            folderCellWidth.coerceIn(
+                FOLDER_CELL_DIMENSION_RANGE.first,
+                FOLDER_CELL_DIMENSION_RANGE.last,
+            ),
+        )
+    }
+    var currentFolderCellHeight by remember(folderCellHeight) {
+        mutableIntStateOf(
+            folderCellHeight.coerceIn(
+                FOLDER_CELL_DIMENSION_RANGE.first,
+                FOLDER_CELL_DIMENSION_RANGE.last,
+            ),
+        )
+    }
 
     EblanDialog(
         modifier = modifier,
@@ -67,51 +78,21 @@ internal fun EditFolderCellDimensionDialog(
             style = MaterialTheme.typography.titleLarge,
         )
 
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            TextField(
-                value = currentFolderCellWidth,
-                onValueChange = { currentFolderCellWidthString ->
-                    currentFolderCellWidth = currentFolderCellWidthString
-                    isErrorFolderCellWidth = false
-                },
-                modifier = Modifier.weight(1f),
-                label = { Text(text = stringResource(R.string.cell_width)) },
-                supportingText = if (isErrorFolderCellWidth) {
-                    {
-                        Text(text = stringResource(R.string.cell_width_is_not_valid))
-                    }
-                } else {
-                    null
-                },
-                isError = isErrorFolderCellWidth,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                ),
-            )
+        LabeledSlider(
+            label = stringResource(R.string.cell_width),
+            value = currentFolderCellWidth,
+            valueRange = FOLDER_CELL_DIMENSION_RANGE,
+            step = FOLDER_CELL_DIMENSION_STEP,
+            onValueChange = { currentFolderCellWidth = it },
+        )
 
-            TextField(
-                value = currentFolderCellHeight,
-                onValueChange = { currentFolderCellHeightString ->
-                    currentFolderCellHeight = currentFolderCellHeightString
-                    isErrorFolderCellHeight = false
-                },
-                modifier = Modifier.weight(1f),
-                label = { Text(text = stringResource(R.string.cell_height)) },
-                supportingText = if (isErrorFolderCellHeight) {
-                    {
-                        Text(text = stringResource(R.string.cell_height_is_not_valid))
-                    }
-                } else {
-                    null
-                },
-                isError = isErrorFolderCellHeight,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                ),
-            )
-        }
+        LabeledSlider(
+            label = stringResource(R.string.cell_height),
+            value = currentFolderCellHeight,
+            valueRange = FOLDER_CELL_DIMENSION_RANGE,
+            step = FOLDER_CELL_DIMENSION_STEP,
+            onValueChange = { currentFolderCellHeight = it },
+        )
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -125,21 +106,9 @@ internal fun EditFolderCellDimensionDialog(
 
             TextButton(
                 onClick = {
-                    val newWidth = currentFolderCellWidth.toIntOrNull()
-                    val newHeight = currentFolderCellHeight.toIntOrNull()
+                    onUpdateFolderCellDimension(currentFolderCellWidth, currentFolderCellHeight)
 
-                    isErrorFolderCellWidth = newWidth == null || newWidth <= 0
-                    isErrorFolderCellHeight = newHeight == null || newHeight <= 0
-
-                    if (newWidth != null &&
-                        newHeight != null &&
-                        newWidth > 0 &&
-                        newHeight > 0
-                    ) {
-                        onUpdateFolderCellDimension(newWidth, newHeight)
-
-                        onDismissRequest()
-                    }
+                    onDismissRequest()
                 },
             ) {
                 Text(text = stringResource(commonR.string.update))

@@ -35,11 +35,11 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object DataStoreModule {
+internal object DataStoreModule {
 
     @Provides
     @Singleton
-    internal fun userDataStore(
+    fun userDataStore(
         @ApplicationContext context: Context,
         @Dispatcher(EblanDispatchers.IO) ioDispatcher: CoroutineDispatcher,
         userDataSerializer: UserDataSerializer,

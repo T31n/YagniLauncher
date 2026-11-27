@@ -20,23 +20,22 @@ package com.eblan.launcher.feature.settings.folder.dialog
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.component.EblanDialog
 import com.eblan.launcher.feature.settings.folder.R
+import com.eblan.launcher.ui.dialog.LabeledSlider
 import com.eblan.launcher.common.R as commonR
+
+private val FOLDER_MAX_GRID_RANGE = 1..10
 
 @Composable
 internal fun EditFolderMaxGridDialog(
@@ -52,11 +51,16 @@ internal fun EditFolderMaxGridDialog(
         maxFolderRows: Int,
     ) -> Unit,
 ) {
-    var currentMaxFolderColumns by remember { mutableStateOf("$maxFolderColumns") }
-    var currentMaxFolderRows by remember { mutableStateOf("$maxFolderRows") }
-
-    var isErrorMaxFolderColumns by remember { mutableStateOf(false) }
-    var isErrorMaxFolderRows by remember { mutableStateOf(false) }
+    var currentMaxFolderColumns by remember(maxFolderColumns) {
+        mutableIntStateOf(
+            maxFolderColumns.coerceIn(FOLDER_MAX_GRID_RANGE.first, FOLDER_MAX_GRID_RANGE.last),
+        )
+    }
+    var currentMaxFolderRows by remember(maxFolderRows) {
+        mutableIntStateOf(
+            maxFolderRows.coerceIn(FOLDER_MAX_GRID_RANGE.first, FOLDER_MAX_GRID_RANGE.last),
+        )
+    }
 
     EblanDialog(
         modifier = modifier,
@@ -67,51 +71,19 @@ internal fun EditFolderMaxGridDialog(
             style = MaterialTheme.typography.titleLarge,
         )
 
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            TextField(
-                value = currentMaxFolderColumns,
-                onValueChange = { currentMaxFolderColumnsString ->
-                    currentMaxFolderColumns = currentMaxFolderColumnsString
-                    isErrorMaxFolderColumns = false
-                },
-                modifier = Modifier.weight(1f),
-                label = { Text(text = stringResource(R.string.max_columns)) },
-                supportingText = if (isErrorMaxFolderColumns) {
-                    {
-                        Text(text = stringResource(R.string.max_columns_is_not_valid))
-                    }
-                } else {
-                    null
-                },
-                isError = isErrorMaxFolderColumns,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                ),
-            )
+        LabeledSlider(
+            label = stringResource(R.string.max_columns),
+            value = currentMaxFolderColumns,
+            valueRange = FOLDER_MAX_GRID_RANGE,
+            onValueChange = { currentMaxFolderColumns = it },
+        )
 
-            TextField(
-                value = currentMaxFolderRows,
-                onValueChange = { currentMaxFolderRowsString ->
-                    currentMaxFolderRows = currentMaxFolderRowsString
-                    isErrorMaxFolderRows = false
-                },
-                modifier = Modifier.weight(1f),
-                label = { Text(text = stringResource(R.string.max_rows)) },
-                supportingText = if (isErrorMaxFolderRows) {
-                    {
-                        Text(text = stringResource(R.string.max_rows_is_not_valid))
-                    }
-                } else {
-                    null
-                },
-                isError = isErrorMaxFolderRows,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                ),
-            )
-        }
+        LabeledSlider(
+            label = stringResource(R.string.max_rows),
+            value = currentMaxFolderRows,
+            valueRange = FOLDER_MAX_GRID_RANGE,
+            onValueChange = { currentMaxFolderRows = it },
+        )
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -125,21 +97,9 @@ internal fun EditFolderMaxGridDialog(
 
             TextButton(
                 onClick = {
-                    val newColumns = currentMaxFolderColumns.toIntOrNull()
-                    val newRows = currentMaxFolderRows.toIntOrNull()
+                    onUpdateFolderMaxGrid(currentMaxFolderColumns, currentMaxFolderRows)
 
-                    isErrorMaxFolderColumns = newColumns == null || newColumns <= 0
-                    isErrorMaxFolderRows = newRows == null || newRows <= 0
-
-                    if (newColumns != null &&
-                        newRows != null &&
-                        newColumns > 0 &&
-                        newRows > 0
-                    ) {
-                        onUpdateFolderMaxGrid(newColumns, newRows)
-
-                        onDismissRequest()
-                    }
+                    onDismissRequest()
                 },
             ) {
                 Text(text = stringResource(commonR.string.update))

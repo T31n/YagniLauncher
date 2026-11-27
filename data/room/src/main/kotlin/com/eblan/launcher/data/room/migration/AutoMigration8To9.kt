@@ -32,4 +32,4 @@ import androidx.room.migration.AutoMigrationSpec
         toColumnName = "applicationLabel",
     ),
 )
-class AutoMigration8To9 : AutoMigrationSpec
+internal class AutoMigration8To9 : AutoMigrationSpec

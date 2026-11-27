@@ -20,8 +20,11 @@ package com.eblan.launcher.domain.grid
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemSection
 import com.eblan.launcher.domain.model.grid.ResolveDirection
+import com.eblan.launcher.domain.model.userdata.PageIndicatorType
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
+
+private const val PAGE_INDICATOR_HEIGHT_DP = 30
 
 /**
  * Checks whether a grid item's full span fits within the grid.
@@ -289,4 +292,47 @@ fun getWidgetGridItemSize(
     }
 
     return width to height
+}
+
+/**
+ * Calculates the dock height in pixels proportionally from the home grid and dock row counts.
+ *
+ * Divides [availableHeight] evenly across `rows + dockRows` so dock cells match home grid cell
+ * height, capped at half of [availableHeight] to preserve space for the home grid.
+ *
+ * @param enableDock Whether the dock is enabled.
+ * @param rows The number of rows in the home grid.
+ * @param dockRows The number of rows in the dock.
+ * @param availableHeight The vertical space in pixels shared by the home grid and dock.
+ * @return The dock height in pixels, or `0` if the dock is disabled or any input is non-positive.
+ */
+fun getDockHeight(
+    enableDock: Boolean,
+    rows: Int,
+    dockRows: Int,
+    availableHeight: Int,
+): Int {
+    if (!enableDock || rows <= 0 || dockRows <= 0 || availableHeight <= 0) {
+        return 0
+    }
+
+    val totalRows = rows.toLong() + dockRows.toLong()
+    val proportionalHeight = (availableHeight.toLong() * dockRows / totalRows).toInt()
+
+    return proportionalHeight.coerceAtMost(availableHeight / 2)
+}
+
+/**
+ * Returns the page indicator height in density-independent pixels (dp).
+ *
+ * Returns `0` when [pageIndicatorType] is [PageIndicatorType.None].
+ *
+ * @param pageIndicatorType The configured page indicator style.
+ * @return The page indicator height in dp.
+ */
+fun getPageIndicatorHeight(
+    pageIndicatorType: PageIndicatorType,
+): Int = when (pageIndicatorType) {
+    PageIndicatorType.None -> 0
+    else -> PAGE_INDICATOR_HEIGHT_DP
 }

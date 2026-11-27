@@ -831,9 +831,10 @@ private fun Success(
                     hasShortcutHostPermission = homeData.hasShortcutHostPermission,
                     // Settings
                     dockInitialPage = homeData.userData.homeSettings.dockInitialPage,
-                    dockHeight = homeData.userData.homeSettings.dockHeight,
+                    rows = homeData.userData.homeSettings.rows,
                     dockColumns = homeData.userData.homeSettings.dockColumns,
                     dockRows = homeData.userData.homeSettings.dockRows,
+                    pageIndicatorType = homeData.userData.homeSettings.pageIndicatorType,
                     dockGridItemSettings = homeData.userData.homeSettings.dockGridItemSettings,
                     folderCornerRadius = homeData.userData.folderSettings.folderCornerRadius,
                     // Appearance
@@ -847,6 +848,7 @@ private fun Success(
                     iconPackFilePaths = homeData.iconPackFilePaths,
                     // Layout
                     paddingValues = paddingValues,
+                    screenHeight = screenHeight,
                     // Callbacks
                     onSaveEditPage = onSaveEditPage,
                     onUpdateScreen = onUpdateScreen,
@@ -902,7 +904,7 @@ private fun RequestPermissionsEffect(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun produceHomeTextColorState(
+private fun produceHomeTextColorState(
     configuredTextColor: TextColor?,
     theme: Theme?,
 ): State<TextColor> {

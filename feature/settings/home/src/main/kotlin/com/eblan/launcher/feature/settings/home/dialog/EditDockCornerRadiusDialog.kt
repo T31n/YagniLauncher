@@ -18,25 +18,28 @@
 package com.eblan.launcher.feature.settings.home.dialog
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.component.EblanDialog
+import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.feature.settings.home.R
+import com.eblan.launcher.ui.dialog.LabeledSlider
 import com.eblan.launcher.common.R as commonR
+
+private val CORNER_RADIUS_RANGE = 0..50
 
 @Composable
 internal fun EditDockCornerRadiusDialog(
@@ -56,15 +59,29 @@ internal fun EditDockCornerRadiusDialog(
         dockBottomEndCornerRadius: Int,
     ) -> Unit,
 ) {
-    var currentDockTopStartCornerRadius by remember { mutableStateOf("$dockTopStartCornerRadius") }
-    var currentDockTopEndCornerRadius by remember { mutableStateOf("$dockTopEndCornerRadius") }
-    var currentDockBottomStartCornerRadius by remember { mutableStateOf("$dockBottomStartCornerRadius") }
-    var currentDockBottomEndCornerRadius by remember { mutableStateOf("$dockBottomEndCornerRadius") }
-
-    var isErrorDockTopStartCornerRadius by remember { mutableStateOf(false) }
-    var isErrorDockTopEndCornerRadius by remember { mutableStateOf(false) }
-    var isErrorDockBottomStartCornerRadius by remember { mutableStateOf(false) }
-    var isErrorDockBottomEndCornerRadius by remember { mutableStateOf(false) }
+    var currentDockTopStartCornerRadius by remember(dockTopStartCornerRadius) {
+        mutableIntStateOf(
+            dockTopStartCornerRadius.coerceIn(CORNER_RADIUS_RANGE.first, CORNER_RADIUS_RANGE.last),
+        )
+    }
+    var currentDockTopEndCornerRadius by remember(dockTopEndCornerRadius) {
+        mutableIntStateOf(
+            dockTopEndCornerRadius.coerceIn(CORNER_RADIUS_RANGE.first, CORNER_RADIUS_RANGE.last),
+        )
+    }
+    var currentDockBottomStartCornerRadius by remember(dockBottomStartCornerRadius) {
+        mutableIntStateOf(
+            dockBottomStartCornerRadius.coerceIn(
+                CORNER_RADIUS_RANGE.first,
+                CORNER_RADIUS_RANGE.last,
+            ),
+        )
+    }
+    var currentDockBottomEndCornerRadius by remember(dockBottomEndCornerRadius) {
+        mutableIntStateOf(
+            dockBottomEndCornerRadius.coerceIn(CORNER_RADIUS_RANGE.first, CORNER_RADIUS_RANGE.last),
+        )
+    }
 
     EblanDialog(
         modifier = modifier,
@@ -75,95 +92,39 @@ internal fun EditDockCornerRadiusDialog(
             style = MaterialTheme.typography.titleLarge,
         )
 
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(weight = 1f, fill = false)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(EblanSpacing.small),
         ) {
-            TextField(
+            LabeledSlider(
+                label = stringResource(R.string.top_start),
                 value = currentDockTopStartCornerRadius,
-                onValueChange = { currentDockTopStartCornerRadiusString ->
-                    currentDockTopStartCornerRadius = currentDockTopStartCornerRadiusString
-                    isErrorDockTopStartCornerRadius = false
-                },
-                modifier = Modifier.weight(1f),
-                label = { Text(text = stringResource(R.string.top_start)) },
-                supportingText = if (isErrorDockTopStartCornerRadius) {
-                    {
-                        Text(text = stringResource(R.string.top_start_is_not_valid))
-                    }
-                } else {
-                    null
-                },
-                isError = isErrorDockTopStartCornerRadius,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                ),
+                valueRange = CORNER_RADIUS_RANGE,
+                onValueChange = { currentDockTopStartCornerRadius = it },
             )
 
-            TextField(
+            LabeledSlider(
+                label = stringResource(R.string.top_end),
                 value = currentDockTopEndCornerRadius,
-                onValueChange = { currentDockTopEndCornerRadiusString ->
-                    currentDockTopEndCornerRadius = currentDockTopEndCornerRadiusString
-                    isErrorDockTopEndCornerRadius = false
-                },
-                modifier = Modifier.weight(1f),
-                label = { Text(text = stringResource(R.string.top_end)) },
-                supportingText = if (isErrorDockTopEndCornerRadius) {
-                    {
-                        Text(text = stringResource(R.string.top_end_is_not_valid))
-                    }
-                } else {
-                    null
-                },
-                isError = isErrorDockTopEndCornerRadius,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                ),
+                valueRange = CORNER_RADIUS_RANGE,
+                onValueChange = { currentDockTopEndCornerRadius = it },
             )
-        }
 
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            TextField(
+            LabeledSlider(
+                label = stringResource(R.string.bottom_start),
                 value = currentDockBottomStartCornerRadius,
-                onValueChange = { currentDockBottomStartCornerRadiusString ->
-                    currentDockBottomStartCornerRadius = currentDockBottomStartCornerRadiusString
-                    isErrorDockBottomStartCornerRadius = false
-                },
-                modifier = Modifier.weight(1f),
-                label = { Text(text = stringResource(R.string.bottom_start)) },
-                supportingText = if (isErrorDockBottomStartCornerRadius) {
-                    {
-                        Text(text = stringResource(R.string.bottom_start_is_not_valid))
-                    }
-                } else {
-                    null
-                },
-                isError = isErrorDockBottomStartCornerRadius,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                ),
+                valueRange = CORNER_RADIUS_RANGE,
+                onValueChange = { currentDockBottomStartCornerRadius = it },
             )
 
-            TextField(
+            LabeledSlider(
+                label = stringResource(R.string.bottom_end),
                 value = currentDockBottomEndCornerRadius,
-                onValueChange = { currentDockBottomEndCornerRadiusString ->
-                    currentDockBottomEndCornerRadius = currentDockBottomEndCornerRadiusString
-                    isErrorDockBottomEndCornerRadius = false
-                },
-                modifier = Modifier.weight(1f),
-                label = { Text(text = stringResource(R.string.bottom_end)) },
-                supportingText = if (isErrorDockBottomEndCornerRadius) {
-                    {
-                        Text(text = stringResource(R.string.bottom_end_is_not_valid))
-                    }
-                } else {
-                    null
-                },
-                isError = isErrorDockBottomEndCornerRadius,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                ),
+                valueRange = CORNER_RADIUS_RANGE,
+                onValueChange = { currentDockBottomEndCornerRadius = it },
             )
         }
 
@@ -179,36 +140,14 @@ internal fun EditDockCornerRadiusDialog(
 
             TextButton(
                 onClick = {
-                    val newDockTopStartCornerRadius = currentDockTopStartCornerRadius.toIntOrNull()
-                    val newDockTopEndCornerRadius = currentDockTopEndCornerRadius.toIntOrNull()
-                    val newDockBottomStartCornerRadius =
-                        currentDockBottomStartCornerRadius.toIntOrNull()
-                    val newDockBottomEndCornerRadius =
-                        currentDockBottomEndCornerRadius.toIntOrNull()
+                    onUpdateCornerRadius(
+                        currentDockTopStartCornerRadius,
+                        currentDockTopEndCornerRadius,
+                        currentDockBottomStartCornerRadius,
+                        currentDockBottomEndCornerRadius,
+                    )
 
-                    isErrorDockTopStartCornerRadius = newDockTopStartCornerRadius == null ||
-                        newDockTopStartCornerRadius < 0
-                    isErrorDockTopEndCornerRadius = newDockTopEndCornerRadius == null ||
-                        newDockTopEndCornerRadius < 0
-                    isErrorDockBottomStartCornerRadius = newDockBottomStartCornerRadius == null ||
-                        newDockBottomStartCornerRadius < 0
-                    isErrorDockBottomEndCornerRadius = newDockBottomEndCornerRadius == null ||
-                        newDockBottomEndCornerRadius < 0
-
-                    if (newDockTopStartCornerRadius != null && newDockTopStartCornerRadius >= 0 &&
-                        newDockTopEndCornerRadius != null && newDockTopEndCornerRadius >= 0 &&
-                        newDockBottomStartCornerRadius != null && newDockBottomStartCornerRadius >= 0 &&
-                        newDockBottomEndCornerRadius != null && newDockBottomEndCornerRadius >= 0
-                    ) {
-                        onUpdateCornerRadius(
-                            newDockTopStartCornerRadius,
-                            newDockTopEndCornerRadius,
-                            newDockBottomStartCornerRadius,
-                            newDockBottomEndCornerRadius,
-                        )
-
-                        onDismissRequest()
-                    }
+                    onDismissRequest()
                 },
             ) {
                 Text(text = stringResource(commonR.string.update))

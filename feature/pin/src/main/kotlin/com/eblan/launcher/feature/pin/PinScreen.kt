@@ -66,6 +66,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draganddrop.DragAndDropTransferData
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -263,6 +264,7 @@ private fun PinWidgetScreen(
         maxResizeHeight: Int,
         rootWidth: Int,
         rootHeight: Int,
+        density: Float,
         preview: ByteArray?,
     ) -> Unit,
     onDeleteGridItemCache: (GridItem) -> Unit,
@@ -272,6 +274,7 @@ private fun PinWidgetScreen(
     onUpdateGridItems: () -> Unit,
 ) {
     val context = LocalContext.current
+    val density = LocalDensity.current
 
     val appWidgetProviderInfo = pinItemRequest.getAppWidgetProviderInfo(context) ?: return
 
@@ -385,6 +388,7 @@ private fun PinWidgetScreen(
                     // Dimensions
                     maxWidth = constraints.maxWidth,
                     maxHeight = constraints.maxHeight,
+                    density = density.density,
                     // Dependencies
                     appWidgetManager = appWidgetManager,
                     userManager = userManager,
@@ -586,6 +590,7 @@ private suspend fun addPinWidgetToHomeScreen(
     // Dimensions
     maxWidth: Int,
     maxHeight: Int,
+    density: Float,
     // Dependencies
     appWidgetManager: AndroidAppWidgetManagerWrapper,
     userManager: AndroidUserManagerWrapper,
@@ -606,6 +611,7 @@ private suspend fun addPinWidgetToHomeScreen(
         maxResizeHeight: Int,
         rootWidth: Int,
         rootHeight: Int,
+        density: Float,
         preview: ByteArray?,
     ) -> Unit,
 ) {
@@ -636,6 +642,7 @@ private suspend fun addPinWidgetToHomeScreen(
             appWidgetProviderInfo.maxResizeHeight,
             maxWidth,
             maxHeight,
+            density,
             preview,
         )
     } else {
@@ -655,6 +662,7 @@ private suspend fun addPinWidgetToHomeScreen(
             0,
             maxWidth,
             maxHeight,
+            density,
             preview,
         )
     }

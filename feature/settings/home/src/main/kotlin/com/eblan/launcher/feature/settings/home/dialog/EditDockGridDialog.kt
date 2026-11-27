@@ -20,23 +20,23 @@ package com.eblan.launcher.feature.settings.home.dialog
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.component.EblanDialog
 import com.eblan.launcher.feature.settings.home.R
+import com.eblan.launcher.ui.dialog.LabeledSlider
 import com.eblan.launcher.common.R as commonR
+
+private val DOCK_COLUMNS_RANGE = 1..12
+private val DOCK_ROWS_RANGE = 1..4
 
 @Composable
 internal fun EditDockGridDialog(
@@ -52,11 +52,12 @@ internal fun EditDockGridDialog(
         dockRows: Int,
     ) -> Unit,
 ) {
-    var currentDockColumns by remember { mutableStateOf("$dockColumns") }
-    var currentDockRows by remember { mutableStateOf("$dockRows") }
-
-    var isErrorDockColumns by remember { mutableStateOf(false) }
-    var isErrorDockRows by remember { mutableStateOf(false) }
+    var currentDockColumns by remember(dockColumns) {
+        mutableIntStateOf(dockColumns)
+    }
+    var currentDockRows by remember(dockRows) {
+        mutableIntStateOf(dockRows)
+    }
 
     EblanDialog(
         modifier = modifier,
@@ -67,51 +68,19 @@ internal fun EditDockGridDialog(
             style = MaterialTheme.typography.titleLarge,
         )
 
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            TextField(
-                value = currentDockColumns,
-                onValueChange = { currentDockColumnsString ->
-                    currentDockColumns = currentDockColumnsString
-                    isErrorDockColumns = false
-                },
-                modifier = Modifier.weight(1f),
-                label = { Text(text = stringResource(commonR.string.columns)) },
-                supportingText = if (isErrorDockColumns) {
-                    {
-                        Text(text = stringResource(R.string.dock_columns_is_not_valid))
-                    }
-                } else {
-                    null
-                },
-                isError = isErrorDockColumns,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                ),
-            )
+        LabeledSlider(
+            label = stringResource(commonR.string.columns),
+            value = currentDockColumns,
+            valueRange = DOCK_COLUMNS_RANGE,
+            onValueChange = { currentDockColumns = it },
+        )
 
-            TextField(
-                value = currentDockRows,
-                onValueChange = { currentDockRowsString ->
-                    currentDockRows = currentDockRowsString
-                    isErrorDockRows = false
-                },
-                modifier = Modifier.weight(1f),
-                label = { Text(text = stringResource(commonR.string.rows)) },
-                supportingText = if (isErrorDockRows) {
-                    {
-                        Text(text = stringResource(R.string.dock_rows_is_not_valid))
-                    }
-                } else {
-                    null
-                },
-                isError = isErrorDockRows,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                ),
-            )
-        }
+        LabeledSlider(
+            label = stringResource(commonR.string.rows),
+            value = currentDockRows,
+            valueRange = DOCK_ROWS_RANGE,
+            onValueChange = { currentDockRows = it },
+        )
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -125,19 +94,9 @@ internal fun EditDockGridDialog(
 
             TextButton(
                 onClick = {
-                    val newDockColumns = currentDockColumns.toIntOrNull()
-                    val newDockRows = currentDockRows.toIntOrNull()
+                    onUpdateDockGrid(currentDockColumns, currentDockRows)
 
-                    isErrorDockColumns = newDockColumns == null || newDockColumns <= 0
-                    isErrorDockRows = newDockRows == null || newDockRows <= 0
-
-                    if (newDockColumns != null && newDockRows != null &&
-                        newDockColumns > 0 && newDockRows > 0
-                    ) {
-                        onUpdateDockGrid(newDockColumns, newDockRows)
-
-                        onDismissRequest()
-                    }
+                    onDismissRequest()
                 },
             ) {
                 Text(text = stringResource(commonR.string.update))

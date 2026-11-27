@@ -20,23 +20,24 @@ package com.eblan.launcher.feature.settings.appdrawer.dialog
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.component.EblanDialog
 import com.eblan.launcher.feature.settings.appdrawer.R
+import com.eblan.launcher.ui.dialog.LabeledSlider
 import com.eblan.launcher.common.R as commonR
+
+private val VERTICAL_COLUMNS_RANGE = 1..12
+private val VERTICAL_ROWS_HEIGHT_RANGE = 48..200
+private const val VERTICAL_ROWS_HEIGHT_STEP = 4
 
 @Composable
 internal fun EditVerticalGridDialog(
@@ -52,11 +53,19 @@ internal fun EditVerticalGridDialog(
         appDrawerRowsHeight: Int,
     ) -> Unit,
 ) {
-    var currentAppDrawerColumns by remember { mutableStateOf("$appDrawerColumns") }
-    var currentAppDrawerRowsHeight by remember { mutableStateOf("$appDrawerRowsHeight") }
-
-    var isErrorAppDrawerColumns by remember { mutableStateOf(false) }
-    var isErrorAppDrawerRowsHeight by remember { mutableStateOf(false) }
+    var currentAppDrawerColumns by remember(appDrawerColumns) {
+        mutableIntStateOf(
+            appDrawerColumns.coerceIn(VERTICAL_COLUMNS_RANGE.first, VERTICAL_COLUMNS_RANGE.last),
+        )
+    }
+    var currentAppDrawerRowsHeight by remember(appDrawerRowsHeight) {
+        mutableIntStateOf(
+            appDrawerRowsHeight.coerceIn(
+                VERTICAL_ROWS_HEIGHT_RANGE.first,
+                VERTICAL_ROWS_HEIGHT_RANGE.last,
+            ),
+        )
+    }
 
     EblanDialog(
         modifier = modifier,
@@ -67,52 +76,20 @@ internal fun EditVerticalGridDialog(
             style = MaterialTheme.typography.titleLarge,
         )
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            TextField(
-                value = currentAppDrawerColumns,
-                onValueChange = { currentAppDrawerColumnsString ->
-                    currentAppDrawerColumns = currentAppDrawerColumnsString
-                    isErrorAppDrawerColumns = false
-                },
-                modifier = Modifier.weight(1f),
-                label = { Text(text = stringResource(commonR.string.columns)) },
-                supportingText = if (isErrorAppDrawerColumns) {
-                    {
-                        Text(text = stringResource(commonR.string.columns_is_not_valid))
-                    }
-                } else {
-                    null
-                },
-                isError = isErrorAppDrawerColumns,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                ),
-            )
+        LabeledSlider(
+            label = stringResource(commonR.string.columns),
+            value = currentAppDrawerColumns,
+            valueRange = VERTICAL_COLUMNS_RANGE,
+            onValueChange = { currentAppDrawerColumns = it },
+        )
 
-            TextField(
-                value = currentAppDrawerRowsHeight,
-                onValueChange = { currentAppDrawerRowsHeightString ->
-                    currentAppDrawerRowsHeight = currentAppDrawerRowsHeightString
-                    isErrorAppDrawerRowsHeight = false
-                },
-                modifier = Modifier.weight(1f),
-                label = { Text(text = stringResource(R.string.rows_height)) },
-                supportingText = if (isErrorAppDrawerRowsHeight) {
-                    {
-                        Text(text = stringResource(R.string.rows_height_is_not_valid))
-                    }
-                } else {
-                    null
-                },
-                isError = isErrorAppDrawerRowsHeight,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                ),
-            )
-        }
+        LabeledSlider(
+            label = stringResource(R.string.rows_height),
+            value = currentAppDrawerRowsHeight,
+            valueRange = VERTICAL_ROWS_HEIGHT_RANGE,
+            step = VERTICAL_ROWS_HEIGHT_STEP,
+            onValueChange = { currentAppDrawerRowsHeight = it },
+        )
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -126,24 +103,12 @@ internal fun EditVerticalGridDialog(
 
             TextButton(
                 onClick = {
-                    val newColumns = currentAppDrawerColumns.toIntOrNull()
-                    val newRowsHeight = currentAppDrawerRowsHeight.toIntOrNull()
+                    onUpdateVerticalGrid(
+                        currentAppDrawerColumns,
+                        currentAppDrawerRowsHeight,
+                    )
 
-                    isErrorAppDrawerColumns = newColumns == null || newColumns <= 0
-                    isErrorAppDrawerRowsHeight = newRowsHeight == null || newRowsHeight <= 0
-
-                    if (newColumns != null &&
-                        newRowsHeight != null &&
-                        newColumns > 0 &&
-                        newRowsHeight > 0
-                    ) {
-                        onUpdateVerticalGrid(
-                            newColumns,
-                            newRowsHeight,
-                        )
-
-                        onDismissRequest()
-                    }
+                    onDismissRequest()
                 },
             ) {
                 Text(text = stringResource(commonR.string.update))

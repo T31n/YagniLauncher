@@ -50,11 +50,10 @@ import com.eblan.launcher.domain.model.userdata.PagerTransitionEffect
 import com.eblan.launcher.domain.model.userdata.ScreenOrientation
 import com.eblan.launcher.feature.settings.home.dialog.EditDockCornerRadiusDialog
 import com.eblan.launcher.feature.settings.home.dialog.EditDockGridDialog
-import com.eblan.launcher.feature.settings.home.dialog.EditDockHeightDialog
-import com.eblan.launcher.feature.settings.home.dialog.EditDockPaddingDialog
 import com.eblan.launcher.feature.settings.home.dialog.EditGridDialog
 import com.eblan.launcher.feature.settings.home.model.HomeSettingsUiState
 import com.eblan.launcher.ui.dialog.ColorPickerDialog
+import com.eblan.launcher.ui.dialog.SliderDialog
 import com.eblan.launcher.ui.settings.GridItemSettings
 import com.eblan.launcher.ui.settings.SettingsCategoryText
 import com.eblan.launcher.ui.settings.SettingsColumnItem
@@ -128,7 +127,6 @@ private fun Success(
 ) {
     var showGridDialog by remember { mutableStateOf(false) }
     var showDockGridDialog by remember { mutableStateOf(false) }
-    var showDockHeightDialog by remember { mutableStateOf(false) }
     var showDockCustomBackgroundColorDialog by remember { mutableStateOf(false) }
     var showDockPaddingDialog by remember { mutableStateOf(false) }
     var showDockCornerRadiusDialog by remember { mutableStateOf(false) }
@@ -316,18 +314,6 @@ private fun Success(
             },
         )
 
-        SettingsColumnItem(
-            // Content
-            title = stringResource(R.string.dock_height),
-            subtitle = "${homeSettings.dockHeight}",
-            // Layout
-            shape = EblanShapes.middle,
-            // Actions
-            onClick = {
-                showDockHeightDialog = true
-            },
-        )
-
         SettingsSwitchItem(
             // Content
             title = stringResource(R.string.dock_infinite_scroll),
@@ -473,26 +459,6 @@ private fun Success(
         )
     }
 
-    if (showDockHeightDialog) {
-        EditDockHeightDialog(
-            // Layout
-            dockHeight = homeSettings.dockHeight,
-            // Actions
-            onDismissRequest = {
-                showDockHeightDialog = false
-            },
-            onUpdateDockHeight = { currentDockHeight ->
-                onUpdateHomeSettings(
-                    homeSettings.copy(
-                        dockHeight = currentDockHeight,
-                    ),
-                )
-
-                showDockHeightDialog = false
-            },
-        )
-    }
-
     if (showDockCustomBackgroundColorDialog) {
         ColorPickerDialog(
             // Content
@@ -515,14 +481,16 @@ private fun Success(
     }
 
     if (showDockPaddingDialog) {
-        EditDockPaddingDialog(
-            // Padding
-            padding = homeSettings.dockPadding,
+        SliderDialog(
+            // Content
+            title = stringResource(R.string.dock_padding),
+            value = homeSettings.dockPadding,
+            valueRange = 0..48,
             // Callbacks
             onDismissRequest = {
                 showDockPaddingDialog = false
             },
-            onUpdatePadding = { currentDockPadding ->
+            onUpdateValue = { currentDockPadding ->
                 onUpdateHomeSettings(
                     homeSettings.copy(
                         dockPadding = currentDockPadding,

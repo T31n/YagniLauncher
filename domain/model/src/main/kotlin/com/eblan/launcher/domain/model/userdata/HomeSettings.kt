@@ -26,7 +26,6 @@ data class HomeSettings(
     val infiniteScroll: Boolean,
     val dockColumns: Int,
     val dockRows: Int,
-    val dockHeight: Int,
     val initialPage: Int,
     val wallpaperScroll: Boolean,
     val gridItemSettings: GridItemSettings,

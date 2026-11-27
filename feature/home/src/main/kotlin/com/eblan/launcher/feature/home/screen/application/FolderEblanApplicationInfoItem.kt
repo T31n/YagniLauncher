@@ -467,7 +467,7 @@ private fun PreviewFolderEblanApplicationInfoItem(
     }
 }
 
-internal fun handleDragFolderEblanApplicationInfoItem(
+private fun handleDragFolderEblanApplicationInfoItem(
     // Item Data
     folderEblanApplicationInfo: FolderEblanApplicationInfo,
     gridItemSettings: GridItemSettings,

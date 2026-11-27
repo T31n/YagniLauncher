@@ -57,7 +57,7 @@ internal fun GestureSettingsRoute(
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun GestureSettingsScreen(
+internal fun GestureSettingsScreen(
     modifier: Modifier = Modifier,
     gesturesSettingsUiState: GesturesSettingsUiState,
     onNavigateUp: () -> Unit,

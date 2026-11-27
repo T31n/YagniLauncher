@@ -19,8 +19,6 @@
     <string name="dock_grid">Mřížka dokovací oblasti</string>
     <string name="dock_columns_is_not_valid">Počet sloupců dokovací oblasti není platný</string>
     <string name="dock_rows_is_not_valid">Počet řádků dokovací oblasti není platný</string>
-    <string name="dock_height">Výška dokovací oblasti</string>
-    <string name="dock_height_is_not_valid">Výška dokovací oblasti není platná</string>
     <string name="infinite_scrolling">Nekonečné rolování</string>
     <string name="seamless_loop_page_scroll">Bezešvá smyčka při rolování stránek</string>
     <string name="wallpaper_scrolling">Rolování tapety</string>

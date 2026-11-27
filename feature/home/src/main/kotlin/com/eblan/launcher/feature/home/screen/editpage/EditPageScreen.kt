@@ -77,11 +77,14 @@ import androidx.compose.ui.unit.dp
 import androidx.core.util.Consumer
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.designsystem.theme.EblanSpacing
+import com.eblan.launcher.domain.grid.getDockHeight
+import com.eblan.launcher.domain.grid.getPageIndicatorHeight
 import com.eblan.launcher.domain.model.folder.FolderPopup
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.GridItemSettings
 import com.eblan.launcher.domain.model.home.PageItem
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
+import com.eblan.launcher.domain.model.userdata.PageIndicatorType
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.GridLayout
 import com.eblan.launcher.feature.home.component.HomeHandler
@@ -314,45 +317,6 @@ internal fun EditGridPageScreen(
     }
 }
 
-private fun getGridSize(
-    // Screen Dimensions
-    screenWidth: Int,
-    screenHeight: Int,
-    // Layout Context
-    density: Density,
-    paddingValues: PaddingValues,
-    layoutDirection: LayoutDirection,
-): Pair<Dp, Dp> {
-    val leftPadding = with(density) {
-        paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
-    }
-
-    val topPadding = with(density) {
-        paddingValues.calculateTopPadding().roundToPx()
-    }
-
-    val rightPadding = with(density) {
-        paddingValues.calculateRightPadding(layoutDirection).roundToPx()
-    }
-
-    val bottomPadding = with(density) {
-        paddingValues.calculateBottomPadding().roundToPx()
-    }
-
-    val horizontalPadding = leftPadding + rightPadding
-    val verticalPadding = topPadding + bottomPadding
-
-    val gridWidthDp = with(density) {
-        (screenWidth - horizontalPadding).toDp()
-    }
-
-    val gridHeightDp = with(density) {
-        (screenHeight - verticalPadding).toDp()
-    }
-
-    return gridWidthDp to gridHeightDp
-}
-
 @Composable
 internal fun EditDockGridPageScreen(
     // Content
@@ -361,9 +325,10 @@ internal fun EditDockGridPageScreen(
     hasShortcutHostPermission: Boolean,
     // Settings
     dockInitialPage: Int,
-    dockHeight: Int,
+    rows: Int,
     dockColumns: Int,
     dockRows: Int,
+    pageIndicatorType: PageIndicatorType,
     dockGridItemSettings: GridItemSettings,
     folderCornerRadius: Int,
     // Appearance
@@ -377,6 +342,7 @@ internal fun EditDockGridPageScreen(
     iconPackFilePaths: Map<String, String?>,
     // Layout
     paddingValues: PaddingValues,
+    screenHeight: Int,
     modifier: Modifier = Modifier,
     // Callbacks
     onSaveEditPage: (
@@ -408,7 +374,28 @@ internal fun EditDockGridPageScreen(
             }
         }
 
-    val cardHeight = dockHeight.dp
+    val density = LocalDensity.current
+
+    val verticalPadding = with(density) {
+        (paddingValues.calculateTopPadding() + paddingValues.calculateBottomPadding()).roundToPx()
+    }
+
+    val safeDrawingHeight = (screenHeight - verticalPadding).coerceAtLeast(0)
+
+    val pageIndicatorHeightPx = with(density) {
+        getPageIndicatorHeight(
+            pageIndicatorType = pageIndicatorType,
+        ).dp.roundToPx()
+    }
+
+    val cardHeight = with(density) {
+        getDockHeight(
+            enableDock = true,
+            rows = rows,
+            dockRows = dockRows,
+            availableHeight = safeDrawingHeight - pageIndicatorHeightPx,
+        ).toDp()
+    }
 
     EditPageScaffold(
         modifier = modifier,
@@ -537,6 +524,45 @@ internal fun EditDockGridPageScreen(
     }
 }
 
+private fun getGridSize(
+    // Screen Dimensions
+    screenWidth: Int,
+    screenHeight: Int,
+    // Layout Context
+    density: Density,
+    paddingValues: PaddingValues,
+    layoutDirection: LayoutDirection,
+): Pair<Dp, Dp> {
+    val leftPadding = with(density) {
+        paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
+    }
+
+    val topPadding = with(density) {
+        paddingValues.calculateTopPadding().roundToPx()
+    }
+
+    val rightPadding = with(density) {
+        paddingValues.calculateRightPadding(layoutDirection).roundToPx()
+    }
+
+    val bottomPadding = with(density) {
+        paddingValues.calculateBottomPadding().roundToPx()
+    }
+
+    val horizontalPadding = leftPadding + rightPadding
+    val verticalPadding = topPadding + bottomPadding
+
+    val gridWidthDp = with(density) {
+        (screenWidth - horizontalPadding).toDp()
+    }
+
+    val gridHeightDp = with(density) {
+        (screenHeight - verticalPadding).toDp()
+    }
+
+    return gridWidthDp to gridHeightDp
+}
+
 @Composable
 private fun EditPageScaffold(
     paddingValues: PaddingValues,
@@ -631,7 +657,7 @@ private fun EditPageScaffold(
 }
 
 @Composable
-internal fun PageButtons(
+private fun PageButtons(
     pageNumber: Int,
     isHome: Boolean,
     modifier: Modifier = Modifier,
@@ -684,7 +710,7 @@ internal fun PageButtons(
     }
 }
 
-internal fun handleActionMainIntent(
+private fun handleActionMainIntent(
     intent: Intent,
     onUpdateScreen: (Screen) -> Unit,
 ) {

@@ -43,7 +43,6 @@ import com.eblan.launcher.domain.model.launcherapps.PinItemRequestType
 import com.eblan.launcher.feature.home.R
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.GridItemSource
-import com.eblan.launcher.feature.home.util.PAGE_INDICATOR_HEIGHT
 import com.eblan.launcher.feature.home.util.updateAppWidgetOptions
 import com.eblan.launcher.platform.imageserializer.AndroidImageSerializer
 import com.eblan.launcher.platform.launcherapps.AndroidLauncherAppsWrapper
@@ -65,7 +64,8 @@ internal suspend fun handleDropGridItem(
     rows: Int,
     safeDrawingHeight: Int,
     safeDrawingWidth: Int,
-    dockHeight: Int,
+    dockHeightPx: Int,
+    pageIndicatorHeightPx: Int,
     // Drag and Drop State
     drag: Drag,
     gridItemSource: GridItemSource?,
@@ -106,9 +106,8 @@ internal suspend fun handleDropGridItem(
         // Screen Dimensions
         safeDrawingWidth = safeDrawingWidth,
         safeDrawingHeight = safeDrawingHeight,
-        dockHeight = dockHeight,
-        // Display Properties
-        density = density,
+        dockHeightPx = dockHeightPx,
+        pageIndicatorHeightPx = pageIndicatorHeightPx,
         // Association
         associate = currentMoveGridItemResult.movingGridItem.associate,
     )
@@ -249,7 +248,8 @@ internal fun handleAppWidgetLauncherResult(
     rows: Int,
     safeDrawingWidth: Int,
     safeDrawingHeight: Int,
-    dockHeight: Int,
+    dockHeightPx: Int,
+    pageIndicatorHeightPx: Int,
     // Callbacks
     onUpdateWidgetGridItem: (GridItem) -> Unit,
     onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
@@ -263,9 +263,8 @@ internal fun handleAppWidgetLauncherResult(
         // Screen Dimensions
         safeDrawingWidth = safeDrawingWidth,
         safeDrawingHeight = safeDrawingHeight,
-        dockHeight = dockHeight,
-        // Display Properties
-        density = density,
+        dockHeightPx = dockHeightPx,
+        pageIndicatorHeightPx = pageIndicatorHeightPx,
         // Association
         associate = movingGridItem.associate,
     )
@@ -749,20 +748,11 @@ private fun calculateGridSize(
     // Screen Dimensions
     safeDrawingWidth: Int,
     safeDrawingHeight: Int,
-    dockHeight: Int,
-    // Display Properties
-    density: Density,
+    dockHeightPx: Int,
+    pageIndicatorHeightPx: Int,
     // Association
     associate: Associate,
 ): IntSize {
-    val dockHeightPx = with(density) {
-        dockHeight.dp.roundToPx()
-    }
-
-    val pageIndicatorHeightPx = with(density) {
-        PAGE_INDICATOR_HEIGHT.roundToPx()
-    }
-
     val gridHeight = when (associate) {
         Associate.Grid -> safeDrawingHeight - dockHeightPx - pageIndicatorHeightPx
         Associate.Dock -> dockHeightPx

@@ -19,8 +19,6 @@
     <string name="dock_grid">تنسيق شاشة شريط التطبيقات السفلي</string>
     <string name="dock_columns_is_not_valid">أعمدة شريط التطبيقات غير صالحة</string>
     <string name="dock_rows_is_not_valid">صفوف شريط التطبيقات السفلي غير صالحة</string>
-    <string name="dock_height">إرتفاع شريط التطبيقات السفلي</string>
-    <string name="dock_height_is_not_valid">إرتفاع شريط التطبيقات السفلي غير صالحة</string>
     <string name="infinite_scrolling">التمرير الانهائي</string>
     <string name="seamless_loop_page_scroll">التمرير بين الصفحات بشكل دائري سلس</string>
     <string name="wallpaper_scrolling">تمرير خلفية الشاشة</string>

@@ -152,6 +152,28 @@ internal class DefaultImageSerializer @Inject constructor(
         return shapedBitmap.toDrawable(Resources.getSystem())
     }
 
+    override fun getTintedAndShapedDrawable(
+        drawable: Drawable,
+        colorSource: ColorSource,
+        customSeedColor: Int,
+        theme: Theme,
+        iconShape: IconShape,
+        colorSchemeSettings: ColorSchemeSettings,
+    ): Drawable? {
+        val tintedDrawable = getTintedDrawable(
+            drawable = drawable,
+            colorSource = colorSource,
+            customSeedColor = customSeedColor,
+            theme = theme,
+            colorSchemeSettings = colorSchemeSettings,
+        )
+
+        return getShapedDrawable(
+            drawable = tintedDrawable,
+            iconShape = iconShape,
+        )
+    }
+
     private fun circlePath(bounds: RectF) = Path().apply {
         addCircle(
             bounds.centerX(),
@@ -566,28 +588,6 @@ internal class DefaultImageSerializer @Inject constructor(
             quadTo(currX, currY, endX, endY)
         }
         close()
-    }
-
-    override fun getTintedAndShapedDrawable(
-        drawable: Drawable,
-        colorSource: ColorSource,
-        customSeedColor: Int,
-        theme: Theme,
-        iconShape: IconShape,
-        colorSchemeSettings: ColorSchemeSettings,
-    ): Drawable? {
-        val tintedDrawable = getTintedDrawable(
-            drawable = drawable,
-            colorSource = colorSource,
-            customSeedColor = customSeedColor,
-            theme = theme,
-            colorSchemeSettings = colorSchemeSettings,
-        )
-
-        return getShapedDrawable(
-            drawable = tintedDrawable,
-            iconShape = iconShape,
-        )
     }
 
     private fun Drawable.toBitmap(unmaskAdaptiveIcon: Boolean = false): Bitmap? = if (this is BitmapDrawable) {

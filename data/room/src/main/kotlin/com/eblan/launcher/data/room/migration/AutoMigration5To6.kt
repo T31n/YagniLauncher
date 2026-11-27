@@ -21,4 +21,4 @@ import androidx.room.DeleteColumn
 import androidx.room.migration.AutoMigrationSpec
 
 @DeleteColumn(tableName = "ShortcutInfoGridItemEntity", columnName = "disabledMessage")
-class AutoMigration5To6 : AutoMigrationSpec
+internal class AutoMigration5To6 : AutoMigrationSpec
