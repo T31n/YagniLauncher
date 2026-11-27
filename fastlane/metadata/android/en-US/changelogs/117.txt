@@ -1,0 +1,6 @@
+- Add hex color input to the color picker (#1156)
+- Replace slider dialogs with inline sliders in settings
+- Replace background icon pack service with an in-app caching dialog
+- Refactor cache settings and consolidate themed icon storage (#1157)
+- Fix accidental scrolling while dragging items in edit page and management dialogs
+- General refactoring and stability improvements
