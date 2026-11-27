@@ -51,10 +51,10 @@ internal fun EditGridDialog(
     ) -> Unit,
 ) {
     var currentColumns by remember(columns) {
-        mutableIntStateOf(columns.coerceIn(GRID_RANGE.first, GRID_RANGE.last))
+        mutableIntStateOf(columns)
     }
     var currentRows by remember(rows) {
-        mutableIntStateOf(rows.coerceIn(GRID_RANGE.first, GRID_RANGE.last))
+        mutableIntStateOf(rows)
     }
 
     EblanDialog(

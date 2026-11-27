@@ -156,7 +156,7 @@ fun ColorPickerDialog(
         currentHue: Float = hue,
         currentSaturation: Float = saturation,
         currentValue: Float = value,
-        currentAlpha: Float = selectedAlpha,
+        currentAlpha: Float = alpha,
     ) {
         val updatedArgb = Color.hsv(currentHue, currentSaturation, currentValue)
             .copy(alpha = if (showAlphaSlider) currentAlpha else 1f)

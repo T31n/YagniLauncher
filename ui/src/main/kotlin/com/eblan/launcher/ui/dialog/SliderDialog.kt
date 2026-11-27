@@ -88,6 +88,10 @@ fun SliderDialog(
             },
             modifier = Modifier.fillMaxWidth(),
             valueRange = valueRange.first.toFloat()..valueRange.last.toFloat(),
+            steps = calculateSliderSteps(
+                valueRange = valueRange,
+                step = step,
+            ),
         )
 
         Row(
@@ -143,7 +147,7 @@ fun LabeledSlider(
             )
 
             Text(
-                text = valueLabel(clampedValue),
+                text = valueLabel(value),
                 color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.titleSmall,
             )
@@ -162,8 +166,22 @@ fun LabeledSlider(
             },
             modifier = Modifier.fillMaxWidth(),
             valueRange = valueRange.first.toFloat()..valueRange.last.toFloat(),
+            steps = calculateSliderSteps(
+                valueRange = valueRange,
+                step = step,
+            ),
         )
     }
+}
+
+private fun calculateSliderSteps(
+    valueRange: IntRange,
+    step: Int,
+): Int {
+    val safeStep = step.coerceAtLeast(1)
+    val span = (valueRange.last - valueRange.first).coerceAtLeast(0)
+
+    return ((span / safeStep) - 1).coerceAtLeast(0)
 }
 
 private fun snapToStep(

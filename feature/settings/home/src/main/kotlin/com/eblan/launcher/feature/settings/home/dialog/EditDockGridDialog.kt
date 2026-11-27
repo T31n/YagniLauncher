@@ -53,10 +53,10 @@ internal fun EditDockGridDialog(
     ) -> Unit,
 ) {
     var currentDockColumns by remember(dockColumns) {
-        mutableIntStateOf(dockColumns.coerceIn(DOCK_COLUMNS_RANGE.first, DOCK_COLUMNS_RANGE.last))
+        mutableIntStateOf(dockColumns)
     }
     var currentDockRows by remember(dockRows) {
-        mutableIntStateOf(dockRows.coerceIn(DOCK_ROWS_RANGE.first, DOCK_ROWS_RANGE.last))
+        mutableIntStateOf(dockRows)
     }
 
     EblanDialog(
