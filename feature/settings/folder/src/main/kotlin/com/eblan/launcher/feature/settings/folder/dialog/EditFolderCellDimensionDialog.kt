@@ -32,7 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.eblan.launcher.designsystem.component.EblanDialog
 import com.eblan.launcher.feature.settings.folder.R
-import com.eblan.launcher.ui.dialog.LabeledSlider
+import com.eblan.launcher.ui.settings.LabeledSlider
 import com.eblan.launcher.common.R as commonR
 
 private val FOLDER_CELL_DIMENSION_RANGE = 40..160

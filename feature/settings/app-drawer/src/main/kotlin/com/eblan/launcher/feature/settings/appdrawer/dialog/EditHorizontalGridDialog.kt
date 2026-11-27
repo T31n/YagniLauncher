@@ -32,7 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.eblan.launcher.designsystem.component.EblanDialog
 import com.eblan.launcher.feature.settings.appdrawer.R
-import com.eblan.launcher.ui.dialog.LabeledSlider
+import com.eblan.launcher.ui.settings.LabeledSlider
 import com.eblan.launcher.common.R as commonR
 
 private val HORIZONTAL_GRID_RANGE = 3..12

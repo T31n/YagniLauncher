@@ -46,6 +46,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
@@ -311,6 +312,51 @@ fun SettingsSwitchItem(
             checked = checked,
             onCheckedChange = onCheckedChange,
             thumbContent = { SettingsSwitchThumbIcon(checked) },
+        )
+    }
+}
+
+@Composable
+fun SettingsSliderItem(
+    // Content
+    title: String,
+    value: Int,
+    valueRange: IntRange,
+    // Layout
+    shape: Shape,
+    modifier: Modifier = Modifier,
+    step: Int = 1,
+    valueLabel: (Int) -> String = Int::toString,
+    // Actions
+    onValueChange: (Int) -> Unit,
+) {
+    var currentValue by remember(key1 = value, key2 = valueRange) {
+        mutableIntStateOf(value.coerceIn(valueRange.first, valueRange.last))
+    }
+
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = shape,
+    ) {
+        LabeledSlider(
+            label = title,
+            value = currentValue,
+            valueRange = valueRange,
+            modifier = Modifier.padding(
+                start = EblanSpacing.large,
+                top = EblanSpacing.large,
+                end = EblanSpacing.large,
+                bottom = EblanSpacing.small,
+            ),
+            step = step,
+            valueLabel = valueLabel,
+            labelStyle = MaterialTheme.typography.titleMedium,
+            onValueChange = { currentValue = it },
+            onValueChangeFinished = {
+                if (currentValue != value) {
+                    onValueChange(currentValue)
+                }
+            },
         )
     }
 }

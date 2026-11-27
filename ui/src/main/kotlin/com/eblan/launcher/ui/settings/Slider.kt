@@ -15,7 +15,7 @@
  *   limitations under the License.
  *
  */
-package com.eblan.launcher.ui.dialog
+package com.eblan.launcher.ui.settings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,98 +24,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import com.eblan.launcher.designsystem.component.EblanDialog
+import androidx.compose.ui.text.TextStyle
 import com.eblan.launcher.designsystem.theme.EblanSpacing
 import kotlin.math.roundToInt
-import com.eblan.launcher.common.R as commonR
-
-@Composable
-fun SliderDialog(
-    // Content
-    title: String,
-    value: Int,
-    valueRange: IntRange,
-    // Layout
-    modifier: Modifier = Modifier,
-    step: Int = 1,
-    valueLabel: (Int) -> String = Int::toString,
-    // Callbacks
-    onDismissRequest: () -> Unit,
-    onUpdateValue: (Int) -> Unit,
-) {
-    var currentValue by remember(value, valueRange) {
-        mutableIntStateOf(value.coerceIn(valueRange.first, valueRange.last))
-    }
-
-    EblanDialog(
-        modifier = modifier,
-        onDismissRequest = onDismissRequest,
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleLarge,
-            )
-
-            Text(
-                text = valueLabel(currentValue),
-                color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.titleMedium,
-            )
-        }
-
-        Slider(
-            value = currentValue.toFloat(),
-            onValueChange = { rawValue ->
-                currentValue = snapToStep(
-                    value = rawValue,
-                    valueRange = valueRange,
-                    step = step,
-                )
-            },
-            modifier = Modifier.fillMaxWidth(),
-            valueRange = valueRange.first.toFloat()..valueRange.last.toFloat(),
-            steps = calculateSliderSteps(
-                valueRange = valueRange,
-                step = step,
-            ),
-        )
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End,
-        ) {
-            TextButton(
-                onClick = onDismissRequest,
-            ) {
-                Text(text = stringResource(commonR.string.cancel))
-            }
-
-            TextButton(
-                onClick = {
-                    onUpdateValue(currentValue)
-
-                    onDismissRequest()
-                },
-            ) {
-                Text(text = stringResource(commonR.string.update))
-            }
-        }
-    }
-}
 
 @Composable
 fun LabeledSlider(
@@ -127,8 +41,10 @@ fun LabeledSlider(
     modifier: Modifier = Modifier,
     step: Int = 1,
     valueLabel: (Int) -> String = Int::toString,
+    labelStyle: TextStyle = MaterialTheme.typography.bodyLarge,
     // Callbacks
     onValueChange: (Int) -> Unit,
+    onValueChangeFinished: (() -> Unit)? = null,
 ) {
     val clampedValue = value.coerceIn(valueRange.first, valueRange.last)
 
@@ -143,7 +59,7 @@ fun LabeledSlider(
         ) {
             Text(
                 text = label,
-                style = MaterialTheme.typography.bodyLarge,
+                style = labelStyle,
             )
 
             Text(
@@ -170,6 +86,7 @@ fun LabeledSlider(
                 valueRange = valueRange,
                 step = step,
             ),
+            onValueChangeFinished = onValueChangeFinished,
         )
     }
 }

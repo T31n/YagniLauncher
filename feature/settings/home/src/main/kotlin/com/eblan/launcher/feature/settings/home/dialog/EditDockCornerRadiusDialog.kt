@@ -36,7 +36,7 @@ import androidx.compose.ui.res.stringResource
 import com.eblan.launcher.designsystem.component.EblanDialog
 import com.eblan.launcher.designsystem.theme.EblanSpacing
 import com.eblan.launcher.feature.settings.home.R
-import com.eblan.launcher.ui.dialog.LabeledSlider
+import com.eblan.launcher.ui.settings.LabeledSlider
 import com.eblan.launcher.common.R as commonR
 
 private val CORNER_RADIUS_RANGE = 0..50

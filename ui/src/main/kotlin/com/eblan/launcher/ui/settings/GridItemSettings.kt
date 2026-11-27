@@ -38,7 +38,6 @@ import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.ui.R
 import com.eblan.launcher.ui.dialog.ColorPickerDialog
-import com.eblan.launcher.ui.dialog.SliderDialog
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -52,14 +51,8 @@ fun GridItemSettings(
     // Actions
     onUpdateGridItemSettings: (GridItemSettings) -> Unit,
 ) {
-    var showIconSizeDialog by remember { mutableStateOf(false) }
     var showTextColorPickerDialog by remember { mutableStateOf(false) }
-    var showTextSizeDialog by remember { mutableStateOf(false) }
     var showBackgroundColorDialog by remember { mutableStateOf(false) }
-    var showPaddingDialog by remember { mutableStateOf(false) }
-    var showCornerRadiusDialog by remember { mutableStateOf(false) }
-    var showIconPaddingDialog by remember { mutableStateOf(false) }
-    var showTextPaddingDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier,
@@ -83,15 +76,19 @@ fun GridItemSettings(
             },
         )
 
-        SettingsColumnItem(
+        SettingsSliderItem(
             // Content
             title = stringResource(R.string.icon_size),
-            subtitle = "${gridItemSettings.iconSize}",
+            value = gridItemSettings.iconSize,
+            valueRange = 24..120,
             // Layout
             shape = EblanShapes.middle,
+            step = 2,
             // Actions
-            onClick = {
-                showIconSizeDialog = true
+            onValueChange = { currentIconSize ->
+                onUpdateGridItemSettings(
+                    gridItemSettings.copy(iconSize = currentIconSize),
+                )
             },
         )
 
@@ -115,15 +112,18 @@ fun GridItemSettings(
             },
         )
 
-        SettingsColumnItem(
+        SettingsSliderItem(
             // Content
             title = stringResource(R.string.text_size),
-            subtitle = "${gridItemSettings.textSize}",
+            value = gridItemSettings.textSize,
+            valueRange = 6..32,
             // Layout
             shape = EblanShapes.middle,
             // Actions
-            onClick = {
-                showTextSizeDialog = true
+            onValueChange = { currentTextSize ->
+                onUpdateGridItemSettings(
+                    gridItemSettings.copy(textSize = currentTextSize),
+                )
             },
         )
 
@@ -149,27 +149,33 @@ fun GridItemSettings(
             },
         )
 
-        SettingsColumnItem(
+        SettingsSliderItem(
             // Content
             title = stringResource(R.string.padding),
-            subtitle = "${gridItemSettings.padding}",
+            value = gridItemSettings.padding,
+            valueRange = 0..32,
             // Layout
             shape = EblanShapes.middle,
             // Actions
-            onClick = {
-                showPaddingDialog = true
+            onValueChange = { currentPadding ->
+                onUpdateGridItemSettings(
+                    gridItemSettings.copy(padding = currentPadding),
+                )
             },
         )
 
-        SettingsColumnItem(
+        SettingsSliderItem(
             // Content
             title = stringResource(R.string.corner_radius),
-            subtitle = "${gridItemSettings.cornerRadius}",
+            value = gridItemSettings.cornerRadius,
+            valueRange = 0..50,
             // Layout
             shape = EblanShapes.middle,
             // Actions
-            onClick = {
-                showCornerRadiusDialog = true
+            onValueChange = { currentCornerRadius ->
+                onUpdateGridItemSettings(
+                    gridItemSettings.copy(cornerRadius = currentCornerRadius),
+                )
             },
         )
 
@@ -261,47 +267,32 @@ fun GridItemSettings(
             },
         )
 
-        SettingsColumnItem(
+        SettingsSliderItem(
             // Content
             title = stringResource(R.string.icon_padding),
-            subtitle = "${gridItemSettings.iconPadding}",
+            value = gridItemSettings.iconPadding,
+            valueRange = 0..32,
             // Layout
             shape = EblanShapes.middle,
             // Actions
-            onClick = {
-                showIconPaddingDialog = true
+            onValueChange = { currentIconPadding ->
+                onUpdateGridItemSettings(
+                    gridItemSettings.copy(iconPadding = currentIconPadding),
+                )
             },
         )
 
-        SettingsColumnItem(
+        SettingsSliderItem(
             // Content
             title = stringResource(R.string.text_padding),
-            subtitle = "${gridItemSettings.textPadding}",
+            value = gridItemSettings.textPadding,
+            valueRange = 0..32,
             // Layout
             shape = EblanShapes.last,
             // Actions
-            onClick = {
-                showTextPaddingDialog = true
-            },
-        )
-    }
-
-    if (showIconSizeDialog) {
-        SliderDialog(
-            // Content
-            title = stringResource(R.string.icon_size),
-            value = gridItemSettings.iconSize,
-            valueRange = 24..120,
-            step = 2,
-            // Callbacks
-            onDismissRequest = {
-                showIconSizeDialog = false
-            },
-            onUpdateValue = { currentIconSize ->
+            onValueChange = { currentTextPadding ->
                 onUpdateGridItemSettings(
-                    gridItemSettings.copy(
-                        iconSize = currentIconSize,
-                    ),
+                    gridItemSettings.copy(textPadding = currentTextPadding),
                 )
             },
         )
@@ -328,26 +319,6 @@ fun GridItemSettings(
         )
     }
 
-    if (showTextSizeDialog) {
-        SliderDialog(
-            // Content
-            title = stringResource(R.string.text_size),
-            value = gridItemSettings.textSize,
-            valueRange = 6..32,
-            // Callbacks
-            onDismissRequest = {
-                showTextSizeDialog = false
-            },
-            onUpdateValue = { currentTextSize ->
-                onUpdateGridItemSettings(
-                    gridItemSettings.copy(
-                        textSize = currentTextSize,
-                    ),
-                )
-            },
-        )
-    }
-
     if (showBackgroundColorDialog) {
         ColorPickerDialog(
             // Content
@@ -363,86 +334,6 @@ fun GridItemSettings(
                     gridItemSettings.copy(
                         backgroundColor = BackgroundColor.Custom,
                         customBackgroundColor = currentCustomBackgroundColor,
-                    ),
-                )
-            },
-        )
-    }
-
-    if (showPaddingDialog) {
-        SliderDialog(
-            // Content
-            title = stringResource(R.string.padding),
-            value = gridItemSettings.padding,
-            valueRange = 0..32,
-            // Callbacks
-            onDismissRequest = {
-                showPaddingDialog = false
-            },
-            onUpdateValue = { currentPadding ->
-                onUpdateGridItemSettings(
-                    gridItemSettings.copy(
-                        padding = currentPadding,
-                    ),
-                )
-            },
-        )
-    }
-
-    if (showCornerRadiusDialog) {
-        SliderDialog(
-            // Content
-            title = stringResource(R.string.corner_radius),
-            value = gridItemSettings.cornerRadius,
-            valueRange = 0..50,
-            // Callbacks
-            onDismissRequest = {
-                showCornerRadiusDialog = false
-            },
-            onUpdateValue = { currentCornerRadius ->
-                onUpdateGridItemSettings(
-                    gridItemSettings.copy(
-                        cornerRadius = currentCornerRadius,
-                    ),
-                )
-            },
-        )
-    }
-
-    if (showIconPaddingDialog) {
-        SliderDialog(
-            // Content
-            title = stringResource(R.string.icon_padding),
-            value = gridItemSettings.iconPadding,
-            valueRange = 0..32,
-            // Callbacks
-            onDismissRequest = {
-                showIconPaddingDialog = false
-            },
-            onUpdateValue = { currentIconPadding ->
-                onUpdateGridItemSettings(
-                    gridItemSettings.copy(
-                        iconPadding = currentIconPadding,
-                    ),
-                )
-            },
-        )
-    }
-
-    if (showTextPaddingDialog) {
-        SliderDialog(
-            // Content
-            title = stringResource(R.string.text_padding),
-            value = gridItemSettings.textPadding,
-            valueRange = 0..32,
-            // Callbacks
-            onDismissRequest = {
-                showTextPaddingDialog = false
-            },
-            onUpdateValue = { currentTextPadding ->
-                onUpdateGridItemSettings(
-                    gridItemSettings.copy(
-                        textPadding = currentTextPadding,
                     ),
                 )
             },

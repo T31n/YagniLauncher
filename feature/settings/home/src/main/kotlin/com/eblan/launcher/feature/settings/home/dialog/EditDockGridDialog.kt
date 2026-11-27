@@ -32,7 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.eblan.launcher.designsystem.component.EblanDialog
 import com.eblan.launcher.feature.settings.home.R
-import com.eblan.launcher.ui.dialog.LabeledSlider
+import com.eblan.launcher.ui.settings.LabeledSlider
 import com.eblan.launcher.common.R as commonR
 
 private val DOCK_COLUMNS_RANGE = 1..12

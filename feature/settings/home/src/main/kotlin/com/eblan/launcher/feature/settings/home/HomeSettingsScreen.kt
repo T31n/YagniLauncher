@@ -53,11 +53,11 @@ import com.eblan.launcher.feature.settings.home.dialog.EditDockGridDialog
 import com.eblan.launcher.feature.settings.home.dialog.EditGridDialog
 import com.eblan.launcher.feature.settings.home.model.HomeSettingsUiState
 import com.eblan.launcher.ui.dialog.ColorPickerDialog
-import com.eblan.launcher.ui.dialog.SliderDialog
 import com.eblan.launcher.ui.settings.GridItemSettings
 import com.eblan.launcher.ui.settings.SettingsCategoryText
 import com.eblan.launcher.ui.settings.SettingsColumnItem
 import com.eblan.launcher.ui.settings.SettingsDropdownItem
+import com.eblan.launcher.ui.settings.SettingsSliderItem
 import com.eblan.launcher.ui.settings.SettingsSwitchItem
 import com.eblan.launcher.ui.settings.getTitle
 import com.eblan.launcher.common.R as commonR
@@ -128,7 +128,6 @@ private fun Success(
     var showGridDialog by remember { mutableStateOf(false) }
     var showDockGridDialog by remember { mutableStateOf(false) }
     var showDockCustomBackgroundColorDialog by remember { mutableStateOf(false) }
-    var showDockPaddingDialog by remember { mutableStateOf(false) }
     var showDockCornerRadiusDialog by remember { mutableStateOf(false) }
 
     Column(
@@ -352,15 +351,18 @@ private fun Success(
             },
         )
 
-        SettingsColumnItem(
+        SettingsSliderItem(
             // Content
             title = stringResource(R.string.dock_padding),
-            subtitle = "${homeSettings.dockPadding}",
+            value = homeSettings.dockPadding,
+            valueRange = 0..48,
             // Layout
             shape = EblanShapes.middle,
             // Actions
-            onClick = {
-                showDockPaddingDialog = true
+            onValueChange = { currentDockPadding ->
+                onUpdateHomeSettings(
+                    homeSettings.copy(dockPadding = currentDockPadding),
+                )
             },
         )
 
@@ -474,26 +476,6 @@ private fun Success(
                     homeSettings.copy(
                         dockBackgroundColor = BackgroundColor.Custom,
                         dockCustomBackgroundColor = currentDockCustomBackgroundColor,
-                    ),
-                )
-            },
-        )
-    }
-
-    if (showDockPaddingDialog) {
-        SliderDialog(
-            // Content
-            title = stringResource(R.string.dock_padding),
-            value = homeSettings.dockPadding,
-            valueRange = 0..48,
-            // Callbacks
-            onDismissRequest = {
-                showDockPaddingDialog = false
-            },
-            onUpdateValue = { currentDockPadding ->
-                onUpdateHomeSettings(
-                    homeSettings.copy(
-                        dockPadding = currentDockPadding,
                     ),
                 )
             },
