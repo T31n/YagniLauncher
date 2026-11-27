@@ -700,13 +700,13 @@ private fun rawPageDistance(
     pageCount: Int,
     infiniteScroll: Boolean,
 ): Float {
-    val (fromPage, toPage, fraction) = resolveTransition(
-        pagePosition = pagePosition,
-        pageCount = pageCount,
-        infiniteScroll = infiniteScroll,
-    )
-    val visualPosition = lerp(fromPage.toFloat(), toPage.toFloat(), fraction)
-    return visualPosition - index
+    var diff = pagePosition - index
+    if (infiniteScroll && pageCount > 1) {
+        val half = pageCount / 2f
+        while (diff > half) diff -= pageCount
+        while (diff < -half) diff += pageCount
+    }
+    return diff
 }
 
 private fun pageDistance(
