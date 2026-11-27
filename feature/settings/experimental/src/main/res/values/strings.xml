@@ -35,5 +35,5 @@
     <string name="cleaning_up">Cleaning up…</string>
     <string name="nothing_to_clean_up">Nothing to clean up</string>
     <string name="clean_cache">Clean Cache</string>
-    <string name="clean_cache_automatically_on_launch">Clean unused cache automatically on launch</string>
+    <string name="clean_cache_on_launch">Clean cache on launch</string>
 </resources>

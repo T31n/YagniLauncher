@@ -121,7 +121,7 @@ internal fun ExperimentalSettingsScreen(
 private fun Success(
     modifier: Modifier = Modifier,
     experimentalSettings: ExperimentalSettings,
-    cacheInfo: CacheInfo?,
+    cacheInfo: CacheInfo,
     isCleaningUp: Boolean,
     onUpdateExperimentalSettings: (ExperimentalSettings) -> Unit,
     onRefreshCacheInfo: () -> Unit,

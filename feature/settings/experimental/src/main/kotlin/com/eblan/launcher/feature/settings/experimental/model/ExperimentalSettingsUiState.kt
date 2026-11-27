@@ -25,7 +25,7 @@ internal sealed interface ExperimentalSettingsUiState {
 
     data class Success(
         val experimentalSettings: ExperimentalSettings,
-        val cacheInfo: CacheInfo? = null,
+        val cacheInfo: CacheInfo = CacheInfo(totalSize = 0L, reclaimableSize = 0L),
         val isCleaningUp: Boolean = false,
     ) : ExperimentalSettingsUiState
 }

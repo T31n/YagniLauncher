@@ -19,7 +19,6 @@ package com.eblan.launcher.feature.settings.experimental.dialog
 
 import android.text.format.Formatter
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -53,7 +52,7 @@ import com.eblan.launcher.common.R as commonR
 internal fun CleanCacheDialog(
     // State
     cleanCache: Boolean,
-    cacheInfo: CacheInfo?,
+    cacheInfo: CacheInfo,
     isCleaningUp: Boolean,
     // Layout
     modifier: Modifier = Modifier,
@@ -82,64 +81,53 @@ internal fun CleanCacheDialog(
             SettingsSwitch(
                 // Content
                 title = stringResource(R.string.clean_cache),
-                subtitle = stringResource(R.string.clean_cache_automatically_on_launch),
+                subtitle = stringResource(R.string.clean_cache_on_launch),
                 // State
                 checked = cleanCache,
                 // Callbacks
                 onCheckedChange = onUpdateCleanCache,
             )
 
-            if (cacheInfo == null) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(EblanSpacing.large),
-                    contentAlignment = Alignment.Center,
+            Card(modifier = Modifier.fillMaxWidth()) {
+                Column(
+                    modifier = Modifier.padding(EblanSpacing.large),
+                    verticalArrangement = Arrangement.spacedBy(EblanSpacing.medium),
                 ) {
-                    CircularProgressIndicator()
+                    CacheSizeRow(
+                        label = stringResource(R.string.total_cache),
+                        size = Formatter.formatShortFileSize(context, cacheInfo.totalSize),
+                    )
+
+                    CacheSizeRow(
+                        label = stringResource(R.string.can_be_freed),
+                        size = Formatter.formatShortFileSize(context, cacheInfo.reclaimableSize),
+                    )
                 }
-            } else {
-                Card(modifier = Modifier.fillMaxWidth()) {
-                    Column(
-                        modifier = Modifier.padding(EblanSpacing.large),
-                        verticalArrangement = Arrangement.spacedBy(EblanSpacing.medium),
-                    ) {
-                        CacheSizeRow(
-                            label = stringResource(R.string.total_cache),
-                            size = Formatter.formatShortFileSize(context, cacheInfo.totalSize),
-                        )
+            }
 
-                        CacheSizeRow(
-                            label = stringResource(R.string.can_be_freed),
-                            size = Formatter.formatShortFileSize(context, cacheInfo.reclaimableSize),
-                        )
-                    }
-                }
+            Text(
+                text = stringResource(R.string.cache_description),
+                style = MaterialTheme.typography.bodyMedium,
+            )
 
-                Text(
-                    text = stringResource(R.string.cache_description),
-                    style = MaterialTheme.typography.bodyMedium,
-                )
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !isCleaningUp && cacheInfo.reclaimableSize > 0L,
+                onClick = onCleanUpCache,
+            ) {
+                if (isCleaningUp) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(ButtonDefaults.IconSize),
+                        strokeWidth = 2.dp,
+                    )
 
-                Button(
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = !isCleaningUp && cacheInfo.reclaimableSize > 0L,
-                    onClick = onCleanUpCache,
-                ) {
-                    if (isCleaningUp) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(ButtonDefaults.IconSize),
-                            strokeWidth = 2.dp,
-                        )
+                    Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
 
-                        Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
-
-                        Text(text = stringResource(R.string.cleaning_up))
-                    } else if (cacheInfo.reclaimableSize > 0L) {
-                        Text(text = stringResource(R.string.clean_up))
-                    } else {
-                        Text(text = stringResource(R.string.nothing_to_clean_up))
-                    }
+                    Text(text = stringResource(R.string.cleaning_up))
+                } else if (cacheInfo.reclaimableSize > 0L) {
+                    Text(text = stringResource(R.string.clean_up))
+                } else {
+                    Text(text = stringResource(R.string.nothing_to_clean_up))
                 }
             }
         }

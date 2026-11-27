@@ -29,8 +29,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -40,17 +40,22 @@ internal class ExperimentalSettingsViewModel @Inject constructor(
     private val getCacheInfoUseCase: GetCacheInfoUseCase,
     private val cleanUpCacheUseCase: CleanUpCacheUseCase,
 ) : ViewModel() {
-    private val _cacheInfo = MutableStateFlow<CacheInfo?>(null)
+    private val _cacheInfo = MutableStateFlow(
+        CacheInfo(
+            totalSize = 0L,
+            reclaimableSize = 0L,
+        ),
+    )
 
     private val _isCleaningUp = MutableStateFlow(false)
 
     val experimentalSettingsUiState = combine(
-        userDataRepository.userDataFlow.map { userData -> userData.experimentalSettings },
+        userDataRepository.userDataFlow,
         _cacheInfo,
         _isCleaningUp,
-    ) { experimentalSettings, cacheInfo, isCleaningUp ->
+    ) { userData, cacheInfo, isCleaningUp ->
         ExperimentalSettingsUiState.Success(
-            experimentalSettings = experimentalSettings,
+            experimentalSettings = userData.experimentalSettings,
             cacheInfo = cacheInfo,
             isCleaningUp = isCleaningUp,
         )
@@ -72,25 +77,23 @@ internal class ExperimentalSettingsViewModel @Inject constructor(
         viewModelScope.launch {
             val cacheInfo = getCacheInfoUseCase()
 
-            if (!_isCleaningUp.value) {
-                _cacheInfo.value = cacheInfo
-            }
+            _cacheInfo.update { cacheInfo }
         }
     }
 
     fun cleanUpCache() {
-        if (_cacheInfo.value == null || _isCleaningUp.value) return
+        if (_isCleaningUp.value) return
+
+        _isCleaningUp.update { true }
 
         viewModelScope.launch {
-            _isCleaningUp.value = true
+            cleanUpCacheUseCase()
 
-            try {
-                cleanUpCacheUseCase()
+            val cacheInfo = getCacheInfoUseCase()
 
-                _cacheInfo.value = getCacheInfoUseCase()
-            } finally {
-                _isCleaningUp.value = false
-            }
+            _cacheInfo.update { cacheInfo }
+
+            _isCleaningUp.update { false }
         }
     }
 }
