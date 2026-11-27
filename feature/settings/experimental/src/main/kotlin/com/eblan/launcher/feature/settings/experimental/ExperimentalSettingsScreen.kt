@@ -43,7 +43,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.designsystem.theme.EblanShapes
 import com.eblan.launcher.designsystem.theme.EblanSpacing
+import com.eblan.launcher.domain.model.cache.CacheInfo
 import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
+import com.eblan.launcher.feature.settings.experimental.dialog.CleanCacheDialog
 import com.eblan.launcher.feature.settings.experimental.dialog.SyncDataDialog
 import com.eblan.launcher.feature.settings.experimental.model.ExperimentalSettingsUiState
 import com.eblan.launcher.ui.settings.SettingsColumnItem
@@ -63,6 +65,8 @@ internal fun ExperimentalSettingsRoute(
         experimentalSettingsUiState = experimentalSettingsUiState,
         onNavigateUp = onNavigateUp,
         onUpdateExperimentalSettings = viewModel::updateExperimentalSettings,
+        onRefreshCacheInfo = viewModel::refreshCacheInfo,
+        onCleanUpCache = viewModel::cleanUpCache,
     )
 }
 
@@ -73,6 +77,8 @@ internal fun ExperimentalSettingsScreen(
     experimentalSettingsUiState: ExperimentalSettingsUiState,
     onNavigateUp: () -> Unit,
     onUpdateExperimentalSettings: (ExperimentalSettings) -> Unit,
+    onRefreshCacheInfo: () -> Unit,
+    onCleanUpCache: () -> Unit,
 ) {
     Scaffold(
         modifier = modifier,
@@ -100,7 +106,11 @@ internal fun ExperimentalSettingsScreen(
             if (experimentalSettingsUiState is ExperimentalSettingsUiState.Success) {
                 Success(
                     experimentalSettings = experimentalSettingsUiState.experimentalSettings,
+                    cacheInfo = experimentalSettingsUiState.cacheInfo,
+                    isCleaningUp = experimentalSettingsUiState.isCleaningUp,
                     onUpdateExperimentalSettings = onUpdateExperimentalSettings,
+                    onRefreshCacheInfo = onRefreshCacheInfo,
+                    onCleanUpCache = onCleanUpCache,
                 )
             }
         }
@@ -111,9 +121,15 @@ internal fun ExperimentalSettingsScreen(
 private fun Success(
     modifier: Modifier = Modifier,
     experimentalSettings: ExperimentalSettings,
+    cacheInfo: CacheInfo,
+    isCleaningUp: Boolean,
     onUpdateExperimentalSettings: (ExperimentalSettings) -> Unit,
+    onRefreshCacheInfo: () -> Unit,
+    onCleanUpCache: () -> Unit,
 ) {
     var showSyncDataDialog by remember { mutableStateOf(false) }
+
+    var showCleanCacheDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -131,6 +147,19 @@ private fun Success(
             // Actions
             onClick = {
                 showSyncDataDialog = true
+            },
+        )
+
+        SettingsColumnItem(
+            // Content
+            title = stringResource(commonR.string.cache),
+            subtitle = stringResource(R.string.clean_up_unused_icons_and_previews),
+            // Layout
+            shape = EblanShapes.middle,
+            // Actions
+            onClick = {
+                onRefreshCacheInfo()
+                showCleanCacheDialog = true
             },
         )
 
@@ -182,6 +211,23 @@ private fun Success(
             onUpdateSyncData = { currentSyncData ->
                 onUpdateExperimentalSettings(experimentalSettings.copy(syncData = currentSyncData))
             },
+        )
+    }
+
+    if (showCleanCacheDialog) {
+        CleanCacheDialog(
+            // State
+            cleanCache = experimentalSettings.cleanCache,
+            cacheInfo = cacheInfo,
+            isCleaningUp = isCleaningUp,
+            // Actions
+            onDismissRequest = {
+                showCleanCacheDialog = false
+            },
+            onUpdateCleanCache = { currentCleanCache ->
+                onUpdateExperimentalSettings(experimentalSettings.copy(cleanCache = currentCleanCache))
+            },
+            onCleanUpCache = onCleanUpCache,
         )
     }
 }

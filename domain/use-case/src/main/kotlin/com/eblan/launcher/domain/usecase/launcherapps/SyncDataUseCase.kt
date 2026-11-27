@@ -51,6 +51,7 @@ import com.eblan.launcher.domain.repository.ShortcutConfigGridItemRepository
 import com.eblan.launcher.domain.repository.ShortcutInfoGridItemRepository
 import com.eblan.launcher.domain.repository.UserDataRepository
 import com.eblan.launcher.domain.repository.WidgetGridItemRepository
+import com.eblan.launcher.domain.usecase.cache.CleanUpCacheUseCase
 import com.eblan.launcher.domain.usecase.folder.CleanupFolderEblanApplicationInfosUseCase
 import com.eblan.launcher.domain.usecase.folder.CleanupFolderGridItemsUseCase
 import com.eblan.launcher.domain.usecase.iconpack.UpdateIconPacksUseCase
@@ -87,6 +88,7 @@ class SyncDataUseCase @Inject constructor(
     private val eblanIconPackInfoRepository: EblanIconPackInfoRepository,
     private val cleanupFolderGridItemsUseCase: CleanupFolderGridItemsUseCase,
     private val cleanupFolderEblanApplicationInfosUseCase: CleanupFolderEblanApplicationInfosUseCase,
+    private val cleanUpCacheUseCase: CleanUpCacheUseCase,
     @param:Dispatcher(EblanDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     /** Refreshes launcher data and icon-pack caches using the current user settings. */
@@ -121,6 +123,10 @@ class SyncDataUseCase @Inject constructor(
             updateEblanIconPackInfos(generalSettings = userData.generalSettings)
 
             cleanupFolderGridItemsUseCase()
+
+            if (userData.experimentalSettings.cleanCache) {
+                cleanUpCacheUseCase()
+            }
         }
     }
 

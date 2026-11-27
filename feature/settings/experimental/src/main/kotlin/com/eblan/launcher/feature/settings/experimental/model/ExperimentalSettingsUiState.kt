@@ -17,10 +17,15 @@
  */
 package com.eblan.launcher.feature.settings.experimental.model
 
+import com.eblan.launcher.domain.model.cache.CacheInfo
 import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
 
 internal sealed interface ExperimentalSettingsUiState {
     data object Loading : ExperimentalSettingsUiState
 
-    data class Success(val experimentalSettings: ExperimentalSettings) : ExperimentalSettingsUiState
+    data class Success(
+        val experimentalSettings: ExperimentalSettings,
+        val cacheInfo: CacheInfo = CacheInfo(totalSize = 0L, reclaimableSize = 0L),
+        val isCleaningUp: Boolean = false,
+    ) : ExperimentalSettingsUiState
 }

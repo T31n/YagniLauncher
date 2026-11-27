@@ -8,4 +8,5 @@ message ExperimentalSettingsProto {
   optional bool firstLaunch = 2;
   optional bool lockMovement = 3;
   optional bool gridItemAnimation = 4;
+  optional bool cleanCache = 5;
 }

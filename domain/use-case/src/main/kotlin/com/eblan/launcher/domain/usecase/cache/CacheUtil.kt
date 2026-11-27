@@ -31,13 +31,18 @@ import java.io.File
 /** Cache directories whose files are tracked by a path column in the database. */
 internal val referenceCheckedDirectoryNames = listOf(
     FileManager.ICONS_DIR,
-    FileManager.TINTED_ICONS_DIR,
-    FileManager.SHAPED_ICONS_DIR,
-    FileManager.TINTED_SHAPED_ICONS_DIR,
+    FileManager.THEMED_ICONS_DIR,
     FileManager.WIDGETS_DIR,
     FileManager.SHORTCUTS_DIR,
     FileManager.SHORTCUT_INTENT_ICONS_DIR,
     FileManager.CUSTOM_ICONS_DIR,
+)
+
+/** Legacy icon cache directories replaced by [FileManager.THEMED_ICONS_DIR]. */
+private val legacyReferenceCheckedDirectoryNames = listOf(
+    "tinted_icons",
+    "shaped_icons",
+    "tinted_shaped_icons",
 )
 
 /**
@@ -46,11 +51,13 @@ internal val referenceCheckedDirectoryNames = listOf(
  * @property totalSize Total size in bytes of all files in the managed cache directories.
  * @property reclaimableSize Total size in bytes of unreferenced files that can be deleted.
  * @property unreferencedFiles The files that are not used anymore and can be deleted.
+ * @property legacyDirectories Existing legacy cache directories that can be removed once empty.
  */
 internal data class CacheSnapshot(
     val totalSize: Long,
     val reclaimableSize: Long,
     val unreferencedFiles: List<File>,
+    val legacyDirectories: List<File>,
 )
 
 /** Loads everything [scanCache] needs from the file system, the database and the settings. */
@@ -81,10 +88,20 @@ internal suspend fun getCacheSnapshot(
         }
     }
 
+    val referenceCheckedDirectories = referenceCheckedDirectoryNames.map { currentDirectoryName ->
+        fileManager.getFilesDirectory(name = currentDirectoryName)
+    }
+
+    val filesRoot = referenceCheckedDirectories.firstOrNull()?.parentFile
+
+    val legacyDirectories = legacyReferenceCheckedDirectoryNames.mapNotNull { legacyDirectoryName ->
+        filesRoot?.let { currentRoot -> File(currentRoot, legacyDirectoryName) }
+            ?.takeIf(File::isDirectory)
+    }
+
     return scanCache(
-        referenceCheckedDirectories = referenceCheckedDirectoryNames.map { currentDirectoryName ->
-            fileManager.getFilesDirectory(name = currentDirectoryName)
-        },
+        referenceCheckedDirectories = referenceCheckedDirectories + legacyDirectories,
+        legacyDirectories = legacyDirectories,
         iconPacksDirectory = fileManager.getFilesDirectory(name = FileManager.ICON_PACKS_DIR),
         referencedPaths = fileReferenceRepository.getReferencedFilePaths(),
         keptIconPackPackageNames = keptIconPackPackageNames,
@@ -96,6 +113,7 @@ internal suspend fun getCacheSnapshot(
  * Splits the cached files into the ones that are still in use and the ones that can be deleted.
  *
  * @param referenceCheckedDirectories Flat directories whose files are tracked by the database.
+ * @param legacyDirectories Existing legacy cache directories that can be removed once empty.
  * @param iconPacksDirectory Directory containing one sub directory per icon pack.
  * @param referencedPaths File paths that are referenced by the database.
  * @param keptIconPackPackageNames Icon packs that must keep their cache directory.
@@ -103,6 +121,7 @@ internal suspend fun getCacheSnapshot(
  */
 private fun scanCache(
     referenceCheckedDirectories: List<File>,
+    legacyDirectories: List<File>,
     iconPacksDirectory: File,
     referencedPaths: Collection<String>,
     keptIconPackPackageNames: Set<String>,
@@ -152,5 +171,6 @@ private fun scanCache(
         totalSize = totalSize,
         reclaimableSize = reclaimableSize,
         unreferencedFiles = unreferencedFiles,
+        legacyDirectories = legacyDirectories,
     )
 }

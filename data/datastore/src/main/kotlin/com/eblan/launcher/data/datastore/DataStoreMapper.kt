@@ -244,6 +244,7 @@ internal fun ExperimentalSettings.toExperimentalSettingsProto(): ExperimentalSet
     builder.firstLaunch = firstLaunch
     builder.lockMovement = lockMovement
     builder.gridItemAnimation = gridItemAnimation
+    builder.cleanCache = cleanCache
 }.build()
 
 internal fun ExperimentalSettingsProto.toExperimentalSettings(): ExperimentalSettings = ExperimentalSettings(
@@ -251,6 +252,7 @@ internal fun ExperimentalSettingsProto.toExperimentalSettings(): ExperimentalSet
     firstLaunch = firstLaunch,
     lockMovement = lockMovement,
     gridItemAnimation = gridItemAnimation,
+    cleanCache = cleanCache,
 )
 
 internal fun FolderSettingsProto.toFolderSettings(): FolderSettings = FolderSettings(

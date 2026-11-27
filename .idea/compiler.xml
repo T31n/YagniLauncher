@@ -88,6 +88,7 @@
       <module name="YagniLauncher.data.cache" target="21" />
       <module name="YagniLauncher.data.network" target="21" />
       <module name="YagniLauncher.feature.settings.ai-organizer" target="21" />
+      <module name="YagniLauncher.feature.settings.cache" target="21" />
       <module name="YagniLauncher.framework.accessibility-manager" target="21" />
       <module name="YagniLauncher.framework.content-resolver" target="21" />
       <module name="YagniLauncher.framework.file-manager" target="21" />

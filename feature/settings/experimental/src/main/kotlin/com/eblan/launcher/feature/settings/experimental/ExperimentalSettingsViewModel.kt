@@ -19,20 +19,46 @@ package com.eblan.launcher.feature.settings.experimental
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.eblan.launcher.domain.model.cache.CacheInfo
 import com.eblan.launcher.domain.model.userdata.ExperimentalSettings
 import com.eblan.launcher.domain.repository.UserDataRepository
+import com.eblan.launcher.domain.usecase.cache.CleanUpCacheUseCase
+import com.eblan.launcher.domain.usecase.cache.GetCacheInfoUseCase
 import com.eblan.launcher.feature.settings.experimental.model.ExperimentalSettingsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-internal class ExperimentalSettingsViewModel @Inject constructor(private val userDataRepository: UserDataRepository) : ViewModel() {
-    val experimentalSettingsUiState = userDataRepository.userDataFlow.map { userData ->
-        ExperimentalSettingsUiState.Success(experimentalSettings = userData.experimentalSettings)
+internal class ExperimentalSettingsViewModel @Inject constructor(
+    private val userDataRepository: UserDataRepository,
+    private val getCacheInfoUseCase: GetCacheInfoUseCase,
+    private val cleanUpCacheUseCase: CleanUpCacheUseCase,
+) : ViewModel() {
+    private val _cacheInfo = MutableStateFlow(
+        CacheInfo(
+            totalSize = 0L,
+            reclaimableSize = 0L,
+        ),
+    )
+
+    private val _isCleaningUp = MutableStateFlow(false)
+
+    val experimentalSettingsUiState = combine(
+        userDataRepository.userDataFlow,
+        _cacheInfo,
+        _isCleaningUp,
+    ) { userData, cacheInfo, isCleaningUp ->
+        ExperimentalSettingsUiState.Success(
+            experimentalSettings = userData.experimentalSettings,
+            cacheInfo = cacheInfo,
+            isCleaningUp = isCleaningUp,
+        )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
@@ -42,6 +68,32 @@ internal class ExperimentalSettingsViewModel @Inject constructor(private val use
     fun updateExperimentalSettings(experimentalSettings: ExperimentalSettings) {
         viewModelScope.launch {
             userDataRepository.updateExperimentalSettings(experimentalSettings = experimentalSettings)
+        }
+    }
+
+    fun refreshCacheInfo() {
+        if (_isCleaningUp.value) return
+
+        viewModelScope.launch {
+            val cacheInfo = getCacheInfoUseCase()
+
+            _cacheInfo.update { cacheInfo }
+        }
+    }
+
+    fun cleanUpCache() {
+        if (_isCleaningUp.value) return
+
+        _isCleaningUp.update { true }
+
+        viewModelScope.launch {
+            cleanUpCacheUseCase()
+
+            val cacheInfo = getCacheInfoUseCase()
+
+            _cacheInfo.update { cacheInfo }
+
+            _isCleaningUp.update { false }
         }
     }
 }

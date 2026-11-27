@@ -802,11 +802,10 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
     ): String? {
         if (drawable == null) return null
 
-        val directoryName = when {
-            !iconTint && iconShape == IconShape.None -> FileManager.ICONS_DIR
-            !iconTint -> FileManager.SHAPED_ICONS_DIR
-            iconShape == IconShape.None -> FileManager.TINTED_ICONS_DIR
-            else -> FileManager.TINTED_SHAPED_ICONS_DIR
+        val directoryName = if (!iconTint && iconShape == IconShape.None) {
+            FileManager.ICONS_DIR
+        } else {
+            FileManager.THEMED_ICONS_DIR
         }
 
         val directory = fileManager.getFilesDirectory(directoryName)
