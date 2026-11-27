@@ -148,10 +148,7 @@ internal fun FolderApplicationScreen(
         sharedElementKey: SharedElementKey,
     ) -> Unit,
     onDragFolderEblanApplicationInfoGridItem: () -> Unit,
-    onCloseFolder: (
-        folderEntry: FolderEntry,
-        isFirstFolderEblanApplicationInfoGridItem: Boolean,
-    ) -> Unit,
+    onCloseFolder: (FolderEntry) -> Unit,
     onDismiss: () -> Unit,
     onTapFolderEblanApplicationInfoItem: (FolderEntry) -> Unit,
 ) {
@@ -243,9 +240,6 @@ internal fun FolderApplicationScreen(
 
     var pageDirection by remember { mutableStateOf<PageDirection?>(null) }
 
-    val isFirstFolderEblanApplicationInfo = folderEblanApplicationInfoEntries.size == 1 &&
-        folderEblanApplicationInfoEntries.singleOrNull()?.id == folderEntry.id
-
     val isLastFolderEblanApplicationInfo =
         folderEblanApplicationInfoEntries.lastOrNull()?.id == folderEntry.id
 
@@ -270,7 +264,6 @@ internal fun FolderApplicationScreen(
 
     LaunchedEffect(
         folderEntry,
-        isFirstFolderEblanApplicationInfo,
         animations,
         isLastFolderEblanApplicationInfo,
         gridItemSettings,
@@ -278,7 +271,6 @@ internal fun FolderApplicationScreen(
         handleIsCloseFolder(
             // Folder Information
             folderEntry = folderEntry,
-            isFirstFolderEblanApplicationInfo = isFirstFolderEblanApplicationInfo,
             isLastFolderEblanApplicationInfo = isLastFolderEblanApplicationInfo,
             // Drag and UI State
             drag = currentDrag,
@@ -568,7 +560,6 @@ internal fun FolderApplicationScreen(
 private suspend fun handleIsCloseFolder(
     // Folder Information
     folderEntry: FolderEntry,
-    isFirstFolderEblanApplicationInfo: Boolean,
     isLastFolderEblanApplicationInfo: Boolean,
     // Drag and UI State
     drag: State<Drag>,
@@ -586,10 +577,7 @@ private suspend fun handleIsCloseFolder(
         isFolder: Boolean,
         movingGridItem: GridItem,
     ) -> Unit,
-    onCloseFolder: (
-        folderEntry: FolderEntry,
-        isFirstFolderEblanApplicationInfo: Boolean,
-    ) -> Unit,
+    onCloseFolder: (FolderEntry) -> Unit,
 ) {
     if (!folderEntry.isCloseFolder || !isLastFolderEblanApplicationInfo) return
 
@@ -613,10 +601,7 @@ private suspend fun handleIsCloseFolder(
         onMoveFolderEblanApplicationInfoGridItemOutsideFolder = onMoveFolderEblanApplicationInfoGridItemOutsideFolder,
     )
 
-    onCloseFolder(
-        folderEntry,
-        isFirstFolderEblanApplicationInfo,
-    )
+    onCloseFolder(folderEntry)
 }
 
 private fun handleMoveFolderGridItemOutsideFolder(

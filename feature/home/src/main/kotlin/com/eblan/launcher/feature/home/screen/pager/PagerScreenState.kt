@@ -136,9 +136,6 @@ internal class PagerScreenState(
     var isDragging by mutableStateOf(false)
         private set
 
-    var isResizing by mutableStateOf(false)
-        private set
-
     var settingsMenuIntOffset by mutableStateOf<IntOffset?>(null)
         private set
 
@@ -178,12 +175,6 @@ internal class PagerScreenState(
     private var overlayCaptureJob: Job? = null
 
     var associate by mutableStateOf<Associate?>(null)
-        private set
-
-    var isVisibleFolderGridItems by mutableStateOf(false)
-        private set
-
-    var isVisibleFolderEblanApplicationInfos by mutableStateOf(false)
         private set
 
     val swipeUpY = Animatable(screenHeight.toFloat())
@@ -534,10 +525,6 @@ internal class PagerScreenState(
 
     fun updateIsDragging(value: Boolean) {
         isDragging = value
-    }
-
-    fun updateIsResizing(value: Boolean) {
-        isResizing = value
     }
 
     fun updateDrag(value: Drag) {
@@ -1298,17 +1285,9 @@ internal class PagerScreenState(
 
         eblanApplicationInfoGroup = null
 
-        if (isVisibleFolderGridItems) {
-            isVisibleFolderGridItems = false
+        onResetFolderGridItemEntries()
 
-            onResetFolderGridItemEntries()
-        }
-
-        if (isVisibleFolderEblanApplicationInfos) {
-            isVisibleFolderEblanApplicationInfos = false
-
-            onResetFolderEblanApplicationInfoEntries()
-        }
+        onResetFolderEblanApplicationInfoEntries()
 
         if (showApplicationScreen) {
             showApplicationScreen = false
@@ -1386,21 +1365,10 @@ internal class PagerScreenState(
             parent = SharedElementKey.Parent.Folder,
         )
 
-        isVisibleFolderGridItems = true
-
         onShowFolderWhenDragging(
             folderEntry,
             movingGridItem,
         )
-    }
-
-    fun tapFolderGridItem(
-        folderEntry: FolderEntry,
-        onUpsertFolderGridItemEntry: (FolderEntry) -> Unit,
-    ) {
-        isVisibleFolderGridItems = true
-
-        onUpsertFolderGridItemEntry(folderEntry)
     }
 
     fun dragGridItem() {
@@ -1472,18 +1440,6 @@ internal class PagerScreenState(
         sharedElementKey = newSharedElementKey
 
         onMoveFolderGridItemOutsideFolder(gridItem)
-    }
-
-    fun closeFolderGridItem(
-        // Folder Item
-        folderEntry: FolderEntry,
-        isFirstFolderGridItem: Boolean,
-        // Callbacks
-        onDeleteFolderGridItemEntry: (FolderEntry) -> Unit,
-    ) {
-        isVisibleFolderGridItems = !isFirstFolderGridItem
-
-        onDeleteFolderGridItemEntry(folderEntry)
     }
 
     fun dragWidget(
@@ -1660,15 +1616,6 @@ internal class PagerScreenState(
         )
     }
 
-    fun tapFolderEblanApplicationInfo(
-        folderEntry: FolderEntry,
-        onUpsertFolderEblanApplicationInfoEntry: (FolderEntry) -> Unit,
-    ) {
-        isVisibleFolderEblanApplicationInfos = true
-
-        onUpsertFolderEblanApplicationInfoEntry(folderEntry)
-    }
-
     fun longPressFolderEblanApplicationInfo(
         // Target Data
         folderEblanApplicationInfo: FolderEblanApplicationInfo,
@@ -1771,27 +1718,6 @@ internal class PagerScreenState(
             isFolder,
             movingGridItem,
         )
-    }
-
-    fun closeFolderEblanApplicationInfo(
-        // Folder Information
-        folderEntry: FolderEntry,
-        isFirstFolderEblanApplicationInfo: Boolean,
-        // Callbacks
-        onDeleteFolderEntry: (FolderEntry) -> Unit,
-    ) {
-        isVisibleFolderEblanApplicationInfos = !isFirstFolderEblanApplicationInfo
-
-        onDeleteFolderEntry(folderEntry)
-    }
-
-    fun tapFolderEblanApplicationInfoGridItem(
-        folderEntry: FolderEntry,
-        onUpsertFolderEntry: (FolderEntry) -> Unit,
-    ) {
-        isVisibleFolderEblanApplicationInfos = true
-
-        onUpsertFolderEntry(folderEntry)
     }
 }
 

@@ -84,7 +84,6 @@ internal fun GridItemPopup(
     onEdit: (String) -> Unit,
     onResize: (GridItem) -> Unit,
     onWidgets: (EblanApplicationInfoGroup) -> Unit,
-    onUpdateIsResizing: (Boolean) -> Unit,
     onDragShortcutInfo: (
         gridItem: GridItem,
         imageBitmap: ImageBitmap,
@@ -214,7 +213,6 @@ internal fun GridItemPopup(
                     )
                 },
                 onWidgets = onWidgets,
-                onUpdateIsResizing = onUpdateIsResizing,
                 onDragShortcutInfo = onDragShortcutInfo,
             )
         }
@@ -249,7 +247,6 @@ private fun GridItemPopupContent(
         shortcutId: String,
     ) -> Unit,
     onWidgets: (EblanApplicationInfoGroup) -> Unit,
-    onUpdateIsResizing: (Boolean) -> Unit,
     onDragShortcutInfo: (
         gridItem: GridItem,
         imageBitmap: ImageBitmap,
@@ -297,8 +294,6 @@ private fun GridItemPopupContent(
                         onResize = {
                             onResize(gridItem)
 
-                            onUpdateIsResizing(true)
-
                             onDismiss()
                         },
                         onWidgets = {
@@ -341,8 +336,6 @@ private fun GridItemPopupContent(
                         onResize = {
                             onResize(gridItem)
 
-                            onUpdateIsResizing(true)
-
                             onDismiss()
                         },
                     )
@@ -360,8 +353,6 @@ private fun GridItemPopupContent(
                         },
                         onResize = {
                             onResize(gridItem)
-
-                            onUpdateIsResizing(true)
 
                             onDismiss()
                         },

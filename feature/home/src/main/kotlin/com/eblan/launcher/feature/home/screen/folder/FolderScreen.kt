@@ -117,10 +117,7 @@ internal fun FolderScreen(
     hasShortcutHostPermission: Boolean,
     showFolderGridItemMenu: Boolean,
     // Folder Actions
-    onCloseFolder: (
-        folderEntry: FolderEntry,
-        isFirstFolderGridItem: Boolean,
-    ) -> Unit,
+    onCloseFolder: (FolderEntry) -> Unit,
     onDismiss: () -> Unit,
     onOpenAppDrawer: () -> Unit,
     onResetGrid: () -> Unit,
@@ -238,9 +235,6 @@ internal fun FolderScreen(
 
     var pageDirection by remember { mutableStateOf<PageDirection?>(null) }
 
-    val isFirstFolderGridItem = folderGridItemEntries.size == 1 &&
-        folderGridItemEntries.singleOrNull()?.id == folderEntry.id
-
     val isLastFolderGridItem =
         folderGridItemEntries.lastOrNull()?.id == folderEntry.id
 
@@ -264,7 +258,6 @@ internal fun FolderScreen(
 
     LaunchedEffect(
         folderEntry,
-        isFirstFolderGridItem,
         animations,
         isLastFolderGridItem,
     ) {
@@ -277,7 +270,6 @@ internal fun FolderScreen(
             // Item and Animation Properties
             folderEntry = folderEntry,
             progress = progress,
-            isFirstFolderGridItem = isFirstFolderGridItem,
             animations = animations,
             isLastFolderGridItem = isLastFolderGridItem,
             folderGridItemPage = folderPopup.folderGridItem.page,
@@ -575,7 +567,6 @@ private suspend fun handleIsCloseFolder(
     // Item and Animation Properties
     folderEntry: FolderEntry,
     progress: Animatable<Float, AnimationVector1D>,
-    isFirstFolderGridItem: Boolean,
     animations: Boolean,
     isLastFolderGridItem: Boolean,
     folderGridItemPage: Int,
@@ -586,10 +577,7 @@ private suspend fun handleIsCloseFolder(
         gridItem: GridItem,
         sharedElementKey: SharedElementKey,
     ) -> Unit,
-    onCloseFolder: (
-        folderEntry: FolderEntry,
-        isFirstFolderGridItem: Boolean,
-    ) -> Unit,
+    onCloseFolder: (FolderEntry) -> Unit,
 ) {
     if (!folderEntry.isCloseFolder || !isLastFolderGridItem) return
 
@@ -614,10 +602,7 @@ private suspend fun handleIsCloseFolder(
         onMoveFolderGridItemOutsideFolder = onMoveFolderGridItemOutsideFolder,
     )
 
-    onCloseFolder(
-        folderEntry,
-        isFirstFolderGridItem,
-    )
+    onCloseFolder(folderEntry)
 }
 
 private fun handleMoveFolderGridItemOutsideFolder(

@@ -522,19 +522,16 @@ internal fun PagerScreen(
     val isVisibleSettingsMenu =
         pagerScreenState.showSettingsMenu && pagerScreenState.settingsMenuIntOffset != null
 
-    val isVisibleFolderGridItems =
-        pagerScreenState.isVisibleFolderGridItems && folderGridItemEntries.isNotEmpty()
+    val isVisibleFolderGridItems = folderGridItemEntries.isNotEmpty()
 
-    val isVisibleFolderEblanApplicationInfos =
-        pagerScreenState.isVisibleFolderEblanApplicationInfos &&
-            folderEblanApplicationInfoEntries.isNotEmpty()
+    val isVisibleFolderEblanApplicationInfos = folderEblanApplicationInfoEntries.isNotEmpty()
 
     val isVisibleFolderGridItemMenu =
         pagerScreenState.selectedGridItem != null &&
             pagerScreenState.showFolderGridItemMenu &&
             hasMenuGeometry
 
-    val isResizing = pagerScreenState.isResizing && resizeGridItem != null
+    val isResizing = resizeGridItem != null
 
     val shouldLockScreenOrientation =
         isVisibleGridItemMenu ||
@@ -1049,12 +1046,7 @@ internal fun PagerScreen(
                                         onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
                                     )
                                 },
-                                onTapFolderGridItem = { folderEntry ->
-                                    pagerScreenState.tapFolderGridItem(
-                                        folderEntry = folderEntry,
-                                        onUpsertFolderGridItemEntry = onUpsertFolderGridItemEntry,
-                                    )
-                                },
+                                onTapFolderGridItem = onUpsertFolderGridItemEntry,
                                 onDragGridItem = pagerScreenState::dragGridItem,
                             )
                         },
@@ -1246,12 +1238,7 @@ internal fun PagerScreen(
                                             onUpdateMoveGridItemResult = onUpdateMoveGridItemResult,
                                         )
                                     },
-                                    onTapFolderGridItem = { folderEntry ->
-                                        pagerScreenState.tapFolderGridItem(
-                                            folderEntry = folderEntry,
-                                            onUpsertFolderGridItemEntry = onUpsertFolderGridItemEntry,
-                                        )
-                                    },
+                                    onTapFolderGridItem = onUpsertFolderGridItemEntry,
                                     onDragGridItem = pagerScreenState::dragGridItem,
                                 )
                             },
@@ -1300,7 +1287,6 @@ internal fun PagerScreen(
                 },
                 onResize = onUpdateResizeGridItem,
                 onWidgets = pagerScreenState::openAppWidgetScreen,
-                onUpdateIsResizing = pagerScreenState::updateIsResizing,
                 onDragShortcutInfo = { gridItem, imageBitmap, intOffset, intSize, sharedElementKey ->
                     pagerScreenState.dragShortcutInfoFromGridItemMenu(
                         // Drag source information
@@ -1375,15 +1361,7 @@ internal fun PagerScreen(
                     hasShortcutHostPermission = hasShortcutHostPermission,
                     showFolderGridItemMenu = pagerScreenState.showFolderGridItemMenu,
                     // Folder Actions
-                    onCloseFolder = { folderEntry, isFirstFolderGridItem ->
-                        pagerScreenState.closeFolderGridItem(
-                            // Folder Item
-                            folderEntry = folderEntry,
-                            isFirstFolderGridItem = isFirstFolderGridItem,
-                            // Callbacks
-                            onDeleteFolderGridItemEntry = onDeleteFolderGridItemEntry,
-                        )
-                    },
+                    onCloseFolder = onDeleteFolderGridItemEntry,
                     onDismiss = onCloseFolderGridItemEntries,
                     onOpenAppDrawer = pagerScreenState::openApplicationScreen,
                     onResetGrid = onResetGrid,
@@ -1565,12 +1543,7 @@ internal fun PagerScreen(
                         intSize = intSize,
                     )
                 },
-                onTapFolderApplicationInfo = { currentFolderEntry ->
-                    pagerScreenState.tapFolderEblanApplicationInfo(
-                        folderEntry = currentFolderEntry,
-                        onUpsertFolderEblanApplicationInfoEntry = onUpsertFolderEblanApplicationInfoEntry,
-                    )
-                },
+                onTapFolderApplicationInfo = onUpsertFolderEblanApplicationInfoEntry,
             )
         }
 
@@ -1752,7 +1725,6 @@ internal fun PagerScreen(
                 onResizeCancel = onResizeCancel,
                 onResizeEnd = onResizeEnd,
                 onResizeGridItem = onResizeGridItem,
-                onUpdateIsResizing = pagerScreenState::updateIsResizing,
             )
         }
 
@@ -1825,26 +1797,13 @@ internal fun PagerScreen(
                         )
                     },
                     onDragFolderEblanApplicationInfoGridItem = pagerScreenState::dragFolderEblanApplicationInfoGridItem,
-                    onCloseFolder = { folderEntry, isFirstFolderGridItem ->
-                        pagerScreenState.closeFolderEblanApplicationInfo(
-                            // Folder Information
-                            folderEntry = folderEntry,
-                            isFirstFolderEblanApplicationInfo = isFirstFolderGridItem,
-                            // Callbacks
-                            onDeleteFolderEntry = onDeleteFolderEblanApplicationInfoEntry,
-                        )
-                    },
+                    onCloseFolder = onDeleteFolderEblanApplicationInfoEntry,
                     onDismiss = {
                         onCloseFolderEblanApplicationInfoEntries()
 
                         pagerScreenState.dismissApplicationScreen()
                     },
-                    onTapFolderEblanApplicationInfoItem = { newFolderEntry ->
-                        pagerScreenState.tapFolderEblanApplicationInfoGridItem(
-                            folderEntry = newFolderEntry,
-                            onUpsertFolderEntry = onUpsertFolderEblanApplicationInfoEntry,
-                        )
-                    },
+                    onTapFolderEblanApplicationInfoItem = onUpsertFolderEblanApplicationInfoEntry,
                 )
             }
         }

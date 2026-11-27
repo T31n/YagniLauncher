@@ -64,7 +64,6 @@ internal fun ResizeScreen(
         columns: Int,
         rows: Int,
     ) -> Unit,
-    onUpdateIsResizing: (Boolean) -> Unit,
 ) {
     BackHandler {
         onResizeCancel()
@@ -81,8 +80,6 @@ internal fun ResizeScreen(
             .pointerInput(Unit) {
                 detectTapGestures(
                     onTap = {
-                        onUpdateIsResizing(false)
-
                         onResizeEnd()
                     },
                 )

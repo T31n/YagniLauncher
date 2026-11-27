@@ -747,7 +747,7 @@ private fun Success(
                     onMoveGridItem = onMoveGridItem,
                     onCancelPendingMoveGridItem = onCancelPendingMoveGridItem,
                     onResizeGridItem = onResizeGridItem,
-                    onResizeCancel = onResetGrid,
+                    onResizeCancel = onResetGridAfterResize,
                     onResizeEnd = onResetGridAfterResize,
                     onUpdateResizeGridItem = onUpdateResizeGridItem,
                     onUpdateGridItemSource = onUpdateGridItemSource,
