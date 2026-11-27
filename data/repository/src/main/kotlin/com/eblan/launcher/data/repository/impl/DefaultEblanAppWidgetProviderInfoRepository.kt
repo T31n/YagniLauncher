@@ -24,7 +24,7 @@ import com.eblan.launcher.domain.repository.EblanAppWidgetProviderInfoRepository
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class DefaultEblanAppWidgetProviderInfoRepository @Inject constructor(private val eblanAppWidgetProviderInfoDao: EblanAppWidgetProviderInfoDao) : EblanAppWidgetProviderInfoRepository {
+internal class DefaultEblanAppWidgetProviderInfoRepository @Inject constructor(private val eblanAppWidgetProviderInfoDao: EblanAppWidgetProviderInfoDao) : EblanAppWidgetProviderInfoRepository {
     override val eblanAppWidgetProviderInfosFlow =
         eblanAppWidgetProviderInfoDao.getEblanAppWidgetProviderInfoEntitiesFlow().map { entities ->
             entities.map { currentEblanAppWidgetProviderInfoEntity ->

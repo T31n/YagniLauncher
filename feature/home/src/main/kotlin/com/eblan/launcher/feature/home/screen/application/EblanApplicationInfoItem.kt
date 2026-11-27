@@ -367,7 +367,7 @@ internal fun handleOnTapEblanApplicationInfoItem(
     )
 }
 
-internal fun handleDragEblanApplicationInfoItem(
+private fun handleDragEblanApplicationInfoItem(
     // Application Info
     eblanApplicationInfo: EblanApplicationInfo,
     gridItemSettings: GridItemSettings,

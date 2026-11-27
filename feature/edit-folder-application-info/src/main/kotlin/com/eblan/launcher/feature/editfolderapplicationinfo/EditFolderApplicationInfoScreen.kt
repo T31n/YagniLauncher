@@ -195,7 +195,7 @@ internal fun EditFolderApplicationInfoScreen(
 }
 
 @Composable
-internal fun Success(
+private fun Success(
     // Application Info
     eblanApplicationInfos: List<EblanApplicationInfo>,
     folderEblanApplicationInfo: FolderEblanApplicationInfo,

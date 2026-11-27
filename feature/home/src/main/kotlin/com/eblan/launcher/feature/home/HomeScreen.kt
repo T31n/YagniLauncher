@@ -903,7 +903,7 @@ private fun RequestPermissionsEffect(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun produceHomeTextColorState(
+private fun produceHomeTextColorState(
     configuredTextColor: TextColor?,
     theme: Theme?,
 ): State<TextColor> {

@@ -422,7 +422,7 @@ internal fun PrivateSpaceEblanApplicationInfoItem(
     )
 }
 
-internal fun handleOnLongPressPrivateSpaceEblanApplicationInfoItem(
+private fun handleOnLongPressPrivateSpaceEblanApplicationInfoItem(
     // Application Info
     eblanApplicationInfo: EblanApplicationInfo,
     // Position and Size

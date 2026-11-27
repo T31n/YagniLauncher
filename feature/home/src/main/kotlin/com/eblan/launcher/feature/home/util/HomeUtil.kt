@@ -43,6 +43,13 @@ import com.eblan.launcher.platform.usermanager.AndroidUserManagerWrapper
 import com.eblan.launcher.platform.widgetmanager.AndroidAppWidgetManagerWrapper
 import kotlin.math.roundToInt
 
+internal val PAGE_INDICATOR_HEIGHT = 30.dp
+internal val DRAG_HANDLE_SIZE = 30.dp
+
+private const val MIN_DOCK_HEIGHT_DP = 50
+private const val MIN_DOCK_HEIGHT_PERCENTAGE = 8
+private const val MAX_DOCK_HEIGHT_PERCENTAGE = 45
+
 internal fun handleEblanAction(
     // Context and Action
     context: Context,
@@ -255,13 +262,6 @@ internal fun handleOnUninstall(
         )
     }
 }
-
-internal val PAGE_INDICATOR_HEIGHT = 30.dp
-internal val DRAG_HANDLE_SIZE = 30.dp
-
-private const val MIN_DOCK_HEIGHT_DP = 50
-private const val MIN_DOCK_HEIGHT_PERCENTAGE = 8
-private const val MAX_DOCK_HEIGHT_PERCENTAGE = 45
 
 internal fun calculateDockHeightPx(
     enableDock: Boolean,

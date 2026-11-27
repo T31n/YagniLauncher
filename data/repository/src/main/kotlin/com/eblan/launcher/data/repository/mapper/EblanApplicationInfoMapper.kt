@@ -20,7 +20,7 @@ package com.eblan.launcher.data.repository.mapper
 import com.eblan.launcher.data.room.entity.EblanApplicationInfoEntity
 import com.eblan.launcher.domain.model.application.EblanApplicationInfo
 
-fun EblanApplicationInfo.asEntity(): EblanApplicationInfoEntity = EblanApplicationInfoEntity(
+internal fun EblanApplicationInfo.asEntity(): EblanApplicationInfoEntity = EblanApplicationInfoEntity(
     componentName = componentName,
     serialNumber = serialNumber,
     packageName = packageName,
@@ -35,7 +35,7 @@ fun EblanApplicationInfo.asEntity(): EblanApplicationInfoEntity = EblanApplicati
     folderId = folderId,
 )
 
-fun EblanApplicationInfoEntity.asModel(): EblanApplicationInfo = EblanApplicationInfo(
+internal fun EblanApplicationInfoEntity.asModel(): EblanApplicationInfo = EblanApplicationInfo(
     componentName = componentName,
     serialNumber = serialNumber,
     packageName = packageName,

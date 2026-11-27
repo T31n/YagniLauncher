@@ -316,35 +316,6 @@ fun SettingsSwitchItem(
 }
 
 @Composable
-private fun SettingsSwitchThumbIcon(checked: Boolean) {
-    Icon(
-        imageVector = if (checked) EblanLauncherIcons.Done else EblanLauncherIcons.Close,
-        contentDescription = null,
-        modifier = Modifier.size(SwitchDefaults.IconSize),
-    )
-}
-
-@Composable
-private fun SettingsItemText(
-    title: String,
-    subtitle: String,
-    spacing: Dp = 5.dp,
-) {
-    Text(
-        text = title,
-        style = MaterialTheme.typography.titleMedium,
-    )
-
-    Spacer(modifier = Modifier.height(spacing))
-
-    Text(
-        text = subtitle,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.bodyMedium,
-    )
-}
-
-@Composable
 fun SettingsCategoryText(
     modifier: Modifier = Modifier,
     text: String,
@@ -562,6 +533,41 @@ fun CustomIcon(
 }
 
 @Composable
+fun BackgroundColor.getTitle() = when (this) {
+    BackgroundColor.System -> stringResource(commonR.string.system)
+    BackgroundColor.Custom -> stringResource(commonR.string.custom)
+}
+
+@Composable
+private fun SettingsSwitchThumbIcon(checked: Boolean) {
+    Icon(
+        imageVector = if (checked) EblanLauncherIcons.Done else EblanLauncherIcons.Close,
+        contentDescription = null,
+        modifier = Modifier.size(SwitchDefaults.IconSize),
+    )
+}
+
+@Composable
+private fun SettingsItemText(
+    title: String,
+    subtitle: String,
+    spacing: Dp = 5.dp,
+) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.titleMedium,
+    )
+
+    Spacer(modifier = Modifier.height(spacing))
+
+    Text(
+        text = subtitle,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = MaterialTheme.typography.bodyMedium,
+    )
+}
+
+@Composable
 private fun SettingsColumn(
     // Content
     title: String,
@@ -617,10 +623,4 @@ private fun IconPackItem(
             )
         }
     }
-}
-
-@Composable
-fun BackgroundColor.getTitle() = when (this) {
-    BackgroundColor.System -> stringResource(commonR.string.system)
-    BackgroundColor.Custom -> stringResource(commonR.string.custom)
 }

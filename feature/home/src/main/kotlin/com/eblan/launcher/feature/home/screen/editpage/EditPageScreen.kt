@@ -315,45 +315,6 @@ internal fun EditGridPageScreen(
     }
 }
 
-private fun getGridSize(
-    // Screen Dimensions
-    screenWidth: Int,
-    screenHeight: Int,
-    // Layout Context
-    density: Density,
-    paddingValues: PaddingValues,
-    layoutDirection: LayoutDirection,
-): Pair<Dp, Dp> {
-    val leftPadding = with(density) {
-        paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
-    }
-
-    val topPadding = with(density) {
-        paddingValues.calculateTopPadding().roundToPx()
-    }
-
-    val rightPadding = with(density) {
-        paddingValues.calculateRightPadding(layoutDirection).roundToPx()
-    }
-
-    val bottomPadding = with(density) {
-        paddingValues.calculateBottomPadding().roundToPx()
-    }
-
-    val horizontalPadding = leftPadding + rightPadding
-    val verticalPadding = topPadding + bottomPadding
-
-    val gridWidthDp = with(density) {
-        (screenWidth - horizontalPadding).toDp()
-    }
-
-    val gridHeightDp = with(density) {
-        (screenHeight - verticalPadding).toDp()
-    }
-
-    return gridWidthDp to gridHeightDp
-}
-
 @Composable
 internal fun EditDockGridPageScreen(
     // Content
@@ -554,6 +515,45 @@ internal fun EditDockGridPageScreen(
     }
 }
 
+private fun getGridSize(
+    // Screen Dimensions
+    screenWidth: Int,
+    screenHeight: Int,
+    // Layout Context
+    density: Density,
+    paddingValues: PaddingValues,
+    layoutDirection: LayoutDirection,
+): Pair<Dp, Dp> {
+    val leftPadding = with(density) {
+        paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
+    }
+
+    val topPadding = with(density) {
+        paddingValues.calculateTopPadding().roundToPx()
+    }
+
+    val rightPadding = with(density) {
+        paddingValues.calculateRightPadding(layoutDirection).roundToPx()
+    }
+
+    val bottomPadding = with(density) {
+        paddingValues.calculateBottomPadding().roundToPx()
+    }
+
+    val horizontalPadding = leftPadding + rightPadding
+    val verticalPadding = topPadding + bottomPadding
+
+    val gridWidthDp = with(density) {
+        (screenWidth - horizontalPadding).toDp()
+    }
+
+    val gridHeightDp = with(density) {
+        (screenHeight - verticalPadding).toDp()
+    }
+
+    return gridWidthDp to gridHeightDp
+}
+
 @Composable
 private fun EditPageScaffold(
     paddingValues: PaddingValues,
@@ -648,7 +648,7 @@ private fun EditPageScaffold(
 }
 
 @Composable
-internal fun PageButtons(
+private fun PageButtons(
     pageNumber: Int,
     isHome: Boolean,
     modifier: Modifier = Modifier,
@@ -701,7 +701,7 @@ internal fun PageButtons(
     }
 }
 
-internal fun handleActionMainIntent(
+private fun handleActionMainIntent(
     intent: Intent,
     onUpdateScreen: (Screen) -> Unit,
 ) {

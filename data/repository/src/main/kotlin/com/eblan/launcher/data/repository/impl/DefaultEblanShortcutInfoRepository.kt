@@ -24,7 +24,7 @@ import com.eblan.launcher.domain.repository.EblanShortcutInfoRepository
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class DefaultEblanShortcutInfoRepository @Inject constructor(private val eblanShortcutInfoDao: EblanShortcutInfoDao) : EblanShortcutInfoRepository {
+internal class DefaultEblanShortcutInfoRepository @Inject constructor(private val eblanShortcutInfoDao: EblanShortcutInfoDao) : EblanShortcutInfoRepository {
     override val eblanShortcutInfosFlow =
         eblanShortcutInfoDao.getEblanShortcutInfoEntitiesFlow().map { entities ->
             entities.map { currentEblanShortcutInfoEntity ->
