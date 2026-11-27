@@ -407,7 +407,7 @@ internal class HomeViewModel @Inject constructor(
             updateGridItemsAfterMoveUseCase(moveGridItemResult = moveGridItemResult)
 
             if (moveGridItemResult.conflictingGridItem == null) {
-                resetGrid()
+                resetGridState()
             }
         }
     }
@@ -416,21 +416,7 @@ internal class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             moveGridItemJob?.cancelAndJoin()
 
-            _isVisibleOverlay.update {
-                false
-            }
-
-            _moveGridItemResult.update {
-                null
-            }
-
-            _moveFolderEblanApplicationInfoGridItemResult.update {
-                null
-            }
-
-            _gridItemSource.update {
-                null
-            }
+            resetGridState()
         }
     }
 
@@ -493,6 +479,8 @@ internal class HomeViewModel @Inject constructor(
         pinItemRequestType: PinItemRequestType.ShortcutInfo,
     ) {
         viewModelScope.launch {
+            moveGridItemJob?.cancelAndJoin()
+
             val movingGridItem = moveGridItemResult.movingGridItem
 
             gridRepository.deleteGridItemById(gridItem = movingGridItem)
@@ -547,9 +535,9 @@ internal class HomeViewModel @Inject constructor(
 
             gridRepository.insertGridItem(gridItem = movingGridItem.copy(data = data))
 
-            updateGridItemsAfterMove(moveGridItemResult = moveGridItemResult)
+            updateGridItemsAfterMoveUseCase(moveGridItemResult = moveGridItemResult)
 
-            resetGrid()
+            resetGridState()
         }
     }
 
@@ -586,7 +574,7 @@ internal class HomeViewModel @Inject constructor(
                 moveGridItemResult = moveGridItemResult.copy(movingGridItem = newMovingGridItem),
             )
 
-            resetGrid()
+            resetGridState()
         }
     }
 
@@ -993,8 +981,26 @@ internal class HomeViewModel @Inject constructor(
             }
 
             if (moveGridItemResult.conflictingGridItem == null) {
-                resetGrid()
+                resetGridState()
             }
+        }
+    }
+
+    private fun resetGridState() {
+        _isVisibleOverlay.update {
+            false
+        }
+
+        _moveGridItemResult.update {
+            null
+        }
+
+        _moveFolderEblanApplicationInfoGridItemResult.update {
+            null
+        }
+
+        _gridItemSource.update {
+            null
         }
     }
 }
