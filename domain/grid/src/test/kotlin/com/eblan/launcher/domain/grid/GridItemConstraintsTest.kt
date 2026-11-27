@@ -24,6 +24,7 @@ import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemData
 import com.eblan.launcher.domain.model.grid.GridItemSection
 import com.eblan.launcher.domain.model.grid.ResolveDirection
+import com.eblan.launcher.domain.model.userdata.PageIndicatorType
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -1166,6 +1167,42 @@ class GridItemConstraintsTest {
                     availableHeight = 1200,
                 ),
             )
+        }
+
+        @Test
+        fun `does not overflow when row sum exceeds Int max`() {
+            assertEquals(
+                600,
+                getDockHeight(
+                    enableDock = true,
+                    rows = Int.MAX_VALUE,
+                    dockRows = Int.MAX_VALUE,
+                    availableHeight = 1200,
+                ),
+            )
+        }
+    }
+
+    @Nested
+    inner class GetPageIndicatorHeight {
+        @Test
+        fun `returns zero when indicator type is none`() {
+            assertEquals(
+                0,
+                getPageIndicatorHeight(pageIndicatorType = PageIndicatorType.None),
+            )
+        }
+
+        @Test
+        fun `returns default dp height for visible indicator types`() {
+            PageIndicatorType.entries
+                .filter { it != PageIndicatorType.None }
+                .forEach { pageIndicatorType ->
+                    assertEquals(
+                        30,
+                        getPageIndicatorHeight(pageIndicatorType = pageIndicatorType),
+                    )
+                }
         }
     }
 

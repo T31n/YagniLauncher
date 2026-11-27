@@ -26,13 +26,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalDensity
 import com.eblan.launcher.domain.model.grid.Associate
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.feature.home.component.HomeHandler
-import com.eblan.launcher.feature.home.util.PAGE_INDICATOR_HEIGHT
 
 @Composable
 internal fun ResizeScreen(
@@ -41,6 +39,7 @@ internal fun ResizeScreen(
     modifier: Modifier = Modifier,
     // Content
     dockHeightPx: Int,
+    pageIndicatorHeightPx: Int,
     columns: Int,
     rows: Int,
     gridItemTextColor: TextColor,
@@ -67,12 +66,6 @@ internal fun ResizeScreen(
     ) -> Unit,
     onUpdateIsResizing: (Boolean) -> Unit,
 ) {
-    val density = LocalDensity.current
-
-    val pageIndicatorHeightPx = with(density) {
-        PAGE_INDICATOR_HEIGHT.roundToPx()
-    }
-
     BackHandler {
         onResizeCancel()
     }

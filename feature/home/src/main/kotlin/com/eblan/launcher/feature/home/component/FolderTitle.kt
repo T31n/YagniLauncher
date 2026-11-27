@@ -31,10 +31,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
+import com.eblan.launcher.domain.grid.getPageIndicatorHeight
 import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.PageIndicatorType
 import com.eblan.launcher.domain.model.userdata.TextColor
-import com.eblan.launcher.feature.home.util.PAGE_INDICATOR_HEIGHT
 import com.eblan.launcher.feature.home.util.getTextColorFromBackgroundColor
 
 @Composable
@@ -71,7 +71,7 @@ internal fun FolderTitle(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(PAGE_INDICATOR_HEIGHT)
+            .height(getPageIndicatorHeight(pageIndicatorType = PageIndicatorType.Dots).dp)
             .padding(horizontal = 10.dp)
             .alpha(if (progress > 0.5) 1f else 0f),
     ) {

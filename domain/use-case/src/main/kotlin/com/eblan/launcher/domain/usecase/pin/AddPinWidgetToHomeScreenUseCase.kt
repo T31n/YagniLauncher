@@ -21,6 +21,7 @@ import com.eblan.launcher.domain.common.Dispatcher
 import com.eblan.launcher.domain.common.EblanDispatchers
 import com.eblan.launcher.domain.grid.findAvailableRegionByPage
 import com.eblan.launcher.domain.grid.getDockHeight
+import com.eblan.launcher.domain.grid.getPageIndicatorHeight
 import com.eblan.launcher.domain.grid.getWidgetGridItemSize
 import com.eblan.launcher.domain.grid.getWidgetGridItemSpan
 import com.eblan.launcher.domain.model.grid.Associate
@@ -41,6 +42,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
+import kotlin.math.roundToInt
 import kotlin.uuid.Uuid
 
 /** Creates a home-screen grid item for a pinned widget when a free region is available. */
@@ -70,7 +72,8 @@ class AddPinWidgetToHomeScreenUseCase @Inject constructor(
      * @param maxResizeWidth The maximum resizable width in pixels.
      * @param maxResizeHeight The maximum resizable height in pixels.
      * @param rootWidth The home-grid root width in pixels.
-     * @param rootHeight The home-grid root height in pixels.
+     * @param rootHeight The vertical safe-drawing height in pixels.
+     * @param density The display density factor used to convert dp to pixels.
      * @param preview The optional widget preview image bytes.
      * @return The inserted grid item, or `null` if no region is available.
      */
@@ -90,6 +93,7 @@ class AddPinWidgetToHomeScreenUseCase @Inject constructor(
         maxResizeHeight: Int,
         rootWidth: Int,
         rootHeight: Int,
+        density: Float,
         preview: ByteArray?,
     ): GridItem? = withContext(ioDispatcher) {
         val homeSettings = userDataRepository.userDataFlow.first().homeSettings
@@ -102,11 +106,17 @@ class AddPinWidgetToHomeScreenUseCase @Inject constructor(
 
         val initialPage = homeSettings.initialPage
 
+        val pageIndicatorHeight =
+            (getPageIndicatorHeight(pageIndicatorType = homeSettings.pageIndicatorType) * density.coerceAtLeast(0f))
+                .roundToInt()
+
+        val availableHeight = (rootHeight - pageIndicatorHeight).coerceAtLeast(0)
+
         val dockHeight = getDockHeight(
             enableDock = homeSettings.enableDock,
             rows = rows,
             dockRows = homeSettings.dockRows,
-            availableHeight = rootHeight,
+            availableHeight = availableHeight,
         )
 
         val eblanApplicationInfoIcon =
@@ -127,7 +137,7 @@ class AddPinWidgetToHomeScreenUseCase @Inject constructor(
                 file.absolutePath
             }
 
-        val gridHeight = rootHeight - dockHeight
+        val gridHeight = availableHeight - dockHeight
 
         val cellWidth = rootWidth / columns
 

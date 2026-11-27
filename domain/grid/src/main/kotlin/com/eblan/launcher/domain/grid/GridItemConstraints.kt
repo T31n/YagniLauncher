@@ -20,8 +20,11 @@ package com.eblan.launcher.domain.grid
 import com.eblan.launcher.domain.model.grid.GridItem
 import com.eblan.launcher.domain.model.grid.GridItemSection
 import com.eblan.launcher.domain.model.grid.ResolveDirection
+import com.eblan.launcher.domain.model.userdata.PageIndicatorType
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
+
+private const val PAGE_INDICATOR_HEIGHT_DP = 30
 
 /**
  * Checks whether a grid item's full span fits within the grid.
@@ -313,8 +316,23 @@ fun getDockHeight(
         return 0
     }
 
-    val totalRows = rows + dockRows
+    val totalRows = rows.toLong() + dockRows.toLong()
     val proportionalHeight = (availableHeight.toLong() * dockRows / totalRows).toInt()
 
     return proportionalHeight.coerceAtMost(availableHeight / 2)
+}
+
+/**
+ * Returns the page indicator height in density-independent pixels (dp).
+ *
+ * Returns `0` when [pageIndicatorType] is [PageIndicatorType.None].
+ *
+ * @param pageIndicatorType The configured page indicator style.
+ * @return The page indicator height in dp.
+ */
+fun getPageIndicatorHeight(
+    pageIndicatorType: PageIndicatorType,
+): Int = when (pageIndicatorType) {
+    PageIndicatorType.None -> 0
+    else -> PAGE_INDICATOR_HEIGHT_DP
 }

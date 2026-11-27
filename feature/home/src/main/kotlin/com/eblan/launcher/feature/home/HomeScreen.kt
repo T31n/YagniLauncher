@@ -834,6 +834,7 @@ private fun Success(
                     rows = homeData.userData.homeSettings.rows,
                     dockColumns = homeData.userData.homeSettings.dockColumns,
                     dockRows = homeData.userData.homeSettings.dockRows,
+                    pageIndicatorType = homeData.userData.homeSettings.pageIndicatorType,
                     dockGridItemSettings = homeData.userData.homeSettings.dockGridItemSettings,
                     folderCornerRadius = homeData.userData.folderSettings.folderCornerRadius,
                     // Appearance

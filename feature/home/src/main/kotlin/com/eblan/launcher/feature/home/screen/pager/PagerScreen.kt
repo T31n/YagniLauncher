@@ -97,6 +97,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
 import com.eblan.launcher.domain.grid.getDockHeight
+import com.eblan.launcher.domain.grid.getPageIndicatorHeight
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoGroup
 import com.eblan.launcher.domain.model.application.EblanApplicationInfoTag
 import com.eblan.launcher.domain.model.application.GetEblanApplicationInfosByLabelAndTag
@@ -147,7 +148,6 @@ import com.eblan.launcher.feature.home.screen.resize.ResizeScreen
 import com.eblan.launcher.feature.home.screen.shortcutconfig.ShortcutConfigScreen
 import com.eblan.launcher.feature.home.screen.widget.AppWidgetScreen
 import com.eblan.launcher.feature.home.screen.widget.WidgetScreen
-import com.eblan.launcher.feature.home.util.PAGE_INDICATOR_HEIGHT
 import com.eblan.launcher.feature.home.util.calculatePage
 import com.eblan.launcher.feature.home.util.getBackgroundColor
 import com.eblan.launcher.feature.home.util.getTextColor
@@ -393,8 +393,12 @@ internal fun PagerScreen(
 
     val safeDrawingHeight = screenHeight - verticalPadding
 
+    val pageIndicatorHeight = getPageIndicatorHeight(
+        pageIndicatorType = homeSettings.pageIndicatorType,
+    ).dp
+
     val pageIndicatorHeightPx = with(density) {
-        PAGE_INDICATOR_HEIGHT.roundToPx()
+        pageIndicatorHeight.roundToPx()
     }
 
     val dockHeightPx = getDockHeight(
@@ -436,6 +440,7 @@ internal fun PagerScreen(
             safeDrawingWidth = safeDrawingWidth,
             safeDrawingHeight = safeDrawingHeight,
             dockHeightPx = dockHeightPx,
+            pageIndicatorHeightPx = pageIndicatorHeightPx,
             // Callbacks
             onUpdateWidgetGridItem = pagerScreenState::updateWidgetGridItem,
             onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
@@ -620,7 +625,7 @@ internal fun PagerScreen(
             // Screen and Layout
             screenWidth = screenWidth,
             screenHeight = screenHeight,
-            density = density,
+            pageIndicatorHeightPx = pageIndicatorHeightPx,
             layoutDirection = layoutDirection,
             leftPadding = leftPadding,
             topPadding = topPadding,
@@ -664,6 +669,7 @@ internal fun PagerScreen(
             safeDrawingHeight = safeDrawingHeight,
             safeDrawingWidth = safeDrawingWidth,
             dockHeightPx = dockHeightPx,
+            pageIndicatorHeightPx = pageIndicatorHeightPx,
             // Drag and Drop State
             drag = pagerScreenState.drag,
             gridItemSource = currentGridItemSource.value,
@@ -1076,7 +1082,7 @@ internal fun PagerScreen(
                 // Layout
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(PAGE_INDICATOR_HEIGHT),
+                    .height(pageIndicatorHeight),
             )
 
             if (homeSettings.enableDock) {
@@ -1727,6 +1733,7 @@ internal fun PagerScreen(
                 paddingValues = paddingValues,
                 // Content
                 dockHeightPx = dockHeightPx,
+                pageIndicatorHeightPx = pageIndicatorHeightPx,
                 columns = homeSettings.columns,
                 rows = homeSettings.rows,
                 gridItemTextColor = homeSettings.gridItemSettings.textColor,

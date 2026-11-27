@@ -43,7 +43,6 @@ import com.eblan.launcher.domain.model.launcherapps.PinItemRequestType
 import com.eblan.launcher.feature.home.R
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.GridItemSource
-import com.eblan.launcher.feature.home.util.PAGE_INDICATOR_HEIGHT
 import com.eblan.launcher.feature.home.util.updateAppWidgetOptions
 import com.eblan.launcher.platform.imageserializer.AndroidImageSerializer
 import com.eblan.launcher.platform.launcherapps.AndroidLauncherAppsWrapper
@@ -66,6 +65,7 @@ internal suspend fun handleDropGridItem(
     safeDrawingHeight: Int,
     safeDrawingWidth: Int,
     dockHeightPx: Int,
+    pageIndicatorHeightPx: Int,
     // Drag and Drop State
     drag: Drag,
     gridItemSource: GridItemSource?,
@@ -107,8 +107,7 @@ internal suspend fun handleDropGridItem(
         safeDrawingWidth = safeDrawingWidth,
         safeDrawingHeight = safeDrawingHeight,
         dockHeightPx = dockHeightPx,
-        // Display Properties
-        density = density,
+        pageIndicatorHeightPx = pageIndicatorHeightPx,
         // Association
         associate = currentMoveGridItemResult.movingGridItem.associate,
     )
@@ -250,6 +249,7 @@ internal fun handleAppWidgetLauncherResult(
     safeDrawingWidth: Int,
     safeDrawingHeight: Int,
     dockHeightPx: Int,
+    pageIndicatorHeightPx: Int,
     // Callbacks
     onUpdateWidgetGridItem: (GridItem) -> Unit,
     onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
@@ -264,8 +264,7 @@ internal fun handleAppWidgetLauncherResult(
         safeDrawingWidth = safeDrawingWidth,
         safeDrawingHeight = safeDrawingHeight,
         dockHeightPx = dockHeightPx,
-        // Display Properties
-        density = density,
+        pageIndicatorHeightPx = pageIndicatorHeightPx,
         // Association
         associate = movingGridItem.associate,
     )
@@ -750,15 +749,10 @@ private fun calculateGridSize(
     safeDrawingWidth: Int,
     safeDrawingHeight: Int,
     dockHeightPx: Int,
-    // Display Properties
-    density: Density,
+    pageIndicatorHeightPx: Int,
     // Association
     associate: Associate,
 ): IntSize {
-    val pageIndicatorHeightPx = with(density) {
-        PAGE_INDICATOR_HEIGHT.roundToPx()
-    }
-
     val gridHeight = when (associate) {
         Associate.Grid -> safeDrawingHeight - dockHeightPx - pageIndicatorHeightPx
         Associate.Dock -> dockHeightPx
