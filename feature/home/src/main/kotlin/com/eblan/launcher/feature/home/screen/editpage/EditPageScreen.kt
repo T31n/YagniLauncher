@@ -218,6 +218,7 @@ internal fun EditGridPageScreen(
                 contentPadding = PaddingValues(horizontal = horizontalEdgePadding),
                 horizontalArrangement = Arrangement.spacedBy(EblanSpacing.medium),
                 verticalAlignment = Alignment.CenterVertically,
+                userScrollEnabled = lazyRowDragDropState.draggingItemIndex == null,
             ) {
                 itemsIndexed(
                     items = currentPageItems,
@@ -431,6 +432,7 @@ internal fun EditDockGridPageScreen(
             state = lazyListState,
             contentPadding = PaddingValues(EblanSpacing.large),
             verticalArrangement = Arrangement.spacedBy(EblanSpacing.medium),
+            userScrollEnabled = lazyColumnDragDropState.draggingItemIndex == null,
         ) {
             itemsIndexed(
                 items = currentPageItems,

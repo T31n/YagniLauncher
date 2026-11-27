@@ -93,6 +93,7 @@ internal fun ManageTagsDialog(
                         ),
                     state = lazyListState,
                     verticalArrangement = Arrangement.spacedBy(EblanSpacing.extraSmall),
+                    userScrollEnabled = lazyColumnDragDropState.draggingItemIndex == null,
                 ) {
                     itemsIndexed(
                         items = currentEblanApplicationInfoTags,

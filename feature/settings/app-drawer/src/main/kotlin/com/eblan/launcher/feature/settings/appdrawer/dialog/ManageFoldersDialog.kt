@@ -94,6 +94,7 @@ internal fun ManageFoldersDialog(
                         ),
                     state = lazyListState,
                     verticalArrangement = Arrangement.spacedBy(EblanSpacing.extraSmall),
+                    userScrollEnabled = lazyColumnDragDropState.draggingItemIndex == null,
                 ) {
                     itemsIndexed(
                         items = currentFolderEblanApplicationInfos,
