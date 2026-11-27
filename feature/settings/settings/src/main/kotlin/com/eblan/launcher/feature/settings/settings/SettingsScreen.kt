@@ -70,7 +70,6 @@ internal fun SettingsRoute(
     modifier: Modifier = Modifier,
     // Navigation Actions
     onAppDrawer: () -> Unit,
-    onCache: () -> Unit,
     onExperimental: () -> Unit,
     onFinish: () -> Unit,
     onGeneral: () -> Unit,
@@ -83,7 +82,6 @@ internal fun SettingsRoute(
         modifier = modifier,
         // Navigation Actions
         onAppDrawer = onAppDrawer,
-        onCache = onCache,
         onExperimental = onExperimental,
         onFinish = onFinish,
         onGeneral = onGeneral,
@@ -100,7 +98,6 @@ internal fun SettingsScreen(
     modifier: Modifier = Modifier,
     // Navigation Actions
     onAppDrawer: () -> Unit,
-    onCache: () -> Unit,
     onExperimental: () -> Unit,
     onFinish: () -> Unit,
     onGeneral: () -> Unit,
@@ -239,17 +236,6 @@ internal fun SettingsScreen(
                     shape = EblanShapes.middle,
                     // Action
                     onClick = onGestures,
-                )
-
-                SettingsRowItem(
-                    // Content
-                    title = stringResource(commonR.string.cache),
-                    subtitle = stringResource(R.string.clean_up_unused_icons_and_previews),
-                    imageVector = EblanLauncherIcons.Storage,
-                    // Appearance
-                    shape = EblanShapes.middle,
-                    // Action
-                    onClick = onCache,
                 )
 
                 SettingsRowItem(

@@ -27,4 +27,13 @@
     <string name="prevent_other_grid_items_from_moving">Prevent other grid items from moving</string>
     <string name="grid_item_animation">Grid Item Animation</string>
     <string name="enable_or_disable_animations">Enable or disable grid item animation</string>
+    <string name="clean_up_unused_icons_and_previews">Clean up unused icons and previews</string>
+    <string name="cache_description">App icons (original and themed), custom icons, icon packs, widget previews, and shortcut icons are cached locally for faster loading. Clean up checks these files against your launcher data and removes only unused ones, such as icons from uninstalled apps, removed custom icons, deleted icon packs, or unused icon variants. Files currently in use are kept.</string>
+    <string name="total_cache">Total cache</string>
+    <string name="can_be_freed">Can be freed</string>
+    <string name="clean_up">Clean up</string>
+    <string name="cleaning_up">Cleaning up…</string>
+    <string name="nothing_to_clean_up">Nothing to clean up</string>
+    <string name="clean_cache">Clean Cache</string>
+    <string name="clean_cache_automatically_on_launch">Clean unused cache automatically on launch</string>
 </resources>

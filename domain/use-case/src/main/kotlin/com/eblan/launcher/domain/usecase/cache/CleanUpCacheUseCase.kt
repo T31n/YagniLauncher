@@ -64,6 +64,10 @@ class CleanUpCacheUseCase @Inject constructor(
             file.delete()
         }
 
+        cacheSnapshot.legacyDirectories
+            .filter { currentDirectory -> currentDirectory.list().isNullOrEmpty() }
+            .forEach { currentDirectory -> currentDirectory.delete() }
+
         fileManager.getFilesDirectory(name = FileManager.ICON_PACKS_DIR)
             .listFiles()
             ?.filter(File::isDirectory)

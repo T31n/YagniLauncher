@@ -151,6 +151,7 @@ class UserDataSerializer @Inject constructor() : Serializer<UserDataProto> {
         firstLaunch = true
         lockMovement = false
         gridItemAnimation = true
+        cleanCache = false
     }.build()
 
     private val defaultFolderSettingsProto = FolderSettingsProto.newBuilder().apply {
