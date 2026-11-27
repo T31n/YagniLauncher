@@ -16,7 +16,6 @@ message HomeSettingsProto {
   optional bool infiniteScroll = 4;
   optional int32 dockColumns = 5;
   optional int32 dockRows = 6;
-  optional int32 dockHeight = 7;
   optional int32 initialPage = 8;
   optional bool wallpaperScroll = 9;
   GridItemSettingsProto gridItemSettingsProto = 12;
@@ -39,4 +38,5 @@ message HomeSettingsProto {
   optional BackgroundColorProto dockBackgroundColorProto = 35;
   optional ScreenOrientationProto screenOrientationProto = 36;
   optional PageIndicatorTypeProto pageIndicatorTypeProto = 37;
+  optional int32 dockHeightPercentage = 38;
 }

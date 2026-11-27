@@ -111,7 +111,7 @@ internal fun handleDragGridItem(
     dockIndex: Int,
     dockInfiniteScroll: Boolean,
     dockPageCount: Int,
-    dockHeight: Int,
+    dockHeightPx: Int,
     // Screen and Layout
     screenWidth: Int,
     screenHeight: Int,
@@ -168,10 +168,6 @@ internal fun handleDragGridItem(
     val layoutDirectionX = when (layoutDirection) {
         LayoutDirection.Rtl -> safeDrawingWidth - localDragX
         LayoutDirection.Ltr -> localDragX
-    }
-
-    val dockHeightPx = with(density) {
-        dockHeight.dp.roundToPx()
     }
 
     val isOnDock = dockHeightPx > 0 && localDragY > safeDrawingHeight - dockHeightPx

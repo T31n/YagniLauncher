@@ -20,22 +20,21 @@ package com.eblan.launcher.feature.settings.home.dialog
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.component.EblanDialog
+import com.eblan.launcher.ui.dialog.LabeledSlider
 import com.eblan.launcher.common.R as commonR
+
+private val GRID_RANGE = 1..12
 
 @Composable
 internal fun EditGridDialog(
@@ -51,11 +50,12 @@ internal fun EditGridDialog(
         rows: Int,
     ) -> Unit,
 ) {
-    var currentColumns by remember { mutableStateOf("$columns") }
-    var currentRows by remember { mutableStateOf("$rows") }
-
-    var isErrorColumns by remember { mutableStateOf(false) }
-    var isErrorRows by remember { mutableStateOf(false) }
+    var currentColumns by remember(columns) {
+        mutableIntStateOf(columns.coerceIn(GRID_RANGE.first, GRID_RANGE.last))
+    }
+    var currentRows by remember(rows) {
+        mutableIntStateOf(rows.coerceIn(GRID_RANGE.first, GRID_RANGE.last))
+    }
 
     EblanDialog(
         modifier = modifier,
@@ -66,51 +66,19 @@ internal fun EditGridDialog(
             style = MaterialTheme.typography.titleLarge,
         )
 
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            TextField(
-                value = currentColumns,
-                onValueChange = { currentColumnsString ->
-                    currentColumns = currentColumnsString
-                    isErrorColumns = false
-                },
-                modifier = Modifier.weight(1f),
-                label = { Text(text = stringResource(commonR.string.columns)) },
-                supportingText = if (isErrorColumns) {
-                    {
-                        Text(text = stringResource(commonR.string.columns_is_not_valid))
-                    }
-                } else {
-                    null
-                },
-                isError = isErrorColumns,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                ),
-            )
+        LabeledSlider(
+            label = stringResource(commonR.string.columns),
+            value = currentColumns,
+            valueRange = GRID_RANGE,
+            onValueChange = { currentColumns = it },
+        )
 
-            TextField(
-                value = currentRows,
-                onValueChange = { currentRowsString ->
-                    currentRows = currentRowsString
-                    isErrorRows = false
-                },
-                modifier = Modifier.weight(1f),
-                label = { Text(text = stringResource(commonR.string.rows)) },
-                supportingText = if (isErrorRows) {
-                    {
-                        Text(text = stringResource(commonR.string.rows_is_not_valid))
-                    }
-                } else {
-                    null
-                },
-                isError = isErrorRows,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                ),
-            )
-        }
+        LabeledSlider(
+            label = stringResource(commonR.string.rows),
+            value = currentRows,
+            valueRange = GRID_RANGE,
+            onValueChange = { currentRows = it },
+        )
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -124,21 +92,9 @@ internal fun EditGridDialog(
 
             TextButton(
                 onClick = {
-                    val newColumns = currentColumns.toIntOrNull()
-                    val newRows = currentRows.toIntOrNull()
+                    onUpdateGrid(currentColumns, currentRows)
 
-                    isErrorColumns = newColumns == null || newColumns <= 0
-                    isErrorRows = newRows == null || newRows <= 0
-
-                    if (newColumns != null &&
-                        newRows != null &&
-                        newColumns > 0 &&
-                        newRows > 0
-                    ) {
-                        onUpdateGrid(newColumns, newRows)
-
-                        onDismissRequest()
-                    }
+                    onDismissRequest()
                 },
             ) {
                 Text(text = stringResource(commonR.string.update))

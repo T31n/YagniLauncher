@@ -258,3 +258,31 @@ internal fun handleOnUninstall(
 
 internal val PAGE_INDICATOR_HEIGHT = 30.dp
 internal val DRAG_HANDLE_SIZE = 30.dp
+
+private const val MIN_DOCK_HEIGHT_DP = 50
+private const val MIN_DOCK_HEIGHT_PERCENTAGE = 8
+private const val MAX_DOCK_HEIGHT_PERCENTAGE = 45
+
+internal fun calculateDockHeightPx(
+    enableDock: Boolean,
+    dockHeightPercentage: Int,
+    safeDrawingHeight: Int,
+    density: Density,
+): Int {
+    if (!enableDock || safeDrawingHeight <= 0) {
+        return 0
+    }
+
+    val clampedPercentage = dockHeightPercentage.coerceIn(
+        MIN_DOCK_HEIGHT_PERCENTAGE,
+        MAX_DOCK_HEIGHT_PERCENTAGE,
+    )
+
+    val minDockHeightPx = with(density) {
+        MIN_DOCK_HEIGHT_DP.dp.roundToPx()
+    }
+
+    return (safeDrawingHeight * clampedPercentage / 100)
+        .coerceAtLeast(minDockHeightPx)
+        .coerceAtMost(safeDrawingHeight / 2)
+}

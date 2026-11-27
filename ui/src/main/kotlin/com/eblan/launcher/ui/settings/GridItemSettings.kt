@@ -38,10 +38,7 @@ import com.eblan.launcher.domain.model.userdata.BackgroundColor
 import com.eblan.launcher.domain.model.userdata.TextColor
 import com.eblan.launcher.ui.R
 import com.eblan.launcher.ui.dialog.ColorPickerDialog
-import com.eblan.launcher.ui.dialog.EditCornerRadiusDialog
-import com.eblan.launcher.ui.dialog.EditIconSizeDialog
-import com.eblan.launcher.ui.dialog.EditPaddingDialog
-import com.eblan.launcher.ui.dialog.EditTextSizeDialog
+import com.eblan.launcher.ui.dialog.SliderDialog
 import com.eblan.launcher.common.R as commonR
 
 @Composable
@@ -290,14 +287,17 @@ fun GridItemSettings(
     }
 
     if (showIconSizeDialog) {
-        EditIconSizeDialog(
+        SliderDialog(
             // Content
-            iconSize = gridItemSettings.iconSize,
+            title = stringResource(R.string.icon_size),
+            value = gridItemSettings.iconSize,
+            valueRange = 24..120,
+            step = 2,
             // Callbacks
             onDismissRequest = {
                 showIconSizeDialog = false
             },
-            onUpdateIconSize = { currentIconSize ->
+            onUpdateValue = { currentIconSize ->
                 onUpdateGridItemSettings(
                     gridItemSettings.copy(
                         iconSize = currentIconSize,
@@ -329,14 +329,16 @@ fun GridItemSettings(
     }
 
     if (showTextSizeDialog) {
-        EditTextSizeDialog(
-            // State
-            textSize = gridItemSettings.textSize,
-            // Actions
+        SliderDialog(
+            // Content
+            title = stringResource(R.string.text_size),
+            value = gridItemSettings.textSize,
+            valueRange = 6..32,
+            // Callbacks
             onDismissRequest = {
                 showTextSizeDialog = false
             },
-            onUpdateTextSize = { currentTextSize ->
+            onUpdateValue = { currentTextSize ->
                 onUpdateGridItemSettings(
                     gridItemSettings.copy(
                         textSize = currentTextSize,
@@ -368,15 +370,16 @@ fun GridItemSettings(
     }
 
     if (showPaddingDialog) {
-        EditPaddingDialog(
+        SliderDialog(
             // Content
             title = stringResource(R.string.padding),
-            padding = gridItemSettings.padding,
+            value = gridItemSettings.padding,
+            valueRange = 0..32,
             // Callbacks
             onDismissRequest = {
                 showPaddingDialog = false
             },
-            onUpdatePadding = { currentPadding ->
+            onUpdateValue = { currentPadding ->
                 onUpdateGridItemSettings(
                     gridItemSettings.copy(
                         padding = currentPadding,
@@ -387,14 +390,16 @@ fun GridItemSettings(
     }
 
     if (showCornerRadiusDialog) {
-        EditCornerRadiusDialog(
-            // State
-            cornerRadius = gridItemSettings.cornerRadius,
+        SliderDialog(
+            // Content
+            title = stringResource(R.string.corner_radius),
+            value = gridItemSettings.cornerRadius,
+            valueRange = 0..50,
             // Callbacks
             onDismissRequest = {
                 showCornerRadiusDialog = false
             },
-            onUpdateCornerRadius = { currentCornerRadius ->
+            onUpdateValue = { currentCornerRadius ->
                 onUpdateGridItemSettings(
                     gridItemSettings.copy(
                         cornerRadius = currentCornerRadius,
@@ -405,15 +410,16 @@ fun GridItemSettings(
     }
 
     if (showIconPaddingDialog) {
-        EditPaddingDialog(
+        SliderDialog(
             // Content
-            title = "Icon Padding",
-            padding = gridItemSettings.iconPadding,
+            title = stringResource(R.string.icon_padding),
+            value = gridItemSettings.iconPadding,
+            valueRange = 0..32,
             // Callbacks
             onDismissRequest = {
                 showIconPaddingDialog = false
             },
-            onUpdatePadding = { currentIconPadding ->
+            onUpdateValue = { currentIconPadding ->
                 onUpdateGridItemSettings(
                     gridItemSettings.copy(
                         iconPadding = currentIconPadding,
@@ -424,15 +430,16 @@ fun GridItemSettings(
     }
 
     if (showTextPaddingDialog) {
-        EditPaddingDialog(
+        SliderDialog(
             // Content
-            title = "Text Padding",
-            padding = gridItemSettings.textPadding,
+            title = stringResource(R.string.text_padding),
+            value = gridItemSettings.textPadding,
+            valueRange = 0..32,
             // Callbacks
             onDismissRequest = {
                 showTextPaddingDialog = false
             },
-            onUpdatePadding = { currentTextPadding ->
+            onUpdateValue = { currentTextPadding ->
                 onUpdateGridItemSettings(
                     gridItemSettings.copy(
                         textPadding = currentTextPadding,

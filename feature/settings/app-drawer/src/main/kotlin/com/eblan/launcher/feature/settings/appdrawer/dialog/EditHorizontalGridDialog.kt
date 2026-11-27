@@ -20,23 +20,22 @@ package com.eblan.launcher.feature.settings.appdrawer.dialog
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import com.eblan.launcher.designsystem.component.EblanDialog
 import com.eblan.launcher.feature.settings.appdrawer.R
+import com.eblan.launcher.ui.dialog.LabeledSlider
 import com.eblan.launcher.common.R as commonR
+
+private val HORIZONTAL_GRID_RANGE = 3..12
 
 @Composable
 internal fun EditHorizontalGridDialog(
@@ -52,11 +51,22 @@ internal fun EditHorizontalGridDialog(
         horizontalAppDrawerRows: Int,
     ) -> Unit,
 ) {
-    var currentHorizontalAppDrawerColumns by remember { mutableStateOf("$horizontalAppDrawerColumns") }
-    var currentHorizontalAppDrawerRows by remember { mutableStateOf("$horizontalAppDrawerRows") }
-
-    var isErrorHorizontalAppDrawerColumns by remember { mutableStateOf(false) }
-    var isErrorHorizontalAppDrawerRows by remember { mutableStateOf(false) }
+    var currentHorizontalAppDrawerColumns by remember(horizontalAppDrawerColumns) {
+        mutableIntStateOf(
+            horizontalAppDrawerColumns.coerceIn(
+                HORIZONTAL_GRID_RANGE.first,
+                HORIZONTAL_GRID_RANGE.last,
+            ),
+        )
+    }
+    var currentHorizontalAppDrawerRows by remember(horizontalAppDrawerRows) {
+        mutableIntStateOf(
+            horizontalAppDrawerRows.coerceIn(
+                HORIZONTAL_GRID_RANGE.first,
+                HORIZONTAL_GRID_RANGE.last,
+            ),
+        )
+    }
 
     EblanDialog(
         modifier = modifier,
@@ -67,52 +77,19 @@ internal fun EditHorizontalGridDialog(
             style = MaterialTheme.typography.titleLarge,
         )
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            TextField(
-                value = currentHorizontalAppDrawerColumns,
-                onValueChange = { currentHorizontalAppDrawerColumnsString ->
-                    currentHorizontalAppDrawerColumns = currentHorizontalAppDrawerColumnsString
-                    isErrorHorizontalAppDrawerColumns = false
-                },
-                modifier = Modifier.weight(1f),
-                label = { Text(text = stringResource(commonR.string.columns)) },
-                supportingText = if (isErrorHorizontalAppDrawerColumns) {
-                    {
-                        Text(text = stringResource(commonR.string.columns_is_not_valid))
-                    }
-                } else {
-                    null
-                },
-                isError = isErrorHorizontalAppDrawerColumns,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                ),
-            )
+        LabeledSlider(
+            label = stringResource(commonR.string.columns),
+            value = currentHorizontalAppDrawerColumns,
+            valueRange = HORIZONTAL_GRID_RANGE,
+            onValueChange = { currentHorizontalAppDrawerColumns = it },
+        )
 
-            TextField(
-                value = currentHorizontalAppDrawerRows,
-                onValueChange = { currentHorizontalAppDrawerRowsString ->
-                    currentHorizontalAppDrawerRows = currentHorizontalAppDrawerRowsString
-                    isErrorHorizontalAppDrawerRows = false
-                },
-                modifier = Modifier.weight(1f),
-                label = { Text(text = stringResource(commonR.string.rows)) },
-                supportingText = if (isErrorHorizontalAppDrawerRows) {
-                    {
-                        Text(text = stringResource(commonR.string.rows_is_not_valid))
-                    }
-                } else {
-                    null
-                },
-                isError = isErrorHorizontalAppDrawerRows,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                ),
-            )
-        }
+        LabeledSlider(
+            label = stringResource(commonR.string.rows),
+            value = currentHorizontalAppDrawerRows,
+            valueRange = HORIZONTAL_GRID_RANGE,
+            onValueChange = { currentHorizontalAppDrawerRows = it },
+        )
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -126,25 +103,12 @@ internal fun EditHorizontalGridDialog(
 
             TextButton(
                 onClick = {
-                    val newHorizontalAppDrawerColumns =
-                        currentHorizontalAppDrawerColumns.toIntOrNull()
-                    val newHorizontalAppDrawerRows = currentHorizontalAppDrawerRows.toIntOrNull()
+                    onUpdateHorizontalGrid(
+                        currentHorizontalAppDrawerColumns,
+                        currentHorizontalAppDrawerRows,
+                    )
 
-                    isErrorHorizontalAppDrawerColumns =
-                        newHorizontalAppDrawerColumns == null || newHorizontalAppDrawerColumns <= 2
-                    isErrorHorizontalAppDrawerRows =
-                        newHorizontalAppDrawerRows == null || newHorizontalAppDrawerRows <= 2
-
-                    if (newHorizontalAppDrawerColumns != null && newHorizontalAppDrawerRows != null &&
-                        newHorizontalAppDrawerColumns > 2 && newHorizontalAppDrawerRows > 2
-                    ) {
-                        onUpdateHorizontalGrid(
-                            newHorizontalAppDrawerColumns,
-                            newHorizontalAppDrawerRows,
-                        )
-
-                        onDismissRequest()
-                    }
+                    onDismissRequest()
                 },
             ) {
                 Text(text = stringResource(commonR.string.update))

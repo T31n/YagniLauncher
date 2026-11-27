@@ -87,6 +87,7 @@ import com.eblan.launcher.feature.home.component.GridLayout
 import com.eblan.launcher.feature.home.component.HomeHandler
 import com.eblan.launcher.feature.home.model.Screen
 import com.eblan.launcher.feature.home.screen.editpage.griditem.PageGridItem
+import com.eblan.launcher.feature.home.util.calculateDockHeightPx
 import com.eblan.launcher.ui.lazylist.DraggableColumnItem
 import com.eblan.launcher.ui.lazylist.dragColumnContainer
 import com.eblan.launcher.ui.lazylist.rememberLazyColumnDragDropState
@@ -361,7 +362,7 @@ internal fun EditDockGridPageScreen(
     hasShortcutHostPermission: Boolean,
     // Settings
     dockInitialPage: Int,
-    dockHeight: Int,
+    dockHeightPercentage: Int,
     dockColumns: Int,
     dockRows: Int,
     dockGridItemSettings: GridItemSettings,
@@ -377,6 +378,7 @@ internal fun EditDockGridPageScreen(
     iconPackFilePaths: Map<String, String?>,
     // Layout
     paddingValues: PaddingValues,
+    screenHeight: Int,
     modifier: Modifier = Modifier,
     // Callbacks
     onSaveEditPage: (
@@ -408,7 +410,22 @@ internal fun EditDockGridPageScreen(
             }
         }
 
-    val cardHeight = dockHeight.dp
+    val density = LocalDensity.current
+
+    val verticalPadding = with(density) {
+        (paddingValues.calculateTopPadding() + paddingValues.calculateBottomPadding()).roundToPx()
+    }
+
+    val safeDrawingHeight = (screenHeight - verticalPadding).coerceAtLeast(0)
+
+    val cardHeight = with(density) {
+        calculateDockHeightPx(
+            enableDock = true,
+            dockHeightPercentage = dockHeightPercentage,
+            safeDrawingHeight = safeDrawingHeight,
+            density = density,
+        ).toDp()
+    }
 
     EditPageScaffold(
         modifier = modifier,

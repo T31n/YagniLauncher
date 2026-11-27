@@ -49,8 +49,7 @@ import com.eblan.launcher.feature.settings.folder.dialog.EditFolderCellDimension
 import com.eblan.launcher.feature.settings.folder.dialog.EditFolderMaxGridDialog
 import com.eblan.launcher.feature.settings.folder.model.FolderSettingsUiState
 import com.eblan.launcher.ui.dialog.ColorPickerDialog
-import com.eblan.launcher.ui.dialog.EditBorderWidthDialog
-import com.eblan.launcher.ui.dialog.EditCornerRadiusDialog
+import com.eblan.launcher.ui.dialog.SliderDialog
 import com.eblan.launcher.ui.settings.SettingsColumnItem
 import com.eblan.launcher.ui.settings.SettingsDropdownItem
 import com.eblan.launcher.ui.settings.getTitle
@@ -278,14 +277,16 @@ private fun Success(
     }
 
     if (showFolderCornerRadiusGridDialog) {
-        EditCornerRadiusDialog(
-            // State
-            cornerRadius = folderSettings.folderCornerRadius,
+        SliderDialog(
+            // Content
+            title = stringResource(R.string.folder_corner_radius),
+            value = folderSettings.folderCornerRadius,
+            valueRange = 0..50,
             // Callbacks
             onDismissRequest = {
                 showFolderCornerRadiusGridDialog = false
             },
-            onUpdateCornerRadius = { currentFolderCornerRadius ->
+            onUpdateValue = { currentFolderCornerRadius ->
                 onUpdateFolderSettings(
                     folderSettings.copy(
                         folderCornerRadius = currentFolderCornerRadius,
@@ -340,16 +341,16 @@ private fun Success(
     }
 
     if (showFolderBorderWidthDialog) {
-        EditBorderWidthDialog(
+        SliderDialog(
             // Content
             title = stringResource(R.string.folder_border_width),
-            // State
-            borderWidth = folderSettings.borderWidth,
+            value = folderSettings.borderWidth,
+            valueRange = 0..16,
             // Callbacks
             onDismissRequest = {
                 showFolderBorderWidthDialog = false
             },
-            onUpdateBorderWidth = { currentBorderWidth ->
+            onUpdateValue = { currentBorderWidth ->
                 onUpdateFolderSettings(
                     folderSettings.copy(
                         borderWidth = currentBorderWidth,

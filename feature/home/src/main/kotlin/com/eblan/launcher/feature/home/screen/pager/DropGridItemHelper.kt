@@ -65,7 +65,7 @@ internal suspend fun handleDropGridItem(
     rows: Int,
     safeDrawingHeight: Int,
     safeDrawingWidth: Int,
-    dockHeight: Int,
+    dockHeightPx: Int,
     // Drag and Drop State
     drag: Drag,
     gridItemSource: GridItemSource?,
@@ -106,7 +106,7 @@ internal suspend fun handleDropGridItem(
         // Screen Dimensions
         safeDrawingWidth = safeDrawingWidth,
         safeDrawingHeight = safeDrawingHeight,
-        dockHeight = dockHeight,
+        dockHeightPx = dockHeightPx,
         // Display Properties
         density = density,
         // Association
@@ -249,7 +249,7 @@ internal fun handleAppWidgetLauncherResult(
     rows: Int,
     safeDrawingWidth: Int,
     safeDrawingHeight: Int,
-    dockHeight: Int,
+    dockHeightPx: Int,
     // Callbacks
     onUpdateWidgetGridItem: (GridItem) -> Unit,
     onResetGridAfterDeleteGridItem: (GridItem) -> Unit,
@@ -263,7 +263,7 @@ internal fun handleAppWidgetLauncherResult(
         // Screen Dimensions
         safeDrawingWidth = safeDrawingWidth,
         safeDrawingHeight = safeDrawingHeight,
-        dockHeight = dockHeight,
+        dockHeightPx = dockHeightPx,
         // Display Properties
         density = density,
         // Association
@@ -749,16 +749,12 @@ private fun calculateGridSize(
     // Screen Dimensions
     safeDrawingWidth: Int,
     safeDrawingHeight: Int,
-    dockHeight: Int,
+    dockHeightPx: Int,
     // Display Properties
     density: Density,
     // Association
     associate: Associate,
 ): IntSize {
-    val dockHeightPx = with(density) {
-        dockHeight.dp.roundToPx()
-    }
-
     val pageIndicatorHeightPx = with(density) {
         PAGE_INDICATOR_HEIGHT.roundToPx()
     }

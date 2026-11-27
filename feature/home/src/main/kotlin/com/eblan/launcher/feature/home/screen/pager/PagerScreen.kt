@@ -147,6 +147,7 @@ import com.eblan.launcher.feature.home.screen.shortcutconfig.ShortcutConfigScree
 import com.eblan.launcher.feature.home.screen.widget.AppWidgetScreen
 import com.eblan.launcher.feature.home.screen.widget.WidgetScreen
 import com.eblan.launcher.feature.home.util.PAGE_INDICATOR_HEIGHT
+import com.eblan.launcher.feature.home.util.calculateDockHeightPx
 import com.eblan.launcher.feature.home.util.calculatePage
 import com.eblan.launcher.feature.home.util.getBackgroundColor
 import com.eblan.launcher.feature.home.util.getTextColor
@@ -368,17 +369,6 @@ internal fun PagerScreen(
         onResetPinGridItem = onResetPinGridItem,
     )
 
-    val visibleDockHeight = when (homeSettings.enableDock) {
-        true -> homeSettings.dockHeight
-        false -> 0
-    }
-
-    val dockHeight = visibleDockHeight.dp
-
-    val dockHeightPx = with(density) {
-        dockHeight.roundToPx()
-    }
-
     val leftPadding = with(density) {
         paddingValues.calculateLeftPadding(layoutDirection).roundToPx()
     }
@@ -402,6 +392,17 @@ internal fun PagerScreen(
     val safeDrawingWidth = screenWidth - horizontalPadding
 
     val safeDrawingHeight = screenHeight - verticalPadding
+
+    val dockHeightPx = calculateDockHeightPx(
+        enableDock = homeSettings.enableDock,
+        dockHeightPercentage = homeSettings.dockHeightPercentage,
+        safeDrawingHeight = safeDrawingHeight,
+        density = density,
+    )
+
+    val dockHeight = with(density) {
+        dockHeightPx.toDp()
+    }
 
     val dockTopLeft = safeDrawingHeight - dockHeightPx
 
@@ -434,7 +435,7 @@ internal fun PagerScreen(
             rows = homeSettings.rows,
             safeDrawingWidth = safeDrawingWidth,
             safeDrawingHeight = safeDrawingHeight,
-            dockHeight = visibleDockHeight,
+            dockHeightPx = dockHeightPx,
             // Callbacks
             onUpdateWidgetGridItem = pagerScreenState::updateWidgetGridItem,
             onResetGridAfterDeleteGridItem = onResetGridAfterDeleteGridItem,
@@ -615,7 +616,7 @@ internal fun PagerScreen(
             dockIndex = dockGridHorizontalPagerState.currentPage,
             dockInfiniteScroll = homeSettings.dockInfiniteScroll,
             dockPageCount = homeSettings.dockPageCount,
-            dockHeight = visibleDockHeight,
+            dockHeightPx = dockHeightPx,
             // Screen and Layout
             screenWidth = screenWidth,
             screenHeight = screenHeight,
@@ -662,7 +663,7 @@ internal fun PagerScreen(
             rows = homeSettings.rows,
             safeDrawingHeight = safeDrawingHeight,
             safeDrawingWidth = safeDrawingWidth,
-            dockHeight = visibleDockHeight,
+            dockHeightPx = dockHeightPx,
             // Drag and Drop State
             drag = pagerScreenState.drag,
             gridItemSource = currentGridItemSource.value,
@@ -1725,7 +1726,7 @@ internal fun PagerScreen(
                 // Layout
                 paddingValues = paddingValues,
                 // Content
-                dockHeight = visibleDockHeight,
+                dockHeightPx = dockHeightPx,
                 columns = homeSettings.columns,
                 rows = homeSettings.rows,
                 gridItemTextColor = homeSettings.gridItemSettings.textColor,

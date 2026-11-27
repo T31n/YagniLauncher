@@ -831,7 +831,7 @@ private fun Success(
                     hasShortcutHostPermission = homeData.hasShortcutHostPermission,
                     // Settings
                     dockInitialPage = homeData.userData.homeSettings.dockInitialPage,
-                    dockHeight = homeData.userData.homeSettings.dockHeight,
+                    dockHeightPercentage = homeData.userData.homeSettings.dockHeightPercentage,
                     dockColumns = homeData.userData.homeSettings.dockColumns,
                     dockRows = homeData.userData.homeSettings.dockRows,
                     dockGridItemSettings = homeData.userData.homeSettings.dockGridItemSettings,
@@ -847,6 +847,7 @@ private fun Success(
                     iconPackFilePaths = homeData.iconPackFilePaths,
                     // Layout
                     paddingValues = paddingValues,
+                    screenHeight = screenHeight,
                     // Callbacks
                     onSaveEditPage = onSaveEditPage,
                     onUpdateScreen = onUpdateScreen,

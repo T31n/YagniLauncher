@@ -102,7 +102,7 @@ class AddPinWidgetToHomeScreenUseCase @Inject constructor(
         val initialPage = homeSettings.initialPage
 
         val dockHeight = if (homeSettings.enableDock) {
-            homeSettings.dockHeight
+            rootHeight * homeSettings.dockHeightPercentage.coerceIn(8, 45) / 100
         } else {
             0
         }
